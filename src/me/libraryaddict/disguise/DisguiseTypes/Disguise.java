@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import net.minecraft.server.v1_5_R3.DataWatcher;
 import net.minecraft.server.v1_5_R3.Entity;
 import net.minecraft.server.v1_5_R3.EntityCreeper;
 import net.minecraft.server.v1_5_R3.EntitySkeleton;
@@ -39,8 +37,6 @@ public class Disguise {
             if (disguiseType == DisguiseType.CHARGED_CREEPER) {
                 ((EntityCreeper) entity).setPowered(true);
             }
-            Field field = Entity.class.getDeclaredField("datawatcher");
-            field.setAccessible(true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -52,10 +48,6 @@ public class Disguise {
 
     public DisguiseType getType() {
         return disguiseType;
-    }
-
-    public DataWatcher getDataWatcher() {
-        return entity.getDataWatcher();
     }
 
     public Entity getEntity() {
