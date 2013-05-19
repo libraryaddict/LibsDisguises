@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import net.minecraft.server.v1_5_R3.Packet40EntityMetadata;
 import net.minecraft.server.v1_5_R3.WatchableObject;
 
-public abstract class LibsBaseWatcher {
+public abstract class FlagWatcher {
 
     private static HashMap<Class, Integer> classTypes = new HashMap<Class, Integer>();
     static {
@@ -25,7 +25,7 @@ public abstract class LibsBaseWatcher {
     private int entityId;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
 
-    protected LibsBaseWatcher(int entityId) {
+    protected FlagWatcher(int entityId) {
         this.entityId = entityId;
     }
 

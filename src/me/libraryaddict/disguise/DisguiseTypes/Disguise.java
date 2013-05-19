@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 public class Disguise {
     protected DisguiseType disguiseType;
     private Entity entity;
-    private LibsBaseWatcher watcher;
+    private FlagWatcher watcher;
 
     protected Disguise(DisguiseType newType) {
         disguiseType = newType;
@@ -84,7 +84,7 @@ public class Disguise {
             }
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
-            watcher = (LibsBaseWatcher) contructor.newInstance(entityId);
+            watcher = (FlagWatcher) contructor.newInstance(entityId);
         } catch (Exception ex) {
             // There is no watcher for this entity
         }
@@ -101,7 +101,7 @@ public class Disguise {
         return disguiseType;
     }
 
-    public LibsBaseWatcher getWatcher() {
+    public FlagWatcher getWatcher() {
         return watcher;
     }
 
