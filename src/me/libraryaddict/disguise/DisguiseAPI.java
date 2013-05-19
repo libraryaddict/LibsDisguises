@@ -3,8 +3,6 @@ package me.libraryaddict.disguise;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import net.minecraft.server.v1_5_R3.*;
 
 import org.bukkit.Bukkit;
@@ -42,26 +40,7 @@ public class DisguiseAPI {
     public static void disguiseToPlayer(Player disguiser, Player observer, Disguise disguise) {
         disguises.put(disguiser.getName(), disguise);
         Packet29DestroyEntity destroyPacket = new Packet29DestroyEntity(new int[] { disguiser.getEntityId() });
-        Packet spawnPacket = null;
-        if (disguise.getType().isMob()) {
-
-            EntityLiving entityLiving = ((MobDisguise) disguise).getEntityLiving(((CraftPlayer) disguiser).getHandle().world,
-                    disguiser.getLocation(), disguiser.getEntityId());
-            spawnPacket = new Packet24MobSpawn(entityLiving);
-
-        } else if (disguise.getType().isMisc()) {
-
-            Entity entity = disguise.getEntity(((CraftPlayer) disguiser).getHandle().world, disguiser.getLocation(),
-                    disguiser.getEntityId());
-            spawnPacket = new Packet23VehicleSpawn(entity, 0);
-
-        } else if (disguise.getType().isPlayer()) {
-
-            EntityHuman entityHuman = ((CraftPlayer) disguiser).getHandle();
-            spawnPacket = new Packet20NamedEntitySpawn(entityHuman);
-            ((Packet20NamedEntitySpawn) spawnPacket).b = ((PlayerDisguise) disguise).getName();
-
-        }
+        Packet spawnPacket = disguise.constructPacket(disguiser);
         ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(destroyPacket);
         ((CraftPlayer) observer).getHandle().playerConnection.sendPacket(spawnPacket);
 

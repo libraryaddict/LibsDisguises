@@ -1,17 +1,13 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.MiscDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
-import net.minecraft.server.v1_5_R3.DataWatcher;
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import net.minecraft.server.v1_5_R3.WatchableObject;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -54,7 +50,8 @@ public class LibsDisguises extends JavaPlugin {
                                             }
                                         }
                                     } else if (!disguise.getType().isPlayer()) {
-                                        mods.write(1, modifyDataWatcher(disguise, watched));
+                                        if (disguise.hasWatcher())
+                                            mods.write(1, disguise.getWatcher().convert((List<WatchableObject>) mods.read(1)));
                                     }
                                 }
                             }
@@ -63,39 +60,5 @@ public class LibsDisguises extends JavaPlugin {
                         }
                     }
                 });
-
-    }
-
-    private List modifyDataWatcher(Disguise disguise, Player p) {
-        Entity e = disguise.getEntity();
-        EntityPlayer hE = ((CraftPlayer) p).getHandle();
-        e.setAirTicks(hE.getAirTicks());
-        e.fireTicks = p.getFireTicks();
-        a(e.getDataWatcher(), 0, e.fireTicks > 0);
-        e.setSprinting(p.isSprinting());
-        e.setSneaking(p.isSneaking());
-        if (e instanceof EntityLiving) {
-            EntityLiving lE = (EntityLiving) e;
-            lE.setInvisible(hE.isInvisible());
-            lE.effects = hE.effects;
-            lE.updateEffects = true;
-            try {
-                Method method = EntityLiving.class.getDeclaredMethod("bA");
-                method.setAccessible(true);
-                method.invoke(lE);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        }
-        return e.getDataWatcher().b();
-    }
-
-    protected void a(DataWatcher datawatcher, int i, boolean flag) {
-        byte b0 = datawatcher.getByte(0);
-        if (flag) {
-            datawatcher.watch(0, Byte.valueOf((byte) (b0 | 1 << i)));
-        } else {
-            datawatcher.watch(0, Byte.valueOf((byte) (b0 & ~(1 << i))));
-        }
     }
 }

@@ -17,7 +17,7 @@ public class MobDisguise extends Disguise {
         adult = isAdult;
     }
 
-    public EntityLiving getEntityLiving(World w, Location loc, int id) {
+    protected EntityLiving getEntityLiving(World w, Location loc, int id) {
         Entity entity = getEntity(w, loc, id);
         if (!adult) {
             if (entity instanceof EntityAgeable)
