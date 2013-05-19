@@ -5,5 +5,4 @@ public class MagmaCubeWatcher extends SlimeWatcher {
     public MagmaCubeWatcher(int entityId) {
         super(entityId);
     }
-
 }

@@ -36,8 +36,19 @@ public class Disguise {
 
         } else if (getType().isMisc()) {
 
+            int id = 0;
+            if (getType() == DisguiseType.PRIMED_TNT)
+                id = 50;
+            else if (getType() == DisguiseType.ENDER_CRYSTAL)
+                id = 51;
+            else if (getType() == DisguiseType.FALLING_BLOCK)
+                id = 70;
             Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
-            spawnPacket = new Packet23VehicleSpawn(entity, 0);
+            if (((MiscDisguise) this).getId() > 0)
+                spawnPacket = new Packet23VehicleSpawn(entity, id, ((MiscDisguise) this).getId()
+                        | ((MiscDisguise) this).getData() << 16);
+            else
+                spawnPacket = new Packet23VehicleSpawn(entity, id);
 
         } else if (getType().isPlayer()) {
 
@@ -54,13 +65,14 @@ public class Disguise {
     }
 
     public Entity getEntity(World world, Location loc, int entityId) {
-        Entity entity = null;
+        if (entity != null)
+            return entity;
         try {
             String name = toReadable(disguiseType.name());
             if (disguiseType == DisguiseType.WITHER_SKELETON) {
                 name = "Skeleton";
             }
-            if (disguiseType == DisguiseType.TNT_PRIMED) {
+            if (disguiseType == DisguiseType.PRIMED_TNT) {
                 name = "TNTPrimed";
             }
             Class entityClass = Class.forName("net.minecraft.server.v1_5_R3.Entity" + name);
@@ -74,7 +86,6 @@ public class Disguise {
         }
         entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         entity.id = entityId;
-        this.entity = entity;
         try {
             String name;
             if (getType().isPlayer()) {
