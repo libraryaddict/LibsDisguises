@@ -100,7 +100,6 @@ public class Disguise {
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
             watcher = (FlagWatcher) contructor.newInstance(entityId);
         } catch (Exception ex) {
-            System.out.print("No watcher found");
             // There is no watcher for this entity
         }
         if (watcher == null && entity instanceof EntityAgeable && this instanceof MobDisguise) {
