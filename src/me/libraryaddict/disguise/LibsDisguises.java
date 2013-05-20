@@ -3,7 +3,6 @@ package me.libraryaddict.disguise;
 import java.util.List;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import net.minecraft.server.v1_5_R3.WatchableObject;
 
@@ -20,7 +19,6 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class LibsDisguises extends JavaPlugin {
 
-    @Override
     public void onEnable() {
         getCommand("disguise").setExecutor(new DisguiseCommand());
         ProtocolLibrary.getProtocolManager().addPacketListener(
