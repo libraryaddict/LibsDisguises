@@ -8,7 +8,8 @@ public class SlimeWatcher extends FlagWatcher {
 
     public SlimeWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) new Random().nextInt(4) + 1);
+        setValue(16, (byte) (new Random().nextInt(4) + 1));
+        setValue(18, (byte) 0);
     }
 
     public int getSize() {

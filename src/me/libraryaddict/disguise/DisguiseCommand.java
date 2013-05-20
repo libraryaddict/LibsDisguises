@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 public class DisguiseCommand implements CommandExecutor {
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.isOp()) {
             Player p = (Player) sender;

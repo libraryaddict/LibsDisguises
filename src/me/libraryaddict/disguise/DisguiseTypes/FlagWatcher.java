@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_5_R3.ItemStack;
 import net.minecraft.server.v1_5_R3.Packet40EntityMetadata;
 import net.minecraft.server.v1_5_R3.WatchableObject;
 
@@ -21,6 +22,7 @@ public abstract class FlagWatcher {
         classTypes.put(Short.class, 1);
         classTypes.put(Integer.class, 2);
         classTypes.put(String.class, 4);
+        classTypes.put(ItemStack.class, 5);
     }
     private int entityId;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
@@ -57,7 +59,7 @@ public abstract class FlagWatcher {
                             ex.printStackTrace();
                         }
                     } else {
-                        watch.a(entityValues.get(watch.a()));
+                        watch.a(value);
                     }
                 }
             }
@@ -76,6 +78,13 @@ public abstract class FlagWatcher {
             }
         }
         return newList;
+    }
+
+    public void displayName(boolean display) {
+        if ((Byte) getValue(6) != (display ? 1 : 0)) {
+            setValue(6, (byte) (display ? 1 : 0));
+            sendData(6);
+        }
     }
 
     protected Object getValue(int no) {
@@ -102,13 +111,6 @@ public abstract class FlagWatcher {
 
     public void setName(String name) {
         setValue(5, name);
-    }
-
-    public void displayName(boolean display) {
-        if ((Byte) getValue(6) != (display ? 1 : 0)) {
-            setValue(6, (byte) (display ? 1 : 0));
-            sendData(6);
-        }
     }
 
     protected void setValue(int no, Object value) {

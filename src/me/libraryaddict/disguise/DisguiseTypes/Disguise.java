@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import net.minecraft.server.v1_5_R3.Entity;
 import net.minecraft.server.v1_5_R3.EntityAgeable;
+import net.minecraft.server.v1_5_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_5_R3.EntityHuman;
 import net.minecraft.server.v1_5_R3.EntityLiving;
 import net.minecraft.server.v1_5_R3.EntitySkeleton;
@@ -12,6 +13,7 @@ import net.minecraft.server.v1_5_R3.Packet;
 import net.minecraft.server.v1_5_R3.Packet20NamedEntitySpawn;
 import net.minecraft.server.v1_5_R3.Packet23VehicleSpawn;
 import net.minecraft.server.v1_5_R3.Packet24MobSpawn;
+import net.minecraft.server.v1_5_R3.Packet26AddExpOrb;
 import net.minecraft.server.v1_5_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
@@ -36,25 +38,25 @@ public class Disguise {
 
         } else if (getType().isMisc()) {
 
-            int id = 0;
-            if (getType() == DisguiseType.PRIMED_TNT)
-                id = 50;
-            else if (getType() == DisguiseType.ENDER_CRYSTAL)
-                id = 51;
-            else if (getType() == DisguiseType.FALLING_BLOCK)
-                id = 70;
             Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
-            if (((MiscDisguise) this).getId() > 0)
-                spawnPacket = new Packet23VehicleSpawn(entity, id, ((MiscDisguise) this).getId()
-                        | ((MiscDisguise) this).getData() << 16);
-            else
-                spawnPacket = new Packet23VehicleSpawn(entity, id);
-
+            if (((MiscDisguise) this).getId() >= 0) {
+                if (((MiscDisguise) this).getData() >= 0) {
+                    spawnPacket = new Packet23VehicleSpawn(entity, getType().getEntityId(), ((MiscDisguise) this).getId()
+                            | ((MiscDisguise) this).getData() << 16);
+                } else
+                    spawnPacket = new Packet23VehicleSpawn(entity, getType().getEntityId(), ((MiscDisguise) this).getId());
+            } else
+                spawnPacket = new Packet23VehicleSpawn(entity, getType().getEntityId());
         } else if (getType().isPlayer()) {
 
             EntityHuman entityHuman = ((CraftPlayer) p).getHandle();
             spawnPacket = new Packet20NamedEntitySpawn(entityHuman);
             ((Packet20NamedEntitySpawn) spawnPacket).b = ((PlayerDisguise) this).getName();
+
+        } else if (getType().isExp()) {
+
+            Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
+            spawnPacket = new Packet26AddExpOrb((EntityExperienceOrb) entity);
 
         }
         return spawnPacket;
@@ -72,6 +74,9 @@ public class Disguise {
             }
             if (disguiseType == DisguiseType.PRIMED_TNT) {
                 name = "TNTPrimed";
+            }
+            if (disguiseType == DisguiseType.MINECART_TNT) {
+                name = "MinecartTNT";
             }
             Class entityClass = Class.forName("net.minecraft.server.v1_5_R3.Entity" + name);
             Constructor<?> contructor = entityClass.getDeclaredConstructor(World.class);
@@ -95,6 +100,7 @@ public class Disguise {
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
             watcher = (FlagWatcher) contructor.newInstance(entityId);
         } catch (Exception ex) {
+            System.out.print("No watcher found");
             // There is no watcher for this entity
         }
         if (watcher == null && entity instanceof EntityAgeable && this instanceof MobDisguise) {
