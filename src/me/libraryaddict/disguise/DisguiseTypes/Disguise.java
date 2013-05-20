@@ -60,10 +60,6 @@ public class Disguise {
         return spawnPacket;
     }
 
-    public Entity getEntity() {
-        return entity;
-    }
-
     public Entity getEntity(World world, Location loc, int entityId) {
         if (entity != null) {
             entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());

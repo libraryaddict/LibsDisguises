@@ -21,6 +21,7 @@ public class DisguiseAPI {
      */
     public static void disguiseToAll(Player p, Disguise disguise) {
         disguises.put(p.getName(), disguise);
+        disguise.constructPacket(p);
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (p.getWorld() != player.getWorld())
                 continue;
