@@ -65,8 +65,10 @@ public class Disguise {
     }
 
     public Entity getEntity(World world, Location loc, int entityId) {
-        if (entity != null)
+        if (entity != null) {
+            entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
             return entity;
+        }
         try {
             String name = toReadable(disguiseType.name());
             if (disguiseType == DisguiseType.WITHER_SKELETON) {

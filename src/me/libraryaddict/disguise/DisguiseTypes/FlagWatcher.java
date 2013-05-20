@@ -27,13 +27,17 @@ public abstract class FlagWatcher {
 
     protected FlagWatcher(int entityId) {
         this.entityId = entityId;
+        setValue(6, (byte) 0);
+        setValue(5, "");
     }
 
     public List<WatchableObject> convert(List<WatchableObject> list) {
         Iterator<WatchableObject> itel = list.iterator();
         List<WatchableObject> newList = new ArrayList<WatchableObject>();
+        List<Integer> sentValues = new ArrayList<Integer>();
         while (itel.hasNext()) {
             WatchableObject watch = itel.next();
+            sentValues.add(watch.a());
             if (entityValues.containsKey(watch.a())) {
                 boolean doD = watch.d();
                 watch = new WatchableObject(watch.c(), watch.a(), watch.b());
@@ -59,6 +63,18 @@ public abstract class FlagWatcher {
             }
             newList.add(watch);
         }
+        if (list.size() == 10) {
+            // Its sending the entire meta data. Better add the custom meta
+            for (int value : entityValues.keySet()) {
+                if (sentValues.contains(value))
+                    continue;
+                Object obj = entityValues.get(value);
+                if (obj == null)
+                    continue;
+                WatchableObject watch = new WatchableObject(classTypes.get(obj.getClass()), value, obj);
+                newList.add(watch);
+            }
+        }
         return newList;
     }
 
@@ -81,6 +97,17 @@ public abstract class FlagWatcher {
         }
         for (Player p : Bukkit.getOnlinePlayers()) {
             ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+        }
+    }
+
+    public void setName(String name) {
+        setValue(5, name);
+    }
+
+    public void displayName(boolean display) {
+        if ((Byte) getValue(6) != (display ? 1 : 0)) {
+            setValue(6, (byte) (display ? 1 : 0));
+            sendData(6);
         }
     }
 
