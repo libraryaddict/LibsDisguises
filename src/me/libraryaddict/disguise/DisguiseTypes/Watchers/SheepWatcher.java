@@ -16,14 +16,17 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public void setColor(AnimalColor newColor) {
-        setValue(16, (byte) (newColor.getId() + (isSheared ? 16 : 0)));
-        sendData(16);
+        if (color != newColor) {
+            setValue(16, (byte) (newColor.getId() + (isSheared ? 16 : 0)));
+            sendData(16);
+        }
     }
 
     public void setSheared(boolean sheared) {
         if (sheared != isSheared) {
             isSheared = sheared;
-            setColor(color);
+            setValue(16, (byte) (color.getId() + (isSheared ? 16 : 0)));
+            sendData(16);
         }
     }
 

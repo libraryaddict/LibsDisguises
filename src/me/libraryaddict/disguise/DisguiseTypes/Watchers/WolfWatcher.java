@@ -10,7 +10,7 @@ public class WolfWatcher extends AgeableWatcher {
 
     public WolfWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) 7);
+        setValue(16, (byte) 0);
         setValue(17, "");
         setValue(18, 8);
         setValue(19, (byte) 0);
