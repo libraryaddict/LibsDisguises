@@ -12,6 +12,10 @@ public class MiscDisguise extends Disguise {
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
         super(disguiseType);
+        if (id == -1)
+            id = disguiseType.getDefaultId();
+        if (data == -1)
+            data = disguiseType.getDefaultData();
         this.id = id;
         this.data = data;
     }
