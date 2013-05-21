@@ -24,7 +24,7 @@ public class DisguiseAPI {
         disguises.put(p.getName(), disguise);
         disguise.constructPacket(p);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (p.getWorld() != player.getWorld())
+            if (p.getWorld() != player.getWorld() || !player.canSee(p))
                 continue;
             player.hidePlayer(p);
             player.showPlayer(p);
@@ -88,7 +88,8 @@ public class DisguiseAPI {
     }
 
     /**
-     * @param Boolean - Set if sounds play when the disguiser is hurt
+     * @param Boolean
+     *            - Set if sounds play when the disguiser is hurt
      */
     public static void setPlaySounds(boolean sounds) {
         playSounds = sounds;
