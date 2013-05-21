@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>LibsDisguises</groupId>
 	<artifactId>LibsDisguises</artifactId>
-	<version>v3.2</version>
+	<version>v3.3</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<defaultGoal>clean package</defaultGoal>
