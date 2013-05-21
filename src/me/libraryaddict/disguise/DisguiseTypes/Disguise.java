@@ -53,7 +53,7 @@ public class Disguise {
             spawnPacket = new Packet20NamedEntitySpawn(entityHuman);
             ((Packet20NamedEntitySpawn) spawnPacket).b = ((PlayerDisguise) this).getName();
 
-        } else if (getType().isExp()) {
+        } else if (getType() == DisguiseType.EXPERIENCE_ORB) {
 
             Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
             spawnPacket = new Packet26AddExpOrb((EntityExperienceOrb) entity);

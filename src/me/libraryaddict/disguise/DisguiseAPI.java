@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 public class DisguiseAPI {
 
     private static ConcurrentHashMap<String, Disguise> disguises = new ConcurrentHashMap<String, Disguise>();
+    private static boolean playSounds = true;
 
     /**
      * @param Player
@@ -77,6 +78,20 @@ public class DisguiseAPI {
      */
     public static boolean isDisguised(String name) {
         return disguises.containsKey(name);
+    }
+
+    /**
+     * Does sounds play when the disguiser is hurt
+     */
+    public static boolean playSounds() {
+        return playSounds;
+    }
+
+    /**
+     * @param Boolean - Set if sounds play when the disguiser is hurt
+     */
+    public static void setPlaySounds(boolean sounds) {
+        playSounds = sounds;
     }
 
     /**
