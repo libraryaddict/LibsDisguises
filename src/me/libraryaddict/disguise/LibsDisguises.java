@@ -69,18 +69,34 @@ public class LibsDisguises extends JavaPlugin {
                                             String mobName = dis.getType().name().toLowerCase().replace("_", "");
                                             if (dis.getType() == DisguiseType.WITHER_SKELETON)
                                                 mobName = "skeleton";
-                                            else if (dis.getType() == DisguiseType.OCELOT)
-                                                mobName = "cat";
+                                            else if (dis.getType() == DisguiseType.CAVE_SPIDER)
+                                                mobName = "spider";
+                                            else if (dis.getType() == DisguiseType.ENDERMAN)
+                                                mobName = "endermen";
+                                            else if (dis.getType() == DisguiseType.MUSHROOM_COW)
+                                                mobName = "cow";
                                             if (soundName.startsWith("step.")) {
                                                 if (sounds.contains("mob." + mobName + ".walk"))
                                                     sound = "mob." + mobName + ".walk";
                                                 else if (sounds.contains("mob." + mobName + ".step"))
                                                     sound = "mob." + mobName + ".step";
                                             } else if (soundName.equals("damage.hit")) {
-                                                if (sounds.contains("mob." + mobName + ".hit"))
+                                                if (dis.getType() == DisguiseType.SNOWMAN
+                                                        || dis.getType() == DisguiseType.VILLAGER
+                                                        || dis.getType() == DisguiseType.WITCH) {
+                                                    event.setCancelled(true);
+                                                    return;
+                                                }
+                                                if (dis.getType() == DisguiseType.PIG_ZOMBIE)
+                                                    sound = "mob.zombiepig.zpighurt";
+                                                else if (dis.getType() == DisguiseType.GHAST)
+                                                    sound = "mob.ghast.scream";
+                                                else if (dis.getType() == DisguiseType.OCELOT)
+                                                    sound = "mob.cat.hitt";
+                                                else if (mobName.equals("slime"))
+                                                    sound = "mob.slime.attack";
+                                                else if (sounds.contains("mob." + mobName + ".hit"))
                                                     sound = "mob." + mobName + ".hit";
-                                                else if (sounds.contains("mob." + mobName + ".hitt"))
-                                                    sound = "mob." + mobName + ".hitt";
                                                 else if (sounds.contains("mob." + mobName + ".hurt"))
                                                     sound = "mob." + mobName + ".hurt";
                                                 else if (sounds.contains("mob." + mobName + ".say"))
@@ -89,7 +105,6 @@ public class LibsDisguises extends JavaPlugin {
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
                                         }
-                                        System.out.print(sound);
                                         if (sound != null) {
                                             mods.write(0, sound);
                                         }
