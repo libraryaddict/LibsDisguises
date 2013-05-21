@@ -26,7 +26,6 @@ import com.comphenix.protocol.reflect.StructureModifier;
 public class LibsDisguises extends JavaPlugin {
 
     public void onEnable() {
-        getCommand("disguise").setExecutor(new DisguiseCommand());
         ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(this, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL, Packets.Server.NAMED_ENTITY_SPAWN,
                         Packets.Server.ENTITY_METADATA, Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ARM_ANIMATION) {
@@ -149,5 +148,7 @@ public class LibsDisguises extends JavaPlugin {
                         }
                     }
                 });
+        getCommand("disguise").setExecutor(new DisguiseCommand());
+        getCommand("undisguise").setExecutor(new UndisguiseCommand());
     }
 }

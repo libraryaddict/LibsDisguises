@@ -6,3 +6,5 @@ depend: [ProtocolLib]
 commands:
    disguise:
       aliases: [d, dis]
+   undisguise:
+      aliases: [undis]

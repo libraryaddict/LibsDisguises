@@ -64,7 +64,7 @@ public class DisguiseCommand implements CommandExecutor {
             } else
                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
         } else if (args[0].equalsIgnoreCase("undiguise") || args[0].equalsIgnoreCase("undis") || args[0].equalsIgnoreCase("un")) {
-            if (sender.hasPermission("libsdisguises.disguise.undisguise")) {
+            if (sender.hasPermission("libsdisguises.undisguise")) {
                 if (DisguiseAPI.isDisguised(p.getName())) {
                     DisguiseAPI.undisguiseToAll(p);
                     sender.sendMessage(ChatColor.RED + "You are no longer disguised");
