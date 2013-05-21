@@ -30,7 +30,12 @@ public class Disguise {
 
     public Packet constructPacket(Player p) {
         Packet spawnPacket = null;
-        if (getType().isMob()) {
+        if (getType() == DisguiseType.EXPERIENCE_ORB) {
+
+            Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
+            spawnPacket = new Packet26AddExpOrb((EntityExperienceOrb) entity);
+
+        } else if (getType().isMob()) {
 
             EntityLiving entityLiving = ((MobDisguise) this).getEntityLiving(((CraftPlayer) p).getHandle().world,
                     p.getLocation(), p.getEntityId());
@@ -52,11 +57,6 @@ public class Disguise {
             EntityHuman entityHuman = ((CraftPlayer) p).getHandle();
             spawnPacket = new Packet20NamedEntitySpawn(entityHuman);
             ((Packet20NamedEntitySpawn) spawnPacket).b = ((PlayerDisguise) this).getName();
-
-        } else if (getType() == DisguiseType.EXPERIENCE_ORB) {
-
-            Entity entity = getEntity(((CraftPlayer) p).getHandle().world, p.getLocation(), p.getEntityId());
-            spawnPacket = new Packet26AddExpOrb((EntityExperienceOrb) entity);
 
         }
         return spawnPacket;
