@@ -12,6 +12,7 @@ import net.minecraft.server.v1_5_R3.WatchableObject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_5_R3.CraftSound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,7 +29,8 @@ public class LibsDisguises extends JavaPlugin {
     public void onEnable() {
         ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(this, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL, Packets.Server.NAMED_ENTITY_SPAWN,
-                        Packets.Server.ENTITY_METADATA, Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ARM_ANIMATION) {
+                        Packets.Server.ENTITY_METADATA, Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ARM_ANIMATION,
+                        Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         StructureModifier<Object> mods = event.getPacket().getModifier();
@@ -110,8 +112,9 @@ public class LibsDisguises extends JavaPlugin {
                                     }
                                 }
                             } else {
-                                org.bukkit.entity.Entity entity = event.getPacket().getEntityModifier(observer.getWorld())
-                                        .read(0);
+                                StructureModifier<Entity> entityModifer = event.getPacket()
+                                        .getEntityModifier(observer.getWorld());
+                                org.bukkit.entity.Entity entity = entityModifer.read(0);
                                 if (entity instanceof Player) {
                                     Player watched = (Player) entity;
                                     if (DisguiseAPI.isDisguised(watched.getName())) {
@@ -132,12 +135,17 @@ public class LibsDisguises extends JavaPlugin {
                                                 event.setCancelled(true);
                                                 DisguiseAPI.disguiseToPlayer(watched, observer, disguise);
                                             }
-                                        } else {
-                                            // Set the sounds and cancel bad packets.
+                                        } else if (event.getPacketID() == Packets.Server.ARM_ANIMATION) {
                                             if (disguise.getType().isMisc()) {
-                                                if (event.getPacketID() == Packets.Server.ARM_ANIMATION) {
-                                                    event.setCancelled(true);
-                                                }
+                                                event.setCancelled(true);
+                                            }
+                                        } else {
+                                            if (disguise.getType() == DisguiseType.ENDER_DRAGON) {
+                                                byte value = (Byte) mods.read(4);
+                                                mods.write(4, (byte) (value - 128));
+                                            } else if (disguise.getType().isMisc()) {
+                                                byte value = (Byte) mods.read(4);
+                                                mods.write(4, (byte) (value + 64));
                                             }
                                         }
                                     }

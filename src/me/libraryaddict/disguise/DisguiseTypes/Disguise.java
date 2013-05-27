@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 
 public class Disguise {
     protected DisguiseType disguiseType;
-    private Entity entity;
+    private Entity entity = null;
     private FlagWatcher watcher;
 
     protected Disguise(DisguiseType newType) {
@@ -40,6 +40,8 @@ public class Disguise {
             EntityLiving entityLiving = ((MobDisguise) this).getEntityLiving(((CraftPlayer) p).getHandle().world,
                     p.getLocation(), p.getEntityId());
             spawnPacket = new Packet24MobSpawn(entityLiving);
+            if (getType() == DisguiseType.ENDER_DRAGON)
+                ((Packet24MobSpawn) spawnPacket).i -= 128;
 
         } else if (getType().isMisc()) {
 
@@ -52,6 +54,8 @@ public class Disguise {
                     spawnPacket = new Packet23VehicleSpawn(entity, getType().getEntityId(), ((MiscDisguise) this).getId());
             } else
                 spawnPacket = new Packet23VehicleSpawn(entity, getType().getEntityId());
+            ((Packet23VehicleSpawn) spawnPacket).i += 64;
+
         } else if (getType().isPlayer()) {
 
             EntityHuman entityHuman = ((CraftPlayer) p).getHandle();
@@ -65,6 +69,7 @@ public class Disguise {
     public Entity getEntity(World world, Location loc, int entityId) {
         if (entity != null) {
             entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+            entity.id = entityId;
             return entity;
         }
         try {
