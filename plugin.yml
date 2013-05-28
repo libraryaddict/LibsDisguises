@@ -8,3 +8,7 @@ commands:
       aliases: [d, dis]
    undisguise:
       aliases: [undis]
+   disguiseplayer:
+      aliases: [dplayer, displayer]
+   undisguiseplayer:
+      aliases: [undisplayer]

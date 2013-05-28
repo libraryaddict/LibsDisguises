@@ -1,4 +1,6 @@
-package me.libraryaddict.disguise;
+package me.libraryaddict.disguise.Commands;
+
+import me.libraryaddict.disguise.DisguiseAPI;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

@@ -2,6 +2,10 @@ package me.libraryaddict.disguise;
 
 import java.util.List;
 
+import me.libraryaddict.disguise.Commands.DisguiseCommand;
+import me.libraryaddict.disguise.Commands.DisguisePlayerCommand;
+import me.libraryaddict.disguise.Commands.UndisguiseCommand;
+import me.libraryaddict.disguise.Commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
@@ -107,5 +111,7 @@ public class LibsDisguises extends JavaPlugin {
         });
         getCommand("disguise").setExecutor(new DisguiseCommand());
         getCommand("undisguise").setExecutor(new UndisguiseCommand());
+        getCommand("disguiseplayer").setExecutor(new DisguisePlayerCommand());
+        getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
     }
 }

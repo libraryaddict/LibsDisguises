@@ -1,8 +1,9 @@
-package me.libraryaddict.disguise;
+package me.libraryaddict.disguise.Commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.MiscDisguise;
