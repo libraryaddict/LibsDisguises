@@ -24,7 +24,7 @@ public class DisguisePlayerCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises.disguise." + name))
+            if (sender.hasPermission("libsdisguises.disguiseothers." + name))
                 names.add(name);
         }
         Collections.sort(names);
@@ -35,7 +35,7 @@ public class DisguisePlayerCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (!sender.hasPermission("libsdisguises.disguise." + name))
+            if (!sender.hasPermission("libsdisguises.disguiseothers." + name))
                 names.add(name);
         }
         Collections.sort(names);
@@ -52,7 +52,9 @@ public class DisguisePlayerCommand implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.hasPermission("libsdisguises.disguiseothers")) {
+        if (sender.hasPermission("libsdisguises.disguiseothers")
+                || (args.length > 0 && args[0].toLowerCase().startsWith("un") && sender
+                        .hasPermission("libsdisguises.undisguiseothers"))) {
             if (args.length == 0) {
                 ArrayList<String> names = allowedDisguises(sender);
                 ArrayList<String> otherNames = forbiddenDisguises(sender);
@@ -71,23 +73,23 @@ public class DisguisePlayerCommand implements CommandExecutor {
                     if (p != null) {
                         if (args[1].equalsIgnoreCase("undiguise") || args[1].equalsIgnoreCase("undis")
                                 || args[1].equalsIgnoreCase("un")) {
-                            if (sender.hasPermission("libsdisguises.undisguise")) {
+                            if (sender.hasPermission("libsdisguises.undisguiseothers")) {
                                 if (DisguiseAPI.isDisguised(p.getName())) {
                                     DisguiseAPI.undisguiseToAll(p);
-                                    sender.sendMessage(ChatColor.RED + "You are no longer disguised");
+                                    sender.sendMessage(ChatColor.RED + "They are no longer disguised");
                                 } else
-                                    sender.sendMessage(ChatColor.RED + "You are not disguised!");
+                                    sender.sendMessage(ChatColor.RED + "They are not disguised!");
                             } else
                                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
                         } else if (args[1].equalsIgnoreCase("player")) {
-                            if (sender.hasPermission("libsdisguises.disguise.player")) {
+                            if (sender.hasPermission("libsdisguises.disguiseothers.player")) {
                                 if (args.length > 2) {
                                     String name = ChatColor.translateAlternateColorCodes('&', StringUtils.join(args, " ")
                                             .substring(args[0].length() + args[1].length() + 2));
                                     PlayerDisguise disguise = new PlayerDisguise(name);
                                     DisguiseAPI.disguiseToAll(p, disguise);
-                                    sender.sendMessage(ChatColor.RED + "Disguised as the player '" + ChatColor.GREEN + name
-                                            + ChatColor.RESET + ChatColor.RED + "'");
+                                    sender.sendMessage(ChatColor.RED + "Disguised " + p.getName() + " as the player '"
+                                            + ChatColor.GREEN + name + ChatColor.RESET + ChatColor.RED + "'");
                                 } else
                                     sender.sendMessage(ChatColor.RED + "You need to provide a player name");
                             } else {
@@ -103,11 +105,14 @@ public class DisguisePlayerCommand implements CommandExecutor {
                             try {
                                 type = DisguiseType.valueOf(args[1].toUpperCase());
                             } catch (Exception ex) {
-                                sender.sendMessage(ChatColor.RED + "Failed to find disguise: " + ChatColor.GREEN + args[1]
-                                        + "\n/disguise player <Name>\n/disguise <Mob Name>\n/disguise undisguise/un/undis");
+                                sender.sendMessage(ChatColor.RED
+                                        + "Failed to find disguise: "
+                                        + ChatColor.GREEN
+                                        + args[1]
+                                        + "\n/disguiseplayer <Name> player <Name>\n/disguiseplayer <Name><Mob Name>\n/disguiseplayer <Name> undisguise/un/undis\n/undisguiseplayer");
                                 return true;
                             }
-                            if (sender.hasPermission("libsdisguises.disguise." + type.name().toLowerCase())) {
+                            if (sender.hasPermission("libsdisguises.disguiseothers." + type.name().toLowerCase())) {
                                 Object args1 = true;
                                 if (type.isMisc())
                                     args1 = -1;
@@ -143,7 +148,8 @@ public class DisguisePlayerCommand implements CommandExecutor {
                                 else
                                     disguise = new MiscDisguise(type, (Integer) args1, args2);
                                 DisguiseAPI.disguiseToAll(p, disguise);
-                                sender.sendMessage(ChatColor.RED + "Now disguised as a " + type.name().toLowerCase() + "!");
+                                sender.sendMessage(ChatColor.RED + "Disguised " + p.getName() + " as a "
+                                        + type.name().toLowerCase() + "!");
                             } else
                                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this disguise.");
                         }

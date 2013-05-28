@@ -98,7 +98,7 @@ public class DisguiseCommand implements CommandExecutor {
                 type = DisguiseType.valueOf(args[0].toUpperCase());
             } catch (Exception ex) {
                 sender.sendMessage(ChatColor.RED + "Failed to find disguise: " + ChatColor.GREEN + args[0]
-                        + "\n/disguise player <Name>\n/disguise <Mob Name>\n/disguise undisguise/un/undis");
+                        + "\n/disguise player <Name>\n/disguise <Mob Name>\n/disguise undisguise/un/undis\n/undisguise");
                 return true;
             }
             if (sender.hasPermission("libsdisguises.disguise." + type.name().toLowerCase())) {
