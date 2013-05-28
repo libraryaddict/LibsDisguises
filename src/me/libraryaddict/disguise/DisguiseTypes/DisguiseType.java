@@ -15,13 +15,23 @@ public enum DisguiseType {
             EntityType.MISC, 64, 0), SNOWBALL(EntityType.MISC, 61), SNOWMAN(EntityType.MOB), SPIDER(EntityType.MOB), SQUID(
             EntityType.MOB), THROWN_EXP_BOTTLE(EntityType.MISC, 75), VILLAGER(EntityType.MOB), WITCH(EntityType.MOB), WITHER(
             EntityType.MOB), WITHER_SKELETON(EntityType.MOB), WITHER_SKULL(EntityType.MISC, 66), WOLF(EntityType.MOB), ZOMBIE(
-            EntityType.MOB);
+            EntityType.MOB), PAINTING(EntityType.MISC);
 
     public static enum EntityType {
         MISC, MOB, PLAYER;
     }
 
     public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
+        if (entityType == org.bukkit.entity.EntityType.SPLASH_POTION)
+            return DisguiseType.POTION;
+        else if (entityType == org.bukkit.entity.EntityType.GIANT)
+            return DisguiseType.GIANT_ZOMBIE;
+        else if (entityType == org.bukkit.entity.EntityType.DROPPED_ITEM)
+            return DisguiseType.ITEM;
+        else if (entityType == org.bukkit.entity.EntityType.FIREBALL)
+            return DisguiseType.LARGE_FIREBALL;
+        else if (entityType == org.bukkit.entity.EntityType.SMALL_FIREBALL)
+            return DisguiseType.LARGE_FIREBALL;
         return DisguiseType.valueOf(entityType.name());
     }
 
@@ -30,26 +40,19 @@ public enum DisguiseType {
     private int entityId;
     private EntityType entityType;
 
-    private DisguiseType(EntityType newType) {
+    private DisguiseType(EntityType newType, int... obj) {
         entityType = newType;
-    }
-
-    private DisguiseType(EntityType newType, int entityId) {
-        entityType = newType;
-        this.entityId = entityId;
-    }
-
-    private DisguiseType(EntityType newType, int entityId, int defaultId) {
-        entityType = newType;
-        this.entityId = entityId;
-        this.defaultId = defaultId;
-    }
-
-    private DisguiseType(EntityType newType, int entityId, int defaultId, int defaultData) {
-        entityType = newType;
-        this.entityId = entityId;
-        this.defaultId = defaultId;
-        this.defaultData = defaultData;
+        int a = 0;
+        for (int i = 0; i < obj.length; i++) {
+            int value = obj[i];
+            if (a == 0)
+                entityId = value;
+            else if (a == 1)
+                defaultId = value;
+            else if (a == 2)
+                defaultData = value;
+            a++;
+        }
     }
 
     public int getDefaultData() {

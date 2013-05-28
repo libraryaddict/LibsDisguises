@@ -37,9 +37,12 @@ public abstract class FlagWatcher {
         Iterator<WatchableObject> itel = list.iterator();
         List<WatchableObject> newList = new ArrayList<WatchableObject>();
         List<Integer> sentValues = new ArrayList<Integer>();
+        boolean sendAllCustom = false;
         while (itel.hasNext()) {
             WatchableObject watch = itel.next();
             sentValues.add(watch.a());
+            if (watch.a() == 1)
+                sendAllCustom = true;
             if (entityValues.containsKey(watch.a())) {
                 boolean doD = watch.d();
                 watch = new WatchableObject(watch.c(), watch.a(), watch.b());
@@ -65,7 +68,7 @@ public abstract class FlagWatcher {
             }
             newList.add(watch);
         }
-        if (list.size() == 10) {
+        if (sendAllCustom) {
             // Its sending the entire meta data. Better add the custom meta
             for (int value : entityValues.keySet()) {
                 if (sentValues.contains(value))
