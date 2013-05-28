@@ -28,6 +28,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class LibsDisguises extends JavaPlugin {
 
+    @Override
     public void onEnable() {
         DisguiseAPI.init(this);
         DisguiseAPI.enableSounds(true);

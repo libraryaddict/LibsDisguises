@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 public class UndisguiseCommand implements CommandExecutor {
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player p = (Player) sender;
         if (sender.hasPermission("libsdisguises.undisguise")) {

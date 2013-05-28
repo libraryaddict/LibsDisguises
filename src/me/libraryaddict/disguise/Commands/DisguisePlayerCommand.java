@@ -51,6 +51,7 @@ public class DisguisePlayerCommand implements CommandExecutor {
         }
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.hasPermission("libsdisguises.disguiseothers")
                 || (args.length > 0 && args[0].toLowerCase().startsWith("un") && sender

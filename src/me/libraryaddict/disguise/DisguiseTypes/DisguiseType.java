@@ -9,13 +9,13 @@ public enum DisguiseType {
             EntityType.MOB), ITEM(EntityType.MISC, 2, 1), ITEM_FRAME(EntityType.MISC, 71), LARGE_FIREBALL(EntityType.MISC, 63, 0), MAGMA_CUBE(
             EntityType.MOB), MINECART_CHEST(EntityType.MISC, 10, 1), MINECART_FURNACE(EntityType.MISC, 10, 2), MINECART_HOPPER(
             EntityType.MISC, 10), MINECART_MOB_SPAWNER(EntityType.MISC, 10, 4), MINECART_RIDEABLE(EntityType.MISC, 10, 0), MINECART_TNT(
-            EntityType.MISC, 10, 3), MUSHROOM_COW(EntityType.MOB), OCELOT(EntityType.MOB), PIG(EntityType.MOB), PIG_ZOMBIE(
+            EntityType.MISC, 10, 3), MUSHROOM_COW(EntityType.MOB), OCELOT(EntityType.MOB), PAINTING(EntityType.MISC), PIG(EntityType.MOB), PIG_ZOMBIE(
             EntityType.MOB), PLAYER(EntityType.PLAYER), POTION(EntityType.MISC, 73), PRIMED_TNT(EntityType.MISC, 50), SHEEP(
             EntityType.MOB), SILVERFISH(EntityType.MOB), SKELETON(EntityType.MOB), SLIME(EntityType.MOB), SMALL_FIREBALL(
             EntityType.MISC, 64, 0), SNOWBALL(EntityType.MISC, 61), SNOWMAN(EntityType.MOB), SPIDER(EntityType.MOB), SQUID(
             EntityType.MOB), THROWN_EXP_BOTTLE(EntityType.MISC, 75), VILLAGER(EntityType.MOB), WITCH(EntityType.MOB), WITHER(
             EntityType.MOB), WITHER_SKELETON(EntityType.MOB), WITHER_SKULL(EntityType.MISC, 66), WOLF(EntityType.MOB), ZOMBIE(
-            EntityType.MOB), PAINTING(EntityType.MISC);
+            EntityType.MOB);
 
     public static enum EntityType {
         MISC, MOB, PLAYER;

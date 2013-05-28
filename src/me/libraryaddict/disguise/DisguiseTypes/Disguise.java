@@ -37,6 +37,13 @@ public class Disguise {
         disguiseType = newType;
     }
 
+    public PacketContainer constructDestroyPacket(int entityId) {
+        PacketContainer destroyPacket = ProtocolLibrary.getProtocolManager().createPacket(Packets.Server.DESTROY_ENTITY);
+        StructureModifier<Object> mods = destroyPacket.getModifier();
+        mods.write(0, new int[] { entityId });
+        return destroyPacket;
+    }
+
     public PacketContainer constructPacket(org.bukkit.entity.Entity e) {
         PacketContainer spawnPacket = null;
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -173,13 +180,6 @@ public class Disguise {
         }
 
         return spawnPacket;
-    }
-
-    public PacketContainer constructDestroyPacket(int entityId) {
-        PacketContainer destroyPacket = ProtocolLibrary.getProtocolManager().createPacket(Packets.Server.DESTROY_ENTITY);
-        StructureModifier<Object> mods = destroyPacket.getModifier();
-        mods.write(0, new int[] { entityId });
-        return destroyPacket;
     }
 
     public Entity getEntity(World world, Location loc, int entityId) {

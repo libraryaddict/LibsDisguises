@@ -33,8 +33,44 @@ public class DisguiseAPI {
 
     private static ConcurrentHashMap<Object, Disguise> disguises = new ConcurrentHashMap<Object, Disguise>();
     private static PacketListener packetListener;
-    private static boolean soundsEnabled;
     private static JavaPlugin plugin;
+    private static boolean soundsEnabled;
+
+    /**
+     * @param Player
+     *            - The player to disguise
+     * @param Disguise
+     *            - The disguise to wear
+     */
+    public static void disguiseToAll(Entity entity, Disguise disguise) {
+        disguises.put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
+        refresh(entity);
+    }
+
+    public static void enableSounds(boolean isSoundsEnabled) {
+        if (soundsEnabled != isSoundsEnabled) {
+            soundsEnabled = isSoundsEnabled;
+            if (soundsEnabled) {
+                ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
+            } else {
+                ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
+            }
+        }
+    }
+
+    /**
+     * @param Disguiser
+     * @return Disguise
+     */
+    public static Disguise getDisguise(Object disguiser) {
+        if (disguiser instanceof Entity) {
+            if (disguiser instanceof Player)
+                return disguises.get(((Player) disguiser).getName());
+            else
+                return disguises.get(((Entity) disguiser).getUniqueId());
+        }
+        return disguises.get(disguiser);
+    }
 
     protected static void init(JavaPlugin mainPlugin) {
         plugin = mainPlugin;
@@ -97,14 +133,17 @@ public class DisguiseAPI {
     }
 
     /**
-     * @param Player
-     *            - The player to disguise
-     * @param Disguise
-     *            - The disguise to wear
+     * @param Disguiser
+     * @return boolean - If the disguiser is disguised
      */
-    public static void disguiseToAll(Entity entity, Disguise disguise) {
-        disguises.put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
-        refresh(entity);
+    public static boolean isDisguised(Object disguiser) {
+        if (disguiser instanceof Entity) {
+            if (disguiser instanceof Player)
+                return disguises.containsKey(((Player) disguiser).getName());
+            else
+                return disguises.containsKey(((Entity) disguiser).getUniqueId());
+        }
+        return disguises.containsKey(disguiser);
     }
 
     private static void refresh(Entity entity) {
@@ -130,49 +169,10 @@ public class DisguiseAPI {
 
     /**
      * @param Disguiser
-     * @return Disguise
-     */
-    public static Disguise getDisguise(Object disguiser) {
-        if (disguiser instanceof Entity) {
-            if (disguiser instanceof Player)
-                return disguises.get(((Player) disguiser).getName());
-            else
-                return disguises.get(((Entity) disguiser).getUniqueId());
-        }
-        return disguises.get(disguiser);
-    }
-
-    /**
-     * @param Disguiser
-     * @return boolean - If the disguiser is disguised
-     */
-    public static boolean isDisguised(Object disguiser) {
-        if (disguiser instanceof Entity) {
-            if (disguiser instanceof Player)
-                return disguises.containsKey(((Player) disguiser).getName());
-            else
-                return disguises.containsKey(((Entity) disguiser).getUniqueId());
-        }
-        return disguises.containsKey(disguiser);
-    }
-
-    /**
-     * @param Disguiser
      *            - Undisguises him
      */
     public static void undisguiseToAll(Entity entity) {
         disguises.remove(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId());
         refresh(entity);
-    }
-
-    public static void enableSounds(boolean isSoundsEnabled) {
-        if (soundsEnabled != isSoundsEnabled) {
-            soundsEnabled = isSoundsEnabled;
-            if (soundsEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
-            }
-        }
     }
 }

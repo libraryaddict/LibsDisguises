@@ -72,10 +72,24 @@ public enum DisguiseSound {
     ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
             Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD);
     public enum SoundType {
-        HURT, STEP, IDLE, DEATH, CANCEL;
+        CANCEL, DEATH, HURT, IDLE, STEP;
+    }
+
+    public static String getSoundName(Sound sound) {
+        return CraftSound.getSound(sound);
+    }
+    public static DisguiseSound getType(String name) {
+        try {
+            if (name.equals("GIANT"))
+                return DisguiseSound.GIANT_ZOMBIE;
+            return valueOf(name);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     private HashSet<Sound> cancelSounds = new HashSet<Sound>();
+
     private HashMap<SoundType, Sound> disguiseSounds = new HashMap<SoundType, Sound>();
 
     DisguiseSound(Sound... sounds) {
@@ -94,10 +108,6 @@ public enum DisguiseSound {
         }
     }
 
-    public boolean isCancelled(String soundName) {
-        return cancelSounds.contains(soundName);
-    }
-
     public Sound getSound(SoundType type) {
         if (type == null)
             return null;
@@ -108,8 +118,8 @@ public enum DisguiseSound {
         return cancelSounds;
     }
 
-    public static String getSoundName(Sound sound) {
-        return CraftSound.getSound(sound);
+    public boolean isCancelled(String soundName) {
+        return cancelSounds.contains(soundName);
     }
 
     public boolean isCancelSound(String sound) {
@@ -135,15 +145,5 @@ public enum DisguiseSound {
                     return type;
         }
         return null;
-    }
-
-    public static DisguiseSound getType(String name) {
-        try {
-            if (name.equals("GIANT"))
-                return DisguiseSound.GIANT_ZOMBIE;
-            return valueOf(name);
-        } catch (Exception ex) {
-            return null;
-        }
     }
 }
