@@ -153,6 +153,8 @@ public class DisguiseAPI {
             Iterator itel = entry.trackedPlayers.iterator();
             while (itel.hasNext()) {
                 EntityPlayer player = (EntityPlayer) itel.next();
+                if (entity instanceof Player && !player.getBukkitEntity().canSee((Player) entity))
+                    continue;
                 entry.clear(player);
                 entry.updatePlayer(player);
             }
