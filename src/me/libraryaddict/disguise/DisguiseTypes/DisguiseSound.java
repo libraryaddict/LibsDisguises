@@ -110,17 +110,6 @@ public enum DisguiseSound {
         return cancelSounds;
     }
 
-    public boolean isCancelled(String soundName) {
-        return cancelSounds.contains(soundName);
-    }
-
-    public boolean isCancelSound(String sound) {
-        for (Sound s : cancelSounds)
-            if (getSoundName(s).equals(sound))
-                return true;
-        return false;
-    }
-
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
@@ -142,5 +131,16 @@ public enum DisguiseSound {
             }
         }
         return null;
+    }
+
+    public boolean isCancelled(String soundName) {
+        return cancelSounds.contains(soundName);
+    }
+
+    public boolean isCancelSound(String sound) {
+        for (Sound s : cancelSounds)
+            if (getSoundName(s).equals(sound))
+                return true;
+        return false;
     }
 }
