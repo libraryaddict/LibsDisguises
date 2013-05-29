@@ -26,7 +26,6 @@ public abstract class FlagWatcher {
     }
     private int entityId;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
-    private HashMap<Integer, Object> softReplace = new HashMap<Integer, Object>();
 
     protected FlagWatcher(int entityId) {
         this.entityId = entityId;
@@ -66,10 +65,6 @@ public abstract class FlagWatcher {
                         watch.a(value);
                     }
                 }
-            } else if (softReplace.containsKey(watch.a())) {
-                if (watch.b().getClass() == softReplace.get(watch.a()).getClass()) {
-
-                }
             }
             newList.add(watch);
         }
@@ -86,31 +81,6 @@ public abstract class FlagWatcher {
             }
         }
         return newList;
-    }
-
-    private WatchableObject processWatcher(WatchableObject watch, HashMap<Integer, Object> map) {
-        boolean doD = watch.d();
-        watch = new WatchableObject(watch.c(), watch.a(), watch.b());
-        if (!doD)
-            watch.a(false);
-        if (map.get(watch.a()) == null) {
-            return watch;
-        } else {
-            Object value = map.get(watch.a());
-            if (watch.b().getClass() != value.getClass()) {
-                watch.a(value);
-                try {
-                    Field field = WatchableObject.class.getDeclaredField("a");
-                    field.setAccessible(true);
-                    field.set(watch, classTypes.get(value.getClass()));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                watch.a(value);
-            }
-        }
-        return watch;
     }
 
     public void displayName(boolean display) {
