@@ -2,7 +2,7 @@ name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
 version: ${project.version}
 author: libraryaddict
-depend: [ProtocolLib]
+softdepend: [ProtocolLib]
 commands:
    disguise:
       aliases: [d, dis]

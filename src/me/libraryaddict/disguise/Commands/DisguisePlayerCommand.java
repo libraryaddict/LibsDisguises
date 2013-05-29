@@ -69,7 +69,7 @@ public class DisguisePlayerCommand implements CommandExecutor {
                 } else
                     sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
             } else {
-                if (args.length == 1) {
+                if (args.length > 1) {
                     Player p = Bukkit.getPlayer(args[0]);
                     if (p != null) {
                         if (args[1].equalsIgnoreCase("undiguise") || args[1].equalsIgnoreCase("undis")

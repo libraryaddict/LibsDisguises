@@ -107,6 +107,7 @@ public class DisguiseAPI {
                         }
                     }
                     if (disguisedEntity != null) {
+                        // TODO Check if they been damage with invincibility ticks
                         Sound sound = null;
                         DisguiseSound dSound = DisguiseSound.getType(DisguiseAPI.getDisguise(disguisedEntity).getType().name());
                         if (dSound != null)
@@ -150,9 +151,8 @@ public class DisguiseAPI {
         EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
                 .get(entity.getEntityId());
         if (entry != null) {
-            Iterator itel = entry.trackedPlayers.iterator();
-            while (itel.hasNext()) {
-                EntityPlayer player = (EntityPlayer) itel.next();
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray();
+            for (EntityPlayer player : players) {
                 if (entity instanceof Player && !player.getBukkitEntity().canSee((Player) entity))
                     continue;
                 entry.clear(player);

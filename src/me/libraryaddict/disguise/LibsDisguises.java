@@ -10,6 +10,8 @@ import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import net.minecraft.server.v1_5_R3.WatchableObject;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -30,6 +32,12 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+            System.out.print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! This plugin depends on it to run!");
+            System.out.print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! LibsDisguises is now shutting down!");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         DisguiseAPI.init(this);
         DisguiseAPI.enableSounds(true);
         final ProtocolManager manager = ProtocolLibrary.getProtocolManager();
