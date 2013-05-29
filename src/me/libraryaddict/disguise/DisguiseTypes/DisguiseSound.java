@@ -63,7 +63,7 @@ public enum DisguiseSound {
 
     ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
             Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD);
-    
+
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP;
     }
@@ -132,7 +132,9 @@ public enum DisguiseSound {
             return SoundType.CANCEL;
         if (disguiseSounds.get(SoundType.STEP) == Sound.STEP_GRASS && name.startsWith("step."))
             return SoundType.STEP;
-        for (SoundType type : disguiseSounds.keySet()) {
+        for (SoundType type : SoundType.values()) {
+            if (!disguiseSounds.containsKey(type))
+                continue;
             Sound s = disguiseSounds.get(type);
             if (s != null)
                 if (CraftSound.getSound(s).equals(name))
