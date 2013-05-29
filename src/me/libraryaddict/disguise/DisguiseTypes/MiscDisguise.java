@@ -5,19 +5,21 @@ public class MiscDisguise extends Disguise {
     private int id = -1;
 
     public MiscDisguise(DisguiseType disguiseType) {
-        super(disguiseType);
-        id = disguiseType.getDefaultId();
-        data = disguiseType.getDefaultData();
+        this(disguiseType, true, -1, -1);
     }
 
-    public MiscDisguise(DisguiseType disguiseType, int id, int data) {
-        super(disguiseType);
+    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
+        super(disguiseType, replaceSounds);
         if (id == -1)
             id = disguiseType.getDefaultId();
         if (data == -1)
             data = disguiseType.getDefaultData();
         this.id = id;
         this.data = data;
+    }
+
+    public MiscDisguise(DisguiseType disguiseType, int id, int data) {
+        this(disguiseType, true, id, data);
     }
 
     public int getData() {

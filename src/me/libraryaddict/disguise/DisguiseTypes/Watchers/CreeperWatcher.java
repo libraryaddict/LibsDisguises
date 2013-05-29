@@ -6,7 +6,7 @@ public class CreeperWatcher extends FlagWatcher {
 
     public CreeperWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) -1);
+        setValue(16, (byte) 0);
         setValue(17, 0);
     }
 

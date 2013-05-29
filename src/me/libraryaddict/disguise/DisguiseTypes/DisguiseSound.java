@@ -12,7 +12,7 @@ public enum DisguiseSound {
 
     BLAZE(Sound.BLAZE_HIT, null, Sound.BLAZE_DEATH, Sound.BLAZE_BREATH),
 
-    CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.PIG_IDLE),
+    CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
 
     CHICKEN(Sound.CHICKEN_HURT, Sound.CHICKEN_WALK, Sound.CHICKEN_HURT, Sound.CHICKEN_IDLE, Sound.CHICKEN_EGG_POP),
 
@@ -28,7 +28,7 @@ public enum DisguiseSound {
     GHAST(Sound.GHAST_SCREAM, null, Sound.GHAST_DEATH, Sound.GHAST_MOAN, Sound.GHAST_CHARGE, Sound.GHAST_FIREBALL,
             Sound.GHAST_SCREAM2),
 
-    GIANT_ZOMBIE(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
+    GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
@@ -52,7 +52,7 @@ public enum DisguiseSound {
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.PIG_IDLE),
+    SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
 
     WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN),
 
@@ -74,8 +74,6 @@ public enum DisguiseSound {
 
     public static DisguiseSound getType(String name) {
         try {
-            if (name.equals("GIANT"))
-                return DisguiseSound.GIANT_ZOMBIE;
             return valueOf(name);
         } catch (Exception ex) {
             return null;
@@ -124,16 +122,15 @@ public enum DisguiseSound {
     }
 
     /**
-     * Used to check if the original sound is owned by this disguise sound Ofc it won't be correct for commonly shared names. But
-     * its the best I can possibly do
+     * Used to check if this sound name is owned by this disguise sound.
      */
-    public SoundType ownsSound(String name) {
+    public SoundType getType(String name, boolean ignoreDamage) {
         if (isCancelSound(name))
             return SoundType.CANCEL;
         if (disguiseSounds.get(SoundType.STEP) == Sound.STEP_GRASS && name.startsWith("step."))
             return SoundType.STEP;
         for (SoundType type : SoundType.values()) {
-            if (!disguiseSounds.containsKey(type))
+            if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
                 continue;
             Sound s = disguiseSounds.get(type);
             if (s != null)

@@ -1,40 +1,26 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
-import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityAgeable;
-import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityZombie;
-import net.minecraft.server.v1_5_R3.World;
-
-import org.bukkit.Location;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 
 public class MobDisguise extends Disguise {
 
-    private boolean adult;
+    private boolean isAdult;
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
-        super(disguiseType);
-        adult = isAdult;
+        super(disguiseType, true);
     }
 
-    protected EntityLiving getEntityLiving(World w, Location loc, int id) {
-        Entity entity = getEntity(w, loc, id);
-        if (!adult) {
-            if (entity instanceof EntityAgeable)
-                ((EntityAgeable) entity).setAge(-24000);
-            else if (entity instanceof EntityZombie)
-                ((EntityZombie) entity).setBaby(true);
-        }
-        if (entity instanceof EntityLiving)
-            return (EntityLiving) entity;
-        return null;
+    public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
+        super(disguiseType, replaceSounds);
+        this.isAdult = isAdult;
     }
 
     public boolean isAdult() {
-        return adult;
-    }
-
-    public void setAdult(boolean setAdult) {
-        adult = setAdult;
+        if (getWatcher() != null) {
+            if (getWatcher() instanceof AgeableWatcher)
+                return ((AgeableWatcher) getWatcher()).isAdult();
+            return false;
+        }
+        return isAdult;
     }
 }

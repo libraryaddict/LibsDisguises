@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
@@ -16,7 +15,9 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_5_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,6 +45,7 @@ public class DisguiseAPI {
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         disguises.put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
+        disguise.constructWatcher(entity.getType(), entity.getEntityId());
         refresh(entity);
     }
 
@@ -94,7 +96,22 @@ public class DisguiseAPI {
                             if (loc.equals(soundLoc)) {
                                 DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
                                 if (disSound != null) {
-                                    soundType = disSound.ownsSound(soundName);
+                                    if (((CraftEntity) entity).getHandle().dead) {
+                                        soundType = SoundType.DEATH;
+                                        System.out.print(soundType);
+                                    } else {
+                                        boolean hasInvun = false;
+                                        if (entity instanceof LivingEntity) {
+                                            net.minecraft.server.v1_5_R3.EntityLiving e = ((CraftLivingEntity) entity)
+                                                    .getHandle();
+                                            hasInvun = e.noDamageTicks == e.maxNoDamageTicks;
+                                        } else {
+                                            net.minecraft.server.v1_5_R3.Entity e = ((CraftEntity) entity).getHandle();
+                                            hasInvun = e.isInvulnerable();
+                                        }
+                                        soundType = disSound.getType(soundName, !hasInvun);
+                                        System.out.print(soundType + " " + hasInvun);
+                                    }
                                     if (soundType != null) {
                                         disguisedEntity = entity;
                                         break;
@@ -107,22 +124,24 @@ public class DisguiseAPI {
                         }
                     }
                     if (disguisedEntity != null) {
-                        // TODO Check if they been damage with invincibility ticks
-                        Sound sound = null;
-                        DisguiseSound dSound = DisguiseSound.getType(DisguiseAPI.getDisguise(disguisedEntity).getType().name());
-                        if (dSound != null)
-                            sound = dSound.getSound(soundType);
-                        if (sound == null) {
-                            event.setCancelled(true);
-                        } else {
-                            if (sound == Sound.STEP_GRASS) {
-                                World world = ((CraftEntity) disguisedEntity).getHandle().world;
-                                Block b = Block.byId[world.getTypeId(soundLoc.getBlockX(), soundLoc.getBlockY() - 1,
-                                        soundLoc.getBlockZ())];
-                                if (b != null)
-                                    mods.write(0, b.stepSound.getStepSound());
+                        Disguise disguise = DisguiseAPI.getDisguise(disguisedEntity);
+                        if (disguise.replaceSounds()) {
+                            Sound sound = null;
+                            DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
+                            if (dSound != null)
+                                sound = dSound.getSound(soundType);
+                            if (sound == null) {
+                                event.setCancelled(true);
                             } else {
-                                mods.write(0, CraftSound.getSound(sound));
+                                if (sound == Sound.STEP_GRASS) {
+                                    World world = ((CraftEntity) disguisedEntity).getHandle().world;
+                                    Block b = Block.byId[world.getTypeId(soundLoc.getBlockX(), soundLoc.getBlockY() - 1,
+                                            soundLoc.getBlockZ())];
+                                    if (b != null)
+                                        mods.write(0, b.stepSound.getStepSound());
+                                } else {
+                                    mods.write(0, CraftSound.getSound(sound));
+                                }
                             }
                         }
                     }
@@ -151,7 +170,7 @@ public class DisguiseAPI {
         EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
                 .get(entity.getEntityId());
         if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray();
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
             for (EntityPlayer player : players) {
                 if (entity instanceof Player && !player.getBukkitEntity().canSee((Player) entity))
                     continue;

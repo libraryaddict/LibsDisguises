@@ -33,8 +33,10 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onEnable() {
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
-            System.out.print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! This plugin depends on it to run!");
-            System.out.print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! LibsDisguises is now shutting down!");
+            System.out
+                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! This plugin depends on it to run!");
+            System.out
+                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! LibsDisguises is now shutting down!");
             getPluginLoader().disablePlugin(this);
             return;
         }

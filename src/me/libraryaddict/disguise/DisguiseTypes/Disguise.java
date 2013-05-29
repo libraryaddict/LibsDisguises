@@ -1,24 +1,21 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import net.minecraft.server.v1_5_R3.Entity;
-import net.minecraft.server.v1_5_R3.EntityAgeable;
 import net.minecraft.server.v1_5_R3.EntityLiving;
-import net.minecraft.server.v1_5_R3.EntityPlayer;
-import net.minecraft.server.v1_5_R3.EntitySkeleton;
 import net.minecraft.server.v1_5_R3.EntityTypes;
 import net.minecraft.server.v1_5_R3.ItemStack;
 import net.minecraft.server.v1_5_R3.MathHelper;
-import net.minecraft.server.v1_5_R3.MinecraftServer;
-import net.minecraft.server.v1_5_R3.PlayerInteractManager;
 import net.minecraft.server.v1_5_R3.EnumArt;
-import net.minecraft.server.v1_5_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -30,18 +27,12 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
     protected DisguiseType disguiseType;
-    private Entity entity = null;
+    private boolean replaceSounds;
     private FlagWatcher watcher;
 
-    protected Disguise(DisguiseType newType) {
+    protected Disguise(DisguiseType newType, boolean doSounds) {
         disguiseType = newType;
-    }
-
-    public PacketContainer constructDestroyPacket(int entityId) {
-        PacketContainer destroyPacket = ProtocolLibrary.getProtocolManager().createPacket(Packets.Server.DESTROY_ENTITY);
-        StructureModifier<Object> mods = destroyPacket.getModifier();
-        mods.write(0, new int[] { entityId });
-        return destroyPacket;
+        replaceSounds = doSounds;
     }
 
     public PacketContainer constructPacket(org.bukkit.entity.Entity e) {
@@ -76,7 +67,8 @@ public class Disguise {
 
         } else if (getType().isMob()) {
 
-            entity = ((MobDisguise) this).getEntityLiving(((CraftEntity) e).getHandle().world, e.getLocation(), e.getEntityId());
+            // entity = ((MobDisguise) this).getEntityLiving(((CraftEntity) e).getHandle().world, e.getLocation(),
+            // e.getEntityId());
             double d1 = 3.9D;
             Vector vec = e.getVelocity();
             double d2 = vec.getX();
@@ -98,6 +90,31 @@ public class Disguise {
             StructureModifier<Object> mods = spawnPacket.getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, (byte) EntityTypes.a(entity));
+            String name = toReadable(disguiseType.name());
+            if (disguiseType == DisguiseType.WITHER_SKELETON) {
+                name = "Skeleton";
+            } else if (disguiseType == DisguiseType.PRIMED_TNT) {
+                name = "TNTPrimed";
+            } else if (disguiseType == DisguiseType.MINECART_TNT) {
+                name = "MinecartTNT";
+            } else if (disguiseType == DisguiseType.SPLASH_POTION)
+                name = "Potion";
+            else if (disguiseType == DisguiseType.GIANT)
+                name = "Giant Zombie";
+            else if (disguiseType == DisguiseType.DROPPED_ITEM)
+                name = "Item";
+            else if (disguiseType == DisguiseType.FIREBALL)
+                name = "Large Fireball";
+            try {
+                Class entityClass = Class.forName("net.minecraft.server.v1_5_R3.Entity" + name);
+                Field field = EntityTypes.class.getDeclaredField("e");
+                field.setAccessible(true);
+                Map map = (Map) field.get(null);
+                mods.write(1, map.containsKey(entityClass) ? ((Integer) map.get(entityClass)).intValue() : 0);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+
             mods.write(2, entity.at.a(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
             mods.write(4, entity.at.a(loc.getZ()));
@@ -115,7 +132,7 @@ public class Disguise {
 
         } else if (getType().isMisc()) {
 
-            getEntity(((CraftEntity) e).getHandle().world, e.getLocation(), e.getEntityId());
+            // getEntity(((CraftEntity) e).getHandle().world, e.getLocation(), e.getEntityId());
             int id = getType().getEntityId();
             int data = 0;
             if (((MiscDisguise) this).getId() >= 0)
@@ -159,9 +176,9 @@ public class Disguise {
 
         } else if (getType().isPlayer()) {
 
-            EntityPlayer entityPlayer = (EntityPlayer) getEntity(((CraftEntity) e).getHandle().world, e.getLocation(),
-                    e.getEntityId());
-            entityPlayer.name = ((PlayerDisguise) this).getName();
+            // EntityPlayer entityPlayer = (EntityPlayer) getEntity(((CraftEntity) e).getHandle().world, e.getLocation(),
+            // e.getEntityId());
+            // entityPlayer.name = ((PlayerDisguise) this).getName();
             spawnPacket = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
             StructureModifier<Object> mods = spawnPacket.getModifier();
             mods.write(0, e.getEntityId());
@@ -182,37 +199,7 @@ public class Disguise {
         return spawnPacket;
     }
 
-    public Entity getEntity(World world, Location loc, int entityId) {
-        if (entity != null) {
-            entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-            entity.id = entityId;
-            return entity;
-        }
-        try {
-            if (disguiseType == DisguiseType.PLAYER) {
-                entity = new EntityPlayer(MinecraftServer.getServer(), world, ((PlayerDisguise) this).getName(),
-                        new PlayerInteractManager(world));
-            } else {
-                String name = toReadable(disguiseType.name());
-                if (disguiseType == DisguiseType.WITHER_SKELETON) {
-                    name = "Skeleton";
-                } else if (disguiseType == DisguiseType.PRIMED_TNT) {
-                    name = "TNTPrimed";
-                } else if (disguiseType == DisguiseType.MINECART_TNT) {
-                    name = "MinecartTNT";
-                }
-                Class entityClass = Class.forName("net.minecraft.server.v1_5_R3.Entity" + name);
-                Constructor<?> contructor = entityClass.getDeclaredConstructor(World.class);
-                entity = (Entity) contructor.newInstance(world);
-                if (disguiseType == DisguiseType.WITHER_SKELETON) {
-                    ((EntitySkeleton) entity).setSkeletonType(1);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        entity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        entity.id = entityId;
+    public void constructWatcher(EntityType type, int entityId) {
         try {
             String name;
             if (getType().isPlayer()) {
@@ -223,16 +210,18 @@ public class Disguise {
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
             watcher = (FlagWatcher) contructor.newInstance(entityId);
+            if (watcher instanceof AgeableWatcher && this instanceof MobDisguise) {
+                ((AgeableWatcher) watcher).setValue(12, ((MobDisguise) this).isAdult() ? 0 : -23999);
+            }
+            WatcherValues entity = WatcherValues.valueOf(type.name());
+            WatcherValues disguise = WatcherValues.valueOf(getType().name());
+            for (int i : entity.getValues()) {
+                if (disguise.getValue(i) != null && disguise.getValue(i).getClass() != entity.getValue(i).getClass())
+                    watcher.setValue(i, disguise.getValue(i));
+            }
         } catch (Exception ex) {
             // There is no watcher for this entity
         }
-        if (watcher == null && entity instanceof EntityAgeable && this instanceof MobDisguise) {
-            watcher = new AgeableWatcher(entityId);
-        }
-        if (watcher instanceof AgeableWatcher && this instanceof MobDisguise) {
-            ((AgeableWatcher) watcher).setValue(12, ((MobDisguise) this).isAdult() ? 0 : -23999);
-        }
-        return entity;
     }
 
     public DisguiseType getType() {
@@ -245,6 +234,14 @@ public class Disguise {
 
     public boolean hasWatcher() {
         return watcher != null;
+    }
+
+    public boolean replaceSounds() {
+        return replaceSounds;
+    }
+
+    public void setReplaceSounds(boolean areSoundsReplaced) {
+        replaceSounds = areSoundsReplaced;
     }
 
     private String toReadable(String string) {

@@ -4,7 +4,11 @@ public class PlayerDisguise extends Disguise {
     private String playerName;
 
     public PlayerDisguise(String name) {
-        super(DisguiseType.PLAYER);
+        this(name, true);
+    }
+
+    public PlayerDisguise(String name, boolean replaceSounds) {
+        super(DisguiseType.PLAYER, replaceSounds);
         if (name.length() > 16)
             name = name.substring(0, 16);
         playerName = name;
