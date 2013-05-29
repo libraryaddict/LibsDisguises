@@ -12,7 +12,7 @@ public enum DisguiseSound {
 
     BLAZE(Sound.BLAZE_HIT, null, Sound.BLAZE_DEATH, Sound.BLAZE_BREATH),
 
-    CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
+    CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, null),
 
     CHICKEN(Sound.CHICKEN_HURT, Sound.CHICKEN_WALK, Sound.CHICKEN_HURT, Sound.CHICKEN_IDLE, Sound.CHICKEN_EGG_POP),
 
@@ -38,13 +38,13 @@ public enum DisguiseSound {
 
     OCELOT(Sound.CAT_HIT, Sound.STEP_GRASS, Sound.CAT_HIT, Sound.CAT_MEOW, Sound.CAT_PURR, Sound.CAT_PURREOW),
 
-    PIG(Sound.PIG_IDLE, Sound.PIG_WALK, Sound.PIG_DEATH, Sound.PIG_IDLE),
+    PIG(Sound.PIG_IDLE, Sound.PIG_WALK, Sound.PIG_DEATH, null),
 
     PIG_ZOMBIE(Sound.ZOMBIE_PIG_HURT, null, Sound.ZOMBIE_PIG_DEATH, Sound.ZOMBIE_PIG_IDLE, Sound.ZOMBIE_PIG_ANGRY),
 
     PLAYER(Sound.HURT_FLESH, Sound.STEP_GRASS),
 
-    SHEEP(Sound.SHEEP_IDLE, Sound.SHEEP_WALK, Sound.SHEEP_IDLE, null, Sound.SHEEP_SHEAR),
+    SHEEP(Sound.SHEEP_IDLE, Sound.SHEEP_WALK, null, null, null, Sound.SHEEP_SHEAR),
 
     SILVERFISH(Sound.SILVERFISH_HIT, Sound.SILVERFISH_WALK, Sound.SILVERFISH_KILL, Sound.SILVERFISH_IDLE),
 
@@ -52,15 +52,7 @@ public enum DisguiseSound {
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    SNOWMAN(),
-
-    SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
-
-    SQUID(),
-
-    VILLAGER(),
-
-    WITCH(),
+    SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, null),
 
     WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN),
 
@@ -71,6 +63,7 @@ public enum DisguiseSound {
 
     ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
             Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD);
+    
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP;
     }
@@ -78,6 +71,7 @@ public enum DisguiseSound {
     public static String getSoundName(Sound sound) {
         return CraftSound.getSound(sound);
     }
+
     public static DisguiseSound getType(String name) {
         try {
             if (name.equals("GIANT"))
