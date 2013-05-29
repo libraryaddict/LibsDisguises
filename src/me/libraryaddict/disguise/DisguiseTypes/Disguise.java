@@ -67,8 +67,6 @@ public class Disguise {
 
         } else if (getType().isMob()) {
 
-            // entity = ((MobDisguise) this).getEntityLiving(((CraftEntity) e).getHandle().world, e.getLocation(),
-            // e.getEntityId());
             double d1 = 3.9D;
             Vector vec = e.getVelocity();
             double d2 = vec.getX();
@@ -100,11 +98,11 @@ public class Disguise {
             } else if (disguiseType == DisguiseType.SPLASH_POTION)
                 name = "Potion";
             else if (disguiseType == DisguiseType.GIANT)
-                name = "Giant Zombie";
+                name = "GiantZombie";
             else if (disguiseType == DisguiseType.DROPPED_ITEM)
                 name = "Item";
             else if (disguiseType == DisguiseType.FIREBALL)
-                name = "Large Fireball";
+                name = "LargeFireball";
             try {
                 Class entityClass = Class.forName("net.minecraft.server.v1_5_R3.Entity" + name);
                 Field field = EntityTypes.class.getDeclaredField("e");
@@ -124,6 +122,8 @@ public class Disguise {
             byte yawValue = (byte) (int) (entity.yaw * 256.0F / 360.0F);
             if (getType() == DisguiseType.ENDER_DRAGON)
                 yawValue -= 128;
+            else if (getType() == DisguiseType.GHAST)
+                yawValue += 64;
             mods.write(8, yawValue);
             mods.write(9, (byte) (int) (entity.pitch * 256.0F / 360.0F));
             mods.write(10, (byte) (int) (((EntityLiving) entity).aA * 256.0F / 360.0F));
@@ -132,7 +132,6 @@ public class Disguise {
 
         } else if (getType().isMisc()) {
 
-            // getEntity(((CraftEntity) e).getHandle().world, e.getLocation(), e.getEntityId());
             int id = getType().getEntityId();
             int data = 0;
             if (((MiscDisguise) this).getId() >= 0)
@@ -176,9 +175,6 @@ public class Disguise {
 
         } else if (getType().isPlayer()) {
 
-            // EntityPlayer entityPlayer = (EntityPlayer) getEntity(((CraftEntity) e).getHandle().world, e.getLocation(),
-            // e.getEntityId());
-            // entityPlayer.name = ((PlayerDisguise) this).getName();
             spawnPacket = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
             StructureModifier<Object> mods = spawnPacket.getModifier();
             mods.write(0, e.getEntityId());

@@ -3,10 +3,13 @@ package me.libraryaddict.disguise.DisguiseTypes;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
+import org.bukkit.inventory.ItemStack;
+
 public enum WatcherValues {
     ARROW(16, (byte) 0), BAT(16, (byte) 0), BLAZE(16, (byte) 0), BOAT(19, 40, 17, 10, 18, 0), CAVE_SPIDER(), CHICKEN(12, 0), COW(
-            12, 0), CREEPER(16, (byte) 0, 17, (byte) 0), DROPPED_ITEM(), EGG(), ENDER_CRYSTAL(), ENDER_DRAGON(16, 300), ENDER_PEARL(), ENDER_SIGNAL(), ENDERMAN(
-            16, (byte) 0, 17, (byte) 1, 18, (byte) 0), EXPERIENCE_ORB(), FALLING_BLOCK(), FIREBALL(), FIREWORKS(), FISHING_HOOK(), GHAST(
+            12, 0), CREEPER(16, (byte) 0, 17, (byte) 0), DROPPED_ITEM(10, CraftItemStack.asNMSCopy(new ItemStack(1))), EGG(), ENDER_CRYSTAL(), ENDER_DRAGON(
+            16, 300), ENDER_PEARL(), ENDER_SIGNAL(), ENDERMAN(16, (byte) 0, 17, (byte) 1, 18, (byte) 0), EXPERIENCE_ORB(), FALLING_BLOCK(), FIREBALL(), FIREWORKS(), FISHING_HOOK(), GHAST(
             16, (byte) 0), GIANT(), IRON_GOLEM(), ITEM_FRAME(2, 5, 3, (byte) 0), MAGMA_CUBE(16, (byte) 0, 18, (byte) 0), MINECART_CHEST(
             16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MINECART_FURNACE(16, (byte) 0, 17, 0, 18, 1, 19, 0,
             20, 0, 21, 6, 22, (byte) 0), MINECART_HOPPER(16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MINECART_MOB_SPAWNER(

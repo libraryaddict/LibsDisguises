@@ -89,12 +89,14 @@ public class LibsDisguises extends JavaPlugin {
                             if (disguise.getType() == DisguiseType.ENDER_DRAGON) {
                                 byte value = (Byte) mods.read(4);
                                 mods.write(4, (byte) (value - 128));
-                            } else if (disguise.getType().isMisc()) {
+                            } else if (disguise.getType().isMisc() || disguise.getType() == DisguiseType.GHAST) {
                                 byte value = (Byte) mods.read(4);
                                 if (disguise.getType() != DisguiseType.PAINTING)
-                                    mods.write(4, (byte) (value + 64));
+                                    mods.write(4, (byte) (value + 128));
+                                else if (disguise.getType().isMisc())
+                                    mods.write(4, (byte) -(value + 128));
                                 else
-                                    mods.write(4, (byte) -(value += 128));
+                                    mods.write(4, (byte) (value - 64));
                             }
                         }
                     }

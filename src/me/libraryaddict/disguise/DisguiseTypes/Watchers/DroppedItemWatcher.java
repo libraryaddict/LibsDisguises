@@ -5,9 +5,9 @@ import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
-public class ItemWatcher extends FlagWatcher {
+public class DroppedItemWatcher extends FlagWatcher {
 
-    public ItemWatcher(int entityId) {
+    public DroppedItemWatcher(int entityId) {
         super(entityId);
         setValue(10, CraftItemStack.asNMSCopy(new ItemStack(1)));
     }
