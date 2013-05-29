@@ -96,9 +96,8 @@ public class DisguiseAPI {
                             if (loc.equals(soundLoc)) {
                                 DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
                                 if (disSound != null) {
-                                    if (((CraftEntity) entity).getHandle().dead) {
+                                    if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
                                         soundType = SoundType.DEATH;
-                                        System.out.print(soundType);
                                     } else {
                                         boolean hasInvun = false;
                                         if (entity instanceof LivingEntity) {
@@ -110,7 +109,6 @@ public class DisguiseAPI {
                                             hasInvun = e.isInvulnerable();
                                         }
                                         soundType = disSound.getType(soundName, !hasInvun);
-                                        System.out.print(soundType + " " + hasInvun);
                                     }
                                     if (soundType != null) {
                                         disguisedEntity = entity;

@@ -133,9 +133,13 @@ public enum DisguiseSound {
             if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
                 continue;
             Sound s = disguiseSounds.get(type);
-            if (s != null)
-                if (CraftSound.getSound(s).equals(name))
+            if (s != null) {
+                String soundName = CraftSound.getSound(s);
+                if (s == Sound.BLAZE_BREATH)
+                    soundName = "mob.blaze.breathe";
+                if (soundName.equals(name))
                     return type;
+            }
         }
         return null;
     }
