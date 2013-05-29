@@ -13,7 +13,7 @@ public enum WatcherValues {
             21, 6, 22, (byte) 0), MINECART_MOB_SPAWNER(16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MINECART_RIDEABLE(
             16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MINECART_TNT(16, (byte) 0, 17, 0, 18, 1, 19, 0, 20,
             0, 21, 6, 22, (byte) 0), MUSHROOM_COW(12, 0), OCELOT(12, 0, 16, (byte) 0, 17, "", 18, (byte) 0), PAINTING(), PIG(12,
-            0, 16, (byte) 0), PIG_ZOMBIE(12, 0), PLAYER(8, 0, 9, (byte) 0, 10, (byte) 0), SPLASH_POTION(), PRIMED_TNT(), SHEEP(
+            0, 16, (byte) 0), PIG_ZOMBIE(12, 0), PLAYER(8, 0, 9, (byte) 0, 10, (byte) 0, 13, 0), SPLASH_POTION(), PRIMED_TNT(), SHEEP(
             12, (byte) 0, 16, (byte) 0), SILVERFISH(), SKELETON(13, (byte) 0), SLIME(16, (byte) 0, 18, (byte) 0), SMALL_FIREBALL(), SNOWBALL(), SNOWMAN(), SPIDER(), SQUID(), THROWN_EXP_BOTTLE(), VILLAGER(
             16, 0), WITCH(), WITHER(16, 300), WITHER_SKELETON(13, (byte) 1), WITHER_SKULL(), WOLF(16, (byte) 0, 17, "", 18, 8,
             19, (byte) 0, 20, (byte) 14), ZOMBIE(13, (byte) 0);
