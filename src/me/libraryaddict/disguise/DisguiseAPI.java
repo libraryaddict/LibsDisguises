@@ -115,6 +115,7 @@ public class DisguiseAPI {
                                         break;
                                     }
                                 } else {
+                                    soundType = null;
                                     disguisedEntity = entity;
                                     break;
                                 }
@@ -126,7 +127,7 @@ public class DisguiseAPI {
                         if (disguise.replaceSounds()) {
                             Sound sound = null;
                             DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-                            if (dSound != null)
+                            if (dSound != null && soundType != null)
                                 sound = dSound.getSound(soundType);
                             if (sound == null) {
                                 event.setCancelled(true);
@@ -164,6 +165,10 @@ public class DisguiseAPI {
         return disguises.containsKey(disguiser);
     }
 
+    /**
+     * @param Resends
+     *            the entity to all the watching players, which is where the magic begins
+     */
     private static void refresh(Entity entity) {
         EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
                 .get(entity.getEntityId());
@@ -176,14 +181,6 @@ public class DisguiseAPI {
                 entry.updatePlayer(player);
             }
         }
-        /*
-        // Get the tracker of the people who can see the hider
-        EntityTracker hidersTracker = ((WorldServer) hider.world).tracker;
-        // Get the entity tracker entry for the player
-        EntityTrackerEntry entry = (EntityTrackerEntry) tracker.trackedEntities.get(observer.id);
-        if (entry != null) {
-            entry.clear(getHandle());
-        }*/
     }
 
     /**
