@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public abstract class AgeableWatcher extends FlagWatcher {
+public abstract class AgeableWatcher extends LivingWatcher {
 
     public AgeableWatcher(int entityId) {
         super(entityId);

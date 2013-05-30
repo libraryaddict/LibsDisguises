@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public class BatWatcher extends FlagWatcher {
+public class BatWatcher extends LivingWatcher {
 
     protected BatWatcher(int entityId) {
         super(entityId);

@@ -2,9 +2,7 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import java.util.Random;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public class SlimeWatcher extends FlagWatcher {
+public class SlimeWatcher extends LivingWatcher {
 
     public SlimeWatcher(int entityId) {
         super(entityId);

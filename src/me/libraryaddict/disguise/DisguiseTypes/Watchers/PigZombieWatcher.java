@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public class PigZombieWatcher extends FlagWatcher {
+public class PigZombieWatcher extends LivingWatcher {
 
     public PigZombieWatcher(int entityId) {
         super(entityId);

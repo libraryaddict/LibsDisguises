@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public class EndermanWatcher extends FlagWatcher {
+public class EndermanWatcher extends LivingWatcher {
 
     public EndermanWatcher(int entityId) {
         super(entityId);

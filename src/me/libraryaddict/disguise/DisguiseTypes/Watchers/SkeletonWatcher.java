@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-
-public class SkeletonWatcher extends FlagWatcher {
+public class SkeletonWatcher extends LivingWatcher {
 
     protected SkeletonWatcher(int entityId) {
         super(entityId);

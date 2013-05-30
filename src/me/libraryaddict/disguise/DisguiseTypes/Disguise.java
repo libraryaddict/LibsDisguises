@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
 import net.minecraft.server.v1_5_R3.Entity;
 import net.minecraft.server.v1_5_R3.EntityLiving;
 import net.minecraft.server.v1_5_R3.EntityTypes;
@@ -217,6 +218,10 @@ public class Disguise {
             }
         } catch (Exception ex) {
             // There is no watcher for this entity
+            if (type.isAlive())
+                watcher = new LivingWatcher(entityId);
+            else
+                watcher = new FlagWatcher(entityId);
         }
     }
 
@@ -226,10 +231,6 @@ public class Disguise {
 
     public FlagWatcher getWatcher() {
         return watcher;
-    }
-
-    public boolean hasWatcher() {
-        return watcher != null;
     }
 
     public boolean replaceSounds() {
