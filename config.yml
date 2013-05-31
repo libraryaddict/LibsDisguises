@@ -1,0 +1,4 @@
+# Shall I notify people of a LibsDisguises update?
+NotifyUpdate: true
+# Whats the permission to get the notification?
+Permission: 'libsdisguises.update'

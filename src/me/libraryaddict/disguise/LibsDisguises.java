@@ -12,11 +12,15 @@ import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import net.minecraft.server.v1_5_R3.WatchableObject;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.Packets;
@@ -28,7 +32,10 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
-public class LibsDisguises extends JavaPlugin {
+public class LibsDisguises extends JavaPlugin implements Listener {
+    private String latestVersion;
+    private String currentVersion;
+    private String permission;
 
     @Override
     public void onEnable() {
@@ -124,5 +131,39 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("undisguise").setExecutor(new UndisguiseCommand());
         getCommand("disguiseplayer").setExecutor(new DisguisePlayerCommand());
         getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
+        saveDefaultConfig();
+        permission = getConfig().getString("Permission");
+        if (getConfig().getBoolean("NotifyUpdate"))
+            Bukkit.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+                public void run() {
+                    try {
+                        UpdateChecker updateChecker = new UpdateChecker();
+                        updateChecker.checkUpdate("v"
+                                + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion());
+                        latestVersion = updateChecker.getLatestVersion();
+                        if (latestVersion != null) {
+                            latestVersion = "v" + latestVersion;
+                            for (Player p : Bukkit.getOnlinePlayers())
+                                if (p.hasPermission(permission))
+                                    p.sendMessage(String.format(ChatColor.GOLD + "[LibsDisguises] " + ChatColor.DARK_GREEN
+                                            + "There is a update ready to be downloaded! You are using " + ChatColor.GREEN + "%s"
+                                            + ChatColor.DARK_GREEN + ", the new version is " + ChatColor.GREEN + "%s"
+                                            + ChatColor.DARK_GREEN + "!", currentVersion, latestVersion));
+                        }
+                    } catch (Exception ex) {
+                        System.out.print(String.format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
+                    }
+                }
+            });
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        if (latestVersion != null && p.hasPermission(permission))
+            p.sendMessage(String.format(ChatColor.GOLD + "[LibsDisguises] " + ChatColor.DARK_GREEN
+                    + "There is a update ready to be downloaded! You are using " + ChatColor.GREEN + "%s" + ChatColor.DARK_GREEN
+                    + ", the new version is " + ChatColor.GREEN + "%s" + ChatColor.DARK_GREEN + "!", currentVersion,
+                    latestVersion));
     }
 }
