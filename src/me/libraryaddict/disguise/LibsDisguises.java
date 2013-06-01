@@ -155,6 +155,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                     }
                 }
             });
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @EventHandler

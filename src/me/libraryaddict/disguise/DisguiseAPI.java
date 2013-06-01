@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise;
 
-import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.HashMap;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
@@ -32,10 +31,21 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class DisguiseAPI {
 
-    private static ConcurrentHashMap<Object, Disguise> disguises = new ConcurrentHashMap<Object, Disguise>();
+    private static HashMap<Object, Disguise> disguises = new HashMap<Object, Disguise>();
     private static PacketListener packetListener;
     private static JavaPlugin plugin;
     private static boolean soundsEnabled;
+
+    private synchronized static void put(Object obj, Disguise disguise) {
+        if (disguise == null)
+            disguises.remove(obj);
+        else
+            disguises.put(obj, disguise);
+    }
+
+    private synchronized static Disguise get(Object obj) {
+        return disguises.get(obj);
+    }
 
     /**
      * @param Player
@@ -44,7 +54,9 @@ public class DisguiseAPI {
      *            - The disguise to wear
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
-        disguises.put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
+        if (disguise == null)
+            return;
+        put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
         disguise.constructWatcher(entity.getType(), entity.getEntityId());
         refresh(entity);
     }
@@ -67,11 +79,11 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Object disguiser) {
         if (disguiser instanceof Entity) {
             if (disguiser instanceof Player)
-                return disguises.get(((Player) disguiser).getName());
+                return get(((Player) disguiser).getName());
             else
-                return disguises.get(((Entity) disguiser).getUniqueId());
+                return get(((Entity) disguiser).getUniqueId());
         }
-        return disguises.get(disguiser);
+        return get(disguiser);
     }
 
     protected static void init(JavaPlugin mainPlugin) {
@@ -158,11 +170,11 @@ public class DisguiseAPI {
     public static boolean isDisguised(Object disguiser) {
         if (disguiser instanceof Entity) {
             if (disguiser instanceof Player)
-                return disguises.containsKey(((Player) disguiser).getName());
+                return get(((Player) disguiser).getName()) != null;
             else
-                return disguises.containsKey(((Entity) disguiser).getUniqueId());
+                return get(((Entity) disguiser).getUniqueId()) != null;
         }
-        return disguises.containsKey(disguiser);
+        return get(disguiser) != null;
     }
 
     /**
@@ -188,7 +200,7 @@ public class DisguiseAPI {
      *            - Undisguises him
      */
     public static void undisguiseToAll(Entity entity) {
-        disguises.remove(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId());
+        put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), null);
         refresh(entity);
     }
 }
