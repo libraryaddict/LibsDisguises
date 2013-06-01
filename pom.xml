@@ -26,6 +26,7 @@
 				<directory>${project.basedir}</directory>
 				<includes>
 					<include>plugin.yml</include>
+					<include>config.yml</include>
 					<include>README.md</include>
 				</includes>
 			</resource>
