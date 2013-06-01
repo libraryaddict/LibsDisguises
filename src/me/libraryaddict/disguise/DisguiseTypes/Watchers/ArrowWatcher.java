@@ -4,7 +4,7 @@ import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class ArrowWatcher extends FlagWatcher {
 
-    protected ArrowWatcher(int entityId) {
+    public ArrowWatcher(int entityId) {
         super(entityId);
         setValue(16, (byte) 0);
     }

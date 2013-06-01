@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 public class BatWatcher extends LivingWatcher {
 
-    protected BatWatcher(int entityId) {
+    public BatWatcher(int entityId) {
         super(entityId);
         setValue(16, (byte) 1);
     }

@@ -7,7 +7,7 @@ import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class ItemFrameWatcher extends FlagWatcher {
 
-    protected ItemFrameWatcher(int entityId) {
+    public ItemFrameWatcher(int entityId) {
         super(entityId);
         setValue(2, 5);
         setValue(3, (byte) 0);
