@@ -17,7 +17,7 @@ public class UpdateChecker {
     }
 
     public void checkUpdate(String currentVersion) throws Exception {
-        String version = getVersion("98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4", 55);
+        String version = getVersion("98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4", 81);
         if (checkHigher(currentVersion, version))
             latestVersion = version;
     }
