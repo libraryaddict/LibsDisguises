@@ -39,6 +39,8 @@ public class FlagWatcher {
         while (itel.hasNext()) {
             WatchableObject watch = itel.next();
             sentValues.add(watch.a());
+            // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
+            // I send my custom values if I see this!
             if (watch.a() == 1)
                 sendAllCustom = true;
             if (entityValues.containsKey(watch.a())) {

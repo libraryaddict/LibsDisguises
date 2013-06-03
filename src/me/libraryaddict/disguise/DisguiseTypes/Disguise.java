@@ -2,17 +2,22 @@ package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
+import net.minecraft.server.v1_5_R3.DataWatcher;
 import net.minecraft.server.v1_5_R3.Entity;
 import net.minecraft.server.v1_5_R3.EntityLiving;
 import net.minecraft.server.v1_5_R3.EntityTypes;
 import net.minecraft.server.v1_5_R3.ItemStack;
 import net.minecraft.server.v1_5_R3.MathHelper;
 import net.minecraft.server.v1_5_R3.EnumArt;
+import net.minecraft.server.v1_5_R3.WatchableObject;
+
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_5_R3.inventory.CraftItemStack;
@@ -128,7 +133,19 @@ public class Disguise {
             mods.write(8, yawValue);
             mods.write(9, (byte) (int) (entity.pitch * 256.0F / 360.0F));
             mods.write(10, (byte) (int) (((EntityLiving) entity).aA * 256.0F / 360.0F));
-            mods.write(11, entity.getDataWatcher());
+            DataWatcher newWatcher = new DataWatcher();
+            try {
+                Field map = newWatcher.getClass().getDeclaredField("c");
+                map.setAccessible(true);
+                HashMap c = (HashMap) map.get(newWatcher);
+                List<WatchableObject> list = entity.getDataWatcher().c();
+                int i = 0;
+                for (Object obj : watcher.convert(list))
+                    c.put(i++, obj);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            mods.write(11, newWatcher);
             // TODO May need to do the list
 
         } else if (getType().isMisc()) {
