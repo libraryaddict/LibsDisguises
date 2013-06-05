@@ -18,6 +18,10 @@ public class MiscDisguise extends Disguise {
         this.data = data;
     }
 
+    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds) {
+        this(disguiseType, replaceSounds, -1, -1);
+    }
+
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
         this(disguiseType, true, id, data);
     }
