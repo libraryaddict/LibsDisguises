@@ -36,15 +36,22 @@ public class DisguiseAPI {
     private static JavaPlugin plugin;
     private static boolean soundsEnabled;
 
-    private synchronized static void put(Object obj, Disguise disguise) {
-        if (disguise == null)
-            disguises.remove(obj);
-        else
-            disguises.put(obj, disguise);
+    private static void put(Object obj, Disguise disguise) {
+        access(obj, disguise);
     }
 
-    private synchronized static Disguise get(Object obj) {
-        return disguises.get(obj);
+    private synchronized static Disguise access(Object obj, Disguise... object) {
+        if (object.length == 0)
+            return disguises.get(obj);
+        if (object[0] == null)
+            disguises.remove(obj);
+        else
+            disguises.put(obj, object[0]);
+        return null;
+    }
+
+    private static Disguise get(Object obj) {
+        return access(obj);
     }
 
     /**
