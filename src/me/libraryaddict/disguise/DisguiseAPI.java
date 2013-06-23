@@ -133,11 +133,11 @@ public class DisguiseAPI {
                                         disguisedEntity = entity;
                                         break;
                                     }
-                                } else {
+                                } /*else {
                                     soundType = null;
                                     disguisedEntity = entity;
                                     break;
-                                }
+                                }*/
                             }
                         }
                     }
