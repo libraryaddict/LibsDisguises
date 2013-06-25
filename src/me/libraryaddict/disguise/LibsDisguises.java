@@ -139,7 +139,8 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
         saveDefaultConfig();
         permission = getConfig().getString("Permission");
-        if (getConfig().getBoolean("NotifyUpdate"))
+        if (getConfig().getBoolean("NotifyUpdate")) {
+            currentVersion = getDescription().getVersion();
             Bukkit.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
                 public void run() {
                     try {
@@ -161,6 +162,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                     }
                 }
             });
+        }
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
