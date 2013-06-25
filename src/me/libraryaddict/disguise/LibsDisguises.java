@@ -36,6 +36,9 @@ public class LibsDisguises extends JavaPlugin implements Listener {
     private String latestVersion;
     private String currentVersion;
     private String permission;
+    private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
+            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "%s" + ChatColor.DARK_RED
+            + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
 
     @Override
     public void onEnable() {
@@ -152,10 +155,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                             latestVersion = "v" + latestVersion;
                             for (Player p : Bukkit.getOnlinePlayers())
                                 if (p.hasPermission(permission))
-                                    p.sendMessage(String.format(ChatColor.GOLD + "[LibsDisguises] " + ChatColor.DARK_GREEN
-                                            + "There is a update ready to be downloaded! You are using " + ChatColor.GREEN + "%s"
-                                            + ChatColor.DARK_GREEN + ", the new version is " + ChatColor.GREEN + "%s"
-                                            + ChatColor.DARK_GREEN + "!", currentVersion, latestVersion));
+                                    p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
                         }
                     } catch (Exception ex) {
                         System.out.print(String.format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
@@ -170,9 +170,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (latestVersion != null && p.hasPermission(permission))
-            p.sendMessage(String.format(ChatColor.GOLD + "[LibsDisguises] " + ChatColor.DARK_GREEN
-                    + "There is a update ready to be downloaded! You are using " + ChatColor.GREEN + "%s" + ChatColor.DARK_GREEN
-                    + ", the new version is " + ChatColor.GREEN + "%s" + ChatColor.DARK_GREEN + "!", currentVersion,
-                    latestVersion));
+            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
     }
 }
