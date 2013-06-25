@@ -57,7 +57,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                StructureModifier<Object> mods = event.getPacket().getModifier();
                 try {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
@@ -66,11 +65,13 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
                         if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
+                            StructureModifier<Object> mods = event.getPacket().getModifier();
                             mods.write(1,
                                     disguise.getWatcher()
                                             .convert((List<WatchableObject>) event.getPacket().getModifier().read(1)));
                         } else if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
                             if (disguise.getType().isPlayer()) {
+                                StructureModifier<Object> mods = event.getPacket().getModifier();
                                 String name = (String) mods.read(1);
                                 if (!name.equals(((PlayerDisguise) disguise).getName())) {
                                     // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
@@ -94,6 +95,8 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                         } else if (Packets.Server.REL_ENTITY_MOVE_LOOK == event.getPacketID()
                                 || Packets.Server.ENTITY_LOOK == event.getPacketID()
                                 || Packets.Server.ENTITY_TELEPORT == event.getPacketID()) {
+                            event.setPacket(event.getPacket().deepClone());
+                            StructureModifier<Object> mods = event.getPacket().getModifier();
                             if (disguise.getType() == DisguiseType.ENDER_DRAGON) {
                                 byte value = (Byte) mods.read(4);
                                 mods.write(4, (byte) (value - 128));
