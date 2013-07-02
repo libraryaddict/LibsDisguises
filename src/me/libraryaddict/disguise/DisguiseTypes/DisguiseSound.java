@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_5_R3.CraftSound;
+import org.bukkit.craftbukkit.v1_6_R1.CraftSound;
 
 public enum DisguiseSound {
 

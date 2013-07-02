@@ -7,12 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import net.minecraft.server.v1_5_R3.ItemStack;
-import net.minecraft.server.v1_5_R3.Packet40EntityMetadata;
-import net.minecraft.server.v1_5_R3.WatchableObject;
+import net.minecraft.server.v1_6_R1.ItemStack;
+import net.minecraft.server.v1_6_R1.Packet40EntityMetadata;
+import net.minecraft.server.v1_6_R1.WatchableObject;
 
 public class FlagWatcher {
 
