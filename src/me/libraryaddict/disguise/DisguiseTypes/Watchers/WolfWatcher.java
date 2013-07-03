@@ -12,7 +12,7 @@ public class WolfWatcher extends AgeableWatcher {
         super(entityId);
         setValue(16, (byte) 0);
         setValue(17, "");
-        setValue(18, 8);
+        setValue(18, 8F);
         setValue(19, (byte) 0);
         setValue(20, (byte) collarColor.getId());
     }
@@ -21,8 +21,8 @@ public class WolfWatcher extends AgeableWatcher {
         return collarColor;
     }
 
-    public int getHealth() {
-        return (Integer) getValue(18);
+    public float getHealth() {
+        return (Float) getValue(18);
     }
 
     public String getName() {
@@ -68,6 +68,11 @@ public class WolfWatcher extends AgeableWatcher {
             isTamed = tamed;
             updateStatus();
         }
+    }
+    
+    public void setHealth(float newHealth) {
+        setValue(18, newHealth);
+        sendData(18);
     }
 
     private void updateStatus() {

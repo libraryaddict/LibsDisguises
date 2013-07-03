@@ -16,9 +16,9 @@ public enum WatcherValues {
             16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MINECART_RIDEABLE(16, (byte) 0, 17, 0, 18, 1, 19, 0,
             20, 0, 21, 6, 22, (byte) 0), MINECART_TNT(16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0), MUSHROOM_COW(
             12, 0), OCELOT(12, 0, 16, (byte) 0, 17, "", 18, (byte) 0), PAINTING(), PIG(12, 0, 16, (byte) 0), PIG_ZOMBIE(12,
-            (byte) 0), PLAYER(8, 0, 9, (byte) 0, 10, (byte) 0, 13, 0), PRIMED_TNT(), SHEEP(12, 0, 16, (byte) 0), SILVERFISH(), SKELETON(
+            (byte) 0), PLAYER(8, 0, 9, (byte) 0, 10, (byte) 0, 13, 0, 18, 0), PRIMED_TNT(), SHEEP(12, 0, 16, (byte) 0), SILVERFISH(), SKELETON(
             13, (byte) 0), SLIME(16, (byte) 0, 18, (byte) 0), SMALL_FIREBALL(), SNOWBALL(), SNOWMAN(), SPIDER(), SPLASH_POTION(), SQUID(), THROWN_EXP_BOTTLE(), VILLAGER(
-            16, 0), WITCH(), WITHER(16, 300), WITHER_SKELETON(13, (byte) 1), WITHER_SKULL(), WOLF(16, (byte) 0, 17, "", 18, 8,
+            16, 0), WITCH(), WITHER(16, 300), WITHER_SKELETON(13, (byte) 1), WITHER_SKULL(), WOLF(16, (byte) 0, 17, "", 18, 8F,
             19, (byte) 0, 20, (byte) 14), ZOMBIE(12, (byte) 0, 13, (byte) 0);
     private HashMap<Integer, Object> values = new HashMap<Integer, Object>();
 

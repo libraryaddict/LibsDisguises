@@ -16,8 +16,8 @@ public class LivingWatcher extends FlagWatcher {
 
     public LivingWatcher(int entityId) {
         super(entityId);
-        setValue(5, "");
-        setValue(6, (byte) 0);
+        setValue(10, "");
+        setValue(11, (byte) 0);
     }
 
     public void addPotionEffect(PotionEffect potionEffect) {
@@ -27,16 +27,12 @@ public class LivingWatcher extends FlagWatcher {
         sendPotionEffects();
     }
 
-    public int getArrowsSticking() {
-        return (Byte) getValue(10);
-    }
-
     public String getCustomName() {
-        return (String) getValue(5);
+        return (String) getValue(10);
     }
 
     public boolean getPotionParticlesRemoved() {
-        return (Byte) getValue(9) == 1;
+        return (Byte) getValue(8) == 1;
     }
 
     public boolean hasCustomName() {
@@ -64,34 +60,27 @@ public class LivingWatcher extends FlagWatcher {
 
     public void removePotionParticles(boolean particles) {
         if (particles != getPotionParticlesRemoved()) {
-            setValue(9, (byte) (particles ? 1 : 0));
-            sendData(9);
+            setValue(8, (byte) (particles ? 1 : 0));
+            sendData(8);
         }
     }
 
     private void sendPotionEffects() {
-        setValue(8, PotionBrewer.a(potionEffects));
-        sendData(8);
-    }
-
-    public void setArrowsSticking(int arrowsNo) {
-        if (arrowsNo != getArrowsSticking()) {
-            setValue(10, (byte) arrowsNo);
-            sendData(10);
-        }
+        setValue(7, PotionBrewer.a(potionEffects));
+        sendData(7);
     }
 
     public void setCustomName(String name) {
         if (!getCustomName().equals(name)) {
-            setValue(5, name);
-            sendData(5);
+            setValue(10, name);
+            sendData(10);
         }
     }
 
     public void setCustomNameVisible(boolean display) {
-        if ((Byte) getValue(6) != (display ? 1 : 0)) {
-            setValue(6, (byte) (display ? 1 : 0));
-            sendData(6);
+        if ((Byte) getValue(11) != (display ? 1 : 0)) {
+            setValue(11, (byte) (display ? 1 : 0));
+            sendData(11);
         }
     }
 

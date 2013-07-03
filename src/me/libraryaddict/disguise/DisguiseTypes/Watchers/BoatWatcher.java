@@ -6,9 +6,9 @@ public class BoatWatcher extends FlagWatcher {
 
     public BoatWatcher(int entityId) {
         super(entityId);
-        setValue(19, 40);
         setValue(17, 10);
         setValue(18, 0);
+        setValue(19, 40);
     }
 
     public void setDamage(int dmg) {
