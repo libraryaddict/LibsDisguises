@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>LibsDisguises</groupId>
 	<artifactId>LibsDisguises</artifactId>
-	<version>5.5</version>
+	<version>5.6</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<defaultGoal>clean package</defaultGoal>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.5.1-R0.2</version>
+			<version>1.6.1-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
