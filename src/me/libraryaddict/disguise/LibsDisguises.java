@@ -71,12 +71,10 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                             if (disguise.getType().isMisc() && entity.getType().isAlive())
                                 event.setCancelled(true);
                         } else if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
-                            event.setPacket(new PacketContainer(event.getPacketID()));
                             StructureModifier<Object> mods = event.getPacket().getModifier();
-                            mods.write(0, entity.getEntityId());
-                            mods.write(1,
-                                    disguise.getWatcher()
-                                            .convert((List<WatchableObject>) event.getPacket().getModifier().read(1)));
+                            event.setPacket(new PacketContainer(event.getPacketID()));
+                            mods.write(0, mods.read(0));
+                            mods.write(1, disguise.getWatcher().convert((List<WatchableObject>) mods.read(1)));
                         } else if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
                             if (disguise.getType().isPlayer()) {
                                 StructureModifier<Object> mods = event.getPacket().getModifier();
