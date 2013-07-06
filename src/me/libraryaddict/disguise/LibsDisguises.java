@@ -34,8 +34,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class LibsDisguises extends JavaPlugin implements Listener {
-    private String latestVersion;
     private String currentVersion;
+    private String latestVersion;
     private String permission;
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "%s" + ChatColor.DARK_RED

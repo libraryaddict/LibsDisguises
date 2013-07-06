@@ -8,6 +8,10 @@ public class MiscDisguise extends Disguise {
         this(disguiseType, true, -1, -1);
     }
 
+    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds) {
+        this(disguiseType, replaceSounds, -1, -1);
+    }
+
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
         super(disguiseType, replaceSounds);
         if (id == -1)
@@ -16,10 +20,6 @@ public class MiscDisguise extends Disguise {
             data = disguiseType.getDefaultData();
         this.id = id;
         this.data = data;
-    }
-
-    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds) {
-        this(disguiseType, replaceSounds, -1, -1);
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {

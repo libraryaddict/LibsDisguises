@@ -56,23 +56,23 @@ public class WolfWatcher extends AgeableWatcher {
         }
     }
 
+    public void setHealth(float newHealth) {
+        setValue(18, newHealth);
+        sendData(18);
+    }
+
     public void setSitting(boolean sitting) {
         if (isSitting != sitting) {
             isSitting = sitting;
             updateStatus();
         }
     }
-
+    
     public void setTamed(boolean tamed) {
         if (isTamed != tamed) {
             isTamed = tamed;
             updateStatus();
         }
-    }
-    
-    public void setHealth(float newHealth) {
-        setValue(18, newHealth);
-        sendData(18);
     }
 
     private void updateStatus() {

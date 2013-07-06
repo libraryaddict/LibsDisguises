@@ -36,10 +36,6 @@ public class DisguiseAPI {
     private static JavaPlugin plugin;
     private static boolean soundsEnabled;
 
-    private static void put(Object obj, Disguise disguise) {
-        access(obj, disguise);
-    }
-
     private synchronized static Disguise access(Object obj, Disguise... object) {
         if (object.length == 0)
             return disguises.get(obj);
@@ -48,10 +44,6 @@ public class DisguiseAPI {
         else
             disguises.put(obj, object[0]);
         return null;
-    }
-
-    private static Disguise get(Object obj) {
-        return access(obj);
     }
 
     /**
@@ -77,6 +69,10 @@ public class DisguiseAPI {
                 ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
             }
         }
+    }
+
+    private static Disguise get(Object obj) {
+        return access(obj);
     }
 
     /**
@@ -182,6 +178,10 @@ public class DisguiseAPI {
                 return get(((Entity) disguiser).getUniqueId()) != null;
         }
         return get(disguiser) != null;
+    }
+
+    private static void put(Object obj, Disguise disguise) {
+        access(obj, disguise);
     }
 
     /**
