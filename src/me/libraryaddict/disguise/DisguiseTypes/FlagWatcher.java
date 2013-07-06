@@ -46,9 +46,14 @@ public class FlagWatcher {
             if (entityValues.containsKey(watch.a())) {
                 if (entityValues.get(watch.a()) == null)
                     continue;
-                boolean doD = watch.d();
                 Object value = entityValues.get(watch.a());
+                boolean doD = watch.d();
                 watch = new WatchableObject(classTypes.get(value.getClass()), watch.a(), value);
+                if (!doD)
+                    watch.a(false);
+            } else {
+                boolean doD = watch.d();
+                watch = new WatchableObject(watch.c(), watch.a(), watch.b());
                 if (!doD)
                     watch.a(false);
             }
