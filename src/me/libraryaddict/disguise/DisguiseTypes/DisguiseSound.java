@@ -124,8 +124,6 @@ public enum DisguiseSound {
             Sound s = disguiseSounds.get(type);
             if (s != null) {
                 String soundName = CraftSound.getSound(s);
-                if (s == Sound.BLAZE_BREATH)
-                    soundName = "mob.blaze.breathe";
                 if (soundName.equals(name))
                     return type;
             }
