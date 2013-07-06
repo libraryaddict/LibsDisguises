@@ -29,6 +29,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
@@ -57,7 +58,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ENTITY_METADATA, Packets.Server.ARM_ANIMATION,
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ADD_EXP_ORB, Packets.Server.VEHICLE_SPAWN, Packets.Server.MOB_SPAWN,
-                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT) {
+                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, 44) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 try {
@@ -66,9 +67,13 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                     org.bukkit.entity.Entity entity = entityModifer.read((Packets.Server.COLLECT == event.getPacketID() ? 1 : 0));
                     if (DisguiseAPI.isDisguised(entity)) {
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
-                        if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
-                            event.setPacket(event.getPacket().deepClone());
+                        if (event.getPacketID() == 44) {
+                            if (disguise.getType().isMisc() && entity.getType().isAlive())
+                                event.setCancelled(true);
+                        } else if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
+                            event.setPacket(new PacketContainer(event.getPacketID()));
                             StructureModifier<Object> mods = event.getPacket().getModifier();
+                            mods.write(0, entity.getEntityId());
                             mods.write(1,
                                     disguise.getWatcher()
                                             .convert((List<WatchableObject>) event.getPacket().getModifier().read(1)));
