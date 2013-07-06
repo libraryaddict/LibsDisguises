@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_6_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import net.minecraft.server.v1_6_R1.ChunkCoordinates;
 import net.minecraft.server.v1_6_R1.ItemStack;
 import net.minecraft.server.v1_6_R1.Packet40EntityMetadata;
 import net.minecraft.server.v1_6_R1.WatchableObject;
@@ -21,8 +22,10 @@ public class FlagWatcher {
         classTypes.put(Byte.class, 0);
         classTypes.put(Short.class, 1);
         classTypes.put(Integer.class, 2);
+        classTypes.put(Float.class, 3);
         classTypes.put(String.class, 4);
         classTypes.put(ItemStack.class, 5);
+        classTypes.put(ChunkCoordinates.class, 6);
     }
     private int entityId;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
