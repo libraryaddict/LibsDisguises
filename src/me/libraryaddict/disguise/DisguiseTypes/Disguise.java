@@ -214,6 +214,7 @@ public class Disguise {
     }
 
     public void constructWatcher(EntityType type, int entityId) {
+        boolean throwError = false;
         try {
             String name;
             if (getType().isPlayer()) {
@@ -224,6 +225,7 @@ public class Disguise {
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
             watcher = (FlagWatcher) contructor.newInstance(entityId);
+            throwError = true;
             if (watcher instanceof AgeableWatcher && this instanceof MobDisguise) {
                 ((AgeableWatcher) watcher).setValue(12, ((MobDisguise) this).isAdult() ? 0 : -23999);
             }
@@ -234,7 +236,9 @@ public class Disguise {
                     watcher.setValue(i, disguise.getValue(i));
             }
         } catch (Exception ex) {
-            // There is no watcher for this entity
+            if (throwError)
+                ex.printStackTrace();
+            // There is no watcher for this entity, or a error was thrown.
             if (type.isAlive())
                 watcher = new LivingWatcher(entityId);
             else
