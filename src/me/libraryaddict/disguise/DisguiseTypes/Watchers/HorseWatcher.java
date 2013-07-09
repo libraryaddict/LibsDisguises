@@ -14,7 +14,7 @@ public class HorseWatcher extends AgeableWatcher {
         // Zombie
         // Skeleton
         setValue(19, (byte) 0);
-        setValue(20, new Random().nextInt(9));
+        setValue(20, new Random().nextInt(7));
         setValue(21, "");
         setValue(22, 0);
     }
