@@ -9,7 +9,7 @@ import me.libraryaddict.disguise.Commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
-import net.minecraft.server.v1_6_R1.WatchableObject;
+import net.minecraft.server.v1_6_R2.WatchableObject;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

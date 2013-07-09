@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_6_R1.CraftSound;
+import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
 
 public enum DisguiseSound {
 
@@ -29,6 +29,8 @@ public enum DisguiseSound {
             Sound.GHAST_SCREAM2),
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
+
+    HORSE(null, null, null, null),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 

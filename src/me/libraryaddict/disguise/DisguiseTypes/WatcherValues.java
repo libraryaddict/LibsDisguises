@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.DisguiseTypes;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.bukkit.craftbukkit.v1_6_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public enum WatcherValues {

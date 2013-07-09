@@ -3,8 +3,8 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import net.minecraft.server.v1_6_R1.MobEffect;
-import net.minecraft.server.v1_6_R1.PotionBrewer;
+import net.minecraft.server.v1_6_R2.MobEffect;
+import net.minecraft.server.v1_6_R2.PotionBrewer;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;

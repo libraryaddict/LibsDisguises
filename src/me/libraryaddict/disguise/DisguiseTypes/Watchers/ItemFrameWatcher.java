@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
-import org.bukkit.craftbukkit.v1_6_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
@@ -16,7 +16,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     public ItemStack getItemStack() {
         if (getValue(3) instanceof Integer)
             return new ItemStack(0);
-        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R1.ItemStack) getValue(3));
+        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R2.ItemStack) getValue(3));
     }
 
     public void setItemStack(ItemStack newItem) {

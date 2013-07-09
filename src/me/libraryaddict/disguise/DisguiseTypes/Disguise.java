@@ -9,18 +9,18 @@ import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
-import net.minecraft.server.v1_6_R1.DataWatcher;
-import net.minecraft.server.v1_6_R1.Entity;
-import net.minecraft.server.v1_6_R1.EntityLiving;
-import net.minecraft.server.v1_6_R1.EntityTypes;
-import net.minecraft.server.v1_6_R1.ItemStack;
-import net.minecraft.server.v1_6_R1.MathHelper;
-import net.minecraft.server.v1_6_R1.EnumArt;
-import net.minecraft.server.v1_6_R1.WatchableObject;
+import net.minecraft.server.v1_6_R2.DataWatcher;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityTypes;
+import net.minecraft.server.v1_6_R2.ItemStack;
+import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R2.EnumArt;
+import net.minecraft.server.v1_6_R2.WatchableObject;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -110,7 +110,7 @@ public class Disguise {
             else if (disguiseType == DisguiseType.FIREBALL)
                 name = "LargeFireball";
             try {
-                Class entityClass = Class.forName("net.minecraft.server.v1_6_R1.Entity" + name);
+                Class entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
                 Field field = EntityTypes.class.getDeclaredField("e");
                 field.setAccessible(true);
                 Map map = (Map) field.get(null);

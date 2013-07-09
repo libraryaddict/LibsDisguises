@@ -4,17 +4,17 @@ import java.util.HashMap;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
-import net.minecraft.server.v1_6_R1.Block;
-import net.minecraft.server.v1_6_R1.EntityPlayer;
-import net.minecraft.server.v1_6_R1.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R1.World;
-import net.minecraft.server.v1_6_R1.WorldServer;
+import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_6_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -116,11 +116,11 @@ public class DisguiseAPI {
                                     } else {
                                         boolean hasInvun = false;
                                         if (entity instanceof LivingEntity) {
-                                            net.minecraft.server.v1_6_R1.EntityLiving e = ((CraftLivingEntity) entity)
+                                            net.minecraft.server.v1_6_R2.EntityLiving e = ((CraftLivingEntity) entity)
                                                     .getHandle();
                                             hasInvun = (e.noDamageTicks == e.maxNoDamageTicks);
                                         } else {
-                                            net.minecraft.server.v1_6_R1.Entity e = ((CraftEntity) entity).getHandle();
+                                            net.minecraft.server.v1_6_R2.Entity e = ((CraftEntity) entity).getHandle();
                                             hasInvun = e.isInvulnerable();
                                         }
                                         soundType = disSound.getType(soundName, !hasInvun);
