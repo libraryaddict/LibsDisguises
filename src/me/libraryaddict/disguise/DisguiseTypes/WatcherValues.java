@@ -23,6 +23,8 @@ public enum WatcherValues {
 
     CREEPER(16, (byte) 0, 17, (byte) 0),
 
+    DONKEY(12, 0, 16, 0, 19, (byte) 0, 20, 0, 21, "", 22, 0),
+
     DROPPED_ITEM(10, CraftItemStack.asNMSCopy(new ItemStack(1))),
 
     EGG(),
@@ -71,6 +73,8 @@ public enum WatcherValues {
 
     MINECART_TNT(16, (byte) 0, 17, 0, 18, 1, 19, 0, 20, 0, 21, 6, 22, (byte) 0),
 
+    MULE(12, 0, 16, 0, 19, (byte) 0, 20, 0, 21, "", 22, 0),
+
     MUSHROOM_COW(12, 0),
 
     OCELOT(12, 0, 16, (byte) 0, 17, "", 18, (byte) 0),
@@ -90,6 +94,8 @@ public enum WatcherValues {
     SILVERFISH(),
 
     SKELETON(13, (byte) 0),
+
+    SKELETON_HORSE(12, 0, 16, 0, 19, (byte) 0, 20, 0, 21, "", 22, 0),
 
     SLIME(16, (byte) 0, 18, (byte) 0),
 
@@ -119,7 +125,9 @@ public enum WatcherValues {
 
     WOLF(16, (byte) 0, 17, "", 18, 8F, 19, (byte) 0, 20, (byte) 14),
 
-    ZOMBIE(12, (byte) 0, 13, (byte) 0);
+    ZOMBIE(12, (byte) 0, 13, (byte) 0),
+
+    ZOMBIE_HORSE(12, 0, 16, 0, 19, (byte) 0, 20, 0, 21, "", 22, 0);
     private HashMap<Integer, Object> values = new HashMap<Integer, Object>();
 
     private WatcherValues(Object... obj) {

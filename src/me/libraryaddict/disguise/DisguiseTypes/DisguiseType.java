@@ -17,6 +17,8 @@ public enum DisguiseType {
 
     CREEPER(EntityType.MOB),
 
+    DONKEY(EntityType.MOB),
+
     DROPPED_ITEM(EntityType.MISC, 2, 1),
 
     EGG(EntityType.MISC, 62),
@@ -65,6 +67,8 @@ public enum DisguiseType {
 
     MINECART_TNT(EntityType.MISC, 10, 3),
 
+    MULE(EntityType.MOB),
+
     MUSHROOM_COW(EntityType.MOB),
 
     OCELOT(EntityType.MOB),
@@ -84,6 +88,8 @@ public enum DisguiseType {
     SILVERFISH(EntityType.MOB),
 
     SKELETON(EntityType.MOB),
+
+    SKELETON_HORSE(EntityType.MOB),
 
     SLIME(EntityType.MOB),
 
@@ -113,7 +119,9 @@ public enum DisguiseType {
 
     WOLF(EntityType.MOB),
 
-    ZOMBIE(EntityType.MOB);
+    ZOMBIE(EntityType.MOB),
+
+    ZOMBIE_HORSE(EntityType.MOB);
 
     public static enum EntityType {
         MISC, MOB, PLAYER;

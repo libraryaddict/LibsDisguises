@@ -99,6 +99,14 @@ public class Disguise {
                 name = "Skeleton";
             } else if (disguiseType == DisguiseType.PRIMED_TNT) {
                 name = "TNTPrimed";
+            } else if (disguiseType == DisguiseType.DONKEY) {
+                name = "Horse";
+            } else if (disguiseType == DisguiseType.MULE) {
+                name = "Horse";
+            } else if (disguiseType == DisguiseType.ZOMBIE_HORSE) {
+                name = "Horse";
+            } else if (disguiseType == DisguiseType.SKELETON_HORSE) {
+                name = "Horse";
             } else if (disguiseType == DisguiseType.MINECART_TNT) {
                 name = "MinecartTNT";
             } else if (disguiseType == DisguiseType.SPLASH_POTION)
