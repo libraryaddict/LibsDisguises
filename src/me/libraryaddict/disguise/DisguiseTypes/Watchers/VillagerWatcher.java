@@ -5,18 +5,19 @@ import java.util.Random;
 import org.bukkit.entity.Villager.Profession;
 
 public class VillagerWatcher extends AgeableWatcher {
-    private Profession profession;
 
     public VillagerWatcher(int entityId) {
         super(entityId);
-        profession = Profession.values()[new Random().nextInt(Profession.values().length)];
-        setValue(16, profession.getId());
+        setValue(16, Profession.values()[new Random().nextInt(Profession.values().length)].getId());
+    }
+
+    public Profession getProfession() {
+        return Profession.values()[(Integer) getValue(16)];
     }
 
     public void setProfession(Profession newProfession) {
-        if (profession != newProfession) {
-            profession = newProfession;
-            setValue(16, profession.getId());
+        if (getProfession() != newProfession) {
+            setValue(16, newProfession.getId());
             sendData(16);
         }
     }

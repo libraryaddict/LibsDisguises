@@ -3,10 +3,6 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 import me.libraryaddict.disguise.DisguiseTypes.AnimalColor;
 
 public class WolfWatcher extends AgeableWatcher {
-    private AnimalColor collarColor = AnimalColor.RED;
-    private boolean isAgressive;
-    private boolean isSitting;
-    private boolean isTamed;
 
     public WolfWatcher(int entityId) {
         super(entityId);
@@ -14,11 +10,11 @@ public class WolfWatcher extends AgeableWatcher {
         setValue(17, "");
         setValue(18, 8F);
         setValue(19, (byte) 0);
-        setValue(20, (byte) collarColor.getId());
+        setValue(20, (byte) 14);
     }
 
     public AnimalColor getCollarColor() {
-        return collarColor;
+        return AnimalColor.values()[(Byte) getValue(20)];
     }
 
     public float getHealth() {
@@ -29,30 +25,42 @@ public class WolfWatcher extends AgeableWatcher {
         return (String) getValue(17);
     }
 
-    public boolean isAgressive() {
-        return isAgressive;
+    public boolean isAngry() {
+        return isTrue(2);
     }
 
     public boolean isSitting() {
-        return isSitting;
+        return isTrue(1);
     }
 
     public boolean isTamed() {
-        return isTamed;
+        return isTrue(4);
     }
 
-    public void setAgressive(boolean aggressive) {
-        if (isAgressive != aggressive) {
-            isAgressive = aggressive;
-            updateStatus();
-        }
+    private boolean isTrue(int no) {
+        return ((Byte) getValue(16) & no) != 0;
+    }
+
+    public void setAngry(boolean angry) {
+        setFlag(2, angry);
     }
 
     public void setCollarColor(AnimalColor newColor) {
-        if (newColor != collarColor) {
-            collarColor = newColor;
+        if (newColor != getCollarColor()) {
             setValue(20, (byte) newColor.getId());
             sendData(20);
+        }
+    }
+
+    private void setFlag(int no, boolean flag) {
+        if (isTrue(no) != flag) {
+            byte b0 = (Byte) getValue(16);
+            if (flag) {
+                setValue(16, (byte) (b0 | (no)));
+            } else {
+                setValue(16, (byte) (b0 & -(no + 1)));
+            }
+            sendData(16);
         }
     }
 
@@ -62,22 +70,11 @@ public class WolfWatcher extends AgeableWatcher {
     }
 
     public void setSitting(boolean sitting) {
-        if (isSitting != sitting) {
-            isSitting = sitting;
-            updateStatus();
-        }
-    }
-    
-    public void setTamed(boolean tamed) {
-        if (isTamed != tamed) {
-            isTamed = tamed;
-            updateStatus();
-        }
+        setFlag(1, sitting);
     }
 
-    private void updateStatus() {
-        setValue(16, (byte) ((isTamed ? 4 : 0) + (isSitting ? 1 : 0) + (isAgressive ? 2 : 0)));
-        sendData(16);
+    public void setTamed(boolean tamed) {
+        setFlag(4, tamed);
     }
 
 }

@@ -4,9 +4,6 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Ocelot.Type;
 
 public class OcelotWatcher extends AgeableWatcher {
-    private boolean isSitting;
-    private boolean isTamed;
-    private Type type = Ocelot.Type.WILD_OCELOT;
 
     public OcelotWatcher(int entityId) {
         super(entityId);
@@ -14,13 +11,29 @@ public class OcelotWatcher extends AgeableWatcher {
         setValue(17, "");
         setValue(18, (byte) 0);
     }
-    
+
     public String getOwner() {
         return (String) getValue(17);
     }
-    
+
     public Type getType() {
-        return type;
+        return Ocelot.Type.getType((Byte) getValue(18));
+    }
+
+    private boolean isTrue(int no) {
+        return ((Byte) getValue(16) & no) != 0;
+    }
+
+    private void setFlag(int no, boolean flag) {
+        if (isTrue(no) != flag) {
+            byte b0 = (Byte) getValue(16);
+            if (flag) {
+                setValue(16, (byte) (b0 | (no)));
+            } else {
+                setValue(16, (byte) (b0 & -(no + 1)));
+            }
+            sendData(16);
+        }
     }
 
     public void setOwner(String newOwner) {
@@ -28,29 +41,17 @@ public class OcelotWatcher extends AgeableWatcher {
     }
 
     public void setSitting(boolean sitting) {
-        if (isSitting != sitting) {
-            isSitting = sitting;
-            updateStatus();
-        }
+        setFlag(1, sitting);
     }
 
     public void setTamed(boolean tamed) {
-        if (isTamed != tamed) {
-            isTamed = tamed;
-            updateStatus();
-        }
+        setFlag(4, tamed);
     }
 
     public void setType(Type newType) {
-        if (type != newType) {
-            type = newType;
-            setValue(18, (byte) type.getId());
+        if (getType() != newType) {
+            setValue(18, (byte) newType.getId());
             sendData(18);
         }
-    }
-
-    private void updateStatus() {
-        setValue(16, (byte) ((isSitting ? 1 : 0) + (isTamed ? 4 : 0)));
-        sendData(16);
     }
 }
