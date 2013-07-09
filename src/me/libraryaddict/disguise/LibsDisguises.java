@@ -38,7 +38,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
     private String latestVersion;
     private String permission;
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
-            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "%s" + ChatColor.DARK_RED
+            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
 
     @Override
