@@ -1,7 +1,12 @@
 package me.libraryaddict.disguise;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
 import me.libraryaddict.disguise.Commands.DisguiseCommand;
 import me.libraryaddict.disguise.Commands.DisguisePlayerCommand;
 import me.libraryaddict.disguise.Commands.UndisguiseCommand;
@@ -9,10 +14,20 @@ import me.libraryaddict.disguise.Commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
+import me.libraryaddict.disguise.DisguiseTypes.Values;
+import net.minecraft.server.v1_6_R2.AttributeSnapshot;
+import net.minecraft.server.v1_6_R2.ChatMessage;
+import net.minecraft.server.v1_6_R2.ChunkCoordinates;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.GenericAttributes;
 import net.minecraft.server.v1_6_R2.WatchableObject;
+import net.minecraft.server.v1_6_R2.World;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -34,6 +49,25 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class LibsDisguises extends JavaPlugin implements Listener {
+    private class DisguiseHuman extends EntityHuman {
+
+        public DisguiseHuman(World world) {
+            super(world, "LibsDisguises");
+        }
+
+        public boolean a(int arg0, String arg1) {
+            return false;
+        }
+
+        public ChunkCoordinates b() {
+            return null;
+        }
+
+        public void sendMessage(ChatMessage arg0) {
+        }
+
+    }
+
     private String currentVersion;
     private String latestVersion;
     private String permission;
@@ -68,8 +102,24 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                     if (DisguiseAPI.isDisguised(entity)) {
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
                         if (event.getPacketID() == 44) {
-                            if (disguise.getType().isMisc() && entity.getType().isAlive())
+                            if (disguise.getType().isMisc() && entity.getType().isAlive()) {
                                 event.setCancelled(true);
+                            } else {
+                                HashMap<String, Double> values = Values.getAttributesValues(disguise.getType());
+                                Iterator<AttributeSnapshot> itel = ((List<AttributeSnapshot>) event.getPacket().getModifier()
+                                        .read(1)).iterator();
+                                event.setPacket(new PacketContainer(event.getPacketID()));
+                                Collection collection = new ArrayList<AttributeSnapshot>();
+                                while (itel.hasNext()) {
+                                    AttributeSnapshot att = itel.next();
+                                    if (values.containsKey(att.a())) {
+                                        collection.add(new AttributeSnapshot(null, att.a(), values.get(att.a()), att.c()));
+                                    }
+                                }
+                                StructureModifier<Object> mods = event.getPacket().getModifier();
+                                mods.write(0, entity.getEntityId());
+                                mods.write(1, collection);
+                            }
                         } else if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
                             StructureModifier<Object> mods = event.getPacket().getModifier();
                             event.setPacket(new PacketContainer(event.getPacketID()));
@@ -168,6 +218,66 @@ public class LibsDisguises extends JavaPlugin implements Listener {
             });
         }
         Bukkit.getPluginManager().registerEvents(this, this);
+        registerValues();
+    }
+
+    private String toReadable(String string) {
+        String[] strings = string.split("_");
+        string = "";
+        for (String s : strings)
+            string += s.substring(0, 1) + s.substring(1).toLowerCase();
+        return string;
+    }
+
+    private void registerValues() {
+        World world = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
+        for (DisguiseType disguiseType : DisguiseType.values()) {
+            String name = toReadable(disguiseType.name());
+            if (disguiseType == DisguiseType.WITHER_SKELETON) {
+                continue;
+            } else if (disguiseType == DisguiseType.PRIMED_TNT) {
+                name = "TNTPrimed";
+            } else if (disguiseType == DisguiseType.DONKEY) {
+                continue;
+            } else if (disguiseType == DisguiseType.MULE) {
+                continue;
+            } else if (disguiseType == DisguiseType.ZOMBIE_HORSE) {
+                continue;
+            } else if (disguiseType == DisguiseType.SKELETON_HORSE) {
+                continue;
+            } else if (disguiseType == DisguiseType.MINECART_TNT) {
+                name = "MinecartTNT";
+            } else if (disguiseType == DisguiseType.SPLASH_POTION)
+                name = "Potion";
+            else if (disguiseType == DisguiseType.GIANT)
+                name = "GiantZombie";
+            else if (disguiseType == DisguiseType.DROPPED_ITEM)
+                name = "Item";
+            else if (disguiseType == DisguiseType.FIREBALL)
+                name = "LargeFireball";
+            try {
+                net.minecraft.server.v1_6_R2.Entity entity = null;
+                if (disguiseType == DisguiseType.PLAYER) {
+                    entity = new DisguiseHuman(world);
+                } else {
+                    Class entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
+                    entity = (net.minecraft.server.v1_6_R2.Entity) entityClass.getConstructor(World.class).newInstance(world);
+                }
+                Values value = new Values(disguiseType);
+                List<WatchableObject> watchers = entity.getDataWatcher().c();
+                for (WatchableObject watch : watchers)
+                    value.setMetaValue(watch.a(), watch.b());
+                if (entity instanceof EntityLiving) {
+                    EntityLiving livingEntity = (EntityLiving) entity;
+                    value.setAttributesValue(GenericAttributes.d, livingEntity.getAttributeInstance(GenericAttributes.d)
+                            .getValue());
+                }
+            } catch (Exception e1) {
+                System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + e1.getMessage());
+                System.out.print("[LibsDisguises] Please report this to LibsDisguises author");
+                e1.printStackTrace();
+            }
+        }
     }
 
     @EventHandler
