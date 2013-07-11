@@ -1,18 +1,21 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import com.comphenix.protocol.Packets;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 
 import net.minecraft.server.v1_6_R2.ChunkCoordinates;
 import net.minecraft.server.v1_6_R2.ItemStack;
-import net.minecraft.server.v1_6_R2.Packet40EntityMetadata;
 import net.minecraft.server.v1_6_R2.WatchableObject;
 
 public class FlagWatcher {
@@ -110,20 +113,21 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        Packet40EntityMetadata packet = new Packet40EntityMetadata();
-        try {
-            packet.a = entityId;
-            Field field = Packet40EntityMetadata.class.getDeclaredField("b");
-            field.setAccessible(true);
-            Object value = entityValues.get(data);
-            List<WatchableObject> list = new ArrayList<WatchableObject>();
-            list.add(new WatchableObject(classTypes.get(value.getClass()), data, value));
-            field.set(packet, list);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        Object value = entityValues.get(data);
+        List<WatchableObject> list = new ArrayList<WatchableObject>();
+        list.add(new WatchableObject(classTypes.get(value.getClass()), data, value));
+        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+        StructureModifier<Object> mods = packet.getModifier();
+        mods.write(0, entityId);
+        mods.write(1, list);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+            if (p.getEntityId() != entityId) {
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
