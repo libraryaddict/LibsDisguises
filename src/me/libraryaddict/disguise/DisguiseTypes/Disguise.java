@@ -237,12 +237,6 @@ public class Disguise {
             if (watcher instanceof AgeableWatcher && this instanceof MobDisguise) {
                 ((AgeableWatcher) watcher).setValue(12, ((MobDisguise) this).isAdult() ? 0 : -23999);
             }
-            WatcherValues entity = WatcherValues.valueOf(type.name());
-            WatcherValues disguise = WatcherValues.valueOf(getType().name());
-            for (int i : entity.getValues()) {
-                if (disguise.getValue(i) != null && disguise.getValue(i).getClass() != entity.getValue(i).getClass())
-                    watcher.setValue(i, disguise.getValue(i));
-            }
         } catch (Exception ex) {
             if (throwError)
                 ex.printStackTrace();
@@ -251,6 +245,13 @@ public class Disguise {
                 watcher = new LivingWatcher(entityId);
             else
                 watcher = new FlagWatcher(entityId);
+        }
+        WatcherValues entity = WatcherValues.valueOf(getType().name());
+        WatcherValues disguise = WatcherValues.valueOf(getType().name());
+        for (int i : entity.getValues()) {
+            if (disguise.getValue(i) != null && disguise.getValue(i).getClass() != entity.getValue(i).getClass())
+                // watcher.setValue(i, disguise.getValue(i));
+                watcher.setValue(i, null);
         }
     }
 
