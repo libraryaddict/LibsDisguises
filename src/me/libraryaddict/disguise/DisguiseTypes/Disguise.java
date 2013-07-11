@@ -249,11 +249,13 @@ public class Disguise {
         HashMap<Integer, Object> entity = Values.getMetaValues(DisguiseType.getType(type));
         HashMap<Integer, Object> disguise = Values.getMetaValues(getType());
         for (int i : entity.keySet()) {
-            if (!disguise.containsKey(i) || entity.get(i) != disguise.get(i) || entity.get(i).getClass() != disguise.get(i)) {
-                if (disguise.containsKey(i))
+            if (!disguise.containsKey(i) || entity.get(i) != disguise.get(i)
+                    || entity.get(i).getClass() != disguise.get(i).getClass()) {
+                if (disguise.containsKey(i)) {
                     watcher.setValue(i, disguise.get(i));
-                else
+                } else {
                     watcher.setValue(i, null);
+                }
             }
         }
     }
