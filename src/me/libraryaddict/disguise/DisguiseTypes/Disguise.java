@@ -32,7 +32,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
-    protected DisguiseType disguiseType;
+    private DisguiseType disguiseType;
     private boolean replaceSounds;
     private FlagWatcher watcher;
 
@@ -246,12 +246,15 @@ public class Disguise {
             else
                 watcher = new FlagWatcher(entityId);
         }
-        WatcherValues entity = WatcherValues.valueOf(getType().name());
-        WatcherValues disguise = WatcherValues.valueOf(getType().name());
-        for (int i : entity.getValues()) {
-            if (disguise.getValue(i) != null && disguise.getValue(i).getClass() != entity.getValue(i).getClass())
-                // watcher.setValue(i, disguise.getValue(i));
-                watcher.setValue(i, null);
+        HashMap<Integer, Object> entity = Values.getMetaValues(DisguiseType.getType(type));
+        HashMap<Integer, Object> disguise = Values.getMetaValues(getType());
+        for (int i : entity.keySet()) {
+            if (!disguise.containsKey(i) || entity.get(i) != disguise.get(i) || entity.get(i).getClass() != disguise.get(i)) {
+                if (disguise.containsKey(i))
+                    watcher.setValue(i, disguise.get(i));
+                else
+                    watcher.setValue(i, null);
+            }
         }
     }
 
