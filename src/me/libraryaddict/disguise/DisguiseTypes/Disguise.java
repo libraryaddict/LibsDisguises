@@ -225,8 +225,10 @@ public class Disguise {
         boolean throwError = false;
         try {
             String name;
-            if (getType().isPlayer()) {
-                name = "Player";
+            if (getType() == DisguiseType.MINECART_FURNACE || getType() == DisguiseType.MINECART_HOPPER
+                    || getType() == DisguiseType.MINECART_MOB_SPAWNER || getType() == DisguiseType.MINECART_RIDEABLE
+                    || getType() == DisguiseType.MINECART_TNT || getType() == DisguiseType.MINECART_CHEST) {
+                name = "Minecart";
             } else {
                 name = toReadable(getType().name());
             }

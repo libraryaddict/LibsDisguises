@@ -2,9 +2,9 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
-public abstract class MinecartAbstractWatcher extends FlagWatcher {
+public abstract class MinecartWatcher extends FlagWatcher {
 
-    public MinecartAbstractWatcher(int entityId) {
+    public MinecartWatcher(int entityId) {
         super(entityId);
         setValue(16, (byte) 0);
         setValue(17, 0);
