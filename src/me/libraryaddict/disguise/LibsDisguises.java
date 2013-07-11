@@ -1,9 +1,7 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +22,6 @@ import net.minecraft.server.v1_6_R2.GenericAttributes;
 import net.minecraft.server.v1_6_R2.WatchableObject;
 import net.minecraft.server.v1_6_R2.World;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
@@ -221,12 +218,11 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         registerValues();
     }
 
-    private String toReadable(String string) {
-        String[] strings = string.split("_");
-        string = "";
-        for (String s : strings)
-            string += s.substring(0, 1) + s.substring(1).toLowerCase();
-        return string;
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        if (latestVersion != null && p.hasPermission(permission))
+            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
     }
 
     private void registerValues() {
@@ -280,10 +276,11 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player p = event.getPlayer();
-        if (latestVersion != null && p.hasPermission(permission))
-            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+    private String toReadable(String string) {
+        String[] strings = string.split("_");
+        string = "";
+        for (String s : strings)
+            string += s.substring(0, 1) + s.substring(1).toLowerCase();
+        return string;
     }
 }
