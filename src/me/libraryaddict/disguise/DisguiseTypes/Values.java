@@ -2,12 +2,11 @@ package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.util.HashMap;
 
-import net.minecraft.server.v1_6_R2.IAttribute;
-
 public class Values {
 
     private static HashMap<DisguiseType, HashMap<String, Double>> attributesValues = new HashMap<DisguiseType, HashMap<String, Double>>();
     private static HashMap<DisguiseType, HashMap<Integer, Object>> metaValues = new HashMap<DisguiseType, HashMap<Integer, Object>>();
+
     public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
         if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.ZOMBIE_HORSE
                 || type == DisguiseType.SKELETON_HORSE)
@@ -40,8 +39,8 @@ public class Values {
         attributesValues.put(this.type, new HashMap<String, Double>());
     }
 
-    public void setAttributesValue(IAttribute no, Double value) {
-        attributesValues.get(type).put(no.a(), value);
+    public void setAttributesValue(String attribute, Double value) {
+        attributesValues.get(type).put(attribute, value);
     }
 
     public void setMetaValue(int no, Object value) {

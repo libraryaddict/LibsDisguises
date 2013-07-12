@@ -267,7 +267,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                     value.setMetaValue(watch.a(), watch.b());
                 if (entity instanceof EntityLiving) {
                     EntityLiving livingEntity = (EntityLiving) entity;
-                    value.setAttributesValue(GenericAttributes.d, livingEntity.getAttributeInstance(GenericAttributes.d)
+                    value.setAttributesValue(GenericAttributes.d.a(), livingEntity.getAttributeInstance(GenericAttributes.d)
                             .getValue());
                 }
             } catch (Exception e1) {
