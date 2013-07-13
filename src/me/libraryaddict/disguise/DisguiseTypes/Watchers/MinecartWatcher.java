@@ -8,4 +8,14 @@ public class MinecartWatcher extends FlagWatcher {
         super(entityId);
     }
 
+    public void setDamage(float damage) {
+        setValue(19, damage);
+    }
+
+    public float getDamage() {
+        if (getValue(19) != null)
+            return (Float) getValue(19);
+        return 0F;
+    }
+
 }
