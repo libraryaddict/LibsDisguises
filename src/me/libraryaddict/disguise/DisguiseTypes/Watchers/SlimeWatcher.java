@@ -7,11 +7,10 @@ public class SlimeWatcher extends LivingWatcher {
     public SlimeWatcher(int entityId) {
         super(entityId);
         setValue(16, (byte) (new Random().nextInt(4) + 1));
-        setValue(18, (byte) 0);
     }
 
     public int getSize() {
-        return (Integer) getValue(16);
+        return (Integer) getValue(16, (byte) 1);
     }
 
     public void setSize(int size) {

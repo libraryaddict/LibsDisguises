@@ -2,23 +2,24 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import java.util.Random;
 
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+
 public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(int entityId) {
         super(entityId);
         setValue(16, 0);
-        setValue(19, (byte) 0);
         setValue(20, new Random().nextInt(7));
-        setValue(21, "");
         setValue(22, 0);
     }
 
-    public int getColoring() {
-        return (Integer) getValue(20);
+    public Color getColor() {
+        return Color.values()[((Integer) getValue(20, 0) & 0xFF)];
     }
 
-    public int getHorseType() {
-        return (int) (Byte) getValue(19);
+    public Style getStyle() {
+        return Style.values()[((Integer) getValue(20, 0) >>> 8)];
     }
 
     public boolean hasChest() {
@@ -50,7 +51,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     private boolean isTrue(int i) {
-        return ((Integer) getValue(16) & i) != 0;
+        return ((Integer) getValue(16, (byte) 0) & i) != 0;
     }
 
     public void setCanBred(boolean bred) {
@@ -61,14 +62,14 @@ public class HorseWatcher extends AgeableWatcher {
         setFlag(8, true);
     }
 
-    public void setColoring(int color) {
-        setValue(20, color);
+    public void setColor(Color color) {
+        setValue(20, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
         sendData(20);
     }
 
     private void setFlag(int i, boolean flag) {
         if (isTrue(i) != flag) {
-            int j = (Integer) getValue(16);
+            int j = (Integer) getValue(16, (byte) 0);
             if (flag) {
                 setValue(16, j | i);
             } else {
@@ -82,11 +83,6 @@ public class HorseWatcher extends AgeableWatcher {
         setFlag(32, grazing);
     }
 
-    public void setHorseType(int type) {
-        setValue(19, (byte) type);
-        sendData(19);
-    }
-
     public void setMouthOpen(boolean mouthOpen) {
         setFlag(128, mouthOpen);
     }
@@ -97,6 +93,11 @@ public class HorseWatcher extends AgeableWatcher {
 
     public void setSaddled(boolean saddled) {
         setFlag(4, saddled);
+    }
+
+    public void setStyle(Style style) {
+        setValue(20, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(20);
     }
 
     public void setTamed(boolean tamed) {

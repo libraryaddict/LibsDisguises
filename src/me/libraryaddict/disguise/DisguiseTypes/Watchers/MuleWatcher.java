@@ -4,7 +4,7 @@ public class MuleWatcher extends HorseWatcher {
 
     public MuleWatcher(int entityId) {
         super(entityId);
-        setHorseType(2);
+        setValue(19, (byte) 2);
     }
 
 }

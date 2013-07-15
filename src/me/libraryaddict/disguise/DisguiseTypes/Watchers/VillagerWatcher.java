@@ -12,7 +12,7 @@ public class VillagerWatcher extends AgeableWatcher {
     }
 
     public Profession getProfession() {
-        return Profession.values()[(Integer) getValue(16)];
+        return Profession.values()[(Integer) getValue(16, 0)];
     }
 
     public void setProfession(Profession newProfession) {

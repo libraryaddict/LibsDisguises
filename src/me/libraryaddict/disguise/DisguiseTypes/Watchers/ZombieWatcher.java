@@ -4,11 +4,10 @@ public class ZombieWatcher extends PigZombieWatcher {
 
     public ZombieWatcher(int entityId) {
         super(entityId);
-        setValue(13, (byte) 0);
     }
 
     public boolean isVillager() {
-        return (Byte) getValue(13) == 1;
+        return (Byte) getValue(13, (byte) 0) == 1;
     }
 
     public void setVillager(boolean villager) {

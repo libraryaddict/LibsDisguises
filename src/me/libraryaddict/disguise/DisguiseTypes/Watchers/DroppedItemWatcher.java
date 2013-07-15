@@ -9,11 +9,11 @@ public class DroppedItemWatcher extends FlagWatcher {
 
     public DroppedItemWatcher(int entityId) {
         super(entityId);
-        setValue(10, CraftItemStack.asNMSCopy(new ItemStack(1)));
     }
 
     public ItemStack getItemStack() {
-        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R2.ItemStack) getValue(10));
+        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R2.ItemStack) getValue(10,
+                CraftItemStack.asNMSCopy(new ItemStack(1))));
     }
 
     public void setItemStack(ItemStack item) {

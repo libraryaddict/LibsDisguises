@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
             @Override
             public void onPacketSending(PacketEvent event) {
                 try {
-                    Player observer = event.getPlayer();
+                    final Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
                     org.bukkit.entity.Entity entity = entityModifer.read((Packets.Server.COLLECT == event.getPacketID() ? 1 : 0));
                     if (entity == observer)
@@ -131,18 +132,54 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                 String name = (String) mods.read(1);
                                 if (!name.equals(((PlayerDisguise) disguise).getName())) {
                                     // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
-                                    event.setPacket(disguise.constructPacket(entity));
+                                    final PacketContainer[] packets = disguise.constructPacket(entity);
+                                    event.setPacket(packets[0]);
+                                    if (packets.length > 1) {
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                            public void run() {
+                                                try {
+                                                    manager.sendServerPacket(observer, packets[1]);
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
                             } else {
                                 // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
-                                event.setPacket(disguise.constructPacket(entity));
+                                final PacketContainer[] packets = disguise.constructPacket(entity);
+                                event.setPacket(packets[0]);
+                                if (packets.length > 1) {
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                        public void run() {
+                                            try {
+                                                manager.sendServerPacket(observer, packets[1]);
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         } else if (event.getPacketID() == Packets.Server.MOB_SPAWN
                                 || event.getPacketID() == Packets.Server.ADD_EXP_ORB
                                 || event.getPacketID() == Packets.Server.VEHICLE_SPAWN
                                 || event.getPacketID() == Packets.Server.ENTITY_PAINTING) {
                             // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
-                            event.setPacket(disguise.constructPacket(entity));
+                            final PacketContainer[] packets = disguise.constructPacket(entity);
+                            event.setPacket(packets[0]);
+                            if (packets.length > 1) {
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    public void run() {
+                                        try {
+                                            manager.sendServerPacket(observer, packets[1]);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
                         } else if (event.getPacketID() == Packets.Server.ARM_ANIMATION
                                 || event.getPacketID() == Packets.Server.COLLECT) {
                             if (disguise.getType().isMisc()) {
@@ -156,13 +193,13 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                             if (disguise.getType() == DisguiseType.ENDER_DRAGON) {
                                 byte value = (Byte) mods.read(4);
                                 mods.write(4, (byte) (value - 128));
-                            } else if (disguise.getType().isMisc() || disguise.getType() == DisguiseType.GHAST) {
+                            } else if (disguise.getType().isMisc()) {
                                 byte value = (Byte) mods.read(4);
-                                if (disguise.getType() != DisguiseType.PAINTING)
-                                    mods.write(4, (byte) (value + 128));
-                                else if (disguise.getType().isMisc())
-                                    mods.write(4, (byte) -(value + 128));
-                                else
+                                if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                                    mods.write(4, -value);
+                                } else if (disguise.getType() == DisguiseType.PAINTING) {
+                                    mods.write(4, -(value + 128));
+                                } else if (disguise.getType().isMisc())
                                     mods.write(4, (byte) (value - 64));
                             }
                         }
@@ -255,13 +292,15 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 name = "LargeFireball";
             try {
                 net.minecraft.server.v1_6_R2.Entity entity = null;
+                Class entityClass;
                 if (disguiseType == DisguiseType.PLAYER) {
+                    entityClass = EntityHuman.class;
                     entity = new DisguiseHuman(world);
                 } else {
-                    Class entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
+                    entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
                     entity = (net.minecraft.server.v1_6_R2.Entity) entityClass.getConstructor(World.class).newInstance(world);
                 }
-                Values value = new Values(disguiseType);
+                Values value = new Values(disguiseType, entityClass);
                 List<WatchableObject> watchers = entity.getDataWatcher().c();
                 for (WatchableObject watch : watchers)
                     value.setMetaValue(watch.a(), watch.b());

@@ -4,11 +4,10 @@ public class PigZombieWatcher extends LivingWatcher {
 
     public PigZombieWatcher(int entityId) {
         super(entityId);
-        setValue(12, (byte) 0);
     }
 
     public boolean isBaby() {
-        return (Byte) getValue(12) == 1;
+        return (Byte) getValue(12, (byte) 0) == 1;
     }
 
     public void setBaby(boolean baby) {

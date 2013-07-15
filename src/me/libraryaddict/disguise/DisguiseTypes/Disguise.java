@@ -11,6 +11,8 @@ import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
 import net.minecraft.server.v1_6_R2.DataWatcher;
 import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityAgeable;
+import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityTypes;
 import net.minecraft.server.v1_6_R2.ItemStack;
@@ -41,16 +43,16 @@ public class Disguise {
         replaceSounds = doSounds;
     }
 
-    public PacketContainer constructPacket(org.bukkit.entity.Entity e) {
-        PacketContainer spawnPacket = null;
+    public PacketContainer[] constructPacket(org.bukkit.entity.Entity e) {
+        PacketContainer[] spawnPackets = new PacketContainer[1];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         Entity entity = ((CraftEntity) e).getHandle();
         Location loc = e.getLocation();
 
         if (getType() == DisguiseType.EXPERIENCE_ORB) {
 
-            spawnPacket = manager.createPacket(Packets.Server.ADD_EXP_ORB);
-            StructureModifier<Object> mods = spawnPacket.getModifier();
+            spawnPackets[0] = manager.createPacket(Packets.Server.ADD_EXP_ORB);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, (int) Math.floor(loc.getX() * 32));
             mods.write(2, (int) Math.floor(loc.getY() * 32) + 2);
@@ -58,9 +60,9 @@ public class Disguise {
             mods.write(4, 1);
 
         } else if (getType() == DisguiseType.PAINTING) {
-
-            spawnPacket = manager.createPacket(Packets.Server.ENTITY_PAINTING);
-            StructureModifier<Object> mods = spawnPacket.getModifier();
+            spawnPackets = new PacketContainer[2];
+            spawnPackets[0] = manager.createPacket(Packets.Server.ENTITY_PAINTING);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, loc.getBlockX());
             mods.write(2, loc.getBlockY());
@@ -70,6 +72,18 @@ public class Disguise {
             if (id == -1)
                 id = new Random().nextInt(EnumArt.values().length);
             mods.write(5, EnumArt.values()[id].B);
+
+            // Make the teleport packet to make it visible..
+            spawnPackets[1] = manager.createPacket(Packets.Server.ENTITY_TELEPORT);
+            mods = spawnPackets[1].getModifier();
+            mods.write(0, e.getEntityId());
+            mods.write(1, (int) Math.floor(loc.getX() * 32D));
+            mods.write(2, (int) Math.floor(loc.getY() * 32D));
+            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
+            mods.write(4, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+            mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+
+            // Need to fake a teleport packet as well to make the painting visible as a moving.
 
         } else if (getType().isMob()) {
 
@@ -90,8 +104,8 @@ public class Disguise {
                 d3 = d1;
             if (d4 > d1)
                 d4 = d1;
-            spawnPacket = manager.createPacket(Packets.Server.MOB_SPAWN);
-            StructureModifier<Object> mods = spawnPacket.getModifier();
+            spawnPackets[0] = manager.createPacket(Packets.Server.MOB_SPAWN);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, (byte) EntityTypes.a(entity));
             String name = toReadable(disguiseType.name());
@@ -136,8 +150,6 @@ public class Disguise {
             byte yawValue = (byte) (int) (entity.yaw * 256.0F / 360.0F);
             if (getType() == DisguiseType.ENDER_DRAGON)
                 yawValue -= 128;
-            else if (getType() == DisguiseType.GHAST)
-                yawValue += 64;
             mods.write(8, yawValue);
             mods.write(9, (byte) (int) (entity.pitch * 256.0F / 360.0F));
             mods.write(10, (byte) (int) (((EntityLiving) entity).aA * 256.0F / 360.0F));
@@ -154,7 +166,7 @@ public class Disguise {
                 ex.printStackTrace();
             }
             mods.write(11, newWatcher);
-            // TODO May need to do the list
+            // Theres a list sometimes written with this. But no problems have appeared!
 
         } else if (getType().isMisc()) {
 
@@ -166,8 +178,8 @@ public class Disguise {
                 else
                     data = ((MiscDisguise) this).getId();
 
-            spawnPacket = manager.createPacket(Packets.Server.VEHICLE_SPAWN);
-            StructureModifier<Object> mods = spawnPacket.getModifier();
+            spawnPackets[0] = manager.createPacket(Packets.Server.VEHICLE_SPAWN);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, (int) Math.floor(loc.getX() * 32D));
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
@@ -195,14 +207,14 @@ public class Disguise {
                 mods.write(6, (int) (d3 * 8000.0D));
             }
             mods.write(7, MathHelper.d(entity.pitch * 256.0F / 360.0F));
-            mods.write(8, MathHelper.d(entity.yaw * 256.0F / 360.0F) + 64);
+            mods.write(8, MathHelper.d(entity.yaw * 256.0F / 360.0F) - 64);
             mods.write(9, id);
             mods.write(10, data);
 
         } else if (getType().isPlayer()) {
 
-            spawnPacket = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
-            StructureModifier<Object> mods = spawnPacket.getModifier();
+            spawnPackets[0] = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, ((PlayerDisguise) this).getName());
             mods.write(2, (int) Math.floor(loc.getX() * 32));
@@ -218,7 +230,7 @@ public class Disguise {
 
         }
 
-        return spawnPacket;
+        return spawnPackets;
     }
 
     public void constructWatcher(EntityType type, int entityId) {
@@ -248,17 +260,63 @@ public class Disguise {
             else
                 watcher = new FlagWatcher(entityId);
         }
-        HashMap<Integer, Object> entity = Values.getMetaValues(DisguiseType.getType(type));
-        HashMap<Integer, Object> disguise = Values.getMetaValues(getType());
-        for (int i : entity.keySet()) {
-            if (!disguise.containsKey(i) || entity.get(i) != disguise.get(i)
-                    || entity.get(i).getClass() != disguise.get(i).getClass()) {
-                if (disguise.containsKey(i)) {
-                    watcher.setValue(i, disguise.get(i));
-                } else {
-                    watcher.setValue(i, null);
-                }
+        HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
+        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(type));
+        // Start from 2 as they ALL share 0 and 1
+        for (int dataNo = 2; dataNo <= 31; dataNo++) {
+            // If the watcher already set a metadata on this
+            if (watcher.getValue(dataNo, null) != null)
+                continue;
+            // If neither of them touch it
+            if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
+                continue;
+            // If the disguise has this, but not the entity. Then better set it!
+            if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo)) {
+                watcher.setValue(dataNo, disguiseValues.get(dataNo));
+                continue;
             }
+            // Else if the disguise doesn't have it. But the entity does. Better remove it!
+            if (entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo)) {
+                watcher.setValue(dataNo, null);
+                continue;
+            }
+            // Hmm. They both have the datavalue. Time to check if they have different default values!
+            if (!entityValues.get(dataNo).equals(disguiseValues.get(dataNo))) {
+                // They do! Set the default value!
+                watcher.setValue(dataNo, disguiseValues.get(dataNo));
+                continue;
+            }
+            // Hmm. They both now have data values which are exactly the same. I need to do more intensive background checks.
+            // I HAVE to find juicy gossip on these!
+            // Maybe if I check that they extend each other..
+            // Entity is 0 & 1 - But we aint gonna be checking that
+            // EntityAgeable is 16
+            // EntityInsentient is 10 & 11
+            // EntityLiving is 6 & 7 & 8 & 9
+
+            // Lets use switch
+            Class owningData = null;
+            switch (dataNo) {
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                owningData = EntityLiving.class;
+            case 10:
+            case 11:
+                owningData = EntityInsentient.class;
+            case 16:
+                owningData = EntityAgeable.class;
+            default:
+                break;
+            }
+            // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
+            if (owningData != null && Values.getEntityClass(getType()).isInstance(owningData)
+                    && Values.getEntityClass(DisguiseType.getType(type)).isInstance(owningData))
+                continue;
+            // Well I can't find a reason I should leave it alone. They will probably conflict.
+            // Time to set the value to the disguises value so no conflicts!
+            watcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
     }
 

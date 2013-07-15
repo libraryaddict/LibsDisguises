@@ -81,11 +81,13 @@ public class FlagWatcher {
     }
 
     private boolean getFlag(int i) {
-        return ((Byte) getValue(0) & 1 << i) != 0;
+        return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
     }
 
-    protected Object getValue(int no) {
-        return entityValues.get(no);
+    protected Object getValue(int no, Object backup) {
+        if (entityValues.containsKey(no))
+            return entityValues.get(no);
+        return backup;
     }
 
     public boolean isBurning() {
@@ -112,6 +114,10 @@ public class FlagWatcher {
         return getFlag(3);
     }
 
+    protected boolean isTrue(int id, int no) {
+        return ((Byte) getValue(id, (byte) 0) & no) != 0;
+    }
+
     protected void sendData(int data) {
         Object value = entityValues.get(data);
         List<WatchableObject> list = new ArrayList<WatchableObject>();
@@ -133,51 +139,54 @@ public class FlagWatcher {
 
     public void setBurning(boolean setBurning) {
         if (isSneaking() != setBurning) {
-            setFlag(0, true);
+            setFlag(0, 0, true);
             sendData(0);
         }
     }
 
-    private void setFlag(int i, boolean flag) {
-        byte currentValue = (Byte) getValue(0);
-        if (flag) {
-            setValue(0, Byte.valueOf((byte) (currentValue | 1 << i)));
-        } else {
-            setValue(0, Byte.valueOf((byte) (currentValue & ~(1 << i))));
+    protected void setFlag(int id, int no, boolean flag) {
+        if (isTrue(id, no) != flag) {
+            byte b0 = (Byte) getValue(id, (byte) 0);
+            if (flag) {
+                setValue(id, (byte) (b0 | (no)));
+            } else {
+                setValue(id, (byte) (b0 & -(no + 1)));
+            }
+            sendData(id);
         }
     }
 
     public void setInvisible(boolean setInvis) {
         if (isInvisible() != setInvis) {
-            setFlag(5, true);
+            setFlag(0, 5, true);
             sendData(5);
         }
     }
 
     public void setRiding(boolean setRiding) {
         if (isSprinting() != setRiding) {
-            setFlag(2, true);
+            setFlag(0, 2, true);
             sendData(2);
         }
     }
 
     public void setRightClicking(boolean setRightClicking) {
         if (isRightClicking() != setRightClicking) {
-            setFlag(4, true);
+            setFlag(0, 4, true);
             sendData(4);
         }
     }
 
     public void setSneaking(boolean setSneaking) {
         if (isSneaking() != setSneaking) {
-            setFlag(1, true);
+            setFlag(0, 1, true);
             sendData(1);
         }
     }
 
     public void setSprinting(boolean setSprinting) {
         if (isSprinting() != setSprinting) {
-            setFlag(3, true);
+            setFlag(0, 3, true);
             sendData(3);
         }
     }

@@ -4,12 +4,10 @@ public class PlayerWatcher extends LivingWatcher {
 
     public PlayerWatcher(int entityId) {
         super(entityId);
-        setValue(9, (byte) 0);
-        setValue(18, 0);
     }
 
     public int getArrowsSticking() {
-        return (Byte) getValue(9);
+        return (Byte) getValue(9, (byte) 0);
     }
 
     public void setArrowsSticking(int arrowsNo) {

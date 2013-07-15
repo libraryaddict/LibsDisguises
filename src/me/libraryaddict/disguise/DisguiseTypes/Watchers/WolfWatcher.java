@@ -6,23 +6,18 @@ public class WolfWatcher extends AgeableWatcher {
 
     public WolfWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) 0);
-        setValue(17, "");
-        setValue(18, 8F);
-        setValue(19, (byte) 0);
-        setValue(20, (byte) 14);
     }
 
     public AnimalColor getCollarColor() {
-        return AnimalColor.values()[(Byte) getValue(20)];
+        return AnimalColor.values()[(Byte) getValue(20, (byte) 14)];
     }
 
     public float getHealth() {
-        return (Float) getValue(18);
+        return (Float) getValue(18, 8F);
     }
 
     public String getName() {
-        return (String) getValue(17);
+        return (String) getValue(17, "");
     }
 
     public boolean isAngry() {
@@ -38,7 +33,7 @@ public class WolfWatcher extends AgeableWatcher {
     }
 
     private boolean isTrue(int no) {
-        return ((Byte) getValue(16) & no) != 0;
+        return ((Byte) getValue(16, (byte) 0) & no) != 0;
     }
 
     public void setAngry(boolean angry) {
@@ -54,7 +49,7 @@ public class WolfWatcher extends AgeableWatcher {
 
     private void setFlag(int no, boolean flag) {
         if (isTrue(no) != flag) {
-            byte b0 = (Byte) getValue(16);
+            byte b0 = (Byte) getValue(16, (byte) 0);
             if (flag) {
                 setValue(16, (byte) (b0 | (no)));
             } else {

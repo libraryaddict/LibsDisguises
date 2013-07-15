@@ -9,14 +9,14 @@ public class ItemFrameWatcher extends FlagWatcher {
 
     public ItemFrameWatcher(int entityId) {
         super(entityId);
-        setValue(2, 5);
-        setValue(3, (byte) 0);
+        // setValue(2, CraftItemStack.asCraftCopy(new ItemStack(0)));
+        // setValue(3, (byte) 0);
     }
 
     public ItemStack getItemStack() {
-        if (getValue(3) instanceof Integer)
+        if (getValue(3, (byte) 0) instanceof Integer)
             return new ItemStack(0);
-        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R2.ItemStack) getValue(3));
+        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R2.ItemStack) getValue(3, null));
     }
 
     public void setItemStack(ItemStack newItem) {

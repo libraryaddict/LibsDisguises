@@ -4,11 +4,10 @@ public class PigWatcher extends AgeableWatcher {
 
     public PigWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) 0);
     }
 
     public boolean isSaddled() {
-        return (Byte) getValue(16) == 0;
+        return (Byte) getValue(16, (byte) 0) == 1;
     }
 
     public void setSaddled(boolean isSaddled) {

@@ -4,7 +4,7 @@ public class DonkeyWatcher extends HorseWatcher {
 
     public DonkeyWatcher(int entityId) {
         super(entityId);
-        setHorseType(1);
+        setValue(19, (byte) 1);
     }
 
 }

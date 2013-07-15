@@ -4,22 +4,21 @@ import java.util.HashMap;
 
 public class Values {
 
-    private static HashMap<DisguiseType, HashMap<String, Double>> attributesValues = new HashMap<DisguiseType, HashMap<String, Double>>();
-    private static HashMap<DisguiseType, HashMap<Integer, Object>> metaValues = new HashMap<DisguiseType, HashMap<Integer, Object>>();
+    private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
 
     public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
-        if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.ZOMBIE_HORSE
-                || type == DisguiseType.SKELETON_HORSE)
-            type = DisguiseType.HORSE;
-        if (type == DisguiseType.MINECART_CHEST || type == DisguiseType.MINECART_FURNACE || type == DisguiseType.MINECART_HOPPER
-                || type == DisguiseType.MINECART_TNT || type == DisguiseType.MINECART_MOB_SPAWNER)
-            type = DisguiseType.MINECART_RIDEABLE;
-        if (type == DisguiseType.WITHER_SKELETON)
-            type = DisguiseType.SKELETON;
-        return attributesValues.get(type);
+        return getValues(type).getAttributesValues();
+    }
+
+    public static Class getEntityClass(DisguiseType type) {
+        return getValues(type).getEntityClass();
     }
 
     public static HashMap<Integer, Object> getMetaValues(DisguiseType type) {
+        return getValues(type).getMetaValues();
+    }
+
+    public static Values getValues(DisguiseType type) {
         if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.ZOMBIE_HORSE
                 || type == DisguiseType.SKELETON_HORSE)
             type = DisguiseType.HORSE;
@@ -28,22 +27,35 @@ public class Values {
             type = DisguiseType.MINECART_RIDEABLE;
         if (type == DisguiseType.WITHER_SKELETON)
             type = DisguiseType.SKELETON;
-        return metaValues.get(type);
+        return values.get(type);
     }
 
-    private DisguiseType type;
+    private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
 
-    public Values(DisguiseType type) {
-        this.type = type;
-        metaValues.put(this.type, new HashMap<Integer, Object>());
-        attributesValues.put(this.type, new HashMap<String, Double>());
+    private Class declared;
+
+    private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
+
+    public Values(DisguiseType type, Class classType) {
+        values.put(type, this);
+        declared = classType;
+    }
+    public HashMap<String, Double> getAttributesValues() {
+        return attributesValues;
+    }
+    public Class getEntityClass() {
+        return declared;
+    }
+
+    public HashMap<Integer, Object> getMetaValues() {
+        return metaValues;
     }
 
     public void setAttributesValue(String attribute, Double value) {
-        attributesValues.get(type).put(attribute, value);
+        attributesValues.put(attribute, value);
     }
 
     public void setMetaValue(int no, Object value) {
-        metaValues.get(type).put(no, value);
+        metaValues.put(no, value);
     }
 }

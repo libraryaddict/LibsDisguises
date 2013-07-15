@@ -6,20 +6,25 @@ public class BoatWatcher extends FlagWatcher {
 
     public BoatWatcher(int entityId) {
         super(entityId);
-        setValue(17, 10);
-        setValue(18, 0);
-        setValue(19, 40);
     }
 
-    public void setDamage(int dmg) {
-        if ((Integer) getValue(19) != dmg) {
+    public int getDamage() {
+        return (Integer) getValue(19, 40F);
+    }
+
+    public int getHealth() {
+        return (Integer) getValue(17, 10);
+    }
+
+    public void setDamage(float dmg) {
+        if ((Float) getValue(19, 40F) != dmg) {
             setValue(19, dmg);
             sendData(19);
         }
     }
-    
+
     public void setHealth(int health) {
-        if ((Integer) getValue(17) != health) {
+        if ((Integer) getValue(17, 10) != health) {
             setValue(17, health);
             sendData(17);
         }

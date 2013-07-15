@@ -4,7 +4,7 @@ public class ZombieHorseWatcher extends HorseWatcher {
 
     public ZombieHorseWatcher(int entityId) {
         super(entityId);
-        setHorseType(3);
+        setValue(19, (byte) 3);
     }
 
 }

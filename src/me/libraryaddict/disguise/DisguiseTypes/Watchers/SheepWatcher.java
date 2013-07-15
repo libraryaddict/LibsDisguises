@@ -10,16 +10,16 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public AnimalColor getColor() {
-        return AnimalColor.values()[(Byte) getValue(16) & 15];
+        return AnimalColor.values()[(Byte) getValue(16, (byte) 0) & 15];
     }
 
     public boolean isSheared() {
-        return ((Byte) getValue(16) & 16) != 0;
+        return ((Byte) getValue(16, (byte) 0) & 16) != 0;
     }
 
     public void setColor(AnimalColor color) {
         if (getColor() != color) {
-            byte b0 = (Byte) getValue(16);
+            byte b0 = (Byte) getValue(16, (byte) 0);
             setValue(16, (byte) (b0 & 240 | color.getId() & 15));
             sendData(16);
         }
@@ -27,7 +27,7 @@ public class SheepWatcher extends AgeableWatcher {
 
     public void setSheared(boolean flag) {
         if (isSheared() != flag) {
-            byte b0 = (Byte) getValue(16);
+            byte b0 = (Byte) getValue(16, (byte) 0);
             if (flag) {
                 setValue(16, (byte) (b0 | 16));
             } else {

@@ -4,11 +4,10 @@ public class BlazeWatcher extends LivingWatcher {
 
     public BlazeWatcher(int entityId) {
         super(entityId);
-        setValue(16, (byte) 0);
     }
 
     public boolean isBlazing() {
-        return (Byte) getValue(16) == 1;
+        return (Byte) getValue(16, (byte) 0) == 1;
     }
 
     public void setBlazing(boolean isBlazing) {

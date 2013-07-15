@@ -16,8 +16,6 @@ public class LivingWatcher extends FlagWatcher {
 
     public LivingWatcher(int entityId) {
         super(entityId);
-        setValue(10, "");
-        setValue(11, (byte) 0);
     }
 
     public void addPotionEffect(PotionEffect potionEffect) {
@@ -28,11 +26,15 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public String getCustomName() {
-        return (String) getValue(10);
+        return (String) getValue(10, "");
+    }
+
+    public float getHealth() {
+        return (Float) getValue(6, 0F);
     }
 
     public boolean getPotionParticlesRemoved() {
-        return (Byte) getValue(8) == 1;
+        return (Byte) getValue(8, (byte) 0) == 1;
     }
 
     public boolean hasCustomName() {
@@ -44,6 +46,10 @@ public class LivingWatcher extends FlagWatcher {
             if (effect.getEffectId() == type.getId())
                 return true;
         return false;
+    }
+
+    public boolean isCustomNameVisible() {
+        return (Byte) getValue(11, (byte) 0) == 1;
     }
 
     public void removePotionEffect(PotionEffectType type) {
@@ -78,10 +84,15 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setCustomNameVisible(boolean display) {
-        if ((Byte) getValue(11) != (display ? 1 : 0)) {
+        if (this.isCustomNameVisible()) {
             setValue(11, (byte) (display ? 1 : 0));
             sendData(11);
         }
+    }
+
+    public void setHealth(float health) {
+        setValue(6, health);
+        sendData(6);
     }
 
 }

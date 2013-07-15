@@ -4,7 +4,7 @@ public class SkeletonHorseWatcher extends HorseWatcher {
 
     public SkeletonHorseWatcher(int entityId) {
         super(entityId);
-        setHorseType(4);
+        setValue(19, (byte) 4);
     }
 
 }
