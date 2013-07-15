@@ -143,7 +143,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                                     e.printStackTrace();
                                                 }
                                             }
-                                        }, 5);
+                                        });
                                     }
                                 }
                             } else {
@@ -159,7 +159,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                                 e.printStackTrace();
                                             }
                                         }
-                                    }, 5);
+                                    });
                                 }
                             }
                         } else if (event.getPacketID() == Packets.Server.MOB_SPAWN
@@ -178,7 +178,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                             e.printStackTrace();
                                         }
                                     }
-                                }, 5);
+                                });
                             }
                         } else if (event.getPacketID() == Packets.Server.ARM_ANIMATION
                                 || event.getPacketID() == Packets.Server.COLLECT) {
