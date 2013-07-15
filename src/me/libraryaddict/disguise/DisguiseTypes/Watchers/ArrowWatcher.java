@@ -6,6 +6,7 @@ public class ArrowWatcher extends FlagWatcher {
 
     public ArrowWatcher(int entityId) {
         super(entityId);
+        setValue(16, (byte) 0);
     }
 
     public boolean isMoving() {

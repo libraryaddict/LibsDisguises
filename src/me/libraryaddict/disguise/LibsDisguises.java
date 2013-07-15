@@ -143,7 +143,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                                     e.printStackTrace();
                                                 }
                                             }
-                                        });
+                                        }, 5);
                                     }
                                 }
                             } else {
@@ -159,7 +159,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                                 e.printStackTrace();
                                             }
                                         }
-                                    });
+                                    }, 5);
                                 }
                             }
                         } else if (event.getPacketID() == Packets.Server.MOB_SPAWN
@@ -178,7 +178,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                             e.printStackTrace();
                                         }
                                     }
-                                });
+                                }, 5);
                             }
                         } else if (event.getPacketID() == Packets.Server.ARM_ANIMATION
                                 || event.getPacketID() == Packets.Server.COLLECT) {
@@ -195,10 +195,10 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                 mods.write(4, (byte) (value - 128));
                             } else if (disguise.getType().isMisc()) {
                                 byte value = (Byte) mods.read(4);
-                                if (disguise.getType() == DisguiseType.ITEM_FRAME) {
-                                    mods.write(4, -value);
+                                if (disguise.getType() == DisguiseType.ITEM_FRAME || disguise.getType() == DisguiseType.ARROW) {
+                                    mods.write(4, (byte) -value);
                                 } else if (disguise.getType() == DisguiseType.PAINTING) {
-                                    mods.write(4, -(value + 128));
+                                    mods.write(4, (byte) -(value + 128));
                                 } else if (disguise.getType().isMisc())
                                     mods.write(4, (byte) (value - 64));
                             }

@@ -44,7 +44,7 @@ public class Disguise {
     }
 
     public PacketContainer[] constructPacket(org.bukkit.entity.Entity e) {
-        PacketContainer[] spawnPackets = new PacketContainer[1];
+        PacketContainer[] spawnPackets = new PacketContainer[2];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         Entity entity = ((CraftEntity) e).getHandle();
         Location loc = e.getLocation();
@@ -60,7 +60,6 @@ public class Disguise {
             mods.write(4, 1);
 
         } else if (getType() == DisguiseType.PAINTING) {
-            spawnPackets = new PacketContainer[2];
             spawnPackets[0] = manager.createPacket(Packets.Server.ENTITY_PAINTING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
@@ -229,7 +228,13 @@ public class Disguise {
             mods.write(8, entity.getDataWatcher());
 
         }
-
+        if (spawnPackets[1] == null) {
+            // Make a packet to turn his head!
+            spawnPackets[1] = manager.createPacket(Packets.Server.ENTITY_HEAD_ROTATION);
+            StructureModifier<Object> mods = spawnPackets[1].getModifier();
+            mods.write(0, e.getEntityId());
+            mods.write(1, (byte) (int) Math.floor(loc.getYaw() * 256.0F / 360.0F));
+        }
         return spawnPackets;
     }
 
