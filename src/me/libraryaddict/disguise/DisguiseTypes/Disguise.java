@@ -46,7 +46,6 @@ public class Disguise {
 
     public Disguise clone() {
         Disguise disguise = new Disguise(getType(), replaceSounds());
-        disguise.watcher = watcher.clone();
         return disguise;
     }
 
@@ -348,6 +347,10 @@ public class Disguise {
 
     public void setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
+    }
+    
+    public void setWatcher(FlagWatcher newWatcher) {
+        watcher = newWatcher;
     }
 
     private String toReadable(String string) {
