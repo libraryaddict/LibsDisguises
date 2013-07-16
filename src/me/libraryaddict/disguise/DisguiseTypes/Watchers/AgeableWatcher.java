@@ -12,7 +12,7 @@ public abstract class AgeableWatcher extends LivingWatcher {
 
     public void setAdult(boolean isAdult) {
         if (isAdult != isAdult()) {
-            setValue(12, isAdult ? 0 : -23999);
+            setValue(12, isAdult ? 0 : -24000);
             sendData(12);
         }
     }

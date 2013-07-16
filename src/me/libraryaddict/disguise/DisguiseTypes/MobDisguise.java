@@ -1,13 +1,14 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
 
 public class MobDisguise extends Disguise {
 
     private boolean isAdult;
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
-        super(disguiseType, true);
+        this(disguiseType, isAdult, true);
     }
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
@@ -15,11 +16,18 @@ public class MobDisguise extends Disguise {
         this.isAdult = isAdult;
     }
 
+    public MobDisguise clone() {
+        MobDisguise disguise = new MobDisguise(getType(), isAdult(), replaceSounds());
+        return disguise;
+    }
+
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher)
                 return ((AgeableWatcher) getWatcher()).isAdult();
-            return false;
+            else if (getWatcher() instanceof ZombieWatcher)
+                return ((ZombieWatcher) getWatcher()).isAdult();
+            return isAdult;
         }
         return isAdult;
     }
