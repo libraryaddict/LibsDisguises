@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class UndisguiseRadiusCommand implements CommandExecutor {
+    private int maxRadius = 30;
 
     private boolean isNumeric(String string) {
         try {
@@ -20,6 +21,10 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         }
     }
 
+    public UndisguiseRadiusCommand(int maxRadius) {
+        this.maxRadius = maxRadius;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
@@ -27,7 +32,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             return true;
         }
         if (sender.hasPermission("libsdisguises.undisguiseradius")) {
-            int radius = 30;
+            int radius = maxRadius;
             if (args.length > 0) {
                 if (!isNumeric(args[0])) {
                     sender.sendMessage(ChatColor.RED + "Error! " + ChatColor.GREEN + args[0] + ChatColor.RED
@@ -35,6 +40,11 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                     return true;
                 }
                 radius = Integer.parseInt(args[0]);
+                if (radius > maxRadius) {
+                    sender.sendMessage(ChatColor.RED + "Limited radius to " + maxRadius
+                            + "! Don't want to make too much lag right?");
+                    radius = maxRadius;
+                }
             }
             int disguisedEntitys = 0;
             for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {

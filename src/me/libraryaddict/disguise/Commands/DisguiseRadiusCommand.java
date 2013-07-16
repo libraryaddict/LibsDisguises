@@ -19,6 +19,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class DisguiseRadiusCommand implements CommandExecutor {
+    private int maxRadius = 30;
+
+    public DisguiseRadiusCommand(int maxRadius) {
+        this.maxRadius = maxRadius;
+    }
 
     private ArrayList<String> allowedDisguises(CommandSender sender) {
         ArrayList<String> names = new ArrayList<String>();
@@ -75,9 +80,10 @@ public class DisguiseRadiusCommand implements CommandExecutor {
                     if (allowedDisguises.contains(args[1].toLowerCase())) {
                         // He can use the disguise huh.
                         int radius = Integer.parseInt(args[0]);
-                        if (radius > 30) {
-                            sender.sendMessage(ChatColor.RED + "Limited radius to 30! Don't want to make too much lag right?");
-                            radius = 30;
+                        if (radius > maxRadius) {
+                            sender.sendMessage(ChatColor.RED + "Limited radius to " + maxRadius
+                                    + "! Don't want to make too much lag right?");
+                            radius = maxRadius;
                         }
                         Disguise disguise = null;
                         // Time to start constructing the disguise.

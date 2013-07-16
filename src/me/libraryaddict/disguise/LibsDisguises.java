@@ -220,6 +220,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 }
             }
         });
+        saveDefaultConfig();
         DisguiseListener listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());
@@ -228,9 +229,8 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
         getCommand("undisguiseentity").setExecutor(new UndisguiseEntityCommand(listener));
         getCommand("disguiseentity").setExecutor(new DisguiseEntityCommand(listener));
-        getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand());
-        getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand());
-        saveDefaultConfig();
+        getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+        getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
         permission = getConfig().getString("Permission");
         if (getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = getDescription().getVersion();
