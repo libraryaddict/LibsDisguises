@@ -9,8 +9,6 @@ public class ItemFrameWatcher extends FlagWatcher {
 
     public ItemFrameWatcher(int entityId) {
         super(entityId);
-        // setValue(2, CraftItemStack.asCraftCopy(new ItemStack(0)));
-        // setValue(3, (byte) 0);
     }
 
     public ItemStack getItemStack() {

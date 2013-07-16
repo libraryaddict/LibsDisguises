@@ -25,6 +25,12 @@ public class LivingWatcher extends FlagWatcher {
         sendPotionEffects();
     }
 
+    public LivingWatcher clone() {
+        LivingWatcher clone = this.clone();
+        clone.potionEffects = (HashSet<MobEffect>) potionEffects.clone();
+        return clone;
+    }
+
     public String getCustomName() {
         return (String) getValue(10, "");
     }

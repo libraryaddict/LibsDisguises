@@ -46,6 +46,7 @@ public class Disguise {
 
     public Disguise clone() {
         Disguise disguise = new Disguise(getType(), replaceSounds());
+        disguise.watcher = watcher.clone();
         return disguise;
     }
 

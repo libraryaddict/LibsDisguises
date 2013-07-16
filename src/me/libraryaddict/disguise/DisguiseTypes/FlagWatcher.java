@@ -36,6 +36,12 @@ public class FlagWatcher {
     protected FlagWatcher(int entityId) {
         this.entityId = entityId;
     }
+    
+    public FlagWatcher clone() {
+        FlagWatcher cloned = new FlagWatcher(entityId);
+        cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
+        return cloned;
+    }
 
     public List<WatchableObject> convert(List<WatchableObject> list) {
         Iterator<WatchableObject> itel = list.iterator();
