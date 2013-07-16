@@ -24,10 +24,10 @@ public class DisguisePlayerCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises.disguiseothers." + name))
+            if (sender.hasPermission("libsdisguises.disguiseentity." + name))
                 names.add(name);
         }
-        Collections.sort(names);
+        Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
         return names;
     }
 
@@ -35,10 +35,10 @@ public class DisguisePlayerCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (!sender.hasPermission("libsdisguises.disguiseothers." + name))
+            if (!sender.hasPermission("libsdisguises.disguiseentity." + name))
                 names.add(name);
         }
-        Collections.sort(names);
+        Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
         return names;
     }
 
@@ -53,114 +53,120 @@ public class DisguisePlayerCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.hasPermission("libsdisguises.disguiseothers")
-                || (args.length > 0 && args[0].toLowerCase().startsWith("un") && sender
-                        .hasPermission("libsdisguises.undisguiseothers"))) {
-            if (args.length == 0) {
-                ArrayList<String> names = allowedDisguises(sender);
-                ArrayList<String> otherNames = forbiddenDisguises(sender);
-                if (names.size() > 0) {
-                    sender.sendMessage(ChatColor.RED + "You can use the disguises: " + ChatColor.GREEN
-                            + StringUtils.join(names, ChatColor.RED + ", " + ChatColor.GREEN));
-                    if (otherNames.size() > 0) {
-                        sender.sendMessage(ChatColor.RED + "Other disguises: " + ChatColor.GREEN
-                                + StringUtils.join(names, ChatColor.RED + ", " + ChatColor.GREEN));
-                    }
-                } else
-                    sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
-            } else {
+        // What disguises can he use
+        ArrayList<String> allowedDisguises = allowedDisguises(sender);
+        // If he owns at least one disguise
+        if (allowedDisguises.size() > 0) {
+            // Get his forbidden disguises (Disguises he can't use) for later use
+            ArrayList<String> forbiddenDisguises = forbiddenDisguises(sender);
+            // If he is attempting to do something
+            if (args.length > 0) {// Better go check that the player exists.
+                Player player = Bukkit.getPlayer(args[0]);
+                if (player == null) {// Player doesn't exist. Knew it!
+                    sender.sendMessage(ChatColor.RED + "Error! Player " + ChatColor.GREEN + args[0] + ChatColor.RED
+                            + " doesn't exist!");
+                    return true;
+                }
                 if (args.length > 1) {
-                    Player p = Bukkit.getPlayer(args[0]);
-                    if (p != null) {
-                        if (args[1].equalsIgnoreCase("undiguise") || args[1].equalsIgnoreCase("undis")
-                                || args[1].equalsIgnoreCase("un")) {
-                            if (sender.hasPermission("libsdisguises.undisguiseothers")) {
-                                if (DisguiseAPI.isDisguised(p.getName())) {
-                                    DisguiseAPI.undisguiseToAll(p);
-                                    sender.sendMessage(ChatColor.RED + "They are no longer disguised");
-                                } else
-                                    sender.sendMessage(ChatColor.RED + "They are not disguised!");
-                            } else
-                                sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
-                        } else if (args[1].equalsIgnoreCase("player")) {
-                            if (sender.hasPermission("libsdisguises.disguiseothers.player")) {
-                                if (args.length > 2) {
-                                    String name = ChatColor.translateAlternateColorCodes('&', StringUtils.join(args, " ")
-                                            .substring(args[0].length() + args[1].length() + 2));
-                                    PlayerDisguise disguise = new PlayerDisguise(name);
-                                    DisguiseAPI.disguiseToAll(p, disguise);
-                                    sender.sendMessage(ChatColor.RED + "Disguised " + p.getName() + " as the player '"
-                                            + ChatColor.GREEN + name + ChatColor.RESET + ChatColor.RED + "'");
-                                } else
-                                    sender.sendMessage(ChatColor.RED + "You need to provide a player name");
+                    // If he owns the disguise
+                    if (allowedDisguises.contains(args[1].toLowerCase())) {
+                        // He can use the disguise huh.
+                        Disguise disguise = null;
+                        // Time to start constructing the disguise.
+                        // We will need to check between all 3 kinds of disguises
+                        if (args[1].equalsIgnoreCase("player")) { // If he is doing a player disguise
+                            // Did he give enough args?
+                            if (args.length == 2) {
+                                // He needs to give the player name
+                                sender.sendMessage(ChatColor.RED + "Error! You need to give a player name!");
+                                return true;
                             } else {
-                                sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+                                // Construct the player disguise
+                                disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[2]));
                             }
-
                         } else {
-                            if (allowedDisguises(sender).size() == 0) {
-                                sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
-                                return true;
-                            }
-                            DisguiseType type;
-                            try {
-                                type = DisguiseType.valueOf(args[1].toUpperCase());
-                            } catch (Exception ex) {
-                                sender.sendMessage(ChatColor.RED
-                                        + "Failed to find disguise: "
-                                        + ChatColor.GREEN
-                                        + args[1]
-                                        + "\n/disguiseplayer <Name> player <Name>\n/disguiseplayer <Name><Mob Name>\n/disguiseplayer <Name> undisguise/un/undis\n/undisguiseplayer");
-                                return true;
-                            }
-                            if (sender.hasPermission("libsdisguises.disguiseothers." + type.name().toLowerCase())) {
-                                Object args1 = true;
-                                if (type.isMisc())
-                                    args1 = -1;
-                                int args2 = -1;
+                            // Grab the disguise type so we know what constructor to use
+                            DisguiseType disguiseType = DisguiseType.valueOf(args[1].toUpperCase());
+                            if (disguiseType.isMob()) { // Its a mob, use the mob constructor
+                                boolean adult = true;
                                 if (args.length > 2) {
-                                    if (type.isMob()) {
-                                        if (args[2].equalsIgnoreCase("true")) {
-                                            args1 = false;
-                                        } else if (!args[2].equalsIgnoreCase("false")) {
-                                            sender.sendMessage(ChatColor.RED + "Set baby: " + ChatColor.GREEN + args[2]
-                                                    + ChatColor.RED + " - Thats not true or false..");
-                                            return true;
-                                        }
-                                    } else if (type.isMisc()) {
-                                        if (isNumeric(args[2])) {
-                                            args1 = Integer.parseInt(args[2]);
+                                    // Seems they want to make this a baby disguise!
+                                    if (!args[2].equalsIgnoreCase("false") && !args[2].equalsIgnoreCase("true")) {
+                                        sender.sendMessage(ChatColor.RED + "Error! " + ChatColor.GREEN + args[2] + ChatColor.RED
+                                                + " isn't true or false!");
+                                        return true;
+                                    }
+                                    adult = args[1].equalsIgnoreCase("false");
+                                }
+                                disguise = new MobDisguise(disguiseType, adult);
+                            } else if (disguiseType.isMisc()) {
+                                // Its a misc, we are going to use the MiscDisguise constructor.
+                                int miscId = -1;
+                                int miscData = -1;
+                                if (args.length > 2) {
+                                    // They have defined more arguements!
+                                    // If the first arg is a number
+                                    if (isNumeric(args[2])) {
+                                        miscId = Integer.parseInt(args[2]);
+                                    } else {
+                                        // Send them a error
+                                        sender.sendMessage(ChatColor.RED + "Error! " + ChatColor.GREEN + args[2] + ChatColor.RED
+                                                + " is not a number!");
+                                        return true;
+                                    }
+                                    // If they also defined a data value
+                                    if (args.length > 3) {
+                                        if (isNumeric(args[3])) {
+                                            miscData = Integer.parseInt(args[3]);
                                         } else {
-                                            sender.sendMessage(ChatColor.RED + args[2] + " is not a number");
+                                            // Send them a error
+                                            sender.sendMessage(ChatColor.RED + "Error! " + ChatColor.GREEN + args[3]
+                                                    + ChatColor.RED + " is not a number!");
                                             return true;
                                         }
-                                        if (args.length > 3)
-                                            if (isNumeric(args[3])) {
-                                                args2 = Integer.parseInt(args[3]);
-                                            } else {
-                                                sender.sendMessage(ChatColor.RED + args[3] + " is not a number");
-                                                return true;
-                                            }
                                     }
                                 }
-                                Disguise disguise;
-                                if (type.isMob())
-                                    disguise = new MobDisguise(type, (Boolean) args1);
-                                else
-                                    disguise = new MiscDisguise(type, (Integer) args1, args2);
-                                DisguiseAPI.disguiseToAll(p, disguise);
-                                sender.sendMessage(ChatColor.RED + "Disguised " + p.getName() + " as a "
-                                        + type.name().toLowerCase() + "!");
-                            } else
-                                sender.sendMessage(ChatColor.RED + "You do not have permission to use this disguise.");
+                                // Construct the disguise
+                                disguise = new MiscDisguise(disguiseType, true, miscId, miscData);
+                            }
                         }
-                    } else
-                        sender.sendMessage(ChatColor.RED + "Player not found");
+                        // Alright. We've constructed our disguise.
+                        // Time to use it!
+                        DisguiseAPI.disguiseToAll(player, disguise);
+                        sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + "!");
+                    } else {
+                        // He doesn't. Either tell him its incorrect or he isn't allowed to use it
+                        if (forbiddenDisguises.contains(args[0].toLowerCase())) {
+                            // He isn't allowed to use it..
+                            sender.sendMessage(ChatColor.RED + "You are forbidden to use this disguise!");
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
+                                    + " doesn't exist!");
+                        }
+                    }
                 } else
-                    sender.sendMessage(ChatColor.RED + "/disguiseplayer <Name> <Disguise>");
+                    sender.sendMessage(ChatColor.RED + "Error! You need to state a disguise!");
+            } else {
+                // Just send the disguises information.
+                sendDisguises(sender, allowedDisguises, forbiddenDisguises);
             }
         } else
-            sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command!");
         return true;
+    }
+
+    /**
+     * Send the player the information
+     */
+    private void sendDisguises(CommandSender sender, ArrayList<String> allowedDisguises, ArrayList<String> forbiddenDisguises) {
+        sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");
+        sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
+                + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
+        if (allowedDisguises.contains("player"))
+            sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> player <Name>");
+        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> <DisguiseType> <Baby>");
+        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block"))
+            sender.sendMessage(ChatColor.DARK_GREEN
+                    + "/disguiseplayer <PlayerName> <Dropped_Item/Falling_Block> <Id> <Durability>");
     }
 }

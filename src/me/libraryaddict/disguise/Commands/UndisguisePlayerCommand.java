@@ -27,7 +27,7 @@ public class UndisguisePlayerCommand implements CommandExecutor {
             } else
                 sender.sendMessage(ChatColor.RED + "/undisguiseplayer <Name>");
         } else
-            sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command!");
         return true;
     }
 }
