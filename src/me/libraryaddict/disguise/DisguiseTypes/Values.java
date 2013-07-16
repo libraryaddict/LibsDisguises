@@ -40,9 +40,11 @@ public class Values {
         values.put(type, this);
         declared = classType;
     }
+
     public HashMap<String, Double> getAttributesValues() {
         return attributesValues;
     }
+
     public Class getEntityClass() {
         return declared;
     }

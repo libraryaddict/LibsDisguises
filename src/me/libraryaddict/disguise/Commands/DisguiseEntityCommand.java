@@ -95,7 +95,7 @@ public class DisguiseEntityCommand implements CommandExecutor {
                                             + " isn't true or false!");
                                     return true;
                                 }
-                                adult = args[1].equalsIgnoreCase("false");
+                                adult = args[1].equalsIgnoreCase("false"); // Adult = !arg
                             }
                             disguise = new MobDisguise(disguiseType, adult);
                         } else if (disguiseType.isMisc()) {

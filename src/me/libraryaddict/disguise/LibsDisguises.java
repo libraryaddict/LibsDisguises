@@ -6,10 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import me.libraryaddict.disguise.Commands.DisguiseCommand;
-import me.libraryaddict.disguise.Commands.DisguisePlayerCommand;
-import me.libraryaddict.disguise.Commands.UndisguiseCommand;
-import me.libraryaddict.disguise.Commands.UndisguisePlayerCommand;
+import me.libraryaddict.disguise.Commands.*;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
@@ -131,7 +128,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                 StructureModifier<Object> mods = event.getPacket().getModifier();
                                 String name = (String) mods.read(1);
                                 if (!name.equals(((PlayerDisguise) disguise).getName())) {
-                                    // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
                                     final PacketContainer[] packets = disguise.constructPacket(entity);
                                     event.setPacket(packets[0]);
                                     if (packets.length > 1) {
@@ -147,7 +143,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                     }
                                 }
                             } else {
-                                // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
                                 final PacketContainer[] packets = disguise.constructPacket(entity);
                                 event.setPacket(packets[0]);
                                 if (packets.length > 1) {
@@ -166,7 +161,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                                 || event.getPacketID() == Packets.Server.ADD_EXP_ORB
                                 || event.getPacketID() == Packets.Server.VEHICLE_SPAWN
                                 || event.getPacketID() == Packets.Server.ENTITY_PAINTING) {
-                            // manager.sendServerPacket(observer, disguise.constructDestroyPacket(entity.getEntityId()));
                             final PacketContainer[] packets = disguise.constructPacket(entity);
                             event.setPacket(packets[0]);
                             if (packets.length > 1) {
@@ -226,10 +220,16 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 }
             }
         });
+        DisguiseListener listener = new DisguiseListener(this);
+        Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());
         getCommand("undisguise").setExecutor(new UndisguiseCommand());
         getCommand("disguiseplayer").setExecutor(new DisguisePlayerCommand());
         getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
+        getCommand("undisguiseentity").setExecutor(new UndisguiseEntityCommand(listener));
+        getCommand("disguiseentity").setExecutor(new DisguiseEntityCommand(listener));
+        getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand());
+        getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand());
         saveDefaultConfig();
         permission = getConfig().getString("Permission");
         if (getConfig().getBoolean("NotifyUpdate")) {
