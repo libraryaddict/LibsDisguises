@@ -55,6 +55,8 @@ public class DisguiseAPI {
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         if (disguise == null)
             return;
+        if (disguise.getWatcher() != null)
+            disguise = disguise.clone();
         put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
         disguise.constructWatcher(entity.getType(), entity.getEntityId());
         refresh(entity);

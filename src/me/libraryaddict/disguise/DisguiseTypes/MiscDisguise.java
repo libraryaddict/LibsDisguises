@@ -26,6 +26,11 @@ public class MiscDisguise extends Disguise {
         this(disguiseType, true, id, data);
     }
 
+    public MiscDisguise clone() {
+        MiscDisguise disguise = new MiscDisguise(getType(), replaceSounds(), getId(), getData());
+        return disguise;
+    }
+
     public int getData() {
         return data;
     }

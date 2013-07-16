@@ -44,6 +44,11 @@ public class Disguise {
         replaceSounds = doSounds;
     }
 
+    public Disguise clone() {
+        Disguise disguise = new Disguise(getType(), replaceSounds());
+        return disguise;
+    }
+
     public PacketContainer[] constructPacket(org.bukkit.entity.Entity e) {
         PacketContainer[] spawnPackets = new PacketContainer[2];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -260,11 +265,11 @@ public class Disguise {
             else
                 tempWatcher = new FlagWatcher(entityId);
         }
-        if (this instanceof MobDisguise) {
+        if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
             if (tempWatcher instanceof AgeableWatcher)
-                tempWatcher.setValue(12, ((MobDisguise) this).isAdult() ? 0 : -24000);
+                tempWatcher.setValue(12, -24000);
             else if (tempWatcher instanceof ZombieWatcher)
-                tempWatcher.setValue(12, (byte) (((MobDisguise) this).isAdult() ? 0 : 1));
+                tempWatcher.setValue(12, (byte) 1);
         }
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(type));

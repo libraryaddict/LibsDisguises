@@ -14,6 +14,11 @@ public class PlayerDisguise extends Disguise {
         playerName = name;
     }
 
+    public PlayerDisguise clone() {
+        PlayerDisguise disguise = new PlayerDisguise(getName(), replaceSounds());
+        return disguise;
+    }
+
     public String getName() {
         return playerName;
     }
