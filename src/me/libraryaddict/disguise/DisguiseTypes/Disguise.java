@@ -25,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -112,28 +113,25 @@ public class Disguise {
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
             mods.write(1, (byte) EntityTypes.a(entity));
-            String name = toReadable(disguiseType.name());
-            if (disguiseType == DisguiseType.WITHER_SKELETON) {
+            String name = toReadable(getType().name());
+            if (getType() == DisguiseType.WITHER_SKELETON) {
                 name = "Skeleton";
-            } else if (disguiseType == DisguiseType.PRIMED_TNT) {
+            } else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
+                name = "Zombie";
+            } else if (getType() == DisguiseType.PRIMED_TNT) {
                 name = "TNTPrimed";
-            } else if (disguiseType == DisguiseType.DONKEY) {
+            } else if (getType() == DisguiseType.DONKEY || getType() == DisguiseType.MULE
+                    || getType() == DisguiseType.UNDEAD_HORSE || getType() == DisguiseType.SKELETON_HORSE) {
                 name = "Horse";
-            } else if (disguiseType == DisguiseType.MULE) {
-                name = "Horse";
-            } else if (disguiseType == DisguiseType.ZOMBIE_HORSE) {
-                name = "Horse";
-            } else if (disguiseType == DisguiseType.SKELETON_HORSE) {
-                name = "Horse";
-            } else if (disguiseType == DisguiseType.MINECART_TNT) {
+            } else if (getType() == DisguiseType.MINECART_TNT) {
                 name = "MinecartTNT";
-            } else if (disguiseType == DisguiseType.SPLASH_POTION)
+            } else if (getType() == DisguiseType.SPLASH_POTION)
                 name = "Potion";
-            else if (disguiseType == DisguiseType.GIANT)
+            else if (getType() == DisguiseType.GIANT)
                 name = "GiantZombie";
-            else if (disguiseType == DisguiseType.DROPPED_ITEM)
+            else if (getType() == DisguiseType.DROPPED_ITEM)
                 name = "Item";
-            else if (disguiseType == DisguiseType.FIREBALL)
+            else if (getType() == DisguiseType.FIREBALL)
                 name = "LargeFireball";
             try {
                 Class entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
@@ -249,9 +247,16 @@ public class Disguise {
         try {
             String name;
             if (getType() == DisguiseType.MINECART_FURNACE || getType() == DisguiseType.MINECART_HOPPER
-                    || getType() == DisguiseType.MINECART_MOB_SPAWNER || getType() == DisguiseType.MINECART_RIDEABLE
-                    || getType() == DisguiseType.MINECART_TNT || getType() == DisguiseType.MINECART_CHEST) {
+                    || getType() == DisguiseType.MINECART_MOB_SPAWNER || getType() == DisguiseType.MINECART_TNT
+                    || getType() == DisguiseType.MINECART_CHEST) {
                 name = "Minecart";
+            } else if (getType() == DisguiseType.DONKEY || getType() == DisguiseType.MULE
+                    || getType() == DisguiseType.UNDEAD_HORSE || getType() == DisguiseType.SKELETON_HORSE) {
+                name = "Horse";
+            } else if (getType() == DisguiseType.WITHER_SKELETON) {
+                name = "Skeleton";
+            } else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
+                name = "Zombie";
             } else {
                 name = toReadable(getType().name());
             }
@@ -271,6 +276,17 @@ public class Disguise {
             else if (tempWatcher instanceof ZombieWatcher)
                 tempWatcher.setValue(12, (byte) 1);
         }
+        if (getType() == DisguiseType.WITHER_SKELETON)
+            tempWatcher.setValue(13, (byte) 1);
+        else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
+            tempWatcher.setValue(13, (byte) 1);
+        else
+            try {
+                Variant horseType = Variant.valueOf(getType().name());
+                tempWatcher.setValue(19, (byte) horseType.ordinal());
+            } catch (Exception ex) {
+                // Ok.. So it aint a horse
+            }
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(type));
         // Start from 2 as they ALL share 0 and 1
@@ -348,7 +364,7 @@ public class Disguise {
     public void setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
     }
-    
+
     public void setWatcher(FlagWatcher newWatcher) {
         watcher = newWatcher;
     }

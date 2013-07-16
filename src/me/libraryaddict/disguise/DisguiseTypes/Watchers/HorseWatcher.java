@@ -9,9 +9,7 @@ public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(int entityId) {
         super(entityId);
-        setValue(16, 0);
         setValue(20, new Random().nextInt(7));
-        setValue(22, 0);
     }
 
     public Color getColor() {

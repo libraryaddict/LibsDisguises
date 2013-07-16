@@ -270,18 +270,24 @@ public class LibsDisguises extends JavaPlugin implements Listener {
             String name = toReadable(disguiseType.name());
             if (disguiseType == DisguiseType.WITHER_SKELETON) {
                 continue;
+            } else if (disguiseType == DisguiseType.ZOMBIE_VILLAGER) {
+                continue;
             } else if (disguiseType == DisguiseType.PRIMED_TNT) {
                 name = "TNTPrimed";
             } else if (disguiseType == DisguiseType.DONKEY) {
                 continue;
             } else if (disguiseType == DisguiseType.MULE) {
                 continue;
-            } else if (disguiseType == DisguiseType.ZOMBIE_HORSE) {
+            } else if (disguiseType == DisguiseType.UNDEAD_HORSE) {
                 continue;
             } else if (disguiseType == DisguiseType.SKELETON_HORSE) {
                 continue;
             } else if (disguiseType == DisguiseType.MINECART_TNT) {
                 name = "MinecartTNT";
+            } else if (disguiseType == DisguiseType.MINECART) {
+                name = "MinecartRideable";
+            } else if (disguiseType == DisguiseType.FIREWORK) {
+                name = "Fireworks";
             } else if (disguiseType == DisguiseType.SPLASH_POTION)
                 name = "Potion";
             else if (disguiseType == DisguiseType.GIANT)

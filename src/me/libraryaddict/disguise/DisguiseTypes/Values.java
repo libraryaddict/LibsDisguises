@@ -19,14 +19,17 @@ public class Values {
     }
 
     public static Values getValues(DisguiseType type) {
-        if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.ZOMBIE_HORSE
+        if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.UNDEAD_HORSE
                 || type == DisguiseType.SKELETON_HORSE)
             type = DisguiseType.HORSE;
-        if (type == DisguiseType.MINECART_CHEST || type == DisguiseType.MINECART_FURNACE || type == DisguiseType.MINECART_HOPPER
-                || type == DisguiseType.MINECART_TNT || type == DisguiseType.MINECART_MOB_SPAWNER)
-            type = DisguiseType.MINECART_RIDEABLE;
-        if (type == DisguiseType.WITHER_SKELETON)
+        else if (type == DisguiseType.MINECART_CHEST || type == DisguiseType.MINECART_FURNACE
+                || type == DisguiseType.MINECART_HOPPER || type == DisguiseType.MINECART_TNT
+                || type == DisguiseType.MINECART_MOB_SPAWNER)
+            type = DisguiseType.MINECART;
+        else if (type == DisguiseType.WITHER_SKELETON)
             type = DisguiseType.SKELETON;
+        else if (type == DisguiseType.ZOMBIE_VILLAGER)
+            type = DisguiseType.ZOMBIE;
         return values.get(type);
     }
 

@@ -12,6 +12,10 @@ import org.bukkit.entity.Player;
 public class UndisguiseRadiusCommand implements CommandExecutor {
     private int maxRadius = 30;
 
+    public UndisguiseRadiusCommand(int maxRadius) {
+        this.maxRadius = maxRadius;
+    }
+
     private boolean isNumeric(String string) {
         try {
             Integer.parseInt(string);
@@ -19,10 +23,6 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         } catch (Exception ex) {
             return false;
         }
-    }
-
-    public UndisguiseRadiusCommand(int maxRadius) {
-        this.maxRadius = maxRadius;
     }
 
     @Override

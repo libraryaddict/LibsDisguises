@@ -1,131 +1,131 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
+import org.bukkit.entity.EntityType;
+
 public enum DisguiseType {
-    ARROW(EntityType.MISC, 60),
+    ARROW(EntityType.ARROW, 60),
 
-    BAT(EntityType.MOB),
+    BAT(EntityType.BAT),
 
-    BLAZE(EntityType.MOB),
+    BLAZE(EntityType.BLAZE),
 
-    BOAT(EntityType.MISC, 1),
+    BOAT(EntityType.BOAT, 1),
 
-    CAVE_SPIDER(EntityType.MOB),
+    CAVE_SPIDER(EntityType.CAVE_SPIDER),
 
-    CHICKEN(EntityType.MOB),
+    CHICKEN(EntityType.CHICKEN),
 
-    COW(EntityType.MOB),
+    COW(EntityType.COW),
 
-    CREEPER(EntityType.MOB),
+    CREEPER(EntityType.CREEPER),
 
-    DONKEY(EntityType.MOB),
+    DONKEY(EntityType.HORSE),
 
-    DROPPED_ITEM(EntityType.MISC, 2, 1),
+    DROPPED_ITEM(EntityType.DROPPED_ITEM, 2, 1),
 
-    EGG(EntityType.MISC, 62),
+    EGG(EntityType.EGG, 62),
 
-    ENDER_CRYSTAL(EntityType.MISC, 51),
+    ENDER_CRYSTAL(EntityType.ENDER_CRYSTAL, 51),
 
-    ENDER_DRAGON(EntityType.MOB),
+    ENDER_DRAGON(EntityType.ENDER_DRAGON),
 
-    ENDER_PEARL(EntityType.MISC, 65),
+    ENDER_PEARL(EntityType.ENDER_PEARL, 65),
 
-    ENDER_SIGNAL(EntityType.MISC, 72),
+    ENDER_SIGNAL(EntityType.ENDER_SIGNAL, 72),
 
-    ENDERMAN(EntityType.MOB),
+    ENDERMAN(EntityType.ENDERMAN),
 
-    EXPERIENCE_ORB(EntityType.MISC),
+    EXPERIENCE_ORB(EntityType.EXPERIENCE_ORB),
 
-    FALLING_BLOCK(EntityType.MISC, 70, 1),
+    FALLING_BLOCK(EntityType.FALLING_BLOCK, 70, 1),
 
-    FIREBALL(EntityType.MISC, 63, 0),
+    FIREBALL(EntityType.FIREBALL, 63, 0),
 
-    FIREWORKS(EntityType.MISC, 76),
+    FIREWORK(EntityType.FIREWORK, 76),
 
-    FISHING_HOOK(EntityType.MISC, 90),
+    FISHING_HOOK(EntityType.FISHING_HOOK, 90),
 
-    GHAST(EntityType.MOB),
+    GHAST(EntityType.GHAST),
 
-    GIANT(EntityType.MOB),
+    GIANT(EntityType.GIANT),
 
-    HORSE(EntityType.MOB),
+    HORSE(EntityType.HORSE),
 
-    IRON_GOLEM(EntityType.MOB),
+    IRON_GOLEM(EntityType.IRON_GOLEM),
 
-    ITEM_FRAME(EntityType.MISC, 71),
+    ITEM_FRAME(EntityType.ITEM_FRAME, 71),
 
-    MAGMA_CUBE(EntityType.MOB),
+    MAGMA_CUBE(EntityType.MAGMA_CUBE),
 
-    MINECART_CHEST(EntityType.MISC, 10, 1),
+    MINECART(EntityType.MINECART, 10, 0),
 
-    MINECART_FURNACE(EntityType.MISC, 10, 2),
+    MINECART_CHEST(EntityType.MINECART_CHEST, 10, 1),
 
-    MINECART_HOPPER(EntityType.MISC, 10),
+    MINECART_FURNACE(EntityType.MINECART_FURNACE, 10, 2),
 
-    MINECART_MOB_SPAWNER(EntityType.MISC, 10, 4),
+    MINECART_HOPPER(EntityType.MINECART_HOPPER, 10),
 
-    MINECART_RIDEABLE(EntityType.MISC, 10, 0),
+    MINECART_MOB_SPAWNER(EntityType.MINECART_MOB_SPAWNER, 10, 4),
 
-    MINECART_TNT(EntityType.MISC, 10, 3),
+    MINECART_TNT(EntityType.MINECART_TNT, 10, 3),
 
-    MULE(EntityType.MOB),
+    MULE(EntityType.HORSE),
 
-    MUSHROOM_COW(EntityType.MOB),
+    MUSHROOM_COW(EntityType.MUSHROOM_COW),
 
-    OCELOT(EntityType.MOB),
+    OCELOT(EntityType.OCELOT),
 
-    PAINTING(EntityType.MISC),
+    PAINTING(EntityType.PAINTING),
 
-    PIG(EntityType.MOB),
+    PIG(EntityType.PIG),
 
-    PIG_ZOMBIE(EntityType.MOB),
+    PIG_ZOMBIE(EntityType.PIG_ZOMBIE),
 
     PLAYER(EntityType.PLAYER),
 
-    PRIMED_TNT(EntityType.MISC, 50),
+    PRIMED_TNT(EntityType.PRIMED_TNT, 50),
 
-    SHEEP(EntityType.MOB),
+    SHEEP(EntityType.SHEEP),
 
-    SILVERFISH(EntityType.MOB),
+    SILVERFISH(EntityType.SILVERFISH),
 
-    SKELETON(EntityType.MOB),
+    SKELETON(EntityType.SKELETON),
 
-    SKELETON_HORSE(EntityType.MOB),
+    SKELETON_HORSE(EntityType.HORSE),
 
-    SLIME(EntityType.MOB),
+    SLIME(EntityType.SLIME),
 
-    SMALL_FIREBALL(EntityType.MISC, 64, 0),
+    SMALL_FIREBALL(EntityType.SMALL_FIREBALL, 64, 0),
 
-    SNOWBALL(EntityType.MISC, 61),
+    SNOWBALL(EntityType.SNOWBALL, 61),
 
-    SNOWMAN(EntityType.MOB),
+    SNOWMAN(EntityType.SNOWMAN),
 
-    SPIDER(EntityType.MOB),
+    SPIDER(EntityType.SPIDER),
 
-    SPLASH_POTION(EntityType.MISC, 73),
+    SPLASH_POTION(EntityType.SPLASH_POTION, 73),
 
-    SQUID(EntityType.MOB),
+    SQUID(EntityType.SQUID),
 
-    THROWN_EXP_BOTTLE(EntityType.MISC, 75),
+    THROWN_EXP_BOTTLE(EntityType.THROWN_EXP_BOTTLE, 75),
 
-    VILLAGER(EntityType.MOB),
+    UNDEAD_HORSE(EntityType.HORSE),
 
-    WITCH(EntityType.MOB),
+    VILLAGER(EntityType.VILLAGER),
 
-    WITHER(EntityType.MOB),
+    WITCH(EntityType.WITCH),
 
-    WITHER_SKELETON(EntityType.MOB),
+    WITHER(EntityType.WITHER),
 
-    WITHER_SKULL(EntityType.MISC, 66),
+    WITHER_SKELETON(EntityType.SKELETON),
 
-    WOLF(EntityType.MOB),
+    WITHER_SKULL(EntityType.WITHER_SKULL, 66),
 
-    ZOMBIE(EntityType.MOB),
+    WOLF(EntityType.WOLF),
 
-    ZOMBIE_HORSE(EntityType.MOB);
+    ZOMBIE(EntityType.ZOMBIE),
 
-    public static enum EntityType {
-        MISC, MOB, PLAYER;
-    }
+    ZOMBIE_VILLAGER(EntityType.ZOMBIE);
 
     public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
         return DisguiseType.valueOf(entityType.name());
@@ -164,11 +164,11 @@ public enum DisguiseType {
     }
 
     public boolean isMisc() {
-        return entityType == EntityType.MISC;
+        return !entityType.isAlive();
     }
 
     public boolean isMob() {
-        return entityType == EntityType.MOB;
+        return entityType.isAlive();
     }
 
     public boolean isPlayer() {
