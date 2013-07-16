@@ -20,7 +20,7 @@ public enum DisguiseSound {
 
     CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH, null),
 
-    DONKEY(null, null, null, null),
+    DONKEY(null, null, null, null),  // TODO Add sounds when donkey sounds are added
 
     ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS),
 
@@ -32,13 +32,13 @@ public enum DisguiseSound {
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
 
-    HORSE(null, null, null, null),
+    HORSE(null, null, null, null), // TODO Add sounds when horse sounds are added
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
     MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    MULE(null, null, null, null),
+    MULE(null, null, null, null), // TODO Add sounds when mule sounds are added
 
     MUSHROOM_COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
 
@@ -56,7 +56,7 @@ public enum DisguiseSound {
 
     SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
 
-    SKELETON_HORSE(null, null, null, null),
+    SKELETON_HORSE(null, null, null, null), // TODO Add sounds when Skeleton Horse sounds are added
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
@@ -72,7 +72,7 @@ public enum DisguiseSound {
     ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
             Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD),
 
-    ZOMBIE_HORSE(null, null, null, null);
+    ZOMBIE_HORSE(null, null, null, null); // TODO Add sounds when zombie horse sounds are added
 
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP;
