@@ -13,7 +13,7 @@ public class UndisguisePlayerCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.hasPermission("libsdisguises.undisguiseothers")) {
+        if (sender.hasPermission("libsdisguises.undisguiseplayer")) {
             if (args.length > 0) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
