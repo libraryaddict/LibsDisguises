@@ -152,7 +152,7 @@ public class DisguiseRadiusCommand implements CommandExecutor {
                             // He isn't allowed to use it..
                             sender.sendMessage(ChatColor.RED + "You are forbidden to use this disguise!");
                         } else {
-                            sender.sendMessage(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
+                            sender.sendMessage(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[1] + ChatColor.RED
                                     + " doesn't exist!");
                         }
                     }
