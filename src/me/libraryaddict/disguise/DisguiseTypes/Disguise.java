@@ -9,6 +9,7 @@ import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
 import net.minecraft.server.v1_6_R2.DataWatcher;
 import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityAgeable;
@@ -48,7 +49,6 @@ public class Disguise {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         Entity entity = ((CraftEntity) e).getHandle();
         Location loc = e.getLocation();
-
         if (getType() == DisguiseType.EXPERIENCE_ORB) {
 
             spawnPackets[0] = manager.createPacket(Packets.Server.ADD_EXP_ORB);
@@ -151,7 +151,8 @@ public class Disguise {
                 yawValue -= 128;
             mods.write(8, yawValue);
             mods.write(9, (byte) (int) (entity.pitch * 256.0F / 360.0F));
-            mods.write(10, (byte) (int) (((EntityLiving) entity).aA * 256.0F / 360.0F));
+            if (entity instanceof EntityLiving)
+                mods.write(10, (byte) (int) (((EntityLiving) entity).aA * 256.0F / 360.0F));
             DataWatcher newWatcher = new DataWatcher();
             try {
                 Field map = newWatcher.getClass().getDeclaredField("c");
@@ -239,7 +240,7 @@ public class Disguise {
     }
 
     public void constructWatcher(EntityType type, int entityId) {
-        boolean throwError = false;
+        FlagWatcher tempWatcher;
         try {
             String name;
             if (getType() == DisguiseType.MINECART_FURNACE || getType() == DisguiseType.MINECART_HOPPER
@@ -251,44 +252,45 @@ public class Disguise {
             }
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
-            watcher = (FlagWatcher) contructor.newInstance(entityId);
-            throwError = true;
-            if (watcher instanceof AgeableWatcher && this instanceof MobDisguise) {
-                ((AgeableWatcher) watcher).setValue(12, ((MobDisguise) this).isAdult() ? 0 : -23999);
-            }
+            tempWatcher = (FlagWatcher) contructor.newInstance(entityId);
         } catch (Exception ex) {
-            if (throwError)
-                ex.printStackTrace();
             // There is no watcher for this entity, or a error was thrown.
             if (type.isAlive())
-                watcher = new LivingWatcher(entityId);
+                tempWatcher = new LivingWatcher(entityId);
             else
-                watcher = new FlagWatcher(entityId);
+                tempWatcher = new FlagWatcher(entityId);
+        }
+        if (this instanceof MobDisguise) {
+            if (tempWatcher instanceof AgeableWatcher)
+                tempWatcher.setValue(12, ((MobDisguise) this).isAdult() ? 0 : -24000);
+            else if (tempWatcher instanceof ZombieWatcher)
+                tempWatcher.setValue(12, (byte) (((MobDisguise) this).isAdult() ? 0 : 1));
         }
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(type));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
-            if (watcher.getValue(dataNo, null) != null)
+            if (tempWatcher.getValue(dataNo, null) != null)
                 continue;
             // If neither of them touch it
             if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
                 continue;
             // If the disguise has this, but not the entity. Then better set it!
             if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo)) {
-                watcher.setValue(dataNo, disguiseValues.get(dataNo));
+                tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
                 continue;
             }
             // Else if the disguise doesn't have it. But the entity does. Better remove it!
             if (entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo)) {
-                watcher.setValue(dataNo, null);
+                tempWatcher.setValue(dataNo, null);
                 continue;
             }
             // Hmm. They both have the datavalue. Time to check if they have different default values!
-            if (!entityValues.get(dataNo).equals(disguiseValues.get(dataNo))) {
+            if (entityValues.get(dataNo) != disguiseValues.get(dataNo)
+                    || !entityValues.get(dataNo).equals(disguiseValues.get(dataNo))) {
                 // They do! Set the default value!
-                watcher.setValue(dataNo, disguiseValues.get(dataNo));
+                tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
                 continue;
             }
             // Hmm. They both now have data values which are exactly the same. I need to do more intensive background checks.
@@ -321,8 +323,9 @@ public class Disguise {
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
-            watcher.setValue(dataNo, disguiseValues.get(dataNo));
+            tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
+        watcher = tempWatcher;
     }
 
     public DisguiseType getType() {
