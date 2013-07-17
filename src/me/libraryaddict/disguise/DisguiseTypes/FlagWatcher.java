@@ -36,7 +36,7 @@ public class FlagWatcher {
     protected FlagWatcher(int entityId) {
         this.entityId = entityId;
     }
-    
+
     public FlagWatcher clone() {
         FlagWatcher cloned = new FlagWatcher(entityId);
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
@@ -165,35 +165,35 @@ public class FlagWatcher {
     public void setInvisible(boolean setInvis) {
         if (isInvisible() != setInvis) {
             setFlag(0, 5, true);
-            sendData(5);
+            sendData(0);
         }
     }
 
     public void setRiding(boolean setRiding) {
         if (isSprinting() != setRiding) {
             setFlag(0, 2, true);
-            sendData(2);
+            sendData(0);
         }
     }
 
     public void setRightClicking(boolean setRightClicking) {
         if (isRightClicking() != setRightClicking) {
             setFlag(0, 4, true);
-            sendData(4);
+            sendData(0);
         }
     }
 
     public void setSneaking(boolean setSneaking) {
         if (isSneaking() != setSneaking) {
             setFlag(0, 1, true);
-            sendData(1);
+            sendData(0);
         }
     }
 
     public void setSprinting(boolean setSprinting) {
         if (isSprinting() != setSprinting) {
             setFlag(0, 3, true);
-            sendData(3);
+            sendData(0);
         }
     }
 
