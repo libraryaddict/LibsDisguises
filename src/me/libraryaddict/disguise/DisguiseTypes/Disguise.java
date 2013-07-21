@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.DisguiseTypes;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,7 +206,11 @@ public class Disguise {
                     data = (((MiscDisguise) this).getId() | ((MiscDisguise) this).getData() << 16);
                 else
                     data = ((MiscDisguise) this).getId();
-
+            // This won't actually work. But you can still do it when constructing a disguise
+            if (getType() == DisguiseType.FISHING_HOOK)
+                data = getEntity().getEntityId();
+            else if (getType() == DisguiseType.ITEM_FRAME)
+                data = (int) Math.abs(loc.getYaw() % 4);
             spawnPackets[0] = manager.createPacket(Packets.Server.VEHICLE_SPAWN);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, e.getEntityId());
@@ -214,28 +219,28 @@ public class Disguise {
             mods.write(3, (int) Math.floor(loc.getZ() * 32D));
             if (data > 0) {
                 Vector vec = e.getVelocity();
-                double d1 = 3.9D;
-                double d2 = vec.getX();
-                double d3 = vec.getY();
-                double d4 = vec.getZ();
-                if (d2 < -d1)
-                    d2 = -d1;
-                if (d3 < -d1)
-                    d3 = -d1;
-                if (d4 < -d1)
-                    d4 = -d1;
-                if (d2 > d1)
-                    d2 = d1;
-                if (d3 > d1)
-                    d3 = d1;
-                if (d4 > d1)
-                    d4 = d1;
+                double d1 = vec.getX();
+                double d2 = vec.getY();
+                double d3 = vec.getZ();
+                double d4 = 3.9D;
+                if (d1 < -d4)
+                    d1 = -d4;
+                if (d2 < -d4)
+                    d2 = -d4;
+                if (d3 < -d4)
+                    d3 = -d4;
+                if (d1 > d4)
+                    d1 = d4;
+                if (d2 > d4)
+                    d2 = d4;
+                if (d3 > d4)
+                    d3 = d4;
                 mods.write(4, (int) (d1 * 8000.0D));
                 mods.write(5, (int) (d2 * 8000.0D));
                 mods.write(6, (int) (d3 * 8000.0D));
             }
-            mods.write(7, MathHelper.d(entity.pitch * 256.0F / 360.0F));
-            mods.write(8, MathHelper.d(entity.yaw * 256.0F / 360.0F) - 64);
+            mods.write(7, (int) MathHelper.floor(entity.pitch * 256.0F / 360.0F));
+            mods.write(8, (int) MathHelper.floor(entity.yaw * 256.0F / 360.0F) - 64);
             mods.write(9, id);
             mods.write(10, data);
 
@@ -305,8 +310,8 @@ public class Disguise {
             // If the watcher already set a metadata on this
             if (tempWatcher.getValue(dataNo, null) != null) {
                 // Better check that the value is stable.
-                if (disguiseValues.get(dataNo) != null
-                        && entityValues.get(dataNo).getClass() == disguiseValues.get(dataNo).getClass()) {
+                if (disguiseValues.containsKey(dataNo)
+                        && tempWatcher.getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass()) {
                     // The classes are the same. The client "shouldn't" crash.
                     continue;
                 }
@@ -364,7 +369,9 @@ public class Disguise {
             tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
         watcher = tempWatcher;
+        double fallSpeed = 0.0051;
         boolean doesntMove = false;
+        boolean movement = false;
         switch (getType()) {
         case ARROW:
         case BAT:
@@ -382,33 +389,85 @@ public class Disguise {
         case PAINTING:
         case PLAYER:
         case SQUID:
-        case WITHER:
             doesntMove = true;
+        case DROPPED_ITEM:
+        case EXPERIENCE_ORB:
+        case MAGMA_CUBE:
+        case PRIMED_TNT:
+            fallSpeed = 0.2;
+            movement = true;
+        case WITHER:
+        case FALLING_BLOCK:
+            fallSpeed = 0.04;
+        case SPIDER:
+        case CAVE_SPIDER:
+            fallSpeed = 0.0041;
+        case EGG:
+        case ENDER_PEARL:
+        case ENDER_SIGNAL:
+        case FIREBALL:
+        case SMALL_FIREBALL:
+        case SNOWBALL:
+        case SPLASH_POTION:
+        case THROWN_EXP_BOTTLE:
+        case WITHER_SKULL:
+            fallSpeed = 0.0005;
+        case FIREWORK:
+            fallSpeed = -0.041;
         default:
             break;
         }
+        final boolean sendMovementPacket = movement;
         final boolean sendVector = !doesntMove;
+        final int vectorY = (int) (fallSpeed * 8000);
         // A scheduler to clean up any unused disguises.
         runnable = new BukkitRunnable() {
+            private int i = 0;
+
             public void run() {
                 if (!entity.isValid()) {
                     DisguiseAPI.undisguiseToAll(entity);
-                } else if (sendVector && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
-                    Vector vector = entity.getVelocity();
-                    if (vector.getY() != 0)
-                        return;
-                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                    StructureModifier<Object> mods = packet.getModifier();
-                    mods.write(0, entity.getEntityId());
-                    mods.write(1, (int) (vector.getX() * 8000));
-                    mods.write(2, (int) (8000 * 0.005));
-                    mods.write(3, (int) (vector.getZ() * 8000));
-                    for (EntityPlayer player : getPerverts()) {
-                        if (entity != player) {
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                } else {
+                    if (getType() == DisguiseType.PRIMED_TNT) {
+                        i++;
+                        if (i % 40 == 0) {
+                            List<Player> players = new ArrayList<Player>();
+                            for (EntityPlayer p : getPerverts())
+                                players.add(p.getBukkitEntity());
+                            ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), players);
+                        }
+                    }
+                    if (sendVector && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
+                        Vector vector = entity.getVelocity();
+                        if (vector.getY() != 0)
+                            return;
+                        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                        StructureModifier<Object> mods = packet.getModifier();
+                        mods.write(0, entity.getEntityId());
+                        mods.write(1, (int) (vector.getX() * 8000));
+                        mods.write(2, vectorY);
+                        mods.write(3, (int) (vector.getZ() * 8000));
+                        for (EntityPlayer player : getPerverts()) {
+                            if (entity != player) {
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        if (sendMovementPacket) {
+                            packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
+                            mods = packet.getModifier();
+                            mods.write(0, entity.getEntityId());
+                            for (EntityPlayer player : getPerverts()) {
+                                if (entity != player) {
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
                         }
                     }
