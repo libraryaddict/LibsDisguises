@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.Packets;
@@ -15,6 +15,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 import net.minecraft.server.v1_6_R2.ChunkCoordinates;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.ItemStack;
 import net.minecraft.server.v1_6_R2.WatchableObject;
 
@@ -30,15 +31,15 @@ public class FlagWatcher {
         classTypes.put(ItemStack.class, 5);
         classTypes.put(ChunkCoordinates.class, 6);
     }
-    private int entityId;
+    private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
 
-    protected FlagWatcher(int entityId) {
-        this.entityId = entityId;
+    protected FlagWatcher(Disguise disguise) {
+        this.disguise = disguise;
     }
 
     public FlagWatcher clone() {
-        FlagWatcher cloned = new FlagWatcher(entityId);
+        FlagWatcher cloned = new FlagWatcher(disguise);
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         return cloned;
     }
@@ -125,15 +126,17 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
+        Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
         List<WatchableObject> list = new ArrayList<WatchableObject>();
         list.add(new WatchableObject(classTypes.get(value.getClass()), data, value));
         PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
         StructureModifier<Object> mods = packet.getModifier();
-        mods.write(0, entityId);
+        mods.write(0, entity.getEntityId());
         mods.write(1, list);
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getEntityId() != entityId) {
+        for (EntityPlayer player : disguise.getPerverts()) {
+            Player p = player.getBukkitEntity();
+            if (p != entity) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
                 } catch (InvocationTargetException e) {
