@@ -2,11 +2,13 @@ package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
@@ -15,18 +17,22 @@ import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityAgeable;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R2.EntityTypes;
 import net.minecraft.server.v1_6_R2.ItemStack;
 import net.minecraft.server.v1_6_R2.MathHelper;
 import net.minecraft.server.v1_6_R2.EnumArt;
 import net.minecraft.server.v1_6_R2.WatchableObject;
+import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.Packets;
@@ -37,7 +43,9 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
     private DisguiseType disguiseType;
+    private org.bukkit.entity.Entity entity;
     private boolean replaceSounds;
+    private BukkitRunnable runnable;
     private FlagWatcher watcher;
 
     protected Disguise(DisguiseType newType, boolean doSounds) {
@@ -89,6 +97,23 @@ public class Disguise {
             mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
             // Need to fake a teleport packet as well to make the painting visible as a moving.
+
+        } else if (getType().isPlayer()) {
+
+            spawnPackets[0] = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
+            mods.write(0, e.getEntityId());
+            mods.write(1, ((PlayerDisguise) this).getName());
+            mods.write(2, (int) Math.floor(loc.getX() * 32));
+            mods.write(3, (int) Math.floor(loc.getY() * 32));
+            mods.write(4, (int) Math.floor(loc.getZ() * 32));
+            mods.write(5, (byte) (int) (entity.yaw * 256F / 360F));
+            mods.write(6, (byte) (int) (entity.pitch * 256F / 360F));
+            ItemStack item = null;
+            if (e instanceof Player && ((Player) e).getItemInHand() != null)
+                item = CraftItemStack.asNMSCopy(((Player) e).getItemInHand());
+            mods.write(7, (item == null ? 0 : item.id));
+            mods.write(8, entity.getDataWatcher());
 
         } else if (getType().isMob()) {
 
@@ -214,23 +239,6 @@ public class Disguise {
             mods.write(9, id);
             mods.write(10, data);
 
-        } else if (getType().isPlayer()) {
-
-            spawnPackets[0] = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, e.getEntityId());
-            mods.write(1, ((PlayerDisguise) this).getName());
-            mods.write(2, (int) Math.floor(loc.getX() * 32));
-            mods.write(3, (int) Math.floor(loc.getY() * 32));
-            mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, (byte) (int) (entity.yaw * 256F / 360F));
-            mods.write(6, (byte) (int) (entity.pitch * 256F / 360F));
-            ItemStack item = null;
-            if (e instanceof Player && ((Player) e).getItemInHand() != null)
-                item = CraftItemStack.asNMSCopy(((Player) e).getItemInHand());
-            mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, entity.getDataWatcher());
-
         }
         if (spawnPackets[1] == null) {
             // Make a packet to turn his head!
@@ -242,7 +250,10 @@ public class Disguise {
         return spawnPackets;
     }
 
-    public void constructWatcher(EntityType type, int entityId) {
+    public void constructWatcher(JavaPlugin plugin, final org.bukkit.entity.Entity entity) {
+        if (this.entity != null)
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        this.entity = entity;
         FlagWatcher tempWatcher;
         try {
             String name;
@@ -253,22 +264,22 @@ public class Disguise {
             } else if (getType() == DisguiseType.DONKEY || getType() == DisguiseType.MULE
                     || getType() == DisguiseType.UNDEAD_HORSE || getType() == DisguiseType.SKELETON_HORSE) {
                 name = "Horse";
-            } else if (getType() == DisguiseType.WITHER_SKELETON) {
-                name = "Skeleton";
             } else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
                 name = "Zombie";
+            } else if (getType() == DisguiseType.WITHER_SKELETON) {
+                name = "Skeleton";
             } else {
                 name = toReadable(getType().name());
             }
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
             Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
-            tempWatcher = (FlagWatcher) contructor.newInstance(entityId);
+            tempWatcher = (FlagWatcher) contructor.newInstance(entity);
         } catch (Exception ex) {
             // There is no watcher for this entity, or a error was thrown.
-            if (type.isAlive())
-                tempWatcher = new LivingWatcher(entityId);
+            if (entity.getType().isAlive())
+                tempWatcher = new LivingWatcher(this);
             else
-                tempWatcher = new FlagWatcher(entityId);
+                tempWatcher = new FlagWatcher(this);
         }
         if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
             if (tempWatcher instanceof AgeableWatcher)
@@ -288,12 +299,18 @@ public class Disguise {
                 // Ok.. So it aint a horse
             }
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(type));
+        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
-            if (tempWatcher.getValue(dataNo, null) != null)
-                continue;
+            if (tempWatcher.getValue(dataNo, null) != null) {
+                // Better check that the value is stable.
+                if (disguiseValues.get(dataNo) != null
+                        && entityValues.get(dataNo).getClass() == disguiseValues.get(dataNo).getClass()) {
+                    // The classes are the same. The client "shouldn't" crash.
+                    continue;
+                }
+            }
             // If neither of them touch it
             if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
                 continue;
@@ -340,13 +357,59 @@ public class Disguise {
             }
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
             if (owningData != null && Values.getEntityClass(getType()).isInstance(owningData)
-                    && Values.getEntityClass(DisguiseType.getType(type)).isInstance(owningData))
+                    && Values.getEntityClass(DisguiseType.getType(entity.getType())).isInstance(owningData))
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
             tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
         watcher = tempWatcher;
+        // A scheduler to clean up any unused disguises.
+        runnable = new BukkitRunnable() {
+            public void run() {
+                if (!entity.isValid()) {
+                    DisguiseAPI.undisguiseToAll(entity);
+                } else if (DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
+                    Vector vector = entity.getVelocity();
+                    if (vector.getY() != 0)
+                        return;
+                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                    StructureModifier<Object> mods = packet.getModifier();
+                    mods.write(0, entity.getEntityId());
+                    mods.write(1, (int) (vector.getX() * 8000));
+                    mods.write(2, (int) (8000 * 0.005));
+                    mods.write(3, (int) (vector.getZ() * 8000));
+                    for (EntityPlayer player : getPerverts()) {
+                        if (entity != player) {
+                            try {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        runnable.runTaskTimer(plugin, 1, 1);
+    }
+
+    public org.bukkit.entity.Entity getEntity() {
+        return entity;
+    }
+
+    protected EntityPlayer[] getPerverts() {
+        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
+                .get(entity.getEntityId());
+        if (entry != null) {
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
+            return players;
+        }
+        return new EntityPlayer[0];
+    }
+
+    public BukkitRunnable getScheduler() {
+        return runnable;
     }
 
     public DisguiseType getType() {
