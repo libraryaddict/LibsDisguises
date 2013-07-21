@@ -364,12 +364,36 @@ public class Disguise {
             tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
         watcher = tempWatcher;
+        boolean doesntMove = false;
+        switch (getType()) {
+        case ARROW:
+        case BAT:
+        case BOAT:
+        case ENDER_CRYSTAL:
+        case ENDER_DRAGON:
+        case GHAST:
+        case ITEM_FRAME:
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+        case PAINTING:
+        case PLAYER:
+        case SQUID:
+        case WITHER:
+            doesntMove = true;
+        default:
+            break;
+        }
+        final boolean sendVector = !doesntMove;
         // A scheduler to clean up any unused disguises.
         runnable = new BukkitRunnable() {
             public void run() {
                 if (!entity.isValid()) {
                     DisguiseAPI.undisguiseToAll(entity);
-                } else if (DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
+                } else if (sendVector && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
                     Vector vector = entity.getVelocity();
                     if (vector.getY() != 0)
                         return;

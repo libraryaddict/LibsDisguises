@@ -225,7 +225,6 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
         getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
         registerValues();
-        // doVectors();
     }
 
     private void registerValues() {
