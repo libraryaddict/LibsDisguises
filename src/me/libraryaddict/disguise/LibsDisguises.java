@@ -21,18 +21,13 @@ import net.minecraft.server.v1_6_R2.WatchableObject;
 import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -43,7 +38,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
-public class LibsDisguises extends JavaPlugin implements Listener {
+public class LibsDisguises extends JavaPlugin {
     private class DisguiseHuman extends EntityHuman {
 
         public DisguiseHuman(World world) {
@@ -63,25 +58,7 @@ public class LibsDisguises extends JavaPlugin implements Listener {
 
     }
 
-    private String currentVersion;
-    private String latestVersion;
-    private String permission;
-    private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
-            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
-            + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
-
-    @Override
-    public void onEnable() {
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
-            System.out
-                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! This plugin depends on it to run!");
-            System.out
-                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! LibsDisguises is now shutting down!");
-            getPluginLoader().disablePlugin(this);
-            return;
-        }
-        DisguiseAPI.init(this);
-        DisguiseAPI.enableSounds(true);
+    private void addPacketListeners() {
         final ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new PacketAdapter(this, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ENTITY_METADATA, Packets.Server.ARM_ANIMATION,
@@ -220,6 +197,22 @@ public class LibsDisguises extends JavaPlugin implements Listener {
                 }
             }
         });
+    }
+
+    @Override
+    public void onEnable() {
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+            System.out
+                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! This plugin depends on it to run!");
+            System.out
+                    .print("[LibsDisguises] WARNING! WARNING! LibsDisguises couldn't find ProtocolLib! LibsDisguises is now shutting down!");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
+        DisguiseAPI.init(this);
+        DisguiseAPI.enableSounds(true);
+        DisguiseAPI.setVelocitySent(true);
+        addPacketListeners();
         saveDefaultConfig();
         DisguiseListener listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
@@ -231,37 +224,8 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         getCommand("disguiseentity").setExecutor(new DisguiseEntityCommand(listener));
         getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
         getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
-        permission = getConfig().getString("Permission");
-        if (getConfig().getBoolean("NotifyUpdate")) {
-            currentVersion = getDescription().getVersion();
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-                public void run() {
-                    try {
-                        UpdateChecker updateChecker = new UpdateChecker();
-                        updateChecker.checkUpdate("v"
-                                + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion());
-                        latestVersion = updateChecker.getLatestVersion();
-                        if (latestVersion != null) {
-                            latestVersion = "v" + latestVersion;
-                            for (Player p : Bukkit.getOnlinePlayers())
-                                if (p.hasPermission(permission))
-                                    p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
-                        }
-                    } catch (Exception ex) {
-                        System.out.print(String.format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
-                    }
-                }
-            });
-        }
-        Bukkit.getPluginManager().registerEvents(this, this);
         registerValues();
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player p = event.getPlayer();
-        if (latestVersion != null && p.hasPermission(permission))
-            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+        // doVectors();
     }
 
     private void registerValues() {
