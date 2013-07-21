@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import me.libraryaddict.disguise.DisguiseTypes.AnimalColor;
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 
 public class WolfWatcher extends AgeableWatcher {
 
-    public WolfWatcher(int entityId) {
-        super(entityId);
+    public WolfWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public AnimalColor getCollarColor() {

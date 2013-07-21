@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class MushroomCowWatcher extends AgeableWatcher {
 
-    public MushroomCowWatcher(int entityId) {
-        super(entityId);
+    public MushroomCowWatcher(Disguise disguise) {
+        super(disguise);
     }
 
 }

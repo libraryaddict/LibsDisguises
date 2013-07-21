@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class GhastWatcher extends LivingWatcher {
 
-    public GhastWatcher(int entityId) {
-        super(entityId);
+    public GhastWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isAgressive() {

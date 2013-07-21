@@ -1,12 +1,14 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Ocelot.Type;
 
 public class OcelotWatcher extends AgeableWatcher {
 
-    public OcelotWatcher(int entityId) {
-        super(entityId);
+    public OcelotWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public String getOwner() {

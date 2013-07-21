@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class MinecartWatcher extends FlagWatcher {
 
-    public MinecartWatcher(int entityId) {
-        super(entityId);
+    public MinecartWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public float getDamage() {

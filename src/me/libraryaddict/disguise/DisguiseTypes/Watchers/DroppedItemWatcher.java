@@ -3,12 +3,13 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class DroppedItemWatcher extends FlagWatcher {
 
-    public DroppedItemWatcher(int entityId) {
-        super(entityId);
+    public DroppedItemWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public ItemStack getItemStack() {

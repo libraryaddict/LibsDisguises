@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class ArrowWatcher extends FlagWatcher {
 
-    public ArrowWatcher(int entityId) {
-        super(entityId);
+    public ArrowWatcher(Disguise disguise) {
+        super(disguise);
         setValue(16, (byte) 0);
     }
 

@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class PlayerWatcher extends LivingWatcher {
 
-    public PlayerWatcher(int entityId) {
-        super(entityId);
+    public PlayerWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public int getArrowsSticking() {

@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import me.libraryaddict.disguise.DisguiseTypes.AnimalColor;
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 
 public class SheepWatcher extends AgeableWatcher {
 
-    public SheepWatcher(int entityId) {
-        super(entityId);
+    public SheepWatcher(Disguise disguise) {
+        super(disguise);
         setValue(16, (byte) 0);
     }
 

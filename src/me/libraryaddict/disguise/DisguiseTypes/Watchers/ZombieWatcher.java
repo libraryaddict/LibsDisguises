@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class ZombieWatcher extends LivingWatcher {
 
-    public ZombieWatcher(int entityId) {
-        super(entityId);
+    public ZombieWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isAdult() {

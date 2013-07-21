@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public abstract class AgeableWatcher extends LivingWatcher {
 
-    public AgeableWatcher(int entityId) {
-        super(entityId);
+    public AgeableWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isAdult() {

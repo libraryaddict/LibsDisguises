@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class BlazeWatcher extends LivingWatcher {
 
-    public BlazeWatcher(int entityId) {
-        super(entityId);
+    public BlazeWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isBlazing() {

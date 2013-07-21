@@ -2,10 +2,12 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import java.util.Random;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class SlimeWatcher extends LivingWatcher {
 
-    public SlimeWatcher(int entityId) {
-        super(entityId);
+    public SlimeWatcher(Disguise disguise) {
+        super(disguise);
         setValue(16, (byte) (new Random().nextInt(4) + 1));
     }
 

@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class EndermanWatcher extends LivingWatcher {
 
-    public EndermanWatcher(int entityId) {
-        super(entityId);
+    public EndermanWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public int getCarriedData() {

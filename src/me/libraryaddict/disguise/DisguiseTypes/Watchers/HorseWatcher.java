@@ -2,13 +2,15 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import java.util.Random;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
 
 public class HorseWatcher extends AgeableWatcher {
 
-    public HorseWatcher(int entityId) {
-        super(entityId);
+    public HorseWatcher(Disguise disguise) {
+        super(disguise);
         setValue(20, new Random().nextInt(7));
     }
 

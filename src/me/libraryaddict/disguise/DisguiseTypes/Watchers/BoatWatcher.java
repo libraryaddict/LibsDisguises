@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class BoatWatcher extends FlagWatcher {
 
-    public BoatWatcher(int entityId) {
-        super(entityId);
+    public BoatWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public int getDamage() {

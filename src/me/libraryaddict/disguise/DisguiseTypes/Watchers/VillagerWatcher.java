@@ -2,12 +2,14 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import java.util.Random;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 import org.bukkit.entity.Villager.Profession;
 
 public class VillagerWatcher extends AgeableWatcher {
 
-    public VillagerWatcher(int entityId) {
-        super(entityId);
+    public VillagerWatcher(Disguise disguise) {
+        super(disguise);
         setValue(16, Profession.values()[new Random().nextInt(Profession.values().length)].getId());
     }
 

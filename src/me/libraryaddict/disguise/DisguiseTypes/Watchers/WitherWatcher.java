@@ -1,8 +1,10 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class WitherWatcher extends EnderDragonWatcher {
 
-    public WitherWatcher(int entityId) {
-        super(entityId);
+    public WitherWatcher(Disguise disguise) {
+        super(disguise);
     }
 }

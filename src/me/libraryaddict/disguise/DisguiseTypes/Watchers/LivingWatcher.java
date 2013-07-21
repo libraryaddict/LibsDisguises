@@ -8,14 +8,14 @@ import net.minecraft.server.v1_6_R2.PotionBrewer;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 
 public class LivingWatcher extends FlagWatcher {
     private HashSet<MobEffect> potionEffects = new HashSet<MobEffect>();
 
-    public LivingWatcher(int entityId) {
-        super(entityId);
+    public LivingWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public void addPotionEffect(PotionEffect potionEffect) {

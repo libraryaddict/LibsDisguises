@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class PigWatcher extends AgeableWatcher {
 
-    public PigWatcher(int entityId) {
-        super(entityId);
+    public PigWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isSaddled() {

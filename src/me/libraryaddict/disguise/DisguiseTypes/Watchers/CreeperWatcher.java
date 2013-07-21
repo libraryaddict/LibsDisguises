@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class CreeperWatcher extends LivingWatcher {
 
-    public CreeperWatcher(int entityId) {
-        super(entityId);
+    public CreeperWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isFused() {

@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
+import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
 public class BatWatcher extends LivingWatcher {
 
-    public BatWatcher(int entityId) {
-        super(entityId);
+    public BatWatcher(Disguise disguise) {
+        super(disguise);
     }
 
     public boolean isFlying() {
