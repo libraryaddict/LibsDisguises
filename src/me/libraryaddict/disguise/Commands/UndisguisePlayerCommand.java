@@ -17,7 +17,7 @@ public class UndisguisePlayerCommand implements CommandExecutor {
             if (args.length > 0) {
                 Player p = Bukkit.getPlayer(args[0]);
                 if (p != null) {
-                    if (DisguiseAPI.isDisguised(p.getName())) {
+                    if (DisguiseAPI.isDisguised(p)) {
                         DisguiseAPI.undisguiseToAll(p);
                         sender.sendMessage(ChatColor.RED + "He is no longer disguised");
                     } else

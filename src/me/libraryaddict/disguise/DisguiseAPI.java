@@ -31,18 +31,19 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class DisguiseAPI {
 
-    private static HashMap<Object, Disguise> disguises = new HashMap<Object, Disguise>();
+    private static HashMap<Entity, Disguise> disguises = new HashMap<Entity, Disguise>();
     private static PacketListener packetListener;
     private static JavaPlugin plugin;
+    private static boolean sendVelocity;
     private static boolean soundsEnabled;
 
-    private synchronized static Disguise access(Object obj, Disguise... object) {
-        if (object.length == 0)
-            return disguises.get(obj);
-        if (object[0] == null)
-            disguises.remove(obj);
+    private synchronized static Disguise access(Entity entity, Disguise... args) {
+        if (args.length == 0)
+            return disguises.get(entity);
+        if (args[0] == null)
+            disguises.remove(entity);
         else
-            disguises.put(obj, object[0]);
+            disguises.put(entity, args[0]);
         return null;
     }
 
@@ -57,8 +58,11 @@ public class DisguiseAPI {
             return;
         if (disguise.getWatcher() != null)
             disguise = disguise.clone();
-        put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), disguise);
-        disguise.constructWatcher(entity.getType(), entity.getEntityId());
+        Disguise oldDisguise = getDisguise(entity);
+        if (oldDisguise != null)
+            oldDisguise.getScheduler().cancel();
+        put(entity, disguise);
+        disguise.constructWatcher(plugin, entity);
         refresh(entity);
     }
 
@@ -73,7 +77,7 @@ public class DisguiseAPI {
         }
     }
 
-    private static Disguise get(Object obj) {
+    private static Disguise get(Entity obj) {
         return access(obj);
     }
 
@@ -81,14 +85,13 @@ public class DisguiseAPI {
      * @param Disguiser
      * @return Disguise
      */
-    public static Disguise getDisguise(Object disguiser) {
-        if (disguiser instanceof Entity) {
-            if (disguiser instanceof Player)
-                return get(((Player) disguiser).getName());
-            else
-                return get(((Entity) disguiser).getUniqueId());
-        }
+    public static Disguise getDisguise(Entity disguiser) {
         return get(disguiser);
+    }
+
+    @Deprecated
+    public static Disguise getDisguise(Object disguiser) {
+        return get((Entity) disguiser);
     }
 
     protected static void init(JavaPlugin mainPlugin) {
@@ -172,17 +175,20 @@ public class DisguiseAPI {
      * @param Disguiser
      * @return boolean - If the disguiser is disguised
      */
-    public static boolean isDisguised(Object disguiser) {
-        if (disguiser instanceof Entity) {
-            if (disguiser instanceof Player)
-                return get(((Player) disguiser).getName()) != null;
-            else
-                return get(((Entity) disguiser).getUniqueId()) != null;
-        }
+    public static boolean isDisguised(Entity disguiser) {
         return get(disguiser) != null;
     }
 
-    private static void put(Object obj, Disguise disguise) {
+    @Deprecated
+    public static boolean isDisguised(Object disguiser) {
+        return get((Entity) disguiser) != null;
+    }
+
+    public static boolean isVelocitySent() {
+        return sendVelocity;
+    }
+
+    private static void put(Entity obj, Disguise disguise) {
         access(obj, disguise);
     }
 
@@ -204,12 +210,22 @@ public class DisguiseAPI {
         }
     }
 
+    public static void setVelocitySent(boolean sendVelocityPackets) {
+        sendVelocity = sendVelocityPackets;
+    }
+
     /**
      * @param Disguiser
      *            - Undisguises him
      */
     public static void undisguiseToAll(Entity entity) {
-        put(entity instanceof Player ? ((Player) entity).getName() : entity.getUniqueId(), null);
-        refresh(entity);
+        Disguise disguise = getDisguise(entity);
+        if (disguise == null)
+            return;
+        disguise.getScheduler().cancel();
+        put(entity, null);
+        if (entity.isValid()) {
+            refresh(entity);
+        }
     }
 }

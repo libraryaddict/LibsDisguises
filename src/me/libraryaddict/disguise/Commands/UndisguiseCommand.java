@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class UndisguiseCommand implements CommandExecutor {
@@ -17,7 +18,7 @@ public class UndisguiseCommand implements CommandExecutor {
             return true;
         }
         if (sender.hasPermission("libsdisguises.undisguise")) {
-            if (DisguiseAPI.isDisguised(sender.getName())) {
+            if (DisguiseAPI.isDisguised((Entity) sender)) {
                 DisguiseAPI.undisguiseToAll((Player) sender);
                 sender.sendMessage(ChatColor.RED + "You are no longer disguised");
             } else
