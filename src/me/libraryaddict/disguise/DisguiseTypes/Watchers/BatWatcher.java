@@ -6,6 +6,7 @@ public class BatWatcher extends LivingWatcher {
 
     public BatWatcher(Disguise disguise) {
         super(disguise);
+        setFlying(true);
     }
 
     public boolean isFlying() {
