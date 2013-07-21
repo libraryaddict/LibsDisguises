@@ -303,6 +303,8 @@ public class Disguise {
             } catch (Exception ex) {
                 // Ok.. So it aint a horse
             }
+        Class entityClass = Values.getEntityClass(DisguiseType.getType(getEntity().getType()));
+        Class disguiseClass = Values.getEntityClass(getType());
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
         // Start from 2 as they ALL share 0 and 1
@@ -339,6 +341,11 @@ public class Disguise {
             // Hmm. They both now have data values which are exactly the same. I need to do more intensive background checks.
             // I HAVE to find juicy gossip on these!
             // Maybe if I check that they extend each other..
+            // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
+            // datawatchers.
+            if (entityClass.isInstance(disguiseClass) || disguiseClass.isInstance(entityClass))
+                continue;
+
             // Entity is 0 & 1 - But we aint gonna be checking that
             // EntityAgeable is 16
             // EntityInsentient is 10 & 11
@@ -361,8 +368,7 @@ public class Disguise {
                 break;
             }
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
-            if (owningData != null && Values.getEntityClass(getType()).isInstance(owningData)
-                    && Values.getEntityClass(DisguiseType.getType(entity.getType())).isInstance(owningData))
+            if (owningData != null && disguiseClass.isInstance(owningData) && entityClass.isInstance(owningData))
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
