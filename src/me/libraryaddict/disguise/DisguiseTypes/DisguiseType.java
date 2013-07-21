@@ -138,16 +138,18 @@ public enum DisguiseType {
 
     private DisguiseType(EntityType newType, int... obj) {
         entityType = newType;
-        int a = 0;
         for (int i = 0; i < obj.length; i++) {
             int value = obj[i];
-            if (a == 0)
+            switch (i) {
+            case 0:
                 entityId = value;
-            else if (a == 1)
+            case 1:
                 defaultId = value;
-            else if (a == 2)
+            case 2:
                 defaultData = value;
-            a++;
+            default:
+                break;
+            }
         }
     }
 
@@ -168,7 +170,7 @@ public enum DisguiseType {
     }
 
     public boolean isMob() {
-        return entityType.isAlive();
+        return entityType.isAlive() && entityType != EntityType.PLAYER;
     }
 
     public boolean isPlayer() {
