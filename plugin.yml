@@ -11,12 +11,12 @@ commands:
    disguiseplayer:
       aliases: [dplayer, displayer]
    undisguiseplayer:
-      aliases: [undisplayer]
+      aliases: [undisplayer, undplayer]
    disguiseentity:
       aliases: [dentity, disentity]
    undisguiseentity:
-      aliases: [undisentity]
+      aliases: [undisentity, undentity]
    disguiseradius:
       aliases: [disradius, dradius]
    undisguiseradius:
-      aliases: [undisradius]
+      aliases: [undisradius, undradius]
