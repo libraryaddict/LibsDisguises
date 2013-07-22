@@ -59,16 +59,6 @@ public class Disguise {
         return disguise;
     }
 
-    public boolean equals(Disguise disguise) {
-        if (getType() != disguise.getType())
-            return false;
-        if (replaceSounds() != disguise.replaceSounds())
-            return false;
-        if (!getWatcher().equals(disguise.getWatcher()))
-            return false;
-        return true;
-    }
-
     public PacketContainer[] constructPacket(org.bukkit.entity.Entity e) {
         PacketContainer[] spawnPackets = new PacketContainer[2];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -503,6 +493,16 @@ public class Disguise {
             }
         };
         runnable.runTaskTimer(plugin, 1, 1);
+    }
+
+    public boolean equals(Disguise disguise) {
+        if (getType() != disguise.getType())
+            return false;
+        if (replaceSounds() != disguise.replaceSounds())
+            return false;
+        if (!getWatcher().equals(disguise.getWatcher()))
+            return false;
+        return true;
     }
 
     public org.bukkit.entity.Entity getEntity() {

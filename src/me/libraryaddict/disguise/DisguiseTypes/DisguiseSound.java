@@ -100,8 +100,8 @@ public enum DisguiseSound {
     }
 
     private HashSet<String> cancelSounds = new HashSet<String>();
-    private HashMap<SoundType, String> disguiseSounds = new HashMap<SoundType, String>();
     private float damageSoundVolume = 1F;
+    private HashMap<SoundType, String> disguiseSounds = new HashMap<SoundType, String>();
 
     DisguiseSound(Object... sounds) {
         for (int i = 0; i < sounds.length; i++) {
@@ -133,10 +133,6 @@ public enum DisguiseSound {
                 break;
             }
         }
-    }
-
-    public void setDamageSoundVolume(float strength) {
-        this.damageSoundVolume = strength;
     }
 
     public float getDamageSoundVolume() {
@@ -180,5 +176,9 @@ public enum DisguiseSound {
 
     public boolean isCancelSound(String sound) {
         return getSoundsToCancel().contains(sound);
+    }
+
+    public void setDamageSoundVolume(float strength) {
+        this.damageSoundVolume = strength;
     }
 }

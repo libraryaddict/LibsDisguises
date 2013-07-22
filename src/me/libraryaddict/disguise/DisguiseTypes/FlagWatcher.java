@@ -38,10 +38,6 @@ public class FlagWatcher {
         this.disguise = disguise;
     }
 
-    public boolean equals(FlagWatcher flagWatcher) {
-        return entityValues.equals(flagWatcher.entityValues);
-    }
-
     public FlagWatcher clone() {
         FlagWatcher cloned = new FlagWatcher(disguise);
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
@@ -89,6 +85,10 @@ public class FlagWatcher {
             }
         }
         return newList;
+    }
+
+    public boolean equals(FlagWatcher flagWatcher) {
+        return entityValues.equals(flagWatcher.entityValues);
     }
 
     private boolean getFlag(int i) {
