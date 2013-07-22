@@ -3,6 +3,6 @@ NotifyUpdate: true
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'
 # Whats the max size allowed for command disguiseradius
-DisguiseRadiusMax: 30
+DisguiseRadiusMax: 50
 # Whats the max size allowed for command undisguiseradius
-UndisguiseRadiusMax: 30
+UndisguiseRadiusMax: 50
