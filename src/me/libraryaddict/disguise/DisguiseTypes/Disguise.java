@@ -59,6 +59,16 @@ public class Disguise {
         return disguise;
     }
 
+    public boolean equals(Disguise disguise) {
+        if (getType() != disguise.getType())
+            return false;
+        if (replaceSounds() != disguise.replaceSounds())
+            return false;
+        if (!getWatcher().equals(disguise.getWatcher()))
+            return false;
+        return true;
+    }
+
     public PacketContainer[] constructPacket(org.bukkit.entity.Entity e) {
         PacketContainer[] spawnPackets = new PacketContainer[2];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -277,8 +287,8 @@ public class Disguise {
                 name = toReadable(getType().name());
             }
             Class watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
-            Constructor<?> contructor = watcherClass.getDeclaredConstructor(int.class);
-            tempWatcher = (FlagWatcher) contructor.newInstance(entity);
+            Constructor<?> contructor = watcherClass.getDeclaredConstructor(Disguise.class);
+            tempWatcher = (FlagWatcher) contructor.newInstance(this);
         } catch (Exception ex) {
             // There is no watcher for this entity, or a error was thrown.
             if (entity.getType().isAlive())
@@ -359,11 +369,14 @@ public class Disguise {
             case 8:
             case 9:
                 owningData = EntityLiving.class;
+                break;
             case 10:
             case 11:
                 owningData = EntityInsentient.class;
+                break;
             case 16:
                 owningData = EntityAgeable.class;
+                break;
             default:
                 break;
             }
@@ -375,7 +388,7 @@ public class Disguise {
             tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
         watcher = tempWatcher;
-        double fallSpeed = 0.0051;
+        double fallSpeed = 0.0050;
         boolean doesntMove = false;
         boolean movement = false;
         switch (getType()) {
@@ -396,18 +409,22 @@ public class Disguise {
         case PLAYER:
         case SQUID:
             doesntMove = true;
+            break;
         case DROPPED_ITEM:
         case EXPERIENCE_ORB:
         case MAGMA_CUBE:
         case PRIMED_TNT:
             fallSpeed = 0.2;
             movement = true;
+            break;
         case WITHER:
         case FALLING_BLOCK:
             fallSpeed = 0.04;
+            break;
         case SPIDER:
         case CAVE_SPIDER:
-            fallSpeed = 0.0041;
+            fallSpeed = 0.0040;
+            break;
         case EGG:
         case ENDER_PEARL:
         case ENDER_SIGNAL:
@@ -418,14 +435,16 @@ public class Disguise {
         case THROWN_EXP_BOTTLE:
         case WITHER_SKULL:
             fallSpeed = 0.0005;
+            break;
         case FIREWORK:
-            fallSpeed = -0.041;
+            fallSpeed = -0.040;
+            break;
         default:
             break;
         }
         final boolean sendMovementPacket = movement;
         final boolean sendVector = !doesntMove;
-        final int vectorY = (int) (fallSpeed * 8000);
+        final double vectorY = fallSpeed;
         // A scheduler to clean up any unused disguises.
         runnable = new BukkitRunnable() {
             private int i = 0;
@@ -447,29 +466,32 @@ public class Disguise {
                         Vector vector = entity.getVelocity();
                         if (vector.getY() != 0)
                             return;
-                        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                        StructureModifier<Object> mods = packet.getModifier();
-                        mods.write(0, entity.getEntityId());
-                        mods.write(1, (int) (vector.getX() * 8000));
-                        mods.write(2, vectorY);
-                        mods.write(3, (int) (vector.getZ() * 8000));
+
                         for (EntityPlayer player : getPerverts()) {
                             if (entity != player) {
+                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                mods.write(0, entity.getEntityId());
+                                mods.write(1, (int) (vector.getX() * 8000));
+                                mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
+                                mods.write(3, (int) (vector.getZ() * 8000));
                                 try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                    ProtocolLibrary.getProtocolManager()
+                                            .sendServerPacket(player.getBukkitEntity(), packet, false);
                                 } catch (InvocationTargetException e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
                         if (sendMovementPacket) {
-                            packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
-                            mods = packet.getModifier();
+                            PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
+                            StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, entity.getEntityId());
                             for (EntityPlayer player : getPerverts()) {
                                 if (entity != player) {
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet,
+                                                false);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
