@@ -159,7 +159,8 @@ public enum DisguiseSound {
     public SoundType getType(String name, boolean ignoreDamage) {
         if (isCancelSound(name))
             return SoundType.CANCEL;
-        if (disguiseSounds.get(SoundType.STEP).startsWith("step.") && name.startsWith("step."))
+        if (disguiseSounds.containsKey(SoundType.STEP) && disguiseSounds.get(SoundType.STEP).startsWith("step.")
+                && name.startsWith("step."))
             return SoundType.STEP;
         for (SoundType type : SoundType.values()) {
             if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
