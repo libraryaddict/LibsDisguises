@@ -148,6 +148,8 @@ public class DisguiseRadiusCommand implements CommandExecutor {
                         // Time to use it!
                         int disguisedEntitys = 0;
                         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
+                            if (entity == sender)
+                                continue;
                             DisguiseAPI.disguiseToAll(entity, disguise);
                             disguisedEntitys++;
                         }

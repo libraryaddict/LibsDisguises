@@ -48,8 +48,12 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             }
             int disguisedEntitys = 0;
             for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
-                DisguiseAPI.undisguiseToAll(entity);
-                disguisedEntitys++;
+                if (entity == sender)
+                    continue;
+                if (DisguiseAPI.isDisguised(entity)) {
+                    DisguiseAPI.undisguiseToAll(entity);
+                    disguisedEntitys++;
+                }
             }
             sender.sendMessage(ChatColor.RED + "Successfully undisguised " + disguisedEntitys + " entities!");
         } else
