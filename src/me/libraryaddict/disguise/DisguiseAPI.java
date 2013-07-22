@@ -170,23 +170,39 @@ public class DisguiseAPI {
                                             mods.write(4, entitySound.getDamageSoundVolume());
                                         }
                                         // Here I assume its the default pitch as I can't calculate if its real.
-                                        if (disguise instanceof MobDisguise
-                                                && disguisedEntity instanceof LivingEntity
-                                                && (((MobDisguise) disguise).isAdult() == ((CraftLivingEntity) disguisedEntity)
-                                                        .getHandle().isBaby())) {
-                                            float pitch;
-                                            if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                                pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-                                            } else
-                                                pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-                                            if (disguise.getType() == DisguiseType.BAT)
-                                                pitch *= 95F;
-                                            pitch *= 63;
-                                            if (pitch < 0)
-                                                pitch = 0;
-                                            if (pitch > 255)
-                                                pitch = 255;
-                                            mods.write(5, (int) pitch);
+                                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity) {
+                                            boolean baby = ((CraftLivingEntity) disguisedEntity).getHandle().isBaby();
+                                            if (((MobDisguise) disguise).isAdult() == baby) {
+
+                                                float pitch = (Integer) mods.read(5);
+                                                if (baby) {
+                                                    // If the pitch is not the expected
+                                                    if (pitch > 97 || pitch < 111)
+                                                        return;
+                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                                    // Min = 1.5
+                                                    // Cap = 97.5
+                                                    // Max = 1.7
+                                                    // Cap = 110.5
+                                                } else {
+                                                    // If the pitch is not the expected
+                                                    if (pitch >= 63 || pitch <= 76)
+                                                        return;
+                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                                    // Min = 1
+                                                    // Cap = 63
+                                                    // Max = 1.2
+                                                    // Cap = 75.6
+                                                }
+                                                if (disguise.getType() == DisguiseType.BAT)
+                                                    pitch *= 0.95F;
+                                                pitch *= 63;
+                                                if (pitch < 0)
+                                                    pitch = 0;
+                                                if (pitch > 255)
+                                                    pitch = 255;
+                                                mods.write(5, (int) pitch);
+                                            }
                                         }
                                     }
                                 }
