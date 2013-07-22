@@ -19,6 +19,10 @@ public class PlayerDisguise extends Disguise {
         return disguise;
     }
 
+    public boolean equals(PlayerDisguise playerDisguise) {
+        return getName().equals(playerDisguise.getName()) && this.equals(playerDisguise);
+    }
+
     public String getName() {
         return playerName;
     }
