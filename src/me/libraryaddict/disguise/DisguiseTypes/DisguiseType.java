@@ -143,10 +143,13 @@ public enum DisguiseType {
             switch (i) {
             case 0:
                 entityId = value;
+                break;
             case 1:
                 defaultId = value;
+                break;
             case 2:
                 defaultData = value;
+                break;
             default:
                 break;
             }
