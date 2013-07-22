@@ -23,10 +23,7 @@ public class MobDisguise extends Disguise {
 
     public boolean doesDisguiseAge() {
         if (getWatcher() != null) {
-            if (getWatcher() instanceof AgeableWatcher)
-                return ((AgeableWatcher) getWatcher()).isAdult();
-            else if (getWatcher() instanceof ZombieWatcher)
-                return ((ZombieWatcher) getWatcher()).isAdult();
+            return getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher;
         }
         return false;
 
@@ -39,7 +36,7 @@ public class MobDisguise extends Disguise {
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher)
-                return ((AgeableWatcher) getWatcher()).isAdult();
+                return true;
             else if (getWatcher() instanceof ZombieWatcher)
                 return ((ZombieWatcher) getWatcher()).isAdult();
             return false;
