@@ -167,10 +167,11 @@ public class DisguiseAPI {
                                         // If the volume is the default
                                         if (soundType != SoundType.IDLE
                                                 && ((Float) mods.read(4)).equals(entitySound.getDamageSoundVolume())) {
-                                            mods.write(4, entitySound.getDamageSoundVolume());
+                                            mods.write(4, dSound.getDamageSoundVolume());
                                         }
                                         // Here I assume its the default pitch as I can't calculate if its real.
-                                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity) {
+                                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
+                                                && ((MobDisguise) disguise).doesDisguiseAge()) {
                                             boolean baby = ((CraftLivingEntity) disguisedEntity).getHandle().isBaby();
                                             if (((MobDisguise) disguise).isAdult() == baby) {
 
@@ -194,8 +195,6 @@ public class DisguiseAPI {
                                                     // Max = 1.2
                                                     // Cap = 75.6
                                                 }
-                                                if (disguise.getType() == DisguiseType.BAT)
-                                                    pitch *= 0.95F;
                                                 pitch *= 63;
                                                 if (pitch < 0)
                                                     pitch = 0;
