@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
-import org.bukkit.entity.EntityType;
 
 public enum DisguiseSound {
 
@@ -69,9 +68,10 @@ public enum DisguiseSound {
 
     UNDEAD_HORSE("mob.horse.zombie.hit", Sound.STEP_GRASS, "mob.horse.zombie.death", "mob.horse.zombie.idle"),
 
-    VILLAGER(null, null, null, null),
+    VILLAGER("mob.villager.hit", null, "mob.villager.death", "mob.villager.idle", "mob.villager.haggle", "mob.villager.yes",
+            "mob.villager.no"),
 
-    WITCH(null, null, null, null),
+    WITCH("mob.witch.hurt", null, "mob.witch.death", "mob.witch.idle"),
 
     WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN),
 

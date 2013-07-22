@@ -16,8 +16,6 @@ import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
