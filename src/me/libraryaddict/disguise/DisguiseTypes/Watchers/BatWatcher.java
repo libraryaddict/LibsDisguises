@@ -14,8 +14,8 @@ public class BatWatcher extends LivingWatcher {
     }
 
     public void setFlying(boolean flying) {
-        if ((Byte) getValue(16, (byte) 1) != (flying ? 1 : 0)) {
-            setValue(16, (byte) (flying ? 1 : 0));
+        if (isFlying() != flying) {
+            setValue(16, (byte) (flying ? 0 : 1));
             sendData(16);
         }
     }
