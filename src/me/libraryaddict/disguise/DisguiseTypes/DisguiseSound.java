@@ -8,13 +8,15 @@ import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
 
 public enum DisguiseSound {
 
-    BAT(Sound.BAT_HURT, null, Sound.BAT_DEATH, Sound.BAT_IDLE, Sound.BAT_LOOP, Sound.BAT_TAKEOFF),
+    BAT(Sound.BAT_HURT, null, Sound.BAT_DEATH, Sound.BAT_IDLE, Sound.BAT_LOOP, Sound.BAT_TAKEOFF, Sound.FALL_BIG,
+            Sound.FALL_SMALL),
 
-    BLAZE(Sound.BLAZE_HIT, null, Sound.BLAZE_DEATH, Sound.BLAZE_BREATH),
+    BLAZE(Sound.BLAZE_HIT, null, Sound.BLAZE_DEATH, Sound.BLAZE_BREATH, Sound.FALL_BIG, Sound.FALL_SMALL),
 
     CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
 
-    CHICKEN(Sound.CHICKEN_HURT, Sound.CHICKEN_WALK, Sound.CHICKEN_HURT, Sound.CHICKEN_IDLE, Sound.CHICKEN_EGG_POP),
+    CHICKEN(Sound.CHICKEN_HURT, Sound.CHICKEN_WALK, Sound.CHICKEN_HURT, Sound.CHICKEN_IDLE, Sound.CHICKEN_EGG_POP,
+            Sound.FALL_BIG, Sound.FALL_SMALL),
 
     COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
 
@@ -22,13 +24,14 @@ public enum DisguiseSound {
 
     DONKEY("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
 
-    ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS),
+    ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS,
+            Sound.FALL_BIG, Sound.FALL_SMALL),
 
     ENDERMAN(Sound.ENDERMAN_HIT, Sound.STEP_GRASS, Sound.ENDERMAN_DEATH, Sound.ENDERMAN_IDLE, Sound.ENDERMAN_STARE,
             Sound.ENDERMAN_TELEPORT, Sound.ENDERMAN_SCREAM),
 
     GHAST(Sound.GHAST_SCREAM, null, Sound.GHAST_DEATH, Sound.GHAST_MOAN, Sound.GHAST_CHARGE, Sound.GHAST_FIREBALL,
-            Sound.GHAST_SCREAM2),
+            Sound.GHAST_SCREAM2, Sound.FALL_BIG, Sound.FALL_SMALL),
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
 
@@ -73,7 +76,8 @@ public enum DisguiseSound {
 
     WITCH("mob.witch.hurt", null, "mob.witch.death", "mob.witch.idle"),
 
-    WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN),
+    WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN,
+            Sound.FALL_BIG, Sound.FALL_SMALL),
 
     WITHER_SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
 
