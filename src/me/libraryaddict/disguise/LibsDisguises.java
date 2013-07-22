@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import me.libraryaddict.disguise.Commands.*;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.Values;
@@ -281,6 +283,12 @@ public class LibsDisguises extends JavaPlugin {
                     EntityLiving livingEntity = (EntityLiving) entity;
                     value.setAttributesValue(GenericAttributes.d.a(), livingEntity.getAttributeInstance(GenericAttributes.d)
                             .getValue());
+                }
+                DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+                if (sound != null) {
+                    Method soundStrength = EntityLiving.class.getDeclaredMethod("aZ");
+                    soundStrength.setAccessible(true);
+                    sound.setDamageSoundVolume((Float) soundStrength.invoke(entity));
                 }
             } catch (Exception e1) {
                 System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + e1.getMessage());
