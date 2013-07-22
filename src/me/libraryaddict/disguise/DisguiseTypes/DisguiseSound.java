@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_6_R2.CraftSound;
+import org.bukkit.entity.EntityType;
 
 public enum DisguiseSound {
 
@@ -20,7 +21,7 @@ public enum DisguiseSound {
 
     CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH, null),
 
-    DONKEY(null, null, null, null),  // TODO Add sounds when donkey sounds are added
+    DONKEY("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
 
     ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS),
 
@@ -32,13 +33,13 @@ public enum DisguiseSound {
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
 
-    HORSE(null, null, null, null), // TODO Add sounds when horse sounds are added
+    HORSE("mob.horse.hit", Sound.STEP_GRASS, "mob.horse.death", "mob.horse.idle"),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
     MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    MULE(null, null, null, null), // TODO Add sounds when mule sounds are added
+    MULE("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
 
     MUSHROOM_COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
 
@@ -56,11 +57,21 @@ public enum DisguiseSound {
 
     SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
 
-    SKELETON_HORSE(null, null, null, null), // TODO Add sounds when Skeleton Horse sounds are added
+    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, "mob.horse.skeleton.death", "mob.horse.skeleton.idle"),
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
+    SNOWMAN(null, null, null, null),
+
     SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
+
+    SQUID(null, null, null, null),
+
+    UNDEAD_HORSE("mob.horse.zombie.hit", Sound.STEP_GRASS, "mob.horse.zombie.death", "mob.horse.zombie.idle"),
+
+    VILLAGER(null, null, null, null),
+
+    WITCH(null, null, null, null),
 
     WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN),
 
@@ -70,9 +81,7 @@ public enum DisguiseSound {
             Sound.WOLF_HOWL, Sound.WOLF_PANT, Sound.WOLF_SHAKE),
 
     ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
-            Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD),
-
-    ZOMBIE_HORSE(null, null, null, null); // TODO Add sounds when zombie horse sounds are added
+            Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD);
 
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP;
@@ -90,33 +99,57 @@ public enum DisguiseSound {
         }
     }
 
-    private HashSet<Sound> cancelSounds = new HashSet<Sound>();
+    private HashSet<String> cancelSounds = new HashSet<String>();
+    private HashMap<SoundType, String> disguiseSounds = new HashMap<SoundType, String>();
+    private float damageSoundVolume = 1F;
 
-    private HashMap<SoundType, Sound> disguiseSounds = new HashMap<SoundType, Sound>();
-
-    DisguiseSound(Sound... sounds) {
+    DisguiseSound(Object... sounds) {
         for (int i = 0; i < sounds.length; i++) {
-            Sound s = sounds[i];
-            if (i == 0)
-                disguiseSounds.put(SoundType.HURT, s);
-            else if (i == 1)
-                disguiseSounds.put(SoundType.STEP, s);
-            else if (i == 2)
-                disguiseSounds.put(SoundType.DEATH, s);
-            else if (i == 3)
-                disguiseSounds.put(SoundType.IDLE, s);
+            Object obj = sounds[i];
+            String s;
+            if (obj == null)
+                continue;
+            else if (obj instanceof String)
+                s = (String) obj;
+            else if (obj instanceof Sound)
+                s = CraftSound.getSound((Sound) obj);
             else
+                throw new RuntimeException("Was given a unknown object " + obj);
+            switch (i) {
+            case 0:
+                disguiseSounds.put(SoundType.HURT, s);
+                break;
+            case 1:
+                disguiseSounds.put(SoundType.STEP, s);
+                break;
+            case 2:
+                disguiseSounds.put(SoundType.DEATH, s);
+                break;
+            case 3:
+                disguiseSounds.put(SoundType.IDLE, s);
+                break;
+            default:
                 cancelSounds.add(s);
+                break;
+            }
         }
     }
 
-    public Sound getSound(SoundType type) {
-        if (type == null)
+    public void setDamageSoundVolume(float strength) {
+        this.damageSoundVolume = strength;
+    }
+
+    public float getDamageSoundVolume() {
+        return damageSoundVolume;
+    }
+
+    public String getSound(SoundType type) {
+        if (type == null || !disguiseSounds.containsKey(type))
             return null;
         return disguiseSounds.get(type);
     }
 
-    public HashSet<Sound> getSoundsToCancel() {
+    public HashSet<String> getSoundsToCancel() {
         return cancelSounds;
     }
 
@@ -126,15 +159,14 @@ public enum DisguiseSound {
     public SoundType getType(String name, boolean ignoreDamage) {
         if (isCancelSound(name))
             return SoundType.CANCEL;
-        if (disguiseSounds.get(SoundType.STEP) == Sound.STEP_GRASS && name.startsWith("step."))
+        if (disguiseSounds.get(SoundType.STEP).startsWith("step.") && name.startsWith("step."))
             return SoundType.STEP;
         for (SoundType type : SoundType.values()) {
             if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
                 continue;
-            Sound s = disguiseSounds.get(type);
+            String s = disguiseSounds.get(type);
             if (s != null) {
-                String soundName = CraftSound.getSound(s);
-                if (soundName.equals(name))
+                if (s.equals(name))
                     return type;
             }
         }
@@ -146,9 +178,6 @@ public enum DisguiseSound {
     }
 
     public boolean isCancelSound(String sound) {
-        for (Sound s : cancelSounds)
-            if (getSoundName(s).equals(sound))
-                return true;
-        return false;
+        return getSoundsToCancel().contains(sound);
     }
 }
