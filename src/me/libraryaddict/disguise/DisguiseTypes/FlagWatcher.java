@@ -130,6 +130,8 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
+        if (disguise.getWatcher() == null)
+            return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
         List<WatchableObject> list = new ArrayList<WatchableObject>();
