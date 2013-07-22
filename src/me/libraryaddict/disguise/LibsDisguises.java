@@ -214,6 +214,10 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseAPI.setVelocitySent(true);
         addPacketListeners();
         saveDefaultConfig();
+        if (!getConfig().contains("DisguiseRadiusMax"))
+            getConfig().set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
+        if (!getConfig().contains("UndisguiseRadiusMax"))
+            getConfig().set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
         DisguiseListener listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());
