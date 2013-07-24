@@ -179,4 +179,8 @@ public enum DisguiseType {
     public boolean isPlayer() {
         return entityType == EntityType.PLAYER;
     }
+    
+    public EntityType getEntityType() {
+        return entityType;
+    }
 }

@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -20,7 +19,6 @@ import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R2.EntityTypes;
 import net.minecraft.server.v1_6_R2.ItemStack;
 import net.minecraft.server.v1_6_R2.MathHelper;
 import net.minecraft.server.v1_6_R2.EnumArt;
@@ -118,8 +116,12 @@ public class Disguise {
 
         } else if (getType().isMob()) {
 
-            double d1 = 3.9D;
             Vector vec = e.getVelocity();
+            spawnPackets[0] = manager.createPacket(Packets.Server.MOB_SPAWN);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
+            mods.write(0, e.getEntityId());
+            mods.write(1, (int) getType().getEntityType().getTypeId());
+            double d1 = 3.9D;
             double d2 = vec.getX();
             double d3 = vec.getY();
             double d4 = vec.getZ();
@@ -135,40 +137,6 @@ public class Disguise {
                 d3 = d1;
             if (d4 > d1)
                 d4 = d1;
-            spawnPackets[0] = manager.createPacket(Packets.Server.MOB_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, e.getEntityId());
-            mods.write(1, (byte) EntityTypes.a(entity));
-            String name = toReadable(getType().name());
-            if (getType() == DisguiseType.WITHER_SKELETON) {
-                name = "Skeleton";
-            } else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
-                name = "Zombie";
-            } else if (getType() == DisguiseType.PRIMED_TNT) {
-                name = "TNTPrimed";
-            } else if (getType() == DisguiseType.DONKEY || getType() == DisguiseType.MULE
-                    || getType() == DisguiseType.UNDEAD_HORSE || getType() == DisguiseType.SKELETON_HORSE) {
-                name = "Horse";
-            } else if (getType() == DisguiseType.MINECART_TNT) {
-                name = "MinecartTNT";
-            } else if (getType() == DisguiseType.SPLASH_POTION)
-                name = "Potion";
-            else if (getType() == DisguiseType.GIANT)
-                name = "GiantZombie";
-            else if (getType() == DisguiseType.DROPPED_ITEM)
-                name = "Item";
-            else if (getType() == DisguiseType.FIREBALL)
-                name = "LargeFireball";
-            try {
-                Class entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
-                Field field = EntityTypes.class.getDeclaredField("e");
-                field.setAccessible(true);
-                Map map = (Map) field.get(null);
-                mods.write(1, map.containsKey(entityClass) ? ((Integer) map.get(entityClass)).intValue() : 0);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-
             mods.write(2, entity.at.a(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
             mods.write(4, entity.at.a(loc.getZ()));
@@ -196,6 +164,7 @@ public class Disguise {
             }
             mods.write(11, newWatcher);
             // Theres a list sometimes written with this. But no problems have appeared!
+            // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
 
         } else if (getType().isMisc()) {
 
