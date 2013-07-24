@@ -16,6 +16,10 @@ public class MobDisguise extends Disguise {
         this.isAdult = isAdult;
     }
 
+    public MobDisguise(DisguiseType disguiseType) {
+        this(disguiseType, true);
+    }
+
     public MobDisguise clone() {
         MobDisguise disguise = new MobDisguise(getType(), isAdult(), replaceSounds());
         return disguise;
