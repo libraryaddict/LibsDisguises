@@ -504,6 +504,18 @@ public class Disguise {
         return replaceSounds;
     }
 
+    public boolean isMobDisguise() {
+        return this instanceof MobDisguise;
+    }
+
+    public boolean isMiscDisguise() {
+        return this instanceof MiscDisguise;
+    }
+
+    public boolean isPlayerDisguise() {
+        return this instanceof PlayerDisguise;
+    }
+
     public void setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
     }
