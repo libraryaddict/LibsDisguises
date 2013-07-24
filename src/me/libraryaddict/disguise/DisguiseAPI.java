@@ -9,12 +9,16 @@ import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
+import me.libraryaddict.disguise.Events.DisguisedEvent;
+import me.libraryaddict.disguise.Events.RedisguisedEvent;
+import me.libraryaddict.disguise.Events.UndisguisedEvent;
 import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
@@ -60,11 +64,21 @@ public class DisguiseAPI {
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         if (disguise == null)
             return;
+        Disguise oldDisguise = getDisguise(entity);
+        if (oldDisguise != null) {
+            RedisguisedEvent event = new RedisguisedEvent(entity, oldDisguise, disguise);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
+            oldDisguise.getScheduler().cancel();
+        } else {
+            DisguisedEvent event = new DisguisedEvent(entity, disguise);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
+        }
         if (disguise.getWatcher() != null)
             disguise = disguise.clone();
-        Disguise oldDisguise = getDisguise(entity);
-        if (oldDisguise != null)
-            oldDisguise.getScheduler().cancel();
         put(entity, disguise);
         disguise.constructWatcher(plugin, entity);
         refresh(entity);
@@ -314,6 +328,10 @@ public class DisguiseAPI {
     public static void undisguiseToAll(Entity entity) {
         Disguise disguise = getDisguise(entity);
         if (disguise == null)
+            return;
+        UndisguisedEvent event = new UndisguisedEvent(entity, disguise);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled())
             return;
         disguise.getScheduler().cancel();
         put(entity, null);
