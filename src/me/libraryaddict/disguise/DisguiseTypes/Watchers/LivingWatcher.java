@@ -84,13 +84,15 @@ public class LivingWatcher extends FlagWatcher {
 
     public void setCustomName(String name) {
         if (!getCustomName().equals(name)) {
+            if (name.length() > 64)
+                name = name.substring(0, 64);
             setValue(10, name);
             sendData(10);
         }
     }
 
     public void setCustomNameVisible(boolean display) {
-        if (this.isCustomNameVisible()) {
+        if (isCustomNameVisible() != display) {
             setValue(11, (byte) (display ? 1 : 0));
             sendData(11);
         }
