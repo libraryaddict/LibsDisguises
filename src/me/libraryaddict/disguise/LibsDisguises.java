@@ -11,8 +11,11 @@ import me.libraryaddict.disguise.Commands.*;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
+import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.Values;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
 import net.minecraft.server.v1_6_R2.AttributeSnapshot;
 import net.minecraft.server.v1_6_R2.ChatMessage;
 import net.minecraft.server.v1_6_R2.ChunkCoordinates;
@@ -24,10 +27,12 @@ import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.comphenix.protocol.Packets;
@@ -236,35 +241,89 @@ public class LibsDisguises extends JavaPlugin {
     private void registerValues() {
         World world = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
         for (DisguiseType disguiseType : DisguiseType.values()) {
+            Class watcherClass = null;
+            try {
+                String name;
+                switch (disguiseType) {
+                case MINECART_FURNACE:
+                case MINECART_HOPPER:
+                case MINECART_MOB_SPAWNER:
+                case MINECART_TNT:
+                case MINECART_CHEST:
+                    name = "Minecart";
+                    break;
+                case DONKEY:
+                case MULE:
+                case UNDEAD_HORSE:
+                case SKELETON_HORSE:
+                    name = "Horse";
+                    break;
+                case ZOMBIE_VILLAGER:
+                case PIG_ZOMBIE:
+                    name = "Zombie";
+                    break;
+                case MAGMA_CUBE:
+                    name = "Slime";
+                default:
+                    name = toReadable(disguiseType.name());
+                    break;
+                }
+                watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
+            } catch (Exception ex) {
+                // There is no watcher for this entity, or a error was thrown.
+                try {
+                    Class c = disguiseType.getEntityType().getEntityClass();
+                    if (c.isAssignableFrom(Ageable.class))
+                        watcherClass = AgeableWatcher.class;
+                    else if (c.isAssignableFrom(LivingEntity.class))
+                        watcherClass = LivingWatcher.class;
+                    else
+                        watcherClass = FlagWatcher.class;
+                } catch (Exception ex1) {
+                    ex1.printStackTrace();
+                }
+            }
+            disguiseType.setWatcherClass(watcherClass);
             String name = toReadable(disguiseType.name());
-            if (disguiseType == DisguiseType.WITHER_SKELETON) {
-                continue;
-            } else if (disguiseType == DisguiseType.ZOMBIE_VILLAGER) {
-                continue;
-            } else if (disguiseType == DisguiseType.PRIMED_TNT) {
+            boolean dontDo = false;
+            switch (disguiseType) {
+            case WITHER_SKELETON:
+            case ZOMBIE_VILLAGER:
+            case DONKEY:
+            case MULE:
+            case UNDEAD_HORSE:
+            case SKELETON_HORSE:
+                dontDo = true;
+                break;
+            case PRIMED_TNT:
                 name = "TNTPrimed";
-            } else if (disguiseType == DisguiseType.DONKEY) {
-                continue;
-            } else if (disguiseType == DisguiseType.MULE) {
-                continue;
-            } else if (disguiseType == DisguiseType.UNDEAD_HORSE) {
-                continue;
-            } else if (disguiseType == DisguiseType.SKELETON_HORSE) {
-                continue;
-            } else if (disguiseType == DisguiseType.MINECART_TNT) {
+                break;
+            case MINECART_TNT:
                 name = "MinecartTNT";
-            } else if (disguiseType == DisguiseType.MINECART) {
+                break;
+            case MINECART:
                 name = "MinecartRideable";
-            } else if (disguiseType == DisguiseType.FIREWORK) {
+                break;
+            case FIREWORK:
                 name = "Fireworks";
-            } else if (disguiseType == DisguiseType.SPLASH_POTION)
+                break;
+            case SPLASH_POTION:
                 name = "Potion";
-            else if (disguiseType == DisguiseType.GIANT)
+                break;
+            case GIANT:
                 name = "GiantZombie";
-            else if (disguiseType == DisguiseType.DROPPED_ITEM)
+                break;
+            case DROPPED_ITEM:
                 name = "Item";
-            else if (disguiseType == DisguiseType.FIREBALL)
+                break;
+            case FIREBALL:
                 name = "LargeFireball";
+                break;
+            default:
+                break;
+            }
+            if (dontDo)
+                continue;
             try {
                 net.minecraft.server.v1_6_R2.Entity entity = null;
                 Class entityClass;
@@ -299,10 +358,10 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private String toReadable(String string) {
-        String[] strings = string.split("_");
-        string = "";
-        for (String s : strings)
-            string += s.substring(0, 1) + s.substring(1).toLowerCase();
-        return string;
+        StringBuilder builder = new StringBuilder();
+        for (String s : string.split("_")) {
+            builder.append(s.substring(0, 1) + s.substring(1).toLowerCase());
+        }
+        return builder.toString();
     }
 }
