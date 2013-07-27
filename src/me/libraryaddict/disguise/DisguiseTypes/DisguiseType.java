@@ -135,6 +135,7 @@ public enum DisguiseType {
     private int defaultId;
     private int entityId;
     private EntityType entityType;
+    private Class watcherClass;
 
     private DisguiseType(EntityType newType, int... obj) {
         entityType = newType;
@@ -160,6 +161,14 @@ public enum DisguiseType {
         return defaultData;
     }
 
+    public Class getWatcherClass() {
+        return watcherClass;
+    }
+
+    public void setWatcherClass(Class c) {
+        watcherClass = c;
+    }
+
     public int getDefaultId() {
         return defaultId;
     }
@@ -179,7 +188,7 @@ public enum DisguiseType {
     public boolean isPlayer() {
         return entityType == EntityType.PLAYER;
     }
-    
+
     public EntityType getEntityType() {
         return entityType;
     }
