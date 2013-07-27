@@ -77,10 +77,14 @@ public class DisguiseAPI {
             if (event.isCancelled())
                 return;
         }
-        if (disguise.getWatcher() != null)
-            disguise = disguise.clone();
+
+        if (disguise.getEntity() != entity) {
+            if (disguise.getWatcher() != null) {
+                disguise = disguise.clone();
+            }
+            disguise.constructWatcher(plugin, entity);
+        }
         put(entity, disguise);
-        disguise.constructWatcher(plugin, entity);
         refresh(entity);
     }
 
