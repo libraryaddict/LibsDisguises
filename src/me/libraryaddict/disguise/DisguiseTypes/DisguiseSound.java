@@ -153,21 +153,45 @@ public enum DisguiseSound {
         return cancelSounds;
     }
 
+    public void setSound(SoundType type, Sound sound) {
+        setSound(type, CraftSound.getSound(sound));
+    }
+
+    public void setSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL)
+            cancelSounds.add(sound);
+        else {
+            disguiseSounds.put(type, sound);
+        }
+    }
+
+    public void removeSound(SoundType type, Sound sound) {
+        removeSound(type, CraftSound.getSound(sound));
+    }
+
+    public void removeSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL)
+            cancelSounds.remove(sound);
+        else {
+            disguiseSounds.remove(type);
+        }
+    }
+
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
-    public SoundType getType(String name, boolean ignoreDamage) {
-        if (isCancelSound(name))
+    public SoundType getType(String sound, boolean ignoreDamage) {
+        if (isCancelSound(sound))
             return SoundType.CANCEL;
         if (disguiseSounds.containsKey(SoundType.STEP) && disguiseSounds.get(SoundType.STEP).startsWith("step.")
-                && name.startsWith("step."))
+                && sound.startsWith("step."))
             return SoundType.STEP;
         for (SoundType type : SoundType.values()) {
             if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
                 continue;
             String s = disguiseSounds.get(type);
             if (s != null) {
-                if (s.equals(name))
+                if (s.equals(sound))
                     return type;
             }
         }
