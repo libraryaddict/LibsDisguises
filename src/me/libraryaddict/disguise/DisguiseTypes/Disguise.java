@@ -22,8 +22,10 @@ import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -101,11 +103,14 @@ public class Disguise {
             mods.write(2, (int) Math.floor(loc.getX() * 32));
             mods.write(3, (int) Math.floor(loc.getY() * 32));
             mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, (byte) (int) (nmsEntity.yaw * 256F / 360F));
-            mods.write(6, (byte) (int) (nmsEntity.pitch * 256F / 360F));
+            mods.write(5, (byte) (int) (loc.getYaw() * 256F / 360F));
+            mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
             ItemStack item = null;
-            if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null)
+            if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
                 item = CraftItemStack.asNMSCopy(((Player) disguisedEntity).getItemInHand());
+            } else if (disguisedEntity instanceof LivingEntity) {
+                item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
+            }
             mods.write(7, (item == null ? 0 : item.id));
             mods.write(8, nmsEntity.getDataWatcher());
 
@@ -138,11 +143,11 @@ public class Disguise {
             mods.write(5, (int) (d2 * 8000.0D));
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
-            byte yawValue = (byte) (int) (nmsEntity.yaw * 256.0F / 360.0F);
+            byte yawValue = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
             if (getType() == DisguiseType.ENDER_DRAGON)
                 yawValue -= 128;
             mods.write(8, yawValue);
-            mods.write(9, (byte) (int) (nmsEntity.pitch * 256.0F / 360.0F));
+            mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             if (nmsEntity instanceof EntityLiving)
                 mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
             mods.write(11, nmsEntity.getDataWatcher());
@@ -191,8 +196,8 @@ public class Disguise {
                 mods.write(5, (int) (d2 * 8000.0D));
                 mods.write(6, (int) (d3 * 8000.0D));
             }
-            mods.write(7, (int) MathHelper.floor(nmsEntity.pitch * 256.0F / 360.0F));
-            mods.write(8, (int) MathHelper.floor(nmsEntity.yaw * 256.0F / 360.0F) - 64);
+            mods.write(7, (int) MathHelper.floor(loc.getPitch() * 256.0F / 360.0F));
+            mods.write(8, (int) MathHelper.floor(loc.getYaw() * 256.0F / 360.0F) - 64);
             mods.write(9, id);
             mods.write(10, data);
 
@@ -274,35 +279,36 @@ public class Disguise {
             // Maybe if I check that they extend each other..
             // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
             // datawatchers.
-            if (entityClass.isInstance(disguiseClass) || disguiseClass.isInstance(entityClass))
+            if (entityClass.isAssignableFrom(disguiseClass) || disguiseClass.isAssignableFrom(entityClass))
                 continue;
 
             // Entity is 0 & 1 - But we aint gonna be checking that
             // EntityAgeable is 16
             // EntityInsentient is 10 & 11
+            // EntityZombie is 12 & 13 & 14 - But
             // EntityLiving is 6 & 7 & 8 & 9
 
             // Lets use switch
-            Class owningData = null;
+            Class baseClass = null;
             switch (dataNo) {
             case 6:
             case 7:
             case 8:
             case 9:
-                owningData = EntityLiving.class;
+                baseClass = EntityLiving.class;
                 break;
             case 10:
             case 11:
-                owningData = EntityInsentient.class;
+                baseClass = EntityInsentient.class;
                 break;
             case 16:
-                owningData = EntityAgeable.class;
+                baseClass = EntityAgeable.class;
                 break;
             default:
                 break;
             }
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
-            if (owningData != null && disguiseClass.isInstance(owningData) && entityClass.isInstance(owningData))
+            if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
