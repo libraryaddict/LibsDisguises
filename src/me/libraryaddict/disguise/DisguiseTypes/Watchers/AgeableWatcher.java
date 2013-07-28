@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.DisguiseTypes.Watchers;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 
-public abstract class AgeableWatcher extends LivingWatcher {
+public class AgeableWatcher extends LivingWatcher {
 
     public AgeableWatcher(Disguise disguise) {
         super(disguise);

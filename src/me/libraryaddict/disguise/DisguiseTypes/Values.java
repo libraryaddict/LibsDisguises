@@ -19,17 +19,29 @@ public class Values {
     }
 
     public static Values getValues(DisguiseType type) {
-        if (type == DisguiseType.DONKEY || type == DisguiseType.MULE || type == DisguiseType.UNDEAD_HORSE
-                || type == DisguiseType.SKELETON_HORSE)
+        switch (type) {
+        case DONKEY:
+        case MULE:
+        case UNDEAD_HORSE:
+        case SKELETON_HORSE:
             type = DisguiseType.HORSE;
-        else if (type == DisguiseType.MINECART_CHEST || type == DisguiseType.MINECART_FURNACE
-                || type == DisguiseType.MINECART_HOPPER || type == DisguiseType.MINECART_TNT
-                || type == DisguiseType.MINECART_MOB_SPAWNER)
+            break;
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_TNT:
+        case MINECART_MOB_SPAWNER:
             type = DisguiseType.MINECART;
-        else if (type == DisguiseType.WITHER_SKELETON)
+            break;
+        case WITHER_SKELETON:
             type = DisguiseType.SKELETON;
-        else if (type == DisguiseType.ZOMBIE_VILLAGER)
+            break;
+        case ZOMBIE_VILLAGER:
             type = DisguiseType.ZOMBIE;
+            break;
+        default:
+            break;
+        }
         return values.get(type);
     }
 
