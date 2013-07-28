@@ -4,28 +4,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
-import net.minecraft.server.v1_6_R2.Entity;
 import net.minecraft.server.v1_6_R2.EntityAgeable;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R2.ItemStack;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.EnumArt;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,11 +23,11 @@ import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
+    private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private org.bukkit.entity.Entity entity;
     private boolean replaceSounds;
@@ -54,165 +44,7 @@ public class Disguise {
         return disguise;
     }
 
-    public PacketContainer[] constructPacket(org.bukkit.entity.Entity disguisedEntity) {
-        PacketContainer[] spawnPackets = new PacketContainer[2];
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
-        Location loc = disguisedEntity.getLocation();
-        if (getType() == DisguiseType.EXPERIENCE_ORB) {
-
-            spawnPackets[0] = manager.createPacket(Packets.Server.ADD_EXP_ORB);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32));
-            mods.write(2, (int) Math.floor(loc.getY() * 32) + 2);
-            mods.write(3, (int) Math.floor(loc.getZ() * 32));
-            mods.write(4, 1);
-
-        } else if (getType() == DisguiseType.PAINTING) {
-            spawnPackets[0] = manager.createPacket(Packets.Server.ENTITY_PAINTING);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, loc.getBlockX());
-            mods.write(2, loc.getBlockY());
-            mods.write(3, loc.getBlockZ());
-            mods.write(4, ((int) loc.getYaw()) % 4);
-            int id = ((MiscDisguise) this).getId();
-            if (id == -1)
-                id = new Random().nextInt(EnumArt.values().length);
-            mods.write(5, EnumArt.values()[id].B);
-
-            // Make the teleport packet to make it visible..
-            spawnPackets[1] = manager.createPacket(Packets.Server.ENTITY_TELEPORT);
-            mods = spawnPackets[1].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32D));
-            mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-            mods.write(4, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-            mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-
-            // Need to fake a teleport packet as well to make the painting visible as a moving.
-
-        } else if (getType().isPlayer()) {
-
-            spawnPackets[0] = manager.createPacket(Packets.Server.NAMED_ENTITY_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, ((PlayerDisguise) this).getName());
-            mods.write(2, (int) Math.floor(loc.getX() * 32));
-            mods.write(3, (int) Math.floor(loc.getY() * 32));
-            mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, (byte) (int) (loc.getYaw() * 256F / 360F));
-            mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
-            ItemStack item = null;
-            if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
-                item = CraftItemStack.asNMSCopy(((Player) disguisedEntity).getItemInHand());
-            } else if (disguisedEntity instanceof LivingEntity) {
-                item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
-            }
-            mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, nmsEntity.getDataWatcher());
-
-        } else if (getType().isMob()) {
-
-            Vector vec = disguisedEntity.getVelocity();
-            spawnPackets[0] = manager.createPacket(Packets.Server.MOB_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) getType().getEntityType().getTypeId());
-            double d1 = 3.9D;
-            double d2 = vec.getX();
-            double d3 = vec.getY();
-            double d4 = vec.getZ();
-            if (d2 < -d1)
-                d2 = -d1;
-            if (d3 < -d1)
-                d3 = -d1;
-            if (d4 < -d1)
-                d4 = -d1;
-            if (d2 > d1)
-                d2 = d1;
-            if (d3 > d1)
-                d3 = d1;
-            if (d4 > d1)
-                d4 = d1;
-            mods.write(2, nmsEntity.at.a(loc.getX()));
-            mods.write(3, (int) Math.floor(loc.getY() * 32D));
-            mods.write(4, nmsEntity.at.a(loc.getZ()));
-            mods.write(5, (int) (d2 * 8000.0D));
-            mods.write(6, (int) (d3 * 8000.0D));
-            mods.write(7, (int) (d4 * 8000.0D));
-            byte yawValue = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
-            if (getType() == DisguiseType.ENDER_DRAGON)
-                yawValue -= 128;
-            mods.write(8, yawValue);
-            mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            if (nmsEntity instanceof EntityLiving)
-                mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
-            mods.write(11, nmsEntity.getDataWatcher());
-            // Theres a list sometimes written with this. But no problems have appeared!
-            // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
-
-        } else if (getType().isMisc()) {
-
-            int id = getType().getEntityId();
-            int data = 0;
-            if (((MiscDisguise) this).getId() >= 0)
-                if (((MiscDisguise) this).getData() >= 0)
-                    data = (((MiscDisguise) this).getId() | ((MiscDisguise) this).getData() << 16);
-                else
-                    data = ((MiscDisguise) this).getId();
-            // This won't actually work. But you can still do it when constructing a disguise
-            if (getType() == DisguiseType.FISHING_HOOK)
-                data = getEntity().getEntityId();
-            else if (getType() == DisguiseType.ITEM_FRAME)
-                data = (int) Math.abs(loc.getYaw() % 4);
-            spawnPackets[0] = manager.createPacket(Packets.Server.VEHICLE_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32D));
-            mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-            if (data > 0) {
-                Vector vec = disguisedEntity.getVelocity();
-                double d1 = vec.getX();
-                double d2 = vec.getY();
-                double d3 = vec.getZ();
-                double d4 = 3.9D;
-                if (d1 < -d4)
-                    d1 = -d4;
-                if (d2 < -d4)
-                    d2 = -d4;
-                if (d3 < -d4)
-                    d3 = -d4;
-                if (d1 > d4)
-                    d1 = d4;
-                if (d2 > d4)
-                    d2 = d4;
-                if (d3 > d4)
-                    d3 = d4;
-                mods.write(4, (int) (d1 * 8000.0D));
-                mods.write(5, (int) (d2 * 8000.0D));
-                mods.write(6, (int) (d3 * 8000.0D));
-            }
-            mods.write(7, (int) MathHelper.floor(loc.getPitch() * 256.0F / 360.0F));
-            mods.write(8, (int) MathHelper.floor(loc.getYaw() * 256.0F / 360.0F) - 64);
-            mods.write(9, id);
-            mods.write(10, data);
-
-        }
-        if (spawnPackets[1] == null) {
-            // Make a packet to turn his head!
-            spawnPackets[1] = manager.createPacket(Packets.Server.ENTITY_HEAD_ROTATION);
-            StructureModifier<Object> mods = spawnPackets[1].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (byte) (int) Math.floor(loc.getYaw() * 256.0F / 360.0F));
-        }
-        return spawnPackets;
-    }
-
-    public void constructWatcher(JavaPlugin plugin, final org.bukkit.entity.Entity entity) {
+    public void constructWatcher(final org.bukkit.entity.Entity entity) {
         if (this.entity != null)
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         this.entity = entity;
@@ -468,20 +300,20 @@ public class Disguise {
         return watcher;
     }
 
-    public boolean replaceSounds() {
-        return replaceSounds;
+    public boolean isMiscDisguise() {
+        return this instanceof MiscDisguise;
     }
 
     public boolean isMobDisguise() {
         return this instanceof MobDisguise;
     }
 
-    public boolean isMiscDisguise() {
-        return this instanceof MiscDisguise;
-    }
-
     public boolean isPlayerDisguise() {
         return this instanceof PlayerDisguise;
+    }
+
+    public boolean replaceSounds() {
+        return replaceSounds;
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {
