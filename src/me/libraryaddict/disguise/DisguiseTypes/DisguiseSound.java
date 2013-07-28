@@ -153,30 +153,6 @@ public enum DisguiseSound {
         return cancelSounds;
     }
 
-    public void setSound(SoundType type, Sound sound) {
-        setSound(type, CraftSound.getSound(sound));
-    }
-
-    public void setSound(SoundType type, String sound) {
-        if (type == SoundType.CANCEL)
-            cancelSounds.add(sound);
-        else {
-            disguiseSounds.put(type, sound);
-        }
-    }
-
-    public void removeSound(SoundType type, Sound sound) {
-        removeSound(type, CraftSound.getSound(sound));
-    }
-
-    public void removeSound(SoundType type, String sound) {
-        if (type == SoundType.CANCEL)
-            cancelSounds.remove(sound);
-        else {
-            disguiseSounds.remove(type);
-        }
-    }
-
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
@@ -206,7 +182,31 @@ public enum DisguiseSound {
         return getSoundsToCancel().contains(sound);
     }
 
+    public void removeSound(SoundType type, Sound sound) {
+        removeSound(type, CraftSound.getSound(sound));
+    }
+
+    public void removeSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL)
+            cancelSounds.remove(sound);
+        else {
+            disguiseSounds.remove(type);
+        }
+    }
+
     public void setDamageSoundVolume(float strength) {
         this.damageSoundVolume = strength;
+    }
+
+    public void setSound(SoundType type, Sound sound) {
+        setSound(type, CraftSound.getSound(sound));
+    }
+
+    public void setSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL)
+            cancelSounds.add(sound);
+        else {
+            disguiseSounds.put(type, sound);
+        }
     }
 }

@@ -9,10 +9,14 @@ import org.bukkit.event.HandlerList;
 
 public class RedisguisedEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private Disguise oldDisguise;
-    private Disguise newDisguise;
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
     private Entity disguised;
     private boolean isCancelled;
+    private Disguise newDisguise;
+
+    private Disguise oldDisguise;
 
     public RedisguisedEvent(Entity entity, Disguise oldDisguise, Disguise newDisguise) {
         this.disguised = entity;
@@ -20,24 +24,20 @@ public class RedisguisedEvent extends Event implements Cancellable {
         this.newDisguise = newDisguise;
     }
 
-    public Disguise getOldDisguise() {
-        return oldDisguise;
+    public Entity getDisguised() {
+        return disguised;
+    }
+
+    public HandlerList getHandlers() {
+        return handlers;
     }
 
     public Disguise getNewDisguise() {
         return newDisguise;
     }
 
-    public Entity getDisguised() {
-        return disguised;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
+    public Disguise getOldDisguise() {
+        return oldDisguise;
     }
 
     @Override

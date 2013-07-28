@@ -161,20 +161,20 @@ public enum DisguiseType {
         return defaultData;
     }
 
-    public Class getWatcherClass() {
-        return watcherClass;
-    }
-
-    public void setWatcherClass(Class c) {
-        watcherClass = c;
-    }
-
     public int getDefaultId() {
         return defaultId;
     }
 
     public int getEntityId() {
         return entityId;
+    }
+
+    public EntityType getEntityType() {
+        return entityType;
+    }
+
+    public Class getWatcherClass() {
+        return watcherClass;
     }
 
     public boolean isMisc() {
@@ -189,7 +189,7 @@ public enum DisguiseType {
         return entityType == EntityType.PLAYER;
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public void setWatcherClass(Class c) {
+        watcherClass = c;
     }
 }

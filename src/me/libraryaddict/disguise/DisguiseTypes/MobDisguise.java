@@ -7,6 +7,10 @@ public class MobDisguise extends Disguise {
 
     private boolean isAdult;
 
+    public MobDisguise(DisguiseType disguiseType) {
+        this(disguiseType, true);
+    }
+
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
         this(disguiseType, isAdult, true);
     }
@@ -14,10 +18,6 @@ public class MobDisguise extends Disguise {
     public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
         super(disguiseType, replaceSounds);
         this.isAdult = isAdult;
-    }
-
-    public MobDisguise(DisguiseType disguiseType) {
-        this(disguiseType, true);
     }
 
     public MobDisguise clone() {
