@@ -82,7 +82,7 @@ public class DisguiseAPI {
             if (disguise.getWatcher() != null) {
                 disguise = disguise.clone();
             }
-            disguise.constructWatcher(plugin, entity);
+            disguise.constructWatcher(entity);
         }
         put(entity, disguise);
         refresh(entity);
