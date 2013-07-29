@@ -154,7 +154,7 @@ public class LibsDisguises extends JavaPlugin {
                             event.setPacket(event.getPacket().shallowClone());
                             StructureModifier<Object> mods = event.getPacket().getModifier();
                             byte value = (Byte) mods.read(4);
-                            mods.write(4, getYaw(DisguiseType.getType(entity.getType()), disguise.getType(), value));
+                            mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
                         }
                     }
                 } catch (Exception e) {
@@ -183,17 +183,17 @@ public class LibsDisguises extends JavaPlugin {
         });
     }
 
-    private byte getYaw(DisguiseType entityType, DisguiseType disguiseType, int value) {
+    private byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
         switch (disguiseType) {
         case ENDER_DRAGON:
             value -= 128;
             break;
         case ITEM_FRAME:
         case ARROW:
-            value = -value;
+            value = (byte) -value;
             break;
         case PAINTING:
-            value = -(value + 128);
+            value = (byte) -(value + 128);
             break;
         default:
             if (disguiseType.isMisc()) {
@@ -207,18 +207,18 @@ public class LibsDisguises extends JavaPlugin {
             break;
         case ITEM_FRAME:
         case ARROW:
-            value = -value;
+            value = (byte) -value;
             break;
         case PAINTING:
-            value = -(value - 128);
+            value = (byte) -(value - 128);
             break;
         default:
-            if (disguiseType.isMisc()) {
+            if (entityType.isMisc()) {
                 value += 64;
             }
             break;
         }
-        return (byte) value;
+        return value;
     }
 
     private void sendDelayedPacket(final PacketContainer packet, final Player player) {
@@ -238,6 +238,8 @@ public class LibsDisguises extends JavaPlugin {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
         Location loc = disguisedEntity.getLocation();
+        byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
+                (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
             spawnPackets[0] = manager.createPacket(Packets.Server.ADD_EXP_ORB);
@@ -268,7 +270,7 @@ public class LibsDisguises extends JavaPlugin {
             mods.write(1, (int) Math.floor(loc.getX() * 32D));
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
             mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-            mods.write(4, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+            mods.write(4, yaw);
             mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
         } else if (disguise.getType().isPlayer()) {
@@ -280,7 +282,7 @@ public class LibsDisguises extends JavaPlugin {
             mods.write(2, (int) Math.floor(loc.getX() * 32));
             mods.write(3, (int) Math.floor(loc.getY() * 32));
             mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, (byte) (int) (loc.getYaw() * 256F / 360F));
+            mods.write(5, yaw);
             mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
             ItemStack item = null;
             if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
@@ -320,10 +322,7 @@ public class LibsDisguises extends JavaPlugin {
             mods.write(5, (int) (d2 * 8000.0D));
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
-            byte yawValue = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
-            if (disguise.getType() == DisguiseType.ENDER_DRAGON)
-                yawValue -= 128;
-            mods.write(8, yawValue);
+            mods.write(8, yaw);
             mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             if (nmsEntity instanceof EntityLiving)
                 mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
@@ -375,7 +374,7 @@ public class LibsDisguises extends JavaPlugin {
                 mods.write(6, (int) (d3 * 8000.0D));
             }
             mods.write(7, (int) MathHelper.floor(loc.getPitch() * 256.0F / 360.0F));
-            mods.write(8, (int) MathHelper.floor(loc.getYaw() * 256.0F / 360.0F) - 64);
+            mods.write(8, yaw);
             mods.write(9, id);
             mods.write(10, data);
 
