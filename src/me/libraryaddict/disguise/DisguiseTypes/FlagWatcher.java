@@ -34,7 +34,7 @@ public class FlagWatcher {
     private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
 
-    protected FlagWatcher(Disguise disguise) {
+    public FlagWatcher(Disguise disguise) {
         this.disguise = disguise;
     }
 
