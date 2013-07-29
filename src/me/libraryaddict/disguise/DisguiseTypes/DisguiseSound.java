@@ -20,7 +20,7 @@ public enum DisguiseSound {
 
     COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
 
-    CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH, null),
+    CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH),
 
     DONKEY("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
 
@@ -33,7 +33,7 @@ public enum DisguiseSound {
     GHAST(Sound.GHAST_SCREAM, null, Sound.GHAST_DEATH, Sound.GHAST_MOAN, Sound.GHAST_CHARGE, Sound.GHAST_FIREBALL,
             Sound.GHAST_SCREAM2, Sound.FALL_BIG, Sound.FALL_SMALL),
 
-    GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS, null, null),
+    GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS),
 
     HORSE("mob.horse.hit", Sound.STEP_GRASS, "mob.horse.death", "mob.horse.idle"),
 
@@ -63,11 +63,11 @@ public enum DisguiseSound {
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    SNOWMAN(null, null, null, null),
+    SNOWMAN(),
 
     SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
 
-    SQUID(null, null, null, null),
+    SQUID(),
 
     UNDEAD_HORSE("mob.horse.zombie.hit", Sound.STEP_GRASS, "mob.horse.zombie.death", "mob.horse.zombie.idle"),
 

@@ -9,9 +9,11 @@ import org.bukkit.event.HandlerList;
 
 public class RedisguisedEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
     private Entity disguised;
     private boolean isCancelled;
     private Disguise newDisguise;
