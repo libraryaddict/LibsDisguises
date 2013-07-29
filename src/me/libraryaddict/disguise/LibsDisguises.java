@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -152,13 +151,10 @@ public class LibsDisguises extends JavaPlugin {
                         else if (Packets.Server.REL_ENTITY_MOVE_LOOK == event.getPacketID()
                                 || Packets.Server.ENTITY_LOOK == event.getPacketID()
                                 || Packets.Server.ENTITY_TELEPORT == event.getPacketID()) {
-                            // If the disguise needs its yaw value modified
-                            if (disguise.getType() == DisguiseType.ENDER_DRAGON || disguise.getType().isMisc()) {
-                                event.setPacket(event.getPacket().shallowClone());
-                                StructureModifier<Object> mods = event.getPacket().getModifier();
-                                byte value = (Byte) mods.read(4);
-                                mods.write(4, getYaw(DisguiseType.getType(entity.getType()), disguise.getType(), value));
-                            }
+                            event.setPacket(event.getPacket().shallowClone());
+                            StructureModifier<Object> mods = event.getPacket().getModifier();
+                            byte value = (Byte) mods.read(4);
+                            mods.write(4, getYaw(DisguiseType.getType(entity.getType()), disguise.getType(), value));
                         }
                     }
                 } catch (Exception e) {
