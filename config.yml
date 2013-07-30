@@ -6,3 +6,5 @@ Permission: 'libsdisguises.update'
 DisguiseRadiusMax: 50
 # Whats the max size allowed for command undisguiseradius
 UndisguiseRadiusMax: 50
+# Shall the players view their disguises?
+ViewDisguises: true

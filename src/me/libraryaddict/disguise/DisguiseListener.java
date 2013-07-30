@@ -1,9 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.util.HashMap;
-
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -26,7 +24,8 @@ public class DisguiseListener implements Listener {
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
 
     public DisguiseListener(LibsDisguises libsDisguises) {
-        this.plugin = libsDisguises;
+
+        plugin = libsDisguises;
         permission = plugin.getConfig().getString("Permission");
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
@@ -95,4 +94,5 @@ public class DisguiseListener implements Listener {
         disguiseRunnable.put(player, runnable);
         disguiseSlap.put(player, disguise);
     }
+
 }

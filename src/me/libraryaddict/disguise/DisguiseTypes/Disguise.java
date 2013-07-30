@@ -225,21 +225,23 @@ public class Disguise {
                         Vector vector = entity.getVelocity();
                         if (vector.getY() != 0)
                             return;
-
+                        net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) entity).getHandle();
                         for (EntityPlayer player : getPerverts()) {
-                            if (entity != player) {
-                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                                StructureModifier<Object> mods = packet.getModifier();
+                            PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                            StructureModifier<Object> mods = packet.getModifier();
+                            if (nmsEntity == player) {
+                                if (!DisguiseAPI.viewDisguises())
+                                    continue;
+                                mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                            } else
                                 mods.write(0, entity.getEntityId());
-                                mods.write(1, (int) (vector.getX() * 8000));
-                                mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
-                                mods.write(3, (int) (vector.getZ() * 8000));
-                                try {
-                                    ProtocolLibrary.getProtocolManager()
-                                            .sendServerPacket(player.getBukkitEntity(), packet, false);
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
+                            mods.write(1, (int) (vector.getX() * 8000));
+                            mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
+                            mods.write(3, (int) (vector.getZ() * 8000));
+                            try {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet, false);
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
                             }
                         }
                         if (sendMovementPacket) {
@@ -251,6 +253,16 @@ public class Disguise {
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet,
                                                 false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else if (DisguiseAPI.viewDisguises()) {
+                                    PacketContainer specialPacket = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
+                                    mods = packet.getModifier();
+                                    mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
+                                                specialPacket, false);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }

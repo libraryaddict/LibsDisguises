@@ -1,20 +1,41 @@
 package me.libraryaddict.disguise;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
 import me.libraryaddict.disguise.Events.DisguisedEvent;
 import me.libraryaddict.disguise.Events.RedisguisedEvent;
 import me.libraryaddict.disguise.Events.UndisguisedEvent;
+import net.minecraft.server.v1_6_R2.AttributeMapServer;
 import net.minecraft.server.v1_6_R2.Block;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityInsentient;
+import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
+import net.minecraft.server.v1_6_R2.ItemStack;
+import net.minecraft.server.v1_6_R2.MobEffect;
+import net.minecraft.server.v1_6_R2.Packet17EntityLocationAction;
+import net.minecraft.server.v1_6_R2.Packet20NamedEntitySpawn;
+import net.minecraft.server.v1_6_R2.Packet28EntityVelocity;
+import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R2.Packet39AttachEntity;
+import net.minecraft.server.v1_6_R2.Packet40EntityMetadata;
+import net.minecraft.server.v1_6_R2.Packet41MobEffect;
+import net.minecraft.server.v1_6_R2.Packet44UpdateAttributes;
+import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R2.WatchableObject;
 import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
@@ -22,12 +43,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.Packets;
+import com.comphenix.protocol.Packets.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -40,14 +62,20 @@ import com.comphenix.protocol.reflect.StructureModifier;
 public class DisguiseAPI {
 
     private static HashMap<Entity, Disguise> disguises = new HashMap<Entity, Disguise>();
+    private static LibsDisguises libsDisguises;
     private static PacketListener packetListener;
-    private static JavaPlugin plugin;
     private static boolean sendVelocity;
     private static boolean soundsEnabled;
+    private static HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
+    private static boolean viewDisguises;
+    private static PacketListener viewDisguisesListener;
 
     private synchronized static Disguise access(Entity entity, Disguise... args) {
-        if (args.length == 0)
-            return disguises.get(entity);
+        if (args.length == 0) {
+            if (disguises.containsKey(entity))
+                return disguises.get(entity);
+            return null;
+        }
         if (args[0] == null)
             disguises.remove(entity);
         else
@@ -86,6 +114,8 @@ public class DisguiseAPI {
         }
         put(entity, disguise);
         refresh(entity);
+        if (entity instanceof Player)
+            setupPlayer((Player) entity);
     }
 
     public static void enableSounds(boolean isSoundsEnabled) {
@@ -116,9 +146,15 @@ public class DisguiseAPI {
         return get((Entity) disguiser);
     }
 
-    protected static void init(JavaPlugin mainPlugin) {
-        plugin = mainPlugin;
-        packetListener = new PacketAdapter(plugin, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL,
+    public static int getFakeDisguise(int id) {
+        if (values.containsKey(id))
+            return values.get(id);
+        return -1;
+    }
+
+    protected static void init(LibsDisguises mainPlugin) {
+        libsDisguises = mainPlugin;
+        packetListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL,
                 Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -280,6 +316,80 @@ public class DisguiseAPI {
                 }
             }
         };
+        viewDisguisesListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
+                Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ATTACH_ENTITY, Packets.Server.REL_ENTITY_MOVE,
+                Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
+                Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
+                Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
+                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, 44) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
+                org.bukkit.entity.Entity entity = entityModifer.read(0);
+                if (entity == event.getPlayer() && values.containsKey(entity.getEntityId())) {
+                    PacketContainer[] packets = libsDisguises.fixUpPacket(event.getPacket(), event.getPlayer());
+                    try {
+                        for (PacketContainer packet : packets) {
+                            if (packet.equals(event.getPacket()))
+                                packet = packet.deepClone();
+                            packet.getModifier().write(0, values.get(entity.getEntityId()));
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
+                        event.setPacket(event.getPacket().deepClone());
+                        StructureModifier<Object> mods = event.getPacket().getModifier();
+                        Iterator<WatchableObject> itel = ((List<WatchableObject>) mods.read(1)).iterator();
+                        while (itel.hasNext()) {
+                            WatchableObject watch = itel.next();
+                            if (watch.a() == 0) {
+                                byte b = (Byte) watch.b();
+                                byte a = (byte) (b | 1 << 5);
+                                if ((b & 1 << 3) != 0)
+                                    a = (byte) (a | 1 << 3);
+                                watch.a(a);
+                            }
+                        }
+                    } else {
+                        switch (event.getPacketID()) {
+                        case Packets.Server.NAMED_ENTITY_SPAWN:
+                        case Packets.Server.ATTACH_ENTITY:
+                        case Packets.Server.REL_ENTITY_MOVE:
+                        case Packets.Server.REL_ENTITY_MOVE_LOOK:
+                        case Packets.Server.ENTITY_LOOK:
+                        case Packets.Server.ENTITY_TELEPORT:
+                        case Packets.Server.ENTITY_HEAD_ROTATION:
+                        case Packets.Server.MOB_EFFECT:
+                            if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
+                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                mods.write(0, entity.getEntityId());
+                                List watchableList = new ArrayList();
+                                byte b = (byte) (0 | 1 << 5);
+                                if (event.getPlayer().isSprinting())
+                                    b = (byte) (b | 1 << 3);
+                                watchableList.add(new WatchableObject(0, 0, b));
+                                mods.write(1, watchableList);
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                            event.setCancelled(true);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    if (event.getPacketID() == Server.ENTITY_STATUS)
+                        System.out.print(event.isCancelled());
+                }
+            }
+        };
     }
 
     /**
@@ -321,8 +431,139 @@ public class DisguiseAPI {
         }
     }
 
+    private static void removeVisibleDisguise(Player player) {
+        if (values.containsKey(player.getEntityId())) {
+            PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
+            packet.getModifier().write(0, new int[] { values.get(player.getEntityId()) });
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            values.remove(player.getEntityId());
+        }
+        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
+        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
+                .getEntityId());
+        tracker.trackedPlayers.remove(entityplayer);
+    }
+
+    private static void setupPlayer(Player player) {
+        removeVisibleDisguise(player);
+        if (!viewDisguises())
+            return;
+        int id = 0;
+        try {
+            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
+            field.setAccessible(true);
+            id = field.getInt(null);
+            field.set(null, id + 1);
+            values.put(player.getEntityId(), id);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
+        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
+                .getEntityId());
+
+        tracker.trackedPlayers.add(entityplayer);
+
+        // CraftBukkit end
+        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
+        entityplayer.playerConnection.sendPacket(packet);
+        if (!tracker.tracker.getDataWatcher().d()) {
+            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(id, tracker.tracker.getDataWatcher(), true));
+        }
+
+        if (tracker.tracker instanceof EntityLiving) {
+            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aW();
+            Collection collection = attributemapserver.c();
+
+            if (!collection.isEmpty()) {
+                entityplayer.playerConnection.sendPacket(new Packet44UpdateAttributes(player.getEntityId(), collection));
+            }
+        }
+
+        tracker.j = tracker.tracker.motX;
+        tracker.k = tracker.tracker.motY;
+        tracker.l = tracker.tracker.motZ;
+        boolean isMoving = false;
+        try {
+            Field field = EntityTrackerEntry.class.getDeclaredField("isMoving");
+            field.setAccessible(true);
+            isMoving = field.getBoolean(tracker);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (isMoving) {
+            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(id, tracker.tracker.motX, tracker.tracker.motY,
+                    tracker.tracker.motZ));
+        }
+
+        // CraftBukkit start
+        if (tracker.tracker.vehicle != null && id > tracker.tracker.vehicle.id) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
+        } else if (tracker.tracker.passenger != null && id > tracker.tracker.passenger.id) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
+        }
+
+        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).bI() != null) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
+                    ((EntityInsentient) tracker.tracker).bI()));
+        }
+        // CraftBukkit end
+
+        if (tracker.tracker instanceof EntityLiving) {
+            for (int i = 0; i < 5; ++i) {
+                ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
+
+                if (itemstack != null) {
+                    entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(id, i, itemstack));
+                }
+            }
+        }
+
+        if (tracker.tracker instanceof EntityHuman) {
+            EntityHuman entityhuman = (EntityHuman) tracker.tracker;
+
+            if (entityhuman.isSleeping()) {
+                entityplayer.playerConnection.sendPacket(new Packet17EntityLocationAction(tracker.tracker, 0, (int) Math
+                        .floor(tracker.tracker.locX), (int) Math.floor(tracker.tracker.locY), (int) Math
+                        .floor(tracker.tracker.locZ)));
+            }
+        }
+
+        // CraftBukkit start - Fix for nonsensical head yaw
+        tracker.i = (int) Math.floor(tracker.tracker.getHeadRotation() * 256.0F / 360.0F); // tracker.ao() should be
+        // getHeadRotation
+        tracker.broadcast(new Packet35EntityHeadRotation(id, (byte) tracker.i));
+        // CraftBukkit end
+
+        if (tracker.tracker instanceof EntityLiving) {
+            EntityLiving entityliving = (EntityLiving) tracker.tracker;
+            Iterator iterator = entityliving.getEffects().iterator();
+
+            while (iterator.hasNext()) {
+                MobEffect mobeffect = (MobEffect) iterator.next();
+
+                entityplayer.playerConnection.sendPacket(new Packet41MobEffect(id, mobeffect));
+            }
+        }
+    }
+
     public static void setVelocitySent(boolean sendVelocityPackets) {
         sendVelocity = sendVelocityPackets;
+    }
+
+    public static void setViewDisguises(boolean seeOwnDisguise) {
+        if (viewDisguises != seeOwnDisguise) {
+            viewDisguises = seeOwnDisguise;
+            if (viewDisguises) {
+                ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+            } else {
+                ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+            }
+        }
     }
 
     /**
@@ -342,5 +583,11 @@ public class DisguiseAPI {
         if (entity.isValid()) {
             refresh(entity);
         }
+        if (entity instanceof Player)
+            removeVisibleDisguise((Player) entity);
+    }
+
+    public static boolean viewDisguises() {
+        return viewDisguises;
     }
 }
