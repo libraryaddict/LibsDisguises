@@ -95,7 +95,7 @@ public class LibsDisguises extends JavaPlugin {
                 // Prevents problems and there is no advantage to be gained.
                 if (entity == observer)
                     return;
-                PacketContainer[] packets = fixUpPacket(event.getPacket(), event.getPlayer());
+                PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
                 if (packets.length == 0)
                     event.setCancelled(true);
                 else {
@@ -301,7 +301,7 @@ public class LibsDisguises extends JavaPlugin {
 
     }
 
-    protected PacketContainer[] fixUpPacket(PacketContainer sentPacket, Player observer) {
+    protected PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
         PacketContainer[] packets = new PacketContainer[] { sentPacket };
         try {
             // First get the entity, the one sending this packet

@@ -327,7 +327,7 @@ public class DisguiseAPI {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
                 org.bukkit.entity.Entity entity = entityModifer.read(0);
                 if (entity == event.getPlayer() && values.containsKey(entity.getEntityId())) {
-                    PacketContainer[] packets = libsDisguises.fixUpPacket(event.getPacket(), event.getPlayer());
+                    PacketContainer[] packets = libsDisguises.transformPacket(event.getPacket(), event.getPlayer());
                     try {
                         for (PacketContainer packet : packets) {
                             if (packet.equals(event.getPacket()))
@@ -363,6 +363,7 @@ public class DisguiseAPI {
                         case Packets.Server.ENTITY_TELEPORT:
                         case Packets.Server.ENTITY_HEAD_ROTATION:
                         case Packets.Server.MOB_EFFECT:
+                        case Packets.Server.ENTITY_EQUIPMENT:
                             if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
                                 PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
                                 StructureModifier<Object> mods = packet.getModifier();
@@ -472,7 +473,7 @@ public class DisguiseAPI {
         Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
         entityplayer.playerConnection.sendPacket(packet);
         if (!tracker.tracker.getDataWatcher().d()) {
-            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(id, tracker.tracker.getDataWatcher(), true));
+            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker.getDataWatcher(), true));
         }
 
         if (tracker.tracker instanceof EntityLiving) {
@@ -496,14 +497,14 @@ public class DisguiseAPI {
             ex.printStackTrace();
         }
         if (isMoving) {
-            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(id, tracker.tracker.motX, tracker.tracker.motY,
+            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX, tracker.tracker.motY,
                     tracker.tracker.motZ));
         }
 
         // CraftBukkit start
-        if (tracker.tracker.vehicle != null && id > tracker.tracker.vehicle.id) {
+        if (tracker.tracker.vehicle != null && player.getEntityId() > tracker.tracker.vehicle.id) {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
-        } else if (tracker.tracker.passenger != null && id > tracker.tracker.passenger.id) {
+        } else if (tracker.tracker.passenger != null && player.getEntityId() > tracker.tracker.passenger.id) {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
         }
 
@@ -518,7 +519,7 @@ public class DisguiseAPI {
                 ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
 
                 if (itemstack != null) {
-                    entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(id, i, itemstack));
+                    entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
                 }
             }
         }
@@ -536,7 +537,7 @@ public class DisguiseAPI {
         // CraftBukkit start - Fix for nonsensical head yaw
         tracker.i = (int) Math.floor(tracker.tracker.getHeadRotation() * 256.0F / 360.0F); // tracker.ao() should be
         // getHeadRotation
-        tracker.broadcast(new Packet35EntityHeadRotation(id, (byte) tracker.i));
+        tracker.broadcast(new Packet35EntityHeadRotation(player.getEntityId(), (byte) tracker.i));
         // CraftBukkit end
 
         if (tracker.tracker instanceof EntityLiving) {
@@ -546,7 +547,7 @@ public class DisguiseAPI {
             while (iterator.hasNext()) {
                 MobEffect mobeffect = (MobEffect) iterator.next();
 
-                entityplayer.playerConnection.sendPacket(new Packet41MobEffect(id, mobeffect));
+                entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
             }
         }
     }
