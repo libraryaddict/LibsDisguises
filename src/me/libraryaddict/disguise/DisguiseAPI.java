@@ -39,6 +39,7 @@ import net.minecraft.server.v1_6_R2.WatchableObject;
 import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
@@ -49,7 +50,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.Packets;
-import com.comphenix.protocol.Packets.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -66,7 +66,7 @@ public class DisguiseAPI {
     private static PacketListener packetListener;
     private static boolean sendVelocity;
     private static boolean soundsEnabled;
-    private static HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
+    private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
     private static boolean viewDisguises;
     private static PacketListener viewDisguisesListener;
 
@@ -147,8 +147,8 @@ public class DisguiseAPI {
     }
 
     public static int getFakeDisguise(int id) {
-        if (values.containsKey(id))
-            return values.get(id);
+        if (selfDisguisesIds.containsKey(id))
+            return selfDisguisesIds.get(id);
         return -1;
     }
 
@@ -321,18 +321,18 @@ public class DisguiseAPI {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, 44) {
+                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
                 org.bukkit.entity.Entity entity = entityModifer.read(0);
-                if (entity == event.getPlayer() && values.containsKey(entity.getEntityId())) {
+                if (entity == event.getPlayer() && selfDisguisesIds.containsKey(entity.getEntityId())) {
                     PacketContainer[] packets = libsDisguises.transformPacket(event.getPacket(), event.getPlayer());
                     try {
                         for (PacketContainer packet : packets) {
                             if (packet.equals(event.getPacket()))
                                 packet = packet.deepClone();
-                            packet.getModifier().write(0, values.get(entity.getEntityId()));
+                            packet.getModifier().write(0, selfDisguisesIds.get(entity.getEntityId()));
                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                         }
                     } catch (Exception ex) {
@@ -386,8 +386,6 @@ public class DisguiseAPI {
                             break;
                         }
                     }
-                    if (event.getPacketID() == Server.ENTITY_STATUS)
-                        System.out.print(event.isCancelled());
                 }
             }
         };
@@ -433,20 +431,22 @@ public class DisguiseAPI {
     }
 
     private static void removeVisibleDisguise(Player player) {
-        if (values.containsKey(player.getEntityId())) {
+        if (selfDisguisesIds.containsKey(player.getEntityId())) {
             PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
-            packet.getModifier().write(0, new int[] { values.get(player.getEntityId()) });
+            packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getEntityId()) });
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            values.remove(player.getEntityId());
+            selfDisguisesIds.remove(player.getEntityId());
         }
         EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
         EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
                 .getEntityId());
-        tracker.trackedPlayers.remove(entityplayer);
+        if (tracker != null) {
+            tracker.trackedPlayers.remove(entityplayer);
+        }
     }
 
     private static void setupPlayer(Player player) {
@@ -459,21 +459,23 @@ public class DisguiseAPI {
             field.setAccessible(true);
             id = field.getInt(null);
             field.set(null, id + 1);
-            values.put(player.getEntityId(), id);
+            selfDisguisesIds.put(player.getEntityId(), id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
         EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
                 .getEntityId());
-
+        Validate.notNull(tracker,
+                "If you are disguising as soon as they log in, please wait a tick or 2 for their EntityTracker to be constructed");
         tracker.trackedPlayers.add(entityplayer);
 
         // CraftBukkit end
         Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
         entityplayer.playerConnection.sendPacket(packet);
         if (!tracker.tracker.getDataWatcher().d()) {
-            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker.getDataWatcher(), true));
+            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker
+                    .getDataWatcher(), true));
         }
 
         if (tracker.tracker instanceof EntityLiving) {
@@ -497,8 +499,8 @@ public class DisguiseAPI {
             ex.printStackTrace();
         }
         if (isMoving) {
-            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX, tracker.tracker.motY,
-                    tracker.tracker.motZ));
+            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX,
+                    tracker.tracker.motY, tracker.tracker.motZ));
         }
 
         // CraftBukkit start

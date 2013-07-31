@@ -84,7 +84,7 @@ public class LibsDisguises extends JavaPlugin {
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ENTITY_METADATA, Packets.Server.ARM_ANIMATION,
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ADD_EXP_ORB, Packets.Server.VEHICLE_SPAWN, Packets.Server.MOB_SPAWN,
-                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, 44) {
+                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player observer = event.getPlayer();
@@ -314,7 +314,7 @@ public class LibsDisguises extends JavaPlugin {
                 // This packet sends attributes
 
                 switch (sentPacket.getID()) {
-                case 44:
+                case Packets.Server.UPDATE_ATTRIBUTES:
 
                 {
                     // Grab the values which are 'approved' to be sent for this entity
