@@ -15,7 +15,6 @@ import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
 import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
 import me.libraryaddict.disguise.Events.DisguisedEvent;
-import me.libraryaddict.disguise.Events.RedisguisedEvent;
 import me.libraryaddict.disguise.Events.UndisguisedEvent;
 import net.minecraft.server.v1_6_R2.AttributeMapServer;
 import net.minecraft.server.v1_6_R2.Block;
@@ -94,17 +93,12 @@ public class DisguiseAPI {
         if (disguise == null)
             return;
         Disguise oldDisguise = getDisguise(entity);
-        if (oldDisguise != null) {
-            RedisguisedEvent event = new RedisguisedEvent(entity, oldDisguise, disguise);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                return;
+        DisguisedEvent event = new DisguisedEvent(entity, disguise);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        } else if (oldDisguise != null) {
             oldDisguise.getScheduler().cancel();
-        } else {
-            DisguisedEvent event = new DisguisedEvent(entity, disguise);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                return;
         }
 
         if (disguise.getEntity() != entity) {
