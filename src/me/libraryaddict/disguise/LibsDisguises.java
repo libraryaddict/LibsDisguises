@@ -442,10 +442,22 @@ public class LibsDisguises extends JavaPlugin {
             getPluginLoader().disablePlugin(this);
             return;
         }
+        saveDefaultConfig();
+        if (!getConfig().contains("DisguiseRadiusMax"))
+            getConfig().set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
+        if (!getConfig().contains("UndisguiseRadiusMax"))
+            getConfig().set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
+        if (!getConfig().contains("DisguiseSounds"))
+            getConfig().set("DisguiseSounds", getConfig().getBoolean("DisguiseSounds"));
+        if (!getConfig().contains("HearSelfDisguise"))
+            getConfig().set("HearSelfDisguise", getConfig().getBoolean("HearSelfDisguise"));
+        if (!getConfig().contains("SendVelocity"))
+            getConfig().set("SendVelocity", getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.init(this);
-        DisguiseAPI.enableSounds(true);
-        DisguiseAPI.setVelocitySent(true);
+        DisguiseAPI.enableSounds(getConfig().getBoolean("DisguiseSounds"));
+        DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewDisguises"));
+        DisguiseAPI.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kinda stupid but I don't want open API calls.
@@ -456,11 +468,6 @@ public class LibsDisguises extends JavaPlugin {
             ex.printStackTrace();
         }
         addPacketListeners();
-        saveDefaultConfig();
-        if (!getConfig().contains("DisguiseRadiusMax"))
-            getConfig().set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
-        if (!getConfig().contains("UndisguiseRadiusMax"))
-            getConfig().set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
         DisguiseListener listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());
