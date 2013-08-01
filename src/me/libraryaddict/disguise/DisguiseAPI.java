@@ -61,13 +61,13 @@ import com.comphenix.protocol.reflect.StructureModifier;
 public class DisguiseAPI {
 
     private static HashMap<Entity, Disguise> disguises = new HashMap<Entity, Disguise>();
+    private static boolean hearSelfDisguise;
     private static LibsDisguises libsDisguises;
     private static PacketListener packetListener;
+    private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
     private static boolean sendVelocity;
     private static boolean soundsEnabled;
-    private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
     private static boolean viewDisguises;
-    private static boolean hearSelfDisguise;
     private static PacketListener viewDisguisesListener;
 
     private synchronized static Disguise access(Entity entity, Disguise... args) {
@@ -81,6 +81,10 @@ public class DisguiseAPI {
         else
             disguises.put(entity, args[0]);
         return null;
+    }
+
+    public static boolean canHearSelfDisguise() {
+        return hearSelfDisguise;
     }
 
     /**
@@ -122,16 +126,6 @@ public class DisguiseAPI {
                 ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
             }
         }
-    }
-
-    public static void setHearSelfDisguise(boolean replaceSound) {
-        if (hearSelfDisguise != replaceSound) {
-            hearSelfDisguise = replaceSound;
-        }
-    }
-
-    public static boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
     }
 
     private static Disguise get(Entity obj) {
@@ -452,12 +446,27 @@ public class DisguiseAPI {
                 ex.printStackTrace();
             }
             selfDisguisesIds.remove(player.getEntityId());
+            EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
+            EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities
+                    .get(player.getEntityId());
+            if (tracker != null) {
+                tracker.trackedPlayers.remove(entityplayer);
+            }
+            PacketContainer packetMetadata = new PacketContainer(Packets.Server.ENTITY_METADATA);
+            StructureModifier<Object> mods = packetMetadata.getModifier();
+            mods.write(0, player.getEntityId());
+            mods.write(1, entityplayer.getDataWatcher().c());
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetMetadata);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
-        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
-        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
-                .getEntityId());
-        if (tracker != null) {
-            tracker.trackedPlayers.remove(entityplayer);
+    }
+
+    public static void setHearSelfDisguise(boolean replaceSound) {
+        if (hearSelfDisguise != replaceSound) {
+            hearSelfDisguise = replaceSound;
         }
     }
 
