@@ -17,17 +17,13 @@ public class ZombieWatcher extends LivingWatcher {
     }
 
     public void setAdult(boolean adult) {
-        if (isAdult() != adult) {
-            setValue(12, (byte) (adult ? 0 : 1));
-            sendData(12);
-        }
+        setValue(12, (byte) (adult ? 0 : 1));
+        sendData(12);
     }
 
     public void setVillager(boolean villager) {
-        if (isVillager() != villager) {
-            setValue(13, (byte) (villager ? 1 : 0));
-            sendData(13);
-        }
+        setValue(13, (byte) (villager ? 1 : 0));
+        sendData(13);
     }
 
 }

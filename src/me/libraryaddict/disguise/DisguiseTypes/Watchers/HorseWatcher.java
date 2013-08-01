@@ -68,15 +68,13 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     private void setFlag(int i, boolean flag) {
-        if (isTrue(i) != flag) {
-            int j = (Integer) getValue(16, (byte) 0);
-            if (flag) {
-                setValue(16, j | i);
-            } else {
-                setValue(16, j & ~i);
-            }
-            sendData(16);
+        int j = (Integer) getValue(16, (byte) 0);
+        if (flag) {
+            setValue(16, j | i);
+        } else {
+            setValue(16, j & ~i);
         }
+        sendData(16);
     }
 
     public void setGrazing(boolean grazing) {

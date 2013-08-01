@@ -18,17 +18,13 @@ public class BoatWatcher extends FlagWatcher {
     }
 
     public void setDamage(float dmg) {
-        if ((Float) getValue(19, 40F) != dmg) {
-            setValue(19, dmg);
-            sendData(19);
-        }
+        setValue(19, dmg);
+        sendData(19);
     }
 
     public void setHealth(int health) {
-        if ((Integer) getValue(17, 10) != health) {
-            setValue(17, health);
-            sendData(17);
-        }
+        setValue(17, health);
+        sendData(17);
     }
 
 }

@@ -10,13 +10,12 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public float getDamage() {
-        if (getValue(19, 0F) != null)
-            return (Float) getValue(19, 0F);
-        return 0F;
+        return (Float) getValue(19, 0F);
     }
 
     public void setDamage(float damage) {
         setValue(19, damage);
+        sendData(19);
     }
 
 }

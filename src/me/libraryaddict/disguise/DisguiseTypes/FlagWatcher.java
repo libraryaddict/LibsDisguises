@@ -108,8 +108,20 @@ public class FlagWatcher {
         return entityValues.equals(flagWatcher.entityValues);
     }
 
+    public org.bukkit.inventory.ItemStack[] getArmor() {
+        org.bukkit.inventory.ItemStack[] armor = new org.bukkit.inventory.ItemStack[4];
+        for (int i = 0; i < 4; i++) {
+            armor[i] = items[i];
+        }
+        return armor;
+    }
+
     private boolean getFlag(int i) {
         return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
+    }
+
+    public org.bukkit.inventory.ItemStack getHeldItem() {
+        return getItemStack(SlotType.HELD_ITEM);
     }
 
     public org.bukkit.inventory.ItemStack getItemStack(int slot) {
@@ -150,10 +162,6 @@ public class FlagWatcher {
         return getFlag(3);
     }
 
-    protected boolean isTrue(int id, int no) {
-        return ((Byte) getValue(id, (byte) 0) & no) != 0;
-    }
-
     protected void sendData(int data) {
         if (disguise.getWatcher() == null || !DisguiseAPI.isDisguised(disguise.getEntity()))
             return;
@@ -177,30 +185,33 @@ public class FlagWatcher {
         }
     }
 
+    public void setArmor(org.bukkit.inventory.ItemStack[] itemstack) {
+        for (int i = 0; i < itemstack.length; i++)
+            setItemStack(i, itemstack[i]);
+    }
+
     public void setBurning(boolean setBurning) {
-        if (isSneaking() != setBurning) {
-            setFlag(0, 0, true);
-            sendData(0);
+        setFlag(0, 0, setBurning);
+        sendData(0);
+    }
+
+    protected void setFlag(int no, int i, boolean flag) {
+        byte b0 = (Byte) getValue(no, (byte) 0);
+
+        if (flag) {
+            setValue(no, (byte) (b0 | 1 << i));
+        } else {
+            setValue(no, (byte) (b0 & ~(1 << i)));
         }
     }
 
-    protected void setFlag(int id, int no, boolean flag) {
-        if (isTrue(id, no) != flag) {
-            byte b0 = (Byte) getValue(id, (byte) 0);
-            if (flag) {
-                setValue(id, (byte) (b0 | (no)));
-            } else {
-                setValue(id, (byte) (b0 & -(no + 1)));
-            }
-            sendData(id);
-        }
+    public void setHeldItem(org.bukkit.inventory.ItemStack itemstack) {
+        setItemStack(SlotType.HELD_ITEM, itemstack);
     }
 
     public void setInvisible(boolean setInvis) {
-        if (isInvisible() != setInvis) {
-            setFlag(0, 5, true);
-            sendData(0);
-        }
+        setFlag(0, 5, setInvis);
+        sendData(0);
     }
 
     public void setItemStack(int slot, org.bukkit.inventory.ItemStack itemStack) {
@@ -248,31 +259,23 @@ public class FlagWatcher {
     }
 
     public void setRiding(boolean setRiding) {
-        if (isSprinting() != setRiding) {
-            setFlag(0, 2, true);
-            sendData(0);
-        }
+        setFlag(0, 2, setRiding);
+        sendData(0);
     }
 
     public void setRightClicking(boolean setRightClicking) {
-        if (isRightClicking() != setRightClicking) {
-            setFlag(0, 4, true);
-            sendData(0);
-        }
+        setFlag(0, 4, setRightClicking);
+        sendData(0);
     }
 
     public void setSneaking(boolean setSneaking) {
-        if (isSneaking() != setSneaking) {
-            setFlag(0, 1, true);
-            sendData(0);
-        }
+        setFlag(0, 1, setSneaking);
+        sendData(0);
     }
 
     public void setSprinting(boolean setSprinting) {
-        if (isSprinting() != setSprinting) {
-            setFlag(0, 3, true);
-            sendData(0);
-        }
+        setFlag(0, 3, setSprinting);
+        sendData(0);
     }
 
     protected void setValue(int no, Object value) {

@@ -21,19 +21,15 @@ public class EndermanWatcher extends LivingWatcher {
     }
 
     public void setAgressive(boolean isAgressive) {
-        if (isAgressive() != isAgressive()) {
-            setValue(18, (byte) (isAgressive ? 1 : 0));
-            sendData(18);
-        }
+        setValue(18, (byte) (isAgressive ? 1 : 0));
+        sendData(18);
     }
 
     public void setCarriedItem(int id, int dataValue) {
-        if (getCarriedId() != id || getCarriedData() != dataValue) {
-            setValue(16, (byte) (id & 255));
-            setValue(17, (byte) (dataValue & 255));
-            sendData(16);
-            sendData(17);
-        }
+        setValue(16, (byte) (id & 255));
+        setValue(17, (byte) (dataValue & 255));
+        sendData(16);
+        sendData(17);
     }
 
 }

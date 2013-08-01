@@ -24,6 +24,7 @@ public class ItemFrameWatcher extends FlagWatcher {
         else {
             setValue(3, CraftItemStack.asCraftCopy(newItem));
         }
+        sendData(3);
     }
 
 }

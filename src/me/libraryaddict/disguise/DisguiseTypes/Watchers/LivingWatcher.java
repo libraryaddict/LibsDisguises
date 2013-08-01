@@ -71,10 +71,8 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void removePotionParticles(boolean particles) {
-        if (particles != getPotionParticlesRemoved()) {
-            setValue(8, (byte) (particles ? 1 : 0));
-            sendData(8);
-        }
+        setValue(8, (byte) (particles ? 1 : 0));
+        sendData(8);
     }
 
     private void sendPotionEffects() {
@@ -83,19 +81,15 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setCustomName(String name) {
-        if (!getCustomName().equals(name)) {
-            if (name.length() > 64)
-                name = name.substring(0, 64);
-            setValue(10, name);
-            sendData(10);
-        }
+        if (name.length() > 64)
+            name = name.substring(0, 64);
+        setValue(10, name);
+        sendData(10);
     }
 
     public void setCustomNameVisible(boolean display) {
-        if (isCustomNameVisible() != display) {
-            setValue(11, (byte) (display ? 1 : 0));
-            sendData(11);
-        }
+        setValue(11, (byte) (display ? 1 : 0));
+        sendData(11);
     }
 
     public void setHealth(float health) {

@@ -16,6 +16,7 @@ public class ArrowWatcher extends FlagWatcher {
 
     public void setMoving(boolean moving) {
         setValue(16, (byte) (moving ? 1 : 0));
+        sendData(16);
     }
 
 }

@@ -17,15 +17,11 @@ public class CreeperWatcher extends LivingWatcher {
     }
 
     public void setFuse(boolean isFused) {
-        if (isFused == isFused())
-            return;
         setValue(16, (byte) (isFused ? 1 : -1));
         sendData(16);
     }
 
     public void setPowered(boolean powered) {
-        if (powered == isPowered())
-            return;
         setValue(17, (byte) (powered ? 1 : 0));
         sendData(17);
     }

@@ -13,10 +13,8 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public void setArrowsSticking(int arrowsNo) {
-        if (arrowsNo != getArrowsSticking()) {
-            setValue(9, (byte) arrowsNo);
-            sendData(9);
-        }
+        setValue(9, (byte) arrowsNo);
+        sendData(9);
     }
 
 }

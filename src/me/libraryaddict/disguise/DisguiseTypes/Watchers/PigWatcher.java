@@ -13,9 +13,7 @@ public class PigWatcher extends AgeableWatcher {
     }
 
     public void setSaddled(boolean isSaddled) {
-        if (isSaddled() != isSaddled) {
-            setValue(16, (byte) (isSaddled ? 1 : 0));
-            sendData(16);
-        }
+        setValue(16, (byte) (isSaddled ? 1 : 0));
+        sendData(16);
     }
 }

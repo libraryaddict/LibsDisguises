@@ -13,10 +13,8 @@ public class GhastWatcher extends LivingWatcher {
     }
 
     public void setAgressive(boolean isAgressive) {
-        if (isAgressive() != isAgressive) {
-            setValue(16, (byte) (isAgressive ? 1 : 0));
-            sendData(16);
-        }
+        setValue(16, (byte) (isAgressive ? 1 : 0));
+        sendData(16);
     }
 
 }

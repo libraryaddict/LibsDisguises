@@ -49,15 +49,13 @@ public class WolfWatcher extends AgeableWatcher {
     }
 
     private void setFlag(int no, boolean flag) {
-        if (isTrue(no) != flag) {
-            byte b0 = (Byte) getValue(16, (byte) 0);
-            if (flag) {
-                setValue(16, (byte) (b0 | (no)));
-            } else {
-                setValue(16, (byte) (b0 & -(no + 1)));
-            }
-            sendData(16);
+        byte b0 = (Byte) getValue(16, (byte) 0);
+        if (flag) {
+            setValue(16, (byte) (b0 | (no)));
+        } else {
+            setValue(16, (byte) (b0 & -(no + 1)));
         }
+        sendData(16);
     }
 
     public void setHealth(float newHealth) {
