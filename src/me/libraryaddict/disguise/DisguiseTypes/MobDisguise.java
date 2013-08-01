@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.DisguiseTypes;
 
+import org.bukkit.entity.EntityType;
+
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
 
@@ -17,6 +19,19 @@ public class MobDisguise extends Disguise {
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
         super(disguiseType, replaceSounds);
+        this.isAdult = isAdult;
+    }
+
+    public MobDisguise(EntityType entityType) {
+        this(entityType, true);
+    }
+
+    public MobDisguise(EntityType entityType, boolean isAdult) {
+        this(entityType, isAdult, true);
+    }
+
+    public MobDisguise(EntityType entityType, boolean isAdult, boolean replaceSounds) {
+        super(DisguiseType.getType(entityType), replaceSounds);
         this.isAdult = isAdult;
     }
 
