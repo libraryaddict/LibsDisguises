@@ -84,7 +84,8 @@ public class LibsDisguises extends JavaPlugin {
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ENTITY_METADATA, Packets.Server.ARM_ANIMATION,
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ADD_EXP_ORB, Packets.Server.VEHICLE_SPAWN, Packets.Server.MOB_SPAWN,
-                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, Packets.Server.UPDATE_ATTRIBUTES) {
+                Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, Packets.Server.UPDATE_ATTRIBUTES,
+                Packets.Server.ENTITY_EQUIPMENT) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player observer = event.getPlayer();
@@ -128,12 +129,36 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     protected PacketContainer[] constructPacket(Disguise disguise, Entity disguisedEntity) {
-        PacketContainer[] spawnPackets = new PacketContainer[2];
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
+        ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
+        for (int i = 0; i < 5; i++) {
+            int slot = i - 1;
+            if (slot < 0)
+                slot = 4;
+            org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
+            if (itemstack != null && itemstack.getTypeId() != 0) {
+                ItemStack item = null;
+                if (nmsEntity instanceof EntityLiving)
+                    item = ((EntityLiving) nmsEntity).getEquipment(i);
+                if (item == null) {
+                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
+                    StructureModifier<Object> mods = packet.getModifier();
+                    mods.write(0, disguisedEntity.getEntityId());
+                    mods.write(1, i);
+                    mods.write(2, CraftItemStack.asNMSCopy(itemstack));
+                    packets.add(packet);
+                }
+            }
+        }
+        PacketContainer[] spawnPackets = new PacketContainer[2 + packets.size()];
+        for (int i = 0; i < packets.size(); i++) {
+            spawnPackets[i + 2] = packets.get(i);
+        }
         Location loc = disguisedEntity.getLocation();
         byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
                 (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
             spawnPackets[0] = manager.createPacket(Packets.Server.ADD_EXP_ORB);
@@ -299,99 +324,6 @@ public class LibsDisguises extends JavaPlugin {
         }
         return newWatcher;
 
-    }
-
-    protected PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
-        PacketContainer[] packets = new PacketContainer[] { sentPacket };
-        try {
-            // First get the entity, the one sending this packet
-            StructureModifier<Entity> entityModifer = sentPacket.getEntityModifier(observer.getWorld());
-            org.bukkit.entity.Entity entity = entityModifer.read((Packets.Server.COLLECT == sentPacket.getID() ? 1 : 0));
-            Disguise disguise = DisguiseAPI.getDisguise(entity);
-            // If disguised.
-            if (disguise != null) {
-                // If packet is Packets.Server.UPDATE_ATTRIBUTES - For some reason maven doesn't let me..
-                // This packet sends attributes
-
-                switch (sentPacket.getID()) {
-                case Packets.Server.UPDATE_ATTRIBUTES:
-
-                {
-                    // Grab the values which are 'approved' to be sent for this entity
-                    HashMap<String, Double> values = Values.getAttributesValues(disguise.getType());
-                    Collection collection = new ArrayList<AttributeSnapshot>();
-                    for (AttributeSnapshot att : (List<AttributeSnapshot>) sentPacket.getModifier().read(1)) {
-                        if (values.containsKey(att.a())) {
-                            collection.add(new AttributeSnapshot(null, att.a(), values.get(att.a()), att.c()));
-                        }
-                    }
-                    if (collection.size() > 0) {
-                        packets[0] = new PacketContainer(sentPacket.getID());
-                        StructureModifier<Object> mods = packets[0].getModifier();
-                        mods.write(0, entity.getEntityId());
-                        mods.write(1, collection);
-                    } else {
-                        packets = new PacketContainer[0];
-                    }
-                    break;
-                }
-
-                // Else if the packet is sending entity metadata
-                case Packets.Server.ENTITY_METADATA:
-
-                {
-                    List<WatchableObject> watchableObjects = disguise.getWatcher().convert(
-                            (List<WatchableObject>) packets[0].getModifier().read(1));
-                    packets[0] = new PacketContainer(sentPacket.getID());
-                    StructureModifier<Object> newMods = packets[0].getModifier();
-                    newMods.write(0, entity.getEntityId());
-                    newMods.write(1, watchableObjects);
-                    break;
-                }
-
-                // Else if the packet is spawning..
-                case Packets.Server.NAMED_ENTITY_SPAWN:
-                case Packets.Server.MOB_SPAWN:
-                case Packets.Server.ADD_EXP_ORB:
-                case Packets.Server.VEHICLE_SPAWN:
-                case Packets.Server.ENTITY_PAINTING:
-
-                {
-                    packets = constructPacket(disguise, entity);
-                    break;
-                }
-
-                // Else if the disguise is attempting to send players a forbidden packet
-                case Packets.Server.ARM_ANIMATION:
-                case Packets.Server.COLLECT:
-
-                {
-                    if (disguise.getType().isMisc())
-                        packets = new PacketContainer[0];
-                    break;
-
-                }
-                // Else if the disguise is moving.
-                case Packets.Server.REL_ENTITY_MOVE_LOOK:
-                case Packets.Server.ENTITY_LOOK:
-                case Packets.Server.ENTITY_TELEPORT:
-
-                {
-                    packets[0] = sentPacket.shallowClone();
-                    StructureModifier<Object> mods = packets[0].getModifier();
-                    byte value = (Byte) mods.read(4);
-                    mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
-                    break;
-                }
-
-                default:
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return packets;
     }
 
     private byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
@@ -618,5 +550,112 @@ public class LibsDisguises extends JavaPlugin {
             builder.append(s.substring(0, 1) + s.substring(1).toLowerCase());
         }
         return builder.toString();
+    }
+
+    protected PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
+        PacketContainer[] packets = new PacketContainer[] { sentPacket };
+        try {
+            // First get the entity, the one sending this packet
+            StructureModifier<Entity> entityModifer = sentPacket.getEntityModifier(observer.getWorld());
+            org.bukkit.entity.Entity entity = entityModifer.read((Packets.Server.COLLECT == sentPacket.getID() ? 1 : 0));
+            Disguise disguise = DisguiseAPI.getDisguise(entity);
+            // If disguised.
+            if (disguise != null) {
+                // If packet is Packets.Server.UPDATE_ATTRIBUTES - For some reason maven doesn't let me..
+                // This packet sends attributes
+
+                switch (sentPacket.getID()) {
+                case Packets.Server.UPDATE_ATTRIBUTES:
+
+                {
+                    // Grab the values which are 'approved' to be sent for this entity
+                    HashMap<String, Double> values = Values.getAttributesValues(disguise.getType());
+                    Collection collection = new ArrayList<AttributeSnapshot>();
+                    for (AttributeSnapshot att : (List<AttributeSnapshot>) sentPacket.getModifier().read(1)) {
+                        if (values.containsKey(att.a())) {
+                            collection.add(new AttributeSnapshot(null, att.a(), values.get(att.a()), att.c()));
+                        }
+                    }
+                    if (collection.size() > 0) {
+                        packets[0] = new PacketContainer(sentPacket.getID());
+                        StructureModifier<Object> mods = packets[0].getModifier();
+                        mods.write(0, entity.getEntityId());
+                        mods.write(1, collection);
+                    } else {
+                        packets = new PacketContainer[0];
+                    }
+                    break;
+                }
+
+                // Else if the packet is sending entity metadata
+                case Packets.Server.ENTITY_METADATA:
+
+                {
+                    List<WatchableObject> watchableObjects = disguise.getWatcher().convert(
+                            (List<WatchableObject>) packets[0].getModifier().read(1));
+                    packets[0] = new PacketContainer(sentPacket.getID());
+                    StructureModifier<Object> newMods = packets[0].getModifier();
+                    newMods.write(0, entity.getEntityId());
+                    newMods.write(1, watchableObjects);
+                    break;
+                }
+
+                // Else if the packet is spawning..
+                case Packets.Server.NAMED_ENTITY_SPAWN:
+                case Packets.Server.MOB_SPAWN:
+                case Packets.Server.ADD_EXP_ORB:
+                case Packets.Server.VEHICLE_SPAWN:
+                case Packets.Server.ENTITY_PAINTING:
+
+                {
+                    packets = constructPacket(disguise, entity);
+                    break;
+                }
+
+                // Else if the disguise is attempting to send players a forbidden packet
+                case Packets.Server.ARM_ANIMATION:
+                case Packets.Server.COLLECT:
+
+                {
+                    if (disguise.getType().isMisc())
+                        packets = new PacketContainer[0];
+                    break;
+
+                }
+                // Else if the disguise is moving.
+                case Packets.Server.REL_ENTITY_MOVE_LOOK:
+                case Packets.Server.ENTITY_LOOK:
+                case Packets.Server.ENTITY_TELEPORT:
+
+                {
+                    packets[0] = sentPacket.shallowClone();
+                    StructureModifier<Object> mods = packets[0].getModifier();
+                    byte value = (Byte) mods.read(4);
+                    mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
+                    break;
+                }
+
+                case Packets.Server.ENTITY_EQUIPMENT:
+
+                {
+                    int slot = (Integer) packets[0].getModifier().read(1) - 1;
+                    if (slot < 0)
+                        slot = 4;
+                    org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
+                    if (itemstack != null) {
+                        packets[0] = packets[0].shallowClone();
+                        packets[0].getModifier().write(2,
+                                (itemstack.getTypeId() == 0 ? null : CraftItemStack.asNMSCopy(itemstack)));
+                    }
+                }
+
+                default:
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return packets;
     }
 }

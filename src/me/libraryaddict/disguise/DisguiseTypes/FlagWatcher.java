@@ -6,20 +6,36 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import net.minecraft.server.v1_6_R2.ChunkCoordinates;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.ItemStack;
 import net.minecraft.server.v1_6_R2.WatchableObject;
 
 public class FlagWatcher {
+    public enum SlotType {
+        BOOTS(0), CHESTPLATE(2), HELD_ITEM(4), HELMET(3), LEGGINGS(1);
+        private int slotNo = 0;
+
+        private SlotType(int no) {
+            slotNo = no;
+        }
+
+        public int getSlot() {
+            return slotNo;
+        }
+    }
 
     private static HashMap<Class, Integer> classTypes = new HashMap<Class, Integer>();
     static {
@@ -33,6 +49,7 @@ public class FlagWatcher {
     }
     private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
+    private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = disguise;
@@ -95,6 +112,14 @@ public class FlagWatcher {
         return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
     }
 
+    public org.bukkit.inventory.ItemStack getItemStack(int slot) {
+        return items[slot];
+    }
+
+    public org.bukkit.inventory.ItemStack getItemStack(SlotType slot) {
+        return getItemStack(slot.getSlot());
+    }
+
     protected Object getValue(int no, Object backup) {
         if (entityValues.containsKey(no))
             return entityValues.get(no);
@@ -130,7 +155,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        if (disguise.getWatcher() == null)
+        if (disguise.getWatcher() == null || !DisguiseAPI.isDisguised(disguise.getEntity()))
             return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
@@ -176,6 +201,50 @@ public class FlagWatcher {
             setFlag(0, 5, true);
             sendData(0);
         }
+    }
+
+    public void setItemStack(int slot, org.bukkit.inventory.ItemStack itemStack) {
+        // Itemstack which is null means that its not replacing the disguises itemstack.
+        if (itemStack == null) {
+            // Find the item to replace it with
+            if (disguise.getEntity() instanceof LivingEntity) {
+                EntityEquipment enquipment = ((LivingEntity) disguise.getEntity()).getEquipment();
+                if (slot == 4) {
+                    itemStack = enquipment.getItemInHand();
+                } else {
+                    itemStack = enquipment.getArmorContents()[slot];
+                }
+                if (itemStack != null && itemStack.getTypeId() == 0)
+                    itemStack = null;
+            }
+        }
+
+        ItemStack itemToSend = null;
+        if (itemStack != null && itemStack.getTypeId() != 0)
+            itemToSend = CraftItemStack.asNMSCopy(itemStack);
+        items[slot] = itemStack;
+        slot++;
+        if (slot > 4)
+            slot = 0;
+        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
+        StructureModifier<Object> mods = packet.getModifier();
+        mods.write(0, disguise.getEntity().getEntityId());
+        mods.write(1, slot);
+        mods.write(2, itemToSend);
+        for (EntityPlayer player : disguise.getPerverts()) {
+            Player p = player.getBukkitEntity();
+            if (p != disguise.getEntity()) {
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void setItemStack(SlotType slot, org.bukkit.inventory.ItemStack itemStack) {
+        setItemStack(slot.getSlot(), itemStack);
     }
 
     public void setRiding(boolean setRiding) {
