@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.util.HashMap;
 
+import net.minecraft.server.v1_6_R2.EnumEntitySize;
+
 public class Values {
 
     private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
@@ -48,12 +50,18 @@ public class Values {
     private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
 
     private Class declared;
+    private EnumEntitySize enumEntitySize;
 
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
 
-    public Values(DisguiseType type, Class classType) {
+    public Values(DisguiseType type, Class classType, EnumEntitySize entitySize) {
         values.put(type, this);
+        enumEntitySize = entitySize;
         declared = classType;
+    }
+
+    public EnumEntitySize getEntitySize() {
+        return enumEntitySize;
     }
 
     public HashMap<String, Double> getAttributesValues() {

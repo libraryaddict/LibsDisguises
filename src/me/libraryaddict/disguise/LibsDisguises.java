@@ -26,6 +26,7 @@ import net.minecraft.server.v1_6_R2.DataWatcher;
 import net.minecraft.server.v1_6_R2.EntityHuman;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EnumArt;
+import net.minecraft.server.v1_6_R2.EnumEntitySize;
 import net.minecraft.server.v1_6_R2.GenericAttributes;
 import net.minecraft.server.v1_6_R2.ItemStack;
 import net.minecraft.server.v1_6_R2.MathHelper;
@@ -158,6 +159,7 @@ public class LibsDisguises extends JavaPlugin {
         Location loc = disguisedEntity.getLocation();
         byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
                 (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+        EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -186,9 +188,9 @@ public class LibsDisguises extends JavaPlugin {
             spawnPackets[1] = manager.createPacket(Packets.Server.ENTITY_TELEPORT);
             mods = spawnPackets[1].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32D));
+            mods.write(1, (int) Math.floor(entitySize.a(loc.getX()) * 32D));
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
+            mods.write(3, (int) Math.floor(entitySize.a(loc.getZ()) * 32D));
             mods.write(4, yaw);
             mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
@@ -235,9 +237,9 @@ public class LibsDisguises extends JavaPlugin {
                 d3 = d1;
             if (d4 > d1)
                 d4 = d1;
-            mods.write(2, nmsEntity.at.a(loc.getX()));
+            mods.write(2, entitySize.a(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
-            mods.write(4, nmsEntity.at.a(loc.getZ()));
+            mods.write(4, entitySize.a(loc.getZ()));
             mods.write(5, (int) (d2 * 8000.0D));
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
@@ -509,7 +511,7 @@ public class LibsDisguises extends JavaPlugin {
                     entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
                     entity = (net.minecraft.server.v1_6_R2.Entity) entityClass.getConstructor(World.class).newInstance(world);
                 }
-                Values value = new Values(disguiseType, entityClass);
+                Values value = new Values(disguiseType, entityClass, entity.at);
                 List<WatchableObject> watchers = entity.getDataWatcher().c();
                 for (WatchableObject watch : watchers)
                     value.setMetaValue(watch.a(), watch.b());
@@ -632,6 +634,12 @@ public class LibsDisguises extends JavaPlugin {
                     StructureModifier<Object> mods = packets[0].getModifier();
                     byte value = (Byte) mods.read(4);
                     mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
+                    if (sentPacket.getID() == Packets.Server.ENTITY_TELEPORT) {
+                        Location loc = entity.getLocation();
+                        EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
+                        mods.write(1, (int) Math.floor(entitySize.a(loc.getX()) * 32D));
+                        mods.write(3, (int) Math.floor(entitySize.a(loc.getZ()) * 32D));
+                    }
                     break;
                 }
 
