@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +36,7 @@ import net.minecraft.server.v1_6_R2.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
@@ -377,16 +379,17 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
         saveDefaultConfig();
-        if (!getConfig().contains("DisguiseRadiusMax"))
-            getConfig().set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
-        if (!getConfig().contains("UndisguiseRadiusMax"))
-            getConfig().set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
-        if (!getConfig().contains("DisguiseSounds"))
-            getConfig().set("DisguiseSounds", getConfig().getBoolean("DisguiseSounds"));
-        if (!getConfig().contains("HearSelfDisguise"))
-            getConfig().set("HearSelfDisguise", getConfig().getBoolean("HearSelfDisguise"));
-        if (!getConfig().contains("SendVelocity"))
-            getConfig().set("SendVelocity", getConfig().getBoolean("SendVelocity"));
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        if (!config.contains("DisguiseRadiusMax"))
+            config.set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
+        if (!config.contains("UndisguiseRadiusMax"))
+            config.set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
+        if (!config.contains("DisguiseSounds"))
+            config.set("DisguiseSounds", getConfig().getBoolean("DisguiseSounds"));
+        if (!config.contains("HearSelfDisguise"))
+            config.set("HearSelfDisguise", getConfig().getBoolean("HearSelfDisguise"));
+        if (!config.contains("SendVelocity"))
+            config.set("SendVelocity", getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.init(this);
         DisguiseAPI.enableSounds(getConfig().getBoolean("DisguiseSounds"));
         DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
