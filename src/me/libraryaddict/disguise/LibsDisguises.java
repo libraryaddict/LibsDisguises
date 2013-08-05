@@ -634,12 +634,6 @@ public class LibsDisguises extends JavaPlugin {
                     StructureModifier<Object> mods = packets[0].getModifier();
                     byte value = (Byte) mods.read(4);
                     mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
-                    if (sentPacket.getID() == Packets.Server.ENTITY_TELEPORT) {
-                        Location loc = entity.getLocation();
-                        EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
-                        mods.write(1, (int) Math.floor(entitySize.a(loc.getX()) * 32D));
-                        mods.write(3, (int) Math.floor(entitySize.a(loc.getZ()) * 32D));
-                    }
                     break;
                 }
 
