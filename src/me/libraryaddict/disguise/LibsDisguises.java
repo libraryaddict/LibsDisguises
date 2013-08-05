@@ -458,7 +458,6 @@ public class LibsDisguises extends JavaPlugin {
             }
             disguiseType.setWatcherClass(watcherClass);
             String name = toReadable(disguiseType.name());
-            boolean dontDo = false;
             switch (disguiseType) {
             case WITHER_SKELETON:
             case ZOMBIE_VILLAGER:
@@ -466,8 +465,7 @@ public class LibsDisguises extends JavaPlugin {
             case MULE:
             case UNDEAD_HORSE:
             case SKELETON_HORSE:
-                dontDo = true;
-                break;
+                continue;
             case PRIMED_TNT:
                 name = "TNTPrimed";
                 break;
@@ -495,8 +493,6 @@ public class LibsDisguises extends JavaPlugin {
             default:
                 break;
             }
-            if (dontDo)
-                continue;
             try {
                 net.minecraft.server.v1_6_R2.Entity entity = null;
                 Class entityClass;
@@ -559,7 +555,7 @@ public class LibsDisguises extends JavaPlugin {
             Disguise disguise = DisguiseAPI.getDisguise(entity);
             // If disguised.
             if (disguise != null) {
-                // If packet is Packets.Server.UPDATE_ATTRIBUTES - For some reason maven doesn't let me..
+                // If packet is Packets.Server.UPDATE_ATTRIBUTES
                 // This packet sends attributes
 
                 switch (sentPacket.getID()) {
@@ -645,6 +641,7 @@ public class LibsDisguises extends JavaPlugin {
                         packets[0].getModifier().write(2,
                                 (itemstack.getTypeId() == 0 ? null : CraftItemStack.asNMSCopy(itemstack)));
                     }
+                    break;
                 }
 
                 default:
