@@ -436,6 +436,7 @@ public class LibsDisguises extends JavaPlugin {
                     break;
                 case MAGMA_CUBE:
                     name = "Slime";
+                    break;
                 default:
                     name = toReadable(disguiseType.name());
                     break;
