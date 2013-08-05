@@ -38,7 +38,6 @@ import net.minecraft.server.v1_6_R2.WatchableObject;
 import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
@@ -212,6 +211,8 @@ public class DisguiseAPI {
                                             soundLoc.getBlockZ())];
                                     if (b != null)
                                         mods.write(0, b.stepSound.getStepSound());
+                                    // There is no else statement. Because seriously. This should never be null. Unless someone is
+                                    // sending fake sounds. In which case. Why cancel it.
                                 } else {
                                     mods.write(0, sound);
                                     // Time to change the pitch and volume
@@ -278,7 +279,7 @@ public class DisguiseAPI {
                                     soundType = SoundType.HURT;
                                 }
                                 if (disSound.getSound(soundType) == null
-                                        || (hearSelfDisguise && entity == event.getPlayer() && (soundType == SoundType.HURT || soundType == SoundType.DEATH))) {
+                                        || (soundType != null && hearSelfDisguise && entity == event.getPlayer())) {
                                     disSound = DisguiseSound.getType(disguise.getType().name());
                                     if (disSound != null) {
                                         String sound = disSound.getSound(soundType);
@@ -470,10 +471,24 @@ public class DisguiseAPI {
         }
     }
 
-    private static void setupPlayer(Player player) {
+    private static void setupPlayer(final Player player) {
         removeVisibleDisguise(player);
         if (!viewDisguises())
             return;
+        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
+        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
+                .getEntityId());
+        if (tracker == null) {
+            // A check incase the tracker is null.
+            // If it is, then this method will be run again in one tick. Which is when it should be constructed.
+            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                public void run() {
+                    setupPlayer(player);
+                }
+            });
+            return;
+        }
+        tracker.trackedPlayers.add(entityplayer);
         int id = 0;
         try {
             Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
@@ -484,14 +499,7 @@ public class DisguiseAPI {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
-        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
-                .getEntityId());
-        Validate.notNull(tracker,
-                "If you are disguising as soon as they log in, please wait a tick or 2 for their EntityTracker to be constructed");
-        tracker.trackedPlayers.add(entityplayer);
 
-        // CraftBukkit end
         Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
         entityplayer.playerConnection.sendPacket(packet);
         if (!tracker.tracker.getDataWatcher().d()) {
