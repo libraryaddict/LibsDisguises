@@ -15,6 +15,7 @@ import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,10 +45,9 @@ public class Disguise {
         return disguise;
     }
 
-    public void constructWatcher(final org.bukkit.entity.Entity entity) {
-        if (this.entity != null)
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        this.entity = entity;
+    public void constructWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
+        if (getWatcher() != null)
+            throw new RuntimeException("The watcher has already been constructed! Try .clone()");
         FlagWatcher tempWatcher = null;
         try {
             tempWatcher = (FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this);
@@ -71,10 +71,16 @@ public class Disguise {
             } catch (Exception ex) {
                 // Ok.. So it aint a horse
             }
-        Class entityClass = Values.getEntityClass(DisguiseType.getType(getEntity().getType()));
         Class disguiseClass = Values.getEntityClass(getType());
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
+        EntityType entityType = null;
+        for (EntityType type : EntityType.values()) {
+            if (type.getEntityClass() != null && type.getEntityClass().isAssignableFrom(entityClass)) {
+                entityType = type;
+                break;
+            }
+        }
+        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entityType));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
@@ -147,6 +153,14 @@ public class Disguise {
             tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
         }
         watcher = tempWatcher;
+    }
+
+    public void setEntity(final org.bukkit.entity.Entity entity) {
+        if (this.entity != null)
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        if (getWatcher() == null)
+            constructWatcher(entity.getClass());
+        this.entity = entity;
         double fallSpeed = 0.0050;
         boolean doesntMove = false;
         boolean movement = false;
@@ -249,20 +263,9 @@ public class Disguise {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, entity.getEntityId());
                             for (EntityPlayer player : getPerverts()) {
-                                if (entity != player) {
+                                if (DisguiseAPI.viewDisguises() || entity != player) {
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet,
-                                                false);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else if (DisguiseAPI.viewDisguises()) {
-                                    PacketContainer specialPacket = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
-                                    mods = packet.getModifier();
-                                    mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
-                                                specialPacket, false);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
