@@ -59,7 +59,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class DisguiseAPI {
 
-    private static HashMap<Entity, Disguise> disguises = new HashMap<Entity, Disguise>();
+    private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
     private static boolean hearSelfDisguise;
     private static LibsDisguises libsDisguises;
     private static PacketListener packetListener;
@@ -68,19 +68,6 @@ public class DisguiseAPI {
     private static boolean soundsEnabled;
     private static boolean viewDisguises;
     private static PacketListener viewDisguisesListener;
-
-    private synchronized static Disguise access(Entity entity, Disguise... args) {
-        if (args.length == 0) {
-            if (disguises.containsKey(entity))
-                return disguises.get(entity);
-            return null;
-        }
-        if (args[0] == null)
-            disguises.remove(entity);
-        else
-            disguises.put(entity, args[0]);
-        return null;
-    }
 
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
@@ -105,15 +92,28 @@ public class DisguiseAPI {
         }
 
         if (disguise.getEntity() != entity) {
-            if (disguise.getWatcher() != null) {
+            if (disguise.getEntity() != null) {
                 disguise = disguise.clone();
             }
-            disguise.constructWatcher(entity);
+            disguise.setEntity(entity);
         }
-        put(entity, disguise);
+        disguises.put(entity.getEntityId(), disguise);
         refresh(entity);
         if (entity instanceof Player)
             setupPlayer((Player) entity);
+    }
+
+    public static void disguiseNextEntity(Disguise disguise) {
+        if (disguise == null)
+            return;
+        try {
+            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
+            field.setAccessible(true);
+            int id = field.getInt(null);
+            disguises.put(id, disguise);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void enableSounds(boolean isSoundsEnabled) {
@@ -127,21 +127,17 @@ public class DisguiseAPI {
         }
     }
 
-    private static Disguise get(Entity obj) {
-        return access(obj);
-    }
-
     /**
      * @param Disguiser
      * @return Disguise
      */
     public static Disguise getDisguise(Entity disguiser) {
-        return get(disguiser);
+        return disguises.get(disguiser.getEntityId());
     }
 
     @Deprecated
     public static Disguise getDisguise(Object disguiser) {
-        return get((Entity) disguiser);
+        return getDisguise((Entity) disguiser);
     }
 
     public static int getFakeDisguise(int id) {
@@ -403,20 +399,16 @@ public class DisguiseAPI {
      * @return boolean - If the disguiser is disguised
      */
     public static boolean isDisguised(Entity disguiser) {
-        return get(disguiser) != null;
+        return getDisguise(disguiser) != null;
     }
 
     @Deprecated
     public static boolean isDisguised(Object disguiser) {
-        return get((Entity) disguiser) != null;
+        return getDisguise((Entity) disguiser) != null;
     }
 
     public static boolean isVelocitySent() {
         return sendVelocity;
-    }
-
-    private static void put(Entity obj, Disguise disguise) {
-        access(obj, disguise);
     }
 
     /**
@@ -611,7 +603,7 @@ public class DisguiseAPI {
         if (event.isCancelled())
             return;
         disguise.getScheduler().cancel();
-        put(entity, null);
+        disguises.remove(entity.getEntityId());
         if (entity.isValid()) {
             refresh(entity);
         }
