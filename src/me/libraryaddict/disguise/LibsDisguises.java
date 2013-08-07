@@ -132,6 +132,8 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     protected PacketContainer[] constructPacket(Disguise disguise, Entity disguisedEntity) {
+        if (disguise.getEntity() == null)
+            disguise.setEntity(disguisedEntity);
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
