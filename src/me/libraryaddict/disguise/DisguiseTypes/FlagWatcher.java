@@ -163,7 +163,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        if (disguise.getWatcher() == null || !DisguiseAPI.isDisguised(disguise.getEntity()))
+        if (disguise.getWatcher() == null || disguise.getEntity() == null || !DisguiseAPI.isDisguised(disguise.getEntity()))
             return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
