@@ -28,14 +28,17 @@ public class MiscDisguise extends Disguise {
         this(disguiseType, true, id, data);
     }
 
+    @Deprecated
     public MiscDisguise(EntityType entityType) {
         this(entityType, true, -1, -1);
     }
 
+    @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds) {
         this(entityType, replaceSounds, -1, -1);
     }
 
+    @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds, int id, int data) {
         super(DisguiseType.getType(entityType), replaceSounds);
         if (id == -1)
@@ -46,6 +49,7 @@ public class MiscDisguise extends Disguise {
         this.data = data;
     }
 
+    @Deprecated
     public MiscDisguise(EntityType disguiseType, int id, int data) {
         this(disguiseType, true, id, data);
     }

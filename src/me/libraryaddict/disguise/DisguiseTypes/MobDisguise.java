@@ -22,14 +22,17 @@ public class MobDisguise extends Disguise {
         this.isAdult = isAdult;
     }
 
+    @Deprecated
     public MobDisguise(EntityType entityType) {
         this(entityType, true);
     }
 
+    @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult) {
         this(entityType, isAdult, true);
     }
 
+    @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult, boolean replaceSounds) {
         super(DisguiseType.getType(entityType), replaceSounds);
         this.isAdult = isAdult;
