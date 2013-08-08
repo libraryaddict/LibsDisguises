@@ -60,16 +60,16 @@ public class Values {
         declared = classType;
     }
 
-    public EnumEntitySize getEntitySize() {
-        return enumEntitySize;
-    }
-
     public HashMap<String, Double> getAttributesValues() {
         return attributesValues;
     }
 
     public Class getEntityClass() {
         return declared;
+    }
+
+    public EnumEntitySize getEntitySize() {
+        return enumEntitySize;
     }
 
     public HashMap<Integer, Object> getMetaValues() {

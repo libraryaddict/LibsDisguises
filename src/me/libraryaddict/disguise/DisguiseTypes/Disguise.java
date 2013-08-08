@@ -155,6 +155,58 @@ public class Disguise {
         watcher = tempWatcher;
     }
 
+    public boolean equals(Disguise disguise) {
+        if (getType() != disguise.getType())
+            return false;
+        if (replaceSounds() != disguise.replaceSounds())
+            return false;
+        if (!getWatcher().equals(disguise.getWatcher()))
+            return false;
+        return true;
+    }
+
+    public org.bukkit.entity.Entity getEntity() {
+        return entity;
+    }
+
+    protected EntityPlayer[] getPerverts() {
+        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
+                .get(entity.getEntityId());
+        if (entry != null) {
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
+            return players;
+        }
+        return new EntityPlayer[0];
+    }
+
+    public BukkitRunnable getScheduler() {
+        return runnable;
+    }
+
+    public DisguiseType getType() {
+        return disguiseType;
+    }
+
+    public FlagWatcher getWatcher() {
+        return watcher;
+    }
+
+    public boolean isMiscDisguise() {
+        return this instanceof MiscDisguise;
+    }
+
+    public boolean isMobDisguise() {
+        return this instanceof MobDisguise;
+    }
+
+    public boolean isPlayerDisguise() {
+        return this instanceof PlayerDisguise;
+    }
+
+    public boolean replaceSounds() {
+        return replaceSounds;
+    }
+
     public void setEntity(final org.bukkit.entity.Entity entity) {
         if (this.entity != null)
             throw new RuntimeException("This disguise is already in use! Try .clone()");
@@ -277,58 +329,6 @@ public class Disguise {
             }
         };
         runnable.runTaskTimer(plugin, 1, 1);
-    }
-
-    public boolean equals(Disguise disguise) {
-        if (getType() != disguise.getType())
-            return false;
-        if (replaceSounds() != disguise.replaceSounds())
-            return false;
-        if (!getWatcher().equals(disguise.getWatcher()))
-            return false;
-        return true;
-    }
-
-    public org.bukkit.entity.Entity getEntity() {
-        return entity;
-    }
-
-    protected EntityPlayer[] getPerverts() {
-        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                .get(entity.getEntityId());
-        if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
-            return players;
-        }
-        return new EntityPlayer[0];
-    }
-
-    public BukkitRunnable getScheduler() {
-        return runnable;
-    }
-
-    public DisguiseType getType() {
-        return disguiseType;
-    }
-
-    public FlagWatcher getWatcher() {
-        return watcher;
-    }
-
-    public boolean isMiscDisguise() {
-        return this instanceof MiscDisguise;
-    }
-
-    public boolean isMobDisguise() {
-        return this instanceof MobDisguise;
-    }
-
-    public boolean isPlayerDisguise() {
-        return this instanceof PlayerDisguise;
-    }
-
-    public boolean replaceSounds() {
-        return replaceSounds;
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {

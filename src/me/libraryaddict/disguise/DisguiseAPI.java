@@ -73,6 +73,19 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
+    public static void disguiseNextEntity(Disguise disguise) {
+        if (disguise == null)
+            return;
+        try {
+            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
+            field.setAccessible(true);
+            int id = field.getInt(null);
+            disguises.put(id, disguise);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * @param Player
      *            - The player to disguise
@@ -101,19 +114,6 @@ public class DisguiseAPI {
         refresh(entity);
         if (entity instanceof Player)
             setupPlayer((Player) entity);
-    }
-
-    public static void disguiseNextEntity(Disguise disguise) {
-        if (disguise == null)
-            return;
-        try {
-            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
-            field.setAccessible(true);
-            int id = field.getInt(null);
-            disguises.put(id, disguise);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public static void enableSounds(boolean isSoundsEnabled) {
