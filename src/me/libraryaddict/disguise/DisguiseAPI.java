@@ -80,7 +80,7 @@ public class DisguiseAPI {
      *            - The disguise to wear
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
-        if (disguise == null)
+        if (entity == null || disguise == null)
             return;
         Disguise oldDisguise = getDisguise(entity);
         DisguisedEvent event = new DisguisedEvent(entity, disguise);
@@ -132,6 +132,8 @@ public class DisguiseAPI {
      * @return Disguise
      */
     public static Disguise getDisguise(Entity disguiser) {
+        if (disguiser == null)
+            return null;
         return disguises.get(disguiser.getEntityId());
     }
 
