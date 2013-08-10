@@ -38,6 +38,28 @@ public class Disguise {
     protected Disguise(DisguiseType newType, boolean doSounds) {
         disguiseType = newType;
         replaceSounds = doSounds;
+        try {
+            setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
+            if (getWatcher() instanceof AgeableWatcher)
+                getWatcher().setValue(12, -24000);
+            else if (getWatcher() instanceof ZombieWatcher)
+                getWatcher().setValue(12, (byte) 1);
+        }
+        if (getType() == DisguiseType.WITHER_SKELETON)
+            getWatcher().setValue(13, (byte) 1);
+        else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
+            getWatcher().setValue(13, (byte) 1);
+        else
+            try {
+                Variant horseType = Variant.valueOf(getType().name());
+                getWatcher().setValue(19, (byte) horseType.ordinal());
+            } catch (Exception ex) {
+                // Ok.. So it aint a horse
+            }
     }
 
     public Disguise clone() {
@@ -45,32 +67,16 @@ public class Disguise {
         return disguise;
     }
 
+    /**
+     * @Deprecated No longer does anything. Watcher is constructed at the same time as disguise.
+     */
+    @Deprecated
     public void constructWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
+    }
+
+    private void setupWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
         if (getWatcher() != null)
             throw new RuntimeException("The watcher has already been constructed! Try .clone()");
-        FlagWatcher tempWatcher = null;
-        try {
-            tempWatcher = (FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
-            if (tempWatcher instanceof AgeableWatcher)
-                tempWatcher.setValue(12, -24000);
-            else if (tempWatcher instanceof ZombieWatcher)
-                tempWatcher.setValue(12, (byte) 1);
-        }
-        if (getType() == DisguiseType.WITHER_SKELETON)
-            tempWatcher.setValue(13, (byte) 1);
-        else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
-            tempWatcher.setValue(13, (byte) 1);
-        else
-            try {
-                Variant horseType = Variant.valueOf(getType().name());
-                tempWatcher.setValue(19, (byte) horseType.ordinal());
-            } catch (Exception ex) {
-                // Ok.. So it aint a horse
-            }
         Class disguiseClass = Values.getEntityClass(getType());
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         EntityType entityType = null;
@@ -84,10 +90,10 @@ public class Disguise {
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
-            if (tempWatcher.getValue(dataNo, null) != null) {
+            if (getWatcher().getValue(dataNo, null) != null) {
                 // Better check that the value is stable.
                 if (disguiseValues.containsKey(dataNo)
-                        && tempWatcher.getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass()) {
+                        && getWatcher().getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass()) {
                     // The classes are the same. The client "shouldn't" crash.
                     continue;
                 }
@@ -97,19 +103,19 @@ public class Disguise {
                 continue;
             // If the disguise has this, but not the entity. Then better set it!
             if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo)) {
-                tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
+                getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
                 continue;
             }
             // Else if the disguise doesn't have it. But the entity does. Better remove it!
             if (entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo)) {
-                tempWatcher.setValue(dataNo, null);
+                getWatcher().setValue(dataNo, null);
                 continue;
             }
             // Hmm. They both have the datavalue. Time to check if they have different default values!
             if (entityValues.get(dataNo) != disguiseValues.get(dataNo)
                     || !entityValues.get(dataNo).equals(disguiseValues.get(dataNo))) {
                 // They do! Set the default value!
-                tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
+                getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
                 continue;
             }
             // Hmm. They both now have data values which are exactly the same. I need to do more intensive background checks.
@@ -150,9 +156,8 @@ public class Disguise {
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
-            tempWatcher.setValue(dataNo, disguiseValues.get(dataNo));
+            getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
         }
-        watcher = tempWatcher;
     }
 
     public boolean equals(Disguise disguise) {
@@ -211,10 +216,9 @@ public class Disguise {
         if (this.entity != null)
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         if (getWatcher() == null)
-            constructWatcher(entity.getClass());
+            setupWatcher(entity.getClass());
         this.entity = entity;
         double fallSpeed = 0.0050;
-        boolean doesntMove = false;
         boolean movement = false;
         switch (getType()) {
         case ARROW:
@@ -233,7 +237,7 @@ public class Disguise {
         case PAINTING:
         case PLAYER:
         case SQUID:
-            doesntMove = true;
+            fallSpeed = 0;
             break;
         case DROPPED_ITEM:
         case EXPERIENCE_ORB:
@@ -268,7 +272,6 @@ public class Disguise {
             break;
         }
         final boolean sendMovementPacket = movement;
-        final boolean sendVector = !doesntMove;
         final double vectorY = fallSpeed;
         // A scheduler to clean up any unused disguises.
         runnable = new BukkitRunnable() {
@@ -287,7 +290,7 @@ public class Disguise {
                             ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), players);
                         }
                     }
-                    if (sendVector && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
+                    if (vectorY != 0 && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
                         Vector vector = entity.getVelocity();
                         if (vector.getY() != 0)
                             return;
