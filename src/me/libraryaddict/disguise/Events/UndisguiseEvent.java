@@ -7,7 +7,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class DisguisedEvent extends Event implements Cancellable {
+public class UndisguiseEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
@@ -19,7 +19,7 @@ public class DisguisedEvent extends Event implements Cancellable {
 
     private boolean isCancelled;
 
-    public DisguisedEvent(Entity entity, Disguise disguise) {
+    public UndisguiseEvent(Entity entity, Disguise disguise) {
         this.disguised = entity;
         this.disguise = disguise;
     }
@@ -28,7 +28,7 @@ public class DisguisedEvent extends Event implements Cancellable {
         return disguise;
     }
 
-    public Entity getDisguised() {
+    public Entity getEntity() {
         return disguised;
     }
 
