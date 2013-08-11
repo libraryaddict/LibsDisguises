@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
+import me.libraryaddict.disguise.DisguiseTypes.Watchers.HorseWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
 import net.minecraft.server.v1_6_R2.EntityAgeable;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
@@ -31,52 +32,292 @@ public class Disguise {
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private org.bukkit.entity.Entity entity;
+    private boolean hearSelfDisguise = DisguiseAPI.canHearSelfDisguise();
     private boolean replaceSounds;
     private BukkitRunnable runnable;
+    private boolean velocitySent = DisguiseAPI.isVelocitySent();
+    private boolean viewSelfDisguise = DisguiseAPI.viewDisguises();
     private FlagWatcher watcher;
 
     protected Disguise(DisguiseType newType, boolean doSounds) {
+        // Set the disguise type
         disguiseType = newType;
-        replaceSounds = doSounds;
+        // Set the option to replace the sounds
+        setReplaceSounds(doSounds);
         try {
+            // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // Set the disguise if its a baby or not
         if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
             if (getWatcher() instanceof AgeableWatcher)
                 getWatcher().setValue(12, -24000);
             else if (getWatcher() instanceof ZombieWatcher)
                 getWatcher().setValue(12, (byte) 1);
         }
+        // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
         if (getType() == DisguiseType.WITHER_SKELETON)
             getWatcher().setValue(13, (byte) 1);
+        // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
             getWatcher().setValue(13, (byte) 1);
-        else
+        // Else if its a horse. Set the horse watcher type
+        else if (getWatcher() instanceof HorseWatcher) {
             try {
                 Variant horseType = Variant.valueOf(getType().name());
                 getWatcher().setValue(19, (byte) horseType.ordinal());
             } catch (Exception ex) {
                 // Ok.. So it aint a horse
             }
+        }
+    }
+
+    public boolean canHearSelfDisguise() {
+        return hearSelfDisguise;
     }
 
     public Disguise clone() {
         Disguise disguise = new Disguise(getType(), replaceSounds());
+        disguise.setViewSelfDisguise(viewSelfDisguise());
         return disguise;
     }
 
-    /**
-     * @Deprecated No longer does anything. Watcher is constructed at the same time as disguise.
-     */
-    @Deprecated
-    public void constructWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Disguise other = (Disguise) obj;
+        if (disguiseType != other.disguiseType)
+            return false;
+        if (hearSelfDisguise != other.hearSelfDisguise)
+            return false;
+        if (replaceSounds != other.replaceSounds)
+            return false;
+        if (velocitySent != other.velocitySent)
+            return false;
+        if (viewSelfDisguise != other.viewSelfDisguise)
+            return false;
+        if (!watcher.equals(other.watcher))
+            return false;
+        return true;
     }
 
+    /**
+     * Get the disguised entity
+     */
+    public org.bukkit.entity.Entity getEntity() {
+        return entity;
+    }
+
+    /**
+     * Get all EntityPlayers who have this entity in their Entity Tracker
+     */
+    protected EntityPlayer[] getPerverts() {
+        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
+                .get(entity.getEntityId());
+        if (entry != null) {
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
+            return players;
+        }
+        return new EntityPlayer[0];
+    }
+
+    public BukkitRunnable getScheduler() {
+        return runnable;
+    }
+
+    /**
+     * Get the disguise type
+     */
+    public DisguiseType getType() {
+        return disguiseType;
+    }
+
+    /**
+     * Get the flag watcher
+     */
+    public FlagWatcher getWatcher() {
+        return watcher;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((disguiseType == null) ? 0 : disguiseType.hashCode());
+        result = prime * result + (hearSelfDisguise ? 1231 : 1237);
+        result = prime * result + (replaceSounds ? 1231 : 1237);
+        result = prime * result + (velocitySent ? 1231 : 1237);
+        result = prime * result + (viewSelfDisguise ? 1231 : 1237);
+        result = prime * result + ((watcher == null) ? 0 : watcher.hashCode());
+        return result;
+    }
+
+    public boolean isMiscDisguise() {
+        return this instanceof MiscDisguise;
+    }
+
+    public boolean isMobDisguise() {
+        return this instanceof MobDisguise;
+    }
+
+    public boolean isPlayerDisguise() {
+        return this instanceof PlayerDisguise;
+    }
+
+    public boolean isVelocitySent() {
+        return velocitySent;
+    }
+
+    public boolean replaceSounds() {
+        return replaceSounds;
+    }
+
+    public void setEntity(final org.bukkit.entity.Entity entity) {
+        if (this.entity != null)
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        setupWatcher(entity.getClass());
+        this.entity = entity;
+        double fallSpeed = 0.0050;
+        boolean movement = false;
+        switch (getType()) {
+        case ARROW:
+        case BAT:
+        case BOAT:
+        case ENDER_CRYSTAL:
+        case ENDER_DRAGON:
+        case GHAST:
+        case ITEM_FRAME:
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+        case PAINTING:
+        case PLAYER:
+        case SQUID:
+            fallSpeed = 0;
+            break;
+        case DROPPED_ITEM:
+        case EXPERIENCE_ORB:
+        case MAGMA_CUBE:
+        case PRIMED_TNT:
+            fallSpeed = 0.2;
+            movement = true;
+            break;
+        case WITHER:
+        case FALLING_BLOCK:
+            fallSpeed = 0.04;
+            break;
+        case SPIDER:
+        case CAVE_SPIDER:
+            fallSpeed = 0.0040;
+            break;
+        case EGG:
+        case ENDER_PEARL:
+        case ENDER_SIGNAL:
+        case FIREBALL:
+        case SMALL_FIREBALL:
+        case SNOWBALL:
+        case SPLASH_POTION:
+        case THROWN_EXP_BOTTLE:
+        case WITHER_SKULL:
+            fallSpeed = 0.0005;
+            break;
+        case FIREWORK:
+            fallSpeed = -0.040;
+            break;
+        default:
+            break;
+        }
+        final boolean sendMovementPacket = movement;
+        final double vectorY = fallSpeed;
+        // A scheduler to clean up any unused disguises.
+        runnable = new BukkitRunnable() {
+            private int i = 0;
+
+            public void run() {
+                // If entity is no longer valid. Remove it.
+                if (!((CraftEntity) entity).getHandle().valid) {
+                    DisguiseAPI.undisguiseToAll(entity);
+                } else {
+                    // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
+                    if (getType() == DisguiseType.PRIMED_TNT) {
+                        i++;
+                        if (i % 40 == 0) {
+                            i = 0;
+                            List<Player> players = new ArrayList<Player>();
+                            for (EntityPlayer p : getPerverts())
+                                players.add(p.getBukkitEntity());
+                            ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), players);
+                        }
+                    }
+                    // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
+                    // If this disguise has velocity sending enabled and the entity is flying.
+                    if (vectorY != 0 && isVelocitySent() && !entity.isOnGround()) {
+                        Vector vector = entity.getVelocity();
+                        // If the entity doesn't have velocity changes already
+                        if (vector.getY() != 0)
+                            return;
+                        for (EntityPlayer player : getPerverts()) {
+                            PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                            StructureModifier<Object> mods = packet.getModifier();
+                            if (entity == player.getBukkitEntity()) {
+                                if (!viewSelfDisguise())
+                                    continue;
+                                mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                            } else
+                                mods.write(0, entity.getEntityId());
+                            mods.write(1, (int) (vector.getX() * 8000));
+                            mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
+                            mods.write(3, (int) (vector.getZ() * 8000));
+                            try {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet, false);
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        // If we need to send more packets because else it still 'sinks'
+                        if (sendMovementPacket) {
+                            PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
+                            StructureModifier<Object> mods = packet.getModifier();
+                            mods.write(0, entity.getEntityId());
+                            for (EntityPlayer player : getPerverts()) {
+                                if (DisguiseAPI.viewDisguises() || entity != player) {
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        runnable.runTaskTimer(plugin, 1, 1);
+    }
+
+    public void setHearSelfDisguise(boolean hearSelfDisguise) {
+        this.hearSelfDisguise = hearSelfDisguise;
+    }
+
+    public void setReplaceSounds(boolean areSoundsReplaced) {
+        replaceSounds = areSoundsReplaced;
+    }
+
+    /**
+     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs.
+     */
     private void setupWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
-        if (getWatcher() != null)
-            throw new RuntimeException("The watcher has already been constructed! Try .clone()");
         Class disguiseClass = Values.getEntityClass(getType());
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
         EntityType entityType = null;
@@ -160,185 +401,25 @@ public class Disguise {
         }
     }
 
-    public boolean equals(Disguise disguise) {
-        if (getType() != disguise.getType())
-            return false;
-        if (replaceSounds() != disguise.replaceSounds())
-            return false;
-        if (!getWatcher().equals(disguise.getWatcher()))
-            return false;
-        return true;
+    public void setVelocitySent(boolean sendVelocity) {
+        this.velocitySent = sendVelocity;
     }
 
-    public org.bukkit.entity.Entity getEntity() {
-        return entity;
-    }
-
-    protected EntityPlayer[] getPerverts() {
-        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                .get(entity.getEntityId());
-        if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
-            return players;
-        }
-        return new EntityPlayer[0];
-    }
-
-    public BukkitRunnable getScheduler() {
-        return runnable;
-    }
-
-    public DisguiseType getType() {
-        return disguiseType;
-    }
-
-    public FlagWatcher getWatcher() {
-        return watcher;
-    }
-
-    public boolean isMiscDisguise() {
-        return this instanceof MiscDisguise;
-    }
-
-    public boolean isMobDisguise() {
-        return this instanceof MobDisguise;
-    }
-
-    public boolean isPlayerDisguise() {
-        return this instanceof PlayerDisguise;
-    }
-
-    public boolean replaceSounds() {
-        return replaceSounds;
-    }
-
-    public void setEntity(final org.bukkit.entity.Entity entity) {
-        if (this.entity != null)
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        if (getWatcher() == null)
-            setupWatcher(entity.getClass());
-        this.entity = entity;
-        double fallSpeed = 0.0050;
-        boolean movement = false;
-        switch (getType()) {
-        case ARROW:
-        case BAT:
-        case BOAT:
-        case ENDER_CRYSTAL:
-        case ENDER_DRAGON:
-        case GHAST:
-        case ITEM_FRAME:
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-        case PAINTING:
-        case PLAYER:
-        case SQUID:
-            fallSpeed = 0;
-            break;
-        case DROPPED_ITEM:
-        case EXPERIENCE_ORB:
-        case MAGMA_CUBE:
-        case PRIMED_TNT:
-            fallSpeed = 0.2;
-            movement = true;
-            break;
-        case WITHER:
-        case FALLING_BLOCK:
-            fallSpeed = 0.04;
-            break;
-        case SPIDER:
-        case CAVE_SPIDER:
-            fallSpeed = 0.0040;
-            break;
-        case EGG:
-        case ENDER_PEARL:
-        case ENDER_SIGNAL:
-        case FIREBALL:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-        case WITHER_SKULL:
-            fallSpeed = 0.0005;
-            break;
-        case FIREWORK:
-            fallSpeed = -0.040;
-            break;
-        default:
-            break;
-        }
-        final boolean sendMovementPacket = movement;
-        final double vectorY = fallSpeed;
-        // A scheduler to clean up any unused disguises.
-        runnable = new BukkitRunnable() {
-            private int i = 0;
-
-            public void run() {
-                if (!entity.isValid()) {
-                    DisguiseAPI.undisguiseToAll(entity);
-                } else {
-                    if (getType() == DisguiseType.PRIMED_TNT) {
-                        i++;
-                        if (i % 40 == 0) {
-                            List<Player> players = new ArrayList<Player>();
-                            for (EntityPlayer p : getPerverts())
-                                players.add(p.getBukkitEntity());
-                            ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), players);
-                        }
-                    }
-                    if (vectorY != 0 && DisguiseAPI.isVelocitySent() && !entity.isOnGround()) {
-                        Vector vector = entity.getVelocity();
-                        if (vector.getY() != 0)
-                            return;
-                        net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-                        for (EntityPlayer player : getPerverts()) {
-                            PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                            StructureModifier<Object> mods = packet.getModifier();
-                            if (nmsEntity == player) {
-                                if (!DisguiseAPI.viewDisguises())
-                                    continue;
-                                mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
-                            } else
-                                mods.write(0, entity.getEntityId());
-                            mods.write(1, (int) (vector.getX() * 8000));
-                            mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
-                            mods.write(3, (int) (vector.getZ() * 8000));
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet, false);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (sendMovementPacket) {
-                            PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
-                            StructureModifier<Object> mods = packet.getModifier();
-                            mods.write(0, entity.getEntityId());
-                            for (EntityPlayer player : getPerverts()) {
-                                if (DisguiseAPI.viewDisguises() || entity != player) {
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        runnable.runTaskTimer(plugin, 1, 1);
-    }
-
-    public void setReplaceSounds(boolean areSoundsReplaced) {
-        replaceSounds = areSoundsReplaced;
+    /**
+     * Can the disguised view himself as the disguise
+     */
+    public void setViewSelfDisguise(boolean viewSelfDisguise) {
+        this.viewSelfDisguise = viewSelfDisguise;
     }
 
     public void setWatcher(FlagWatcher newWatcher) {
         watcher = newWatcher;
+    }
+
+    /**
+     * Can the disguised view himself as the disguise
+     */
+    public boolean viewSelfDisguise() {
+        return viewSelfDisguise;
     }
 }
