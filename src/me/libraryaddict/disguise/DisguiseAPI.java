@@ -604,12 +604,10 @@ public class DisguiseAPI {
         Disguise disguise = getDisguise(entity);
         if (disguise == null)
             return;
-        if (((CraftEntity) entity).getHandle().valid) {
-            UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                return;
-        }
+        UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled() && ((CraftEntity) entity).getHandle().valid)
+            return;
         disguise.getScheduler().cancel();
         disguises.remove(entity.getEntityId());
         if (((CraftEntity) entity).getHandle().valid) {
