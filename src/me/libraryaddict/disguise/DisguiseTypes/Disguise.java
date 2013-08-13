@@ -205,18 +205,14 @@ public class Disguise {
     }
 
     /**
-     * Destroys the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
+     * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
      */
-    public void discard() {
-        // If the runnable is null. Just return. Its been discarded already.
-        if (runnable == null)
-            return;
+    public void removeDisguise() {
         // Why the hell can't I safely check if its running?!?!
         try {
             runnable.cancel();
         } catch (Exception ex) {
         }
-        runnable = null;
         HashMap<Integer, Disguise> disguises = disguiseAPI.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {

@@ -106,7 +106,7 @@ public class DisguiseAPI {
         setupPlayerFakeDisguise(disguise);
         // Discard the disguise
         if (oldDisguise != null)
-            oldDisguise.discard();
+            oldDisguise.removeDisguise();
     }
 
     /**
@@ -368,7 +368,7 @@ public class DisguiseAPI {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
-        disguise.discard();
+        disguise.removeDisguise();
     }
 
     public HashMap<Integer, Disguise> getDisguises() {
