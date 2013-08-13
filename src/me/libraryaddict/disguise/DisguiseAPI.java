@@ -52,9 +52,15 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
+    /**
+     * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
+     */
     public static void disguiseNextEntity(Disguise disguise) {
         if (disguise == null)
             return;
+        if (disguise.getEntity() != null || disguises.containsValue(disguise)) {
+            disguise = disguise.clone();
+        }
         try {
             Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
             field.setAccessible(true);
@@ -66,10 +72,7 @@ public class DisguiseAPI {
     }
 
     /**
-     * @param Player
-     *            - The player to disguise
-     * @param Disguise
-     *            - The disguise to wear
+     * Disguise this entity with this disguise
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
@@ -83,12 +86,7 @@ public class DisguiseAPI {
         // Just return.
         if (event.isCancelled())
             return;
-        // The event wasn't cancelled. Got to discard the old disguise
-        Disguise oldDisguise = getDisguise(entity);
-        // If there was a old disguise
-        if (oldDisguise != null) {
-            oldDisguise.getScheduler().cancel();
-        }
+        // The event wasn't cancelled.
         // If the disguise entity isn't the same as the one we are disguising
         if (disguise.getEntity() != entity) {
             // If the disguise entity actually exists
@@ -98,13 +96,17 @@ public class DisguiseAPI {
             }
             // Set the disguise's entity
             disguise.setEntity(entity);
-        }
+        } // If there was a old disguise
+        Disguise oldDisguise = getDisguise(entity);
         // Stick the disguise in the disguises bin
         disguises.put(entity.getEntityId(), disguise);
         // Resend the disguised entity's packet
         refreshTrackers(entity);
         // If he is a player, then self disguise himself
         setupPlayerFakeDisguise(disguise);
+        // Discard the disguise
+        if (oldDisguise != null)
+            oldDisguise.discard();
     }
 
     /**
@@ -113,7 +115,9 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Entity disguiser) {
         if (disguiser == null)
             return null;
-        return disguises.get(disguiser.getEntityId());
+        if (disguises.containsKey(disguiser.getEntityId()))
+            return disguises.get(disguiser.getEntityId());
+        return null;
     }
 
     /**
@@ -130,17 +134,22 @@ public class DisguiseAPI {
     }
 
     /**
-     * @param Disguiser
-     * @return boolean - If the disguiser is disguised
+     * Is this entity disguised
      */
     public static boolean isDisguised(Entity disguiser) {
         return getDisguise(disguiser) != null;
     }
 
+    /**
+     * Is the sound packets caught and modified
+     */
     public static boolean isSoundEnabled() {
         return PacketsManager.isHearDisguisesEnabled();
     }
 
+    /**
+     * Is the velocity packets sent
+     */
     public static boolean isVelocitySent() {
         return sendVelocity;
     }
@@ -170,7 +179,7 @@ public class DisguiseAPI {
         }
     }
 
-    private static void removeVisibleDisguise(Player player) {
+    private static void removeSelfDisguise(Player player) {
         if (selfDisguisesIds.containsKey(player.getEntityId())) {
             // Send a packet to destroy the fake entity
             PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
@@ -203,12 +212,18 @@ public class DisguiseAPI {
         }
     }
 
+    /**
+     * Can players hear their own disguises
+     */
     public static void setHearSelfDisguise(boolean replaceSound) {
         if (hearSelfDisguise != replaceSound) {
             hearSelfDisguise = replaceSound;
         }
     }
 
+    /**
+     * Set if the disguises play sounds when hurt
+     */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
     }
@@ -222,7 +237,7 @@ public class DisguiseAPI {
             return;
         Player player = (Player) disguise.getEntity();
         // Remove the old disguise, else we have weird disguises around the place
-        removeVisibleDisguise(player);
+        removeSelfDisguise(player);
         // If the disguised player can't see himself. Return
         if (!disguise.viewSelfDisguise())
             return;
@@ -342,7 +357,8 @@ public class DisguiseAPI {
     }
 
     /**
-     * Undisguise the entity
+     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka removed from
+     * the world.
      */
     public static void undisguiseToAll(Entity entity) {
         Disguise disguise = getDisguise(entity);
@@ -350,14 +366,20 @@ public class DisguiseAPI {
             return;
         UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled() && ((CraftEntity) entity).getHandle().valid)
+        if (event.isCancelled())
             return;
-        disguise.getScheduler().cancel();
-        disguises.remove(entity.getEntityId());
-        if (((CraftEntity) entity).getHandle().valid) {
-            if (entity instanceof Player)
-                removeVisibleDisguise((Player) entity);
-            refreshTrackers(entity);
-        }
+        disguise.discard();
+    }
+
+    public HashMap<Integer, Disguise> getDisguises() {
+        return disguises;
+    }
+
+    public void refreshWatchingPlayers(Entity entity) {
+        refreshTrackers(entity);
+    }
+
+    public void removeVisibleDisguise(Player player) {
+        removeSelfDisguise(player);
     }
 }

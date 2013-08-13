@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.DisguiseTypes;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
@@ -28,6 +29,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
+    private static DisguiseAPI disguiseAPI = new DisguiseAPI();
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private org.bukkit.entity.Entity entity;
@@ -71,108 +73,6 @@ public class Disguise {
                 // Ok.. So it aint a horse
             }
         }
-    }
-
-    public boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
-    }
-
-    public Disguise clone() {
-        Disguise disguise = new Disguise(getType(), replaceSounds());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
-        return disguise;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Disguise other = (Disguise) obj;
-        if (disguiseType != other.disguiseType)
-            return false;
-        if (hearSelfDisguise != other.hearSelfDisguise)
-            return false;
-        if (replaceSounds != other.replaceSounds)
-            return false;
-        if (velocitySent != other.velocitySent)
-            return false;
-        if (viewSelfDisguise != other.viewSelfDisguise)
-            return false;
-        if (!watcher.equals(other.watcher))
-            return false;
-        return true;
-    }
-
-    /**
-     * Get the disguised entity
-     */
-    public org.bukkit.entity.Entity getEntity() {
-        return entity;
-    }
-
-    /**
-     * Get all EntityPlayers who have this entity in their Entity Tracker
-     */
-    protected EntityPlayer[] getPerverts() {
-        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                .get(entity.getEntityId());
-        if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
-            return players;
-        }
-        return new EntityPlayer[0];
-    }
-
-    public BukkitRunnable getScheduler() {
-        return runnable;
-    }
-
-    /**
-     * Get the disguise type
-     */
-    public DisguiseType getType() {
-        return disguiseType;
-    }
-
-    /**
-     * Get the flag watcher
-     */
-    public FlagWatcher getWatcher() {
-        return watcher;
-    }
-
-    public boolean isMiscDisguise() {
-        return this instanceof MiscDisguise;
-    }
-
-    public boolean isMobDisguise() {
-        return this instanceof MobDisguise;
-    }
-
-    public boolean isPlayerDisguise() {
-        return this instanceof PlayerDisguise;
-    }
-
-    public boolean isVelocitySent() {
-        return velocitySent;
-    }
-
-    public boolean replaceSounds() {
-        return replaceSounds;
-    }
-
-    /**
-     * Set the entity of the disguise. Only used for internal things.
-     */
-    public void setEntity(final org.bukkit.entity.Entity entity) {
-        if (this.entity != null)
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        this.entity = entity;
-        setupWatcher();
         double fallSpeed = 0.0050;
         boolean movement = false;
         switch (getType()) {
@@ -292,6 +192,147 @@ public class Disguise {
                 }
             }
         };
+    }
+
+    public boolean canHearSelfDisguise() {
+        return hearSelfDisguise;
+    }
+
+    public Disguise clone() {
+        Disguise disguise = new Disguise(getType(), replaceSounds());
+        disguise.setViewSelfDisguise(viewSelfDisguise());
+        return disguise;
+    }
+
+    /**
+     * Destroys the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
+     */
+    public void discard() {
+        // If the runnable is null. Just return. Its been discarded already.
+        if (runnable == null)
+            return;
+        // Why the hell can't I safely check if its running?!?!
+        try {
+            runnable.cancel();
+        } catch (Exception ex) {
+        }
+        runnable = null;
+        HashMap<Integer, Disguise> disguises = disguiseAPI.getDisguises();
+        // If this disguise has a entity set
+        if (getEntity() != null) {
+            // If the entity is valid
+            if (((CraftEntity) getEntity()).getHandle().valid) {
+                // If this disguise is active
+                if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
+                    // Gotta do reflection, copy code or open up calls.
+                    // Reflection is the cleanest?
+                    if (entity instanceof Player) {
+                        disguiseAPI.removeVisibleDisguise((Player) entity);
+                    }
+                    // Better refresh the entity to undisguise it
+                    disguiseAPI.refreshWatchingPlayers(getEntity());
+                    // Now remove the disguise from the current disguises.
+                    disguises.remove(getEntity().getEntityId());
+                }
+            }
+        } else {
+            // Loop through the disguises because it could be used with a unknown entity id.
+            Iterator<Integer> itel = disguises.keySet().iterator();
+            while (itel.hasNext()) {
+                int id = itel.next();
+                if (disguises.get(id) == this) {
+                    itel.remove();
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Disguise other = (Disguise) obj;
+        if (disguiseType != other.disguiseType)
+            return false;
+        if (hearSelfDisguise != other.hearSelfDisguise)
+            return false;
+        if (replaceSounds != other.replaceSounds)
+            return false;
+        if (velocitySent != other.velocitySent)
+            return false;
+        if (viewSelfDisguise != other.viewSelfDisguise)
+            return false;
+        if (!watcher.equals(other.watcher))
+            return false;
+        return true;
+    }
+
+    /**
+     * Get the disguised entity
+     */
+    public org.bukkit.entity.Entity getEntity() {
+        return entity;
+    }
+
+    /**
+     * Get all EntityPlayers who have this entity in their Entity Tracker
+     */
+    protected EntityPlayer[] getPerverts() {
+        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
+                .get(entity.getEntityId());
+        if (entry != null) {
+            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
+            return players;
+        }
+        return new EntityPlayer[0];
+    }
+
+    /**
+     * Get the disguise type
+     */
+    public DisguiseType getType() {
+        return disguiseType;
+    }
+
+    /**
+     * Get the flag watcher
+     */
+    public FlagWatcher getWatcher() {
+        return watcher;
+    }
+
+    public boolean isMiscDisguise() {
+        return this instanceof MiscDisguise;
+    }
+
+    public boolean isMobDisguise() {
+        return this instanceof MobDisguise;
+    }
+
+    public boolean isPlayerDisguise() {
+        return this instanceof PlayerDisguise;
+    }
+
+    public boolean isVelocitySent() {
+        return velocitySent;
+    }
+
+    public boolean replaceSounds() {
+        return replaceSounds;
+    }
+
+    /**
+     * Set the entity of the disguise. Only used for internal things.
+     */
+    public void setEntity(final org.bukkit.entity.Entity entity) {
+        if (this.entity != null)
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        this.entity = entity;
+        setupWatcher();
         runnable.runTaskTimer(plugin, 1, 1);
     }
 
@@ -366,7 +407,7 @@ public class Disguise {
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
             if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
                 continue;
-            
+
             // So they don't extend a basic class.
             // Maybe if I check that they extend each other..
             // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared

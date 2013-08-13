@@ -101,6 +101,7 @@ public class PacketsManager {
         });
         // Now add a client listener to cancel them interacting with uninteractable disguised entitys.
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
+        // Kicks you for hacking.
         manager.addPacketListener(new PacketAdapter(libsDisguises, ConnectionSide.CLIENT_SIDE, ListenerPriority.NORMAL,
                 Packets.Client.USE_ENTITY) {
             @Override
@@ -120,7 +121,10 @@ public class PacketsManager {
         });
     }
 
-    public static PacketContainer[] constructPacket(Disguise disguise, Entity disguisedEntity) {
+    /**
+     * Construct the packets I need to spawn in the disguise
+     */
+    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
@@ -204,7 +208,7 @@ public class PacketsManager {
                 item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
             }
             mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, convertDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(8, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
 
         } else if (disguise.getType().isMob()) {
 
@@ -239,7 +243,7 @@ public class PacketsManager {
             mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             if (nmsEntity instanceof EntityLiving)
                 mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
-            mods.write(11, convertDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(11, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
             // Theres a list sometimes written with this. But no problems have appeared!
             // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
 
@@ -302,7 +306,10 @@ public class PacketsManager {
         return spawnPackets;
     }
 
-    private static DataWatcher convertDataWatcher(DataWatcher watcher, FlagWatcher flagWatcher) {
+    /**
+     * Create a new datawatcher but with the 'correct' values
+     */
+    private static DataWatcher createDataWatcher(DataWatcher watcher, FlagWatcher flagWatcher) {
         DataWatcher newWatcher = new DataWatcher();
         try {
             Field map = newWatcher.getClass().getDeclaredField("c");
@@ -320,6 +327,9 @@ public class PacketsManager {
 
     }
 
+    /**
+     * Add the yaw for the disguises
+     */
     private static byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
         switch (disguiseType) {
         case ENDER_DRAGON:
@@ -640,6 +650,9 @@ public class PacketsManager {
         }
     }
 
+    /**
+     * Transform the packet magically into the one I have always dreamed off. My true luv!!!
+     */
     private static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
         PacketContainer[] packets = new PacketContainer[] { sentPacket };
         try {
@@ -653,6 +666,7 @@ public class PacketsManager {
                 // This packet sends attributes
 
                 switch (sentPacket.getID()) {
+                
                 case Packets.Server.UPDATE_ATTRIBUTES:
 
                 {
@@ -696,7 +710,7 @@ public class PacketsManager {
                 case Packets.Server.ENTITY_PAINTING:
 
                 {
-                    packets = constructPacket(disguise, entity);
+                    packets = constructSpawnPackets(disguise, entity);
                     break;
                 }
 
