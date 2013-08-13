@@ -16,7 +16,6 @@ import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,7 +35,7 @@ public class Disguise {
     private boolean replaceSounds;
     private BukkitRunnable runnable;
     private boolean velocitySent = DisguiseAPI.isVelocitySent();
-    private boolean viewSelfDisguise = DisguiseAPI.viewDisguises();
+    private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
     private FlagWatcher watcher;
 
     protected Disguise(DisguiseType newType, boolean doSounds) {
@@ -146,19 +145,6 @@ public class Disguise {
         return watcher;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((disguiseType == null) ? 0 : disguiseType.hashCode());
-        result = prime * result + (hearSelfDisguise ? 1231 : 1237);
-        result = prime * result + (replaceSounds ? 1231 : 1237);
-        result = prime * result + (velocitySent ? 1231 : 1237);
-        result = prime * result + (viewSelfDisguise ? 1231 : 1237);
-        result = prime * result + ((watcher == null) ? 0 : watcher.hashCode());
-        return result;
-    }
-
     public boolean isMiscDisguise() {
         return this instanceof MiscDisguise;
     }
@@ -179,11 +165,14 @@ public class Disguise {
         return replaceSounds;
     }
 
+    /**
+     * Set the entity of the disguise. Only used for internal things.
+     */
     public void setEntity(final org.bukkit.entity.Entity entity) {
         if (this.entity != null)
             throw new RuntimeException("This disguise is already in use! Try .clone()");
-        setupWatcher(entity.getClass());
         this.entity = entity;
+        setupWatcher();
         double fallSpeed = 0.0050;
         boolean movement = false;
         switch (getType()) {
@@ -290,7 +279,7 @@ public class Disguise {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, entity.getEntityId());
                             for (EntityPlayer player : getPerverts()) {
-                                if (DisguiseAPI.viewDisguises() || entity != player) {
+                                if (DisguiseAPI.isViewDisguises() || entity != player) {
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
                                     } catch (InvocationTargetException e) {
@@ -315,19 +304,13 @@ public class Disguise {
     }
 
     /**
-     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs.
+     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
+     * datawatcher.
      */
-    private void setupWatcher(Class<? extends org.bukkit.entity.Entity> entityClass) {
+    private void setupWatcher() {
         Class disguiseClass = Values.getEntityClass(getType());
         HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
-        EntityType entityType = null;
-        for (EntityType type : EntityType.values()) {
-            if (type.getEntityClass() != null && type.getEntityClass().isAssignableFrom(entityClass)) {
-                entityType = type;
-                break;
-            }
-        }
-        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entityType));
+        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
@@ -352,25 +335,12 @@ public class Disguise {
                 getWatcher().setValue(dataNo, null);
                 continue;
             }
-            // Hmm. They both have the datavalue. Time to check if they have different default values!
-            if (entityValues.get(dataNo) != disguiseValues.get(dataNo)
-                    || !entityValues.get(dataNo).equals(disguiseValues.get(dataNo))) {
-                // They do! Set the default value!
-                getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
-                continue;
-            }
-            // Hmm. They both now have data values which are exactly the same. I need to do more intensive background checks.
-            // I HAVE to find juicy gossip on these!
-            // Maybe if I check that they extend each other..
-            // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
-            // datawatchers.
-            if (entityClass.isAssignableFrom(disguiseClass) || disguiseClass.isAssignableFrom(entityClass))
-                continue;
-
+            // Since they both share it. Time to check if its from something they extend.
+            // Better make this clear before I compare the values because some default values are different!
             // Entity is 0 & 1 - But we aint gonna be checking that
             // EntityAgeable is 16
             // EntityInsentient is 10 & 11
-            // EntityZombie is 12 & 13 & 14 - But
+            // EntityZombie is 12 & 13 & 14 - But it overrides other values and another check already does this.
             // EntityLiving is 6 & 7 & 8 & 9
 
             // Lets use switch
@@ -392,8 +362,16 @@ public class Disguise {
             default:
                 break;
             }
+            Class entityClass = ((CraftEntity) entity).getHandle().getClass();
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
             if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
+                continue;
+            
+            // So they don't extend a basic class.
+            // Maybe if I check that they extend each other..
+            // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
+            // datawatchers.
+            if (entityClass.isAssignableFrom(disguiseClass) || disguiseClass.isAssignableFrom(entityClass))
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!

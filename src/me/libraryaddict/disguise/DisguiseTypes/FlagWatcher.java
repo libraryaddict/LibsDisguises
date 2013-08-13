@@ -175,7 +175,7 @@ public class FlagWatcher {
         mods.write(1, list);
         for (EntityPlayer player : disguise.getPerverts()) {
             Player p = player.getBukkitEntity();
-            if (DisguiseAPI.viewDisguises() || p != entity) {
+            if (DisguiseAPI.isViewDisguises() || p != entity) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
                 } catch (InvocationTargetException e) {

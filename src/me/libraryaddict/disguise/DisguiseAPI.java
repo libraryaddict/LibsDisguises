@@ -1,23 +1,13 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
-import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
 import me.libraryaddict.disguise.Events.DisguiseEvent;
 import me.libraryaddict.disguise.Events.UndisguiseEvent;
 import net.minecraft.server.v1_6_R2.AttributeMapServer;
-import net.minecraft.server.v1_6_R2.Block;
 import net.minecraft.server.v1_6_R2.EntityHuman;
 import net.minecraft.server.v1_6_R2.EntityInsentient;
 import net.minecraft.server.v1_6_R2.EntityLiving;
@@ -34,27 +24,17 @@ import net.minecraft.server.v1_6_R2.Packet40EntityMetadata;
 import net.minecraft.server.v1_6_R2.Packet41MobEffect;
 import net.minecraft.server.v1_6_R2.Packet44UpdateAttributes;
 import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R2.WatchableObject;
-import net.minecraft.server.v1_6_R2.World;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ConnectionSide;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class DisguiseAPI {
@@ -62,12 +42,8 @@ public class DisguiseAPI {
     private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
     private static boolean hearSelfDisguise;
     private static LibsDisguises libsDisguises;
-    private static PacketListener packetListener;
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
     private static boolean sendVelocity;
-    private static boolean soundsEnabled;
-    private static boolean viewDisguises;
-    private static PacketListener viewDisguisesListener;
 
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
@@ -93,42 +69,43 @@ public class DisguiseAPI {
      *            - The disguise to wear
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
+        // If they are trying to disguise a null entity or use a null disguise
+        // Just return.
         if (entity == null || disguise == null)
             return;
-        Disguise oldDisguise = getDisguise(entity);
+        // Fire a disguise event
         DisguiseEvent event = new DisguiseEvent(entity, disguise);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        // If they cancelled this disguise event. No idea why.
+        // Just return.
+        if (event.isCancelled())
             return;
-        } else if (oldDisguise != null) {
+        // The event wasn't cancelled. Got to discard the old disguise
+        Disguise oldDisguise = getDisguise(entity);
+        // If there was a old disguise
+        if (oldDisguise != null) {
             oldDisguise.getScheduler().cancel();
         }
-
+        // If the disguise entity isn't the same as the one we are disguising
         if (disguise.getEntity() != entity) {
+            // If the disguise entity actually exists
             if (disguise.getEntity() != null) {
+                // Clone the disguise
                 disguise = disguise.clone();
             }
+            // Set the disguise's entity
             disguise.setEntity(entity);
         }
+        // Stick the disguise in the disguises bin
         disguises.put(entity.getEntityId(), disguise);
+        // Resend the disguised entity's packet
         refresh(entity);
+        // If he is a player, then self disguise himself
         setupPlayer(disguise);
     }
 
-    public static void enableSounds(boolean isSoundsEnabled) {
-        if (soundsEnabled != isSoundsEnabled) {
-            soundsEnabled = isSoundsEnabled;
-            if (soundsEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(packetListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(packetListener);
-            }
-        }
-    }
-
     /**
-     * @param Disguiser
-     * @return Disguise
+     * Get the disguise of a entity
      */
     public static Disguise getDisguise(Entity disguiser) {
         if (disguiser == null)
@@ -136,11 +113,9 @@ public class DisguiseAPI {
         return disguises.get(disguiser.getEntityId());
     }
 
-    @Deprecated
-    public static Disguise getDisguise(Object disguiser) {
-        return getDisguise((Entity) disguiser);
-    }
-
+    /**
+     * Get the ID of a fake disguise for a entityplayer
+     */
     public static int getFakeDisguise(int id) {
         if (selfDisguisesIds.containsKey(id))
             return selfDisguisesIds.get(id);
@@ -149,248 +124,6 @@ public class DisguiseAPI {
 
     protected static void init(LibsDisguises mainPlugin) {
         libsDisguises = mainPlugin;
-        packetListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL,
-                Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ENTITY_STATUS) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                StructureModifier<Object> mods = event.getPacket().getModifier();
-                Player observer = event.getPlayer();
-                if (event.getPacketID() == Packets.Server.NAMED_SOUND_EFFECT) {
-                    String soundName = (String) mods.read(0);
-                    SoundType soundType = null;
-                    Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(1)) / 8D,
-                            ((Integer) mods.read(2)) / 8D, ((Integer) mods.read(3)) / 8D);
-                    Entity disguisedEntity = null;
-                    DisguiseSound entitySound = null;
-                    for (Entity entity : soundLoc.getChunk().getEntities()) {
-                        if (DisguiseAPI.isDisguised(entity)) {
-                            Location loc = entity.getLocation();
-                            loc = new Location(observer.getWorld(), ((int) (loc.getX() * 8)) / 8D, ((int) (loc.getY() * 8)) / 8D,
-                                    ((int) (loc.getZ() * 8)) / 8D);
-                            if (loc.equals(soundLoc)) {
-                                entitySound = DisguiseSound.getType(entity.getType().name());
-                                if (entitySound != null) {
-                                    if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
-                                        soundType = SoundType.DEATH;
-                                    } else {
-                                        boolean hasInvun = false;
-                                        if (entity instanceof LivingEntity) {
-                                            net.minecraft.server.v1_6_R2.EntityLiving e = ((CraftLivingEntity) entity)
-                                                    .getHandle();
-                                            hasInvun = (e.noDamageTicks == e.maxNoDamageTicks);
-                                        } else {
-                                            net.minecraft.server.v1_6_R2.Entity e = ((CraftEntity) entity).getHandle();
-                                            hasInvun = e.isInvulnerable();
-                                        }
-                                        soundType = entitySound.getType(soundName, !hasInvun);
-                                    }
-                                    if (soundType != null) {
-                                        disguisedEntity = entity;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Disguise disguise = DisguiseAPI.getDisguise(disguisedEntity);
-                    if (disguise != null && (disguise.canHearSelfDisguise() || disguisedEntity != event.getPlayer())) {
-                        if (disguise.replaceSounds()) {
-                            String sound = null;
-                            DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-                            if (dSound != null && soundType != null)
-                                sound = dSound.getSound(soundType);
-                            if (sound == null) {
-                                event.setCancelled(true);
-                            } else {
-                                if (sound.equals("step.grass")) {
-                                    World world = ((CraftEntity) disguisedEntity).getHandle().world;
-                                    Block b = Block.byId[world.getTypeId(soundLoc.getBlockX(), soundLoc.getBlockY() - 1,
-                                            soundLoc.getBlockZ())];
-                                    if (b != null)
-                                        mods.write(0, b.stepSound.getStepSound());
-                                    // There is no else statement. Because seriously. This should never be null. Unless someone is
-                                    // sending fake sounds. In which case. Why cancel it.
-                                } else {
-                                    mods.write(0, sound);
-                                    // Time to change the pitch and volume
-                                    if (soundType == SoundType.HURT || soundType == SoundType.DEATH
-                                            || soundType == SoundType.IDLE) {
-                                        // If the volume is the default
-                                        if (soundType != SoundType.IDLE
-                                                && ((Float) mods.read(4)).equals(entitySound.getDamageSoundVolume())) {
-                                            mods.write(4, dSound.getDamageSoundVolume());
-                                        }
-                                        // Here I assume its the default pitch as I can't calculate if its real.
-                                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
-                                                && ((MobDisguise) disguise).doesDisguiseAge()) {
-                                            boolean baby = ((CraftLivingEntity) disguisedEntity).getHandle().isBaby();
-                                            if (((MobDisguise) disguise).isAdult() == baby) {
-
-                                                float pitch = (Integer) mods.read(5);
-                                                if (baby) {
-                                                    // If the pitch is not the expected
-                                                    if (pitch > 97 || pitch < 111)
-                                                        return;
-                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-                                                    // Min = 1.5
-                                                    // Cap = 97.5
-                                                    // Max = 1.7
-                                                    // Cap = 110.5
-                                                } else {
-                                                    // If the pitch is not the expected
-                                                    if (pitch >= 63 || pitch <= 76)
-                                                        return;
-                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-                                                    // Min = 1
-                                                    // Cap = 63
-                                                    // Max = 1.2
-                                                    // Cap = 75.6
-                                                }
-                                                pitch *= 63;
-                                                if (pitch < 0)
-                                                    pitch = 0;
-                                                if (pitch > 255)
-                                                    pitch = 255;
-                                                mods.write(5, (int) pitch);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (event.getPacketID() == Packets.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 2) {
-                        // It made a damage animation
-                        Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
-                        Disguise disguise = getDisguise(entity);
-                        if (disguise != null && (disguise.canHearSelfDisguise() || entity != event.getPlayer())) {
-                            DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
-                            if (disSound == null)
-                                return;
-                            SoundType soundType = null;
-                            if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
-                                soundType = SoundType.DEATH;
-                            } else {
-                                soundType = SoundType.HURT;
-                            }
-                            if (disSound.getSound(soundType) == null
-                                    || (soundType != null && disguise.canHearSelfDisguise() && entity == event.getPlayer())) {
-                                disSound = DisguiseSound.getType(disguise.getType().name());
-                                if (disSound != null) {
-                                    String sound = disSound.getSound(soundType);
-                                    if (sound != null) {
-                                        Location loc = entity.getLocation();
-                                        PacketContainer packet = new PacketContainer(Packets.Server.NAMED_SOUND_EFFECT);
-                                        mods = packet.getModifier();
-                                        mods.write(0, sound);
-                                        mods.write(1, (int) (loc.getX() * 8D));
-                                        mods.write(2, (int) (loc.getY() * 8D));
-                                        mods.write(3, (int) (loc.getZ() * 8D));
-                                        mods.write(4, disSound.getDamageSoundVolume());
-                                        float pitch;
-                                        if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-                                        } else
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-                                        if (disguise.getType() == DisguiseType.BAT)
-                                            pitch *= 95F;
-                                        pitch *= 63;
-                                        if (pitch < 0)
-                                            pitch = 0;
-                                        if (pitch > 255)
-                                            pitch = 255;
-                                        mods.write(5, (int) pitch);
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        viewDisguisesListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
-                Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ATTACH_ENTITY, Packets.Server.REL_ENTITY_MOVE,
-                Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
-                Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
-                Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
-                org.bukkit.entity.Entity entity = entityModifer.read(0);
-                if (entity == event.getPlayer() && selfDisguisesIds.containsKey(entity.getEntityId())) {
-                    PacketContainer[] packets = libsDisguises.transformPacket(event.getPacket(), event.getPlayer());
-                    try {
-                        for (PacketContainer packet : packets) {
-                            if (packet.equals(event.getPacket()))
-                                packet = packet.deepClone();
-                            packet.getModifier().write(0, selfDisguisesIds.get(entity.getEntityId()));
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-
-                    if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
-                        event.setPacket(event.getPacket().deepClone());
-                        StructureModifier<Object> mods = event.getPacket().getModifier();
-                        Iterator<WatchableObject> itel = ((List<WatchableObject>) mods.read(1)).iterator();
-                        while (itel.hasNext()) {
-                            WatchableObject watch = itel.next();
-                            if (watch.a() == 0) {
-                                byte b = (Byte) watch.b();
-                                byte a = (byte) (b | 1 << 5);
-                                if ((b & 1 << 3) != 0)
-                                    a = (byte) (a | 1 << 3);
-                                watch.a(a);
-                            }
-                        }
-                    } else {
-                        switch (event.getPacketID()) {
-                        case Packets.Server.NAMED_ENTITY_SPAWN:
-                        case Packets.Server.ATTACH_ENTITY:
-                        case Packets.Server.REL_ENTITY_MOVE:
-                        case Packets.Server.REL_ENTITY_MOVE_LOOK:
-                        case Packets.Server.ENTITY_LOOK:
-                        case Packets.Server.ENTITY_TELEPORT:
-                        case Packets.Server.ENTITY_HEAD_ROTATION:
-                        case Packets.Server.MOB_EFFECT:
-                        case Packets.Server.ENTITY_EQUIPMENT:
-                            if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
-                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
-                                StructureModifier<Object> mods = packet.getModifier();
-                                mods.write(0, entity.getEntityId());
-                                List watchableList = new ArrayList();
-                                byte b = (byte) (0 | 1 << 5);
-                                if (event.getPlayer().isSprinting())
-                                    b = (byte) (b | 1 << 3);
-                                watchableList.add(new WatchableObject(0, 0, b));
-                                mods.write(1, watchableList);
-                                try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
-                            }
-                            event.setCancelled(true);
-                            break;
-                        case Packets.Server.ENTITY_STATUS:
-                            if (getDisguise(entity).canHearSelfDisguise() && (Byte) event.getPacket().getModifier().read(1) == 2)
-                                event.setCancelled(true);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-            }
-        };
     }
 
     /**
@@ -401,17 +134,19 @@ public class DisguiseAPI {
         return getDisguise(disguiser) != null;
     }
 
-    @Deprecated
-    public static boolean isDisguised(Object disguiser) {
-        return getDisguise((Entity) disguiser) != null;
-    }
-
     public static boolean isSoundEnabled() {
-        return soundsEnabled;
+        return PacketsManager.isHearDisguisesEnabled();
     }
 
     public static boolean isVelocitySent() {
         return sendVelocity;
+    }
+
+    /**
+     * The default value if a player views his own disguise
+     */
+    public static boolean isViewDisguises() {
+        return PacketsManager.isViewDisguisesListenerEnabled();
     }
 
     /**
@@ -434,6 +169,7 @@ public class DisguiseAPI {
 
     private static void removeVisibleDisguise(Player player) {
         if (selfDisguisesIds.containsKey(player.getEntityId())) {
+            // Send a packet to destroy the fake entity
             PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
             packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getEntityId()) });
             try {
@@ -441,13 +177,17 @@ public class DisguiseAPI {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            // Remove the fake entity ID from the disguise bin
             selfDisguisesIds.remove(player.getEntityId());
+            // Get the entity tracker
             EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
             EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities
                     .get(player.getEntityId());
+            // If the tracker exists. Remove himself from his tracker
             if (tracker != null) {
                 tracker.trackedPlayers.remove(entityplayer);
             }
+            // Resend entity metadata else he will be invisible to himself until its resent
             PacketContainer packetMetadata = new PacketContainer(Packets.Server.ENTITY_METADATA);
             StructureModifier<Object> mods = packetMetadata.getModifier();
             mods.write(0, player.getEntityId());
@@ -466,13 +206,24 @@ public class DisguiseAPI {
         }
     }
 
+    public static void setSoundsEnabled(boolean isSoundsEnabled) {
+        PacketsManager.setHearDisguisesListener(isSoundsEnabled);
+    }
+
+    /**
+     * Setup it so he can see himself when disguised
+     */
     private static void setupPlayer(final Disguise disguise) {
+        // If the disguises entity is null, or the disguised entity isn't a player return
         if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player))
             return;
         Player player = (Player) disguise.getEntity();
+        // Remove the old disguise, else we have weird disguises around the place
         removeVisibleDisguise(player);
+        // If the disguised player can't see himself. Return
         if (!disguise.viewSelfDisguise())
             return;
+        // Grab the entity player
         EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
         EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
                 .getEntityId());
@@ -486,25 +237,27 @@ public class DisguiseAPI {
             });
             return;
         }
+        // Add himself to his own entity tracker
         tracker.trackedPlayers.add(entityplayer);
-        int id = 0;
         try {
+            // Grab the entity ID the fake disguise will use
             Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
             field.setAccessible(true);
-            id = field.getInt(null);
+            int id = field.getInt(null);
+            // Set the entitycount plus one so we don't have the id being reused
             field.set(null, id + 1);
             selfDisguisesIds.put(player.getEntityId(), id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        // Send the player a packet with himself being spawned
         Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
         entityplayer.playerConnection.sendPacket(packet);
         if (!tracker.tracker.getDataWatcher().d()) {
             entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker
                     .getDataWatcher(), true));
         }
-
+        // Send himself some entity attributes
         if (tracker.tracker instanceof EntityLiving) {
             AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aW();
             Collection collection = attributemapserver.c();
@@ -514,6 +267,7 @@ public class DisguiseAPI {
             }
         }
 
+        // Why do we even have this?
         tracker.j = tracker.tracker.motX;
         tracker.k = tracker.tracker.motY;
         tracker.l = tracker.tracker.motZ;
@@ -525,12 +279,13 @@ public class DisguiseAPI {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        // Send the velocity packets
         if (isMoving) {
             entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX,
                     tracker.tracker.motY, tracker.tracker.motZ));
         }
 
-        // CraftBukkit start
+        // Why the hell would he even need this. Meh.
         if (tracker.tracker.vehicle != null && player.getEntityId() > tracker.tracker.vehicle.id) {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
         } else if (tracker.tracker.passenger != null && player.getEntityId() > tracker.tracker.passenger.id) {
@@ -541,26 +296,20 @@ public class DisguiseAPI {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
                     ((EntityInsentient) tracker.tracker).bI()));
         }
-        // CraftBukkit end
 
-        if (tracker.tracker instanceof EntityLiving) {
-            for (int i = 0; i < 5; ++i) {
-                ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
+        // Resend the armor
+        for (int i = 0; i < 5; ++i) {
+            ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
 
-                if (itemstack != null) {
-                    entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
-                }
+            if (itemstack != null) {
+                entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
             }
         }
-
-        if (tracker.tracker instanceof EntityHuman) {
-            EntityHuman entityhuman = (EntityHuman) tracker.tracker;
-
-            if (entityhuman.isSleeping()) {
-                entityplayer.playerConnection.sendPacket(new Packet17EntityLocationAction(tracker.tracker, 0, (int) Math
-                        .floor(tracker.tracker.locX), (int) Math.floor(tracker.tracker.locY), (int) Math
-                        .floor(tracker.tracker.locZ)));
-            }
+        // If the disguised is sleeping for w/e reason
+        if (entityplayer.isSleeping()) {
+            entityplayer.playerConnection
+                    .sendPacket(new Packet17EntityLocationAction(entityplayer, 0, (int) Math.floor(tracker.tracker.locX),
+                            (int) Math.floor(tracker.tracker.locY), (int) Math.floor(tracker.tracker.locZ)));
         }
 
         // CraftBukkit start - Fix for nonsensical head yaw
@@ -569,36 +318,28 @@ public class DisguiseAPI {
         tracker.broadcast(new Packet35EntityHeadRotation(player.getEntityId(), (byte) tracker.i));
         // CraftBukkit end
 
-        if (tracker.tracker instanceof EntityLiving) {
-            EntityLiving entityliving = (EntityLiving) tracker.tracker;
-            Iterator iterator = entityliving.getEffects().iterator();
+        // Resend any active potion effects
+        Iterator iterator = entityplayer.getEffects().iterator();
+        while (iterator.hasNext()) {
+            MobEffect mobeffect = (MobEffect) iterator.next();
 
-            while (iterator.hasNext()) {
-                MobEffect mobeffect = (MobEffect) iterator.next();
-
-                entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
-            }
+            entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
         }
     }
 
+    /**
+     * Disable velocity packets being sent for w/e reason. Maybe you want every ounce of performance you can get?
+     */
     public static void setVelocitySent(boolean sendVelocityPackets) {
         sendVelocity = sendVelocityPackets;
     }
 
     public static void setViewDisguises(boolean seeOwnDisguise) {
-        if (viewDisguises != seeOwnDisguise) {
-            viewDisguises = seeOwnDisguise;
-            if (viewDisguises) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
-            }
-        }
+        PacketsManager.setViewDisguisesListener(seeOwnDisguise);
     }
 
     /**
-     * @param Disguiser
-     *            - Undisguises him
+     * Undisguise the entity
      */
     public static void undisguiseToAll(Entity entity) {
         Disguise disguise = getDisguise(entity);
@@ -615,9 +356,5 @@ public class DisguiseAPI {
                 removeVisibleDisguise((Player) entity);
             refresh(entity);
         }
-    }
-
-    public static boolean viewDisguises() {
-        return viewDisguises;
     }
 }
