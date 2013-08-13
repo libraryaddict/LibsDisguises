@@ -39,9 +39,12 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public class DisguiseAPI {
 
+    // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
     private static boolean hearSelfDisguise;
     private static LibsDisguises libsDisguises;
+    // A internal storage of fake entity ID's I can use.
+    // Realistically I could probably use a ID like "4" for everyone seeing as no one shares the ID
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
     private static boolean sendVelocity;
 
@@ -99,9 +102,9 @@ public class DisguiseAPI {
         // Stick the disguise in the disguises bin
         disguises.put(entity.getEntityId(), disguise);
         // Resend the disguised entity's packet
-        refresh(entity);
+        refreshTrackers(entity);
         // If he is a player, then self disguise himself
-        setupPlayer(disguise);
+        setupPlayerFakeDisguise(disguise);
     }
 
     /**
@@ -153,7 +156,7 @@ public class DisguiseAPI {
      * @param Resends
      *            the entity to all the watching players, which is where the magic begins
      */
-    private static void refresh(Entity entity) {
+    private static void refreshTrackers(Entity entity) {
         EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
                 .get(entity.getEntityId());
         if (entry != null) {
@@ -213,7 +216,7 @@ public class DisguiseAPI {
     /**
      * Setup it so he can see himself when disguised
      */
-    private static void setupPlayer(final Disguise disguise) {
+    private static void setupPlayerFakeDisguise(final Disguise disguise) {
         // If the disguises entity is null, or the disguised entity isn't a player return
         if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player))
             return;
@@ -232,7 +235,7 @@ public class DisguiseAPI {
             // If it is, then this method will be run again in one tick. Which is when it should be constructed.
             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                 public void run() {
-                    setupPlayer(disguise);
+                    setupPlayerFakeDisguise(disguise);
                 }
             });
             return;
@@ -354,7 +357,7 @@ public class DisguiseAPI {
         if (((CraftEntity) entity).getHandle().valid) {
             if (entity instanceof Player)
                 removeVisibleDisguise((Player) entity);
-            refresh(entity);
+            refreshTrackers(entity);
         }
     }
 }
