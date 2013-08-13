@@ -220,6 +220,8 @@ public class Disguise {
             if (((CraftEntity) getEntity()).getHandle().valid) {
                 // If this disguise is active
                 if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
+                    // Now remove the disguise from the current disguises.
+                    disguises.remove(getEntity().getEntityId());
                     // Gotta do reflection, copy code or open up calls.
                     // Reflection is the cleanest?
                     if (entity instanceof Player) {
@@ -227,8 +229,6 @@ public class Disguise {
                     }
                     // Better refresh the entity to undisguise it
                     disguiseAPI.refreshWatchingPlayers(getEntity());
-                    // Now remove the disguise from the current disguises.
-                    disguises.remove(getEntity().getEntityId());
                 }
             }
         } else {
