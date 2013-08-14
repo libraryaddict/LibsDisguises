@@ -382,4 +382,8 @@ public class DisguiseAPI {
     public void removeVisibleDisguise(Player player) {
         removeSelfDisguise(player);
     }
+
+    public void setupFakeDisguise(Disguise disguise) {
+        setupPlayerFakeDisguise(disguise);
+    }
 }

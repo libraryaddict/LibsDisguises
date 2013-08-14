@@ -204,45 +204,6 @@ public class Disguise {
         return disguise;
     }
 
-    /**
-     * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
-     */
-    public void removeDisguise() {
-        // Why the hell can't I safely check if its running?!?!
-        try {
-            runnable.cancel();
-        } catch (Exception ex) {
-        }
-        HashMap<Integer, Disguise> disguises = disguiseAPI.getDisguises();
-        // If this disguise has a entity set
-        if (getEntity() != null) {
-            // If the entity is valid
-            if (((CraftEntity) getEntity()).getHandle().valid) {
-                // If this disguise is active
-                if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
-                    // Now remove the disguise from the current disguises.
-                    disguises.remove(getEntity().getEntityId());
-                    // Gotta do reflection, copy code or open up calls.
-                    // Reflection is the cleanest?
-                    if (entity instanceof Player) {
-                        disguiseAPI.removeVisibleDisguise((Player) entity);
-                    }
-                    // Better refresh the entity to undisguise it
-                    disguiseAPI.refreshWatchingPlayers(getEntity());
-                }
-            }
-        } else {
-            // Loop through the disguises because it could be used with a unknown entity id.
-            Iterator<Integer> itel = disguises.keySet().iterator();
-            while (itel.hasNext()) {
-                int id = itel.next();
-                if (disguises.get(id) == this) {
-                    itel.remove();
-                }
-            }
-        }
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -315,6 +276,45 @@ public class Disguise {
 
     public boolean isVelocitySent() {
         return velocitySent;
+    }
+
+    /**
+     * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
+     */
+    public void removeDisguise() {
+        // Why the hell can't I safely check if its running?!?!
+        try {
+            runnable.cancel();
+        } catch (Exception ex) {
+        }
+        HashMap<Integer, Disguise> disguises = disguiseAPI.getDisguises();
+        // If this disguise has a entity set
+        if (getEntity() != null) {
+            // If the entity is valid
+            if (((CraftEntity) getEntity()).getHandle().valid) {
+                // If this disguise is active
+                if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
+                    // Now remove the disguise from the current disguises.
+                    disguises.remove(getEntity().getEntityId());
+                    // Gotta do reflection, copy code or open up calls.
+                    // Reflection is the cleanest?
+                    if (entity instanceof Player) {
+                        disguiseAPI.removeVisibleDisguise((Player) entity);
+                    }
+                    // Better refresh the entity to undisguise it
+                    disguiseAPI.refreshWatchingPlayers(getEntity());
+                }
+            }
+        } else {
+            // Loop through the disguises because it could be used with a unknown entity id.
+            Iterator<Integer> itel = disguises.keySet().iterator();
+            while (itel.hasNext()) {
+                int id = itel.next();
+                if (disguises.get(id) == this) {
+                    itel.remove();
+                }
+            }
+        }
     }
 
     public boolean replaceSounds() {
@@ -424,7 +424,17 @@ public class Disguise {
      * Can the disguised view himself as the disguise
      */
     public void setViewSelfDisguise(boolean viewSelfDisguise) {
-        this.viewSelfDisguise = viewSelfDisguise;
+        if (this.viewSelfDisguise != viewSelfDisguise) {
+            this.viewSelfDisguise = viewSelfDisguise;
+            if (getEntity() != null && getEntity() instanceof Player) {
+                if (DisguiseAPI.getDisguise(getEntity()) == this) {
+                    if (viewSelfDisguise) {
+                        disguiseAPI.setupFakeDisguise(this);
+                    } else
+                        disguiseAPI.removeVisibleDisguise((Player) getEntity());
+                }
+            }
+        }
     }
 
     public void setWatcher(FlagWatcher newWatcher) {
