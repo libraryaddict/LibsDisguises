@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.PacketsManager;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.HorseWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
@@ -16,6 +17,7 @@ import net.minecraft.server.v1_6_R2.EntityPlayer;
 import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R2.WorldServer;
 
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
@@ -75,9 +77,41 @@ public class Disguise {
         }
         double fallSpeed = 0.0050;
         boolean movement = false;
+        boolean alwaysSend = false;
         switch (getType()) {
-        case ARROW:
+        case EGG:
+        case ENDER_PEARL:
         case BAT:
+        case EXPERIENCE_ORB:
+        case FIREBALL:
+        case SMALL_FIREBALL:
+        case SNOWBALL:
+        case SPLASH_POTION:
+        case THROWN_EXP_BOTTLE:
+        case WITHER_SKULL:
+            alwaysSend = true;
+            break;
+        default:
+            break;
+        }
+        switch (getType()) {
+        case FIREWORK:
+            fallSpeed = -0.040;
+            break;
+        case EGG:
+        case ENDER_PEARL:
+        case ENDER_SIGNAL:
+        case FIREBALL:
+        case SMALL_FIREBALL:
+        case SNOWBALL:
+        case SPLASH_POTION:
+        case THROWN_EXP_BOTTLE:
+            fallSpeed = 0.0005;
+            break;
+        case WITHER_SKULL:
+            fallSpeed = 0.000001D;
+            break;
+        case ARROW:
         case BOAT:
         case ENDER_CRYSTAL:
         case ENDER_DRAGON:
@@ -109,25 +143,13 @@ public class Disguise {
         case CAVE_SPIDER:
             fallSpeed = 0.0040;
             break;
-        case EGG:
-        case ENDER_PEARL:
-        case ENDER_SIGNAL:
-        case FIREBALL:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-        case WITHER_SKULL:
-            fallSpeed = 0.0005;
-            break;
-        case FIREWORK:
-            fallSpeed = -0.040;
-            break;
+
         default:
             break;
         }
         final boolean sendMovementPacket = movement;
         final double vectorY = fallSpeed;
+        final boolean alwaysSendVelocity = alwaysSend;
         // A scheduler to clean up any unused disguises.
         runnable = new BukkitRunnable() {
             private int i = 0;
@@ -150,17 +172,40 @@ public class Disguise {
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
-                    if (vectorY != 0 && isVelocitySent() && !entity.isOnGround()) {
+                    if (vectorY != 0 && isVelocitySent() && (alwaysSendVelocity || !entity.isOnGround())) {
                         Vector vector = entity.getVelocity();
                         // If the entity doesn't have velocity changes already
-                        if (vector.getY() != 0)
+                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && entity.isOnGround())) {
                             return;
+                        }
+                        PacketContainer lookPacket = null;
+                        PacketContainer selfLookPacket = null;
+                        if (getType() == DisguiseType.WITHER_SKULL) {
+                            lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
+                            StructureModifier<Object> mods = lookPacket.getModifier();
+                            mods.write(0, entity.getEntityId());
+                            Location loc = entity.getLocation();
+                            mods.write(
+                                    4,
+                                    PacketsManager.getYaw(getType(), DisguiseType.getType(entity.getType()),
+                                            (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                            mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
+                            selfLookPacket = lookPacket.shallowClone();
+                        }
                         for (EntityPlayer player : getPerverts()) {
                             PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
                             StructureModifier<Object> mods = packet.getModifier();
                             if (entity == player.getBukkitEntity()) {
                                 if (!viewSelfDisguise())
                                     continue;
+                                if (selfLookPacket != null) {
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
+                                                selfLookPacket, false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                                 mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
                             } else
                                 mods.write(0, entity.getEntityId());
@@ -168,6 +213,9 @@ public class Disguise {
                             mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
                             mods.write(3, (int) (vector.getZ() * 8000));
                             try {
+                                if (lookPacket != null)
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), lookPacket,
+                                            false);
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet, false);
                             } catch (InvocationTargetException e) {
                                 e.printStackTrace();
