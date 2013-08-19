@@ -380,7 +380,6 @@ public class PacketsManager {
         case EGG:
         case ENDER_PEARL:
         case ENDER_SIGNAL:
-        case EXPERIENCE_ORB:
         case FIREWORK:
         case MINECART:
         case MINECART_CHEST:

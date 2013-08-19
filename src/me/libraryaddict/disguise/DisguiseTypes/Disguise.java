@@ -129,7 +129,6 @@ public class Disguise {
             fallSpeed = 0;
             break;
         case DROPPED_ITEM:
-        case EXPERIENCE_ORB:
         case MAGMA_CUBE:
         case PRIMED_TNT:
             fallSpeed = 0.2;
@@ -138,6 +137,10 @@ public class Disguise {
         case WITHER:
         case FALLING_BLOCK:
             fallSpeed = 0.04;
+            break;
+        case EXPERIENCE_ORB:
+            fallSpeed = 0.0221;
+            movement = true;
             break;
         case SPIDER:
         case CAVE_SPIDER:
@@ -178,47 +181,50 @@ public class Disguise {
                         if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && entity.isOnGround())) {
                             return;
                         }
-                        PacketContainer lookPacket = null;
-                        PacketContainer selfLookPacket = null;
-                        if (getType() == DisguiseType.WITHER_SKULL) {
-                            lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
-                            StructureModifier<Object> mods = lookPacket.getModifier();
-                            mods.write(0, entity.getEntityId());
-                            Location loc = entity.getLocation();
-                            mods.write(
-                                    4,
-                                    PacketsManager.getYaw(getType(), DisguiseType.getType(entity.getType()),
-                                            (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                            mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
-                            selfLookPacket = lookPacket.shallowClone();
-                        }
-                        for (EntityPlayer player : getPerverts()) {
-                            PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                            StructureModifier<Object> mods = packet.getModifier();
-                            if (entity == player.getBukkitEntity()) {
-                                if (!viewSelfDisguise())
-                                    continue;
-                                if (selfLookPacket != null) {
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
-                                                selfLookPacket, false);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
-                            } else
+                        if (getType() != DisguiseType.EXPERIENCE_ORB || !entity.isOnGround()) {
+                            PacketContainer lookPacket = null;
+                            PacketContainer selfLookPacket = null;
+                            if (getType() == DisguiseType.WITHER_SKULL) {
+                                lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
+                                StructureModifier<Object> mods = lookPacket.getModifier();
                                 mods.write(0, entity.getEntityId());
-                            mods.write(1, (int) (vector.getX() * 8000));
-                            mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
-                            mods.write(3, (int) (vector.getZ() * 8000));
-                            try {
-                                if (lookPacket != null)
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), lookPacket,
-                                            false);
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet, false);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                                Location loc = entity.getLocation();
+                                mods.write(
+                                        4,
+                                        PacketsManager.getYaw(getType(), DisguiseType.getType(entity.getType()),
+                                                (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                                mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
+                                selfLookPacket = lookPacket.shallowClone();
+                            }
+                            for (EntityPlayer player : getPerverts()) {
+                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                if (entity == player.getBukkitEntity()) {
+                                    if (!viewSelfDisguise())
+                                        continue;
+                                    if (selfLookPacket != null) {
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
+                                                    selfLookPacket, false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                                } else
+                                    mods.write(0, entity.getEntityId());
+                                mods.write(1, (int) (vector.getX() * 8000));
+                                mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
+                                mods.write(3, (int) (vector.getZ() * 8000));
+                                try {
+                                    if (lookPacket != null)
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
+                                                lookPacket, false);
+                                    ProtocolLibrary.getProtocolManager()
+                                            .sendServerPacket(player.getBukkitEntity(), packet, false);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         // If we need to send more packets because else it still 'sinks'
