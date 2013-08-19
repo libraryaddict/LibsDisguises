@@ -152,7 +152,7 @@ public class PacketsManager {
         for (int i = 0; i < packets.size(); i++) {
             spawnPackets[i + 2] = packets.get(i);
         }
-        Location loc = disguisedEntity.getLocation();
+        Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
         byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
                 (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
         EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
@@ -330,9 +330,10 @@ public class PacketsManager {
     /**
      * Add the yaw for the disguises
      */
-    private static byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
+    public static byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
         switch (disguiseType) {
         case ENDER_DRAGON:
+        case WITHER_SKULL:
             value -= 128;
             break;
         case ITEM_FRAME:
@@ -350,6 +351,7 @@ public class PacketsManager {
         }
         switch (entityType) {
         case ENDER_DRAGON:
+        case WITHER_SKULL:
             value += 128;
             break;
         case ITEM_FRAME:
@@ -366,6 +368,37 @@ public class PacketsManager {
             break;
         }
         return value;
+    }
+
+    private static double getYModifier(Entity entity, DisguiseType disguiseType) {
+        switch (disguiseType) {
+        case BAT:
+            if (entity instanceof LivingEntity)
+                return ((LivingEntity) entity).getEyeHeight();
+        case ARROW:
+        case BOAT:
+        case EGG:
+        case ENDER_PEARL:
+        case ENDER_SIGNAL:
+        case EXPERIENCE_ORB:
+        case FIREWORK:
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+        case PAINTING:
+        case SMALL_FIREBALL:
+        case SNOWBALL:
+        case SPLASH_POTION:
+        case THROWN_EXP_BOTTLE:
+        case WITHER_SKULL:
+            return 0.7;
+        default:
+            break;
+        }
+        return 0;
     }
 
     protected static void init(JavaPlugin libsDisguises) {
@@ -666,7 +699,7 @@ public class PacketsManager {
                 // This packet sends attributes
 
                 switch (sentPacket.getID()) {
-                
+
                 case Packets.Server.UPDATE_ATTRIBUTES:
 
                 {
@@ -730,10 +763,21 @@ public class PacketsManager {
                 case Packets.Server.ENTITY_TELEPORT:
 
                 {
-                    packets[0] = sentPacket.shallowClone();
-                    StructureModifier<Object> mods = packets[0].getModifier();
-                    byte value = (Byte) mods.read(4);
-                    mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
+                    if (sentPacket.getID() == Packets.Server.ENTITY_LOOK && disguise.getType() == DisguiseType.WITHER_SKULL) {
+                        packets = new PacketContainer[0];
+                    } else {
+                        packets[0] = sentPacket.shallowClone();
+                        StructureModifier<Object> mods = packets[0].getModifier();
+                        byte value = (Byte) mods.read(4);
+                        mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
+                        if (sentPacket.getID() == Packets.Server.ENTITY_TELEPORT) {
+                            double y = getYModifier(entity, disguise.getType());
+                            if (y != 0) {
+                                y *= 32;
+                                mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
+                            }
+                        }
+                    }
                     break;
                 }
 
