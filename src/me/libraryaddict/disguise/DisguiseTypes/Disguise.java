@@ -75,7 +75,7 @@ public class Disguise {
                 // Ok.. So it aint a horse
             }
         }
-        double fallSpeed = 0.0050;
+        double fallSpeed = 0.0005;
         boolean movement = false;
         boolean alwaysSend = false;
         switch (getType()) {
