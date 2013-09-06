@@ -163,7 +163,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        if (disguise.getWatcher() == null || disguise.getEntity() == null || !DisguiseAPI.isDisguised(disguise.getEntity()))
+        if (disguise.getWatcher() == null || DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
             return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
@@ -234,7 +234,7 @@ public class FlagWatcher {
         if (itemStack != null && itemStack.getTypeId() != 0)
             itemToSend = CraftItemStack.asNMSCopy(itemStack);
         items[slot] = itemStack;
-        if (disguise.getEntity() == null)
+        if (DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
             return;
         slot++;
         if (slot > 4)
