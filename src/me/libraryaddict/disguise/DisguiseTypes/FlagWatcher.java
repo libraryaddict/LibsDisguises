@@ -234,6 +234,8 @@ public class FlagWatcher {
         if (itemStack != null && itemStack.getTypeId() != 0)
             itemToSend = CraftItemStack.asNMSCopy(itemStack);
         items[slot] = itemStack;
+        if (disguise.getEntity() == null)
+            return;
         slot++;
         if (slot > 4)
             slot = 0;
