@@ -126,12 +126,13 @@ public class LibsDisguises extends JavaPlugin {
                 // There is no watcher for this entity, or a error was thrown.
                 try {
                     Class c = disguiseType.getEntityType().getEntityClass();
-                    if (Ageable.class.isAssignableFrom(c))
+                    if (Ageable.class.isAssignableFrom(c)) {
                         watcherClass = AgeableWatcher.class;
-                    else if (LivingEntity.class.isAssignableFrom(c))
+                    } else if (LivingEntity.class.isAssignableFrom(c)) {
                         watcherClass = LivingWatcher.class;
-                    else
+                    } else {
                         watcherClass = FlagWatcher.class;
+                    }
                 } catch (Exception ex1) {
                     ex1.printStackTrace();
                 }

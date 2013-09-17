@@ -15,13 +15,13 @@ public class MiscDisguise extends Disguise {
     }
 
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
-        super(disguiseType, replaceSounds);
         if (id == -1)
             id = disguiseType.getDefaultId();
         if (data == -1)
             data = disguiseType.getDefaultData();
         this.id = id;
         this.data = data;
+        createDisguise(disguiseType, replaceSounds);
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
@@ -40,13 +40,13 @@ public class MiscDisguise extends Disguise {
 
     @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds, int id, int data) {
-        super(DisguiseType.getType(entityType), replaceSounds);
         if (id == -1)
             id = DisguiseType.getType(entityType).getDefaultId();
         if (data == -1)
             data = DisguiseType.getType(entityType).getDefaultData();
         this.id = id;
         this.data = data;
+        createDisguise(DisguiseType.getType(entityType), replaceSounds);
     }
 
     @Deprecated

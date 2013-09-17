@@ -42,11 +42,15 @@ public class Disguise {
     private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
     private FlagWatcher watcher;
 
-    protected Disguise(DisguiseType newType, boolean doSounds) {
+    protected Disguise createDisguise(DisguiseType newType, boolean doSounds) {
+        if (getWatcher() != null)
+            return this;
         // Set the disguise type
         disguiseType = newType;
         // Set the option to replace the sounds
         setReplaceSounds(doSounds);
+        // Get if they are a adult now..
+        boolean isAdult = !(this instanceof MobDisguise && !((MobDisguise) this).isAdult());
         try {
             // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
@@ -54,11 +58,12 @@ public class Disguise {
             e.printStackTrace();
         }
         // Set the disguise if its a baby or not
-        if (this instanceof MobDisguise && !((MobDisguise) this).isAdult()) {
-            if (getWatcher() instanceof AgeableWatcher)
-                getWatcher().setValue(12, -24000);
-            else if (getWatcher() instanceof ZombieWatcher)
-                getWatcher().setValue(12, (byte) 1);
+        if (isAdult) {
+            if (getWatcher() instanceof AgeableWatcher) {
+                ((AgeableWatcher) getWatcher()).setAdult(false);
+            } else if (getWatcher() instanceof ZombieWatcher) {
+                ((ZombieWatcher) getWatcher()).setAdult(false);
+            }
         }
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
         if (getType() == DisguiseType.WITHER_SKELETON)
@@ -246,6 +251,7 @@ public class Disguise {
                 }
             }
         };
+        return this;
     }
 
     public boolean canHearSelfDisguise() {
@@ -253,7 +259,7 @@ public class Disguise {
     }
 
     public Disguise clone() {
-        Disguise disguise = new Disguise(getType(), replaceSounds());
+        Disguise disguise = new Disguise().createDisguise(getType(), replaceSounds());
         disguise.setViewSelfDisguise(viewSelfDisguise());
         return disguise;
     }

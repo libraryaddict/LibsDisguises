@@ -18,8 +18,8 @@ public class MobDisguise extends Disguise {
     }
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
-        super(disguiseType, replaceSounds);
         this.isAdult = isAdult;
+        createDisguise(disguiseType, replaceSounds);
     }
 
     @Deprecated
@@ -34,8 +34,8 @@ public class MobDisguise extends Disguise {
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult, boolean replaceSounds) {
-        super(DisguiseType.getType(entityType), replaceSounds);
         this.isAdult = isAdult;
+        createDisguise(DisguiseType.getType(entityType), replaceSounds);
     }
 
     public MobDisguise clone() {
@@ -58,7 +58,7 @@ public class MobDisguise extends Disguise {
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher)
-                return true;
+                return ((AgeableWatcher) getWatcher()).isAdult();
             else if (getWatcher() instanceof ZombieWatcher)
                 return ((ZombieWatcher) getWatcher()).isAdult();
             return false;

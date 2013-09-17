@@ -8,10 +8,10 @@ public class PlayerDisguise extends Disguise {
     }
 
     public PlayerDisguise(String name, boolean replaceSounds) {
-        super(DisguiseType.PLAYER, replaceSounds);
         if (name.length() > 16)
             name = name.substring(0, 16);
         playerName = name;
+        createDisguise(DisguiseType.PLAYER, replaceSounds);
     }
 
     public PlayerDisguise clone() {
