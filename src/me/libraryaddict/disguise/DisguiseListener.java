@@ -29,24 +29,27 @@ public class DisguiseListener implements Listener {
         permission = plugin.getConfig().getString("Permission");
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+            Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
                 public void run() {
                     try {
                         UpdateChecker updateChecker = new UpdateChecker();
-                        updateChecker.checkUpdate("v"
-                                + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion());
+                        updateChecker.checkUpdate("v" + currentVersion);
                         latestVersion = updateChecker.getLatestVersion();
                         if (latestVersion != null) {
                             latestVersion = "v" + latestVersion;
-                            for (Player p : Bukkit.getOnlinePlayers())
-                                if (p.hasPermission(permission))
-                                    p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                public void run() {
+                                    for (Player p : Bukkit.getOnlinePlayers())
+                                        if (p.hasPermission(permission))
+                                            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+                                }
+                            });
                         }
                     } catch (Exception ex) {
                         System.out.print(String.format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
                     }
                 }
-            });
+            }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
         }
     }
 
