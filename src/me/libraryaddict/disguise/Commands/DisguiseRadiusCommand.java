@@ -29,7 +29,8 @@ public class DisguiseRadiusCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises.disguiseradius." + name))
+            if (sender.hasPermission("libsdisguises.disguiseradius.*")
+                    || sender.hasPermission("libsdisguises.disguiseradius." + name))
                 names.add(name);
         }
         Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
@@ -38,6 +39,8 @@ public class DisguiseRadiusCommand implements CommandExecutor {
 
     private ArrayList<String> forbiddenDisguises(CommandSender sender) {
         ArrayList<String> names = new ArrayList<String>();
+        if (sender.hasPermission("libsdisguises.disguiseradius.*"))
+            return names;
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
             if (!sender.hasPermission("libsdisguises.disguiseradius." + name))

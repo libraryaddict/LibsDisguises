@@ -28,7 +28,8 @@ public class DisguiseEntityCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises.disguiseentity." + name))
+            if (sender.hasPermission("libsdisguises.disguiseentity.*")
+                    || sender.hasPermission("libsdisguises.disguiseentity." + name))
                 names.add(name);
         }
         Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
@@ -37,6 +38,8 @@ public class DisguiseEntityCommand implements CommandExecutor {
 
     private ArrayList<String> forbiddenDisguises(CommandSender sender) {
         ArrayList<String> names = new ArrayList<String>();
+        if (sender.hasPermission("libsdisguises.disguiseentity.*"))
+            return names;
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
             if (!sender.hasPermission("libsdisguises.disguiseentity." + name))

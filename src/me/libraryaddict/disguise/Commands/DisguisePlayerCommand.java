@@ -24,7 +24,8 @@ public class DisguisePlayerCommand implements CommandExecutor {
         ArrayList<String> names = new ArrayList<String>();
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises.disguiseplayer." + name))
+            if (sender.hasPermission("libsdisguises.disguiseplayer.*")
+                    || sender.hasPermission("libsdisguises.disguiseplayer." + name))
                 names.add(name);
         }
         Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
@@ -33,6 +34,8 @@ public class DisguisePlayerCommand implements CommandExecutor {
 
     private ArrayList<String> forbiddenDisguises(CommandSender sender) {
         ArrayList<String> names = new ArrayList<String>();
+        if (sender.hasPermission("libsdisguises.disguiseplayer.*"))
+            return names;
         for (DisguiseType type : DisguiseType.values()) {
             String name = type.name().toLowerCase();
             if (!sender.hasPermission("libsdisguises.disguiseplayer." + name))
