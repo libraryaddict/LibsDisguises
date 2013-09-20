@@ -7,28 +7,28 @@ import java.util.Iterator;
 import me.libraryaddict.disguise.DisguiseTypes.Disguise;
 import me.libraryaddict.disguise.Events.DisguiseEvent;
 import me.libraryaddict.disguise.Events.UndisguiseEvent;
-import net.minecraft.server.v1_6_R2.AttributeMapServer;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityInsentient;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R2.ItemStack;
-import net.minecraft.server.v1_6_R2.MobEffect;
-import net.minecraft.server.v1_6_R2.Packet17EntityLocationAction;
-import net.minecraft.server.v1_6_R2.Packet20NamedEntitySpawn;
-import net.minecraft.server.v1_6_R2.Packet28EntityVelocity;
-import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R2.Packet39AttachEntity;
-import net.minecraft.server.v1_6_R2.Packet40EntityMetadata;
-import net.minecraft.server.v1_6_R2.Packet41MobEffect;
-import net.minecraft.server.v1_6_R2.Packet44UpdateAttributes;
-import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R2.WorldServer;
+import net.minecraft.server.v1_6_R3.AttributeMapServer;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityInsentient;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
+import net.minecraft.server.v1_6_R3.ItemStack;
+import net.minecraft.server.v1_6_R3.MobEffect;
+import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
+import net.minecraft.server.v1_6_R3.Packet20NamedEntitySpawn;
+import net.minecraft.server.v1_6_R3.Packet28EntityVelocity;
+import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R3.Packet39AttachEntity;
+import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
+import net.minecraft.server.v1_6_R3.Packet41MobEffect;
+import net.minecraft.server.v1_6_R3.Packet44UpdateAttributes;
+import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -62,7 +62,7 @@ public class DisguiseAPI {
             disguise = disguise.clone();
         }
         try {
-            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
+            Field field = net.minecraft.server.v1_6_R3.Entity.class.getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
             disguises.put(id, disguise);
@@ -259,7 +259,7 @@ public class DisguiseAPI {
         tracker.trackedPlayers.add(entityplayer);
         try {
             // Grab the entity ID the fake disguise will use
-            Field field = net.minecraft.server.v1_6_R2.Entity.class.getDeclaredField("entityCount");
+            Field field = net.minecraft.server.v1_6_R3.Entity.class.getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
             // Set the entitycount plus one so we don't have the id being reused
@@ -277,7 +277,7 @@ public class DisguiseAPI {
         }
         // Send himself some entity attributes
         if (tracker.tracker instanceof EntityLiving) {
-            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aW();
+            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aX();
             Collection collection = attributemapserver.c();
 
             if (!collection.isEmpty()) {
@@ -310,9 +310,9 @@ public class DisguiseAPI {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
         }
 
-        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).bI() != null) {
+        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).getLeashHolder() != null) {
             entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
-                    ((EntityInsentient) tracker.tracker).bI()));
+                    ((EntityInsentient) tracker.tracker).getLeashHolder()));
         }
 
         // Resend the armor

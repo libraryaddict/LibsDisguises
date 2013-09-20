@@ -18,22 +18,22 @@ import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
 import me.libraryaddict.disguise.DisguiseTypes.Values;
 import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
-import net.minecraft.server.v1_6_R2.AttributeSnapshot;
-import net.minecraft.server.v1_6_R2.Block;
-import net.minecraft.server.v1_6_R2.DataWatcher;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.EnumArt;
-import net.minecraft.server.v1_6_R2.EnumEntitySize;
-import net.minecraft.server.v1_6_R2.ItemStack;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.WatchableObject;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.AttributeSnapshot;
+import net.minecraft.server.v1_6_R3.Block;
+import net.minecraft.server.v1_6_R3.DataWatcher;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EnumArt;
+import net.minecraft.server.v1_6_R3.EnumEntitySize;
+import net.minecraft.server.v1_6_R3.ItemStack;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.WatchableObject;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -127,7 +127,7 @@ public class PacketsManager {
     public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
-        net.minecraft.server.v1_6_R2.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
+        net.minecraft.server.v1_6_R3.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         for (int i = 0; i < 5; i++) {
             int slot = i - 1;
@@ -427,11 +427,11 @@ public class PacketsManager {
                                     } else {
                                         boolean hasInvun = false;
                                         if (entity instanceof LivingEntity) {
-                                            net.minecraft.server.v1_6_R2.EntityLiving e = ((CraftLivingEntity) entity)
+                                            net.minecraft.server.v1_6_R3.EntityLiving e = ((CraftLivingEntity) entity)
                                                     .getHandle();
                                             hasInvun = (e.noDamageTicks == e.maxNoDamageTicks);
                                         } else {
-                                            net.minecraft.server.v1_6_R2.Entity e = ((CraftEntity) entity).getHandle();
+                                            net.minecraft.server.v1_6_R3.Entity e = ((CraftEntity) entity).getHandle();
                                             hasInvun = e.isInvulnerable();
                                         }
                                         soundType = entitySound.getType(soundName, !hasInvun);

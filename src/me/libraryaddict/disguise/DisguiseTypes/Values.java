@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.DisguiseTypes;
 
 import java.util.HashMap;
 
-import net.minecraft.server.v1_6_R2.EnumEntitySize;
+import net.minecraft.server.v1_6_R3.EnumEntitySize;
 
 public class Values {
 

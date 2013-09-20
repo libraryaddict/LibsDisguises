@@ -12,17 +12,17 @@ import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Values;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
 import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
-import net.minecraft.server.v1_6_R2.ChatMessage;
-import net.minecraft.server.v1_6_R2.ChunkCoordinates;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.WatchableObject;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.ChatMessage;
+import net.minecraft.server.v1_6_R3.ChunkCoordinates;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.WatchableObject;
+import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_6_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -175,14 +175,14 @@ public class LibsDisguises extends JavaPlugin {
                 break;
             }
             try {
-                net.minecraft.server.v1_6_R2.Entity entity = null;
+                net.minecraft.server.v1_6_R3.Entity entity = null;
                 Class entityClass;
                 if (disguiseType == DisguiseType.PLAYER) {
                     entityClass = EntityHuman.class;
                     entity = new DisguiseHuman(world);
                 } else {
-                    entityClass = Class.forName("net.minecraft.server.v1_6_R2.Entity" + name);
-                    entity = (net.minecraft.server.v1_6_R2.Entity) entityClass.getConstructor(World.class).newInstance(world);
+                    entityClass = Class.forName("net.minecraft.server.v1_6_R3.Entity" + name);
+                    entity = (net.minecraft.server.v1_6_R3.Entity) entityClass.getConstructor(World.class).newInstance(world);
                 }
                 Values value = new Values(disguiseType, entityClass, entity.at);
                 List<WatchableObject> watchers = entity.getDataWatcher().c();
