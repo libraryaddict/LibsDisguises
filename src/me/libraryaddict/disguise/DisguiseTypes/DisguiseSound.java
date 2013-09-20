@@ -22,7 +22,7 @@ public enum DisguiseSound {
 
     CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH),
 
-    DONKEY("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
+    DONKEY(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE, Sound.DONKEY_ANGRY),
 
     ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS,
             Sound.FALL_BIG, Sound.FALL_SMALL),
@@ -35,13 +35,13 @@ public enum DisguiseSound {
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS),
 
-    HORSE("mob.horse.hit", Sound.STEP_GRASS, "mob.horse.death", "mob.horse.idle"),
+    HORSE(Sound.HORSE_HIT, Sound.STEP_GRASS, "mob.horse.death", Sound.HORSE_IDLE),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
     MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
-    MULE("mob.horse.donkey.hit", Sound.STEP_GRASS, "mob.horse.donkey.death", "mob.horse.donkey.idle"),
+    MULE(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE),
 
     MUSHROOM_COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
 
@@ -51,7 +51,7 @@ public enum DisguiseSound {
 
     PIG_ZOMBIE(Sound.ZOMBIE_PIG_HURT, null, Sound.ZOMBIE_PIG_DEATH, Sound.ZOMBIE_PIG_IDLE, Sound.ZOMBIE_PIG_ANGRY),
 
-    PLAYER(Sound.HURT_FLESH, Sound.STEP_GRASS),
+    PLAYER(Sound.HURT_FLESH, Sound.STEP_GRASS, Sound.HURT_FLESH),
 
     SHEEP(Sound.SHEEP_IDLE, Sound.SHEEP_WALK, null, Sound.SHEEP_IDLE, Sound.SHEEP_SHEAR),
 
@@ -59,7 +59,7 @@ public enum DisguiseSound {
 
     SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
 
-    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, "mob.horse.skeleton.death", "mob.horse.skeleton.idle"),
+    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, Sound.HORSE_SKELETON_DEATH, Sound.HORSE_SKELETON_IDLE),
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
@@ -69,10 +69,10 @@ public enum DisguiseSound {
 
     SQUID(),
 
-    UNDEAD_HORSE("mob.horse.zombie.hit", Sound.STEP_GRASS, "mob.horse.zombie.death", "mob.horse.zombie.idle"),
+    UNDEAD_HORSE(Sound.HORSE_ZOMBIE_HIT, Sound.STEP_GRASS, Sound.HORSE_ZOMBIE_DEATH, Sound.HORSE_ZOMBIE_IDLE),
 
-    VILLAGER("mob.villager.hit", null, "mob.villager.death", "mob.villager.idle", "mob.villager.haggle", "mob.villager.yes",
-            "mob.villager.no"),
+    VILLAGER(Sound.VILLAGER_HIT, null, Sound.VILLAGER_DEATH, Sound.VILLAGER_IDLE, Sound.VILLAGER_HAGGLE, Sound.VILLAGER_YES,
+            Sound.VILLAGER_NO),
 
     WITCH("mob.witch.hurt", null, "mob.witch.death", "mob.witch.idle"),
 
