@@ -195,7 +195,7 @@ public class LibsDisguises extends JavaPlugin {
                 }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
-                    Method soundStrength = EntityLiving.class.getDeclaredMethod("aZ");
+                    Method soundStrength = EntityLiving.class.getDeclaredMethod("ba");
                     soundStrength.setAccessible(true);
                     sound.setDamageSoundVolume((Float) soundStrength.invoke(entity));
                 }
