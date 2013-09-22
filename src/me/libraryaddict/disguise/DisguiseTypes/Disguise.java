@@ -50,7 +50,7 @@ public class Disguise {
         // Set the option to replace the sounds
         setReplaceSounds(doSounds);
         // Get if they are a adult now..
-        boolean isAdult = !(this instanceof MobDisguise && !((MobDisguise) this).isAdult());
+        boolean isBaby = !(this instanceof MobDisguise && ((MobDisguise) this).isAdult());
         try {
             // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
@@ -58,7 +58,7 @@ public class Disguise {
             e.printStackTrace();
         }
         // Set the disguise if its a baby or not
-        if (isAdult) {
+        if (isBaby) {
             if (getWatcher() instanceof AgeableWatcher) {
                 ((AgeableWatcher) getWatcher()).setAdult(false);
             } else if (getWatcher() instanceof ZombieWatcher) {
