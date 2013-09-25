@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.DisguiseTypes;
+package me.libraryaddict.disguise.disguisetypes;
 
 public enum AnimalColor {
     BLACK(15), BLUE(11), BROWN(

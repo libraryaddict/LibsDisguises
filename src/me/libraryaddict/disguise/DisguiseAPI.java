@@ -4,9 +4,10 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.Events.DisguiseEvent;
-import me.libraryaddict.disguise.Events.UndisguiseEvent;
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.events.DisguiseEvent;
+import me.libraryaddict.disguise.events.UndisguiseEvent;
 import net.minecraft.server.v1_6_R3.AttributeMapServer;
 import net.minecraft.server.v1_6_R3.EntityHuman;
 import net.minecraft.server.v1_6_R3.EntityInsentient;
@@ -31,6 +32,7 @@ import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;

@@ -1,10 +1,12 @@
-package me.libraryaddict.disguise.DisguiseTypes.Watchers;
+package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import java.util.Random;
 
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 import org.bukkit.entity.Villager.Profession;
+
 
 public class VillagerWatcher extends AgeableWatcher {
 

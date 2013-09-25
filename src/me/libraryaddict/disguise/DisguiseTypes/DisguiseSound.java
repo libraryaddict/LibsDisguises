@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.DisguiseTypes;
+package me.libraryaddict.disguise.disguisetypes;
 
 import java.util.HashMap;
 import java.util.HashSet;

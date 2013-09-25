@@ -1,10 +1,12 @@
-package me.libraryaddict.disguise.DisguiseTypes.Watchers;
+package me.libraryaddict.disguise.disguisetypes.watchers;
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
+
 
 public class ItemFrameWatcher extends FlagWatcher {
 

@@ -1,4 +1,5 @@
-package me.libraryaddict.disguise.Commands;
+package me.libraryaddict.disguise.commands;
+
 
 import me.libraryaddict.disguise.DisguiseListener;
 
@@ -6,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
 
 public class UndisguiseEntityCommand implements CommandExecutor {
     private DisguiseListener listener;

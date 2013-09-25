@@ -4,14 +4,15 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import me.libraryaddict.disguise.Commands.*;
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.Values;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.LivingWatcher;
+
+import me.libraryaddict.disguise.commands.*;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseSound;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.Values;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import net.minecraft.server.v1_6_R3.ChatMessage;
 import net.minecraft.server.v1_6_R3.ChunkCoordinates;
 import net.minecraft.server.v1_6_R3.EntityHuman;
@@ -26,6 +27,7 @@ import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 public class LibsDisguises extends JavaPlugin {
     private class DisguiseHuman extends EntityHuman {
@@ -121,7 +123,7 @@ public class LibsDisguises extends JavaPlugin {
                     name = toReadable(disguiseType.name());
                     break;
                 }
-                watcherClass = Class.forName("me.libraryaddict.disguise.DisguiseTypes.Watchers." + name + "Watcher");
+                watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.Watchers." + name + "Watcher");
             } catch (Exception ex) {
                 // There is no watcher for this entity, or a error was thrown.
                 try {

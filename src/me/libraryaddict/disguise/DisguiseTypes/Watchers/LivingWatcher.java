@@ -1,15 +1,17 @@
-package me.libraryaddict.disguise.DisguiseTypes.Watchers;
+package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import java.util.HashSet;
 import java.util.Iterator;
 
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import net.minecraft.server.v1_6_R3.MobEffect;
 import net.minecraft.server.v1_6_R3.PotionBrewer;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
+
+
 
 public class LivingWatcher extends FlagWatcher {
     private HashSet<MobEffect> potionEffects = new HashSet<MobEffect>();

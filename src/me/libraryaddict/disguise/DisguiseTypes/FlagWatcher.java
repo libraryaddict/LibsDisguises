@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.DisguiseTypes;
+package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;

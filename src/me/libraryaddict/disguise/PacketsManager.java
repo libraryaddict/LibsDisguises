@@ -9,15 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.MiscDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.Values;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseSound;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.Values;
+import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
 import net.minecraft.server.v1_6_R3.AttributeSnapshot;
 import net.minecraft.server.v1_6_R3.Block;
 import net.minecraft.server.v1_6_R3.DataWatcher;
@@ -42,6 +42,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;

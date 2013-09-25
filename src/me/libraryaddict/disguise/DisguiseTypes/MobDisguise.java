@@ -1,9 +1,9 @@
-package me.libraryaddict.disguise.DisguiseTypes;
+package me.libraryaddict.disguise.disguisetypes;
+
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.entity.EntityType;
-
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
 
 public class MobDisguise extends Disguise {
 

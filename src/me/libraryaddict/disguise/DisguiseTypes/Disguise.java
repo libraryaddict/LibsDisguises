@@ -1,15 +1,16 @@
-package me.libraryaddict.disguise.DisguiseTypes;
+package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.PacketsManager;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.AgeableWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.HorseWatcher;
-import me.libraryaddict.disguise.DisguiseTypes.Watchers.ZombieWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import net.minecraft.server.v1_6_R3.EntityAgeable;
 import net.minecraft.server.v1_6_R3.EntityInsentient;
 import net.minecraft.server.v1_6_R3.EntityLiving;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;

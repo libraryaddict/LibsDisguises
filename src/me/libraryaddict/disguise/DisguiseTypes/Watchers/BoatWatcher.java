@@ -1,7 +1,7 @@
-package me.libraryaddict.disguise.DisguiseTypes.Watchers;
+package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 public class BoatWatcher extends FlagWatcher {
 

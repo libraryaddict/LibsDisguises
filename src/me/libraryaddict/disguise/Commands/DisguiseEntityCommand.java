@@ -1,20 +1,22 @@
-package me.libraryaddict.disguise.Commands;
+package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 import me.libraryaddict.disguise.DisguiseListener;
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
-import me.libraryaddict.disguise.DisguiseTypes.DisguiseType;
-import me.libraryaddict.disguise.DisguiseTypes.MiscDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.MobDisguise;
-import me.libraryaddict.disguise.DisguiseTypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
 
 public class DisguiseEntityCommand implements CommandExecutor {
 

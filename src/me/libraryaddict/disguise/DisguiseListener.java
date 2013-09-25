@@ -1,7 +1,10 @@
 package me.libraryaddict.disguise;
 
 import java.util.HashMap;
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -10,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
 
 public class DisguiseListener implements Listener {
 

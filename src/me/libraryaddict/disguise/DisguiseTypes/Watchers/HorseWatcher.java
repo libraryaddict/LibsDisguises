@@ -1,11 +1,13 @@
-package me.libraryaddict.disguise.DisguiseTypes.Watchers;
+package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import java.util.Random;
 
-import me.libraryaddict.disguise.DisguiseTypes.Disguise;
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
+
 
 public class HorseWatcher extends AgeableWatcher {
 
