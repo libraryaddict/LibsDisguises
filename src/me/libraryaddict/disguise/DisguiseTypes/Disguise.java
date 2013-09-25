@@ -33,6 +33,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class Disguise {
+    /**
+     * Incase I forget, this is used to access normally hidden api calls.
+     */
     private static DisguiseAPI disguiseAPI = new DisguiseAPI();
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
