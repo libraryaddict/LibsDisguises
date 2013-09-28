@@ -43,7 +43,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
-
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -68,7 +67,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ADD_EXP_ORB, Packets.Server.VEHICLE_SPAWN, Packets.Server.MOB_SPAWN,
                 Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, Packets.Server.UPDATE_ATTRIBUTES,
-                Packets.Server.ENTITY_EQUIPMENT) {
+                Packets.Server.ENTITY_EQUIPMENT, Packets.Server.BED) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
@@ -575,7 +574,8 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
+                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES,
+                Packets.Server.BED) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
@@ -638,6 +638,7 @@ public class PacketsManager {
                                 }
                                 event.setCancelled(true);
                                 break;
+
                             case Packets.Server.ENTITY_STATUS:
                                 if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
                                         && (Byte) event.getPacket().getModifier().read(1) == 2)
@@ -792,6 +793,15 @@ public class PacketsManager {
                         packets[0] = packets[0].shallowClone();
                         packets[0].getModifier().write(2,
                                 (itemstack.getTypeId() == 0 ? null : CraftItemStack.asNMSCopy(itemstack)));
+                    }
+                    break;
+                }
+
+                case Packets.Server.BED:
+
+                {
+                    if (!disguise.getType().isPlayer()) {
+                        packets = new PacketContainer[0];
                     }
                     break;
                 }
