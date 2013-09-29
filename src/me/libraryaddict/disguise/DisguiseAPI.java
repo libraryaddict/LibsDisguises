@@ -33,7 +33,6 @@ import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -44,14 +43,28 @@ public class DisguiseAPI {
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
     private static boolean hearSelfDisguise;
+    private static boolean hidingArmor;
+    private static boolean hidingHeldItem;
     private static LibsDisguises libsDisguises;
+
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone seeing as no one shares the ID
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
+
     private static boolean sendVelocity;
 
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
+    }
+
+    public static void setInventoryListenerEnabled(boolean inventoryListenerEnabled) {
+        if (PacketsManager.isInventoryListenerEnabled() != inventoryListenerEnabled) {
+            PacketsManager.setInventoryListenerEnabled(inventoryListenerEnabled);
+        }
+    }
+
+    public static boolean isInventoryListenerEnabled() {
+        return PacketsManager.isInventoryListenerEnabled();
     }
 
     /**
@@ -143,6 +156,20 @@ public class DisguiseAPI {
     }
 
     /**
+     * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor floating around
+     */
+    public static boolean isHidingArmorFromSelf() {
+        return hidingArmor;
+    }
+
+    /**
+     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
+     */
+    public static boolean isHidingHeldItemFromSelf() {
+        return hidingHeldItem;
+    }
+
+    /**
      * Is the sound packets caught and modified
      */
     public static boolean isSoundEnabled() {
@@ -220,6 +247,24 @@ public class DisguiseAPI {
     public static void setHearSelfDisguise(boolean replaceSound) {
         if (hearSelfDisguise != replaceSound) {
             hearSelfDisguise = replaceSound;
+        }
+    }
+
+    /**
+     * Set the plugin to hide self disguises armor from theirselves
+     */
+    public static void setHideArmorFromSelf(boolean hideArmor) {
+        if (hidingArmor != hideArmor) {
+            hidingArmor = hideArmor;
+        }
+    }
+
+    /**
+     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
+     */
+    public static void setHideHeldItemFromSelf(boolean hideHelditem) {
+        if (hidingHeldItem != hideHelditem) {
+            hidingHeldItem = hideHelditem;
         }
     }
 
