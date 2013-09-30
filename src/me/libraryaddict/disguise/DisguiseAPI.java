@@ -280,7 +280,7 @@ public class DisguiseAPI {
      */
     private static void setupPlayerFakeDisguise(final Disguise disguise) {
         // If the disguises entity is null, or the disguised entity isn't a player return
-        if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player))
+        if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player) || !disguises.containsValue(disguise))
             return;
         Player player = (Player) disguise.getEntity();
         // Remove the old disguise, else we have weird disguises around the place
@@ -295,6 +295,7 @@ public class DisguiseAPI {
         if (tracker == null) {
             // A check incase the tracker is null.
             // If it is, then this method will be run again in one tick. Which is when it should be constructed.
+            // Else its going to run in a infinite loop hue hue hue..
             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                 public void run() {
                     setupPlayerFakeDisguise(disguise);
