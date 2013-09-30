@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,7 +12,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
-
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -65,26 +65,27 @@ public class FlagWatcher {
     public List<WatchableObject> convert(List<WatchableObject> list) {
         Iterator<WatchableObject> itel = list.iterator();
         List<WatchableObject> newList = new ArrayList<WatchableObject>();
-        List<Integer> sentValues = new ArrayList<Integer>();
+        HashSet<Integer> sentValues = new HashSet<Integer>();
         boolean sendAllCustom = false;
         while (itel.hasNext()) {
             WatchableObject watch = itel.next();
-            sentValues.add(watch.a());
+            int dataType = watch.a();
+            sentValues.add(dataType);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (watch.a() == 1)
+            if (dataType == 1)
                 sendAllCustom = true;
-            if (entityValues.containsKey(watch.a())) {
-                if (entityValues.get(watch.a()) == null)
+            if (entityValues.containsKey(dataType)) {
+                if (entityValues.get(dataType) == null)
                     continue;
-                Object value = entityValues.get(watch.a());
+                Object value = entityValues.get(dataType);
                 boolean doD = watch.d();
-                watch = new WatchableObject(classTypes.get(value.getClass()), watch.a(), value);
+                watch = new WatchableObject(classTypes.get(value.getClass()), dataType, value);
                 if (!doD)
                     watch.a(false);
             } else {
                 boolean doD = watch.d();
-                watch = new WatchableObject(watch.c(), watch.a(), watch.b());
+                watch = new WatchableObject(watch.c(), dataType, watch.b());
                 if (!doD)
                     watch.a(false);
             }
