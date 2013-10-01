@@ -19,6 +19,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.PacketsManager;
 import net.minecraft.server.v1_6_R3.ChunkCoordinates;
 import net.minecraft.server.v1_6_R3.EntityPlayer;
 import net.minecraft.server.v1_6_R3.ItemStack;
@@ -51,6 +52,7 @@ public class FlagWatcher {
     private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
+    private boolean hasDied;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = disguise;
@@ -101,6 +103,24 @@ public class FlagWatcher {
                     continue;
                 WatchableObject watch = new WatchableObject(classTypes.get(obj.getClass()), value, obj);
                 newList.add(watch);
+            }
+        }
+        // Here we check for if there is a health packet that says they died.
+        if (disguise.viewSelfDisguise() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
+            for (WatchableObject watch : newList) {
+                // Its a health packet
+                if (watch.a() == 6) {
+                    Object value = watch.b();
+                    if (value != null && value instanceof Float) {
+                        float newHealth = (Float) value;
+                        if (newHealth > 0 && hasDied) {
+                            hasDied = false;
+                            PacketsManager.sendSelfDisguise((Player) disguise.getEntity());
+                        } else if (newHealth <= 0 && !hasDied) {
+                            hasDied = true;
+                        }
+                    }
+                }
             }
         }
         return newList;
