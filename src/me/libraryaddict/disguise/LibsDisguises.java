@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -22,12 +23,12 @@ import net.minecraft.server.v1_6_R3.WatchableObject;
 import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
-
 
 public class LibsDisguises extends JavaPlugin {
     private class DisguiseHuman extends EntityHuman {
@@ -52,23 +53,33 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
-        if (!config.contains("DisguiseRadiusMax"))
-            config.set("DisguiseRadiusMax", getConfig().getInt("DisguiseRadiusMax"));
-        if (!config.contains("UndisguiseRadiusMax"))
-            config.set("UndisguiseRadiusMax", getConfig().getInt("UndisguiseRadiusMax"));
-        if (!config.contains("DisguiseSounds"))
-            config.set("DisguiseSounds", getConfig().getBoolean("DisguiseSounds"));
-        if (!config.contains("HearSelfDisguise"))
-            config.set("HearSelfDisguise", getConfig().getBoolean("HearSelfDisguise"));
-        if (!config.contains("SendVelocity"))
-            config.set("SendVelocity", getConfig().getBoolean("SendVelocity"));
+        FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        try {
+            for (String option : YamlConfiguration
+                    .loadConfiguration(this.getClassLoader().getResource("config.yml").openStream()).getKeys(false)) {
+                if (!config.contains(option)) {
+                    config.set(option, getConfig().get(option));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            config.save(new File(getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         PacketsManager.init(this);
         DisguiseAPI.init(this);
         DisguiseAPI.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
         DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewDisguises"));
         DisguiseAPI.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
+        DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
+        DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
+        if (DisguiseAPI.isHidingArmorFromSelf() || DisguiseAPI.isHidingHeldItemFromSelf()) {
+            DisguiseAPI.setInventoryListenerEnabled(true);
+        }
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kinda stupid but I don't want open API calls.
@@ -123,7 +134,7 @@ public class LibsDisguises extends JavaPlugin {
                     name = toReadable(disguiseType.name());
                     break;
                 }
-                watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.Watchers." + name + "Watcher");
+                watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + name + "Watcher");
             } catch (Exception ex) {
                 // There is no watcher for this entity, or a error was thrown.
                 try {
