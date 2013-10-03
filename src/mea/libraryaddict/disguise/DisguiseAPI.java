@@ -238,6 +238,8 @@ public class DisguiseAPI {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            // TODO Restore their currently held item
+            // TODO Restore their armor
         }
     }
 
@@ -288,23 +290,6 @@ public class DisguiseAPI {
         // If the disguised player can't see himself. Return
         if (!disguise.viewSelfDisguise())
             return;
-        // Grab the entity player
-        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
-        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
-                .getEntityId());
-        if (tracker == null) {
-            // A check incase the tracker is null.
-            // If it is, then this method will be run again in one tick. Which is when it should be constructed.
-            // Else its going to run in a infinite loop hue hue hue..
-            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                public void run() {
-                    setupPlayerFakeDisguise(disguise);
-                }
-            });
-            return;
-        }
-        // Add himself to his own entity tracker
-        tracker.trackedPlayers.add(entityplayer);
         try {
             // Grab the entity ID the fake disguise will use
             Field field = net.minecraft.server.v1_6_R3.Entity.class.getDeclaredField("entityCount");
@@ -316,81 +301,7 @@ public class DisguiseAPI {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        // Send the player a packet with himself being spawned
-        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
-        entityplayer.playerConnection.sendPacket(packet);
-        if (!tracker.tracker.getDataWatcher().d()) {
-            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker
-                    .getDataWatcher(), true));
-        }
-        // Send himself some entity attributes
-        if (tracker.tracker instanceof EntityLiving) {
-            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aX();
-            Collection collection = attributemapserver.c();
-
-            if (!collection.isEmpty()) {
-                entityplayer.playerConnection.sendPacket(new Packet44UpdateAttributes(player.getEntityId(), collection));
-            }
-        }
-
-        // Why do we even have this?
-        tracker.j = tracker.tracker.motX;
-        tracker.k = tracker.tracker.motY;
-        tracker.l = tracker.tracker.motZ;
-        boolean isMoving = false;
-        try {
-            Field field = EntityTrackerEntry.class.getDeclaredField("isMoving");
-            field.setAccessible(true);
-            isMoving = field.getBoolean(tracker);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        // Send the velocity packets
-        if (isMoving) {
-            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX,
-                    tracker.tracker.motY, tracker.tracker.motZ));
-        }
-
-        // Why the hell would he even need this. Meh.
-        if (tracker.tracker.vehicle != null && player.getEntityId() > tracker.tracker.vehicle.id) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
-        } else if (tracker.tracker.passenger != null && player.getEntityId() > tracker.tracker.passenger.id) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
-        }
-
-        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).getLeashHolder() != null) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
-                    ((EntityInsentient) tracker.tracker).getLeashHolder()));
-        }
-
-        // Resend the armor
-        for (int i = 0; i < 5; ++i) {
-            ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
-
-            if (itemstack != null) {
-                entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
-            }
-        }
-        // If the disguised is sleeping for w/e reason
-        if (entityplayer.isSleeping()) {
-            entityplayer.playerConnection
-                    .sendPacket(new Packet17EntityLocationAction(entityplayer, 0, (int) Math.floor(tracker.tracker.locX),
-                            (int) Math.floor(tracker.tracker.locY), (int) Math.floor(tracker.tracker.locZ)));
-        }
-
-        // CraftBukkit start - Fix for nonsensical head yaw
-        tracker.i = (int) Math.floor(tracker.tracker.getHeadRotation() * 256.0F / 360.0F); // tracker.ao() should be
-        // getHeadRotation
-        tracker.broadcast(new Packet35EntityHeadRotation(player.getEntityId(), (byte) tracker.i));
-        // CraftBukkit end
-
-        // Resend any active potion effects
-        Iterator iterator = entityplayer.getEffects().iterator();
-        while (iterator.hasNext()) {
-            MobEffect mobeffect = (MobEffect) iterator.next();
-
-            entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
-        }
+        PacketsManager.sendSelfDisguise(player);
     }
 
     /**

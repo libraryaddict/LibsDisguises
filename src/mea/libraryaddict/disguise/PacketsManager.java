@@ -18,21 +18,39 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
+import net.minecraft.server.v1_6_R3.AttributeMapServer;
 import net.minecraft.server.v1_6_R3.AttributeSnapshot;
 import net.minecraft.server.v1_6_R3.Block;
 import net.minecraft.server.v1_6_R3.DataWatcher;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityInsentient;
 import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
 import net.minecraft.server.v1_6_R3.EnumArt;
 import net.minecraft.server.v1_6_R3.EnumEntitySize;
 import net.minecraft.server.v1_6_R3.ItemStack;
 import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.MobEffect;
+import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
+import net.minecraft.server.v1_6_R3.Packet20NamedEntitySpawn;
+import net.minecraft.server.v1_6_R3.Packet28EntityVelocity;
+import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R3.Packet39AttachEntity;
+import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
+import net.minecraft.server.v1_6_R3.Packet41MobEffect;
+import net.minecraft.server.v1_6_R3.Packet44UpdateAttributes;
+import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
 import net.minecraft.server.v1_6_R3.WatchableObject;
 import net.minecraft.server.v1_6_R3.World;
+import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -55,10 +73,14 @@ import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class PacketsManager {
+    private static PacketListener inventoryListenerClient;
+    private static PacketListener inventoryListenerServer;
+    private static boolean inventoryModifierEnabled;
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
+    private static LibsDisguises libsDisguises;
 
     protected static void addPacketListeners(final JavaPlugin libsDisguises) {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -101,7 +123,7 @@ public class PacketsManager {
         });
         // Now add a client listener to cancel them interacting with uninteractable disguised entitys.
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
-        // Kicks you for hacking.
+        // Because it kicks you for hacking.
         manager.addPacketListener(new PacketAdapter(libsDisguises, ConnectionSide.CLIENT_SIDE, ListenerPriority.NORMAL,
                 Packets.Client.USE_ENTITY) {
             @Override
@@ -370,6 +392,9 @@ public class PacketsManager {
         return value;
     }
 
+    /**
+     * Get the Y level to add to the disguise for realism.
+     */
     private static double getYModifier(Entity entity, DisguiseType disguiseType) {
         switch (disguiseType) {
         case BAT:
@@ -400,7 +425,11 @@ public class PacketsManager {
         return 0;
     }
 
-    protected static void init(JavaPlugin libsDisguises) {
+    /**
+     * Creates the packet listeners
+     */
+    protected static void init(LibsDisguises plugin) {
+        libsDisguises = plugin;
         soundsListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL,
                 Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ENTITY_STATUS) {
             @Override
@@ -652,10 +681,410 @@ public class PacketsManager {
                 }
             }
         };
+        // TODO Potentionally combine both listeners.
+        inventoryListenerServer = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
+                Packets.Server.SET_SLOT) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                // If the inventory is the players inventory
+                if (event.getPacket().getIntegers().read(0) == 0) {
+                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+                    // If the player is disguised, views self disguises and is hiding a item.
+                    if (disguise != null && disguise.viewSelfDisguise()
+                            && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                        switch (event.getPacketID()) {
+                        // If the server is setting the slot
+                        // Need to set it to air if its in a place it shouldn't be.
+                        // Things such as picking up a item, spawned in item. Plugin sets the item. etc. Will fire this
+                        case Packets.Server.SET_SLOT: {
+                            // The raw slot
+                            // nms code has the start of the hotbar being 36.
+                            int slot = event.getPacket().getIntegers().read(1);
+                            Bukkit.broadcastMessage("Set slot: " + slot);
+                            // If the slot is a armor slot
+                            if (slot >= 5 && slot <= 8) {
+                                if (disguise.isHidingArmorFromSelf()) {
+                                    // Get the bukkit armor slot!
+                                    int armorSlot = Math.abs((slot - 5) - 3);
+                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                    if (item != null && item.getType() != Material.AIR) {
+                                        event.setPacket(event.getPacket().shallowClone());
+                                        event.getPacket().getModifier()
+                                                .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                    }
+                                }
+                                // Else if its a hotbar slot
+                            } else if (slot >= 36 && slot <= 44) {
+                                if (disguise.isHidingHeldItemFromSelf()) {
+                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                    // Check if the player is on the same slot as the slot that its setting
+                                    if (slot == currentSlot + 36) {
+                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                        if (item != null && item.getType() != Material.AIR) {
+                                            event.setPacket(event.getPacket().shallowClone());
+                                            event.getPacket().getModifier()
+                                                    .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        // Don't think that we will ever need this.
+                        // We will see.
+                        case Packets.Server.WINDOW_ITEMS: {
+                            // TODO Find out how this works
+                            // It seems to 'update' the inventory.. Screw you..
+                            break;
+                        }
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+        // TODO Add a listener for player click event.
+        // Items placed do not have the server confirm it
+        // So I need to set the item slot
+        inventoryListenerClient = new PacketAdapter(libsDisguises, ConnectionSide.CLIENT_SIDE, ListenerPriority.HIGHEST,
+                Packets.Client.BLOCK_ITEM_SWITCH, Packets.Client.SET_CREATIVE_SLOT, Packets.Client.WINDOW_CLICK) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+                // If player is disguised, views self disguises and has a inventory modifier
+                if (disguise != null && disguise.viewSelfDisguise()
+                        && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                    switch (event.getPacketID()) {
+                    // If they are in creative and clicked on a slot
+                    case Packets.Client.SET_CREATIVE_SLOT: {
+                        int slot = event.getPacket().getIntegers().read(0);
+                        if (slot >= 5 && slot <= 8) {
+                            if (disguise.isHidingArmorFromSelf()) {
+                                int armorSlot = Math.abs(slot - 9);
+                                org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                if (item != null && item.getType() != Material.AIR) {
+                                    PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                    StructureModifier<Object> mods = packet.getModifier();
+                                    mods.write(0, 0);
+                                    mods.write(1, slot);
+                                    mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        } else if (slot >= 36 && slot <= 44) {
+                            if (disguise.isHidingHeldItemFromSelf()) {
+                                int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                if (slot + 36 == currentSlot) {
+                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                    if (item != null && item.getType() != Material.AIR) {
+                                        PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                        StructureModifier<Object> mods = packet.getModifier();
+                                        mods.write(0, 0);
+                                        mods.write(1, slot);
+                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                    false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    // If the player switched item, aka he moved from slot 1 to slot 2
+                    // TODO Listen for this server sided, sometimes it may force him back to a old slot
+                    // ^ But I think the client sends the packet again..
+                    // This currently works fine
+                    case Packets.Client.BLOCK_ITEM_SWITCH: {
+                        if (disguise.isHidingHeldItemFromSelf()) {
+                            // From logging, it seems that both bukkit and nms uses the same thing for the slot switching.
+                            // 0 1 2 3 - 8
+                            // If the packet is coming, then I need to replace the item they are switching to
+                            // As for the old item, I need to restore it.
+                            org.bukkit.inventory.ItemStack currentlyHeld = event.getPlayer().getItemInHand();
+                            // If his old weapon isn't air
+                            if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
+                                PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                mods.write(0, 0);
+                                mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
+                                mods.write(2, CraftItemStack.asNMSCopy(currentlyHeld));
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            org.bukkit.inventory.ItemStack newHeld = event.getPlayer().getInventory()
+                                    .getItem(event.getPacket().getIntegers().read(0));
+                            // If his new weapon isn't air either!
+                            if (newHeld != null && newHeld.getType() != Material.AIR) {
+                                PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                mods.write(0, 0);
+                                mods.write(1, event.getPacket().getIntegers().read(0) + 36);
+                                mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    case Packets.Client.WINDOW_CLICK:
+                    // Seems like the cases are never met..
+                    // Probably slot mismatches again
+                    {
+                        int slot = event.getPacket().getIntegers().read(1);
+                        org.bukkit.inventory.ItemStack clickedItem;
+                        if (event.getPacket().getIntegers().read(3) == 1) {
+                            // Its a shift click
+                            clickedItem = event.getPacket().getItemModifier().read(0);
+                            if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+                                org.bukkit.inventory.ItemStack armorItem = null;
+                                int armorSlot = 0;
+                                switch (clickedItem.getType()) {
+                                case LEATHER_BOOTS:
+                                case GOLD_BOOTS:
+                                case CHAINMAIL_BOOTS:
+                                case IRON_BOOTS:
+                                case DIAMOND_BOOTS:
+                                    armorSlot = 8;
+                                    armorItem = event.getPlayer().getInventory().getBoots();
+                                    break;
+                                case LEATHER_LEGGINGS:
+                                case GOLD_LEGGINGS:
+                                case CHAINMAIL_LEGGINGS:
+                                case IRON_LEGGINGS:
+                                case DIAMOND_LEGGINGS:
+                                    armorSlot = 7;
+                                    armorItem = event.getPlayer().getInventory().getLeggings();
+                                    break;
+                                case LEATHER_CHESTPLATE:
+                                case GOLD_CHESTPLATE:
+                                case CHAINMAIL_CHESTPLATE:
+                                case IRON_CHESTPLATE:
+                                case DIAMOND_CHESTPLATE:
+                                    armorSlot = 6;
+                                    armorItem = event.getPlayer().getInventory().getChestplate();
+                                    break;
+                                case LEATHER_HELMET:
+                                case GOLD_HELMET:
+                                case CHAINMAIL_HELMET:
+                                case IRON_HELMET:
+                                case DIAMOND_HELMET:
+                                    armorSlot = 5;
+                                    armorItem = event.getPlayer().getInventory().getHelmet();
+                                    break;
+                                default:
+                                    break;
+                                }
+                                // Its a piece of armor they clicked on..
+                                if (armorSlot > 0) {
+                                    if (armorItem == null || armorItem.getType() == Material.AIR) {
+                                        PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                        StructureModifier<Object> mods = packet.getModifier();
+                                        mods.write(0, 0);
+                                        mods.write(1, armorSlot);
+                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                    false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    org.bukkit.inventory.ItemStack heldItem = event.getPlayer().getItemInHand();
+                                    // If its not a piece of armor they clicked on
+                                    // Then it can't go into a armor slot
+                                    // So it has to go into the held item..
+                                    // But the held item is full.
+                                    if (heldItem == null || heldItem.getType() == Material.AIR) {
+                                        PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                        StructureModifier<Object> mods = packet.getModifier();
+                                        mods.write(0, 0);
+                                        mods.write(1, 36 + event.getPlayer().getInventory().getHeldItemSlot());
+                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                    false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                            return;
+                        } else {
+                            // If its not a player inventory click
+                            // Shift clicking is exempted for the item in hand..
+                            if (event.getPacket().getIntegers().read(0) != 0) {
+                                return;
+                            }
+                            clickedItem = event.getPlayer().getItemOnCursor();
+                        }
+                        if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+                            // If the slot is a armor slot
+                            if (slot >= 5 && slot <= 8) {
+                                if (disguise.isHidingArmorFromSelf()) {
+                                    PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                    StructureModifier<Object> mods = packet.getModifier();
+                                    mods.write(0, 0);
+                                    mods.write(1, slot);
+                                    mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                // Else if its a hotbar slot
+                            } else if (slot >= 36 && slot <= 44) {
+                                if (disguise.isHidingHeldItemFromSelf()) {
+                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                    // Check if the player is on the same slot as the slot that its setting
+                                    if (slot == currentSlot + 36) {
+                                        PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
+                                        StructureModifier<Object> mods = packet.getModifier();
+                                        mods.write(0, 0);
+                                        mods.write(1, slot);
+                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                    false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
+                    }
+                }
+            }
+        };
+    }
+
+    /**
+     * Sends the self disguise to the player
+     */
+    public static void sendSelfDisguise(final Player player) {
+        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
+        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
+                .getEntityId());
+        if (tracker == null) {
+            // A check incase the tracker is null.
+            // If it is, then this method will be run again in one tick. Which is when it should be constructed.
+            // Else its going to run in a infinite loop hue hue hue..
+            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                public void run() {
+                    sendSelfDisguise(player);
+                }
+            });
+            return;
+        }
+        // Add himself to his own entity tracker
+        tracker.trackedPlayers.add(entityplayer);
+        // Send the player a packet with himself being spawned
+        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
+        entityplayer.playerConnection.sendPacket(packet);
+        if (!tracker.tracker.getDataWatcher().d()) {
+            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker
+                    .getDataWatcher(), true));
+        }
+        // Send himself some entity attributes
+        if (tracker.tracker instanceof EntityLiving) {
+            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aX();
+            Collection collection = attributemapserver.c();
+
+            if (!collection.isEmpty()) {
+                entityplayer.playerConnection.sendPacket(new Packet44UpdateAttributes(player.getEntityId(), collection));
+            }
+        }
+
+        // Why do we even have this?
+        tracker.j = tracker.tracker.motX;
+        tracker.k = tracker.tracker.motY;
+        tracker.l = tracker.tracker.motZ;
+        boolean isMoving = false;
+        try {
+            Field field = EntityTrackerEntry.class.getDeclaredField("isMoving");
+            field.setAccessible(true);
+            isMoving = field.getBoolean(tracker);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        // Send the velocity packets
+        if (isMoving) {
+            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX,
+                    tracker.tracker.motY, tracker.tracker.motZ));
+        }
+
+        // Why the hell would he even need this. Meh.
+        if (tracker.tracker.vehicle != null && player.getEntityId() > tracker.tracker.vehicle.id) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
+        } else if (tracker.tracker.passenger != null && player.getEntityId() > tracker.tracker.passenger.id) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
+        }
+
+        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).getLeashHolder() != null) {
+            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
+                    ((EntityInsentient) tracker.tracker).getLeashHolder()));
+        }
+
+        // Resend the armor
+        for (int i = 0; i < 5; ++i) {
+            ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
+
+            if (itemstack != null) {
+                entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
+            }
+        }
+        // If the disguised is sleeping for w/e reason
+        if (entityplayer.isSleeping()) {
+            entityplayer.playerConnection
+                    .sendPacket(new Packet17EntityLocationAction(entityplayer, 0, (int) Math.floor(tracker.tracker.locX),
+                            (int) Math.floor(tracker.tracker.locY), (int) Math.floor(tracker.tracker.locZ)));
+        }
+
+        // CraftBukkit start - Fix for nonsensical head yaw
+        tracker.i = (int) Math.floor(tracker.tracker.getHeadRotation() * 256.0F / 360.0F); // tracker.ao() should be
+        // getHeadRotation
+        tracker.broadcast(new Packet35EntityHeadRotation(player.getEntityId(), (byte) tracker.i));
+        // CraftBukkit end
+
+        // Resend any active potion effects
+        Iterator iterator = entityplayer.getEffects().iterator();
+        while (iterator.hasNext()) {
+            MobEffect mobeffect = (MobEffect) iterator.next();
+
+            entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
+        }
     }
 
     public static boolean isHearDisguisesEnabled() {
         return soundsListenerEnabled;
+    }
+
+    public static boolean isInventoryListenerEnabled() {
+        return inventoryModifierEnabled;
     }
 
     public static boolean isViewDisguisesListenerEnabled() {
@@ -673,9 +1102,24 @@ public class PacketsManager {
         }
     }
 
+    public static void setInventoryListenerEnabled(boolean enabled) {
+        if (inventoryModifierEnabled != enabled) {
+            inventoryModifierEnabled = enabled;
+            // TODO Update all disguises to update their inventories.
+            if (inventoryModifierEnabled) {
+                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListenerClient);
+                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListenerServer);
+            } else {
+                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListenerClient);
+                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListenerServer);
+            }
+        }
+    }
+
     public static void setViewDisguisesListener(boolean enabled) {
         if (viewDisguisesListenerEnabled != enabled) {
             viewDisguisesListenerEnabled = enabled;
+            // TODO Remove all self disguises, or add them.
             if (viewDisguisesListenerEnabled) {
                 ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
             } else {

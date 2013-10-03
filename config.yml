@@ -18,3 +18,9 @@ HearSelfDisguise: false
 # Shall I send the velocity packets? I REALLY recommend you don't disable.
 # This is the only thing allowing the mobs to fly without glitching out.
 SendVelocity: true
+# For self disguises, they need to have the armor and the held item removed
+# Else they see floating armor, floating held items.
+# However! This doesn't actually remove the armor!
+# It just makes the client think the armor was removed so that it doesn't render it!
+RemoveArmor: true
+RemoveHeldItem: true
