@@ -26,7 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -41,11 +40,23 @@ public class Disguise {
     private DisguiseType disguiseType;
     private org.bukkit.entity.Entity entity;
     private boolean hearSelfDisguise = DisguiseAPI.canHearSelfDisguise();
-    private boolean replaceSounds;
+    private boolean hideArmorFromSelf = DisguiseAPI.isHidingArmorFromSelf();
+    private boolean hideHeldItemFromSelf = DisguiseAPI.isHidingHeldItemFromSelf();
+    private boolean replaceSounds = DisguiseAPI.isSoundEnabled();
     private BukkitRunnable runnable;
     private boolean velocitySent = DisguiseAPI.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
     private FlagWatcher watcher;
+
+    public boolean canHearSelfDisguise() {
+        return hearSelfDisguise;
+    }
+
+    public Disguise clone() {
+        Disguise disguise = new Disguise().createDisguise(getType(), replaceSounds());
+        disguise.setViewSelfDisguise(viewSelfDisguise());
+        return disguise;
+    }
 
     protected Disguise createDisguise(DisguiseType newType, boolean doSounds) {
         if (getWatcher() != null)
@@ -55,7 +66,12 @@ public class Disguise {
         // Set the option to replace the sounds
         setReplaceSounds(doSounds);
         // Get if they are a adult now..
-        boolean isBaby = !(this instanceof MobDisguise && ((MobDisguise) this).isAdult());
+        boolean isBaby = false;
+        if (this instanceof MobDisguise) {
+            if (!((MobDisguise) this).isAdult()) {
+                isBaby = true;
+            }
+        }
         try {
             // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
@@ -259,16 +275,6 @@ public class Disguise {
         return this;
     }
 
-    public boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
-    }
-
-    public Disguise clone() {
-        Disguise disguise = new Disguise().createDisguise(getType(), replaceSounds());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
-        return disguise;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -327,6 +333,14 @@ public class Disguise {
         return watcher;
     }
 
+    public boolean isHidingArmorFromSelf() {
+        return hideArmorFromSelf;
+    }
+
+    public boolean isHidingHeldItemFromSelf() {
+        return hideHeldItemFromSelf;
+    }
+
     public boolean isMiscDisguise() {
         return this instanceof MiscDisguise;
     }
@@ -363,7 +377,7 @@ public class Disguise {
                     disguises.remove(getEntity().getEntityId());
                     // Gotta do reflection, copy code or open up calls.
                     // Reflection is the cleanest?
-                    if (entity instanceof Player) {
+                    if (getEntity() instanceof Player) {
                         disguiseAPI.removeVisibleDisguise((Player) entity);
                     }
                     // Better refresh the entity to undisguise it
@@ -399,6 +413,16 @@ public class Disguise {
 
     public void setHearSelfDisguise(boolean hearSelfDisguise) {
         this.hearSelfDisguise = hearSelfDisguise;
+    }
+
+    public void setHideArmorFromSelf(boolean hideArmor) {
+        this.hideArmorFromSelf = hideArmor;
+        // TODO Update their armor if player
+    }
+
+    public void setHideHeldItemFromSelf(boolean hideHeldItem) {
+        this.hideHeldItemFromSelf = hideHeldItem;
+        // TODO Update their held item if player
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {

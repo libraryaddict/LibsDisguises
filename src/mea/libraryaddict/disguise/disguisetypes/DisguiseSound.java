@@ -22,7 +22,9 @@ public enum DisguiseSound {
 
     CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH),
 
-    DONKEY(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE, Sound.DONKEY_ANGRY),
+    DONKEY(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE, Sound.DONKEY_ANGRY, Sound.HORSE_GALLOP,
+            Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT,
+            Sound.HORSE_WOOD),
 
     ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS,
             Sound.FALL_BIG, Sound.FALL_SMALL),
@@ -35,7 +37,8 @@ public enum DisguiseSound {
 
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS),
 
-    HORSE(Sound.HORSE_HIT, Sound.STEP_GRASS, "mob.horse.death", Sound.HORSE_IDLE),
+    HORSE(Sound.HORSE_HIT, Sound.STEP_GRASS, "mob.horse.death", Sound.HORSE_IDLE, Sound.HORSE_GALLOP, Sound.HORSE_ANGRY,
+            Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT, Sound.HORSE_WOOD),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
@@ -59,7 +62,9 @@ public enum DisguiseSound {
 
     SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
 
-    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, Sound.HORSE_SKELETON_DEATH, Sound.HORSE_SKELETON_IDLE),
+    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, Sound.HORSE_SKELETON_DEATH, Sound.HORSE_SKELETON_IDLE,
+            Sound.HORSE_GALLOP, Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE,
+            Sound.HORSE_SOFT, Sound.HORSE_WOOD),
 
     SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
@@ -69,7 +74,9 @@ public enum DisguiseSound {
 
     SQUID(),
 
-    UNDEAD_HORSE(Sound.HORSE_ZOMBIE_HIT, Sound.STEP_GRASS, Sound.HORSE_ZOMBIE_DEATH, Sound.HORSE_ZOMBIE_IDLE),
+    UNDEAD_HORSE(Sound.HORSE_ZOMBIE_HIT, Sound.STEP_GRASS, Sound.HORSE_ZOMBIE_DEATH, Sound.HORSE_ZOMBIE_IDLE, Sound.HORSE_GALLOP,
+            Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT,
+            Sound.HORSE_WOOD),
 
     VILLAGER(Sound.VILLAGER_HIT, null, Sound.VILLAGER_DEATH, Sound.VILLAGER_IDLE, Sound.VILLAGER_HAGGLE, Sound.VILLAGER_YES,
             Sound.VILLAGER_NO),
