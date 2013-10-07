@@ -683,7 +683,7 @@ public class PacketsManager {
         };
         // TODO Potentionally combine both listeners.
         inventoryListenerServer = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
-                Packets.Server.SET_SLOT) {
+                Packets.Server.SET_SLOT, Packets.Server.WINDOW_ITEMS) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 // If the inventory is the players inventory
@@ -735,6 +735,33 @@ public class PacketsManager {
                         case Packets.Server.WINDOW_ITEMS: {
                             // TODO Find out how this works
                             // It seems to 'update' the inventory.. Screw you..
+                            event.setPacket(event.getPacket().deepClone());
+                            StructureModifier<Object> mods = event.getPacket().getModifier();
+                            ItemStack[] items = (ItemStack[]) mods.read(1);
+                            for (int slot = 0; slot < items.length; slot++) {
+                                if (slot >= 5 && slot <= 8) {
+                                    if (disguise.isHidingArmorFromSelf()) {
+                                        // Get the bukkit armor slot!
+                                        int armorSlot = Math.abs((slot - 5) - 3);
+                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                        if (item != null && item.getType() != Material.AIR) {
+                                            items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                        }
+                                    }
+                                    // Else if its a hotbar slot
+                                } else if (slot >= 36 && slot <= 44) {
+                                    if (disguise.isHidingHeldItemFromSelf()) {
+                                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                        // Check if the player is on the same slot as the slot that its setting
+                                        if (slot == currentSlot + 36) {
+                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                            if (item != null && item.getType() != Material.AIR) {
+                                                items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             break;
                         }
                         default:
@@ -850,6 +877,8 @@ public class PacketsManager {
                         org.bukkit.inventory.ItemStack clickedItem;
                         if (event.getPacket().getIntegers().read(3) == 1) {
                             // Its a shift click
+                            // TODO Make the item appear in the right place
+                            // Also set the armor/item in hand to air cos the client is stupid.
                             clickedItem = event.getPacket().getItemModifier().read(0);
                             if (clickedItem != null && clickedItem.getType() != Material.AIR) {
                                 org.bukkit.inventory.ItemStack armorItem = null;

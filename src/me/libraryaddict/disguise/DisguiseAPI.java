@@ -45,7 +45,6 @@ public class DisguiseAPI {
     private static boolean hearSelfDisguise;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
-    private static LibsDisguises libsDisguises;
 
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone seeing as no one shares the ID
@@ -142,10 +141,6 @@ public class DisguiseAPI {
         if (selfDisguisesIds.containsKey(id))
             return selfDisguisesIds.get(id);
         return -1;
-    }
-
-    protected static void init(LibsDisguises mainPlugin) {
-        libsDisguises = mainPlugin;
     }
 
     /**
