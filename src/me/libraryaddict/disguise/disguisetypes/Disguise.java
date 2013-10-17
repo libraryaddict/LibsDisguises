@@ -403,7 +403,7 @@ public class Disguise {
     /**
      * Set the entity of the disguise. Only used for internal things.
      */
-    public void setEntity(final org.bukkit.entity.Entity entity) {
+    public void setEntity(org.bukkit.entity.Entity entity) {
         if (this.entity != null)
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         this.entity = entity;
@@ -417,12 +417,18 @@ public class Disguise {
 
     public void setHideArmorFromSelf(boolean hideArmor) {
         this.hideArmorFromSelf = hideArmor;
-        // TODO Update their armor if player
+        if (entity instanceof Player) {
+            ((Player) entity).updateInventory();
+        }
+        // TODO Stop using this as a shortcut >.>
     }
 
     public void setHideHeldItemFromSelf(boolean hideHeldItem) {
         this.hideHeldItemFromSelf = hideHeldItem;
-        // TODO Update their held item if player
+        if (entity instanceof Player) {
+            ((Player) entity).updateInventory();
+        }
+        // TODO Stop using this as a shortcut >.>
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {

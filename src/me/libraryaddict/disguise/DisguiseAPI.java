@@ -1,30 +1,12 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
-import net.minecraft.server.v1_6_R3.AttributeMapServer;
-import net.minecraft.server.v1_6_R3.EntityHuman;
-import net.minecraft.server.v1_6_R3.EntityInsentient;
-import net.minecraft.server.v1_6_R3.EntityLiving;
 import net.minecraft.server.v1_6_R3.EntityPlayer;
 import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.ItemStack;
-import net.minecraft.server.v1_6_R3.MobEffect;
-import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
-import net.minecraft.server.v1_6_R3.Packet20NamedEntitySpawn;
-import net.minecraft.server.v1_6_R3.Packet28EntityVelocity;
-import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R3.Packet39AttachEntity;
-import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
-import net.minecraft.server.v1_6_R3.Packet41MobEffect;
-import net.minecraft.server.v1_6_R3.Packet44UpdateAttributes;
-import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
 import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Bukkit;
@@ -233,8 +215,7 @@ public class DisguiseAPI {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            // TODO Restore their currently held item
-            // TODO Restore their armor
+            player.updateInventory();
         }
     }
 
@@ -283,7 +264,7 @@ public class DisguiseAPI {
         // Remove the old disguise, else we have weird disguises around the place
         removeSelfDisguise(player);
         // If the disguised player can't see himself. Return
-        if (!disguise.viewSelfDisguise())
+        if (!disguise.viewSelfDisguise() || !PacketsManager.isViewDisguisesListenerEnabled())
             return;
         try {
             // Grab the entity ID the fake disguise will use
@@ -297,6 +278,11 @@ public class DisguiseAPI {
             ex.printStackTrace();
         }
         PacketsManager.sendSelfDisguise(player);
+        if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
+            if (PacketsManager.isInventoryListenerEnabled()) {
+                player.updateInventory();
+            }
+        }
     }
 
     /**

@@ -74,8 +74,8 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewDisguises"));
         DisguiseAPI.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
-       // DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
-      //  DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
+        DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
+        DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
         if (DisguiseAPI.isHidingArmorFromSelf() || DisguiseAPI.isHidingHeldItemFromSelf()) {
             DisguiseAPI.setInventoryListenerEnabled(true);
         }
