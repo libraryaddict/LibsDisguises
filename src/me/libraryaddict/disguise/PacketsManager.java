@@ -1180,6 +1180,15 @@ public class PacketsManager {
 
                 // Else if the disguise is attempting to send players a forbidden packet
                 case Packets.Server.ARM_ANIMATION:
+
+                {
+                    if (disguise.getType().isMisc() || (packets[0].getIntegers().read(1) == 3 && !disguise.getType().isPlayer())) {
+                        packets = new PacketContainer[0];
+                    }
+                    break;
+
+                }
+
                 case Packets.Server.COLLECT:
 
                 {
@@ -1227,7 +1236,7 @@ public class PacketsManager {
                     break;
                 }
 
-                case Packets.Server.BED:
+                case Packets.Server.ENTITY_LOCATION_ACTION:
 
                 {
                     if (!disguise.getType().isPlayer()) {
@@ -1235,7 +1244,6 @@ public class PacketsManager {
                     }
                     break;
                 }
-
                 default:
                     break;
                 }
