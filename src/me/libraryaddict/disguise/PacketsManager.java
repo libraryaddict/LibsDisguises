@@ -82,6 +82,7 @@ public class PacketsManager {
     private static boolean viewDisguisesListenerEnabled;
     private static LibsDisguises libsDisguises;
     private static DisguiseAPI disguiseAPI = new DisguiseAPI();
+    private static boolean cancelSound;
 
     protected static void addPacketListeners(final JavaPlugin libsDisguises) {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -435,6 +436,8 @@ public class PacketsManager {
                 Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
+                if (event.isCancelled())
+                    return;
                 StructureModifier<Object> mods = event.getPacket().getModifier();
                 Player observer = event.getPlayer();
                 if (event.getPacketID() == Packets.Server.NAMED_SOUND_EFFECT) {
@@ -561,6 +564,11 @@ public class PacketsManager {
                             }
                             if (disSound.getSound(soundType) == null
                                     || (disguise.canHearSelfDisguise() && entity == event.getPlayer())) {
+                                if (disguise.canHearSelfDisguise() && entity == event.getPlayer()) {
+                                    cancelSound = !cancelSound;
+                                    if (cancelSound)
+                                        return;
+                                }
                                 disSound = DisguiseSound.getType(disguise.getType().name());
                                 if (disSound != null) {
                                     String sound = disSound.getSound(soundType);
@@ -599,7 +607,7 @@ public class PacketsManager {
                 }
             }
         };
-        viewDisguisesListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGHEST,
+        viewDisguisesListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGH,
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ATTACH_ENTITY, Packets.Server.REL_ENTITY_MOVE,
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
@@ -613,6 +621,7 @@ public class PacketsManager {
                 if (entity == event.getPlayer()) {
                     int fakeId = DisguiseAPI.getFakeDisguise(entity.getEntityId());
                     if (fakeId > 0) {
+                        // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
                         try {
                             for (PacketContainer packet : packets) {
@@ -671,8 +680,9 @@ public class PacketsManager {
 
                             case Packets.Server.ENTITY_STATUS:
                                 if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
-                                        && (Byte) event.getPacket().getModifier().read(1) == 2)
+                                        && (Byte) event.getPacket().getModifier().read(1) == 2) {
                                     event.setCancelled(true);
+                                }
                                 break;
                             default:
                                 break;
