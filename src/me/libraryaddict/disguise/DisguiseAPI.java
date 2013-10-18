@@ -38,16 +38,6 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
-    public static void setInventoryListenerEnabled(boolean inventoryListenerEnabled) {
-        if (PacketsManager.isInventoryListenerEnabled() != inventoryListenerEnabled) {
-            PacketsManager.setInventoryListenerEnabled(inventoryListenerEnabled);
-        }
-    }
-
-    public static boolean isInventoryListenerEnabled() {
-        return PacketsManager.isInventoryListenerEnabled();
-    }
-
     /**
      * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
      */
@@ -144,6 +134,10 @@ public class DisguiseAPI {
      */
     public static boolean isHidingHeldItemFromSelf() {
         return hidingHeldItem;
+    }
+
+    public static boolean isInventoryListenerEnabled() {
+        return PacketsManager.isInventoryListenerEnabled();
     }
 
     /**
@@ -243,6 +237,12 @@ public class DisguiseAPI {
     public static void setHideHeldItemFromSelf(boolean hideHelditem) {
         if (hidingHeldItem != hideHelditem) {
             hidingHeldItem = hideHelditem;
+        }
+    }
+
+    public static void setInventoryListenerEnabled(boolean inventoryListenerEnabled) {
+        if (PacketsManager.isInventoryListenerEnabled() != inventoryListenerEnabled) {
+            PacketsManager.setInventoryListenerEnabled(inventoryListenerEnabled);
         }
     }
 

@@ -51,8 +51,8 @@ public class FlagWatcher {
     }
     private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
-    private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
     private boolean hasDied;
+    private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = disguise;

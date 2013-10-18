@@ -73,16 +73,16 @@ import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public class PacketsManager {
+    private static boolean cancelSound;
+    private static DisguiseAPI disguiseAPI = new DisguiseAPI();
     private static PacketListener inventoryListenerClient;
     private static PacketListener inventoryListenerServer;
     private static boolean inventoryModifierEnabled;
+    private static LibsDisguises libsDisguises;
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
-    private static LibsDisguises libsDisguises;
-    private static DisguiseAPI disguiseAPI = new DisguiseAPI();
-    private static boolean cancelSound;
 
     protected static void addPacketListeners(final JavaPlugin libsDisguises) {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
@@ -612,8 +612,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES,
-                Packets.Server.BED) {
+                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
@@ -946,6 +945,18 @@ public class PacketsManager {
         };
     }
 
+    public static boolean isHearDisguisesEnabled() {
+        return soundsListenerEnabled;
+    }
+
+    public static boolean isInventoryListenerEnabled() {
+        return inventoryModifierEnabled;
+    }
+
+    public static boolean isViewDisguisesListenerEnabled() {
+        return viewDisguisesListenerEnabled;
+    }
+
     /**
      * Sends the self disguise to the player
      */
@@ -1041,18 +1052,6 @@ public class PacketsManager {
 
             entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
         }
-    }
-
-    public static boolean isHearDisguisesEnabled() {
-        return soundsListenerEnabled;
-    }
-
-    public static boolean isInventoryListenerEnabled() {
-        return inventoryModifierEnabled;
-    }
-
-    public static boolean isViewDisguisesListenerEnabled() {
-        return viewDisguisesListenerEnabled;
     }
 
     public static void setHearDisguisesListener(boolean enabled) {
