@@ -61,6 +61,7 @@ public class FlagWatcher {
     public FlagWatcher clone() {
         FlagWatcher cloned = new FlagWatcher(disguise);
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
+        cloned.setArmor(items.clone());
         return cloned;
     }
 
