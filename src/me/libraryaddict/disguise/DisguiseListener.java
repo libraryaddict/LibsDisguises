@@ -61,10 +61,11 @@ public class DisguiseListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onVechileLeave(VehicleExitEvent event) {
         final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
-        if (disguise != null) {
+        if (disguise != null && event.getExited() instanceof Player) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 public void run() {
                     disguiseAPI.setupFakeDisguise(disguise);
+                    ((Player) disguise.getEntity()).updateInventory();
                 }
             });
         }
@@ -75,6 +76,7 @@ public class DisguiseListener implements Listener {
         Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
         if (disguise != null && event.getEntered() instanceof Player) {
             disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
+            ((Player) event.getEntered()).updateInventory();
         }
     }
 
