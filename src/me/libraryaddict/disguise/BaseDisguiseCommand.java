@@ -77,7 +77,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
                     + " doesn't exist!");
         }
-        if (!allowedDisguises.contains(args[0].toLowerCase())) {
+        if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this disguise!");
         }
         Disguise disguise = null;
