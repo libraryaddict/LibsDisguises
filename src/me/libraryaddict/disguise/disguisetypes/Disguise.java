@@ -31,7 +31,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
-public class Disguise {
+public abstract class Disguise {
     /**
      * Incase I forget, this is used to access normally hidden api calls.
      */
@@ -52,16 +52,8 @@ public class Disguise {
         return hearSelfDisguise;
     }
 
-    public Disguise clone() {
-        Disguise disguise = new Disguise().createDisguise(getType(), replaceSounds());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
-        disguise.setHearSelfDisguise(canHearSelfDisguise());
-        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
-        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
-        disguise.setVelocitySent(isVelocitySent());
-        disguise.setWatcher(getWatcher().clone());
-        return disguise;
-    }
+    @Override
+    public abstract Disguise clone();
 
     protected Disguise createDisguise(DisguiseType newType, boolean doSounds) {
         if (getWatcher() != null)
