@@ -138,10 +138,6 @@ public class FlagWatcher {
         return newList;
     }
 
-    public boolean equals(FlagWatcher flagWatcher) {
-        return entityValues.equals(flagWatcher.entityValues);
-    }
-
     public org.bukkit.inventory.ItemStack[] getArmor() {
         org.bukkit.inventory.ItemStack[] armor = new org.bukkit.inventory.ItemStack[4];
         for (int i = 0; i < 4; i++) {

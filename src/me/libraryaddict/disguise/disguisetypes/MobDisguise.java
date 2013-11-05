@@ -57,10 +57,6 @@ public class MobDisguise extends Disguise {
 
     }
 
-    public boolean equals(MobDisguise mobDisguise) {
-        return isAdult == mobDisguise.isAdult && this.equals(mobDisguise);
-    }
-
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher)

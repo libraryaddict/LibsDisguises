@@ -280,30 +280,6 @@ public class Disguise {
         return this;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Disguise other = (Disguise) obj;
-        if (disguiseType != other.disguiseType)
-            return false;
-        if (hearSelfDisguise != other.hearSelfDisguise)
-            return false;
-        if (replaceSounds != other.replaceSounds)
-            return false;
-        if (velocitySent != other.velocitySent)
-            return false;
-        if (viewSelfDisguise != other.viewSelfDisguise)
-            return false;
-        if (!watcher.equals(other.watcher))
-            return false;
-        return true;
-    }
-
     /**
      * Get the disguised entity
      */
