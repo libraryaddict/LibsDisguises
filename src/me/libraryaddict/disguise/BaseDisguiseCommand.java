@@ -141,21 +141,20 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             Method methodToUse = null;
             Object value = null;
             for (Method method : disguise.getWatcher().getClass().getMethods()) {
-                if (method.getName().equalsIgnoreCase(methodName)) {
+                if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)) {
                     methodToUse = method;
                     methodName = method.getName();
                     Class<?>[] types = method.getParameterTypes();
                     if (types.length == 1) {
                         Class param = types[0];
-                        if (Float.class.isAssignableFrom(param) || Double.class.isAssignableFrom(param)
-                                || Integer.class.isAssignableFrom(param)) {
+                        if (float.class == param || double.class == param || int.class == param) {
                             if (isDouble(valueString)) {
                                 value = param.cast(Float.parseFloat(valueString));
                             } else {
                                 throw new Exception(ChatColor.RED + "Expected a number, received " + valueString
                                         + " instead for " + methodName);
                             }
-                        } else if (Boolean.class.isAssignableFrom(param)) {
+                        } else if (boolean.class == param) {
                             try {
                                 Boolean.parseBoolean(valueString);
                             } catch (Exception ex) {

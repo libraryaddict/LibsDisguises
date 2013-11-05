@@ -43,15 +43,14 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         Class watcher = type.getWatcherClass();
                         try {
                             for (Method method : watcher.getMethods()) {
-                                if (method.getParameterTypes().length == 1) {
+                                if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1) {
                                     Class c = method.getParameterTypes()[0];
                                     String valueType = null;
                                     if (c == String.class)
                                         valueType = "String";
-                                    else if (Boolean.class.isAssignableFrom(c))
+                                    else if (boolean.class == c)
                                         valueType = "True/False";
-                                    else if (Float.class.isAssignableFrom(c) || Double.class.isAssignableFrom(c)
-                                            || Integer.class.isAssignableFrom(c)) {
+                                    else if (float.class == c || double.class == c || int.class == c) {
                                         valueType = "Number";
                                     }
                                     if (valueType != null) {
@@ -63,7 +62,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
-                        sender.sendMessage(ChatColor.DARK_RED + "Options: " + StringUtils.join(methods, ", "));
+                        sender.sendMessage(ChatColor.DARK_RED + "Options: "
+                                + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
                         return true;
                     }
                 }
