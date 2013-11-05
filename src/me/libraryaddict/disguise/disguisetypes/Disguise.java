@@ -464,12 +464,12 @@ public class Disguise {
                 continue;
             // If the disguise has this, but not the entity. Then better set it!
             if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo)) {
-                getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
+                getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));
                 continue;
             }
             // Else if the disguise doesn't have it. But the entity does. Better remove it!
             if (entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo)) {
-                getWatcher().setValue(dataNo, null);
+                getWatcher().setBackupValue(dataNo, null);
                 continue;
             }
             // Since they both share it. Time to check if its from something they extend.
@@ -512,7 +512,7 @@ public class Disguise {
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
-            getWatcher().setValue(dataNo, disguiseValues.get(dataNo));
+            getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));
         }
     }
 

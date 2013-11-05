@@ -51,6 +51,10 @@ public class FlagWatcher {
     }
     private Disguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
+    /**
+     * This is the entity values I need to add else it could crash them..
+     */
+    private HashMap<Integer, Object> backupEntityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
 
@@ -78,10 +82,17 @@ public class FlagWatcher {
             // I send my custom values if I see this!
             if (dataType == 1)
                 sendAllCustom = true;
+            Object value = null;
             if (entityValues.containsKey(dataType)) {
                 if (entityValues.get(dataType) == null)
                     continue;
-                Object value = entityValues.get(dataType);
+                value = entityValues.get(dataType);
+            } else if (backupEntityValues.containsKey(dataType)) {
+                if (backupEntityValues.get(dataType) == null)
+                    continue;
+                value = backupEntityValues.get(dataType);
+            }
+            if (value != null) {
                 boolean doD = watch.d();
                 watch = new WatchableObject(classTypes.get(value.getClass()), dataType, value);
                 if (!doD)
@@ -305,6 +316,10 @@ public class FlagWatcher {
 
     protected void setValue(int no, Object value) {
         entityValues.put(no, value);
+    }
+
+    protected void setBackupValue(int no, Object value) {
+        backupEntityValues.put(no, value);
     }
 
 }
