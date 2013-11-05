@@ -2,18 +2,19 @@ package me.libraryaddict.disguise;
 
 import java.util.HashMap;
 
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-
 
 public class DisguiseListener implements Listener {
 
@@ -26,6 +27,7 @@ public class DisguiseListener implements Listener {
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
+    private DisguiseAPI disguiseAPI = new DisguiseAPI();
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
@@ -53,6 +55,26 @@ public class DisguiseListener implements Listener {
                     }
                 }
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVechileLeave(VehicleExitEvent event) {
+        final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
+        if (disguise != null) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                public void run() {
+                    disguiseAPI.setupFakeDisguise(disguise);
+                }
+            });
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVechileEnter(VehicleEnterEvent event) {
+        Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
+        if (disguise != null && event.getEntered() instanceof Player) {
+            disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
         }
     }
 

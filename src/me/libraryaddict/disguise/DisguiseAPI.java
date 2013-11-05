@@ -264,7 +264,7 @@ public class DisguiseAPI {
         // Remove the old disguise, else we have weird disguises around the place
         removeSelfDisguise(player);
         // If the disguised player can't see himself. Return
-        if (!disguise.viewSelfDisguise() || !PacketsManager.isViewDisguisesListenerEnabled())
+        if (!disguise.viewSelfDisguise() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null)
             return;
         try {
             // Grab the entity ID the fake disguise will use
