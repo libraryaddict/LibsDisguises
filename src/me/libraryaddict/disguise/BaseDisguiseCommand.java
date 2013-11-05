@@ -3,20 +3,14 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import net.minecraft.v1_6_R3.org.bouncycastle.util.Arrays;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
@@ -31,15 +25,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return names;
     }
 
-    protected boolean isNumeric(String string) {
-        try {
-            Integer.parseInt(string);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
     protected boolean isDouble(String string) {
         try {
             Float.parseFloat(string);
@@ -49,7 +34,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
     }
 
-    protected abstract void sendCommandUsage(CommandSender sender);
+    protected boolean isNumeric(String string) {
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
 
     /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
@@ -137,7 +129,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         for (int i = 0; i < args.length; i += 2) {
             String methodName = args[i];
             if (i + 1 >= args.length) {
-                throw new Exception(ChatColor.RED + "No value was given for " + methodName);
+                throw new Exception(ChatColor.RED + "No value was given for the option " + methodName);
             }
             String valueString = args[i + 1];
             Method methodToUse = null;
@@ -183,4 +175,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         // Alright. We've constructed our disguise.
         return disguise;
     }
+
+    protected abstract void sendCommandUsage(CommandSender sender);
 }
