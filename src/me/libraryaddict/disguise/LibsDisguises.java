@@ -65,20 +65,24 @@ public class LibsDisguises extends JavaPlugin {
         }
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        boolean modified = false;
         try {
             for (String option : YamlConfiguration
                     .loadConfiguration(this.getClassLoader().getResource("config.yml").openStream()).getKeys(false)) {
                 if (!config.contains(option)) {
                     config.set(option, getConfig().get(option));
+                    modified = true;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            config.save(new File(getDataFolder(), "config.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (modified) {
+            try {
+                config.save(new File(getDataFolder(), "config.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         PacketsManager.init(this);
         DisguiseAPI.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
