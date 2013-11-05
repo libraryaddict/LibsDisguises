@@ -55,6 +55,11 @@ public class Disguise {
     public Disguise clone() {
         Disguise disguise = new Disguise().createDisguise(getType(), replaceSounds());
         disguise.setViewSelfDisguise(viewSelfDisguise());
+        disguise.setHearSelfDisguise(canHearSelfDisguise());
+        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
+        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
+        disguise.setVelocitySent(isVelocitySent());
+        disguise.setWatcher(getWatcher().clone());
         return disguise;
     }
 

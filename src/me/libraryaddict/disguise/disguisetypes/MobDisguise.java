@@ -40,6 +40,12 @@ public class MobDisguise extends Disguise {
 
     public MobDisguise clone() {
         MobDisguise disguise = new MobDisguise(getType(), isAdult(), replaceSounds());
+        disguise.setViewSelfDisguise(viewSelfDisguise());
+        disguise.setHearSelfDisguise(canHearSelfDisguise());
+        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
+        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
+        disguise.setVelocitySent(isVelocitySent());
+        disguise.setWatcher(getWatcher().clone());
         return disguise;
     }
 
