@@ -82,23 +82,21 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         // Time to start constructing the disguise.
         // We will need to check between all 3 kinds of disguises
         if (disguiseType.isPlayer()) {// If he is doing a player disguise
-            toSkip++;
             if (args.length == 1) {
                 // He needs to give the player name
                 throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
             } else {
                 // Construct the player disguise
                 disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
+                toSkip++;
             }
         } else {
             if (disguiseType.isMob()) { // Its a mob, use the mob constructor
                 boolean adult = true;
                 if (args.length > 1) {
-                    try {
-                        adult = Boolean.valueOf(args[1]);
+                    if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+                        adult = "false".equalsIgnoreCase(args[1]);
                         toSkip++;
-                    } catch (Exception ex) {
-                        // Its not a true/false for adult..
                     }
                 }
                 disguise = new MobDisguise(disguiseType, adult);
