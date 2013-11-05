@@ -8,7 +8,7 @@ DisguiseRadiusMax: 50
 UndisguiseRadiusMax: 50
 # Shall the players view their disguises?
 # Best used when viewing yourself in 3rd person
-ViewDisguises: false
+ViewSelfDisguises: false
 # Shall I disguise the sounds?
 # This turns your damage sound into a MOOOO
 DisguiseSounds: true

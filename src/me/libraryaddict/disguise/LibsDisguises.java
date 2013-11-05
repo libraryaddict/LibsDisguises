@@ -83,7 +83,7 @@ public class LibsDisguises extends JavaPlugin {
         PacketsManager.init(this);
         DisguiseAPI.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
         DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
-        DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewDisguises"));
+        DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewSelfDisguises"));
         DisguiseAPI.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
         DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
         DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
