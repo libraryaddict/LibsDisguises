@@ -28,7 +28,6 @@ public class DisguiseListener implements Listener {
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
 
     public DisguiseListener(LibsDisguises libsDisguises) {
-
         plugin = libsDisguises;
         permission = plugin.getConfig().getString("Permission");
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
