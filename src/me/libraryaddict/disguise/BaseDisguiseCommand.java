@@ -147,7 +147,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     Class<?>[] types = method.getParameterTypes();
                     if (types.length == 1) {
                         Class param = types[0];
-                        if ((param.isAssignableFrom(Float.class) || param.isAssignableFrom(int.class) || param
+                        if ((param.isAssignableFrom(Float.class) || param.isAssignableFrom(Integer.class) || param
                                 .isAssignableFrom(Double.class))) {
                             if (isDouble(valueString)) {
                                 value = param.cast(Float.parseFloat(valueString));
