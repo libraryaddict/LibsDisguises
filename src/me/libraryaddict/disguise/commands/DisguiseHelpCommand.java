@@ -54,8 +54,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                         valueType = "Number";
                                     }
                                     if (valueType != null) {
-                                        methods.add(ChatColor.RED + method.getName() + " (" + ChatColor.GREEN + valueType
-                                                + ChatColor.RED + ")");
+                                        methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + " ("
+                                                + ChatColor.GREEN + valueType + ChatColor.DARK_RED + ")");
                                     }
                                 }
                             }
