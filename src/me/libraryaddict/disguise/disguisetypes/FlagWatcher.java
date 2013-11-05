@@ -49,12 +49,12 @@ public class FlagWatcher {
         classTypes.put(ItemStack.class, 5);
         classTypes.put(ChunkCoordinates.class, 6);
     }
-    private Disguise disguise;
-    private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     /**
      * This is the entity values I need to add else it could crash them..
      */
     private HashMap<Integer, Object> backupEntityValues = new HashMap<Integer, Object>();
+    private Disguise disguise;
+    private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
 
@@ -226,6 +226,10 @@ public class FlagWatcher {
             setItemStack(i, itemstack[i]);
     }
 
+    protected void setBackupValue(int no, Object value) {
+        backupEntityValues.put(no, value);
+    }
+
     public void setBurning(boolean setBurning) {
         setFlag(0, 0, setBurning);
         sendData(0);
@@ -318,10 +322,6 @@ public class FlagWatcher {
 
     protected void setValue(int no, Object value) {
         entityValues.put(no, value);
-    }
-
-    protected void setBackupValue(int no, Object value) {
-        backupEntityValues.put(no, value);
     }
 
 }

@@ -132,19 +132,12 @@ public enum DisguiseType {
         return DisguiseType.valueOf(entityType.name());
     }
 
-    public String toReadable() {
-        String[] split = name().split("_");
-        for (int i = 0; i < split.length; i++)
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-        return StringUtils.join(split, " ");
-    }
-
     private int defaultData;
+
     private int defaultId;
     private int entityId;
     private EntityType entityType;
     private Class watcherClass;
-
     private DisguiseType(EntityType newType, int... obj) {
         entityType = newType;
         for (int i = 0; i < obj.length; i++) {
@@ -199,5 +192,12 @@ public enum DisguiseType {
 
     public void setWatcherClass(Class c) {
         watcherClass = c;
+    }
+
+    public String toReadable() {
+        String[] split = name().split("_");
+        for (int i = 0; i < split.length; i++)
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        return StringUtils.join(split, " ");
     }
 }
