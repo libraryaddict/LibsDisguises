@@ -60,6 +60,8 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onVechileLeave(VehicleExitEvent event) {
+        if (event.isCancelled())
+            return;
         final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
         if (disguise != null && event.getExited() instanceof Player) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -73,6 +75,8 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onVechileEnter(VehicleEnterEvent event) {
+        if (event.isCancelled())
+            return;
         Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
         if (disguise != null && event.getEntered() instanceof Player) {
             disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
