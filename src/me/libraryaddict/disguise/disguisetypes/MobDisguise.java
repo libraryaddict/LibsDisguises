@@ -38,6 +38,7 @@ public class MobDisguise extends Disguise {
         createDisguise(DisguiseType.getType(entityType), replaceSounds);
     }
 
+    @Override
     public MobDisguise clone() {
         MobDisguise disguise = new MobDisguise(getType(), isAdult(), replaceSounds());
         disguise.setViewSelfDisguise(viewSelfDisguise());
@@ -45,7 +46,7 @@ public class MobDisguise extends Disguise {
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
-        disguise.setWatcher(getWatcher().clone());
+        disguise.setWatcher(getWatcher().clone(disguise));
         return disguise;
     }
 

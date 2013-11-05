@@ -11,8 +11,6 @@ import net.minecraft.server.v1_6_R3.PotionBrewer;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-
-
 public class LivingWatcher extends FlagWatcher {
     private HashSet<MobEffect> potionEffects = new HashSet<MobEffect>();
 
@@ -27,8 +25,9 @@ public class LivingWatcher extends FlagWatcher {
         sendPotionEffects();
     }
 
-    public LivingWatcher clone() {
-        LivingWatcher clone = (LivingWatcher) super.clone();
+    @Override
+    public LivingWatcher clone(Disguise disguise) {
+        LivingWatcher clone = (LivingWatcher) super.clone(disguise);
         clone.potionEffects = (HashSet<MobEffect>) potionEffects.clone();
         return clone;
     }

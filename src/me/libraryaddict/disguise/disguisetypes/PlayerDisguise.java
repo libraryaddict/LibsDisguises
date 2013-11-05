@@ -14,8 +14,15 @@ public class PlayerDisguise extends Disguise {
         createDisguise(DisguiseType.PLAYER, replaceSounds);
     }
 
+    @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise(getName(), replaceSounds());
+        disguise.setViewSelfDisguise(viewSelfDisguise());
+        disguise.setHearSelfDisguise(canHearSelfDisguise());
+        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
+        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
+        disguise.setVelocitySent(isVelocitySent());
+        disguise.setWatcher(getWatcher().clone(disguise));
         return disguise;
     }
 

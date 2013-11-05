@@ -54,6 +54,7 @@ public class MiscDisguise extends Disguise {
         this(disguiseType, true, id, data);
     }
 
+    @Override
     public MiscDisguise clone() {
         MiscDisguise disguise = new MiscDisguise(getType(), replaceSounds(), getId(), getData());
         disguise.setViewSelfDisguise(viewSelfDisguise());
@@ -61,7 +62,7 @@ public class MiscDisguise extends Disguise {
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
-        disguise.setWatcher(getWatcher().clone());
+        disguise.setWatcher(getWatcher().clone(disguise));
         return disguise;
     }
 
