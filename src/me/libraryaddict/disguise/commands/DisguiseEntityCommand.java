@@ -35,7 +35,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             Disguise disguise = parseDisguise(sender, args);
             listener.setSlap(sender.getName(), disguise);
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise it as a "
-                    + toReadable(disguise.getType().name()) + "!");
+                    + disguise.getType().toReadable() + "!");
         } catch (Exception ex) {
             if (ex.getMessage() != null) {
                 sender.sendMessage(ex.getMessage());
@@ -59,10 +59,4 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseentity <Dropped_Item/Falling_Block> <Id> <Durability>");
     }
 
-    private String toReadable(String name) {
-        String[] split = name.split("_");
-        for (int i = 0; i < split.length; i++)
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-        return StringUtils.join(split, " ");
-    }
 }

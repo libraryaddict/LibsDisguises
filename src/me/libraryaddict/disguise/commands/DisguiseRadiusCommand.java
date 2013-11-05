@@ -66,7 +66,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
                 if (entity == sender)
                     continue;
-                DisguiseAPI.disguiseToAll(entity, disguise.clone());
+                DisguiseAPI.disguiseToAll(entity, disguise);
                 disguisedEntitys++;
             }
             sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");

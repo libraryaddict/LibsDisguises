@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.EntityType;
 
 public enum DisguiseType {
@@ -129,6 +130,13 @@ public enum DisguiseType {
 
     public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
         return DisguiseType.valueOf(entityType.name());
+    }
+
+    public String toReadable() {
+        String[] split = name().split("_");
+        for (int i = 0; i < split.length; i++)
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        return StringUtils.join(split, " ");
     }
 
     private int defaultData;

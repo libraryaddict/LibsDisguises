@@ -45,7 +45,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             Disguise disguise = parseDisguise(sender, newArgs);
             DisguiseAPI.disguiseToAll(player, disguise);
             sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "
-                    + toReadable(disguise.getType().name()) + "!");
+                    + disguise.getType().toReadable() + "!");
         } catch (Exception ex) {
             if (ex.getMessage() != null) {
                 sender.sendMessage(ex.getMessage());
@@ -68,12 +68,5 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block"))
             sender.sendMessage(ChatColor.DARK_GREEN
                     + "/disguiseplayer <PlayerName> <Dropped_Item/Falling_Block> <Id> <Durability>");
-    }
-
-    private String toReadable(String name) {
-        String[] split = name.split("_");
-        for (int i = 0; i < split.length; i++)
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-        return StringUtils.join(split, " ");
     }
 }
