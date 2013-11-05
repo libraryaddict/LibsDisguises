@@ -28,7 +28,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public LivingWatcher clone() {
-        LivingWatcher clone = this.clone();
+        LivingWatcher clone = (LivingWatcher) super.clone();
         clone.potionEffects = (HashSet<MobEffect>) potionEffects.clone();
         return clone;
     }
