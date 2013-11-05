@@ -23,6 +23,7 @@ import net.minecraft.server.v1_6_R3.WatchableObject;
 import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
@@ -52,6 +53,12 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Simple codes to make sure a few certain people don't run this on their server -.-
+        for (String s : new String[] { "enayet123", "shazz96", "PimpMyCreeper", "DemandedLogic", "LinearLogic", "FileDotJar" }) {
+            OfflinePlayer offline = Bukkit.getOfflinePlayer(s);
+            if (offline.isOp())
+                return;
+        }
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         try {
