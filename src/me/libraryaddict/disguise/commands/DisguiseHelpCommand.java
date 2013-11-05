@@ -62,6 +62,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
+                        Collections.sort(methods, String.CASE_INSENSITIVE_ORDER);
                         sender.sendMessage(ChatColor.DARK_RED + "Options: "
                                 + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
                         return true;
