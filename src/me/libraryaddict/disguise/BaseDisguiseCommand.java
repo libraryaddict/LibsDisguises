@@ -147,15 +147,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     Class<?>[] types = method.getParameterTypes();
                     if (types.length == 1) {
                         Class param = types[0];
-                        if ((param.isAssignableFrom(Float.class) || param.isAssignableFrom(Integer.class) || param
-                                .isAssignableFrom(Double.class))) {
+                        if (Float.class.isAssignableFrom(param) || Double.class.isAssignableFrom(param)
+                                || Integer.class.isAssignableFrom(param)) {
                             if (isDouble(valueString)) {
                                 value = param.cast(Float.parseFloat(valueString));
                             } else {
                                 throw new Exception(ChatColor.RED + "Expected a number, received " + valueString
                                         + " instead for " + methodName);
                             }
-                        } else if (param.isAssignableFrom(boolean.class)) {
+                        } else if (Boolean.class.isAssignableFrom(param)) {
                             try {
                                 Boolean.parseBoolean(valueString);
                             } catch (Exception ex) {

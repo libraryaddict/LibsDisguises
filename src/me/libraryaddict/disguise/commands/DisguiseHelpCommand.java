@@ -48,10 +48,10 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     String valueType = null;
                                     if (c == String.class)
                                         valueType = "String";
-                                    else if (c.isAssignableFrom(Boolean.class))
+                                    else if (Boolean.class.isAssignableFrom(c))
                                         valueType = "True/False";
-                                    else if (c.isAssignableFrom(Float.class) || c.isAssignableFrom(Double.class)
-                                            || c.isAssignableFrom(Integer.class)) {
+                                    else if (Float.class.isAssignableFrom(c) || Double.class.isAssignableFrom(c)
+                                            || Integer.class.isAssignableFrom(c)) {
                                         valueType = "Number";
                                     }
                                     if (valueType != null) {
