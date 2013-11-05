@@ -147,19 +147,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         Class param = types[0];
                         if (float.class == param || double.class == param || int.class == param) {
                             if (isDouble(valueString)) {
-                                value = param.cast(Float.parseFloat(valueString));
+                                float obj = Float.parseFloat(valueString);
+                                if (param == float.class) {
+                                    value = (float) obj;
+                                } else if (param == int.class) {
+                                    value = (int) obj;
+                                } else if (param == double.class) {
+                                    value = (double) obj;
+                                }
                             } else {
                                 throw new Exception(ChatColor.RED + "Expected a number, received " + valueString
                                         + " instead for " + methodName);
                             }
                         } else if (boolean.class == param) {
-                            try {
-                                Boolean.parseBoolean(valueString);
-                            } catch (Exception ex) {
+                            if (!("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString)))
                                 throw new Exception(ChatColor.RED + "Expected true/false, received " + valueString
                                         + " instead for " + methodName);
-                            }
-                            value = param.cast(Boolean.parseBoolean(valueString));
+                            value = (boolean) "true".equalsIgnoreCase(valueString);
                         } else if (param == String.class) {
                             value = valueString;
                         }
