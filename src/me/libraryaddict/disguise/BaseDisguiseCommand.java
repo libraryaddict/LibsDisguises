@@ -165,7 +165,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                         + " instead for " + methodName);
                             value = (boolean) "true".equalsIgnoreCase(valueString);
                         } else if (param == String.class) {
-                            value = valueString;
+                            value = ChatColor.translateAlternateColorCodes('&', valueString);
                         }
                     }
                     break;
