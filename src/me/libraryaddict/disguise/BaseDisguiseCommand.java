@@ -66,10 +66,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             sendCommandUsage(sender);
             throw new Exception();
         }
-        DisguiseType disguiseType;
-        try {
-            disguiseType = DisguiseType.valueOf(args[0].toUpperCase());
-        } catch (Exception ex) {
+        DisguiseType disguiseType = null;
+        for (DisguiseType type : DisguiseType.values()) {
+            if (args[0].equalsIgnoreCase(type.name()) || type.name().replace("_", "").equalsIgnoreCase(args[0])) {
+                disguiseType = type;
+                break;
+            }
+        }
+        if (disguiseType == null) {
             throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
                     + " doesn't exist!");
         }
