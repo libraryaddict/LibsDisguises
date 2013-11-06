@@ -2,12 +2,10 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import java.util.Random;
 
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
-
 
 public class HorseWatcher extends AgeableWatcher {
 
@@ -64,8 +62,22 @@ public class HorseWatcher extends AgeableWatcher {
         setFlag(8, true);
     }
 
+    public String getOwnerName() {
+        return (String) getValue(21, "");
+    }
+
+    public void setOwnerName(String name) {
+        setValue(21, name);
+        sendData(21);
+    }
+
     public void setColor(Color color) {
         setValue(20, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        sendData(20);
+    }
+
+    public void setColorId(int color) {
+        setValue(20, color & 0xFF | getStyle().ordinal() << 8);
         sendData(20);
     }
 
@@ -97,6 +109,11 @@ public class HorseWatcher extends AgeableWatcher {
 
     public void setStyle(Style style) {
         setValue(20, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(20);
+    }
+
+    public void setStyleId(int style) {
+        setValue(20, getColor().ordinal() & 0xFF | style << 8);
         sendData(20);
     }
 
