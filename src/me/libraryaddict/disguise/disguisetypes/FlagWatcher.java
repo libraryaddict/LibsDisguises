@@ -205,6 +205,8 @@ public class FlagWatcher {
     protected void sendData(int data) {
         if (disguise.getWatcher() == null || DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
             return;
+        if (!entityValues.containsKey(data) || entityValues.get(data) == null)
+            return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
         List<WatchableObject> list = new ArrayList<WatchableObject>();
