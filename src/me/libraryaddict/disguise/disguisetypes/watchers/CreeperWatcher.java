@@ -16,7 +16,7 @@ public class CreeperWatcher extends LivingWatcher {
         return (Byte) getValue(17, (byte) 0) == 1;
     }
 
-    public void setFuse(boolean isFused) {
+    public void setFused(boolean isFused) {
         setValue(16, (byte) (isFused ? 1 : -1));
         sendData(16);
     }
