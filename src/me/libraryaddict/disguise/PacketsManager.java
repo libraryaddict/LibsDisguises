@@ -208,9 +208,9 @@ public class PacketsManager {
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
             mods = spawnPackets[1].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(entitySize.a(loc.getX()) * 32D));
+            mods.write(1, (int) Math.floor(loc.getX() * 32D));
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(entitySize.a(loc.getZ()) * 32D));
+            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
             mods.write(4, yaw);
             mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
