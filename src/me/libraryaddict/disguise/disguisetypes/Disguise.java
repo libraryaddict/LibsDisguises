@@ -393,7 +393,6 @@ public abstract class Disguise {
         if (entity instanceof Player) {
             ((Player) entity).updateInventory();
         }
-        // TODO Stop using this as a shortcut >.>
     }
 
     public void setHideHeldItemFromSelf(boolean hideHeldItem) {
@@ -401,7 +400,6 @@ public abstract class Disguise {
         if (entity instanceof Player) {
             ((Player) entity).updateInventory();
         }
-        // TODO Stop using this as a shortcut >.>
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {
@@ -418,6 +416,7 @@ public abstract class Disguise {
         HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
+            // STEP 1. Find out if the watcher has set data on it.
             // If the watcher already set a metadata on this
             if (getWatcher().hasValue(dataNo)) {
                 // Better check that the value is stable.
@@ -436,6 +435,7 @@ public abstract class Disguise {
                     }
                 }
             }
+            // STEP 2. As the watcher has not set data on it, check if I need to set the default data.
             // If neither of them touch it
             if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
                 continue;
@@ -449,7 +449,22 @@ public abstract class Disguise {
                 getWatcher().setBackupValue(dataNo, null);
                 continue;
             }
-            // Since they both share it. Time to check if its from something they extend.
+            Object eObj = entityValues.get(dataNo);
+            Object dObj = disguiseValues.get(dataNo);
+            if (eObj == null || dObj == null) {
+                if (eObj == null && dObj == null)
+                    continue;
+                else {
+                    getWatcher().setBackupValue(dataNo, dObj);
+                    continue;
+                }
+            }
+            if (eObj.getClass() != dObj.getClass()) {
+                getWatcher().setBackupValue(dataNo, dObj);
+                continue;
+            }
+
+            // Since they both share it. With the same classes. Time to check if its from something they extend.
             // Better make this clear before I compare the values because some default values are different!
             // Entity is 0 & 1 - But we aint gonna be checking that
             // EntityAgeable is 16
