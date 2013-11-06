@@ -39,16 +39,19 @@ public class DisguiseListener implements Listener {
                     try {
                         UpdateChecker updateChecker = new UpdateChecker();
                         updateChecker.checkUpdate("v" + currentVersion);
+                        String lastVersion = latestVersion;
                         latestVersion = updateChecker.getLatestVersion();
                         if (latestVersion != null) {
                             latestVersion = "v" + latestVersion;
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                public void run() {
-                                    for (Player p : Bukkit.getOnlinePlayers())
-                                        if (p.hasPermission(permission))
-                                            p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
-                                }
-                            });
+                            if (lastVersion == null || !lastVersion.equals(latestVersion)) {
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                    public void run() {
+                                        for (Player p : Bukkit.getOnlinePlayers())
+                                            if (p.hasPermission(permission))
+                                                p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+                                    }
+                                });
+                            }
                         }
                     } catch (Exception ex) {
                         System.out.print(String.format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
