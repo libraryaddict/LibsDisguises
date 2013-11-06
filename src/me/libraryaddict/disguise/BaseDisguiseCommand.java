@@ -3,6 +3,8 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
@@ -11,6 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
@@ -152,28 +155,83 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     value = (double) obj;
                                 }
                             } else {
-                                throw new Exception(ChatColor.RED + "Expected a number, received " + valueString
-                                        + " instead for " + methodName);
+                                throw parseString("number", valueString, methodName);
                             }
                         } else if (boolean.class == param) {
                             if (!("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString)))
-                                throw new Exception(ChatColor.RED + "Expected true/false, received " + valueString
-                                        + " instead for " + methodName);
+                                throw parseString("true/false", valueString, methodName);
                             value = (boolean) "true".equalsIgnoreCase(valueString);
                         } else if (param == String.class) {
                             value = ChatColor.translateAlternateColorCodes('&', valueString);
+                        } else if (param == AnimalColor.class) {
+                            try {
+                                value = AnimalColor.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseString("animal color", valueString, methodName);
+                            }
+                        } else if (param == ItemStack.class) {
+                            try {
+                                value = parseString(valueString);
+                            } catch (Exception ex) {
+                                throw new Exception(String.format(ex.getMessage(), methodName));
+                            }
+                        } else if (param == ItemStack[].class) {
+                            ItemStack[] items = new ItemStack[4];
+                            String[] split = valueString.split(",");
+                            if (split.length == 4) {
+                                for (int a = 0; a < 4; a++) {
+                                    try {
+                                        ItemStack item = parseString(split[a]);
+                                        items[a] = item;
+                                    } catch (Exception ex) {
+                                        throw parseString("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                                + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
+                                    }
+                                }
+                            } else {
+                                throw parseString("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                        + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
+                            }
+                            value = items;
                         }
                     }
                     break;
                 }
             }
             if (methodToUse == null) {
-                throw new Exception(ChatColor.RED + "Cannot find option " + methodName);
+                throw new Exception(ChatColor.RED + "Cannot find the option " + methodName);
             }
             methodToUse.invoke(disguise.getWatcher(), value);
         }
         // Alright. We've constructed our disguise.
         return disguise;
+    }
+
+    private Exception parseString(String expectedValue, String receivedInstead, String methodName) {
+        return new Exception(ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED + ", received "
+                + ChatColor.GREEN + receivedInstead + ChatColor.RED + " instead for " + ChatColor.GREEN + methodName);
+    }
+
+    private ItemStack parseString(String string) throws Exception {
+        String[] split = string.split(":", -1);
+        if (isNumeric(split[0])) {
+            int itemId = Integer.parseInt(split[0]);
+            short itemDura = 0;
+            if (split.length > 1) {
+                if (isNumeric(split[1])) {
+                    itemDura = Short.parseShort(split[1]);
+                } else {
+                    throw parseString("item ID:Durability combo", string, "%s");
+                }
+            }
+            return new ItemStack(itemId, 1, itemDura);
+        } else {
+            if (split.length == 1) {
+                throw parseString("item ID", string, "%s");
+            } else {
+                throw parseString("item ID:Durability combo", string, "%s");
+            }
+        }
     }
 
     protected abstract void sendCommandUsage(CommandSender sender);

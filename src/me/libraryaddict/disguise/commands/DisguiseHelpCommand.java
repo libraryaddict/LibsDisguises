@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import me.libraryaddict.disguise.BaseDisguiseCommand;
+import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 
 public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
@@ -19,10 +21,19 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
             ArrayList<String> allowedDisguises = getAllowedDisguises(sender, node);
             if (!allowedDisguises.isEmpty()) {
                 if (args.length == 0) {
-                    sender.sendMessage(ChatColor.RED + "/disguisehelp <Disguise>");
                     return true;
                     // sender.sendMessage(ChatColor.RED + "/disguisehelp <Disguise> <Option>");
                 } else {
+                    if (args[0].equalsIgnoreCase("colors")) {
+                        ArrayList<String> colors = new ArrayList<String>();
+                        for (AnimalColor color : AnimalColor.values()) {
+                            colors.add(color.name().substring(0, 1)
+                                    + color.name().toLowerCase().substring(1, color.name().length()));
+                        }
+                        sender.sendMessage(ChatColor.RED + "Animal colors: " + ChatColor.GREEN
+                                + StringUtils.join(colors, ChatColor.RED + ", " + ChatColor.GREEN));
+                        return true;
+                    }
                     DisguiseType type = null;
                     for (DisguiseType disguiseType : DisguiseType.values()) {
                         if (args[0].equalsIgnoreCase(disguiseType.name())
@@ -48,9 +59,15 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "True/False";
                                 else if (float.class == c || double.class == c || int.class == c) {
                                     valueType = "Number";
+                                } else if (AnimalColor.class == c) {
+                                    valueType = "Color";
+                                } else if (ItemStack.class == c) {
+                                    valueType = "Item ID with optional :Durability";
+                                } else if (ItemStack[].class == c) {
+                                    valueType = "Item ID,ID,ID,ID with optional :Durability";
                                 }
                                 if (valueType != null) {
-                                    methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + " (" + ChatColor.GREEN
+                                    methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
                                             + valueType + ChatColor.DARK_RED + ")");
                                 }
                             }
@@ -72,5 +89,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
+        sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> - View the options you can set on a disguise");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp Colors - View all the colors you can use for a disguise color");
     }
 }
