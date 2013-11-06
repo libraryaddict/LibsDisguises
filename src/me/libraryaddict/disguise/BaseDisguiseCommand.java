@@ -18,7 +18,6 @@ import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
