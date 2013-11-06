@@ -34,6 +34,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                 } else {
                     Enum[] enums = null;
                     String enumName = null;
+                    ArrayList<String> enumReturns = new ArrayList<String>();
                     if (args[0].equalsIgnoreCase("animalcolor") || args[0].equalsIgnoreCase("animalcolors")) {
                         enums = AnimalColor.values();
                         enumName = "Animal colors";
@@ -50,21 +51,19 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         enums = Profession.values();
                         enumName = "Villager professions";
                     } else if (args[0].equalsIgnoreCase("PotionEffect") || args[0].equalsIgnoreCase("PotionEffects")) {
-                        ArrayList<String> potionTypes = new ArrayList<String>();
+                        enumName = "Potioneffect types";
                         for (PotionEffectType potionType : PotionEffectType.values()) {
                             if (potionType != null)
-                                potionTypes.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN
+                                enumReturns.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN
                                         + potionType.getId() + ChatColor.RED + ")");
                         }
-                        sender.sendMessage(ChatColor.RED + "Potioneffect types: " + ChatColor.GREEN
-                                + StringUtils.join(potionTypes, ChatColor.RED + ", " + ChatColor.GREEN));
-                        return true;
                     }
                     if (enums != null) {
-                        ArrayList<String> enumReturns = new ArrayList<String>();
                         for (Enum enumType : enums) {
                             enumReturns.add(toReadable(enumType.name()));
                         }
+                    }
+                    if (!enumReturns.isEmpty()) {
                         sender.sendMessage(ChatColor.RED + enumName + ": " + ChatColor.GREEN
                                 + StringUtils.join(enumReturns, ChatColor.RED + ", " + ChatColor.GREEN));
                         return true;
