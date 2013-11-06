@@ -4,8 +4,6 @@ import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
-
-
 public class SlimeWatcher extends LivingWatcher {
 
     public SlimeWatcher(Disguise disguise) {
