@@ -34,6 +34,11 @@ public class HorseWatcher extends AgeableWatcher {
         return isTrue(16);
     }
 
+    @Deprecated
+    public boolean isBredable() {
+        return isTrue(16);
+    }
+
     public boolean isGrazing() {
         return isTrue(32);
     }
@@ -56,6 +61,11 @@ public class HorseWatcher extends AgeableWatcher {
 
     private boolean isTrue(int i) {
         return ((Integer) getValue(16, (byte) 0) & i) != 0;
+    }
+
+    @Deprecated
+    public void setCanBred(boolean breed) {
+        setFlag(16, breed);
     }
 
     public void setCanBreed(boolean breed) {
