@@ -48,7 +48,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         enums = Profession.values();
                         enumName = "Villager professions";
                     } else if (args[0].equalsIgnoreCase("PotionEffect") || args[0].equalsIgnoreCase("PotionEffects")) {
-                        enumName = "Potioneffect types";
+                        enumName = "Potioneffects";
                         for (PotionEffectType potionType : PotionEffectType.values()) {
                             if (potionType != null)
                                 enumReturns.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN
@@ -105,7 +105,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                 } else if (Profession.class == c) {
                                     valueType = "Villager Profession";
                                 } else if (PotionEffectType.class == c) {
-                                    valueType = "Potioneffect Type";
+                                    valueType = "Potioneffect";
                                 }
                                 if (valueType != null) {
                                     methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
