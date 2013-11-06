@@ -3,9 +3,6 @@ package me.libraryaddict.disguise.commands;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.BaseDisguiseCommand;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
