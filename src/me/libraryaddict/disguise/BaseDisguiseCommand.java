@@ -13,7 +13,13 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Ocelot.Type;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
@@ -144,6 +150,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     Class<?>[] types = method.getParameterTypes();
                     if (types.length == 1) {
                         Class param = types[0];
+                        // Parse to number
                         if (float.class == param || double.class == param || int.class == param) {
                             if (isDouble(valueString)) {
                                 float obj = Float.parseFloat(valueString);
@@ -157,24 +164,29 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             } else {
                                 throw parseToException("number", valueString, methodName);
                             }
+                            // Parse to boolean
                         } else if (boolean.class == param) {
                             if (!("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString)))
                                 throw parseToException("true/false", valueString, methodName);
                             value = (boolean) "true".equalsIgnoreCase(valueString);
+                            // Parse to string
                         } else if (param == String.class) {
                             value = ChatColor.translateAlternateColorCodes('&', valueString);
+                            // Parse to animal color
                         } else if (param == AnimalColor.class) {
                             try {
                                 value = AnimalColor.valueOf(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("animal color", valueString, methodName);
                             }
+                            // Parse to itemstack
                         } else if (param == ItemStack.class) {
                             try {
                                 value = parseToItemstack(valueString);
                             } catch (Exception ex) {
                                 throw new Exception(String.format(ex.getMessage(), methodName));
                             }
+                            // Parse to itemstack array
                         } else if (param == ItemStack[].class) {
                             ItemStack[] items = new ItemStack[4];
                             String[] split = valueString.split(",");
@@ -193,6 +205,46 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                         + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                             }
                             value = items;
+                            // Parse to horse color
+                        } else if (param == Color.class) {
+                            try {
+                                value = Color.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("horse color", valueString, methodName);
+                            }
+                            // Parse to horse style
+                        } else if (param == Style.class) {
+                            try {
+                                value = Style.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("horse style", valueString, methodName);
+                            }
+                            // Parse to villager profession
+                        } else if (param == Profession.class) {
+                            try {
+                                value = Profession.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("villager profession", valueString, methodName);
+                            }
+                            // Parse to ocelot type
+                        } else if (param == Type.class) {
+                            try {
+                                value = Type.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("ocelot type", valueString, methodName);
+                            }
+
+                            // Parse to potion effect
+                        } else if (param == PotionEffect.class) {
+                            try {
+                                PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
+                                if (potionType == null && isNumeric(valueString)) {
+                                    potionType = PotionEffectType.getById(Integer.parseInt(valueString));
+                                }
+                                value = new PotionEffect(potionType, 0, 0);
+                            } catch (Exception ex) {
+                                throw parseToException("potioneffect type", valueString, methodName);
+                            }
                         }
                     }
                     break;

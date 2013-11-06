@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.commands;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 
 import me.libraryaddict.disguise.BaseDisguiseCommand;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
@@ -11,7 +13,12 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Ocelot.Type;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
@@ -21,17 +28,45 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
             ArrayList<String> allowedDisguises = getAllowedDisguises(sender, node);
             if (!allowedDisguises.isEmpty()) {
                 if (args.length == 0) {
+                    sendCommandUsage(sender);
                     return true;
                     // sender.sendMessage(ChatColor.RED + "/disguisehelp <Disguise> <Option>");
                 } else {
-                    if (args[0].equalsIgnoreCase("colors")) {
-                        ArrayList<String> colors = new ArrayList<String>();
-                        for (AnimalColor color : AnimalColor.values()) {
-                            colors.add(color.name().substring(0, 1)
-                                    + color.name().toLowerCase().substring(1, color.name().length()));
+                    Enum[] enums = null;
+                    String enumName = null;
+                    if (args[0].equalsIgnoreCase("animalcolor") || args[0].equalsIgnoreCase("animalcolors")) {
+                        enums = AnimalColor.values();
+                        enumName = "Animal colors";
+                    } else if (args[0].equalsIgnoreCase("horsecolor") || args[0].equalsIgnoreCase("horsecolors")) {
+                        enums = Color.values();
+                        enumName = "Horse colors";
+                    } else if (args[0].equalsIgnoreCase("horsestyle") || args[0].equalsIgnoreCase("horsestyles")) {
+                        enums = Style.values();
+                        enumName = "Horse styles";
+                    } else if (args[0].equalsIgnoreCase("OcelotType") || args[0].equalsIgnoreCase("OcelotTypes")) {
+                        enums = Type.values();
+                        enumName = "Ocelot types";
+                    } else if (args[0].equalsIgnoreCase("Profession") || args[0].equalsIgnoreCase("Professions")) {
+                        enums = Profession.values();
+                        enumName = "Villager professions";
+                    } else if (args[0].equalsIgnoreCase("PotionEffect") || args[0].equalsIgnoreCase("PotionEffects")) {
+                        ArrayList<String> potionTypes = new ArrayList<String>();
+                        for (PotionEffectType potionType : PotionEffectType.values()) {
+                            if (potionType != null)
+                                potionTypes.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN
+                                        + potionType.getId() + ChatColor.RED + ")");
                         }
-                        sender.sendMessage(ChatColor.RED + "Animal colors: " + ChatColor.GREEN
-                                + StringUtils.join(colors, ChatColor.RED + ", " + ChatColor.GREEN));
+                        sender.sendMessage(ChatColor.RED + "Potioneffect types: " + ChatColor.GREEN
+                                + StringUtils.join(potionTypes, ChatColor.RED + ", " + ChatColor.GREEN));
+                        return true;
+                    }
+                    if (enums != null) {
+                        ArrayList<String> enumReturns = new ArrayList<String>();
+                        for (Enum enumType : enums) {
+                            enumReturns.add(toReadable(enumType.name()));
+                        }
+                        sender.sendMessage(ChatColor.RED + enumName + ": " + ChatColor.GREEN
+                                + StringUtils.join(enumReturns, ChatColor.RED + ", " + ChatColor.GREEN));
                         return true;
                     }
                     DisguiseType type = null;
@@ -65,6 +100,14 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "Item ID with optional :Durability";
                                 } else if (ItemStack[].class == c) {
                                     valueType = "Item ID,ID,ID,ID with optional :Durability";
+                                } else if (Style.class == c) {
+                                    valueType = "Horse Style";
+                                } else if (Color.class == c) {
+                                    valueType = "Horse Color";
+                                } else if (Type.class == c) {
+                                    valueType = "Ocelot type";
+                                } else if (Profession.class == c) {
+                                    valueType = "Villager Profession";
                                 }
                                 if (valueType != null) {
                                     methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
@@ -85,11 +128,30 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         return true;
     }
 
+    public String toReadable(String string) {
+        String[] split = string.split("_");
+        for (int i = 0; i < split.length; i++)
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        return StringUtils.join(split, "_");
+    }
+
     /**
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> - View the options you can set on a disguise");
-        sender.sendMessage(ChatColor.RED + "/disguisehelp Colors - View all the colors you can use for a disguise color");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN
+                + "- View the options you can set on a disguise");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp AnimalColors " + ChatColor.GREEN
+                + "- View all the colors you can use for a animal color");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp HorseColors " + ChatColor.GREEN
+                + "- View all the colors you can use for a horses color");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp HorseStyles " + ChatColor.GREEN
+                + "- View all the styles you can use for a horses style");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp OcelotTypes " + ChatColor.GREEN
+                + "- View all the ocelot types you can use for ocelots");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp Professions " + ChatColor.GREEN
+                + "- View all the professions you can set on a villager");
+        sender.sendMessage(ChatColor.RED + "/disguisehelp PotionEffect " + ChatColor.GREEN
+                + "- View all the potion effects you can set");
     }
 }
