@@ -18,10 +18,18 @@ public class LivingWatcher extends FlagWatcher {
         super(disguise);
     }
 
+    @Deprecated
     public void addPotionEffect(PotionEffect potionEffect) {
         if (hasPotionEffect(potionEffect.getType()))
             removePotionEffect(potionEffect.getType());
-        new MobEffect(potionEffect.getType().getId(), potionEffect.getDuration(), potionEffect.getAmplifier());
+        potionEffects.add(new MobEffect(potionEffect.getType().getId(), potionEffect.getDuration(), potionEffect.getAmplifier()));
+        sendPotionEffects();
+    }
+
+    public void addPotionEffect(PotionEffectType potionEffect) {
+        if (hasPotionEffect(potionEffect))
+            removePotionEffect(potionEffect);
+        potionEffects.add(new MobEffect(potionEffect.getId(), 0, 0));
         sendPotionEffects();
     }
 
