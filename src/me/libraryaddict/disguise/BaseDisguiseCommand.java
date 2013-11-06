@@ -155,11 +155,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     value = (double) obj;
                                 }
                             } else {
-                                throw parseString("number", valueString, methodName);
+                                throw parseToException("number", valueString, methodName);
                             }
                         } else if (boolean.class == param) {
                             if (!("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString)))
-                                throw parseString("true/false", valueString, methodName);
+                                throw parseToException("true/false", valueString, methodName);
                             value = (boolean) "true".equalsIgnoreCase(valueString);
                         } else if (param == String.class) {
                             value = ChatColor.translateAlternateColorCodes('&', valueString);
@@ -167,11 +167,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             try {
                                 value = AnimalColor.valueOf(valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseString("animal color", valueString, methodName);
+                                throw parseToException("animal color", valueString, methodName);
                             }
                         } else if (param == ItemStack.class) {
                             try {
-                                value = parseString(valueString);
+                                value = parseToItemstack(valueString);
                             } catch (Exception ex) {
                                 throw new Exception(String.format(ex.getMessage(), methodName));
                             }
@@ -181,15 +181,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             if (split.length == 4) {
                                 for (int a = 0; a < 4; a++) {
                                     try {
-                                        ItemStack item = parseString(split[a]);
+                                        ItemStack item = parseToItemstack(split[a]);
                                         items[a] = item;
                                     } catch (Exception ex) {
-                                        throw parseString("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                        throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
                                                 + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                                     }
                                 }
                             } else {
-                                throw parseString("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
                                         + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                             }
                             value = items;
@@ -207,12 +207,12 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
-    private Exception parseString(String expectedValue, String receivedInstead, String methodName) {
+    private Exception parseToException(String expectedValue, String receivedInstead, String methodName) {
         return new Exception(ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED + ", received "
                 + ChatColor.GREEN + receivedInstead + ChatColor.RED + " instead for " + ChatColor.GREEN + methodName);
     }
 
-    private ItemStack parseString(String string) throws Exception {
+    private ItemStack parseToItemstack(String string) throws Exception {
         String[] split = string.split(":", -1);
         if (isNumeric(split[0])) {
             int itemId = Integer.parseInt(split[0]);
@@ -221,15 +221,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 if (isNumeric(split[1])) {
                     itemDura = Short.parseShort(split[1]);
                 } else {
-                    throw parseString("item ID:Durability combo", string, "%s");
+                    throw parseToException("item ID:Durability combo", string, "%s");
                 }
             }
             return new ItemStack(itemId, 1, itemDura);
         } else {
             if (split.length == 1) {
-                throw parseString("item ID", string, "%s");
+                throw parseToException("item ID", string, "%s");
             } else {
-                throw parseString("item ID:Durability combo", string, "%s");
+                throw parseToException("item ID:Durability combo", string, "%s");
             }
         }
     }

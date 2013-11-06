@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class DisguiseListener implements Listener {
 
     private String currentVersion;
+    private DisguiseAPI disguiseAPI = new DisguiseAPI();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<String, BukkitRunnable>();
     private HashMap<String, Disguise> disguiseSlap = new HashMap<String, Disguise>();
     private String latestVersion;
@@ -27,7 +28,6 @@ public class DisguiseListener implements Listener {
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
-    private DisguiseAPI disguiseAPI = new DisguiseAPI();
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
@@ -58,32 +58,6 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onVechileLeave(VehicleExitEvent event) {
-        if (event.isCancelled())
-            return;
-        final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
-        if (disguise != null && event.getExited() instanceof Player) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    disguiseAPI.setupFakeDisguise(disguise);
-                    ((Player) disguise.getEntity()).updateInventory();
-                }
-            });
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onVechileEnter(VehicleEnterEvent event) {
-        if (event.isCancelled())
-            return;
-        Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
-        if (disguise != null && event.getEntered() instanceof Player) {
-            disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
-            ((Player) event.getEntered()).updateInventory();
-        }
-    }
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
@@ -110,6 +84,32 @@ public class DisguiseListener implements Listener {
                 } else
                     event.getPlayer().sendMessage(ChatColor.RED + entityName + " isn't disguised!");
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVechileEnter(VehicleEnterEvent event) {
+        if (event.isCancelled())
+            return;
+        Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
+        if (disguise != null && event.getEntered() instanceof Player) {
+            disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
+            ((Player) event.getEntered()).updateInventory();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVechileLeave(VehicleExitEvent event) {
+        if (event.isCancelled())
+            return;
+        final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
+        if (disguise != null && event.getExited() instanceof Player) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                public void run() {
+                    disguiseAPI.setupFakeDisguise(disguise);
+                    ((Player) disguise.getEntity()).updateInventory();
+                }
+            });
         }
     }
 
