@@ -28,7 +28,7 @@ public class HorseWatcher extends AgeableWatcher {
         return isTrue(8);
     }
 
-    public boolean isBredable() {
+    public boolean isBreedable() {
         return isTrue(16);
     }
 
@@ -56,8 +56,8 @@ public class HorseWatcher extends AgeableWatcher {
         return ((Integer) getValue(16, (byte) 0) & i) != 0;
     }
 
-    public void setCanBred(boolean bred) {
-        setFlag(16, bred);
+    public void setCanBreed(boolean breed) {
+        setFlag(16, breed);
     }
 
     public void setCarryingChest(boolean chest) {
