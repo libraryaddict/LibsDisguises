@@ -10,12 +10,12 @@ public class WitherSkullWatcher extends FlagWatcher {
     }
 
     public boolean isBlue() {
-        return (Byte) getValue(0, (byte) 0) == 1;
+        return (Byte) getValue(10, (byte) 0) == 1;
     }
 
     public void setBlue(boolean blue) {
-        setValue(0, (byte) (blue ? 1 : 0));
-        sendData(0);
+        setValue(10, (byte) (blue ? 1 : 0));
+        sendData(10);
     }
 
 }
