@@ -202,7 +202,7 @@ public class PacketsManager {
             int id = ((MiscDisguise) disguise).getId();
             if (id == -1)
                 id = new Random().nextInt(EnumArt.values().length);
-            mods.write(5, EnumArt.values()[id].B);
+            mods.write(5, EnumArt.values()[id % EnumArt.values().length].B);
 
             // Make the teleport packet to make it visible..
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
