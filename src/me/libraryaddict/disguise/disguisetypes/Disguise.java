@@ -419,12 +419,21 @@ public abstract class Disguise {
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // If the watcher already set a metadata on this
-            if (getWatcher().getValue(dataNo, null) != null) {
+            if (getWatcher().hasValue(dataNo)) {
                 // Better check that the value is stable.
-                if (disguiseValues.containsKey(dataNo)
-                        && getWatcher().getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass()) {
-                    // The classes are the same. The client "shouldn't" crash.
-                    continue;
+                // To check this, I'm going to check if there exists a default value
+                // Then I'm going to check if the watcher value is the same as the default value.
+                if (disguiseValues.containsKey(dataNo)) {
+                    // Now check if they are the same class, or both null.
+                    if (disguiseValues.get(dataNo) == null || getWatcher().getValue(dataNo, null) == null) {
+                        if (disguiseValues.get(dataNo) == null && getWatcher().getValue(dataNo, null) == null) {
+                            // They are both null. Idk what this means really.
+                            continue;
+                        }
+                    } else if (getWatcher().getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass()) {
+                        // The classes are the same. The client "shouldn't" crash.
+                        continue;
+                    }
                 }
             }
             // If neither of them touch it
