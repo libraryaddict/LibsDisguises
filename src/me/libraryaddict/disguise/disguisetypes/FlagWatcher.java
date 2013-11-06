@@ -174,6 +174,10 @@ public class FlagWatcher {
         return backup;
     }
 
+    protected boolean hasValue(int no) {
+        return entityValues.containsKey(no);
+    }
+
     public boolean isBurning() {
         return getFlag(0);
     }
