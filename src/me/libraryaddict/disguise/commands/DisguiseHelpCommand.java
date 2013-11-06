@@ -104,6 +104,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "Ocelot type";
                                 } else if (Profession.class == c) {
                                     valueType = "Villager Profession";
+                                } else if (PotionEffectType.class == c) {
+                                    valueType = "Potioneffect Type";
                                 }
                                 if (valueType != null) {
                                     methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN

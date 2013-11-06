@@ -235,13 +235,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
 
                             // Parse to potion effect
-                        } else if (param == PotionEffect.class) {
+                        } else if (param == PotionEffectType.class) {
                             try {
                                 PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
                                 if (potionType == null && isNumeric(valueString)) {
                                     potionType = PotionEffectType.getById(Integer.parseInt(valueString));
                                 }
-                                value = new PotionEffect(potionType, 0, 0);
+                                if (potionType == null)
+                                    throw new Exception();
+                                value = potionType;
                             } catch (Exception ex) {
                                 throw parseToException("potioneffect type", valueString, methodName);
                             }
