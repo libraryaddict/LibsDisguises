@@ -127,13 +127,6 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         return true;
     }
 
-    public String toReadable(String string) {
-        String[] split = string.split("_");
-        for (int i = 0; i < split.length; i++)
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-        return StringUtils.join(split, "_");
-    }
-
     /**
      * Send the player the information
      */
@@ -152,5 +145,12 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                 + "- View all the professions you can set on a villager");
         sender.sendMessage(ChatColor.RED + "/disguisehelp PotionEffect " + ChatColor.GREEN
                 + "- View all the potion effects you can set");
+    }
+
+    public String toReadable(String string) {
+        String[] split = string.split("_");
+        for (int i = 0; i < split.length; i++)
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        return StringUtils.join(split, "_");
     }
 }

@@ -21,11 +21,6 @@ public class WolfWatcher extends AgeableWatcher {
         return (String) getValue(17, "");
     }
 
-    public void setOwner(String owner) {
-        setValue(17, owner);
-        sendData(17);
-    }
-
     public boolean isAngry() {
         return isTrue(2);
     }
@@ -66,6 +61,11 @@ public class WolfWatcher extends AgeableWatcher {
     public void setHealth(float newHealth) {
         setValue(18, newHealth);
         sendData(18);
+    }
+
+    public void setOwner(String owner) {
+        setValue(17, owner);
+        sendData(17);
     }
 
     public void setSitting(boolean sitting) {

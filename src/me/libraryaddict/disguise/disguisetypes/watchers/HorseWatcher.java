@@ -18,6 +18,10 @@ public class HorseWatcher extends AgeableWatcher {
         return Color.values()[((Integer) getValue(20, 0) & 0xFF)];
     }
 
+    public String getOwnerName() {
+        return (String) getValue(21, "");
+    }
+
     public Style getStyle() {
         return Style.values()[((Integer) getValue(20, 0) >>> 8)];
     }
@@ -62,15 +66,6 @@ public class HorseWatcher extends AgeableWatcher {
         setFlag(8, true);
     }
 
-    public String getOwnerName() {
-        return (String) getValue(21, "");
-    }
-
-    public void setOwnerName(String name) {
-        setValue(21, name);
-        sendData(21);
-    }
-
     public void setColor(Color color) {
         setValue(20, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
         sendData(20);
@@ -97,6 +92,11 @@ public class HorseWatcher extends AgeableWatcher {
 
     public void setMouthOpen(boolean mouthOpen) {
         setFlag(128, mouthOpen);
+    }
+
+    public void setOwnerName(String name) {
+        setValue(21, name);
+        sendData(21);
     }
 
     public void setRearing(boolean rear) {

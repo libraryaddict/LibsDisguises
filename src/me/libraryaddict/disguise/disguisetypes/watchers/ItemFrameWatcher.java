@@ -12,10 +12,19 @@ public class ItemFrameWatcher extends FlagWatcher {
         super(disguise);
     }
 
+    public int getItemRotation() {
+        return (Integer) getValue(3, 0);
+    }
+
     public ItemStack getItemStack() {
         if (getValue(2, null) == null)
             return new ItemStack(0);
         return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R3.ItemStack) getValue(2, null));
+    }
+
+    public void setItemRotation(int rotation) {
+        setValue(3, (byte) (rotation % 4));
+        sendData(3);
     }
 
     public void setItemStack(ItemStack newItem) {
@@ -23,15 +32,6 @@ public class ItemFrameWatcher extends FlagWatcher {
         newItem.setAmount(1);
         setValue(2, CraftItemStack.asNMSCopy(newItem));
         sendData(2);
-    }
-
-    public int getItemRotation() {
-        return (Integer) getValue(3, 0);
-    }
-
-    public void setItemRotation(int rotation) {
-        setValue(3, (byte) (rotation % 4));
-        sendData(3);
     }
 
 }
