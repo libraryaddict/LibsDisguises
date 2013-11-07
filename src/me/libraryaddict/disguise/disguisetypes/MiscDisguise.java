@@ -14,6 +14,11 @@ public class MiscDisguise extends Disguise {
         this(disguiseType, replaceSounds, -1, -1);
     }
 
+    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int addictionalData) {
+        this(disguiseType, replaceSounds, (disguiseType == DisguiseType.FALLING_BLOCK ? addictionalData : -1),
+                (disguiseType == DisguiseType.FALLING_BLOCK ? -1 : addictionalData));
+    }
+
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
         switch (disguiseType) {
         // The only disguises which should use a custom data.
@@ -39,14 +44,6 @@ public class MiscDisguise extends Disguise {
             data = disguiseType.getDefaultData();
         this.data = data;
         createDisguise(disguiseType, replaceSounds);
-    }
-
-    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int addictionalData) {
-        this(disguiseType, replaceSounds, -1, addictionalData);
-    }
-
-    public int getId() {
-        return id;
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
@@ -87,6 +84,10 @@ public class MiscDisguise extends Disguise {
 
     public int getData() {
         return data;
+    }
+
+    public int getId() {
+        return id;
     }
 
 }
