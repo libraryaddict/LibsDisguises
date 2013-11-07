@@ -10,12 +10,19 @@ public class EndermanWatcher extends LivingWatcher {
         super(disguise);
     }
 
+    @Deprecated
     public int getCarriedData() {
         return ((Byte) getValue(17, (byte) 0));
     }
 
+    @Deprecated
     public int getCarriedId() {
         return ((Byte) getValue(16, (byte) 0));
+    }
+
+    @Override
+    public ItemStack getHeldItem() {
+        return new ItemStack((Byte) getValue(16, (byte) 0), 1, ((Byte) getValue(17, (byte) 0)));
     }
 
     public boolean isAgressive() {
@@ -35,7 +42,14 @@ public class EndermanWatcher extends LivingWatcher {
         sendData(17);
     }
 
+    @Deprecated
     public void setCarriedItem(ItemStack itemstack) {
+        setValue(16, (byte) (itemstack.getTypeId() & 255));
+        setValue(17, (byte) (itemstack.getDurability() & 255));
+    }
+
+    @Override
+    public void setHeldItem(ItemStack itemstack) {
         setValue(16, (byte) (itemstack.getTypeId() & 255));
         setValue(17, (byte) (itemstack.getDurability() & 255));
     }

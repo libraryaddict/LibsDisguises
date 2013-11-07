@@ -6,8 +6,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-
-
 public class DroppedItemWatcher extends FlagWatcher {
 
     public DroppedItemWatcher(Disguise disguise) {
