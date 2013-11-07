@@ -84,12 +84,14 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                             if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1) {
                                 Class c = method.getParameterTypes()[0];
                                 String valueType = null;
-                                if (c == String.class)
+                                if (c == String.class) {
                                     valueType = "String";
-                                else if (boolean.class == c)
+                                } else if (boolean.class == c) {
                                     valueType = "True/False";
-                                else if (float.class == c || double.class == c || int.class == c) {
+                                } else if (int.class == c) {
                                     valueType = "Number";
+                                } else if (float.class == c || double.class == c) {
+                                    valueType = "Number.0";
                                 } else if (AnimalColor.class == c) {
                                     valueType = "Color";
                                 } else if (ItemStack.class == c) {
