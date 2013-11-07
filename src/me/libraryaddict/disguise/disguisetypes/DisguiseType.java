@@ -133,11 +133,11 @@ public enum DisguiseType {
     }
 
     private int defaultData;
-
     private int defaultId;
     private int entityId;
     private EntityType entityType;
     private Class watcherClass;
+
     private DisguiseType(EntityType newType, int... obj) {
         entityType = newType;
         for (int i = 0; i < obj.length; i++) {

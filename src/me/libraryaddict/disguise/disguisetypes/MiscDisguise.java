@@ -15,13 +15,38 @@ public class MiscDisguise extends Disguise {
     }
 
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
-        if (id == -1)
-            id = disguiseType.getDefaultId();
+        switch (disguiseType) {
+        // The only disguises which should use a custom data.
+        case FISHING_HOOK:
+        case ARROW:
+        case SPLASH_POTION:
+        case SMALL_FIREBALL:
+        case FIREBALL:
+        case WITHER_SKULL:
+        case PAINTING:
+        case FALLING_BLOCK:
+            break;
+        default:
+            data = -1;
+            break;
+        }
+        if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
+            this.id = id;
+        } else {
+            this.id = disguiseType.getDefaultId();
+        }
         if (data == -1)
             data = disguiseType.getDefaultData();
-        this.id = id;
         this.data = data;
         createDisguise(disguiseType, replaceSounds);
+    }
+
+    public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int addictionalData) {
+        this(disguiseType, replaceSounds, -1, addictionalData);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
@@ -40,13 +65,7 @@ public class MiscDisguise extends Disguise {
 
     @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds, int id, int data) {
-        if (id == -1)
-            id = DisguiseType.getType(entityType).getDefaultId();
-        if (data == -1)
-            data = DisguiseType.getType(entityType).getDefaultData();
-        this.id = id;
-        this.data = data;
-        createDisguise(DisguiseType.getType(entityType), replaceSounds);
+        this(DisguiseType.getType(entityType), replaceSounds, id, data);
     }
 
     @Deprecated
@@ -56,7 +75,7 @@ public class MiscDisguise extends Disguise {
 
     @Override
     public MiscDisguise clone() {
-        MiscDisguise disguise = new MiscDisguise(getType(), replaceSounds(), getId(), getData());
+        MiscDisguise disguise = new MiscDisguise(getType(), replaceSounds(), getData());
         disguise.setViewSelfDisguise(viewSelfDisguise());
         disguise.setHearSelfDisguise(canHearSelfDisguise());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
@@ -68,10 +87,6 @@ public class MiscDisguise extends Disguise {
 
     public int getData() {
         return data;
-    }
-
-    public int getId() {
-        return id;
     }
 
 }

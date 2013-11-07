@@ -199,7 +199,7 @@ public class PacketsManager {
             mods.write(2, loc.getBlockY());
             mods.write(3, loc.getBlockZ());
             mods.write(4, ((int) loc.getYaw()) % 4);
-            int id = ((MiscDisguise) disguise).getId();
+            int id = ((MiscDisguise) disguise).getData();
             if (id == -1)
                 id = new Random().nextInt(EnumArt.values().length);
             mods.write(5, EnumArt.values()[id % EnumArt.values().length].B);
@@ -275,17 +275,21 @@ public class PacketsManager {
 
             int id = disguise.getType().getEntityId();
             int data = 0;
-            if (((MiscDisguise) disguise).getId() >= 0)
+            if (((MiscDisguise) disguise).getId() >= 0) {
                 if (((MiscDisguise) disguise).getData() >= 0)
                     data = (((MiscDisguise) disguise).getId() | ((MiscDisguise) disguise).getData() << 16);
                 else
                     data = ((MiscDisguise) disguise).getId();
+            }
             // This won't actually work.
             // But if someone constructing the disguise uses it properly. It will work.
             if (disguise.getType() == DisguiseType.FISHING_HOOK)
                 data = disguise.getEntity().getEntityId();
-            else if (disguise.getType() == DisguiseType.ITEM_FRAME)
-                data = (int) Math.abs(loc.getYaw() % 4);
+            else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                data = (int) loc.getYaw();
+                if (data < 0)
+                    data = -data;
+            }
             spawnPackets[0] = new PacketContainer(Packets.Server.VEHICLE_SPAWN);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
