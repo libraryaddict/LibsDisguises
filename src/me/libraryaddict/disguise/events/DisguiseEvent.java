@@ -1,13 +1,11 @@
 package me.libraryaddict.disguise.events;
 
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
 
 public class DisguiseEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -18,7 +16,6 @@ public class DisguiseEvent extends Event implements Cancellable {
 
     private Disguise disguise;
     private Entity disguised;
-
     private boolean isCancelled;
 
     public DisguiseEvent(Entity entity, Disguise disguise) {

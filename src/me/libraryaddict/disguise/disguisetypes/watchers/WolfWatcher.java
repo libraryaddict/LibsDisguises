@@ -13,6 +13,7 @@ public class WolfWatcher extends AgeableWatcher {
         return AnimalColor.values()[(Byte) getValue(20, (byte) 14)];
     }
 
+    @Override
     public float getHealth() {
         return (Float) getValue(18, 8F);
     }
@@ -58,6 +59,7 @@ public class WolfWatcher extends AgeableWatcher {
         sendData(16);
     }
 
+    @Override
     public void setHealth(float newHealth) {
         setValue(18, newHealth);
         sendData(18);
