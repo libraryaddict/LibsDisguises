@@ -4,12 +4,12 @@ version: ${project.version}
 author: libraryaddict
 depend: [ProtocolLib]
 commands:
-   disguisehelp:
-      aliases: [dhelp, dishelp]
    disguise:
       aliases: [d, dis]
    disguiseentity:
       aliases: [dentity, disentity]
+   disguisehelp:
+      aliases: [dhelp, dishelp]
    disguiseplayer:
       aliases: [dplayer, displayer]
    disguiseradius:
