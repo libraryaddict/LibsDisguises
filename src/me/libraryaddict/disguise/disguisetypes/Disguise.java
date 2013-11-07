@@ -55,9 +55,9 @@ public abstract class Disguise {
     @Override
     public abstract Disguise clone();
 
-    protected Disguise createDisguise(DisguiseType newType, boolean doSounds) {
+    protected void createDisguise(DisguiseType newType, boolean doSounds) {
         if (getWatcher() != null)
-            return this;
+            return;
         // Set the disguise type
         disguiseType = newType;
         // Set the option to replace the sounds
@@ -269,7 +269,6 @@ public abstract class Disguise {
                 }
             }
         };
-        return this;
     }
 
     /**
