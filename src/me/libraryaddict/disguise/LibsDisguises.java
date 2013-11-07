@@ -199,6 +199,9 @@ public class LibsDisguises extends JavaPlugin {
             case FIREBALL:
                 name = "LargeFireball";
                 break;
+            case LEASH_HITCH:
+                name = "Leash";
+                break;
             default:
                 break;
             }

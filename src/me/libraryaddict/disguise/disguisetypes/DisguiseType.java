@@ -56,6 +56,8 @@ public enum DisguiseType {
 
     ITEM_FRAME(EntityType.ITEM_FRAME, 71),
 
+    LEASH_HITCH(EntityType.LEASH_HITCH, 77),
+
     MAGMA_CUBE(EntityType.MAGMA_CUBE),
 
     MINECART(EntityType.MINECART, 10, 0),
