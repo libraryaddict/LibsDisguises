@@ -10,6 +10,8 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -124,7 +126,12 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     }
                 }
                 // Construct the disguise
-                disguise = new MiscDisguise(disguiseType, true, miscId, miscData);
+                if (disguiseType == DisguiseType.DROPPED_ITEM) {
+                    disguise = new MiscDisguise(disguiseType, true);
+                    ((DroppedItemWatcher) disguise.getWatcher()).setItemStack(new ItemStack(miscId, 1, (short) miscData));
+                } else {
+                    disguise = new MiscDisguise(disguiseType, true, miscId, miscData);
+                }
             }
         }
         // Copy strings to their new range
