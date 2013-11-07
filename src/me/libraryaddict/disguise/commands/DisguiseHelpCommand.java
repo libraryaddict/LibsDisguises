@@ -32,13 +32,13 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     Enum[] enums = null;
                     String enumName = null;
                     ArrayList<String> enumReturns = new ArrayList<String>();
-                    if (args[0].equalsIgnoreCase("animalcolor") || args[0].equalsIgnoreCase("animalcolors")) {
+                    if (args[0].equalsIgnoreCase("AnimalColor") || args[0].equalsIgnoreCase("AnimalColors")) {
                         enums = AnimalColor.values();
                         enumName = "Animal colors";
-                    } else if (args[0].equalsIgnoreCase("horsecolor") || args[0].equalsIgnoreCase("horsecolors")) {
+                    } else if (args[0].equalsIgnoreCase("HorseColor") || args[0].equalsIgnoreCase("HorseColors")) {
                         enums = Color.values();
                         enumName = "Horse colors";
-                    } else if (args[0].equalsIgnoreCase("horsestyle") || args[0].equalsIgnoreCase("horsestyles")) {
+                    } else if (args[0].equalsIgnoreCase("HorseStyle") || args[0].equalsIgnoreCase("HorseStyles")) {
                         enums = Style.values();
                         enumName = "Horse styles";
                     } else if (args[0].equalsIgnoreCase("OcelotType") || args[0].equalsIgnoreCase("OcelotTypes")) {
@@ -48,7 +48,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         enums = Profession.values();
                         enumName = "Villager professions";
                     } else if (args[0].equalsIgnoreCase("PotionEffect") || args[0].equalsIgnoreCase("PotionEffects")) {
-                        enumName = "Potioneffects";
+                        enumName = "PotionEffect";
                         for (PotionEffectType potionType : PotionEffectType.values()) {
                             if (potionType != null)
                                 enumReturns.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN
