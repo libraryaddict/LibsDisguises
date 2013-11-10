@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 public class MiscDisguise extends Disguise {
     private int data = -1;
@@ -15,8 +18,9 @@ public class MiscDisguise extends Disguise {
     }
 
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int addictionalData) {
-        this(disguiseType, replaceSounds, (disguiseType == DisguiseType.FALLING_BLOCK ? addictionalData : -1),
-                (disguiseType == DisguiseType.FALLING_BLOCK ? -1 : addictionalData));
+        this(disguiseType, replaceSounds, (disguiseType == DisguiseType.FALLING_BLOCK
+                || disguiseType == DisguiseType.DROPPED_ITEM ? addictionalData : -1), (disguiseType == DisguiseType.FALLING_BLOCK
+                || disguiseType == DisguiseType.DROPPED_ITEM ? -1 : addictionalData));
     }
 
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
@@ -36,6 +40,8 @@ public class MiscDisguise extends Disguise {
             break;
         }
         if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
+
+        } else if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
             this.id = id;
         } else {
             this.id = disguiseType.getDefaultId();
@@ -44,6 +50,11 @@ public class MiscDisguise extends Disguise {
             data = disguiseType.getDefaultData();
         this.data = data;
         createDisguise(disguiseType, replaceSounds);
+        if (disguiseType == DisguiseType.DROPPED_ITEM) {
+            if (id > 0) {
+                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, data));
+            }
+        }
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
