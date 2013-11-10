@@ -220,19 +220,20 @@ public class PacketsManager {
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, ((PlayerDisguise) disguise).getName());
-            mods.write(2, (int) Math.floor(loc.getX() * 32));
-            mods.write(3, (int) Math.floor(loc.getY() * 32));
-            mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, yaw);
-            mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
+            mods.write(2, ((PlayerDisguise) disguise).getName());
+            mods.write(3, (int) Math.floor(loc.getX() * 32));
+            mods.write(4, (int) Math.floor(loc.getY() * 32));
+            mods.write(5, (int) Math.floor(loc.getZ() * 32));
+            mods.write(6, yaw);
+            mods.write(7, (byte) (int) (loc.getPitch() * 256F / 360F));
             ItemStack item = null;
             if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
                 item = CraftItemStack.asNMSCopy(((Player) disguisedEntity).getItemInHand());
             } else if (disguisedEntity instanceof LivingEntity) {
                 item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
             }
-            mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(8, (item == null ? 0 : item.id));
+            mods.write(9, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
 
         } else if (disguise.getType().isMob()) {
 
