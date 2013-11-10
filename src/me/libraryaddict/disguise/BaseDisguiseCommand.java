@@ -126,12 +126,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     }
                 }
                 // Construct the disguise
-                if (disguiseType == DisguiseType.DROPPED_ITEM) {
-                    disguise = new MiscDisguise(disguiseType, true);
-                    ((DroppedItemWatcher) disguise.getWatcher()).setItemStack(new ItemStack(miscId, 1, (short) miscData));
-                } else {
-                    disguise = new MiscDisguise(disguiseType, true, miscId, miscData);
-                }
+                disguise = new MiscDisguise(disguiseType, miscId, miscData);
             }
         }
         // Copy strings to their new range
