@@ -157,7 +157,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     if (types.length == 1) {
                         Class param = types[0];
                         // Parse to number
-                        if (float.class == param || double.class == param || int.class == param) {
+                        if (int.class == param) {
+                            if (isNumeric(valueString)) {
+                                value = (int) Integer.parseInt(valueString);
+                            } else {
+                                throw parseToException("number", valueString, methodName);
+                            }
+                            // Parse to boolean
+                        } else if (float.class == param || double.class == param) {
                             if (isDouble(valueString)) {
                                 float obj = Float.parseFloat(valueString);
                                 if (param == float.class) {
@@ -168,7 +175,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     value = (double) obj;
                                 }
                             } else {
-                                throw parseToException("number", valueString, methodName);
+                                throw parseToException("number.0", valueString, methodName);
                             }
                             // Parse to boolean
                         } else if (boolean.class == param) {
