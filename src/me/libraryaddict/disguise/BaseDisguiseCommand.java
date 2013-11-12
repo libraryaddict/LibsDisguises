@@ -2,7 +2,9 @@ package me.libraryaddict.disguise;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -18,17 +20,41 @@ import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Ocelot.Type;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
+
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
         ArrayList<String> names = new ArrayList<String>();
-        for (DisguiseType type : DisguiseType.values()) {
-            String name = type.name().toLowerCase();
-            if (sender.hasPermission("libsdisguises." + permissionNode + ".*")
-                    || sender.hasPermission("libsdisguises." + permissionNode + "." + name))
-                names.add(name);
+        ArrayList<String> forbiddenDisguises = new ArrayList<String>();
+        for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+            String perm = permission.getPermission().toLowerCase();
+            if (perm.startsWith(permissionNode)) {
+                perm = perm.substring(permissionNode.length());
+                for (DisguiseType type : DisguiseType.values()) {
+                    String name = type.name().toLowerCase();
+                    if (perm.split("//.")[0].equals("*") && permission.getValue()) {
+                        names.add(name);
+                    } else if (perm.split("//.")[0].equals(name)) {
+                        if (permission.getValue()) {
+                            names.add(name);
+                        } else {
+                            forbiddenDisguises.add(name);
+                        }
+                    }
+                }
+            }
         }
+        for (DisguiseType type : DisguiseType.values()) {
+            if (!names.contains(type.name().toLowerCase())) {
+                if (sender.hasPermission(permissionNode + "*")
+                        || sender.hasPermission(permissionNode + type.name().toLowerCase())) {
+                    names.add(type.name().toLowerCase());
+                }
+            }
+        }
+        names.removeAll(forbiddenDisguises);
         Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
         return names;
     }
@@ -52,12 +78,40 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     /**
+     * Returns null if they have all perms. Else they can only use the options in the returned
+     */
+    protected HashSet<HashSet<String>> getPermissions(CommandSender sender, String disguiseType) {
+        HashSet<HashSet<String>> perms = new HashSet<HashSet<String>>();
+        String permNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
+        for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+            if (permission.getValue()) {
+                String s = permission.getPermission().toLowerCase();
+                if (s.startsWith(permNode + disguiseType) || s.startsWith(permNode + "*")) {
+                    if (s.startsWith(permNode + disguiseType))
+                        s = s.substring((permNode + disguiseType).length());
+                    else if (s.startsWith(permNode + "*")) {
+                        s = s.substring((permNode + "*").length());
+                        if (s.length() == 0)
+                            continue;
+                    }
+                    if (s.length() == 0)
+                        return new HashSet<HashSet<String>>();
+                    HashSet<String> p = new HashSet<String>();
+                    p.addAll(Arrays.asList(s.split("\\.")));
+                    perms.add(p);
+                }
+            }
+        }
+        return perms;
+    }
+
+    /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
      * disguise has been feed a proper disguisetype.
      */
     protected Disguise parseDisguise(CommandSender sender, String[] args) throws Exception {
-        String permissionNode = getClass().getSimpleName().replace("Command", "").toLowerCase();
+        String permissionNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
         ArrayList<String> allowedDisguises = getAllowedDisguises(sender, permissionNode);
         if (allowedDisguises.isEmpty()) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this command.");
@@ -80,11 +134,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this disguise!");
         }
+        HashSet<String> usedOptions = new HashSet<String>();
         Disguise disguise = null;
         // How many args to skip due to the disugise being constructed
         int toSkip = 1;
         // Time to start constructing the disguise.
         // We will need to check between all 3 kinds of disguises
+
+        HashSet<HashSet<String>> optionPermissions = this.getPermissions(sender, disguiseType.name().toLowerCase());
         if (disguiseType.isPlayer()) {// If he is doing a player disguise
             if (args.length == 1) {
                 // He needs to give the player name
@@ -99,11 +156,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 boolean adult = true;
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+                        usedOptions.add("setbaby");
+                        doCheck(optionPermissions, usedOptions);
                         adult = "false".equalsIgnoreCase(args[1]);
                         sender.sendMessage(ChatColor.RED
                                 + "I notice you are using true/false for constructing a mob disguise! This will soon be removed in favor of the simple 'baby'");
                         toSkip++;
                     } else if (args[1].equalsIgnoreCase("baby")) {
+                        usedOptions.add("setbaby");
+                        doCheck(optionPermissions, usedOptions);
                         adult = false;
                         toSkip++;
                     }
@@ -138,7 +199,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             newArgs[i - toSkip] = args[i];
         }
         args = newArgs;
-        // Don't throw a error about uneven methods names and values so we can throw the error about what is unknown later.
         for (int i = 0; i < args.length; i += 2) {
             String methodName = args[i];
             if (i + 1 >= args.length) {
@@ -266,10 +326,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (methodToUse == null) {
                 throw new Exception(ChatColor.RED + "Cannot find the option " + methodName);
             }
+            usedOptions.add(methodName.toLowerCase());
+            doCheck(optionPermissions, usedOptions);
             methodToUse.invoke(disguise.getWatcher(), value);
         }
         // Alright. We've constructed our disguise.
         return disguise;
+    }
+
+    private void doCheck(HashSet<HashSet<String>> optionPermissions, HashSet<String> usedOptions) throws Exception {
+        if (!optionPermissions.isEmpty()) {
+            for (HashSet<String> perms : optionPermissions) {
+                if (!perms.containsAll(usedOptions)) {
+                    throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
+                            + usedOptions.iterator().next());
+                }
+            }
+        }
     }
 
     private Exception parseToException(String expectedValue, String receivedInstead, String methodName) {
