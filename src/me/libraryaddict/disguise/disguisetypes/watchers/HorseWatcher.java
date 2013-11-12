@@ -30,12 +30,12 @@ public class HorseWatcher extends AgeableWatcher {
         return isTrue(8);
     }
 
-    public boolean isBreedable() {
+    @Deprecated
+    public boolean isBredable() {
         return isTrue(16);
     }
 
-    @Deprecated
-    public boolean isBredable() {
+    public boolean isBreedable() {
         return isTrue(16);
     }
 

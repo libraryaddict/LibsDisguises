@@ -65,9 +65,7 @@ public abstract class Disguise {
         // Get if they are a adult now..
         boolean isBaby = false;
         if (this instanceof MobDisguise) {
-            if (!((MobDisguise) this).isAdult()) {
-                isBaby = true;
-            }
+            isBaby = !((MobDisguise) this).isAdult();
         }
         try {
             // Construct the FlagWatcher from the stored class
