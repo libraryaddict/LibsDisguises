@@ -100,6 +100,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 if (args.length > 1) {
                     if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
                         adult = "false".equalsIgnoreCase(args[1]);
+                        sender.sendMessage(ChatColor.RED
+                                + "I notice you are using true/false for constructing a mob disguise! This will soon be removed in favor of the simple 'baby'");
+                        toSkip++;
+                    } else if (args[1].equalsIgnoreCase("baby")) {
+                        adult = false;
                         toSkip++;
                     }
                 }
