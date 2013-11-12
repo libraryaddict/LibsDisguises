@@ -15,10 +15,6 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
-            return true;
-        }
         ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseplayer");
         if (allowedDisguises.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
