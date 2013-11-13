@@ -35,10 +35,12 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 for (DisguiseType type : DisguiseType.values()) {
                     String name = type.name().toLowerCase();
                     if (perm.split("//.")[0].equals("*") && permission.getValue()) {
-                        names.add(name);
+                        if (!names.contains(name))
+                            names.add(name);
                     } else if (perm.split("//.")[0].equals(name)) {
                         if (permission.getValue()) {
-                            names.add(name);
+                            if (!names.contains(name))
+                                names.add(name);
                         } else {
                             forbiddenDisguises.add(name);
                         }
@@ -46,6 +48,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
             }
         }
+        // This does the disguises for ops.
         for (DisguiseType type : DisguiseType.values()) {
             if (!names.contains(type.name().toLowerCase())) {
                 if (sender.hasPermission(permissionNode + "*")
@@ -97,7 +100,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     if (s.length() == 0)
                         return new HashSet<HashSet<String>>();
                     HashSet<String> p = new HashSet<String>();
-                    p.addAll(Arrays.asList(s.split("\\.")));
+                    for (String str : s.split("\\.")) {
+                        if (str.equals("baby"))
+                            str = "setbaby";
+                        p.add(str);
+                    }
                     perms.add(p);
                 }
             }
