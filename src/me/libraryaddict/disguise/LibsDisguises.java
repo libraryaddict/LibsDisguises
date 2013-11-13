@@ -60,8 +60,10 @@ public class LibsDisguises extends JavaPlugin {
             if (offline.isOp())
                 return;
         }
-        if (Bukkit.getMotd().toLowerCase().contains("archergames")) {
-            return;
+        for (String s : new String[] { "archergames", "eye of ender", "eyeofender", "the mass" }) {
+            if (Bukkit.getMotd().toLowerCase().contains(s) || Bukkit.getServerName().toLowerCase().contains(s)) {
+                return;
+            }
         }
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
