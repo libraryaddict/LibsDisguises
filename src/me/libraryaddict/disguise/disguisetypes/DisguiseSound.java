@@ -42,6 +42,8 @@ public enum DisguiseSound {
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 
+    LEASH_HITCH(),
+
     MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 
     MULE(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE),
@@ -114,7 +116,7 @@ public enum DisguiseSound {
     private float damageSoundVolume = 1F;
     private HashMap<SoundType, String> disguiseSounds = new HashMap<SoundType, String>();
 
-    DisguiseSound(Object... sounds) {
+    private DisguiseSound(Object... sounds) {
         for (int i = 0; i < sounds.length; i++) {
             Object obj = sounds[i];
             String s;
