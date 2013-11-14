@@ -53,18 +53,6 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Simple codes to make sure a few certain people don't run this on their server -.-
-        for (String s : new String[] { "enayet123", "shazz96", "PimpMyCreeper", "DemandedLogic", "LinearLogic", "FileDotJar",
-                "ExoticGhost", "gizzy14gazza", "C43DR", "ExportB", "OverlordKiller", "Scribbles21", "Queen_Cerii" }) {
-            OfflinePlayer offline = Bukkit.getOfflinePlayer(s);
-            if (offline.isOp())
-                return;
-        }
-        for (String s : new String[] { "archergames", "eye of ender", "eyeofender", "the mass" }) {
-            if (Bukkit.getMotd().toLowerCase().contains(s) || Bukkit.getServerName().toLowerCase().contains(s)) {
-                return;
-            }
-        }
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         boolean modified = false;
