@@ -6,6 +6,9 @@ import java.util.HashSet;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_6_R3.CraftSound;
 
+/**
+ * Only living disguises go in here!
+ */
 public enum DisguiseSound {
 
     BAT(Sound.BAT_HURT, null, Sound.BAT_DEATH, Sound.BAT_IDLE, Sound.BAT_LOOP, Sound.BAT_TAKEOFF, Sound.FALL_BIG,
@@ -41,8 +44,6 @@ public enum DisguiseSound {
             Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT, Sound.HORSE_WOOD),
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
-
-    LEASH_HITCH(),
 
     MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
 

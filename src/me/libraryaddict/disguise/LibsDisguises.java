@@ -23,7 +23,6 @@ import net.minecraft.server.v1_6_R3.WatchableObject;
 import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
