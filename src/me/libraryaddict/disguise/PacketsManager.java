@@ -94,8 +94,6 @@ public class PacketsManager {
                 Packets.Server.ENTITY_EQUIPMENT, Packets.Server.BED) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                if (event.getPacketID() == Packets.Server.ENTITY_LOOK)
-                    System.out.print("Packet 32 received master");
                 final Player observer = event.getPlayer();
                 // First get the entity, the one sending this packet
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
