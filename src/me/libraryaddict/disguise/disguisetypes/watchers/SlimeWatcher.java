@@ -8,7 +8,7 @@ public class SlimeWatcher extends LivingWatcher {
 
     public SlimeWatcher(Disguise disguise) {
         super(disguise);
-        setValue(16, (byte) (new Random().nextInt(4) + 1));
+        setSize(new Random().nextInt(4) + 1);
     }
 
     public int getSize() {
