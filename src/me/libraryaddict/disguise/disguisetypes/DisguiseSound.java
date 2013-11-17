@@ -41,7 +41,9 @@ public enum DisguiseSound {
     GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS),
 
     HORSE(Sound.HORSE_HIT, Sound.STEP_GRASS, "mob.horse.death", Sound.HORSE_IDLE, Sound.HORSE_GALLOP, Sound.HORSE_ANGRY,
-            Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT, Sound.HORSE_WOOD),
+            Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT, Sound.HORSE_WOOD,
+            "mob.horse.leather"), // TODO I really should finish adding all the sounds. Lazy bukkit didn't add all of them either.
+                                  // -.-
 
     IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
 

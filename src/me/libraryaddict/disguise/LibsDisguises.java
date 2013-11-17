@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import net.minecraft.server.v1_6_R3.ChatMessage;
 import net.minecraft.server.v1_6_R3.ChunkCoordinates;
+import net.minecraft.server.v1_6_R3.Entity;
 import net.minecraft.server.v1_6_R3.EntityHuman;
 import net.minecraft.server.v1_6_R3.EntityLiving;
 import net.minecraft.server.v1_6_R3.GenericAttributes;
@@ -201,7 +202,7 @@ public class LibsDisguises extends JavaPlugin {
                     entityClass = EntityHuman.class;
                     entity = new DisguiseHuman(world);
                 } else {
-                    entityClass = Class.forName("net.minecraft.server.v1_6_R3.Entity" + name);
+                    entityClass = Class.forName(Entity.class.getName() + name);
                     entity = (net.minecraft.server.v1_6_R3.Entity) entityClass.getConstructor(World.class).newInstance(world);
                 }
                 Values value = new Values(disguiseType, entityClass, entity.at);
@@ -216,6 +217,7 @@ public class LibsDisguises extends JavaPlugin {
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Method soundStrength = EntityLiving.class.getDeclaredMethod("ba");
+                    // TODO Update this each update!
                     soundStrength.setAccessible(true);
                     sound.setDamageSoundVolume((Float) soundStrength.invoke(entity));
                 }
