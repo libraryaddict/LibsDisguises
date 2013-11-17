@@ -11,7 +11,7 @@ public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(Disguise disguise) {
         super(disguise);
-        setValue(20, new Random().nextInt(7));
+        setColorId(new Random().nextInt(Color.values().length));
     }
 
     public Color getColor() {

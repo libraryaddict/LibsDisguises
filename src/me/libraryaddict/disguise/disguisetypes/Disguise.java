@@ -90,6 +90,8 @@ public abstract class Disguise {
         // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
+                // Don't mess with this because Varient is something like ZombieHorse and so on.
+                // Not something that a watcher needs to access.
                 Variant horseType = Variant.valueOf(getType().name());
                 getWatcher().setValue(19, (byte) horseType.ordinal());
             } catch (Exception ex) {
