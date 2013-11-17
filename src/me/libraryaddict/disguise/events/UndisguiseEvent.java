@@ -18,7 +18,6 @@ public class UndisguiseEvent extends Event implements Cancellable {
 
     private Disguise disguise;
     private Entity disguised;
-
     private boolean isCancelled;
 
     public UndisguiseEvent(Entity entity, Disguise disguise) {

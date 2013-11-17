@@ -81,7 +81,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     Class watcher = type.getWatcherClass();
                     try {
                         for (Method method : watcher.getMethods()) {
-                            if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1) {
+                            if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
+                                    && method.getAnnotation(Deprecated.class) == null) {
                                 Class c = method.getParameterTypes()[0];
                                 String valueType = null;
                                 if (c == String.class) {
