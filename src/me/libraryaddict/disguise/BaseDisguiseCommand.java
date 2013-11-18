@@ -33,10 +33,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 perm = perm.substring(permissionNode.length());
                 for (DisguiseType type : DisguiseType.values()) {
                     String name = type.name().toLowerCase();
-                    if (perm.split("//.")[0].equals("*") && permission.getValue()) {
+                    if (perm.split("\\.")[0].equals("*") && permission.getValue()) {
                         if (!names.contains(name))
                             names.add(name);
-                    } else if (perm.split("//.")[0].equals(name)) {
+                    } else if (perm.split("\\.")[0].equals(name)) {
                         if (permission.getValue()) {
                             if (!names.contains(name))
                                 names.add(name);
