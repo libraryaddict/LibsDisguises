@@ -20,7 +20,7 @@ public class ReflectionManager {
             try {
                 if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
                         && method.getParameterTypes().length == 0) {
-                    Object entity = getEntityInstance("Pig");
+                    Object entity = createEntityInstance("Pig");
                     method.setAccessible(true);
                     method.invoke(entity);
                     Field random = getNmsClass("Entity").getDeclaredField("random");
@@ -79,11 +79,11 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getEntityInstance(String entityName) {
+    public static Object createEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
-            Object world = getWorld();
+            Object world = getWorld(Bukkit.getWorlds().get(0));
             if (entityName.equals("Player")) {
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
@@ -121,16 +121,11 @@ public class ReflectionManager {
 
     public static Float getSoundModifier(Object entity) {
         try {
-            // TODO Update this each update!
             soundMethod.setAccessible(true);
             return (Float) soundMethod.invoke(entity);
         } catch (Exception ex) {
         }
         return null;
-    }
-
-    private static Object getWorld() {
-        return getWorld(Bukkit.getWorlds().get(0));
     }
 
     public static Object getWorld(World world) {

@@ -171,7 +171,7 @@ public class LibsDisguises extends JavaPlugin {
                 break;
             }
             try {
-                Object entity = ReflectionManager.getEntityInstance(name);
+                Object entity = ReflectionManager.createEntityInstance(name);
                 Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity")
                         .invoke(entity);
                 int size = 0;

@@ -6,10 +6,6 @@ public class Values {
 
     private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
 
-    /* public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
-         return getValues(type).getAttributesValues();
-     }*/
-
     public static Class getEntityClass(DisguiseType type) {
         return getValues(type).getEntityClass();
     }
@@ -45,8 +41,6 @@ public class Values {
         return values.get(type);
     }
 
-    // private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
-
     private Class declared;
     private int enumEntitySize;
 
@@ -57,10 +51,6 @@ public class Values {
         enumEntitySize = entitySize;
         declared = classType;
     }
-
-    /*public HashMap<String, Double> getAttributesValues() {
-        return attributesValues;
-    }*/
 
     public Class getEntityClass() {
         return declared;
@@ -112,10 +102,6 @@ public class Values {
     public HashMap<Integer, Object> getMetaValues() {
         return metaValues;
     }
-
-    /*public void setAttributesValue(String attribute, Double value) {
-        attributesValues.put(attribute, value);
-    }*/
 
     public void setMetaValue(int no, Object value) {
         metaValues.put(no, value);
