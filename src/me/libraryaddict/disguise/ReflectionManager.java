@@ -103,7 +103,7 @@ public class ReflectionManager {
 
     public static Object getNmsItem(ItemStack itemstack) {
         try {
-            return itemClass.getMethod("asNMSCopy", getNmsClass("ItemStack")).invoke(null, itemstack);
+            return itemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,7 +112,7 @@ public class ReflectionManager {
 
     public static ItemStack getBukkitItem(Object nmsItem) {
         try {
-            return (ItemStack) itemClass.getMethod("asBukkitCopy", ItemStack.class).invoke(null, nmsItem);
+            return (ItemStack) itemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
         } catch (Exception e) {
             e.printStackTrace();
         }
