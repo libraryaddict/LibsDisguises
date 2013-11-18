@@ -3,9 +3,13 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import net.minecraft.server.v1_6_R3.World;
+
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -49,8 +53,13 @@ public class ReflectionManager {
             Class entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
             Object world = getWorld();
-            if (entityName.equals("Human")) {
-                entityObject = entityClass.getConstructor(getNmsClass("World"), String.class).newInstance(world, "LibsDisguises");
+            if (entityName.equals("Player")) {
+                Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+                Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
+                        .newInstance(world);
+                entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
+                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
+                        playerinteractmanager);
             } else {
                 entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
             }

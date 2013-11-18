@@ -167,9 +167,6 @@ public class LibsDisguises extends JavaPlugin {
             case LEASH_HITCH:
                 name = "Leash";
                 break;
-            case PLAYER:
-                name = "Human";
-                break;
             default:
                 break;
             }
@@ -197,10 +194,10 @@ public class LibsDisguises extends JavaPlugin {
                         sound.setDamageSoundVolume((Float) soundStrength);
                     }
                 }
-            } catch (Exception e1) {
-                System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + e1.getMessage());
+            } catch (Exception ex) {
+                System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + ex.getMessage());
                 System.out.print("[LibsDisguises] Please report this to LibsDisguises author");
-                e1.printStackTrace();
+                ex.printStackTrace();
             }
         }
     }

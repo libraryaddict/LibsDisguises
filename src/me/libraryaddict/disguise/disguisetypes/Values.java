@@ -6,9 +6,9 @@ public class Values {
 
     private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
 
-   /* public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
-        return getValues(type).getAttributesValues();
-    }*/
+    /* public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
+         return getValues(type).getAttributesValues();
+     }*/
 
     public static Class getEntityClass(DisguiseType type) {
         return getValues(type).getEntityClass();
@@ -45,7 +45,7 @@ public class Values {
         return values.get(type);
     }
 
-  //  private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
+    // private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
 
     private Class declared;
     private int enumEntitySize;
