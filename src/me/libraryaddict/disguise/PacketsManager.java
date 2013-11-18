@@ -1050,12 +1050,13 @@ public class PacketsManager {
                                 loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
                                 loc.getBlockZ()));
             }
-
+            // TODO Fix this cos it doesn't move the disguise?
+            byte yaw = (byte) (loc.getYaw() * 256.0F / 360.0F);
+            byte pitch = (byte) (loc.getPitch() * 256.0F / 360.0F);
             manager.sendServerPacket(
                     player,
-                    manager.createPacketConstructor(Packets.Server.ENTITY_HEAD_ROTATION, player.getEntityId(),
-                            (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)).createPacket(player.getEntityId(),
-                            (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                    manager.createPacketConstructor(Packets.Server.ENTITY_LOOK, player.getEntityId(), yaw, pitch).createPacket(
+                            player.getEntityId(), yaw, pitch));
 
             // Resend any active potion effects
             Iterator iterator = player.getActivePotionEffects().iterator();
