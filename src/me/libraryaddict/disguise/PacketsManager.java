@@ -552,7 +552,7 @@ public class PacketsManager {
                         }
                     }
                 } else if (event.getPacketID() == Packets.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 1) {
+                    if ((Byte) mods.read(1) == 2) {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
@@ -616,7 +616,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                /*     Packets.Server.ENTITY_STATUS, */Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
+                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
@@ -681,12 +681,12 @@ public class PacketsManager {
                                 event.setCancelled(true);
                                 break;
 
-                            /*     case Packets.Server.ENTITY_STATUS:
-                                     if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
-                                             && (Byte) event.getPacket().getModifier().read(1) == 1) {
-                                         event.setCancelled(true);
-                                     }
-                                     break;*/
+                            case Packets.Server.ENTITY_STATUS:
+                                if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
+                                        && (Byte) event.getPacket().getModifier().read(1) == 2) {
+                                    event.setCancelled(true);
+                                }
+                                break;
                             default:
                                 break;
                             }
