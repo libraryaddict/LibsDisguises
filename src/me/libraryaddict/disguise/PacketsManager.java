@@ -644,12 +644,12 @@ public class PacketsManager {
                                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, entity.getEntityId());
-                                    List watchableList = new ArrayList();
+                                    List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
                                     byte b = (byte) (0 | 1 << 5);
                                     if (event.getPlayer().isSprinting())
                                         b = (byte) (b | 1 << 3);
                                     watchableList.add(new WrappedWatchableObject(0, b));
-                                    mods.write(1, watchableList);
+                                    packet.getWatchableCollectionModifier().write(0, watchableList);
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (Exception ex) {
