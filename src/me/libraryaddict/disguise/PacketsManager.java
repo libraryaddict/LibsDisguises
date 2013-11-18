@@ -18,46 +18,17 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
-import net.minecraft.server.v1_6_R3.AttributeMapServer;
-import net.minecraft.server.v1_6_R3.AttributeSnapshot;
-import net.minecraft.server.v1_6_R3.Block;
-import net.minecraft.server.v1_6_R3.DataWatcher;
-import net.minecraft.server.v1_6_R3.EntityHuman;
-import net.minecraft.server.v1_6_R3.EntityInsentient;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.EnumArt;
-import net.minecraft.server.v1_6_R3.EnumEntitySize;
-import net.minecraft.server.v1_6_R3.ItemStack;
-import net.minecraft.server.v1_6_R3.MathHelper;
-import net.minecraft.server.v1_6_R3.MobEffect;
-import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
-import net.minecraft.server.v1_6_R3.Packet20NamedEntitySpawn;
-import net.minecraft.server.v1_6_R3.Packet28EntityVelocity;
-import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R3.Packet39AttachEntity;
-import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
-import net.minecraft.server.v1_6_R3.Packet41MobEffect;
-import net.minecraft.server.v1_6_R3.Packet44UpdateAttributes;
-import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R3.WatchableObject;
-import net.minecraft.server.v1_6_R3.World;
-import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -167,7 +138,7 @@ public class PacketsManager {
                     StructureModifier<Object> mods = packet.getModifier();
                     mods.write(0, disguisedEntity.getEntityId());
                     mods.write(1, i);
-                    mods.write(2, CraftItemStack.asNMSCopy(itemstack));
+                    mods.write(2, ReflectionManager.getNmsItem(itemstack));
                     packets.add(packet);
                 }
             }
@@ -179,7 +150,6 @@ public class PacketsManager {
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
         byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
                 (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-        EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -220,22 +190,24 @@ public class PacketsManager {
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, ((PlayerDisguise) disguise).getName());
-            mods.write(2, (int) Math.floor(loc.getX() * 32));
-            mods.write(3, (int) Math.floor(loc.getY() * 32));
-            mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, yaw);
-            mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
+            mods.write(2, ((PlayerDisguise) disguise).getName());
+            mods.write(3, (int) Math.floor(loc.getX() * 32));
+            mods.write(4, (int) Math.floor(loc.getY() * 32));
+            mods.write(5, (int) Math.floor(loc.getZ() * 32));
+            mods.write(6, yaw);
+            mods.write(7, (byte) (int) (loc.getPitch() * 256F / 360F));
             ItemStack item = null;
             if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
-                item = CraftItemStack.asNMSCopy(((Player) disguisedEntity).getItemInHand());
+                item = ((Player) disguisedEntity).getItemInHand();
             } else if (disguisedEntity instanceof LivingEntity) {
-                item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
+                item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
             }
-            mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(8, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId());
+            mods.write(9, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
 
         } else if (disguise.getType().isMob()) {
 
+            Values values = Values.getValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(Packets.Server.MOB_SPAWN);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
@@ -257,9 +229,9 @@ public class PacketsManager {
                 d3 = d1;
             if (d4 > d1)
                 d4 = d1;
-            mods.write(2, entitySize.a(loc.getX()));
+            mods.write(2, values.getEntitySize(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
-            mods.write(4, entitySize.a(loc.getZ()));
+            mods.write(4, values.getEntitySize(loc.getZ()));
             mods.write(5, (int) (d2 * 8000.0D));
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
@@ -318,7 +290,7 @@ public class PacketsManager {
                 mods.write(5, (int) (d2 * 8000.0D));
                 mods.write(6, (int) (d3 * 8000.0D));
             }
-            mods.write(7, (int) MathHelper.floor(loc.getPitch() * 256.0F / 360.0F));
+            mods.write(7, (int) Math.floor(loc.getPitch() * 256.0F / 360.0F));
             mods.write(8, yaw);
             mods.write(9, id);
             mods.write(10, data);
@@ -552,7 +524,7 @@ public class PacketsManager {
                         }
                     }
                 } else if (event.getPacketID() == Packets.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 2) {
+                    if ((Byte) mods.read(1) == 1) {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
@@ -616,7 +588,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
+                /*     Packets.Server.ENTITY_STATUS, */Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
@@ -681,12 +653,12 @@ public class PacketsManager {
                                 event.setCancelled(true);
                                 break;
 
-                            case Packets.Server.ENTITY_STATUS:
-                                if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
-                                        && (Byte) event.getPacket().getModifier().read(1) == 2) {
-                                    event.setCancelled(true);
-                                }
-                                break;
+                            /*     case Packets.Server.ENTITY_STATUS:
+                                     if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
+                                             && (Byte) event.getPacket().getModifier().read(1) == 1) {
+                                         event.setCancelled(true);
+                                     }
+                                     break;*/
                             default:
                                 break;
                             }
@@ -726,7 +698,7 @@ public class PacketsManager {
                                     if (item != null && item.getType() != Material.AIR) {
                                         event.setPacket(event.getPacket().shallowClone());
                                         event.getPacket().getModifier()
-                                                .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                                .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                     }
                                 }
                                 // Else if its a hotbar slot
@@ -739,7 +711,7 @@ public class PacketsManager {
                                         if (item != null && item.getType() != Material.AIR) {
                                             event.setPacket(event.getPacket().shallowClone());
                                             event.getPacket().getModifier()
-                                                    .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                                    .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         }
                                     }
                                 }
@@ -760,7 +732,7 @@ public class PacketsManager {
                                         int armorSlot = Math.abs((slot - 5) - 3);
                                         org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
                                         if (item != null && item.getType() != Material.AIR) {
-                                            items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                            items[slot] = ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0));
                                         }
                                     }
                                     // Else if its a hotbar slot
@@ -771,7 +743,7 @@ public class PacketsManager {
                                         if (slot == currentSlot + 36) {
                                             org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
                                             if (item != null && item.getType() != Material.AIR) {
-                                                items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                                items[slot] = ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0));
                                             }
                                         }
                                     }
@@ -808,7 +780,7 @@ public class PacketsManager {
                                         StructureModifier<Object> mods = packet.getModifier();
                                         mods.write(0, 0);
                                         mods.write(1, slot);
-                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
@@ -827,7 +799,7 @@ public class PacketsManager {
                                             StructureModifier<Object> mods = packet.getModifier();
                                             mods.write(0, 0);
                                             mods.write(1, slot);
-                                            mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                             try {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
@@ -854,7 +826,7 @@ public class PacketsManager {
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, 0);
                                     mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
-                                    mods.write(2, CraftItemStack.asNMSCopy(currentlyHeld));
+                                    mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
@@ -869,7 +841,7 @@ public class PacketsManager {
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, 0);
                                     mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                                    mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
@@ -912,7 +884,7 @@ public class PacketsManager {
                                         StructureModifier<Object> mods = packet.getModifier();
                                         mods.write(0, 0);
                                         mods.write(1, slot);
-                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
@@ -930,7 +902,7 @@ public class PacketsManager {
                                             StructureModifier<Object> mods = packet.getModifier();
                                             mods.write(0, 0);
                                             mods.write(1, slot);
-                                            mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                             try {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
@@ -1238,7 +1210,7 @@ public class PacketsManager {
                     if (itemstack != null) {
                         packets[0] = packets[0].shallowClone();
                         packets[0].getModifier().write(2,
-                                (itemstack.getTypeId() == 0 ? null : CraftItemStack.asNMSCopy(itemstack)));
+                                (itemstack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemstack)));
                     }
                     break;
                 }

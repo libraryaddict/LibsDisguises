@@ -20,6 +20,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.PacketsManager;
+import me.libraryaddict.disguise.ReflectionManager;
 import net.minecraft.server.v1_6_R3.ChunkCoordinates;
 import net.minecraft.server.v1_6_R3.EntityPlayer;
 import net.minecraft.server.v1_6_R3.ItemStack;
@@ -278,7 +279,7 @@ public class FlagWatcher {
 
         ItemStack itemToSend = null;
         if (itemStack != null && itemStack.getTypeId() != 0)
-            itemToSend = CraftItemStack.asNMSCopy(itemStack);
+            itemToSend = ReflectionManager.getNmsItem(itemStack);
         items[slot] = itemStack;
         if (DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
             return;

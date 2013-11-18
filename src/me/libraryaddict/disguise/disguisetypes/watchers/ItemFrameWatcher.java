@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
@@ -30,7 +31,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     public void setItemStack(ItemStack newItem) {
         newItem = newItem.clone();
         newItem.setAmount(1);
-        setValue(2, CraftItemStack.asNMSCopy(newItem));
+        setValue(2, ReflectionManager.getNmsItem(newItem));
         sendData(2);
     }
 

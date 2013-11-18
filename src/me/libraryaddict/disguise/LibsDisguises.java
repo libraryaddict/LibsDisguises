@@ -14,42 +14,20 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import net.minecraft.server.v1_6_R3.ChatMessage;
-import net.minecraft.server.v1_6_R3.ChunkCoordinates;
-import net.minecraft.server.v1_6_R3.Entity;
-import net.minecraft.server.v1_6_R3.EntityHuman;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.GenericAttributes;
-import net.minecraft.server.v1_6_R3.WatchableObject;
-import net.minecraft.server.v1_6_R3.World;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.wrappers.WrappedAttribute;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+
 public class LibsDisguises extends JavaPlugin {
-    private class DisguiseHuman extends EntityHuman {
-
-        public DisguiseHuman(World world) {
-            super(world, "LibsDisguises");
-        }
-
-        public boolean a(int arg0, String arg1) {
-            return false;
-        }
-
-        public ChunkCoordinates b() {
-            return null;
-        }
-
-        public void sendMessage(ChatMessage arg0) {
-        }
-
-    }
 
     @Override
     public void onEnable() {
@@ -109,7 +87,6 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void registerValues() {
-        World world = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
         for (DisguiseType disguiseType : DisguiseType.values()) {
             Class watcherClass = null;
             try {
@@ -196,30 +173,32 @@ public class LibsDisguises extends JavaPlugin {
                 break;
             }
             try {
-                net.minecraft.server.v1_6_R3.Entity entity = null;
-                Class entityClass;
-                if (disguiseType == DisguiseType.PLAYER) {
-                    entityClass = EntityHuman.class;
-                    entity = new DisguiseHuman(world);
-                } else {
-                    entityClass = Class.forName(Entity.class.getName() + name);
-                    entity = (net.minecraft.server.v1_6_R3.Entity) entityClass.getConstructor(World.class).newInstance(world);
+                Object entity = ReflectionManager.getEntityInstance(name);
+                Entity bukkitEntity = (Entity) entity.getClass().getMethod("getBukkitEntity").invoke(entity);
+                int size = 0;
+                for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
+                    if (field.getType().getName().equals("EnumEntitySize")) {
+                        Enum a = (Enum) field.get(entity);
+                        size = a.ordinal();
+                        break;
+                    }
                 }
-                Values value = new Values(disguiseType, entityClass, entity.at);
-                List<WatchableObject> watchers = entity.getDataWatcher().c();
-                for (WatchableObject watch : watchers)
-                    value.setMetaValue(watch.a(), watch.b());
-                if (entity instanceof EntityLiving) {
-                    EntityLiving livingEntity = (EntityLiving) entity;
-                    value.setAttributesValue(GenericAttributes.d.a(), livingEntity.getAttributeInstance(GenericAttributes.d)
+                Values value = new Values(disguiseType, entity.getClass(), size);
+                WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
+                List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
+                for (WrappedWatchableObject watch : watchers)
+                    value.setMetaValue(watch.getTypeID(), watch.getValue());
+                WrappedAttribute s;
+                if (bukkitEntity instanceof LivingEntity) {
+                    value.setAttributesValue("generic.movementSpeed", livingEntity.getAttributeInstance(GenericAttributes.d)
                             .getValue());
                 }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
-                    Method soundStrength = EntityLiving.class.getDeclaredMethod("ba");
-                    // TODO Update this each update!
-                    soundStrength.setAccessible(true);
-                    sound.setDamageSoundVolume((Float) soundStrength.invoke(entity));
+                    Float soundStrength = ReflectionManager.getSoundModifier(entity);
+                    if (soundStrength != null) {
+                        sound.setDamageSoundVolume((Float) soundStrength);
+                    }
                 }
             } catch (Exception e1) {
                 System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + e1.getMessage());
