@@ -15,7 +15,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseplayer");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         if (allowedDisguises.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
             return true;
@@ -58,7 +58,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseplayer");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

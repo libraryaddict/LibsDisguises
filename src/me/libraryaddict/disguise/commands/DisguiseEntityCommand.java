@@ -44,7 +44,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseentity");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise then slap a entity to disguise it!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

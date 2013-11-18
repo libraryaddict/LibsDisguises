@@ -24,7 +24,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseplayer");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         if (allowedDisguises.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
             return true;
@@ -76,7 +76,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseradius");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at 30 blocks!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

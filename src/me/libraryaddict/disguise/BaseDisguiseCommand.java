@@ -23,6 +23,10 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
+    protected ArrayList<String> getAllowedDisguises(CommandSender sender) {
+        String permissionNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
+        return getAllowedDisguises(sender, permissionNode);
+    }
 
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
         ArrayList<String> names = new ArrayList<String>();
@@ -117,8 +121,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * disguise has been feed a proper disguisetype.
      */
     protected Disguise parseDisguise(CommandSender sender, String[] args) throws Exception {
-        String permissionNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, permissionNode);
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         if (allowedDisguises.isEmpty()) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this command.");
         }
