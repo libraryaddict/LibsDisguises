@@ -4,7 +4,6 @@ import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemFrameWatcher extends FlagWatcher {
@@ -20,7 +19,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     public ItemStack getItemStack() {
         if (getValue(2, null) == null)
             return new ItemStack(0);
-        return CraftItemStack.asBukkitCopy((net.minecraft.server.v1_6_R3.ItemStack) getValue(2, null));
+        return ReflectionManager.getBukkitItem(getValue(2, null));
     }
 
     public void setItemRotation(int rotation) {

@@ -2,15 +2,13 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.util.HashMap;
 
-import net.minecraft.server.v1_6_R3.EnumEntitySize;
-
 public class Values {
 
     private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
 
-    public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
+   /* public static HashMap<String, Double> getAttributesValues(DisguiseType type) {
         return getValues(type).getAttributesValues();
-    }
+    }*/
 
     public static Class getEntityClass(DisguiseType type) {
         return getValues(type).getEntityClass();
@@ -47,7 +45,7 @@ public class Values {
         return values.get(type);
     }
 
-    private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
+  //  private HashMap<String, Double> attributesValues = new HashMap<String, Double>();
 
     private Class declared;
     private int enumEntitySize;
@@ -60,9 +58,9 @@ public class Values {
         declared = classType;
     }
 
-    public HashMap<String, Double> getAttributesValues() {
+    /*public HashMap<String, Double> getAttributesValues() {
         return attributesValues;
-    }
+    }*/
 
     public Class getEntityClass() {
         return declared;
@@ -115,9 +113,9 @@ public class Values {
         return metaValues;
     }
 
-    public void setAttributesValue(String attribute, Double value) {
+    /*public void setAttributesValue(String attribute, Double value) {
         attributesValues.put(attribute, value);
-    }
+    }*/
 
     public void setMetaValue(int no, Object value) {
         metaValues.put(no, value);

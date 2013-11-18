@@ -1,12 +1,11 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import net.minecraft.server.v1_6_R3.World;
-
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -20,18 +19,44 @@ public class ReflectionManager {
         }
     }
 
+    public static String getEnumArt(Art art) {
+        try {
+            Class craftArt = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftArt");
+            Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
+            for (Field field : enumArt.getClass().getFields()) {
+                if (field.getType() == String.class) {
+                    return (String) field.get(enumArt);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getCraftSound(Sound sound) {
+        try {
+            Class c = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftSound");
+            return (String) c.getMethod("getSound", Sound.class).invoke(null, sound);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Object getEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
             Object world = getWorld();
             if (entityName.equals("Human")) {
-                entityObject = entityClass.getConstructor(world.getClass(), String.class).newInstance(world, "LibsDisguises");
+                entityObject = entityClass.getConstructor(getNmsClass("World"), String.class).newInstance(world, "LibsDisguises");
             } else {
-                entityObject = entityClass.getConstructor(world.getClass()).newInstance(world);
+                entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
             }
             return entityObject;
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -58,7 +83,9 @@ public class ReflectionManager {
 
     private static Object getWorld() {
         try {
-            return World.class.getMethod("getHandle").invoke(Bukkit.getWorlds().get(0));
+            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftWorld").getMethod("getHandle")
+                    .invoke(Bukkit.getWorlds().get(0));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

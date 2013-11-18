@@ -48,7 +48,7 @@ public class DisguiseAPI {
             disguise = disguise.clone();
         }
         try {
-            Field field = net.minecraft.server.v1_6_R3.Entity.class.getDeclaredField("entityCount");
+            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
             disguises.put(id, disguise);
@@ -268,7 +268,7 @@ public class DisguiseAPI {
             return;
         try {
             // Grab the entity ID the fake disguise will use
-            Field field = net.minecraft.server.v1_6_R3.Entity.class.getDeclaredField("entityCount");
+            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
             // Set the entitycount plus one so we don't have the id being reused

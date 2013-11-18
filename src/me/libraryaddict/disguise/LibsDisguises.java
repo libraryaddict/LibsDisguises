@@ -3,7 +3,6 @@ package me.libraryaddict.disguise;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import me.libraryaddict.disguise.commands.*;
@@ -23,7 +22,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
@@ -174,7 +172,8 @@ public class LibsDisguises extends JavaPlugin {
             }
             try {
                 Object entity = ReflectionManager.getEntityInstance(name);
-                Entity bukkitEntity = (Entity) entity.getClass().getMethod("getBukkitEntity").invoke(entity);
+                Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity")
+                        .invoke(entity);
                 int size = 0;
                 for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
                     if (field.getType().getName().equals("EnumEntitySize")) {
@@ -188,11 +187,6 @@ public class LibsDisguises extends JavaPlugin {
                 List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
                 for (WrappedWatchableObject watch : watchers)
                     value.setMetaValue(watch.getTypeID(), watch.getValue());
-                WrappedAttribute s;
-                if (bukkitEntity instanceof LivingEntity) {
-                    value.setAttributesValue("generic.movementSpeed", livingEntity.getAttributeInstance(GenericAttributes.d)
-                            .getValue());
-                }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(entity);

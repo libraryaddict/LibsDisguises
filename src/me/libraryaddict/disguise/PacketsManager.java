@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -18,10 +17,13 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
+import net.minecraft.server.v1_6_R3.*;
 
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_6_R3.entity.*;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
@@ -42,6 +44,8 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
     private static boolean cancelSound;
@@ -131,9 +135,12 @@ public class PacketsManager {
             org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
             if (itemstack != null && itemstack.getTypeId() != 0) {
                 ItemStack item = null;
-                if (nmsEntity instanceof EntityLiving)
-                    item = ((EntityLiving) nmsEntity).getEquipment(i);
-                if (item == null) {
+                if (disguisedEntity instanceof LivingEntity)
+                    if (i != 4)
+                        item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[i];
+                    else
+                        item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
+                if (item == null || item.getType() == Material.AIR) {
                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
                     StructureModifier<Object> mods = packet.getModifier();
                     mods.write(0, disguisedEntity.getEntityId());
@@ -171,8 +178,8 @@ public class PacketsManager {
             mods.write(4, ((int) loc.getYaw()) % 4);
             int id = ((MiscDisguise) disguise).getData();
             if (id == -1)
-                id = new Random().nextInt(EnumArt.values().length);
-            mods.write(5, EnumArt.values()[id % EnumArt.values().length].B);
+                id = new Random().nextInt(Art.values().length);
+            mods.write(5, ReflectionManager.getEnumArt(Art.values()[id % Art.values().length]));
 
             // Make the teleport packet to make it visible..
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
@@ -202,8 +209,9 @@ public class PacketsManager {
             } else if (disguisedEntity instanceof LivingEntity) {
                 item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
             }
-            mods.write(8, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId());
-            mods.write(9, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(8, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
+            spawnPackets[0].getDataWatcherModifier().write(0,
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
         } else if (disguise.getType().isMob()) {
 
@@ -239,7 +247,8 @@ public class PacketsManager {
             mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             if (nmsEntity instanceof EntityLiving)
                 mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
-            mods.write(11, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            spawnPackets[0].getDataWatcherModifier().write(0,
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
             // Theres a list sometimes written with this. But no problems have appeared!
             // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
 
@@ -309,16 +318,13 @@ public class PacketsManager {
     /**
      * Create a new datawatcher but with the 'correct' values
      */
-    private static DataWatcher createDataWatcher(DataWatcher watcher, FlagWatcher flagWatcher) {
-        DataWatcher newWatcher = new DataWatcher();
+    private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
+        WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            Field map = newWatcher.getClass().getDeclaredField("c");
-            map.setAccessible(true);
-            HashMap c = (HashMap) map.get(newWatcher);
             // Calling c() gets the watchable objects exactly as they are.
-            List<WatchableObject> list = watcher.c();
-            for (WatchableObject watchableObject : flagWatcher.convert(list)) {
-                c.put(watchableObject.a(), watchableObject);
+            List<WrappedWatchableObject> list = watcher.getWatchableObjects();
+            for (WrappedWatchableObject watchableObject : flagWatcher.convert(list)) {
+                newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -611,16 +617,16 @@ public class PacketsManager {
 
                         if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<Object> mods = event.getPacket().getModifier();
-                            Iterator<WatchableObject> itel = ((List<WatchableObject>) mods.read(1)).iterator();
+                            Iterator<WrappedWatchableObject> itel = event.getPacket().getWatchableCollectionModifier().read(0)
+                                    .iterator();
                             while (itel.hasNext()) {
-                                WatchableObject watch = itel.next();
-                                if (watch.a() == 0) {
-                                    byte b = (Byte) watch.b();
+                                WrappedWatchableObject watch = itel.next();
+                                if (watch.getTypeID() == 0) {
+                                    byte b = (Byte) watch.getValue();
                                     byte a = (byte) (b | 1 << 5);
                                     if ((b & 1 << 3) != 0)
                                         a = (byte) (a | 1 << 3);
-                                    watch.a(a);
+                                    watch.setValue(a);
                                 }
                             }
                         } else {
@@ -642,7 +648,7 @@ public class PacketsManager {
                                     byte b = (byte) (0 | 1 << 5);
                                     if (event.getPlayer().isSprinting())
                                         b = (byte) (b | 1 << 3);
-                                    watchableList.add(new WatchableObject(0, 0, b));
+                                    watchableList.add(new WrappedWatchableObject(0, b));
                                     mods.write(1, watchableList);
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -710,7 +716,8 @@ public class PacketsManager {
                                         org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
                                         if (item != null && item.getType() != Material.AIR) {
                                             event.setPacket(event.getPacket().shallowClone());
-                                            event.getPacket().getModifier()
+                                            event.getPacket()
+                                                    .getModifier()
                                                     .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         }
                                     }
@@ -723,8 +730,8 @@ public class PacketsManager {
                          */
                         case Packets.Server.WINDOW_ITEMS: {
                             event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<Object> mods = event.getPacket().getModifier();
-                            ItemStack[] items = (ItemStack[]) mods.read(1);
+                            StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
+                            ItemStack[] items = mods.read(0);
                             for (int slot = 0; slot < items.length; slot++) {
                                 if (slot >= 5 && slot <= 8) {
                                     if (disguise.isHidingArmorFromSelf()) {
@@ -732,7 +739,7 @@ public class PacketsManager {
                                         int armorSlot = Math.abs((slot - 5) - 3);
                                         org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
                                         if (item != null && item.getType() != Material.AIR) {
-                                            items[slot] = ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0));
+                                            items[slot] = new org.bukkit.inventory.ItemStack(0);
                                         }
                                     }
                                     // Else if its a hotbar slot
@@ -743,12 +750,13 @@ public class PacketsManager {
                                         if (slot == currentSlot + 36) {
                                             org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
                                             if (item != null && item.getType() != Material.AIR) {
-                                                items[slot] = ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0));
+                                                items[slot] = new org.bukkit.inventory.ItemStack(0);
                                             }
                                         }
                                     }
                                 }
                             }
+                            mods.write(0, items);
                             break;
                         }
                         default:
@@ -1006,7 +1014,7 @@ public class PacketsManager {
 
         // Resend the armor
         for (int i = 0; i < 5; ++i) {
-            ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
+            net.minecraft.server.v1_6_R3.ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
 
             if (itemstack != null) {
                 entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
@@ -1113,22 +1121,8 @@ public class PacketsManager {
                 case Packets.Server.UPDATE_ATTRIBUTES:
 
                 {
-                    // Grab the values which are 'approved' to be sent for this entity
-                    HashMap<String, Double> values = Values.getAttributesValues(disguise.getType());
-                    Collection collection = new ArrayList<AttributeSnapshot>();
-                    for (AttributeSnapshot att : (List<AttributeSnapshot>) sentPacket.getModifier().read(1)) {
-                        if (values.containsKey(att.a())) {
-                            collection.add(new AttributeSnapshot(null, att.a(), values.get(att.a()), att.c()));
-                        }
-                    }
-                    if (collection.size() > 0) {
-                        packets[0] = new PacketContainer(sentPacket.getID());
-                        StructureModifier<Object> mods = packets[0].getModifier();
-                        mods.write(0, entity.getEntityId());
-                        mods.write(1, collection);
-                    } else {
-                        packets = new PacketContainer[0];
-                    }
+
+                    packets = new PacketContainer[0];
                     break;
                 }
 
@@ -1136,12 +1130,12 @@ public class PacketsManager {
                 case Packets.Server.ENTITY_METADATA:
 
                 {
-                    List<WatchableObject> watchableObjects = disguise.getWatcher().convert(
-                            (List<WatchableObject>) packets[0].getModifier().read(1));
+                    List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
+                            packets[0].getWatchableCollectionModifier().read(0));
                     packets[0] = new PacketContainer(sentPacket.getID());
                     StructureModifier<Object> newMods = packets[0].getModifier();
                     newMods.write(0, entity.getEntityId());
-                    newMods.write(1, watchableObjects);
+                    packets[0].getWatchableCollectionModifier().write(0, watchableObjects);
                     break;
                 }
 
