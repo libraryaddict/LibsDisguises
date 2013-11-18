@@ -3,13 +3,9 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import net.minecraft.server.v1_6_R3.World;
-
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
