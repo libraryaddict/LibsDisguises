@@ -167,6 +167,9 @@ public class LibsDisguises extends JavaPlugin {
             case LEASH_HITCH:
                 name = "Leash";
                 break;
+            case PLAYER:
+                name = "Human";
+                break;
             default:
                 break;
             }
