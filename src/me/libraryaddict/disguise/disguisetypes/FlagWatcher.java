@@ -68,7 +68,7 @@ public class FlagWatcher {
         boolean sendAllCustom = false;
         while (itel.hasNext()) {
             WrappedWatchableObject watch = itel.next();
-            int dataType = watch.getTypeID();
+            int dataType = watch.getIndex();
             sentValues.add(dataType);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
@@ -113,7 +113,7 @@ public class FlagWatcher {
         if (disguise.viewSelfDisguise() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
-                if (watch.getTypeID() == 6) {
+                if (watch.getIndex() == 6) {
                     Object value = watch.getValue();
                     if (value != null && value instanceof Float) {
                         float newHealth = (Float) value;

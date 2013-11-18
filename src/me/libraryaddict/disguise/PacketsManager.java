@@ -639,7 +639,7 @@ public class PacketsManager {
                                     .iterator();
                             while (itel.hasNext()) {
                                 WrappedWatchableObject watch = itel.next();
-                                if (watch.getTypeID() == 0) {
+                                if (watch.getIndex() == 0) {
                                     byte b = (Byte) watch.getValue();
                                     byte a = (byte) (b | 1 << 5);
                                     if ((b & 1 << 3) != 0)

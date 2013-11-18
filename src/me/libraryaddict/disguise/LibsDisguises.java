@@ -186,7 +186,7 @@ public class LibsDisguises extends JavaPlugin {
                 WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
                 List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
                 for (WrappedWatchableObject watch : watchers)
-                    value.setMetaValue(watch.getTypeID(), watch.getValue());
+                    value.setMetaValue(watch.getIndex(), watch.getValue());
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(entity);

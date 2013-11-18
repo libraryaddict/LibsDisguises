@@ -13,7 +13,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -212,7 +211,6 @@ public abstract class Disguise {
                             }
                             try {
                                 Field ping = ReflectionManager.getNmsClass("EntityPlayer").getField("ping");
-                                Field handle = Entity.class.getField("getHandle");
                                 for (Player player : getPerverts()) {
                                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
                                     StructureModifier<Object> mods = packet.getModifier();
@@ -231,7 +229,9 @@ public abstract class Disguise {
                                     } else
                                         mods.write(0, entity.getEntityId());
                                     mods.write(1, (int) (vector.getX() * 8000));
-                                    mods.write(2, (int) (8000 * (vectorY * (double) ping.getInt(handle.get(player)) * 0.069)));
+                                    mods.write(
+                                            2,
+                                            (int) (8000 * (vectorY * (double) ping.getInt(ReflectionManager.getNmsEntity(player)) * 0.069)));
                                     mods.write(3, (int) (vector.getZ() * 8000));
                                     if (lookPacket != null)
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
