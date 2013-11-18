@@ -1,17 +1,15 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.WorldServer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -19,6 +17,7 @@ import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseAPI {
 
@@ -166,16 +165,28 @@ public class DisguiseAPI {
      *            the entity to all the watching players, which is where the magic begins
      */
     private static void refreshTrackers(Entity entity) {
-        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                .get(entity.getEntityId());
-        if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
-            for (EntityPlayer player : players) {
-                if (entity instanceof Player && !player.getBukkitEntity().canSee((Player) entity))
-                    continue;
-                entry.clear(player);
-                entry.updatePlayer(player);
+        try {
+            Object world = ReflectionManager.getWorld(entity.getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, entity.getEntityId());
+            if (entityTrackerEntry != null) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                Method getBukkitEntity = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
+                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
+                for (Object player : trackedPlayers) {
+                    if (entity instanceof Player && !((Player) getBukkitEntity.invoke(player)).canSee((Player) entity))
+                        continue;
+                    clear.invoke(entityTrackerEntry, player);
+                    updatePlayer.invoke(entityTrackerEntry, player);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -192,18 +203,26 @@ public class DisguiseAPI {
             // Remove the fake entity ID from the disguise bin
             selfDisguisesIds.remove(player.getEntityId());
             // Get the entity tracker
-            EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
-            EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities
-                    .get(player.getEntityId());
-            // If the tracker exists. Remove himself from his tracker
-            if (tracker != null) {
-                tracker.trackedPlayers.remove(entityplayer);
-            }
-            // Resend entity metadata else he will be invisible to himself until its resent
+            try {
+                Object world = ReflectionManager.getWorld(player.getWorld());
+                Object tracker = world.getClass().getField("tracker").get(world);
+                Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+                Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                        .invoke(trackedEntities, player.getEntityId());
+                if (entityTrackerEntry != null) {
+                    HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                            .get(entityTrackerEntry);
+                    // If the tracker exists. Remove himself from his tracker
+                    trackedPlayers.remove(ReflectionManager.getNmsEntity(player));
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }// Resend entity metadata else he will be invisible to himself until its resent
             PacketContainer packetMetadata = new PacketContainer(Packets.Server.ENTITY_METADATA);
             StructureModifier<Object> mods = packetMetadata.getModifier();
             mods.write(0, player.getEntityId());
-            mods.write(1, entityplayer.getDataWatcher().c());
+            packetMetadata.getWatchableCollectionModifier().write(0,
+                    WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects());
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetMetadata);
             } catch (Exception ex) {

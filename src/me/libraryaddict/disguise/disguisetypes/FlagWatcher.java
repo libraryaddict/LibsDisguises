@@ -251,7 +251,7 @@ public class FlagWatcher {
             // Find the item to replace it with
             if (disguise.getEntity() instanceof LivingEntity) {
                 EntityEquipment enquipment = ((LivingEntity) disguise.getEntity()).getEquipment();
-                if (slot == 4) {
+                if (slot == 0) {
                     itemStack = enquipment.getItemInHand();
                 } else {
                     itemStack = enquipment.getArmorContents()[slot];

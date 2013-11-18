@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.PacketsManager;
@@ -11,14 +12,7 @@ import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import net.minecraft.server.v1_6_R3.EntityAgeable;
-import net.minecraft.server.v1_6_R3.EntityInsentient;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.WorldServer;
-
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
@@ -182,7 +176,7 @@ public abstract class Disguise {
 
             public void run() {
                 // If entity is no longer valid. Remove it.
-                if (!((CraftEntity) entity).getHandle().valid) {
+                if (!getEntity().isValid()) {
                     DisguiseAPI.undisguiseToAll(entity);
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
@@ -282,11 +276,16 @@ public abstract class Disguise {
     protected ArrayList<Player> getPerverts() {
         ArrayList<Player> players = new ArrayList<Player>();
         try {
-            EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                    .get(entity.getEntityId());
-            if (entry != null) {
+            Object world = ReflectionManager.getWorld(getEntity().getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, getEntity().getEntityId());
+            if (entityTrackerEntry != null) {
                 Field field = ReflectionManager.getNmsClass("Entity").getField("getBukkitEntity");
-                for (Object p : entry.trackedPlayers) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                for (Object p : trackedPlayers) {
                     players.add((Player) field.get(p));
                 }
             }
@@ -347,7 +346,7 @@ public abstract class Disguise {
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If the entity is valid
-            if (((CraftEntity) getEntity()).getHandle().valid) {
+            if (getEntity().isValid()) {
                 // If this disguise is active
                 if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
                     // Now remove the disguise from the current disguises.
@@ -483,19 +482,19 @@ public abstract class Disguise {
             case 7:
             case 8:
             case 9:
-                baseClass = EntityLiving.class;
+                baseClass = ReflectionManager.getNmsClass("EntityLiving");
                 break;
             case 10:
             case 11:
-                baseClass = EntityInsentient.class;
+                baseClass = ReflectionManager.getNmsClass("EntityInsentient");
                 break;
             case 16:
-                baseClass = EntityAgeable.class;
+                baseClass = ReflectionManager.getNmsClass("EntityAgeable");
                 break;
             default:
                 break;
             }
-            Class entityClass = ((CraftEntity) entity).getHandle().getClass();
+            Class entityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
             if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
                 continue;

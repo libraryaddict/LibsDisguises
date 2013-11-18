@@ -2,18 +2,44 @@ package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
+    private static Method soundMethod;
     static {
+        for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
+            try {
+                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
+                        && method.getParameterTypes().length == 0) {
+                    Object entity = getEntityInstance("Pig");
+                    method.setAccessible(true);
+                    method.invoke(entity);
+                    Field random = getNmsClass("Entity").getDeclaredField("random");
+                    random.setAccessible(true);
+                    random.set(entity, null);
+                    method.setAccessible(true);
+                    try {
+                        method.invoke(entity);
+                    } catch (Exception ex) {
+                        soundMethod = method;
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
         try {
-            itemClass = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".inventory.CraftItemStack");
+            itemClass = getCraftClass("inventory.CraftItemStack");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,9 +60,18 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object getNmsEntity(Entity entity) {
+        try {
+            return getCraftClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static String getCraftSound(Sound sound) {
         try {
-            Class c = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftSound");
+            Class c = getCraftClass("CraftSound");
             return (String) c.getMethod("getSound", Sound.class).invoke(null, sound);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -75,22 +110,32 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Class getCraftClass(String className) {
+        try {
+            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + "." + className);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Float getSoundModifier(Object entity) {
         try {
-            Method soundStrength = getNmsClass("EntityLiving").getDeclaredMethod("ba");
             // TODO Update this each update!
-            soundStrength.setAccessible(true);
-            return (Float) soundStrength.invoke(entity);
+            soundMethod.setAccessible(true);
+            return (Float) soundMethod.invoke(entity);
         } catch (Exception ex) {
         }
         return null;
     }
 
     private static Object getWorld() {
-        try {
-            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftWorld").getMethod("getHandle")
-                    .invoke(Bukkit.getWorlds().get(0));
+        return getWorld(Bukkit.getWorlds().get(0));
+    }
 
+    public static Object getWorld(World world) {
+        try {
+            return getCraftClass("CraftWorld").getMethod("getHandle").invoke(world);
         } catch (Exception e) {
             e.printStackTrace();
         }
