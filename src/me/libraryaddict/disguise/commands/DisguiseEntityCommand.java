@@ -23,16 +23,20 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
+        Disguise disguise;
         try {
-            Disguise disguise = parseDisguise(sender, args);
-            listener.setSlap(sender.getName(), disguise);
-            sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise it as a "
-                    + disguise.getType().toReadable() + "!");
+            disguise = parseDisguise(sender, args);
         } catch (Exception ex) {
-            if (ex.getMessage() != null) {
+            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
+            } else {
+                ex.printStackTrace();
             }
+            return true;
         }
+        listener.setSlap(sender.getName(), disguise);
+        sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise it as a "
+                + disguise.getType().toReadable() + "!");
         return true;
     }
 

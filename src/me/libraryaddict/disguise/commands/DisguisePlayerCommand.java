@@ -33,20 +33,24 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "Cannot find the player '" + args[0] + "'");
             return true;
         }
-        try {
-            String[] newArgs = new String[args.length - 1];
-            for (int i = 0; i < newArgs.length; i++) {
-                newArgs[i] = args[i + 1];
-            }
-            Disguise disguise = parseDisguise(sender, newArgs);
-            DisguiseAPI.disguiseToAll(player, disguise);
-            sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "
-                    + disguise.getType().toReadable() + "!");
-        } catch (Exception ex) {
-            if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
-            }
+        String[] newArgs = new String[args.length - 1];
+        for (int i = 0; i < newArgs.length; i++) {
+            newArgs[i] = args[i + 1];
         }
+        Disguise disguise;
+        try {
+            disguise = parseDisguise(sender, newArgs);
+        } catch (Exception ex) {
+            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
+                sender.sendMessage(ex.getMessage());
+            } else {
+                ex.printStackTrace();
+            }
+            return true;
+        }
+        DisguiseAPI.disguiseToAll(player, disguise);
+        sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "
+                + disguise.getType().toReadable() + "!");
         return true;
     }
 
