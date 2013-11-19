@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -282,11 +283,11 @@ public abstract class Disguise {
             Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
                     .invoke(trackedEntities, getEntity().getEntityId());
             if (entityTrackerEntry != null) {
-                Field field = ReflectionManager.getNmsClass("Entity").getField("getBukkitEntity");
+                Method method = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
                 HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
                         .get(entityTrackerEntry);
                 for (Object p : trackedPlayers) {
-                    players.add((Player) field.get(p));
+                    players.add((Player) method.invoke(p));
                 }
             }
         } catch (Exception ex) {
