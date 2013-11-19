@@ -348,7 +348,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             for (HashSet<String> perms : optionPermissions) {
                 if (!perms.containsAll(usedOptions)) {
                     throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
-                            + usedOptions.iterator().next());
+                            + usedOptions.toArray(new String[usedOptions.size()])[usedOptions.size() - 1]);
                 }
             }
         }
