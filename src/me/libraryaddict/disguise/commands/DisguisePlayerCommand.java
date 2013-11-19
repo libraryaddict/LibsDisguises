@@ -43,7 +43,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
             if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
-            } else {
+            } else if (ex.getCause() != null) {
                 ex.printStackTrace();
             }
             return true;
