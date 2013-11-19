@@ -22,7 +22,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         for (String node : new String[] { "disguise", "disguiseradius", "disguiseentity", "disguiseplayer" }) {
-            ArrayList<String> allowedDisguises = getAllowedDisguises(sender, node);
+            ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "libsdisguises." + node + ".");
             if (!allowedDisguises.isEmpty()) {
                 if (args.length == 0) {
                     sendCommandUsage(sender);
@@ -126,6 +126,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                 }
             }
         }
+        sender.sendMessage(ChatColor.RED + "You are forbidden from using this command!");
         return true;
     }
 
