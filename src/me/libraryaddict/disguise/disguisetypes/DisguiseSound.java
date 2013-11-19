@@ -3,8 +3,9 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.libraryaddict.disguise.ReflectionManager;
+
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_6_R3.CraftSound;
 
 /**
  * Only living disguises go in here!
@@ -103,10 +104,6 @@ public enum DisguiseSound {
         CANCEL, DEATH, HURT, IDLE, STEP;
     }
 
-    public static String getSoundName(Sound sound) {
-        return CraftSound.getSound(sound);
-    }
-
     public static DisguiseSound getType(String name) {
         try {
             return valueOf(name);
@@ -128,7 +125,7 @@ public enum DisguiseSound {
             else if (obj instanceof String)
                 s = (String) obj;
             else if (obj instanceof Sound)
-                s = CraftSound.getSound((Sound) obj);
+                s = ReflectionManager.getCraftSound((Sound) obj);
             else
                 throw new RuntimeException("Was given a unknown object " + obj);
             switch (i) {
@@ -195,7 +192,7 @@ public enum DisguiseSound {
     }
 
     public void removeSound(SoundType type, Sound sound) {
-        removeSound(type, CraftSound.getSound(sound));
+        removeSound(type, ReflectionManager.getCraftSound(sound));
     }
 
     public void removeSound(SoundType type, String sound) {
@@ -211,7 +208,7 @@ public enum DisguiseSound {
     }
 
     public void setSound(SoundType type, Sound sound) {
-        setSound(type, CraftSound.getSound(sound));
+        setSound(type, ReflectionManager.getCraftSound(sound));
     }
 
     public void setSound(SoundType type, String sound) {

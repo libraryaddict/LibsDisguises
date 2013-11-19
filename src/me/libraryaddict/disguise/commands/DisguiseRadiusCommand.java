@@ -24,7 +24,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseplayer");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         if (allowedDisguises.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
             return true;
@@ -46,26 +46,29 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "Limited radius to " + maxRadius + "! Don't want to make too much lag right?");
             radius = maxRadius;
         }
-        try {
-            String[] newArgs = new String[args.length - 1];
-            for (int i = 0; i < newArgs.length; i++) {
-                newArgs[i] = args[i + 1];
-            }
-            Disguise disguise = parseDisguise(sender, newArgs);
-            // Time to use it!
-            int disguisedEntitys = 0;
-            for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
-                if (entity == sender)
-                    continue;
-                DisguiseAPI.disguiseToAll(entity, disguise);
-                disguisedEntitys++;
-            }
-            sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");
-        } catch (Exception ex) {
-            if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
-            }
+        String[] newArgs = new String[args.length - 1];
+        for (int i = 0; i < newArgs.length; i++) {
+            newArgs[i] = args[i + 1];
         }
+        Disguise disguise;
+        try {
+            disguise = parseDisguise(sender, newArgs);
+        } catch (Exception ex) {
+            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
+                sender.sendMessage(ex.getMessage());
+            } else {
+                ex.printStackTrace();
+            }
+            return true;
+        } // Time to use it!
+        int disguisedEntitys = 0;
+        for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
+            if (entity == sender)
+                continue;
+            DisguiseAPI.disguiseToAll(entity, disguise);
+            disguisedEntitys++;
+        }
+        sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");
         return true;
     }
 
@@ -73,7 +76,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguiseradius");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at 30 blocks!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

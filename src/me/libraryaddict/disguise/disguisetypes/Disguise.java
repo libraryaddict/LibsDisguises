@@ -1,25 +1,19 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.PacketsManager;
+import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import net.minecraft.server.v1_6_R3.EntityAgeable;
-import net.minecraft.server.v1_6_R3.EntityInsentient;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.WorldServer;
-
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -182,7 +176,7 @@ public abstract class Disguise {
 
             public void run() {
                 // If entity is no longer valid. Remove it.
-                if (!((CraftEntity) entity).getHandle().valid) {
+                if (!getEntity().isValid()) {
                     DisguiseAPI.undisguiseToAll(entity);
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
@@ -190,10 +184,7 @@ public abstract class Disguise {
                         i++;
                         if (i % 40 == 0) {
                             i = 0;
-                            List<Player> players = new ArrayList<Player>();
-                            for (EntityPlayer p : getPerverts())
-                                players.add(p.getBukkitEntity());
-                            ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), players);
+                            ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), getPerverts());
                         }
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
@@ -219,35 +210,37 @@ public abstract class Disguise {
                                 mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
                                 selfLookPacket = lookPacket.shallowClone();
                             }
-                            for (EntityPlayer player : getPerverts()) {
-                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
-                                StructureModifier<Object> mods = packet.getModifier();
-                                if (entity == player.getBukkitEntity()) {
-                                    if (!viewSelfDisguise())
-                                        continue;
-                                    if (selfLookPacket != null) {
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
-                                                    selfLookPacket, false);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
+                            try {
+                                Field ping = ReflectionManager.getNmsClass("EntityPlayer").getField("ping");
+                                for (Player player : getPerverts()) {
+                                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                                    StructureModifier<Object> mods = packet.getModifier();
+                                    if (entity == player) {
+                                        if (!viewSelfDisguise())
+                                            continue;
+                                        if (selfLookPacket != null) {
+                                            try {
+                                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, selfLookPacket,
+                                                        false);
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                    mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
-                                } else
-                                    mods.write(0, entity.getEntityId());
-                                mods.write(1, (int) (vector.getX() * 8000));
-                                mods.write(2, (int) (8000 * (vectorY * (double) player.ping * 0.069)));
-                                mods.write(3, (int) (vector.getZ() * 8000));
-                                try {
+                                        mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                                    } else
+                                        mods.write(0, entity.getEntityId());
+                                    mods.write(1, (int) (vector.getX() * 8000));
+                                    mods.write(
+                                            2,
+                                            (int) (8000 * (vectorY * (double) ping.getInt(ReflectionManager.getNmsEntity(player)) * 0.069)));
+                                    mods.write(3, (int) (vector.getZ() * 8000));
                                     if (lookPacket != null)
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(),
-                                                lookPacket, false);
-                                    ProtocolLibrary.getProtocolManager()
-                                            .sendServerPacket(player.getBukkitEntity(), packet, false);
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
                         // If we need to send more packets because else it still 'sinks'
@@ -255,10 +248,10 @@ public abstract class Disguise {
                             PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, entity.getEntityId());
-                            for (EntityPlayer player : getPerverts()) {
+                            for (Player player : getPerverts()) {
                                 if (DisguiseAPI.isViewDisguises() || entity != player) {
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player.getBukkitEntity(), packet);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
@@ -281,14 +274,26 @@ public abstract class Disguise {
     /**
      * Get all EntityPlayers who have this entity in their Entity Tracker
      */
-    protected EntityPlayer[] getPerverts() {
-        EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) ((CraftEntity) entity).getHandle().world).tracker.trackedEntities
-                .get(entity.getEntityId());
-        if (entry != null) {
-            EntityPlayer[] players = (EntityPlayer[]) entry.trackedPlayers.toArray(new EntityPlayer[entry.trackedPlayers.size()]);
-            return players;
+    protected ArrayList<Player> getPerverts() {
+        ArrayList<Player> players = new ArrayList<Player>();
+        try {
+            Object world = ReflectionManager.getWorld(getEntity().getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, getEntity().getEntityId());
+            if (entityTrackerEntry != null) {
+                Method method = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                for (Object p : trackedPlayers) {
+                    players.add((Player) method.invoke(p));
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return new EntityPlayer[0];
+        return players;
     }
 
     /**
@@ -342,7 +347,7 @@ public abstract class Disguise {
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If the entity is valid
-            if (((CraftEntity) getEntity()).getHandle().valid) {
+            if (getEntity().isValid()) {
                 // If this disguise is active
                 if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
                     // Now remove the disguise from the current disguises.
@@ -478,19 +483,19 @@ public abstract class Disguise {
             case 7:
             case 8:
             case 9:
-                baseClass = EntityLiving.class;
+                baseClass = ReflectionManager.getNmsClass("EntityLiving");
                 break;
             case 10:
             case 11:
-                baseClass = EntityInsentient.class;
+                baseClass = ReflectionManager.getNmsClass("EntityInsentient");
                 break;
             case 16:
-                baseClass = EntityAgeable.class;
+                baseClass = ReflectionManager.getNmsClass("EntityAgeable");
                 break;
             default:
                 break;
             }
-            Class entityClass = ((CraftEntity) entity).getHandle().getClass();
+            Class entityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
             if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
                 continue;

@@ -3,8 +3,7 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -18,47 +17,22 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
-import net.minecraft.server.v1_6_R3.AttributeMapServer;
-import net.minecraft.server.v1_6_R3.AttributeSnapshot;
-import net.minecraft.server.v1_6_R3.Block;
-import net.minecraft.server.v1_6_R3.DataWatcher;
-import net.minecraft.server.v1_6_R3.EntityHuman;
-import net.minecraft.server.v1_6_R3.EntityInsentient;
-import net.minecraft.server.v1_6_R3.EntityLiving;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.EntityTrackerEntry;
-import net.minecraft.server.v1_6_R3.EnumArt;
-import net.minecraft.server.v1_6_R3.EnumEntitySize;
-import net.minecraft.server.v1_6_R3.ItemStack;
-import net.minecraft.server.v1_6_R3.MathHelper;
-import net.minecraft.server.v1_6_R3.MobEffect;
-import net.minecraft.server.v1_6_R3.Packet17EntityLocationAction;
-import net.minecraft.server.v1_6_R3.Packet20NamedEntitySpawn;
-import net.minecraft.server.v1_6_R3.Packet28EntityVelocity;
-import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R3.Packet39AttachEntity;
-import net.minecraft.server.v1_6_R3.Packet40EntityMetadata;
-import net.minecraft.server.v1_6_R3.Packet41MobEffect;
-import net.minecraft.server.v1_6_R3.Packet44UpdateAttributes;
-import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R3.WatchableObject;
-import net.minecraft.server.v1_6_R3.World;
-import net.minecraft.server.v1_6_R3.WorldServer;
 
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.Packets;
@@ -71,6 +45,8 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
     private static boolean cancelSound;
@@ -151,7 +127,7 @@ public class PacketsManager {
     public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
-        net.minecraft.server.v1_6_R3.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
+        // net.minecraft.server.v1_6_R3.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         for (int i = 0; i < 5; i++) {
             int slot = i - 1;
@@ -160,14 +136,17 @@ public class PacketsManager {
             org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
             if (itemstack != null && itemstack.getTypeId() != 0) {
                 ItemStack item = null;
-                if (nmsEntity instanceof EntityLiving)
-                    item = ((EntityLiving) nmsEntity).getEquipment(i);
-                if (item == null) {
+                if (disguisedEntity instanceof LivingEntity)
+                    if (i != 4)
+                        item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[i];
+                    else
+                        item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
+                if (item == null || item.getType() == Material.AIR) {
                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
                     StructureModifier<Object> mods = packet.getModifier();
                     mods.write(0, disguisedEntity.getEntityId());
                     mods.write(1, i);
-                    mods.write(2, CraftItemStack.asNMSCopy(itemstack));
+                    mods.write(2, ReflectionManager.getNmsItem(itemstack));
                     packets.add(packet);
                 }
             }
@@ -179,7 +158,6 @@ public class PacketsManager {
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
         byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
                 (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-        EnumEntitySize entitySize = Values.getValues(disguise.getType()).getEntitySize();
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -201,8 +179,8 @@ public class PacketsManager {
             mods.write(4, ((int) loc.getYaw()) % 4);
             int id = ((MiscDisguise) disguise).getData();
             if (id == -1)
-                id = new Random().nextInt(EnumArt.values().length);
-            mods.write(5, EnumArt.values()[id % EnumArt.values().length].B);
+                id = new Random().nextInt(Art.values().length);
+            mods.write(5, ReflectionManager.getEnumArt(Art.values()[id % Art.values().length]));
 
             // Make the teleport packet to make it visible..
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
@@ -220,22 +198,25 @@ public class PacketsManager {
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, ((PlayerDisguise) disguise).getName());
-            mods.write(2, (int) Math.floor(loc.getX() * 32));
-            mods.write(3, (int) Math.floor(loc.getY() * 32));
-            mods.write(4, (int) Math.floor(loc.getZ() * 32));
-            mods.write(5, yaw);
-            mods.write(6, (byte) (int) (loc.getPitch() * 256F / 360F));
+            mods.write(2, ((PlayerDisguise) disguise).getName());
+            mods.write(3, (int) Math.floor(loc.getX() * 32));
+            mods.write(4, (int) Math.floor(loc.getY() * 32));
+            mods.write(5, (int) Math.floor(loc.getZ() * 32));
+            mods.write(6, yaw);
+            mods.write(7, (byte) (int) (loc.getPitch() * 256F / 360F));
             ItemStack item = null;
             if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
-                item = CraftItemStack.asNMSCopy(((Player) disguisedEntity).getItemInHand());
+                item = ((Player) disguisedEntity).getItemInHand();
             } else if (disguisedEntity instanceof LivingEntity) {
-                item = CraftItemStack.asNMSCopy(((CraftLivingEntity) disguisedEntity).getEquipment().getItemInHand());
+                item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
             }
-            mods.write(7, (item == null ? 0 : item.id));
-            mods.write(8, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            mods.write(8, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
+            spawnPackets[0].getDataWatcherModifier().write(0,
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
         } else if (disguise.getType().isMob()) {
 
+            Values values = Values.getValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(Packets.Server.MOB_SPAWN);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
@@ -257,17 +238,18 @@ public class PacketsManager {
                 d3 = d1;
             if (d4 > d1)
                 d4 = d1;
-            mods.write(2, entitySize.a(loc.getX()));
+            mods.write(2, values.getEntitySize(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
-            mods.write(4, entitySize.a(loc.getZ()));
+            mods.write(4, values.getEntitySize(loc.getZ()));
             mods.write(5, (int) (d2 * 8000.0D));
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
             mods.write(8, yaw);
             mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            if (nmsEntity instanceof EntityLiving)
-                mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
-            mods.write(11, createDataWatcher(nmsEntity.getDataWatcher(), disguise.getWatcher()));
+            // if (nmsEntity instanceof EntityLiving)
+            // mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
+            spawnPackets[0].getDataWatcherModifier().write(0,
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
             // Theres a list sometimes written with this. But no problems have appeared!
             // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
 
@@ -318,7 +300,7 @@ public class PacketsManager {
                 mods.write(5, (int) (d2 * 8000.0D));
                 mods.write(6, (int) (d3 * 8000.0D));
             }
-            mods.write(7, (int) MathHelper.floor(loc.getPitch() * 256.0F / 360.0F));
+            mods.write(7, (int) Math.floor(loc.getPitch() * 256.0F / 360.0F));
             mods.write(8, yaw);
             mods.write(9, id);
             mods.write(10, data);
@@ -337,16 +319,13 @@ public class PacketsManager {
     /**
      * Create a new datawatcher but with the 'correct' values
      */
-    private static DataWatcher createDataWatcher(DataWatcher watcher, FlagWatcher flagWatcher) {
-        DataWatcher newWatcher = new DataWatcher();
+    private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
+        WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            Field map = newWatcher.getClass().getDeclaredField("c");
-            map.setAccessible(true);
-            HashMap c = (HashMap) map.get(newWatcher);
             // Calling c() gets the watchable objects exactly as they are.
-            List<WatchableObject> list = watcher.c();
-            for (WatchableObject watchableObject : flagWatcher.convert(list)) {
-                c.put(watchableObject.a(), watchableObject);
+            List<WrappedWatchableObject> list = watcher.getWatchableObjects();
+            for (WrappedWatchableObject watchableObject : flagWatcher.convert(list)) {
+                newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -463,13 +442,18 @@ public class PacketsManager {
                                         soundType = SoundType.DEATH;
                                     } else {
                                         boolean hasInvun = false;
-                                        if (entity instanceof LivingEntity) {
-                                            net.minecraft.server.v1_6_R3.EntityLiving e = ((CraftLivingEntity) entity)
-                                                    .getHandle();
-                                            hasInvun = (e.noDamageTicks == e.maxNoDamageTicks);
-                                        } else {
-                                            net.minecraft.server.v1_6_R3.Entity e = ((CraftEntity) entity).getHandle();
-                                            hasInvun = e.isInvulnerable();
+                                        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
+                                        try {
+                                            if (entity instanceof LivingEntity) {
+                                                Class entityClass = ReflectionManager.getNmsClass("Entity");
+                                                hasInvun = entityClass.getField("noDamageTicks").getInt(nmsEntity) == entityClass
+                                                        .getField("maxNoDamageTicks").getInt(nmsEntity);
+                                            } else {
+                                                hasInvun = (Boolean) ReflectionManager.getNmsClass("Entity")
+                                                        .getMethod("isInvulnerable").invoke(nmsEntity);
+                                            }
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
                                         }
                                         soundType = entitySound.getType(soundName, !hasInvun);
                                     }
@@ -493,11 +477,18 @@ public class PacketsManager {
                                     event.setCancelled(true);
                                 } else {
                                     if (sound.equals("step.grass")) {
-                                        World world = ((CraftEntity) disguisedEntity).getHandle().world;
-                                        Block b = Block.byId[world.getTypeId(soundLoc.getBlockX(), soundLoc.getBlockY() - 1,
-                                                soundLoc.getBlockZ())];
-                                        if (b != null)
-                                            mods.write(0, b.stepSound.getStepSound());
+                                        try {
+                                            int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
+                                                    soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
+                                            Class blockClass = ReflectionManager.getNmsClass("Block");
+                                            Object block = ((Object[]) blockClass.getField("byId").get(null))[typeId];
+                                            if (block != null) {
+                                                Object step = blockClass.getField("stepSound").get(block);
+                                                mods.write(0, step.getClass().getMethod("getStepSound").invoke(step));
+                                            }
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
                                         // There is no else statement. Because seriously. This should never be null. Unless
                                         // someone is
                                         // sending fake sounds. In which case. Why cancel it.
@@ -514,7 +505,12 @@ public class PacketsManager {
                                             // Here I assume its the default pitch as I can't calculate if its real.
                                             if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
                                                     && ((MobDisguise) disguise).doesDisguiseAge()) {
-                                                boolean baby = ((CraftLivingEntity) disguisedEntity).getHandle().isBaby();
+                                                boolean baby = false;
+                                                if (disguisedEntity instanceof Zombie) {
+                                                    baby = ((Zombie) disguisedEntity).isBaby();
+                                                } else if (disguisedEntity instanceof Ageable) {
+                                                    baby = !((Ageable) disguisedEntity).isAdult();
+                                                }
                                                 if (((MobDisguise) disguise).isAdult() == baby) {
 
                                                     float pitch = (Integer) mods.read(5);
@@ -552,7 +548,7 @@ public class PacketsManager {
                         }
                     }
                 } else if (event.getPacketID() == Packets.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 2) {
+                    if ((Byte) mods.read(1) == 1) {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
@@ -616,7 +612,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ENTITY_HEAD_ROTATION, Packets.Server.ENTITY_METADATA, Packets.Server.ENTITY_EQUIPMENT,
                 Packets.Server.ARM_ANIMATION, Packets.Server.ENTITY_LOCATION_ACTION, Packets.Server.MOB_EFFECT,
-                Packets.Server.ENTITY_STATUS, Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
+                Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
@@ -639,16 +635,16 @@ public class PacketsManager {
 
                         if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<Object> mods = event.getPacket().getModifier();
-                            Iterator<WatchableObject> itel = ((List<WatchableObject>) mods.read(1)).iterator();
+                            Iterator<WrappedWatchableObject> itel = event.getPacket().getWatchableCollectionModifier().read(0)
+                                    .iterator();
                             while (itel.hasNext()) {
-                                WatchableObject watch = itel.next();
-                                if (watch.a() == 0) {
-                                    byte b = (Byte) watch.b();
+                                WrappedWatchableObject watch = itel.next();
+                                if (watch.getIndex() == 0) {
+                                    byte b = (Byte) watch.getValue();
                                     byte a = (byte) (b | 1 << 5);
                                     if ((b & 1 << 3) != 0)
                                         a = (byte) (a | 1 << 3);
-                                    watch.a(a);
+                                    watch.setValue(a);
                                 }
                             }
                         } else {
@@ -666,12 +662,12 @@ public class PacketsManager {
                                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, entity.getEntityId());
-                                    List watchableList = new ArrayList();
+                                    List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
                                     byte b = (byte) (0 | 1 << 5);
                                     if (event.getPlayer().isSprinting())
                                         b = (byte) (b | 1 << 3);
-                                    watchableList.add(new WatchableObject(0, 0, b));
-                                    mods.write(1, watchableList);
+                                    watchableList.add(new WrappedWatchableObject(0, b));
+                                    packet.getWatchableCollectionModifier().write(0, watchableList);
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (Exception ex) {
@@ -681,12 +677,12 @@ public class PacketsManager {
                                 event.setCancelled(true);
                                 break;
 
-                            case Packets.Server.ENTITY_STATUS:
-                                if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
-                                        && (Byte) event.getPacket().getModifier().read(1) == 2) {
-                                    event.setCancelled(true);
-                                }
-                                break;
+                            /*     case Packets.Server.ENTITY_STATUS:
+                                     if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
+                                             && (Byte) event.getPacket().getModifier().read(1) == 1) {
+                                         event.setCancelled(true);
+                                     }
+                                     break;*/
                             default:
                                 break;
                             }
@@ -726,7 +722,7 @@ public class PacketsManager {
                                     if (item != null && item.getType() != Material.AIR) {
                                         event.setPacket(event.getPacket().shallowClone());
                                         event.getPacket().getModifier()
-                                                .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                                .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                     }
                                 }
                                 // Else if its a hotbar slot
@@ -738,8 +734,9 @@ public class PacketsManager {
                                         org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
                                         if (item != null && item.getType() != Material.AIR) {
                                             event.setPacket(event.getPacket().shallowClone());
-                                            event.getPacket().getModifier()
-                                                    .write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                            event.getPacket()
+                                                    .getModifier()
+                                                    .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         }
                                     }
                                 }
@@ -751,8 +748,8 @@ public class PacketsManager {
                          */
                         case Packets.Server.WINDOW_ITEMS: {
                             event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<Object> mods = event.getPacket().getModifier();
-                            ItemStack[] items = (ItemStack[]) mods.read(1);
+                            StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
+                            ItemStack[] items = mods.read(0);
                             for (int slot = 0; slot < items.length; slot++) {
                                 if (slot >= 5 && slot <= 8) {
                                     if (disguise.isHidingArmorFromSelf()) {
@@ -760,7 +757,7 @@ public class PacketsManager {
                                         int armorSlot = Math.abs((slot - 5) - 3);
                                         org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
                                         if (item != null && item.getType() != Material.AIR) {
-                                            items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                            items[slot] = new org.bukkit.inventory.ItemStack(0);
                                         }
                                     }
                                     // Else if its a hotbar slot
@@ -771,12 +768,13 @@ public class PacketsManager {
                                         if (slot == currentSlot + 36) {
                                             org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
                                             if (item != null && item.getType() != Material.AIR) {
-                                                items[slot] = CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0));
+                                                items[slot] = new org.bukkit.inventory.ItemStack(0);
                                             }
                                         }
                                     }
                                 }
                             }
+                            mods.write(0, items);
                             break;
                         }
                         default:
@@ -808,7 +806,7 @@ public class PacketsManager {
                                         StructureModifier<Object> mods = packet.getModifier();
                                         mods.write(0, 0);
                                         mods.write(1, slot);
-                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
@@ -827,7 +825,7 @@ public class PacketsManager {
                                             StructureModifier<Object> mods = packet.getModifier();
                                             mods.write(0, 0);
                                             mods.write(1, slot);
-                                            mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                             try {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
@@ -854,7 +852,7 @@ public class PacketsManager {
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, 0);
                                     mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
-                                    mods.write(2, CraftItemStack.asNMSCopy(currentlyHeld));
+                                    mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
@@ -869,7 +867,7 @@ public class PacketsManager {
                                     StructureModifier<Object> mods = packet.getModifier();
                                     mods.write(0, 0);
                                     mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                                    mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
@@ -912,7 +910,7 @@ public class PacketsManager {
                                         StructureModifier<Object> mods = packet.getModifier();
                                         mods.write(0, 0);
                                         mods.write(1, slot);
-                                        mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
@@ -930,7 +928,7 @@ public class PacketsManager {
                                             StructureModifier<Object> mods = packet.getModifier();
                                             mods.write(0, 0);
                                             mods.write(1, slot);
-                                            mods.write(2, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(0)));
+                                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                             try {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
@@ -969,96 +967,107 @@ public class PacketsManager {
      * Sends the self disguise to the player
      */
     public static void sendSelfDisguise(final Player player) {
-        EntityPlayer entityplayer = ((CraftPlayer) player).getHandle();
-        EntityTrackerEntry tracker = (EntityTrackerEntry) ((WorldServer) entityplayer.world).tracker.trackedEntities.get(player
-                .getEntityId());
-        if (tracker == null) {
-            // A check incase the tracker is null.
-            // If it is, then this method will be run again in one tick. Which is when it should be constructed.
-            // Else its going to run in a infinite loop hue hue hue..
-            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                public void run() {
-                    sendSelfDisguise(player);
-                }
-            });
-            return;
-        }
-        // Add himself to his own entity tracker
-        tracker.trackedPlayers.add(entityplayer);
-        // Send the player a packet with himself being spawned
-        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn((EntityHuman) entityplayer);
-        entityplayer.playerConnection.sendPacket(packet);
-        if (!tracker.tracker.getDataWatcher().d()) {
-            entityplayer.playerConnection.sendPacket(new Packet40EntityMetadata(player.getEntityId(), tracker.tracker
-                    .getDataWatcher(), true));
-        }
-        // Send himself some entity attributes
-        if (tracker.tracker instanceof EntityLiving) {
-            AttributeMapServer attributemapserver = (AttributeMapServer) ((EntityLiving) tracker.tracker).aX();
-            Collection collection = attributemapserver.c();
-
-            if (!collection.isEmpty()) {
-                entityplayer.playerConnection.sendPacket(new Packet44UpdateAttributes(player.getEntityId(), collection));
-            }
-        }
-
-        // Why do we even have this?
-        tracker.j = tracker.tracker.motX;
-        tracker.k = tracker.tracker.motY;
-        tracker.l = tracker.tracker.motZ;
-        boolean isMoving = false;
         try {
-            Field field = EntityTrackerEntry.class.getDeclaredField("isMoving");
-            field.setAccessible(true);
-            isMoving = field.getBoolean(tracker);
+            Object world = ReflectionManager.getWorld(player.getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, player.getEntityId());
+            if (entityTrackerEntry == null) {
+                // A check incase the tracker is null.
+                // If it is, then this method will be run again in one tick. Which is when it should be constructed.
+                // Else its going to run in a infinite loop hue hue hue..
+                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                    public void run() {
+                        sendSelfDisguise(player);
+                    }
+                });
+                return;
+            }
+            // Add himself to his own entity tracker
+            ((HashSet) entityTrackerEntry.getClass().getField("trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager
+                    .getNmsEntity(player));
+            ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+            // Send the player a packet with himself being spawned
+            manager.sendServerPacket(player, manager.createPacketConstructor(Packets.Server.NAMED_ENTITY_SPAWN, player)
+                    .createPacket(player));
+            manager.sendServerPacket(
+                    player,
+                    manager.createPacketConstructor(Packets.Server.ENTITY_METADATA, player.getEntityId(),
+                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
+                            WrappedDataWatcher.getEntityWatcher(player), true));
+
+            boolean isMoving = false;
+            try {
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField("isMoving");
+                field.setAccessible(true);
+                isMoving = field.getBoolean(entityTrackerEntry);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            // Send the velocity packets
+            if (isMoving) {
+                Vector velocity = player.getVelocity();
+                manager.sendServerPacket(
+                        player,
+                        manager.createPacketConstructor(Packets.Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
+                                velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(), velocity.getX(),
+                                velocity.getY(), velocity.getZ()));
+            }
+
+            // Why the hell would he even need this. Meh.
+            if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
+                                .createPacket(0, player, player.getVehicle()));
+            } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
+                                .createPacket(0, player.getPassenger(), player));
+            }
+
+            // Resend the armor
+            for (int i = 0; i < 5; i++) {
+                ItemStack item;
+                if (i == 0) {
+                    item = player.getItemInHand();
+                } else {
+                    item = player.getInventory().getArmorContents()[i - 1];
+                }
+
+                if (item != null && item.getType() != Material.AIR) {
+                    manager.sendServerPacket(player,
+                            manager.createPacketConstructor(Packets.Server.ENTITY_EQUIPMENT, player.getEntityId(), i, item)
+                                    .createPacket(player.getEntityId(), i, item));
+                }
+            }
+            Location loc = player.getLocation();
+            // If the disguised is sleeping for w/e reason
+            if (player.isSleeping()) {
+                manager.sendServerPacket(
+                        player,
+                        manager.createPacketConstructor(Packets.Server.ENTITY_LOCATION_ACTION, player, 0, loc.getBlockX(),
+                                loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
+                                loc.getBlockZ()));
+            }
+            // TODO Fix this cos it doesn't move the disguise?
+            byte yaw = (byte) (loc.getYaw() * 256.0F / 360.0F);
+            byte pitch = (byte) (loc.getPitch() * 256.0F / 360.0F);
+            manager.sendServerPacket(
+                    player,
+                    manager.createPacketConstructor(Packets.Server.ENTITY_LOOK, player.getEntityId(), yaw, pitch).createPacket(
+                            player.getEntityId(), yaw, pitch));
+
+            // Resend any active potion effects
+            Iterator iterator = player.getActivePotionEffects().iterator();
+            while (iterator.hasNext()) {
+                PotionEffect potionEffect = (PotionEffect) iterator.next();
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.MOB_EFFECT, player.getEntityId(), potionEffect)
+                                .createPacket(player.getEntityId(), potionEffect));
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-        // Send the velocity packets
-        if (isMoving) {
-            entityplayer.playerConnection.sendPacket(new Packet28EntityVelocity(player.getEntityId(), tracker.tracker.motX,
-                    tracker.tracker.motY, tracker.tracker.motZ));
-        }
-
-        // Why the hell would he even need this. Meh.
-        if (tracker.tracker.vehicle != null && player.getEntityId() > tracker.tracker.vehicle.id) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker, tracker.tracker.vehicle));
-        } else if (tracker.tracker.passenger != null && player.getEntityId() > tracker.tracker.passenger.id) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(0, tracker.tracker.passenger, tracker.tracker));
-        }
-
-        if (tracker.tracker instanceof EntityInsentient && ((EntityInsentient) tracker.tracker).getLeashHolder() != null) {
-            entityplayer.playerConnection.sendPacket(new Packet39AttachEntity(1, tracker.tracker,
-                    ((EntityInsentient) tracker.tracker).getLeashHolder()));
-        }
-
-        // Resend the armor
-        for (int i = 0; i < 5; ++i) {
-            ItemStack itemstack = ((EntityLiving) tracker.tracker).getEquipment(i);
-
-            if (itemstack != null) {
-                entityplayer.playerConnection.sendPacket(new Packet5EntityEquipment(player.getEntityId(), i, itemstack));
-            }
-        }
-        // If the disguised is sleeping for w/e reason
-        if (entityplayer.isSleeping()) {
-            entityplayer.playerConnection
-                    .sendPacket(new Packet17EntityLocationAction(entityplayer, 0, (int) Math.floor(tracker.tracker.locX),
-                            (int) Math.floor(tracker.tracker.locY), (int) Math.floor(tracker.tracker.locZ)));
-        }
-
-        // CraftBukkit start - Fix for nonsensical head yaw
-        tracker.i = (int) Math.floor(tracker.tracker.getHeadRotation() * 256.0F / 360.0F); // tracker.ao() should be
-        // getHeadRotation
-        tracker.broadcast(new Packet35EntityHeadRotation(player.getEntityId(), (byte) tracker.i));
-        // CraftBukkit end
-
-        // Resend any active potion effects
-        Iterator iterator = entityplayer.getEffects().iterator();
-        while (iterator.hasNext()) {
-            MobEffect mobeffect = (MobEffect) iterator.next();
-
-            entityplayer.playerConnection.sendPacket(new Packet41MobEffect(player.getEntityId(), mobeffect));
         }
     }
 
@@ -1141,22 +1150,8 @@ public class PacketsManager {
                 case Packets.Server.UPDATE_ATTRIBUTES:
 
                 {
-                    // Grab the values which are 'approved' to be sent for this entity
-                    HashMap<String, Double> values = Values.getAttributesValues(disguise.getType());
-                    Collection collection = new ArrayList<AttributeSnapshot>();
-                    for (AttributeSnapshot att : (List<AttributeSnapshot>) sentPacket.getModifier().read(1)) {
-                        if (values.containsKey(att.a())) {
-                            collection.add(new AttributeSnapshot(null, att.a(), values.get(att.a()), att.c()));
-                        }
-                    }
-                    if (collection.size() > 0) {
-                        packets[0] = new PacketContainer(sentPacket.getID());
-                        StructureModifier<Object> mods = packets[0].getModifier();
-                        mods.write(0, entity.getEntityId());
-                        mods.write(1, collection);
-                    } else {
-                        packets = new PacketContainer[0];
-                    }
+
+                    packets = new PacketContainer[0];
                     break;
                 }
 
@@ -1164,12 +1159,12 @@ public class PacketsManager {
                 case Packets.Server.ENTITY_METADATA:
 
                 {
-                    List<WatchableObject> watchableObjects = disguise.getWatcher().convert(
-                            (List<WatchableObject>) packets[0].getModifier().read(1));
+                    List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
+                            packets[0].getWatchableCollectionModifier().read(0));
                     packets[0] = new PacketContainer(sentPacket.getID());
                     StructureModifier<Object> newMods = packets[0].getModifier();
                     newMods.write(0, entity.getEntityId());
-                    newMods.write(1, watchableObjects);
+                    packets[0].getWatchableCollectionModifier().write(0, watchableObjects);
                     break;
                 }
 
@@ -1238,7 +1233,7 @@ public class PacketsManager {
                     if (itemstack != null) {
                         packets[0] = packets[0].shallowClone();
                         packets[0].getModifier().write(2,
-                                (itemstack.getTypeId() == 0 ? null : CraftItemStack.asNMSCopy(itemstack)));
+                                (itemstack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemstack)));
                     }
                     break;
                 }

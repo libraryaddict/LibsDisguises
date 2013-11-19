@@ -18,15 +18,19 @@ public class DisguiseCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
+        Disguise disguise = null;
         try {
-            Disguise disguise = parseDisguise(sender, args);
-            DisguiseAPI.disguiseToAll((Player) sender, disguise);
-            sender.sendMessage(ChatColor.RED + "Now disguised as a " + disguise.getType().toReadable());
+            disguise = parseDisguise(sender, args);
         } catch (Exception ex) {
-            if (ex.getMessage() != null) {
+            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
+            } else {
+                ex.printStackTrace();
             }
+            return true;
         }
+        DisguiseAPI.disguiseToAll((Player) sender, disguise);
+        sender.sendMessage(ChatColor.RED + "Now disguised as a " + disguise.getType().toReadable());
         return true;
     }
 
@@ -34,7 +38,7 @@ public class DisguiseCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "disguise");
+        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise to become the disguise!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,13 +16,11 @@ import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.PacketsManager;
-import net.minecraft.server.v1_6_R3.ChunkCoordinates;
-import net.minecraft.server.v1_6_R3.EntityPlayer;
-import net.minecraft.server.v1_6_R3.ItemStack;
-import net.minecraft.server.v1_6_R3.WatchableObject;
+import me.libraryaddict.disguise.ReflectionManager;
 
 public class FlagWatcher {
     public enum SlotType {
@@ -39,16 +36,6 @@ public class FlagWatcher {
         }
     }
 
-    private static HashMap<Class, Integer> classTypes = new HashMap<Class, Integer>();
-    static {
-        classTypes.put(Byte.class, 0);
-        classTypes.put(Short.class, 1);
-        classTypes.put(Integer.class, 2);
-        classTypes.put(Float.class, 3);
-        classTypes.put(String.class, 4);
-        classTypes.put(ItemStack.class, 5);
-        classTypes.put(ChunkCoordinates.class, 6);
-    }
     /**
      * This is the entity values I need to add else it could crash them..
      */
@@ -67,7 +54,6 @@ public class FlagWatcher {
         try {
             cloned = getClass().getConstructor(Disguise.class).newInstance(disguise);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
@@ -75,14 +61,14 @@ public class FlagWatcher {
         return cloned;
     }
 
-    public List<WatchableObject> convert(List<WatchableObject> list) {
-        Iterator<WatchableObject> itel = list.iterator();
-        List<WatchableObject> newList = new ArrayList<WatchableObject>();
+    public List<WrappedWatchableObject> convert(List<WrappedWatchableObject> list) {
+        Iterator<WrappedWatchableObject> itel = list.iterator();
+        List<WrappedWatchableObject> newList = new ArrayList<WrappedWatchableObject>();
         HashSet<Integer> sentValues = new HashSet<Integer>();
         boolean sendAllCustom = false;
         while (itel.hasNext()) {
-            WatchableObject watch = itel.next();
-            int dataType = watch.a();
+            WrappedWatchableObject watch = itel.next();
+            int dataType = watch.getIndex();
             sentValues.add(dataType);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
@@ -99,15 +85,15 @@ public class FlagWatcher {
                 value = backupEntityValues.get(dataType);
             }
             if (value != null) {
-                boolean doD = watch.d();
-                watch = new WatchableObject(classTypes.get(value.getClass()), dataType, value);
+                boolean doD = watch.getDirtyState();
+                watch = new WrappedWatchableObject(dataType, value);
                 if (!doD)
-                    watch.a(false);
+                    watch.setDirtyState(doD);
             } else {
-                boolean doD = watch.d();
-                watch = new WatchableObject(watch.c(), dataType, watch.b());
+                boolean doD = watch.getDirtyState();
+                watch = new WrappedWatchableObject(dataType, watch.getValue());
                 if (!doD)
-                    watch.a(false);
+                    watch.setDirtyState(doD);
             }
             newList.add(watch);
         }
@@ -119,16 +105,16 @@ public class FlagWatcher {
                 Object obj = entityValues.get(value);
                 if (obj == null)
                     continue;
-                WatchableObject watch = new WatchableObject(classTypes.get(obj.getClass()), value, obj);
+                WrappedWatchableObject watch = new WrappedWatchableObject(value, obj);
                 newList.add(watch);
             }
         }
         // Here we check for if there is a health packet that says they died.
         if (disguise.viewSelfDisguise() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
-            for (WatchableObject watch : newList) {
+            for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
-                if (watch.a() == 6) {
-                    Object value = watch.b();
+                if (watch.getIndex() == 6) {
+                    Object value = watch.getValue();
                     if (value != null && value instanceof Float) {
                         float newHealth = (Float) value;
                         if (newHealth > 0 && hasDied) {
@@ -209,17 +195,16 @@ public class FlagWatcher {
             return;
         Entity entity = disguise.getEntity();
         Object value = entityValues.get(data);
-        List<WatchableObject> list = new ArrayList<WatchableObject>();
-        list.add(new WatchableObject(classTypes.get(value.getClass()), data, value));
+        List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
+        list.add(new WrappedWatchableObject(data, value));
         PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, entity.getEntityId());
-        mods.write(1, list);
-        for (EntityPlayer player : disguise.getPerverts()) {
-            Player p = player.getBukkitEntity();
-            if (DisguiseAPI.isViewDisguises() || p != entity) {
+        packet.getWatchableCollectionModifier().write(0, list);
+        for (Player player : disguise.getPerverts()) {
+            if (DisguiseAPI.isViewDisguises() || player != entity) {
                 try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -266,7 +251,7 @@ public class FlagWatcher {
             // Find the item to replace it with
             if (disguise.getEntity() instanceof LivingEntity) {
                 EntityEquipment enquipment = ((LivingEntity) disguise.getEntity()).getEquipment();
-                if (slot == 4) {
+                if (slot == 0) {
                     itemStack = enquipment.getItemInHand();
                 } else {
                     itemStack = enquipment.getArmorContents()[slot];
@@ -276,9 +261,9 @@ public class FlagWatcher {
             }
         }
 
-        ItemStack itemToSend = null;
+        Object itemToSend = null;
         if (itemStack != null && itemStack.getTypeId() != 0)
-            itemToSend = CraftItemStack.asNMSCopy(itemStack);
+            itemToSend = ReflectionManager.getNmsItem(itemStack);
         items[slot] = itemStack;
         if (DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
             return;
@@ -290,11 +275,10 @@ public class FlagWatcher {
         mods.write(0, disguise.getEntity().getEntityId());
         mods.write(1, slot);
         mods.write(2, itemToSend);
-        for (EntityPlayer player : disguise.getPerverts()) {
-            Player p = player.getBukkitEntity();
-            if (p != disguise.getEntity()) {
+        for (Player player : disguise.getPerverts()) {
+            if (player != disguise.getEntity()) {
                 try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
