@@ -416,13 +416,13 @@ public class PacketsManager {
                                         boolean hasInvun = false;
                                         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
                                         try {
+                                            Class entityClass = ReflectionManager.getNmsClass("Entity");
                                             if (entity instanceof LivingEntity) {
-                                                Class entityClass = ReflectionManager.getNmsClass("Entity");
-                                                hasInvun = entityClass.getField("noDamageTicks").getInt(nmsEntity) == entityClass
-                                                        .getField("maxNoDamageTicks").getInt(nmsEntity);
+                                                hasInvun = entityClass.getField("noDamageTicks").getInt(nmsEntity) == ReflectionManager
+                                                        .getNmsClass("EntityLiving").getField("maxNoDamageTicks")
+                                                        .getInt(nmsEntity);
                                             } else {
-                                                hasInvun = (Boolean) ReflectionManager.getNmsClass("Entity")
-                                                        .getMethod("isInvulnerable").invoke(nmsEntity);
+                                                hasInvun = (Boolean) entityClass.getMethod("isInvulnerable").invoke(nmsEntity);
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
