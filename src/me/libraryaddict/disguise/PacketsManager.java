@@ -127,7 +127,7 @@ public class PacketsManager {
     public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
-        // net.minecraft.server.v1_6_R3.Entity nmsEntity = ((CraftEntity) disguisedEntity).getHandle();
+        Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         for (int i = 0; i < 5; i++) {
             int slot = i - 1;
@@ -195,22 +195,25 @@ public class PacketsManager {
         } else if (disguise.getType().isPlayer()) {
 
             spawnPackets[0] = new PacketContainer(Packets.Server.NAMED_ENTITY_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, ((PlayerDisguise) disguise).getName());
-            mods.write(2, ((PlayerDisguise) disguise).getName());
-            mods.write(3, (int) Math.floor(loc.getX() * 32));
-            mods.write(4, (int) Math.floor(loc.getY() * 32));
-            mods.write(5, (int) Math.floor(loc.getZ() * 32));
-            mods.write(6, yaw);
-            mods.write(7, (byte) (int) (loc.getPitch() * 256F / 360F));
+            StructureModifier<String> stringMods = spawnPackets[0].getStrings();
+            for (int i = 0; i < stringMods.size(); i++) {
+                stringMods.write(i, ((PlayerDisguise) disguise).getName());
+            }
+            StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
+            intMods.write(0, disguisedEntity.getEntityId());
+            intMods.write(1, (int) Math.floor(loc.getX() * 32));
+            intMods.write(2, (int) Math.floor(loc.getY() * 32));
+            intMods.write(3, (int) Math.floor(loc.getZ() * 32));
             ItemStack item = null;
             if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getItemInHand() != null) {
                 item = ((Player) disguisedEntity).getItemInHand();
             } else if (disguisedEntity instanceof LivingEntity) {
                 item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
             }
-            mods.write(8, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
+            intMods.write(4, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
+            StructureModifier<Byte> byteMods = spawnPackets[0].getBytes();
+            byteMods.write(0, yaw);
+            byteMods.write(1, (byte) (int) (loc.getPitch() * 256F / 360F));
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
@@ -246,12 +249,8 @@ public class PacketsManager {
             mods.write(7, (int) (d4 * 8000.0D));
             mods.write(8, yaw);
             mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            // if (nmsEntity instanceof EntityLiving)
-            // mods.write(10, (byte) (int) (((EntityLiving) nmsEntity).aA * 256.0F / 360.0F));
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
-            // Theres a list sometimes written with this. But no problems have appeared!
-            // Probably just the metadata to be sent. But the next meta packet after fixes that anyways.
 
         } else if (disguise.getType().isMisc()) {
 
@@ -272,38 +271,10 @@ public class PacketsManager {
                 if (data < 0)
                     data = -data;
             }
-            spawnPackets[0] = new PacketContainer(Packets.Server.VEHICLE_SPAWN);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32D));
-            mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-            if (data > 0) {
-                Vector vec = disguisedEntity.getVelocity();
-                double d1 = vec.getX();
-                double d2 = vec.getY();
-                double d3 = vec.getZ();
-                double d4 = 3.9D;
-                if (d1 < -d4)
-                    d1 = -d4;
-                if (d2 < -d4)
-                    d2 = -d4;
-                if (d3 < -d4)
-                    d3 = -d4;
-                if (d1 > d4)
-                    d1 = d4;
-                if (d2 > d4)
-                    d2 = d4;
-                if (d3 > d4)
-                    d3 = d4;
-                mods.write(4, (int) (d1 * 8000.0D));
-                mods.write(5, (int) (d2 * 8000.0D));
-                mods.write(6, (int) (d3 * 8000.0D));
-            }
-            mods.write(7, (int) Math.floor(loc.getPitch() * 256.0F / 360.0F));
-            mods.write(8, yaw);
-            mods.write(9, id);
-            mods.write(10, data);
+            spawnPackets[0] = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(Packets.Server.VEHICLE_SPAWN, nmsEntity, id, data).createPacket(nmsEntity, id, data);
+            spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
+            spawnPackets[0].getModifier().write(8, yaw);
 
         }
         if (spawnPackets[1] == null) {
@@ -385,18 +356,19 @@ public class PacketsManager {
         case BAT:
             if (entity instanceof LivingEntity)
                 return ((LivingEntity) entity).getEyeHeight();
-        case ARROW:
-        case BOAT:
-        case EGG:
-        case ENDER_PEARL:
-        case ENDER_SIGNAL:
-        case FIREWORK:
         case MINECART:
         case MINECART_CHEST:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
         case MINECART_TNT:
+            return 0.4;
+        case ARROW:
+        case BOAT:
+        case EGG:
+        case ENDER_PEARL:
+        case ENDER_SIGNAL:
+        case FIREWORK:
         case PAINTING:
         case SMALL_FIREBALL:
         case SNOWBALL:
