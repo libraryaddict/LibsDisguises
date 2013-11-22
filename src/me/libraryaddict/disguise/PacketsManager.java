@@ -410,9 +410,20 @@ public class PacketsManager {
                             if (loc.equals(soundLoc)) {
                                 entitySound = DisguiseSound.getType(entity.getType().name());
                                 if (entitySound != null) {
-                                    if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
-                                        soundType = SoundType.DEATH;
-                                    } else {
+                                    Object obj = null;
+                                    if (entity instanceof LivingEntity) {
+                                        try {
+                                            obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        if (obj instanceof Float && ((Float) obj) == 0 || ((Integer) obj) == 0) {
+                                            soundType = SoundType.DEATH;
+                                        } else {
+                                            obj = null;
+                                        }
+                                    }
+                                    if (obj == null) {
                                         boolean hasInvun = false;
                                         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
                                         try {
@@ -529,9 +540,20 @@ public class PacketsManager {
                             if (disSound == null)
                                 return;
                             SoundType soundType = null;
-                            if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
-                                soundType = SoundType.DEATH;
-                            } else {
+                            Object obj = null;
+                            if (entity instanceof LivingEntity) {
+                                try {
+                                    obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (obj instanceof Float && ((Float) obj) == 0 || ((Integer) obj) == 0) {
+                                    soundType = SoundType.DEATH;
+                                } else {
+                                    obj = null;
+                                }
+                            }
+                            if (obj == null) {
                                 soundType = SoundType.HURT;
                             }
                             if (disSound.getSound(soundType) == null
