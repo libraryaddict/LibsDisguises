@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utils.DisguiseUtilities;
 import me.libraryaddict.disguise.utils.PacketsManager;
 import me.libraryaddict.disguise.utils.ReflectionManager;
 
@@ -57,6 +58,7 @@ public class LibsDisguises extends JavaPlugin {
             }
         }
         PacketsManager.init(this);
+        DisguiseUtilities.init(this);
         DisguiseAPI.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
         DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
         DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewSelfDisguises"));
@@ -68,7 +70,7 @@ public class LibsDisguises extends JavaPlugin {
         }
         try {
             // Here I use reflection to set the plugin for Disguise..
-            // Kinda stupid but I don't want open API calls.
+            // Kind of stupid but I don't want open API calls for a commonly used object.
             Field field = Disguise.class.getDeclaredField("plugin");
             field.setAccessible(true);
             field.set(null, this);
@@ -90,6 +92,10 @@ public class LibsDisguises extends JavaPlugin {
         registerValues();
     }
 
+    /**
+     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume
+     * for mob noises. As well as setting their watcher class and entity size.
+     */
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
@@ -135,7 +141,7 @@ public class LibsDisguises extends JavaPlugin {
                 }
             }
             disguiseType.setWatcherClass(watcherClass);
-            String name = toReadable(disguiseType.name());
+            String nmsEntityName = toReadable(disguiseType.name());
             switch (disguiseType) {
             case WITHER_SKELETON:
             case ZOMBIE_VILLAGER:
@@ -145,61 +151,62 @@ public class LibsDisguises extends JavaPlugin {
             case SKELETON_HORSE:
                 continue;
             case PRIMED_TNT:
-                name = "TNTPrimed";
+                nmsEntityName = "TNTPrimed";
                 break;
             case MINECART_TNT:
-                name = "MinecartTNT";
+                nmsEntityName = "MinecartTNT";
                 break;
             case MINECART:
-                name = "MinecartRideable";
+                nmsEntityName = "MinecartRideable";
                 break;
             case FIREWORK:
-                name = "Fireworks";
+                nmsEntityName = "Fireworks";
                 break;
             case SPLASH_POTION:
-                name = "Potion";
+                nmsEntityName = "Potion";
                 break;
             case GIANT:
-                name = "GiantZombie";
+                nmsEntityName = "GiantZombie";
                 break;
             case DROPPED_ITEM:
-                name = "Item";
+                nmsEntityName = "Item";
                 break;
             case FIREBALL:
-                name = "LargeFireball";
+                nmsEntityName = "LargeFireball";
                 break;
             case LEASH_HITCH:
-                name = "Leash";
+                nmsEntityName = "Leash";
                 break;
             default:
                 break;
             }
             try {
-                Object entity = ReflectionManager.createEntityInstance(name);
+                Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
                 Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity")
-                        .invoke(entity);
-                int enumEntitySize = 0;
+                        .invoke(nmsEntity);
+                int entitySize = 0;
                 for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
                     if (field.getType().getName().equals("EnumEntitySize")) {
-                        Enum a = (Enum) field.get(entity);
-                        enumEntitySize = a.ordinal();
+                        Enum enumEntitySize = (Enum) field.get(nmsEntity);
+                        entitySize = enumEntitySize.ordinal();
                         break;
                     }
                 }
-                Values disguiseValues = new Values(disguiseType, entity.getClass(), enumEntitySize);
+                Values disguiseValues = new Values(disguiseType, nmsEntity.getClass(), entitySize);
                 WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
                 List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
                 for (WrappedWatchableObject watch : watchers)
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
-                    Float soundStrength = ReflectionManager.getSoundModifier(entity);
+                    Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
                     if (soundStrength != null) {
                         sound.setDamageSoundVolume((Float) soundStrength);
                     }
                 }
             } catch (Exception ex) {
-                System.out.print("[LibsDisguises] Trouble while making values for " + name + ": " + ex.getMessage());
+                System.out.print("[LibsDisguises] Trouble while making values for " + disguiseType.name() + ": "
+                        + ex.getMessage());
                 System.out.print("[LibsDisguises] Please report this to LibsDisguises author");
                 ex.printStackTrace();
             }

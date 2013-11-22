@@ -4,21 +4,30 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
+    private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
@@ -29,6 +38,10 @@ public class DisguiseUtilities {
 
     public static HashMap<Integer, Integer> getSelfDisguisesIds() {
         return selfDisguisesIds;
+    }
+
+    public static void init(LibsDisguises disguises) {
+        libsDisguises = disguises;
     }
 
     /**
@@ -89,18 +102,125 @@ public class DisguiseUtilities {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-            }// Resend entity metadata else he will be invisible to himself until its resent
-            PacketContainer packetMetadata = new PacketContainer(Packets.Server.ENTITY_METADATA);
-            StructureModifier<Object> mods = packetMetadata.getModifier();
-            mods.write(0, player.getEntityId());
-            packetMetadata.getWatchableCollectionModifier().write(0,
-                    WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects());
+            }
+            // Resend entity metadata else he will be invisible to himself until its resent
             try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetMetadata);
+                ProtocolLibrary.getProtocolManager().sendServerPacket(
+                        player,
+                        ProtocolLibrary.getProtocolManager().createPacketConstructor(Packets.Server.ENTITY_METADATA, player)
+                                .createPacket(player));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             player.updateInventory();
+        }
+    }
+
+    /**
+     * Sends the self disguise to the player
+     */
+    public static void sendSelfDisguise(final Player player) {
+        try {
+            Object world = ReflectionManager.getWorld(player.getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, player.getEntityId());
+            if (entityTrackerEntry == null) {
+                // A check incase the tracker is null.
+                // If it is, then this method will be run again in one tick. Which is when it should be constructed.
+                // Else its going to run in a infinite loop hue hue hue..
+                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                    public void run() {
+                        sendSelfDisguise(player);
+                    }
+                });
+                return;
+            }
+            // Add himself to his own entity tracker
+            ((HashSet) entityTrackerEntry.getClass().getField("trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager
+                    .getNmsEntity(player));
+            ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+            // Send the player a packet with himself being spawned
+            manager.sendServerPacket(player, manager.createPacketConstructor(Packets.Server.NAMED_ENTITY_SPAWN, player)
+                    .createPacket(player));
+            manager.sendServerPacket(
+                    player,
+                    manager.createPacketConstructor(Packets.Server.ENTITY_METADATA, player.getEntityId(),
+                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
+                            WrappedDataWatcher.getEntityWatcher(player), true));
+
+            boolean isMoving = false;
+            try {
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField("isMoving");
+                field.setAccessible(true);
+                isMoving = field.getBoolean(entityTrackerEntry);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            // Send the velocity packets
+            if (isMoving) {
+                Vector velocity = player.getVelocity();
+                manager.sendServerPacket(
+                        player,
+                        manager.createPacketConstructor(Packets.Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
+                                velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(), velocity.getX(),
+                                velocity.getY(), velocity.getZ()));
+            }
+
+            // Why the hell would he even need this. Meh.
+            if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
+                                .createPacket(0, player, player.getVehicle()));
+            } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
+                                .createPacket(0, player.getPassenger(), player));
+            }
+
+            // Resend the armor
+            for (int i = 0; i < 5; i++) {
+                ItemStack item;
+                if (i == 0) {
+                    item = player.getItemInHand();
+                } else {
+                    item = player.getInventory().getArmorContents()[i - 1];
+                }
+
+                if (item != null && item.getType() != Material.AIR) {
+                    manager.sendServerPacket(player,
+                            manager.createPacketConstructor(Packets.Server.ENTITY_EQUIPMENT, player.getEntityId(), i, item)
+                                    .createPacket(player.getEntityId(), i, item));
+                }
+            }
+            Location loc = player.getLocation();
+            // If the disguised is sleeping for w/e reason
+            if (player.isSleeping()) {
+                manager.sendServerPacket(
+                        player,
+                        manager.createPacketConstructor(Packets.Server.ENTITY_LOCATION_ACTION, player, 0, loc.getBlockX(),
+                                loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
+                                loc.getBlockZ()));
+            }
+            // TODO Fix this cos it doesn't move the disguise?
+            byte yaw = (byte) (loc.getYaw() * 256.0F / 360.0F);
+            byte pitch = (byte) (loc.getPitch() * 256.0F / 360.0F);
+            manager.sendServerPacket(
+                    player,
+                    manager.createPacketConstructor(Packets.Server.ENTITY_LOOK, player.getEntityId(), yaw, pitch).createPacket(
+                            player.getEntityId(), yaw, pitch));
+
+            // Resend any active potion effects
+            Iterator iterator = player.getActivePotionEffects().iterator();
+            while (iterator.hasNext()) {
+                PotionEffect potionEffect = (PotionEffect) iterator.next();
+                manager.sendServerPacket(player,
+                        manager.createPacketConstructor(Packets.Server.MOB_EFFECT, player.getEntityId(), potionEffect)
+                                .createPacket(player.getEntityId(), potionEffect));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -128,7 +248,7 @@ public class DisguiseUtilities {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        PacketsManager.sendSelfDisguise(player);
+        sendSelfDisguise(player);
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
             if (PacketsManager.isInventoryListenerEnabled()) {
                 player.updateInventory();

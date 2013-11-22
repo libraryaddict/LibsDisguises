@@ -19,7 +19,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utils.PacketsManager;
+import me.libraryaddict.disguise.utils.DisguiseUtilities;
 import me.libraryaddict.disguise.utils.ReflectionManager;
 
 public class FlagWatcher {
@@ -119,7 +119,7 @@ public class FlagWatcher {
                         float newHealth = (Float) value;
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
-                            PacketsManager.sendSelfDisguise((Player) disguise.getEntity());
+                            DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity());
                         } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }
