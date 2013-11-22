@@ -12,93 +12,88 @@ import org.bukkit.Sound;
  */
 public enum DisguiseSound {
 
-    BAT(Sound.BAT_HURT, null, Sound.BAT_DEATH, Sound.BAT_IDLE, Sound.BAT_LOOP, Sound.BAT_TAKEOFF, Sound.FALL_BIG,
-            Sound.FALL_SMALL),
+    BAT("mob.bat.hurt", null, "mob.bat.death", "mob.bat.idle", "damage.fallsmall", "mob.bat.loop", "damage.fallbig",
+            "mob.bat.takeoff"),
 
-    BLAZE(Sound.BLAZE_HIT, null, Sound.BLAZE_DEATH, Sound.BLAZE_BREATH, Sound.FALL_BIG, Sound.FALL_SMALL),
+    BLAZE("mob.blaze.hit", null, "mob.blaze.death", "mob.blaze.breathe", "damage.fallsmall", "damage.fallbig"),
 
-    CAVE_SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
+    CAVE_SPIDER("mob.spider.say", "mob.spider.step", "mob.spider.death", "mob.spider.say"),
 
-    CHICKEN(Sound.CHICKEN_HURT, Sound.CHICKEN_WALK, Sound.CHICKEN_HURT, Sound.CHICKEN_IDLE, Sound.CHICKEN_EGG_POP,
-            Sound.FALL_BIG, Sound.FALL_SMALL),
+    CHICKEN("mob.chicken.hurt", "mob.chicken.step", "mob.chicken.hurt", "mob.chicken.say", "damage.fallsmall",
+            "mob.chicken.plop", "damage.fallbig"),
 
-    COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
+    COW("mob.cow.hurt", "mob.cow.step", "mob.cow.hurt", "mob.cow.say"),
 
-    CREEPER(Sound.CREEPER_HISS, Sound.STEP_GRASS, Sound.CREEPER_DEATH),
+    CREEPER("mob.creeper.say", "step.grass", "mob.creeper.death", null),
 
-    DONKEY(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE, Sound.DONKEY_ANGRY, Sound.HORSE_GALLOP,
-            Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT,
-            Sound.HORSE_WOOD),
+    DONKEY("horse.donkey.hit", "step.grass", "horse.donkey.death", "horse.donkey.idle", "horse.gallop", "horse.leather",
+            "horse.donkey.angry", "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
 
-    ENDER_DRAGON(Sound.ENDERDRAGON_HIT, null, Sound.ENDERDRAGON_DEATH, Sound.ENDERDRAGON_GROWL, Sound.ENDERDRAGON_WINGS,
-            Sound.FALL_BIG, Sound.FALL_SMALL),
+    ENDER_DRAGON("mob.enderdragon.hit", null, "mob.enderdragon.end", "mob.enderdragon.growl", "damage.fallsmall",
+            "mob.enderdragon.wings", "damage.fallbig"),
 
-    ENDERMAN(Sound.ENDERMAN_HIT, Sound.STEP_GRASS, Sound.ENDERMAN_DEATH, Sound.ENDERMAN_IDLE, Sound.ENDERMAN_STARE,
-            Sound.ENDERMAN_TELEPORT, Sound.ENDERMAN_SCREAM),
+    ENDERMAN("mob.endermen.hit", "step.grass", "mob.endermen.death", "mob.endermen.idle", "mob.endermen.scream",
+            "mob.endermen.portal", "mob.endermen.stare"),
 
-    GHAST(Sound.GHAST_SCREAM, null, Sound.GHAST_DEATH, Sound.GHAST_MOAN, Sound.GHAST_CHARGE, Sound.GHAST_FIREBALL,
-            Sound.GHAST_SCREAM2, Sound.FALL_BIG, Sound.FALL_SMALL),
+    GHAST("mob.ghast.scream", null, "mob.ghast.death", "mob.ghast.moan", "damage.fallsmall", "mob.ghast.fireball",
+            "damage.fallbig", "mob.ghast.affectionate_scream", "mob.ghast.charge"),
 
-    GIANT(Sound.HURT_FLESH, Sound.STEP_GRASS),
+    GIANT("damage.hit", "step.grass", null, null),
 
-    HORSE(Sound.HORSE_HIT, Sound.STEP_GRASS, "mob.horse.death", Sound.HORSE_IDLE, Sound.HORSE_GALLOP, Sound.HORSE_ANGRY,
-            Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT, Sound.HORSE_WOOD,
-            "mob.horse.leather"), // TODO I really should finish adding all the sounds. Lazy bukkit didn't add all of them either.
-                                  // -.-
+    HORSE("horse.hit", "step.grass", "mob.horse.death", "horse.idle", "horse.gallop", "horse.leather", "horse.wood",
+            "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry", "mob.horse.leather"),
 
-    IRON_GOLEM(Sound.IRONGOLEM_HIT, Sound.IRONGOLEM_WALK, Sound.IRONGOLEM_DEATH, Sound.IRONGOLEM_THROW),
+    IRON_GOLEM("mob.irongolem.hit", "mob.irongolem.walk", "mob.irongolem.death", "mob.irongolem.throw"),
 
-    MAGMA_CUBE(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
+    MAGMA_CUBE("mob.slime.attack", "mob.slime.big", null, null, "mob.slime.small"),
 
-    MULE(Sound.DONKEY_HIT, Sound.STEP_GRASS, Sound.DONKEY_DEATH, Sound.DONKEY_IDLE),
+    MULE("horse.donkey.hit", "step.grass", "horse.donkey.death", "horse.donkey.idle"),
 
-    MUSHROOM_COW(Sound.COW_HURT, Sound.COW_WALK, Sound.COW_HURT, Sound.COW_IDLE),
+    MUSHROOM_COW("mob.cow.hurt", "mob.cow.step", "mob.cow.hurt", "mob.cow.say"),
 
-    OCELOT(Sound.CAT_HIT, Sound.STEP_GRASS, Sound.CAT_HIT, Sound.CAT_MEOW, Sound.CAT_PURR, Sound.CAT_PURREOW),
+    OCELOT("mob.cat.hitt", "step.grass", "mob.cat.hitt", "mob.cat.meow", "mob.cat.purreow", "mob.cat.purr"),
 
-    PIG(Sound.PIG_IDLE, Sound.PIG_WALK, Sound.PIG_DEATH, Sound.PIG_IDLE),
+    PIG("mob.pig.say", "mob.pig.step", "mob.pig.death", "mob.pig.say"),
 
-    PIG_ZOMBIE(Sound.ZOMBIE_PIG_HURT, null, Sound.ZOMBIE_PIG_DEATH, Sound.ZOMBIE_PIG_IDLE, Sound.ZOMBIE_PIG_ANGRY),
+    PIG_ZOMBIE("mob.zombiepig.zpighurt", null, "mob.zombiepig.zpigdeath", "mob.zombiepig.zpig", "mob.zombiepig.zpigangry"),
 
-    PLAYER(Sound.HURT_FLESH, Sound.STEP_GRASS, Sound.HURT_FLESH),
+    PLAYER("damage.hit", "step.grass", "damage.hit", null),
 
-    SHEEP(Sound.SHEEP_IDLE, Sound.SHEEP_WALK, null, Sound.SHEEP_IDLE, Sound.SHEEP_SHEAR),
+    SHEEP("mob.sheep.say", "mob.sheep.step", null, "mob.sheep.say", "mob.sheep.shear"),
 
-    SILVERFISH(Sound.SILVERFISH_HIT, Sound.SILVERFISH_WALK, Sound.SILVERFISH_KILL, Sound.SILVERFISH_IDLE),
+    SILVERFISH("mob.silverfish.hit", "mob.silverfish.step", "mob.silverfish.kill", "mob.silverfish.say"),
 
-    SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
+    SKELETON("mob.skeleton.hurt", "mob.skeleton.step", "mob.skeleton.death", "mob.skeleton.say"),
 
-    SKELETON_HORSE("mob.horse.skeleton.hit", Sound.STEP_GRASS, Sound.HORSE_SKELETON_DEATH, Sound.HORSE_SKELETON_IDLE,
-            Sound.HORSE_GALLOP, Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE,
-            Sound.HORSE_SOFT, Sound.HORSE_WOOD),
+    SKELETON_HORSE("mob.horse.skeleton.hit", "step.grass", "horse.skeleton.death", "horse.skeleton.idle", "horse.gallop",
+            "horse.leather", "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
 
-    SLIME(Sound.SLIME_ATTACK, Sound.SLIME_WALK2, null, null, Sound.SLIME_WALK),
+    SLIME("mob.slime.attack", "mob.slime.big", null, null, "mob.slime.small"),
 
     SNOWMAN(),
 
-    SPIDER(Sound.SPIDER_IDLE, Sound.SPIDER_WALK, Sound.SPIDER_DEATH, Sound.SPIDER_IDLE),
+    SPIDER("mob.spider.say", "mob.spider.step", "mob.spider.death", "mob.spider.say"),
 
     SQUID(),
 
-    UNDEAD_HORSE(Sound.HORSE_ZOMBIE_HIT, Sound.STEP_GRASS, Sound.HORSE_ZOMBIE_DEATH, Sound.HORSE_ZOMBIE_IDLE, Sound.HORSE_GALLOP,
-            Sound.HORSE_ANGRY, Sound.HORSE_ARMOR, Sound.HORSE_JUMP, Sound.HORSE_LAND, Sound.HORSE_SADDLE, Sound.HORSE_SOFT,
-            Sound.HORSE_WOOD),
+    UNDEAD_HORSE("horse.zombie.hit", "step.grass", "horse.zombie.death", "horse.zombie.idle", "horse.gallop", "horse.leather",
+            "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
 
-    VILLAGER(Sound.VILLAGER_HIT, null, Sound.VILLAGER_DEATH, Sound.VILLAGER_IDLE, Sound.VILLAGER_HAGGLE, Sound.VILLAGER_YES,
-            Sound.VILLAGER_NO),
+    VILLAGER("mob.villager.hit", null, "mob.villager.death", "mob.villager.idle", "mob.villager.haggle", "mob.villager.no",
+            "mob.villager.yes"),
 
     WITCH("mob.witch.hurt", null, "mob.witch.death", "mob.witch.idle"),
 
-    WITHER(Sound.WITHER_HURT, null, Sound.WITHER_DEATH, Sound.WITHER_IDLE, Sound.WITHER_SHOOT, Sound.WITHER_SPAWN,
-            Sound.FALL_BIG, Sound.FALL_SMALL),
+    WITHER("mob.wither.hurt", null, "mob.wither.death", "mob.wither.idle", "damage.fallsmall", "mob.wither.spawn",
+            "damage.fallbig", "mob.wither.shoot"),
 
-    WITHER_SKELETON(Sound.SKELETON_HURT, Sound.SKELETON_WALK, Sound.SKELETON_DEATH, Sound.SKELETON_IDLE),
+    WITHER_SKELETON("mob.skeleton.hurt", "mob.skeleton.step", "mob.skeleton.death", "mob.skeleton.say"),
 
-    WOLF(Sound.WOLF_HURT, Sound.WOLF_WALK, Sound.WOLF_DEATH, Sound.WOLF_BARK, Sound.WOLF_WHINE, Sound.WOLF_GROWL,
-            Sound.WOLF_HOWL, Sound.WOLF_PANT, Sound.WOLF_SHAKE),
+    WOLF("mob.wolf.hurt", "mob.wolf.step", "mob.wolf.death", "mob.wolf.bark", "mob.wolf.panting", "mob.wolf.whine",
+            "mob.wolf.howl", "mob.wolf.growl", "mob.wolf.shake"),
 
-    ZOMBIE(Sound.ZOMBIE_HURT, Sound.STEP_GRASS, Sound.ZOMBIE_DEATH, Sound.ZOMBIE_IDLE, Sound.ZOMBIE_INFECT, Sound.ZOMBIE_METAL,
-            Sound.ZOMBIE_WOODBREAK, Sound.ZOMBIE_WOOD);
+    ZOMBIE("mob.zombie.hurt", "step.grass", "mob.zombie.death", "mob.zombie.say", "mob.zombie.infect", "mob.zombie.woodbreak",
+            "mob.zombie.metal", "mob.zombie.wood");
 
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP;
@@ -122,12 +117,14 @@ public enum DisguiseSound {
             String s;
             if (obj == null)
                 continue;
-            else if (obj instanceof String)
+            else if (obj instanceof String) {
                 s = (String) obj;
-            else if (obj instanceof Sound)
+            } else if (obj instanceof Sound) {
                 s = ReflectionManager.getCraftSound((Sound) obj);
-            else
+                System.out.print("Warning, the sound " + obj + " needs to be converted to a string");
+            } else {
                 throw new RuntimeException("Was given a unknown object " + obj);
+            }
             switch (i) {
             case 0:
                 disguiseSounds.put(SoundType.HURT, s);
