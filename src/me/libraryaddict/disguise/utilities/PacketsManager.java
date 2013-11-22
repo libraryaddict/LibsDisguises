@@ -446,7 +446,7 @@ public class PacketsManager {
                     }
                     Disguise disguise = DisguiseAPI.getDisguise(disguisedEntity);
                     if (disguise != null) {
-                        if (disguise.canHearSelfDisguise() || disguisedEntity != event.getPlayer()) {
+                        if (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != event.getPlayer()) {
                             if (disguise.isSoundsReplaced()) {
                                 String sound = null;
                                 DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
@@ -531,7 +531,7 @@ public class PacketsManager {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(entity);
-                        if (disguise != null && (disguise.canHearSelfDisguise() || entity != event.getPlayer())) {
+                        if (disguise != null && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
                             DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
                             if (disSound == null)
                                 return;
@@ -553,8 +553,8 @@ public class PacketsManager {
                                 soundType = SoundType.HURT;
                             }
                             if (disSound.getSound(soundType) == null
-                                    || (disguise.canHearSelfDisguise() && entity == event.getPlayer())) {
-                                if (disguise.canHearSelfDisguise() && entity == event.getPlayer()) {
+                                    || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
+                                if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
                                     cancelSound = !cancelSound;
                                     if (cancelSound)
                                         return;

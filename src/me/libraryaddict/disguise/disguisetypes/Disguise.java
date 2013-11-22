@@ -41,6 +41,7 @@ public abstract class Disguise {
     private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
     private FlagWatcher watcher;
 
+    @Deprecated
     public boolean canHearSelfDisguise() {
         return hearSelfDisguise;
     }
@@ -331,6 +332,10 @@ public abstract class Disguise {
 
     public boolean isPlayerDisguise() {
         return this instanceof PlayerDisguise;
+    }
+
+    public boolean isSelfDisguiseSoundsReplaced() {
+        return hearSelfDisguise;
     }
 
     /**

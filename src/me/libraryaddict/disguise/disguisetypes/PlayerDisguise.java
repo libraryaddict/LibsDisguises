@@ -18,7 +18,7 @@ public class PlayerDisguise extends Disguise {
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise(getName(), isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
-        disguise.setHearSelfDisguise(canHearSelfDisguise());
+        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());

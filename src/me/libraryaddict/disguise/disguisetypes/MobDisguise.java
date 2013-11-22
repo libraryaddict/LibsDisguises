@@ -42,7 +42,7 @@ public class MobDisguise extends Disguise {
     public MobDisguise clone() {
         MobDisguise disguise = new MobDisguise(getType(), isAdult(), isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
-        disguise.setHearSelfDisguise(canHearSelfDisguise());
+        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());

@@ -8,14 +8,6 @@ public class DisguiseValues {
 
     private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<DisguiseType, DisguiseValues>();
 
-    public static Class getNmsEntityClass(DisguiseType type) {
-        return getDisguiseValues(type).getNmsEntityClass();
-    }
-
-    public static HashMap<Integer, Object> getMetaValues(DisguiseType type) {
-        return getDisguiseValues(type).getMetaValues();
-    }
-
     public static DisguiseValues getDisguiseValues(DisguiseType type) {
         switch (type) {
         case DONKEY:
@@ -43,18 +35,22 @@ public class DisguiseValues {
         return values.get(type);
     }
 
-    private Class nmsEntityClass;
+    public static HashMap<Integer, Object> getMetaValues(DisguiseType type) {
+        return getDisguiseValues(type).getMetaValues();
+    }
+
+    public static Class getNmsEntityClass(DisguiseType type) {
+        return getDisguiseValues(type).getNmsEntityClass();
+    }
+
     private int enumEntitySize;
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
+    private Class nmsEntityClass;
 
     public DisguiseValues(DisguiseType type, Class classType, int entitySize) {
         values.put(type, this);
         enumEntitySize = entitySize;
         nmsEntityClass = classType;
-    }
-
-    public Class getNmsEntityClass() {
-        return nmsEntityClass;
     }
 
     public int getEntitySize(double paramDouble) {
@@ -102,6 +98,10 @@ public class DisguiseValues {
 
     public HashMap<Integer, Object> getMetaValues() {
         return metaValues;
+    }
+
+    public Class getNmsEntityClass() {
+        return nmsEntityClass;
     }
 
     public void setMetaValue(int no, Object value) {
