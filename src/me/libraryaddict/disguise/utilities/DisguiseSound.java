@@ -1,9 +1,8 @@
-package me.libraryaddict.disguise.disguisetypes;
+package me.libraryaddict.disguise.utilities;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import me.libraryaddict.disguise.utils.ReflectionManager;
 
 import org.bukkit.Sound;
 

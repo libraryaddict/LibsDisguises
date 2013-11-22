@@ -7,19 +7,19 @@ import java.util.List;
 
 import me.libraryaddict.disguise.commands.*;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseSound;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import me.libraryaddict.disguise.utils.DisguiseUtilities;
-import me.libraryaddict.disguise.utils.PacketsManager;
-import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utilities.DisguiseSound;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -192,7 +192,7 @@ public class LibsDisguises extends JavaPlugin {
                         break;
                     }
                 }
-                Values disguiseValues = new Values(disguiseType, nmsEntity.getClass(), entitySize);
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize);
                 WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
                 List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
                 for (WrappedWatchableObject watch : watchers)

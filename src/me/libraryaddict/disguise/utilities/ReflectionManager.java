@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utils;
+package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

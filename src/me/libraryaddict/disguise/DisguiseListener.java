@@ -3,8 +3,8 @@ package me.libraryaddict.disguise;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utils.DisguiseUtilities;
-import me.libraryaddict.disguise.utils.UpdateChecker;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.UpdateChecker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

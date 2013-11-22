@@ -1,20 +1,22 @@
-package me.libraryaddict.disguise.disguisetypes;
+package me.libraryaddict.disguise.utilities;
 
 import java.util.HashMap;
 
-public class Values {
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
-    private static HashMap<DisguiseType, Values> values = new HashMap<DisguiseType, Values>();
+public class DisguiseValues {
 
-    public static Class getEntityClass(DisguiseType type) {
-        return getValues(type).getEntityClass();
+    private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<DisguiseType, DisguiseValues>();
+
+    public static Class getNmsEntityClass(DisguiseType type) {
+        return getDisguiseValues(type).getNmsEntityClass();
     }
 
     public static HashMap<Integer, Object> getMetaValues(DisguiseType type) {
-        return getValues(type).getMetaValues();
+        return getDisguiseValues(type).getMetaValues();
     }
 
-    public static Values getValues(DisguiseType type) {
+    public static DisguiseValues getDisguiseValues(DisguiseType type) {
         switch (type) {
         case DONKEY:
         case MULE:
@@ -41,19 +43,18 @@ public class Values {
         return values.get(type);
     }
 
-    private Class declared;
+    private Class nmsEntityClass;
     private int enumEntitySize;
-
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
 
-    public Values(DisguiseType type, Class classType, int entitySize) {
+    public DisguiseValues(DisguiseType type, Class classType, int entitySize) {
         values.put(type, this);
         enumEntitySize = entitySize;
-        declared = classType;
+        nmsEntityClass = classType;
     }
 
-    public Class getEntityClass() {
-        return declared;
+    public Class getNmsEntityClass() {
+        return nmsEntityClass;
     }
 
     public int getEntitySize(double paramDouble) {

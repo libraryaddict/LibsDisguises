@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
-import me.libraryaddict.disguise.utils.PacketsManager;
-import me.libraryaddict.disguise.utils.ReflectionManager;
-import me.libraryaddict.disguise.utils.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;

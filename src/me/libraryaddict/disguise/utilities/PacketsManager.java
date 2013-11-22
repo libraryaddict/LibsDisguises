@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utils;
+package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -9,14 +9,12 @@ import java.util.Random;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseSound;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.Values;
-import me.libraryaddict.disguise.disguisetypes.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -217,7 +215,7 @@ public class PacketsManager {
 
         } else if (disguise.getType().isMob()) {
 
-            Values values = Values.getValues(disguise.getType());
+            DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(Packets.Server.MOB_SPAWN);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();

@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utils;
+package me.libraryaddict.disguise.utilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;

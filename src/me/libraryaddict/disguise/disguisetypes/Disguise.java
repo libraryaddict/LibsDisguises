@@ -11,9 +11,10 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import me.libraryaddict.disguise.utils.PacketsManager;
-import me.libraryaddict.disguise.utils.ReflectionManager;
-import me.libraryaddict.disguise.utils.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Horse.Variant;
@@ -429,9 +430,8 @@ public abstract class Disguise {
      * datawatcher.
      */
     private void setupWatcher() {
-        Class disguiseClass = Values.getEntityClass(getType());
-        HashMap<Integer, Object> disguiseValues = Values.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = Values.getMetaValues(DisguiseType.getType(entity.getType()));
+        HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
+        HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(entity.getType()));
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // STEP 1. Find out if the watcher has set data on it.
@@ -509,16 +509,17 @@ public abstract class Disguise {
             default:
                 break;
             }
-            Class entityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
+            Class nmsEntityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
+            Class nmsDisguiseClass = DisguiseValues.getNmsEntityClass(getType());
             // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
-            if (baseClass != null && baseClass.isAssignableFrom(disguiseClass) && baseClass.isAssignableFrom(entityClass))
+            if (baseClass != null && baseClass.isAssignableFrom(nmsDisguiseClass) && baseClass.isAssignableFrom(nmsEntityClass))
                 continue;
 
             // So they don't extend a basic class.
             // Maybe if I check that they extend each other..
             // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
             // datawatchers.
-            if (entityClass.isAssignableFrom(disguiseClass) || disguiseClass.isAssignableFrom(entityClass))
+            if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass))
                 continue;
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!

@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.commands;
 import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utils.BaseDisguiseCommand;
+import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;

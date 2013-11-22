@@ -19,8 +19,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utils.DisguiseUtilities;
-import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class FlagWatcher {
     public enum SlotType {

@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.inventory.ItemStack;
 

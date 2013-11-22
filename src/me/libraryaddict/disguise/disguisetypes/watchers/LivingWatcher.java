@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;

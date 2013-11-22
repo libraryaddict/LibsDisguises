@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utils.BaseDisguiseCommand;
+import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
