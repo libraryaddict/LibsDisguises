@@ -178,7 +178,8 @@ public class DisguiseAPI {
                 Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
                 Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
                         ReflectionManager.getNmsClass("EntityPlayer"));
-                for (Object player : trackedPlayers) {
+                HashSet cloned = (HashSet) trackedPlayers.clone();
+                for (Object player : cloned) {
                     if (entity instanceof Player && !((Player) getBukkitEntity.invoke(player)).canSee((Player) entity))
                         continue;
                     clear.invoke(entityTrackerEntry, player);
