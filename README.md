@@ -1,4 +1,4 @@
 LibsDisguises
 =============
 
-Disguises which has no bugz
+Disguises which doesn't suck
