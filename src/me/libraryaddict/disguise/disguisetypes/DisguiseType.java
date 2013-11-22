@@ -159,8 +159,7 @@ public enum DisguiseType {
                 if (entityType != null) {
                     type.setEntityType(entityType);
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (Throwable ex) {
             }
         }
     }
