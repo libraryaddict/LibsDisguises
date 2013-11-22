@@ -4,131 +4,166 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.EntityType;
 
 public enum DisguiseType {
-    ARROW(EntityType.ARROW, 60),
+    ARROW(60),
 
-    BAT(EntityType.BAT),
+    BAT(),
 
-    BLAZE(EntityType.BLAZE),
+    BLAZE(),
 
-    BOAT(EntityType.BOAT, 1),
+    BOAT(1),
 
-    CAVE_SPIDER(EntityType.CAVE_SPIDER),
+    CAVE_SPIDER(),
 
-    CHICKEN(EntityType.CHICKEN),
+    CHICKEN(),
 
-    COW(EntityType.COW),
+    COW(),
 
-    CREEPER(EntityType.CREEPER),
+    CREEPER(),
 
-    DONKEY(EntityType.HORSE),
+    DONKEY(),
 
-    DROPPED_ITEM(EntityType.DROPPED_ITEM, 2, 1),
+    DROPPED_ITEM(2, 1),
 
-    EGG(EntityType.EGG, 62),
+    EGG(62),
 
-    ENDER_CRYSTAL(EntityType.ENDER_CRYSTAL, 51),
+    ENDER_CRYSTAL(51),
 
-    ENDER_DRAGON(EntityType.ENDER_DRAGON),
+    ENDER_DRAGON(),
 
-    ENDER_PEARL(EntityType.ENDER_PEARL, 65),
+    ENDER_PEARL(65),
 
-    ENDER_SIGNAL(EntityType.ENDER_SIGNAL, 72),
+    ENDER_SIGNAL(72),
 
-    ENDERMAN(EntityType.ENDERMAN),
+    ENDERMAN(),
 
-    EXPERIENCE_ORB(EntityType.EXPERIENCE_ORB),
+    EXPERIENCE_ORB(),
 
-    FALLING_BLOCK(EntityType.FALLING_BLOCK, 70, 1),
+    FALLING_BLOCK(70, 1),
 
-    FIREBALL(EntityType.FIREBALL, 63, 0),
+    FIREBALL(63, 0),
 
-    FIREWORK(EntityType.FIREWORK, 76),
+    FIREWORK(76),
 
-    FISHING_HOOK(EntityType.FISHING_HOOK, 90),
+    FISHING_HOOK(90),
 
-    GHAST(EntityType.GHAST),
+    GHAST(),
 
-    GIANT(EntityType.GIANT),
+    GIANT(),
 
-    HORSE(EntityType.HORSE),
+    HORSE(),
 
-    IRON_GOLEM(EntityType.IRON_GOLEM),
+    IRON_GOLEM(),
 
-    ITEM_FRAME(EntityType.ITEM_FRAME, 71),
+    ITEM_FRAME(71),
 
-    LEASH_HITCH(EntityType.LEASH_HITCH, 77),
+    LEASH_HITCH(77),
 
-    MAGMA_CUBE(EntityType.MAGMA_CUBE),
+    MAGMA_CUBE(),
 
-    MINECART(EntityType.MINECART, 10, 0),
+    MINECART(10, 0),
 
-    MINECART_CHEST(EntityType.MINECART_CHEST, 10, 1),
+    MINECART_CHEST(10, 1),
 
-    MINECART_FURNACE(EntityType.MINECART_FURNACE, 10, 2),
+    MINECART_FURNACE(10, 2),
 
-    MINECART_HOPPER(EntityType.MINECART_HOPPER, 10),
+    MINECART_HOPPER(10),
 
-    MINECART_MOB_SPAWNER(EntityType.MINECART_MOB_SPAWNER, 10, 4),
+    MINECART_MOB_SPAWNER(10, 4),
 
-    MINECART_TNT(EntityType.MINECART_TNT, 10, 3),
+    MINECART_TNT(10, 3),
 
-    MULE(EntityType.HORSE),
+    MULE(),
 
-    MUSHROOM_COW(EntityType.MUSHROOM_COW),
+    MUSHROOM_COW(),
 
-    OCELOT(EntityType.OCELOT),
+    OCELOT(),
 
-    PAINTING(EntityType.PAINTING),
+    PAINTING(),
 
-    PIG(EntityType.PIG),
+    PIG(),
 
-    PIG_ZOMBIE(EntityType.PIG_ZOMBIE),
+    PIG_ZOMBIE(),
 
-    PLAYER(EntityType.PLAYER),
+    PLAYER(),
 
-    PRIMED_TNT(EntityType.PRIMED_TNT, 50),
+    PRIMED_TNT(50),
 
-    SHEEP(EntityType.SHEEP),
+    SHEEP(),
 
-    SILVERFISH(EntityType.SILVERFISH),
+    SILVERFISH(),
 
-    SKELETON(EntityType.SKELETON),
+    SKELETON(),
 
-    SKELETON_HORSE(EntityType.HORSE),
+    SKELETON_HORSE(),
 
-    SLIME(EntityType.SLIME),
+    SLIME(),
 
-    SMALL_FIREBALL(EntityType.SMALL_FIREBALL, 64, 0),
+    SMALL_FIREBALL(64, 0),
 
-    SNOWBALL(EntityType.SNOWBALL, 61),
+    SNOWBALL(61),
 
-    SNOWMAN(EntityType.SNOWMAN),
+    SNOWMAN(),
 
-    SPIDER(EntityType.SPIDER),
+    SPIDER(),
 
-    SPLASH_POTION(EntityType.SPLASH_POTION, 73),
+    SPLASH_POTION(73),
 
-    SQUID(EntityType.SQUID),
+    SQUID(),
 
-    THROWN_EXP_BOTTLE(EntityType.THROWN_EXP_BOTTLE, 75),
+    THROWN_EXP_BOTTLE(75),
 
-    UNDEAD_HORSE(EntityType.HORSE),
+    UNDEAD_HORSE(),
 
-    VILLAGER(EntityType.VILLAGER),
+    VILLAGER(),
 
-    WITCH(EntityType.WITCH),
+    WITCH(),
 
-    WITHER(EntityType.WITHER),
+    WITHER(),
 
-    WITHER_SKELETON(EntityType.SKELETON),
+    WITHER_SKELETON(),
 
-    WITHER_SKULL(EntityType.WITHER_SKULL, 66),
+    WITHER_SKULL(66),
 
-    WOLF(EntityType.WOLF),
+    WOLF(),
 
-    ZOMBIE(EntityType.ZOMBIE),
+    ZOMBIE(),
 
-    ZOMBIE_VILLAGER(EntityType.ZOMBIE);
+    ZOMBIE_VILLAGER();
+    static {
+        for (DisguiseType type : values()) {
+            try {
+                EntityType entityType;
+                switch (type) {
+                case DONKEY:
+                    entityType = EntityType.HORSE;
+                    break;
+                case MULE:
+                    entityType = EntityType.HORSE;
+                    break;
+                case UNDEAD_HORSE:
+                    entityType = EntityType.HORSE;
+                    break;
+                case SKELETON_HORSE:
+                    entityType = EntityType.HORSE;
+                    break;
+                case ZOMBIE_VILLAGER:
+                    entityType = EntityType.ZOMBIE;
+                    break;
+                case WITHER_SKELETON:
+                    entityType = EntityType.SKELETON;
+                    break;
+                default:
+                    entityType = EntityType.valueOf(type.name());
+                    break;
+                }
+                if (entityType != null) {
+                    type.setEntityType(entityType);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
         return DisguiseType.valueOf(entityType.name());
@@ -140,8 +175,11 @@ public enum DisguiseType {
     private EntityType entityType;
     private Class watcherClass;
 
-    private DisguiseType(EntityType newType, int... obj) {
-        entityType = newType;
+    private void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
+    }
+
+    private DisguiseType(int... obj) {
         for (int i = 0; i < obj.length; i++) {
             int value = obj[i];
             switch (i) {

@@ -131,6 +131,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
         DisguiseType disguiseType = null;
         for (DisguiseType type : DisguiseType.values()) {
+            if (type.getEntityType() == null) {
+                continue;
+            }
             if (args[0].equalsIgnoreCase(type.name()) || type.name().replace("_", "").equalsIgnoreCase(args[0])) {
                 disguiseType = type;
                 break;

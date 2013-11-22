@@ -86,6 +86,9 @@ public class LibsDisguises extends JavaPlugin {
 
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
+            if (disguiseType.getEntityType() == null) {
+                continue;
+            }
             Class watcherClass = null;
             try {
                 String name;
@@ -117,17 +120,13 @@ public class LibsDisguises extends JavaPlugin {
                 watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + name + "Watcher");
             } catch (Exception ex) {
                 // There is no watcher for this entity, or a error was thrown.
-                try {
-                    Class c = disguiseType.getEntityType().getEntityClass();
-                    if (Ageable.class.isAssignableFrom(c)) {
-                        watcherClass = AgeableWatcher.class;
-                    } else if (LivingEntity.class.isAssignableFrom(c)) {
-                        watcherClass = LivingWatcher.class;
-                    } else {
-                        watcherClass = FlagWatcher.class;
-                    }
-                } catch (Exception ex1) {
-                    ex1.printStackTrace();
+                Class c = disguiseType.getEntityType().getEntityClass();
+                if (Ageable.class.isAssignableFrom(c)) {
+                    watcherClass = AgeableWatcher.class;
+                } else if (LivingEntity.class.isAssignableFrom(c)) {
+                    watcherClass = LivingWatcher.class;
+                } else {
+                    watcherClass = FlagWatcher.class;
                 }
             }
             disguiseType.setWatcherClass(watcherClass);
