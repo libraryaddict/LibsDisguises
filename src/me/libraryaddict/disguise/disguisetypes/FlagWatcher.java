@@ -172,6 +172,7 @@ public class FlagWatcher {
         return getFlag(5);
     }
 
+    @Deprecated
     public boolean isRiding() {
         return getFlag(2);
     }
@@ -290,6 +291,7 @@ public class FlagWatcher {
         setItemStack(slot.getSlot(), itemStack);
     }
 
+    @Deprecated
     public void setRiding(boolean setRiding) {
         setFlag(0, 2, setRiding);
         sendData(0);

@@ -205,7 +205,7 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 }
             } catch (Exception ex) {
-                System.out.print("[LibsDisguises] Trouble while making values for " + disguiseType.name() + ": "
+                System.out.print("[LibsDisguises] Trouble while making values for disguise " + disguiseType.name() + ": "
                         + ex.getMessage());
                 System.out.print("[LibsDisguises] Please report this to LibsDisguises author");
                 ex.printStackTrace();
