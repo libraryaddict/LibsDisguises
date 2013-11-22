@@ -12,7 +12,11 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.Values;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -91,35 +95,34 @@ public class LibsDisguises extends JavaPlugin {
             }
             Class watcherClass = null;
             try {
-                String name;
                 switch (disguiseType) {
                 case MINECART_FURNACE:
                 case MINECART_HOPPER:
                 case MINECART_MOB_SPAWNER:
                 case MINECART_TNT:
                 case MINECART_CHEST:
-                    name = "Minecart";
+                    watcherClass = MinecartWatcher.class;
                     break;
                 case DONKEY:
                 case MULE:
                 case UNDEAD_HORSE:
                 case SKELETON_HORSE:
-                    name = "Horse";
+                    watcherClass = HorseWatcher.class;
                     break;
                 case ZOMBIE_VILLAGER:
                 case PIG_ZOMBIE:
-                    name = "Zombie";
+                    watcherClass = ZombieWatcher.class;
                     break;
                 case MAGMA_CUBE:
-                    name = "Slime";
+                    watcherClass = SlimeWatcher.class;
                     break;
                 default:
-                    name = toReadable(disguiseType.name());
+                    watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
+                            + toReadable(disguiseType.name()) + "Watcher");
                     break;
                 }
-                watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + name + "Watcher");
-            } catch (Exception ex) {
-                // There is no watcher for this entity, or a error was thrown.
+            } catch (ClassNotFoundException ex) {
+                // There is no explict watcher for this entity.
                 Class c = disguiseType.getEntityType().getEntityClass();
                 if (Ageable.class.isAssignableFrom(c)) {
                     watcherClass = AgeableWatcher.class;
