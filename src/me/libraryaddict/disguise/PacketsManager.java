@@ -417,8 +417,7 @@ public class PacketsManager {
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                        if ((obj instanceof Double && ((Double) obj) == 0)
-                                                || (obj instanceof Integer && ((Integer) obj) == 0)) {
+                                        if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
                                             soundType = SoundType.DEATH;
                                         } else {
                                             obj = null;
@@ -548,8 +547,7 @@ public class PacketsManager {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                if ((obj instanceof Double && ((Double) obj) == 0)
-                                        || (obj instanceof Integer && ((Integer) obj) == 0)) {
+                                if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
                                     soundType = SoundType.DEATH;
                                 } else {
                                     obj = null;
