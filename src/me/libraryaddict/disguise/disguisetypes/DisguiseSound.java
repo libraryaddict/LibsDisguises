@@ -26,8 +26,9 @@ public enum DisguiseSound {
 
     CREEPER("mob.creeper.say", "step.grass", "mob.creeper.death", null),
 
-    DONKEY("horse.donkey.hit", "step.grass", "horse.donkey.death", "horse.donkey.idle", "horse.gallop", "horse.leather",
-            "horse.donkey.angry", "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
+    DONKEY("mob.horse.donkey.hit", "step.grass", "mob.horse.donkey.death", "mob.horse.donkey.idle", "mob.horse.gallop",
+            "mob.horse.leather", "mob.horse.donkey.angry", "mob.horse.wood", "mob.horse.armor", "mob.horse.soft",
+            "mob.horse.land", "mob.horse.jump", "mob.horse.angry"),
 
     ENDER_DRAGON("mob.enderdragon.hit", null, "mob.enderdragon.end", "mob.enderdragon.growl", "damage.fallsmall",
             "mob.enderdragon.wings", "damage.fallbig"),
@@ -40,14 +41,15 @@ public enum DisguiseSound {
 
     GIANT("damage.hit", "step.grass", null, null),
 
-    HORSE("horse.hit", "step.grass", "mob.horse.death", "horse.idle", "horse.gallop", "horse.leather", "horse.wood",
-            "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry", "mob.horse.leather"),
+    HORSE("mob.horse.hit", "step.grass", "mob.horse.death", "mob.horse.idle", "mob.horse.gallop", "mob.horse.leather",
+            "mob.horse.wood", "mob.horse.armor", "mob.horse.soft", "mob.horse.land", "mob.horse.jump", "mob.horse.angry",
+            "mob.horse.leather"),
 
     IRON_GOLEM("mob.irongolem.hit", "mob.irongolem.walk", "mob.irongolem.death", "mob.irongolem.throw"),
 
     MAGMA_CUBE("mob.slime.attack", "mob.slime.big", null, null, "mob.slime.small"),
 
-    MULE("horse.donkey.hit", "step.grass", "horse.donkey.death", "horse.donkey.idle"),
+    MULE("mob.horse.donkey.hit", "step.grass", "mob.horse.donkey.death", "mob.horse.donkey.idle"),
 
     MUSHROOM_COW("mob.cow.hurt", "mob.cow.step", "mob.cow.hurt", "mob.cow.say"),
 
@@ -65,8 +67,9 @@ public enum DisguiseSound {
 
     SKELETON("mob.skeleton.hurt", "mob.skeleton.step", "mob.skeleton.death", "mob.skeleton.say"),
 
-    SKELETON_HORSE("mob.horse.skeleton.hit", "step.grass", "horse.skeleton.death", "horse.skeleton.idle", "horse.gallop",
-            "horse.leather", "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
+    SKELETON_HORSE("mob.horse.skeleton.hit", "step.grass", "mob.horse.skeleton.death", "mob.horse.skeleton.idle",
+            "mob.horse.gallop", "mob.horse.leather", "mob.horse.wood", "mob.horse.armor", "mob.horse.soft", "mob.horse.land",
+            "mob.horse.jump", "mob.horse.angry"),
 
     SLIME("mob.slime.attack", "mob.slime.big", null, null, "mob.slime.small"),
 
@@ -76,8 +79,9 @@ public enum DisguiseSound {
 
     SQUID(),
 
-    UNDEAD_HORSE("horse.zombie.hit", "step.grass", "horse.zombie.death", "horse.zombie.idle", "horse.gallop", "horse.leather",
-            "horse.wood", "horse.armor", "horse.soft", "horse.land", "horse.jump", "horse.angry"),
+    UNDEAD_HORSE("mob.horse.zombie.hit", "step.grass", "mob.horse.zombie.death", "mob.horse.zombie.idle", "mob.horse.gallop",
+            "mob.horse.leather", "mob.horse.wood", "mob.horse.armor", "mob.horse.soft", "mob.horse.land", "mob.horse.jump",
+            "mob.horse.angry"),
 
     VILLAGER("mob.villager.hit", null, "mob.villager.death", "mob.villager.idle", "mob.villager.haggle", "mob.villager.no",
             "mob.villager.yes"),
