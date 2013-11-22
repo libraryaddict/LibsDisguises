@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import me.libraryaddict.disguise.ReflectionManager;
+import me.libraryaddict.disguise.utils.ReflectionManager;
 
 import org.bukkit.Sound;
 

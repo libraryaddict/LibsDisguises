@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise;
+package me.libraryaddict.disguise.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseSound;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -50,7 +52,6 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
     private static boolean cancelSound;
-    private static DisguiseAPI disguiseAPI = new DisguiseAPI();
     private static PacketListener inventoryListenerClient;
     private static PacketListener inventoryListenerServer;
     private static boolean inventoryModifierEnabled;
@@ -60,7 +61,7 @@ public class PacketsManager {
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
 
-    protected static void addPacketListeners(final JavaPlugin libsDisguises) {
+    public static void addPacketListeners(JavaPlugin libsDisguises) {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.HIGH,
                 Packets.Server.NAMED_ENTITY_SPAWN, Packets.Server.ENTITY_METADATA, Packets.Server.ARM_ANIMATION,
@@ -385,7 +386,7 @@ public class PacketsManager {
     /**
      * Creates the packet listeners
      */
-    protected static void init(LibsDisguises plugin) {
+    public static void init(LibsDisguises plugin) {
         libsDisguises = plugin;
         soundsListener = new PacketAdapter(libsDisguises, ConnectionSide.SERVER_SIDE, ListenerPriority.NORMAL,
                 Packets.Server.NAMED_SOUND_EFFECT, Packets.Server.ENTITY_STATUS) {
@@ -451,7 +452,7 @@ public class PacketsManager {
                     Disguise disguise = DisguiseAPI.getDisguise(disguisedEntity);
                     if (disguise != null) {
                         if (disguise.canHearSelfDisguise() || disguisedEntity != event.getPlayer()) {
-                            if (disguise.replaceSounds()) {
+                            if (disguise.isSoundsReplaced()) {
                                 String sound = null;
                                 DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
                                 if (dSound != null && soundType != null)
@@ -694,7 +695,7 @@ public class PacketsManager {
                 if (event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
                     // If the player is disguised, views self disguises and is hiding a item.
-                    if (disguise != null && disguise.viewSelfDisguise()
+                    if (disguise != null && disguise.isSelfDisguiseVisible()
                             && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         switch (event.getPacketID()) {
                         // If the server is setting the slot
@@ -785,7 +786,7 @@ public class PacketsManager {
                 if (event.getPlayer().getVehicle() == null) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
                     // If player is disguised, views self disguises and has a inventory modifier
-                    if (disguise != null && disguise.viewSelfDisguise()
+                    if (disguise != null && disguise.isSelfDisguiseVisible()
                             && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         switch (event.getPacketID()) {
                         // If they are in creative and clicked on a slot
@@ -1089,7 +1090,7 @@ public class PacketsManager {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 Disguise disguise = DisguiseAPI.getDisguise(player);
                 if (disguise != null) {
-                    if (viewDisguisesListenerEnabled && disguise.viewSelfDisguise()
+                    if (viewDisguisesListenerEnabled && disguise.isSelfDisguiseVisible()
                             && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         player.updateInventory();
                     }
@@ -1109,11 +1110,11 @@ public class PacketsManager {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 Disguise disguise = DisguiseAPI.getDisguise(player);
                 if (disguise != null) {
-                    if (disguise.viewSelfDisguise()) {
+                    if (disguise.isSelfDisguiseVisible()) {
                         if (enabled) {
-                            disguiseAPI.setupFakeDisguise(disguise);
+                            DisguiseUtilities.setupFakeDisguise(disguise);
                         } else {
-                            disguiseAPI.removeVisibleDisguise(player);
+                            DisguiseUtilities.removeSelfDisguise(player);
                         }
                         if (inventoryModifierEnabled && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                             player.updateInventory();

@@ -17,6 +17,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utils.PacketsManager;
+import me.libraryaddict.disguise.utils.ReflectionManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -122,11 +124,11 @@ public class LibsDisguises extends JavaPlugin {
                     break;
                 }
             } catch (ClassNotFoundException ex) {
-                // There is no explict watcher for this entity.
-                Class c = disguiseType.getEntityType().getEntityClass();
-                if (Ageable.class.isAssignableFrom(c)) {
+                // There is no explicit watcher for this entity.
+                Class entityClass = disguiseType.getEntityType().getEntityClass();
+                if (Ageable.class.isAssignableFrom(entityClass)) {
                     watcherClass = AgeableWatcher.class;
-                } else if (LivingEntity.class.isAssignableFrom(c)) {
+                } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
                     watcherClass = LivingWatcher.class;
                 } else {
                     watcherClass = FlagWatcher.class;
@@ -176,19 +178,19 @@ public class LibsDisguises extends JavaPlugin {
                 Object entity = ReflectionManager.createEntityInstance(name);
                 Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity")
                         .invoke(entity);
-                int size = 0;
+                int enumEntitySize = 0;
                 for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
                     if (field.getType().getName().equals("EnumEntitySize")) {
                         Enum a = (Enum) field.get(entity);
-                        size = a.ordinal();
+                        enumEntitySize = a.ordinal();
                         break;
                     }
                 }
-                Values value = new Values(disguiseType, entity.getClass(), size);
+                Values disguiseValues = new Values(disguiseType, entity.getClass(), enumEntitySize);
                 WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
                 List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
                 for (WrappedWatchableObject watch : watchers)
-                    value.setMetaValue(watch.getIndex(), watch.getValue());
+                    disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(entity);

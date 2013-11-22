@@ -2,15 +2,14 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utils.ReflectionManager;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class LivingWatcher extends FlagWatcher {
-    private HashSet<Integer> potionEffects = new HashSet<Integer>();
     static Object[] list;
     static Method potionNo;
     static {
@@ -33,6 +32,7 @@ public class LivingWatcher extends FlagWatcher {
             ex.printStackTrace();
         }
     }
+    private HashSet<Integer> potionEffects = new HashSet<Integer>();
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
@@ -72,35 +72,6 @@ public class LivingWatcher extends FlagWatcher {
         return (Byte) getValue(8, (byte) 0) == 1;
     }
 
-    public boolean hasCustomName() {
-        return getCustomName().length() > 0;
-    }
-
-    public boolean hasPotionEffect(PotionEffectType type) {
-        return potionEffects.contains(type.getId());
-    }
-
-    public boolean isCustomNameVisible() {
-        return (Byte) getValue(11, (byte) 0) == 1;
-    }
-
-    public void removePotionEffect(PotionEffectType type) {
-        if (potionEffects.contains(type.getId())) {
-            potionEffects.remove(type.getId());
-            sendPotionEffects();
-        }
-    }
-
-    public void removePotionParticles(boolean particles) {
-        setValue(8, (byte) (particles ? 1 : 0));
-        sendData(8);
-    }
-
-    private void sendPotionEffects() {
-        setValue(7, getPotions());
-        sendData(7);
-    }
-
     private int getPotions() {
         int m = 3694022;
 
@@ -129,6 +100,35 @@ public class LivingWatcher extends FlagWatcher {
         f3 = f3 / f4 * 255.0F;
 
         return (int) f1 << 16 | (int) f2 << 8 | (int) f3;
+    }
+
+    public boolean hasCustomName() {
+        return getCustomName().length() > 0;
+    }
+
+    public boolean hasPotionEffect(PotionEffectType type) {
+        return potionEffects.contains(type.getId());
+    }
+
+    public boolean isCustomNameVisible() {
+        return (Byte) getValue(11, (byte) 0) == 1;
+    }
+
+    public void removePotionEffect(PotionEffectType type) {
+        if (potionEffects.contains(type.getId())) {
+            potionEffects.remove(type.getId());
+            sendPotionEffects();
+        }
+    }
+
+    public void removePotionParticles(boolean particles) {
+        setValue(8, (byte) (particles ? 1 : 0));
+        sendData(8);
+    }
+
+    private void sendPotionEffects() {
+        setValue(7, getPotions());
+        sendData(7);
     }
 
     public void setCustomName(String name) {

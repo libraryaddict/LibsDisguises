@@ -3,6 +3,8 @@ package me.libraryaddict.disguise;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utils.DisguiseUtilities;
+import me.libraryaddict.disguise.utils.UpdateChecker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,7 +21,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class DisguiseListener implements Listener {
 
     private String currentVersion;
-    private DisguiseAPI disguiseAPI = new DisguiseAPI();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<String, BukkitRunnable>();
     private HashMap<String, Disguise> disguiseSlap = new HashMap<String, Disguise>();
     private String latestVersion;
@@ -93,7 +94,7 @@ public class DisguiseListener implements Listener {
             return;
         Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
         if (disguise != null && event.getEntered() instanceof Player) {
-            disguiseAPI.removeVisibleDisguise((Player) event.getEntered());
+            DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
             ((Player) event.getEntered()).updateInventory();
         }
     }
@@ -106,7 +107,7 @@ public class DisguiseListener implements Listener {
         if (disguise != null && event.getExited() instanceof Player) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 public void run() {
-                    disguiseAPI.setupFakeDisguise(disguise);
+                    DisguiseUtilities.setupFakeDisguise(disguise);
                     ((Player) disguise.getEntity()).updateInventory();
                 }
             });

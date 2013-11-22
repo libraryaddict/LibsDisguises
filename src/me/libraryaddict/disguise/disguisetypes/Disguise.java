@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.PacketsManager;
-import me.libraryaddict.disguise.ReflectionManager;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utils.PacketsManager;
+import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utils.DisguiseUtilities;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
@@ -26,18 +28,14 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
 public abstract class Disguise {
-    /**
-     * Incase I forget, this is used to access normally hidden api calls.
-     */
-    private static DisguiseAPI disguiseAPI = new DisguiseAPI();
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private org.bukkit.entity.Entity entity;
-    private boolean hearSelfDisguise = DisguiseAPI.canHearSelfDisguise();
+    private boolean hearSelfDisguise = DisguiseAPI.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseAPI.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseAPI.isHidingHeldItemFromSelf();
     private boolean replaceSounds = DisguiseAPI.isSoundEnabled();
-    private BukkitRunnable runnable;
+    private BukkitRunnable velocityRunnable;
     private boolean velocitySent = DisguiseAPI.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
     private FlagWatcher watcher;
@@ -175,7 +173,7 @@ public abstract class Disguise {
         final double vectorY = fallSpeed;
         final boolean alwaysSendVelocity = alwaysSend;
         // A scheduler to clean up any unused disguises.
-        runnable = new BukkitRunnable() {
+        velocityRunnable = new BukkitRunnable() {
             private int i = 0;
 
             public void run() {
@@ -220,7 +218,7 @@ public abstract class Disguise {
                                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
                                     StructureModifier<Object> mods = packet.getModifier();
                                     if (entity == player) {
-                                        if (!viewSelfDisguise())
+                                        if (!isSelfDisguiseVisible())
                                             continue;
                                         if (selfLookPacket != null) {
                                             try {
@@ -334,6 +332,17 @@ public abstract class Disguise {
         return this instanceof PlayerDisguise;
     }
 
+    /**
+     * Can the disguised view himself as the disguise
+     */
+    public boolean isSelfDisguiseVisible() {
+        return viewSelfDisguise;
+    }
+
+    public boolean isSoundsReplaced() {
+        return replaceSounds;
+    }
+
     public boolean isVelocitySent() {
         return velocitySent;
     }
@@ -344,10 +353,10 @@ public abstract class Disguise {
     public void removeDisguise() {
         // Why the hell can't I safely check if its running?!?!
         try {
-            runnable.cancel();
+            velocityRunnable.cancel();
         } catch (Exception ex) {
         }
-        HashMap<Integer, Disguise> disguises = disguiseAPI.getDisguises();
+        HashMap<Integer, Disguise> disguises = DisguiseUtilities.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If the entity is valid
@@ -359,10 +368,10 @@ public abstract class Disguise {
                     // Gotta do reflection, copy code or open up calls.
                     // Reflection is the cleanest?
                     if (getEntity() instanceof Player) {
-                        disguiseAPI.removeVisibleDisguise((Player) entity);
+                        DisguiseUtilities.removeSelfDisguise((Player) entity);
                     }
                     // Better refresh the entity to undisguise it
-                    disguiseAPI.refreshWatchingPlayers(getEntity());
+                    DisguiseUtilities.refreshTrackers(getEntity());
                 }
             }
         } else {
@@ -377,6 +386,7 @@ public abstract class Disguise {
         }
     }
 
+    @Deprecated
     public boolean replaceSounds() {
         return replaceSounds;
     }
@@ -389,7 +399,7 @@ public abstract class Disguise {
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         this.entity = entity;
         setupWatcher();
-        runnable.runTaskTimer(plugin, 1, 1);
+        velocityRunnable.runTaskTimer(plugin, 1, 1);
     }
 
     public void setHearSelfDisguise(boolean hearSelfDisguise) {
@@ -529,9 +539,9 @@ public abstract class Disguise {
             if (getEntity() != null && getEntity() instanceof Player) {
                 if (DisguiseAPI.getDisguise(getEntity()) == this) {
                     if (viewSelfDisguise) {
-                        disguiseAPI.setupFakeDisguise(this);
+                        DisguiseUtilities.setupFakeDisguise(this);
                     } else
-                        disguiseAPI.removeVisibleDisguise((Player) getEntity());
+                        DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                 }
             }
         }
@@ -541,9 +551,7 @@ public abstract class Disguise {
         watcher = newWatcher;
     }
 
-    /**
-     * Can the disguised view himself as the disguise
-     */
+    @Deprecated
     public boolean viewSelfDisguise() {
         return viewSelfDisguise;
     }

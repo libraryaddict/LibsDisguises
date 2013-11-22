@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise;
+package me.libraryaddict.disguise.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -45,40 +45,6 @@ public class ReflectionManager {
         }
     }
 
-    public static String getEnumArt(Art art) {
-        try {
-            Class craftArt = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftArt");
-            Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
-            for (Field field : enumArt.getClass().getFields()) {
-                if (field.getType() == String.class) {
-                    return (String) field.get(enumArt);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Object getNmsEntity(Entity entity) {
-        try {
-            return getCraftClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static String getCraftSound(Sound sound) {
-        try {
-            Class c = getCraftClass("CraftSound");
-            return (String) c.getMethod("getSound", Sound.class).invoke(null, sound);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     public static Object createEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);
@@ -101,6 +67,49 @@ public class ReflectionManager {
         return null;
     }
 
+    public static ItemStack getBukkitItem(Object nmsItem) {
+        try {
+            return (ItemStack) itemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Class getCraftClass(String className) {
+        try {
+            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + "." + className);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getCraftSound(Sound sound) {
+        try {
+            Class c = getCraftClass("CraftSound");
+            return (String) c.getMethod("getSound", Sound.class).invoke(null, sound);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getEnumArt(Art art) {
+        try {
+            Class craftArt = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftArt");
+            Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
+            for (Field field : enumArt.getClass().getFields()) {
+                if (field.getType() == String.class) {
+                    return (String) field.get(enumArt);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Class getNmsClass(String className) {
         try {
             return Class.forName("net.minecraft.server." + bukkitVersion + "." + className);
@@ -110,9 +119,18 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Class getCraftClass(String className) {
+    public static Object getNmsEntity(Entity entity) {
         try {
-            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + "." + className);
+            return getCraftClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getNmsItem(ItemStack itemstack) {
+        try {
+            return itemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,24 +149,6 @@ public class ReflectionManager {
     public static Object getWorld(World world) {
         try {
             return getCraftClass("CraftWorld").getMethod("getHandle").invoke(world);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Object getNmsItem(ItemStack itemstack) {
-        try {
-            return itemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static ItemStack getBukkitItem(Object nmsItem) {
-        try {
-            return (ItemStack) itemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
         } catch (Exception e) {
             e.printStackTrace();
         }

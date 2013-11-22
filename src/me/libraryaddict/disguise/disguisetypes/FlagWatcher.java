@@ -19,8 +19,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.PacketsManager;
-import me.libraryaddict.disguise.ReflectionManager;
+import me.libraryaddict.disguise.utils.PacketsManager;
+import me.libraryaddict.disguise.utils.ReflectionManager;
 
 public class FlagWatcher {
     public enum SlotType {
@@ -110,7 +110,7 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (disguise.viewSelfDisguise() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
+        if (disguise.isSelfDisguiseVisible() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {

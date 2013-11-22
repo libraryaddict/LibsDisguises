@@ -83,8 +83,8 @@ public class MiscDisguise extends Disguise {
 
     @Override
     public MiscDisguise clone() {
-        MiscDisguise disguise = new MiscDisguise(getType(), replaceSounds(), getData());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
+        MiscDisguise disguise = new MiscDisguise(getType(), isSoundsReplaced(), getData());
+        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(canHearSelfDisguise());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());

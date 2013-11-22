@@ -3,9 +3,10 @@ package me.libraryaddict.disguise.commands;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import me.libraryaddict.disguise.BaseDisguiseCommand;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utils.BaseDisguiseCommand;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,8 +16,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public class DisguiseHelpCommand extends BaseDisguiseCommand {
     private class EnumHelp {
-        private String enumName;
         private String enumDescription;
+        private String enumName;
         private String[] enums;
         private String readableEnum;
 
@@ -38,20 +39,20 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
             this.readableEnum = enumReadable;
         }
 
-        public String getEnumName() {
-            return enumName;
-        }
-
-        public String getReadableEnum() {
-            return readableEnum;
-        }
-
         public String getEnumDescription() {
             return enumDescription;
         }
 
+        public String getEnumName() {
+            return enumName;
+        }
+
         public String[] getEnums() {
             return enums;
+        }
+
+        public String getReadableEnum() {
+            return readableEnum;
         }
     }
 

@@ -16,8 +16,8 @@ public class PlayerDisguise extends Disguise {
 
     @Override
     public PlayerDisguise clone() {
-        PlayerDisguise disguise = new PlayerDisguise(getName(), replaceSounds());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
+        PlayerDisguise disguise = new PlayerDisguise(getName(), isSoundsReplaced());
+        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(canHearSelfDisguise());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());

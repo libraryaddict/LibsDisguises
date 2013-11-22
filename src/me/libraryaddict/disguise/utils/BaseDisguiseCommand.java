@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise;
+package me.libraryaddict.disguise.utils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

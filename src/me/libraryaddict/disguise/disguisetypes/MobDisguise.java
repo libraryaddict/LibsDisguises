@@ -40,8 +40,8 @@ public class MobDisguise extends Disguise {
 
     @Override
     public MobDisguise clone() {
-        MobDisguise disguise = new MobDisguise(getType(), isAdult(), replaceSounds());
-        disguise.setViewSelfDisguise(viewSelfDisguise());
+        MobDisguise disguise = new MobDisguise(getType(), isAdult(), isSoundsReplaced());
+        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(canHearSelfDisguise());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());

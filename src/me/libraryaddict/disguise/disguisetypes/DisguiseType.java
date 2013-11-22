@@ -174,10 +174,6 @@ public enum DisguiseType {
     private EntityType entityType;
     private Class watcherClass;
 
-    private void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
-
     private DisguiseType(int... obj) {
         for (int i = 0; i < obj.length; i++) {
             int value = obj[i];
@@ -227,6 +223,10 @@ public enum DisguiseType {
 
     public boolean isPlayer() {
         return entityType == EntityType.PLAYER;
+    }
+
+    private void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
     }
 
     public void setWatcherClass(Class c) {

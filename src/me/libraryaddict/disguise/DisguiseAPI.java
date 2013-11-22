@@ -1,38 +1,24 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
+import me.libraryaddict.disguise.utils.PacketsManager;
+import me.libraryaddict.disguise.utils.ReflectionManager;
+import me.libraryaddict.disguise.utils.DisguiseUtilities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
-import com.comphenix.protocol.Packets;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseAPI {
-
-    // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
-    private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
     private static boolean hearSelfDisguise;
+
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
-
-    // A internal storage of fake entity ID's I can use.
-    // Realistically I could probably use a ID like "4" for everyone seeing as no one shares the ID
-    private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
-
     private static boolean sendVelocity;
-
+    
+    @Deprecated
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
     }
@@ -43,14 +29,14 @@ public class DisguiseAPI {
     public static void disguiseNextEntity(Disguise disguise) {
         if (disguise == null)
             return;
-        if (disguise.getEntity() != null || disguises.containsValue(disguise)) {
+        if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
             disguise = disguise.clone();
         }
         try {
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
-            disguises.put(id, disguise);
+            DisguiseUtilities.getDisguises().put(id, disguise);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -84,11 +70,11 @@ public class DisguiseAPI {
         } // If there was a old disguise
         Disguise oldDisguise = getDisguise(entity);
         // Stick the disguise in the disguises bin
-        disguises.put(entity.getEntityId(), disguise);
+        DisguiseUtilities.getDisguises().put(entity.getEntityId(), disguise);
         // Resend the disguised entity's packet
-        refreshTrackers(entity);
+        DisguiseUtilities.refreshTrackers(entity);
         // If he is a player, then self disguise himself
-        setupPlayerFakeDisguise(disguise);
+        DisguiseUtilities.setupFakeDisguise(disguise);
         // Discard the disguise
         if (oldDisguise != null)
             oldDisguise.removeDisguise();
@@ -97,28 +83,28 @@ public class DisguiseAPI {
     /**
      * Get the disguise of a entity
      */
-    public static Disguise getDisguise(Entity disguiser) {
-        if (disguiser == null)
+    public static Disguise getDisguise(Entity disguised) {
+        if (disguised == null)
             return null;
-        if (disguises.containsKey(disguiser.getEntityId()))
-            return disguises.get(disguiser.getEntityId());
+        if (DisguiseUtilities.getDisguises().containsKey(disguised.getEntityId()))
+            return DisguiseUtilities.getDisguises().get(disguised.getEntityId());
         return null;
     }
 
     /**
      * Get the ID of a fake disguise for a entityplayer
      */
-    public static int getFakeDisguise(int id) {
-        if (selfDisguisesIds.containsKey(id))
-            return selfDisguisesIds.get(id);
+    public static int getFakeDisguise(int entityId) {
+        if (DisguiseUtilities.getSelfDisguisesIds().containsKey(entityId))
+            return DisguiseUtilities.getSelfDisguisesIds().get(entityId);
         return -1;
     }
 
     /**
      * Is this entity disguised
      */
-    public static boolean isDisguised(Entity disguiser) {
-        return getDisguise(disguiser) != null;
+    public static boolean isDisguised(Entity disguised) {
+        return getDisguise(disguised) != null;
     }
 
     /**
@@ -137,6 +123,10 @@ public class DisguiseAPI {
 
     public static boolean isInventoryListenerEnabled() {
         return PacketsManager.isInventoryListenerEnabled();
+    }
+
+    public static boolean isSelfDisguisesSoundsReplaced() {
+        return hearSelfDisguise;
     }
 
     /**
@@ -158,79 +148,6 @@ public class DisguiseAPI {
      */
     public static boolean isViewDisguises() {
         return PacketsManager.isViewDisguisesListenerEnabled();
-    }
-
-    /**
-     * @param Resends
-     *            the entity to all the watching players, which is where the magic begins
-     */
-    private static void refreshTrackers(Entity entity) {
-        try {
-            Object world = ReflectionManager.getWorld(entity.getWorld());
-            Object tracker = world.getClass().getField("tracker").get(world);
-            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
-            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
-                    .invoke(trackedEntities, entity.getEntityId());
-            if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
-                        .get(entityTrackerEntry);
-                Method getBukkitEntity = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
-                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
-                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
-                HashSet cloned = (HashSet) trackedPlayers.clone();
-                for (Object player : cloned) {
-                    if (entity instanceof Player && !((Player) getBukkitEntity.invoke(player)).canSee((Player) entity))
-                        continue;
-                    clear.invoke(entityTrackerEntry, player);
-                    updatePlayer.invoke(entityTrackerEntry, player);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private static void removeSelfDisguise(Player player) {
-        if (selfDisguisesIds.containsKey(player.getEntityId())) {
-            // Send a packet to destroy the fake entity
-            PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
-            packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getEntityId()) });
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            // Remove the fake entity ID from the disguise bin
-            selfDisguisesIds.remove(player.getEntityId());
-            // Get the entity tracker
-            try {
-                Object world = ReflectionManager.getWorld(player.getWorld());
-                Object tracker = world.getClass().getField("tracker").get(world);
-                Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
-                Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
-                        .invoke(trackedEntities, player.getEntityId());
-                if (entityTrackerEntry != null) {
-                    HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
-                            .get(entityTrackerEntry);
-                    // If the tracker exists. Remove himself from his tracker
-                    trackedPlayers.remove(ReflectionManager.getNmsEntity(player));
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }// Resend entity metadata else he will be invisible to himself until its resent
-            PacketContainer packetMetadata = new PacketContainer(Packets.Server.ENTITY_METADATA);
-            StructureModifier<Object> mods = packetMetadata.getModifier();
-            mods.write(0, player.getEntityId());
-            packetMetadata.getWatchableCollectionModifier().write(0,
-                    WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects());
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetMetadata);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            player.updateInventory();
-        }
     }
 
     /**
@@ -274,38 +191,6 @@ public class DisguiseAPI {
     }
 
     /**
-     * Setup it so he can see himself when disguised
-     */
-    private static void setupPlayerFakeDisguise(final Disguise disguise) {
-        // If the disguises entity is null, or the disguised entity isn't a player return
-        if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player) || !disguises.containsValue(disguise))
-            return;
-        Player player = (Player) disguise.getEntity();
-        // Remove the old disguise, else we have weird disguises around the place
-        removeSelfDisguise(player);
-        // If the disguised player can't see himself. Return
-        if (!disguise.viewSelfDisguise() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null)
-            return;
-        try {
-            // Grab the entity ID the fake disguise will use
-            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
-            field.setAccessible(true);
-            int id = field.getInt(null);
-            // Set the entitycount plus one so we don't have the id being reused
-            field.set(null, id + 1);
-            selfDisguisesIds.put(player.getEntityId(), id);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        PacketsManager.sendSelfDisguise(player);
-        if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
-            if (PacketsManager.isInventoryListenerEnabled()) {
-                player.updateInventory();
-            }
-        }
-    }
-
-    /**
      * Disable velocity packets being sent for w/e reason. Maybe you want every ounce of performance you can get?
      */
     public static void setVelocitySent(boolean sendVelocityPackets) {
@@ -331,19 +216,6 @@ public class DisguiseAPI {
         disguise.removeDisguise();
     }
 
-    public HashMap<Integer, Disguise> getDisguises() {
-        return disguises;
-    }
-
-    public void refreshWatchingPlayers(Entity entity) {
-        refreshTrackers(entity);
-    }
-
-    public void removeVisibleDisguise(Player player) {
-        removeSelfDisguise(player);
-    }
-
-    public void setupFakeDisguise(Disguise disguise) {
-        setupPlayerFakeDisguise(disguise);
+    private DisguiseAPI() {
     }
 }
