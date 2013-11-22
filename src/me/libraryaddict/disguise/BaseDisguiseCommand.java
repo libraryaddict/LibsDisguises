@@ -14,10 +14,6 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Horse.Color;
-import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Ocelot.Type;
-import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -36,6 +32,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (perm.startsWith(permissionNode)) {
                 perm = perm.substring(permissionNode.length());
                 for (DisguiseType type : DisguiseType.values()) {
+                    if (type.getEntityType() == null) {
+                        continue;
+                    }
                     String name = type.name().toLowerCase();
                     if (perm.split("\\.")[0].equals("*") && permission.getValue()) {
                         if (!names.contains(name))
@@ -51,8 +50,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
             }
         }
-        // This does the disguises for ops.
+        // This does the disguises for OP's.
         for (DisguiseType type : DisguiseType.values()) {
+            if (type.getEntityType() == null) {
+                continue;
+            }
             if (!names.contains(type.name().toLowerCase())) {
                 if (sender.hasPermission(permissionNode + "*")
                         || sender.hasPermission(permissionNode + type.name().toLowerCase())) {
@@ -289,30 +291,31 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
                             value = items;
                             // Parse to horse color
-                        } else if (param == Color.class) {
+                        } else if (param.getSimpleName().equals("Color")) {
                             try {
-                                value = Color.valueOf(valueString.toUpperCase());
+
+                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("horse color", valueString, methodName);
                             }
                             // Parse to horse style
-                        } else if (param == Style.class) {
+                        } else if (param.getSimpleName().equals("Style")) {
                             try {
-                                value = Style.valueOf(valueString.toUpperCase());
+                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("horse style", valueString, methodName);
                             }
                             // Parse to villager profession
-                        } else if (param == Profession.class) {
+                        } else if (param.getSimpleName().equals("Profession")) {
                             try {
-                                value = Profession.valueOf(valueString.toUpperCase());
+                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("villager profession", valueString, methodName);
                             }
                             // Parse to ocelot type
-                        } else if (param == Type.class) {
+                        } else if (param.getSimpleName().equals("Type")) {
                             try {
-                                value = Type.valueOf(valueString.toUpperCase());
+                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("ocelot type", valueString, methodName);
                             }
