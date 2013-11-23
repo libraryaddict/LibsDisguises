@@ -272,6 +272,18 @@ public class PacketsManager {
             spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
             spawnPackets[0].getModifier().write(8, yaw);
 
+            if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
+                // Make the teleport packet to make it visible..
+                spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
+                StructureModifier<Object> mods = spawnPackets[1].getModifier();
+                mods.write(0, disguisedEntity.getEntityId());
+                mods.write(1, (int) Math.floor(loc.getX() * 32D));
+                mods.write(2, (int) Math.floor(loc.getY() * 32D));
+                mods.write(3, (int) Math.floor(loc.getZ() * 32D));
+                mods.write(4, yaw);
+                mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+            }
+
         }
         if (spawnPackets[1] == null) {
             // Make a packet to turn his head!
