@@ -307,37 +307,38 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         } else if (param.getSimpleName().equals("Color")) {
                             try {
 
-                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                                value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("horse color", valueString, methodName);
+                                throw parseToException("a horse color", valueString, methodName);
                             }
                             // Parse to horse style
                         } else if (param.getSimpleName().equals("Style")) {
                             try {
-                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                                value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("horse style", valueString, methodName);
+                                throw parseToException("a horse style", valueString, methodName);
                             }
                             // Parse to villager profession
                         } else if (param.getSimpleName().equals("Profession")) {
                             try {
-                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                                value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("villager profession", valueString, methodName);
+                                throw parseToException("a villager profession", valueString, methodName);
                             }
                             // Parse to ocelot type
                         } else if (param.getSimpleName().equals("Art")) {
                             try {
-                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                                value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("painting art", valueString, methodName);
+                                ex.printStackTrace();
+                                throw parseToException("a painting art", valueString, methodName);
                             }
                             // Parse to ocelot type
                         } else if (param.getSimpleName().equals("Type")) {
                             try {
-                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                                value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("ocelot type", valueString, methodName);
+                                throw parseToException("a ocelot type", valueString, methodName);
                             }
 
                             // Parse to potion effect
@@ -351,7 +352,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     throw new Exception();
                                 value = potionType;
                             } catch (Exception ex) {
-                                throw parseToException("potioneffect type", valueString, methodName);
+                                throw parseToException("a potioneffect type", valueString, methodName);
                             }
                         }
                     }
