@@ -628,7 +628,7 @@ public class PacketsManager {
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
-                        final PacketContainer[] delayedPackets = new PacketContainer[packets.length - 1];
+                        final PacketContainer[] delayedPackets = new PacketContainer[packets.length > 0 ? packets.length - 1 : 0];
                         final Player observer = event.getPlayer();
                         for (int i = 0; i < packets.length; i++) {
                             PacketContainer packet = packets[i];
