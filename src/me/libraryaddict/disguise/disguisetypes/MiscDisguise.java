@@ -1,7 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+import java.util.Random;
 
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
+
+import org.bukkit.Art;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,19 +45,37 @@ public class MiscDisguise extends Disguise {
             data = -1;
             break;
         }
-        if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
+        if (getType() == DisguiseType.FALLING_BLOCK && id != -1) {
             this.id = id;
         } else {
             this.id = disguiseType.getDefaultId();
         }
-        if (data == -1)
-            data = disguiseType.getDefaultData();
+        if (data == -1) {
+            if (getType() == DisguiseType.PAINTING) {
+                data = new Random().nextInt(Art.values().length);
+            } else {
+                data = disguiseType.getDefaultData();
+            }
+        }
         this.data = data;
         createDisguise(disguiseType, replaceSounds);
-        if (disguiseType == DisguiseType.DROPPED_ITEM) {
+        switch (getType()) {
+        case DROPPED_ITEM:
             if (id > 0) {
                 ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, data));
             }
+            break;
+        case FALLING_BLOCK:
+            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(this.id, 1, (short) this.data));
+            break;
+        case PAINTING:
+            ((PaintingWatcher) getWatcher()).setPainting(this.data);
+            break;
+        case SPLASH_POTION:
+            ((SplashPotionWatcher) getWatcher()).setPotionId(this.data);
+            break;
+        default:
+            break;
         }
     }
 
@@ -91,11 +115,29 @@ public class MiscDisguise extends Disguise {
         return disguise;
     }
 
+    /**
+     * This is the getId of everything but falling block.
+     */
     public int getData() {
-        return data;
+        switch (getType()) {
+        case FALLING_BLOCK:
+            return ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
+        case PAINTING:
+            return ((PaintingWatcher) getWatcher()).getPainting().getId();
+        case SPLASH_POTION:
+            return ((SplashPotionWatcher) getWatcher()).getPotionId();
+        default:
+            return data;
+        }
     }
 
+    /**
+     * Only falling block should use this
+     */
     public int getId() {
+        if (getType() == DisguiseType.FALLING_BLOCK) {
+            return ((FallingBlockWatcher) getWatcher()).getBlock().getTypeId();
+        }
         return id;
     }
 
