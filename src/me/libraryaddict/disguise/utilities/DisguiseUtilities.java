@@ -107,8 +107,11 @@ public class DisguiseUtilities {
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(
                         player,
-                        ProtocolLibrary.getProtocolManager().createPacketConstructor(Packets.Server.ENTITY_METADATA, player)
-                                .createPacket(player));
+                        ProtocolLibrary
+                                .getProtocolManager()
+                                .createPacketConstructor(Packets.Server.ENTITY_METADATA, player.getEntityId(),
+                                        WrappedDataWatcher.getEntityWatcher(player), true)
+                                .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -206,13 +209,6 @@ public class DisguiseUtilities {
                                 loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
                                 loc.getBlockZ()));
             }
-            // TODO Fix this cos it doesn't move the disguise?
-            byte yaw = (byte) (loc.getYaw() * 256.0F / 360.0F);
-            byte pitch = (byte) (loc.getPitch() * 256.0F / 360.0F);
-            manager.sendServerPacket(
-                    player,
-                    manager.createPacketConstructor(Packets.Server.ENTITY_LOOK, player.getEntityId(), yaw, pitch).createPacket(
-                            player.getEntityId(), yaw, pitch));
 
             // Resend any active potion effects
             Iterator iterator = player.getActivePotionEffects().iterator();
