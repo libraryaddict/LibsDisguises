@@ -178,9 +178,7 @@ public class PacketsManager {
             mods.write(3, loc.getBlockZ());
             mods.write(4, ((int) loc.getYaw()) % 4);
             int id = ((MiscDisguise) disguise).getData();
-            if (id == -1)
-                id = new Random().nextInt(Art.values().length);
-            mods.write(5, ReflectionManager.getEnumArt(Art.values()[id % Art.values().length]));
+            mods.write(5, ReflectionManager.getEnumArt(Art.values()[id]));
 
             // Make the teleport packet to make it visible..
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
@@ -257,10 +255,11 @@ public class PacketsManager {
             int id = disguise.getType().getEntityId();
             int data = 0;
             if (((MiscDisguise) disguise).getId() >= 0) {
-                if (((MiscDisguise) disguise).getData() >= 0)
+                if (((MiscDisguise) disguise).getData() >= 0) {
                     data = (((MiscDisguise) disguise).getId() | ((MiscDisguise) disguise).getData() << 16);
-                else
+                } else {
                     data = ((MiscDisguise) disguise).getId();
+                }
             }
             // This won't actually work.
             // But if someone constructing the disguise uses it properly. It will work.

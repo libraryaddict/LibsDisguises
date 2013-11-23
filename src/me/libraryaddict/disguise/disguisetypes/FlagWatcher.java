@@ -143,6 +143,10 @@ public class FlagWatcher {
         return armor;
     }
 
+    protected Disguise getDisguise() {
+        return disguise;
+    }
+
     private boolean getFlag(int i) {
         return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
     }
@@ -315,10 +319,6 @@ public class FlagWatcher {
     public void setSprinting(boolean setSprinting) {
         setFlag(0, 3, setSprinting);
         sendData(0);
-    }
-
-    protected Disguise getDisguise() {
-        return disguise;
     }
 
     protected void setValue(int no, Object value) {
