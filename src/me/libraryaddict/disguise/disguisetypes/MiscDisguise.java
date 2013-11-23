@@ -30,6 +30,7 @@ public class MiscDisguise extends Disguise {
     }
 
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
+        createDisguise(disguiseType, replaceSounds);
         switch (disguiseType) {
         // The only disguises which should use a custom data.
         case FISHING_HOOK:
@@ -58,7 +59,6 @@ public class MiscDisguise extends Disguise {
             }
         }
         this.data = data;
-        createDisguise(disguiseType, replaceSounds);
         switch (getType()) {
         case DROPPED_ITEM:
             if (id > 0) {
