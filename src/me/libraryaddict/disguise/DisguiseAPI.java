@@ -13,11 +13,11 @@ import org.bukkit.entity.Entity;
 
 public class DisguiseAPI {
     private static boolean hearSelfDisguise;
-
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
+    private static boolean isEntityAnimationsAdded;
     private static boolean sendVelocity;
-    
+
     @Deprecated
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
@@ -107,6 +107,10 @@ public class DisguiseAPI {
         return getDisguise(disguised) != null;
     }
 
+    public static boolean isEntityAnimationsAdded() {
+        return isEntityAnimationsAdded;
+    }
+
     /**
      * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor floating around
      */
@@ -148,6 +152,10 @@ public class DisguiseAPI {
      */
     public static boolean isViewDisguises() {
         return PacketsManager.isViewDisguisesListenerEnabled();
+    }
+
+    public static void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
+        DisguiseAPI.isEntityAnimationsAdded = isEntityAnimationsAdded;
     }
 
     /**

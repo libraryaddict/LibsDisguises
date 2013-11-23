@@ -36,6 +36,7 @@ public class FlagWatcher {
         }
     }
 
+    private boolean addEntityAnimations = DisguiseAPI.isEntityAnimationsAdded();
     /**
      * This is the entity values I need to add else it could crash them..
      */
@@ -44,6 +45,7 @@ public class FlagWatcher {
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
+    private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = disguise;
@@ -63,6 +65,7 @@ public class FlagWatcher {
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.items = items.clone();
+        cloned.modifiedEntityAnimations = (HashSet) modifiedEntityAnimations.clone();
         return cloned;
     }
 
@@ -90,6 +93,16 @@ public class FlagWatcher {
                 value = backupEntityValues.get(dataType);
             }
             if (value != null) {
+                if (addEntityAnimations && dataType == 0) {
+                    byte watcher = (Byte) watch.getValue();
+                    byte valueByte = (Byte) value;
+                    for (int i = 0; i < 6; i++) {
+                        if ((watcher & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
+                            valueByte = (byte) (valueByte | 1 << i);
+                        }
+                    }
+                    value = valueByte;
+                }
                 boolean doD = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, value);
                 if (!doD)
@@ -177,6 +190,10 @@ public class FlagWatcher {
         return getFlag(0);
     }
 
+    public boolean isEntityAnimationsAdded() {
+        return addEntityAnimations;
+    }
+
     public boolean isInvisible() {
         return getFlag(5);
     }
@@ -222,6 +239,10 @@ public class FlagWatcher {
         }
     }
 
+    public void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
+        this.addEntityAnimations = isEntityAnimationsAdded;
+    }
+
     public void setArmor(org.bukkit.inventory.ItemStack[] itemstack) {
         for (int i = 0; i < itemstack.length; i++)
             setItemStack(i, itemstack[i]);
@@ -237,8 +258,10 @@ public class FlagWatcher {
     }
 
     protected void setFlag(int no, int i, boolean flag) {
+        if (no == 0) {
+            modifiedEntityAnimations.add(i);
+        }
         byte b0 = (Byte) getValue(no, (byte) 0);
-
         if (flag) {
             setValue(no, (byte) (b0 | 1 << i));
         } else {

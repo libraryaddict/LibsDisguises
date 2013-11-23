@@ -24,3 +24,7 @@ SendVelocity: true
 # It just makes the client think the armor was removed so that it doesn't render it!
 RemoveArmor: true
 RemoveHeldItem: true
+# If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
+# Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
+# This is only valid if you set a animation on the disguise itself. Because the entitys animations are applied otherwise.
+AddEntityAnimations: false
