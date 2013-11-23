@@ -374,7 +374,17 @@ public class PacketsManager {
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
         case MINECART_TNT:
-            return 0.4;
+            switch (entity.getType()) {
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+                return 0;
+            default:
+                return 0.4;
+            }
         case ARROW:
         case BOAT:
         case EGG:
