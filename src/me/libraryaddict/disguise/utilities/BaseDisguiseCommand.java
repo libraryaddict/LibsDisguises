@@ -19,6 +19,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
+
     protected ArrayList<String> getAllowedDisguises(CommandSender sender) {
         String permissionNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
         return getAllowedDisguises(sender, permissionNode);
@@ -203,6 +204,18 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         }
                     }
                 }
+                if (miscId != -1) {
+                    if (disguiseType == DisguiseType.FALLING_BLOCK) {
+                        usedOptions.add("setblock");
+                        doCheck(optionPermissions, usedOptions);
+                    } else if (disguiseType == DisguiseType.PAINTING) {
+                        usedOptions.add("setpainting");
+                        doCheck(optionPermissions, usedOptions);
+                    } else if (disguiseType == DisguiseType.SPLASH_POTION) {
+                        usedOptions.add("setpotionid");
+                        doCheck(optionPermissions, usedOptions);
+                    }
+                }
                 // Construct the disguise
                 disguise = new MiscDisguise(disguiseType, miscId, miscData);
             }
@@ -311,6 +324,13 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("villager profession", valueString, methodName);
+                            }
+                            // Parse to ocelot type
+                        } else if (param.getSimpleName().equals("Art")) {
+                            try {
+                                value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("painting", valueString, methodName);
                             }
                             // Parse to ocelot type
                         } else if (param.getSimpleName().equals("Type")) {
