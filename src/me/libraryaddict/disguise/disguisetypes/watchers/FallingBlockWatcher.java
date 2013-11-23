@@ -13,21 +13,21 @@ public class FallingBlockWatcher extends FlagWatcher {
         super(disguise);
     }
 
-    public void setBlock(ItemStack block) {
-        this.block = block;
-        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
-            DisguiseUtilities.refreshTrackers(getDisguise().getEntity());
-        }
+    @Override
+    public FallingBlockWatcher clone(Disguise disguise) {
+        FallingBlockWatcher watcher = (FallingBlockWatcher) super.clone(disguise);
+        watcher.setBlock(getBlock());
+        return watcher;
     }
 
     public ItemStack getBlock() {
         return block;
     }
 
-    @Override
-    public FallingBlockWatcher clone(Disguise disguise) {
-        FallingBlockWatcher watcher = (FallingBlockWatcher) super.clone(disguise);
-        watcher.setBlock(getBlock());
-        return watcher;
+    public void setBlock(ItemStack block) {
+        this.block = block;
+        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
+            DisguiseUtilities.refreshTrackers(getDisguise().getEntity());
+        }
     }
 }

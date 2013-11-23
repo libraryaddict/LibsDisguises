@@ -11,15 +11,15 @@ public class SplashPotionWatcher extends FlagWatcher {
         super(disguise);
     }
 
-    public int getPotionId() {
-        return potionId;
-    }
-
     @Override
     public SplashPotionWatcher clone(Disguise disguise) {
         SplashPotionWatcher watcher = (SplashPotionWatcher) super.clone(disguise);
         watcher.setPotionId(getPotionId());
         return watcher;
+    }
+
+    public int getPotionId() {
+        return potionId;
     }
 
     public void setPotionId(int newPotionId) {
