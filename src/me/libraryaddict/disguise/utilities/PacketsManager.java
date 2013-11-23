@@ -276,17 +276,15 @@ public class PacketsManager {
             spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
             spawnPackets[0].getModifier().write(8, yaw);
 
-            if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                // Make the teleport packet to make it visible..
-                spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
-                StructureModifier<Object> mods = spawnPackets[1].getModifier();
-                mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, (int) Math.floor(loc.getX() * 32D));
-                mods.write(2, (int) Math.floor(loc.getY() * 32D));
-                mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-                mods.write(4, yaw);
-                mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            }
+            // Make the teleport packet to make it visible..
+            spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_TELEPORT);
+            StructureModifier<Object> mods = spawnPackets[1].getModifier();
+            mods.write(0, disguisedEntity.getEntityId());
+            mods.write(1, (int) Math.floor(loc.getX() * 32D));
+            mods.write(2, (int) Math.floor(loc.getY() * 32D));
+            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
+            mods.write(4, yaw);
+            mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
         }
         if (spawnPackets[1] == null) {
@@ -317,11 +315,47 @@ public class PacketsManager {
 
     }
 
+    public static byte getPitch(DisguiseType disguiseType, DisguiseType entityType, byte value) {
+        switch (disguiseType) {
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+            value = (byte) -value;
+            break;
+        default:
+            break;
+        }
+        switch (entityType) {
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+            value = (byte) -value;
+            break;
+        default:
+            break;
+        }
+        return value;
+    }
+
     /**
      * Add the yaw for the disguises
      */
     public static byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
         switch (disguiseType) {
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+            value += 64;
+            break;
         case ENDER_DRAGON:
         case WITHER_SKULL:
             value -= 128;
@@ -340,6 +374,14 @@ public class PacketsManager {
             break;
         }
         switch (entityType) {
+        case MINECART:
+        case MINECART_CHEST:
+        case MINECART_FURNACE:
+        case MINECART_HOPPER:
+        case MINECART_MOB_SPAWNER:
+        case MINECART_TNT:
+            value -= 64;
+            break;
         case ENDER_DRAGON:
         case WITHER_SKULL:
             value += 128;
@@ -1138,8 +1180,10 @@ public class PacketsManager {
                     } else {
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Object> mods = packets[0].getModifier();
-                        byte value = (Byte) mods.read(4);
-                        mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), value));
+                        byte yawValue = (Byte) mods.read(4);
+                        mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), yawValue));
+                        byte pitchValue = (Byte) mods.read(5);
+                        mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getID() == Packets.Server.ENTITY_TELEPORT) {
                             double y = getYModifier(entity, disguise.getType());
                             if (y != 0) {
