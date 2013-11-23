@@ -40,8 +40,6 @@ public class MiscDisguise extends Disguise {
             break;
         }
         if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
-
-        } else if (disguiseType == DisguiseType.FALLING_BLOCK && id != -1) {
             this.id = id;
         } else {
             this.id = disguiseType.getDefaultId();
