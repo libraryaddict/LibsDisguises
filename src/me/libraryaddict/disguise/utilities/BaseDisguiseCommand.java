@@ -330,7 +330,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             try {
                                 value = param.getClass().getMethod("valueOf", String.class).invoke(valueString.toUpperCase());
                             } catch (Exception ex) {
-                                throw parseToException("painting", valueString, methodName);
+                                throw parseToException("painting art", valueString, methodName);
                             }
                             // Parse to ocelot type
                         } else if (param.getSimpleName().equals("Type")) {

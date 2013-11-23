@@ -15,15 +15,15 @@ public class PaintingWatcher extends FlagWatcher {
     @Override
     public PaintingWatcher clone(Disguise disguise) {
         PaintingWatcher watcher = (PaintingWatcher) super.clone(disguise);
-        watcher.setPainting(getPainting());
+        watcher.setArt(getArt());
         return watcher;
     }
 
-    public Art getPainting() {
+    public Art getArt() {
         return painting;
     }
 
-    public void setPainting(Art newPainting) {
+    public void setArt(Art newPainting) {
         this.painting = newPainting;
         if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise().getEntity());
@@ -31,7 +31,7 @@ public class PaintingWatcher extends FlagWatcher {
     }
 
     @Deprecated
-    public void setPaintingId(int paintingNo) {
+    public void setArtId(int paintingNo) {
         painting = Art.values()[paintingNo % Art.values().length];
     }
 

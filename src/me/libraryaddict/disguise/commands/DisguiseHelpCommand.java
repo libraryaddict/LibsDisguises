@@ -90,8 +90,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
         }
         try {
-            enumHelp.add(new EnumHelp("Painting", "Paintings", ChatColor.RED + "/disguisehelp Painting " + ChatColor.GREEN
-                    + "- View all the paintings you can use on a painting disguise", (Enum[]) Class.forName("org.bukkit.Art")
+            enumHelp.add(new EnumHelp("Art", "Arts", ChatColor.RED + "/disguisehelp Art " + ChatColor.GREEN
+                    + "- View all the painting arts you can use on a painting disguise", (Enum[]) Class.forName("org.bukkit.Art")
                     .getEnumConstants()));
         } catch (Exception ex) {
         }

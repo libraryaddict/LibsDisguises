@@ -69,7 +69,7 @@ public class MiscDisguise extends Disguise {
             ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(this.id, 1, (short) this.data));
             break;
         case PAINTING:
-            ((PaintingWatcher) getWatcher()).setPaintingId(this.data);
+            ((PaintingWatcher) getWatcher()).setArtId(this.data);
             break;
         case SPLASH_POTION:
             ((SplashPotionWatcher) getWatcher()).setPotionId(this.data);
@@ -123,7 +123,7 @@ public class MiscDisguise extends Disguise {
         case FALLING_BLOCK:
             return ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
         case PAINTING:
-            return ((PaintingWatcher) getWatcher()).getPainting().getId();
+            return ((PaintingWatcher) getWatcher()).getArt().getId();
         case SPLASH_POTION:
             return ((SplashPotionWatcher) getWatcher()).getPotionId();
         default:
