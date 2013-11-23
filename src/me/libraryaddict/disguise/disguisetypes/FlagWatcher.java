@@ -49,6 +49,11 @@ public class FlagWatcher {
         this.disguise = disguise;
     }
 
+    @Override
+    protected Object clone() {
+        throw new RuntimeException("Please use clone(disguise) instead of clone()");
+    }
+
     public FlagWatcher clone(Disguise disguise) {
         FlagWatcher cloned = null;
         try {
@@ -110,7 +115,7 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (disguise.isSelfDisguiseVisible() && disguise.getEntity() != null && disguise.getEntity() instanceof Player) {
+        if (disguise.isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -119,7 +124,7 @@ public class FlagWatcher {
                         float newHealth = (Float) value;
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
-                            DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity());
+                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity());
                         } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }
@@ -194,7 +199,7 @@ public class FlagWatcher {
             return;
         if (!entityValues.containsKey(data) || entityValues.get(data) == null)
             return;
-        Entity entity = disguise.getEntity();
+        Entity entity = getDisguise().getEntity();
         Object value = entityValues.get(data);
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
         list.add(new WrappedWatchableObject(data, value));
@@ -202,7 +207,7 @@ public class FlagWatcher {
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, entity.getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
-        for (Player player : disguise.getPerverts()) {
+        for (Player player : getDisguise().getPerverts()) {
             if (DisguiseAPI.isViewDisguises() || player != entity) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -251,7 +256,7 @@ public class FlagWatcher {
         if (itemStack == null) {
             // Find the item to replace it with
             if (disguise.getEntity() instanceof LivingEntity) {
-                EntityEquipment enquipment = ((LivingEntity) disguise.getEntity()).getEquipment();
+                EntityEquipment enquipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
                 if (slot == 0) {
                     itemStack = enquipment.getItemInHand();
                 } else {
@@ -273,11 +278,11 @@ public class FlagWatcher {
             slot = 0;
         PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
         StructureModifier<Object> mods = packet.getModifier();
-        mods.write(0, disguise.getEntity().getEntityId());
+        mods.write(0, getDisguise().getEntity().getEntityId());
         mods.write(1, slot);
         mods.write(2, itemToSend);
-        for (Player player : disguise.getPerverts()) {
-            if (player != disguise.getEntity()) {
+        for (Player player : getDisguise().getPerverts()) {
+            if (player != getDisguise().getEntity()) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {
@@ -310,6 +315,10 @@ public class FlagWatcher {
     public void setSprinting(boolean setSprinting) {
         setFlag(0, 3, setSprinting);
         sendData(0);
+    }
+
+    protected Disguise getDisguise() {
+        return disguise;
     }
 
     protected void setValue(int no, Object value) {
