@@ -121,6 +121,9 @@ public class DisguiseUtilities {
      */
     public static void sendSelfDisguise(final Player player) {
         try {
+            if (!player.isValid()) {
+                return;
+            }
             Object world = ReflectionManager.getWorld(player.getWorld());
             Object tracker = world.getClass().getField("tracker").get(world);
             Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
