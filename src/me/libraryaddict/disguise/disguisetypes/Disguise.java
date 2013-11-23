@@ -54,16 +54,16 @@ public abstract class Disguise {
             return;
         if (newType.getEntityType() == null) {
             throw new RuntimeException("DisguiseType " + newType
-                    + " was attempted to construct a disguise, but this version of craftbukkit does not have that entity");
+                    + " was used to attempt to construct a disguise, but this version of craftbukkit does not have that entity");
         }
         // Set the disguise type
         disguiseType = newType;
         // Set the option to replace the sounds
         setReplaceSounds(doSounds);
         // Get if they are a adult now..
-        boolean isBaby = false;
+        boolean isAdult = true;
         if (this instanceof MobDisguise) {
-            isBaby = !((MobDisguise) this).isAdult();
+            isAdult = ((MobDisguise) this).isAdult();
         }
         try {
             // Construct the FlagWatcher from the stored class
@@ -72,7 +72,7 @@ public abstract class Disguise {
             e.printStackTrace();
         }
         // Set the disguise if its a baby or not
-        if (isBaby) {
+        if (!isAdult) {
             if (getWatcher() instanceof AgeableWatcher) {
                 ((AgeableWatcher) getWatcher()).setAdult(false);
             } else if (getWatcher() instanceof ZombieWatcher) {
@@ -80,11 +80,13 @@ public abstract class Disguise {
             }
         }
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
-        if (getType() == DisguiseType.WITHER_SKELETON)
+        if (getType() == DisguiseType.WITHER_SKELETON) {
             getWatcher().setValue(13, (byte) 1);
+        }
         // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
-        else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
+        else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
             getWatcher().setValue(13, (byte) 1);
+        }
         // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
@@ -401,8 +403,9 @@ public abstract class Disguise {
      * Set the entity of the disguise. Only used for internal things.
      */
     public void setEntity(org.bukkit.entity.Entity entity) {
-        if (this.entity != null)
+        if (this.entity != null) {
             throw new RuntimeException("This disguise is already in use! Try .clone()");
+        }
         this.entity = entity;
         setupWatcher();
         velocityRunnable.runTaskTimer(plugin, 1, 1);

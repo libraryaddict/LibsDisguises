@@ -129,6 +129,7 @@ public enum DisguiseType {
     ZOMBIE(),
 
     ZOMBIE_VILLAGER();
+
     static {
         for (DisguiseType type : values()) {
             try {
@@ -160,6 +161,7 @@ public enum DisguiseType {
                     type.setEntityType(entityType);
                 }
             } catch (Throwable ex) {
+                // This version of craftbukkit doesn't have the disguise.
             }
         }
     }
@@ -214,15 +216,15 @@ public enum DisguiseType {
     }
 
     public boolean isMisc() {
-        return !entityType.isAlive();
+        return !getEntityType().isAlive();
     }
 
     public boolean isMob() {
-        return entityType.isAlive() && entityType != EntityType.PLAYER;
+        return getEntityType().isAlive() && this != DisguiseType.PLAYER;
     }
 
     public boolean isPlayer() {
-        return entityType == EntityType.PLAYER;
+        return this == DisguiseType.PLAYER;
     }
 
     private void setEntityType(EntityType entityType) {

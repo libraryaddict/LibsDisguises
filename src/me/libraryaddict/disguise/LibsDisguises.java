@@ -3,8 +3,6 @@ package me.libraryaddict.disguise;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.List;
-
 import me.libraryaddict.disguise.commands.*;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -38,19 +36,19 @@ public class LibsDisguises extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
-        boolean modified = false;
+        boolean needToSaveConfig = false;
         try {
-            for (String option : YamlConfiguration
-                    .loadConfiguration(this.getClassLoader().getResource("config.yml").openStream()).getKeys(false)) {
+            for (String option : YamlConfiguration.loadConfiguration(getClassLoader().getResource("config.yml").openStream())
+                    .getKeys(false)) {
                 if (!config.contains(option)) {
                     config.set(option, getConfig().get(option));
-                    modified = true;
+                    needToSaveConfig = true;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (modified) {
+        if (needToSaveConfig) {
             try {
                 config.save(new File(getDataFolder(), "config.yml"));
             } catch (IOException e) {
@@ -193,9 +191,7 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 }
                 DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize);
-                WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
-                List<WrappedWatchableObject> watchers = dataWatcher.getWatchableObjects();
-                for (WrappedWatchableObject watch : watchers)
+                for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects())
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
