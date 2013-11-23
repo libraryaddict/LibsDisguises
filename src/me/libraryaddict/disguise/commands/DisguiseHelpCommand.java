@@ -66,6 +66,12 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
             ex.printStackTrace();
         }
         try {
+            enumHelp.add(new EnumHelp("Art", "Arts", ChatColor.RED + "/disguisehelp Art " + ChatColor.GREEN
+                    + "- View all the painting arts you can use on a painting disguise", (Enum[]) Class.forName("org.bukkit.Art")
+                    .getEnumConstants()));
+        } catch (Exception ex) {
+        }
+        try {
             enumHelp.add(new EnumHelp("HorseColor", "Horse colors", ChatColor.RED + "/disguisehelp HorseColors "
                     + ChatColor.GREEN + "- View all the colors you can use for a horses color", (Enum[]) Class.forName(
                     "org.bukkit.entity.Horse$Color").getEnumConstants()));
@@ -84,18 +90,6 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
         }
         try {
-            enumHelp.add(new EnumHelp("Profession", "Villager professions", ChatColor.RED + "/disguisehelp Professions "
-                    + ChatColor.GREEN + "- View all the professions you can set on a villager", (Enum[]) Class.forName(
-                    "org.bukkit.entity.Villager$Profession").getEnumConstants()));
-        } catch (Exception ex) {
-        }
-        try {
-            enumHelp.add(new EnumHelp("Art", "Arts", ChatColor.RED + "/disguisehelp Art " + ChatColor.GREEN
-                    + "- View all the painting arts you can use on a painting disguise", (Enum[]) Class.forName("org.bukkit.Art")
-                    .getEnumConstants()));
-        } catch (Exception ex) {
-        }
-        try {
             ArrayList<String> enumReturns = new ArrayList<String>();
             for (PotionEffectType potionType : PotionEffectType.values()) {
                 if (potionType != null)
@@ -107,6 +101,12 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     .size()])));
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+        try {
+            enumHelp.add(new EnumHelp("Profession", "Villager professions", ChatColor.RED + "/disguisehelp Professions "
+                    + ChatColor.GREEN + "- View all the professions you can set on a villager", (Enum[]) Class.forName(
+                    "org.bukkit.entity.Villager$Profession").getEnumConstants()));
+        } catch (Exception ex) {
         }
     }
 
