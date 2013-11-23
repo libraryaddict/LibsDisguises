@@ -80,18 +80,22 @@ public class PacketsManager {
                 else {
                     event.setPacket(packets[0]);
                     final PacketContainer[] delayedPackets = new PacketContainer[packets.length - 1];
-                    for (int i = 1; i < packets.length; i++)
+                    for (int i = 1; i < packets.length; i++) {
                         delayedPackets[i - 1] = packets[i];
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                        public void run() {
-                            try {
-                                for (PacketContainer packet : delayedPackets)
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                    }
+                    if (delayedPackets.length > 0) {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            public void run() {
+                                try {
+                                    for (PacketContainer packet : delayedPackets) {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                    }
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -290,7 +294,7 @@ public class PacketsManager {
             spawnPackets[1] = new PacketContainer(Packets.Server.ENTITY_HEAD_ROTATION);
             StructureModifier<Object> mods = spawnPackets[1].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (byte) (int) Math.floor(loc.getYaw() * 256.0F / 360.0F));
+            mods.write(1, yaw);
         }
         return spawnPackets;
     }
@@ -624,15 +628,35 @@ public class PacketsManager {
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
-                        try {
-                            for (PacketContainer packet : packets) {
-                                if (packet.equals(event.getPacket()))
-                                    packet = packet.deepClone();
-                                packet.getModifier().write(0, fakeId);
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                        final PacketContainer[] delayedPackets = new PacketContainer[packets.length - 1];
+                        final Player observer = event.getPlayer();
+                        for (int i = 0; i < packets.length; i++) {
+                            PacketContainer packet = packets[i];
+                            if (packet.equals(event.getPacket()))
+                                packet = packet.deepClone();
+                            packet.getModifier().write(0, fakeId);
+                            if (i == 0) {
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                delayedPackets[i - 1] = packets[i];
                             }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                        }
+                        if (delayedPackets.length > 0) {
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                public void run() {
+                                    try {
+                                        for (PacketContainer packet : delayedPackets) {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                        }
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                         }
 
                         if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
@@ -652,6 +676,22 @@ public class PacketsManager {
                         } else {
                             switch (event.getPacketID()) {
                             case Packets.Server.NAMED_ENTITY_SPAWN:
+                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+                                StructureModifier<Object> mods = packet.getModifier();
+                                mods.write(0, entity.getEntityId());
+                                List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
+                                byte b = (byte) (0 | 1 << 5);
+                                if (event.getPlayer().isSprinting())
+                                    b = (byte) (b | 1 << 3);
+                                watchableList.add(new WrappedWatchableObject(0, b));
+                                packet.getWatchableCollectionModifier().write(0, watchableList);
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                                event.setCancelled(true);
+                                break;
                             case Packets.Server.ATTACH_ENTITY:
                             case Packets.Server.REL_ENTITY_MOVE:
                             case Packets.Server.REL_ENTITY_MOVE_LOOK:
@@ -660,22 +700,6 @@ public class PacketsManager {
                             case Packets.Server.ENTITY_HEAD_ROTATION:
                             case Packets.Server.MOB_EFFECT:
                             case Packets.Server.ENTITY_EQUIPMENT:
-                                if (event.getPacketID() == Packets.Server.NAMED_ENTITY_SPAWN) {
-                                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
-                                    StructureModifier<Object> mods = packet.getModifier();
-                                    mods.write(0, entity.getEntityId());
-                                    List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
-                                    byte b = (byte) (0 | 1 << 5);
-                                    if (event.getPlayer().isSprinting())
-                                        b = (byte) (b | 1 << 3);
-                                    watchableList.add(new WrappedWatchableObject(0, b));
-                                    packet.getWatchableCollectionModifier().write(0, watchableList);
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
                                 event.setCancelled(true);
                                 break;
 
