@@ -17,6 +17,7 @@ public class VillagerWatcher extends AgeableWatcher {
         return Profession.values()[(Integer) getValue(16, 0)];
     }
 
+    @Deprecated
     public int getProfessionId() {
         return (Integer) getValue(16, 0);
     }
@@ -25,6 +26,7 @@ public class VillagerWatcher extends AgeableWatcher {
         setProfessionId(newProfession.getId());
     }
 
+    @Deprecated
     public void setProfessionId(int profession) {
         setValue(16, profession % 6);
         sendData(16);

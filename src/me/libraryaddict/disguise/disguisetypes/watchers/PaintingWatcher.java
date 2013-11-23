@@ -30,7 +30,8 @@ public class PaintingWatcher extends FlagWatcher {
         }
     }
 
-    public void setPainting(int paintingNo) {
+    @Deprecated
+    public void setPaintingId(int paintingNo) {
         painting = Art.values()[paintingNo % Art.values().length];
     }
 

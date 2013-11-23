@@ -81,6 +81,7 @@ public class HorseWatcher extends AgeableWatcher {
         sendData(20);
     }
 
+    @Deprecated
     public void setColorId(int color) {
         setValue(20, (color % Color.values().length) & 0xFF | getStyle().ordinal() << 8);
         sendData(20);
@@ -122,6 +123,7 @@ public class HorseWatcher extends AgeableWatcher {
         sendData(20);
     }
 
+    @Deprecated
     public void setStyleId(int style) {
         setValue(20, getColor().ordinal() & 0xFF | (style % Style.values().length) << 8);
         sendData(20);

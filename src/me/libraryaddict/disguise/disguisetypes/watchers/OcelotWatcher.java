@@ -39,6 +39,7 @@ public class OcelotWatcher extends AgeableWatcher {
         sendData(18);
     }
 
+    @Deprecated
     public void setTypeId(int type) {
         setValue(18, (byte) (type % Type.values().length));
         sendData(18);
