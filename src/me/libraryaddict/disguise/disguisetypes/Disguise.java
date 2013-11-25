@@ -203,7 +203,6 @@ public abstract class Disguise {
                         }
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !entity.isOnGround()) {
                             PacketContainer lookPacket = null;
-                            PacketContainer selfLookPacket = null;
                             if (getType() == DisguiseType.WITHER_SKULL) {
                                 lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
@@ -214,35 +213,39 @@ public abstract class Disguise {
                                         PacketsManager.getYaw(getType(), DisguiseType.getType(entity.getType()),
                                                 (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
                                 mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
-                                selfLookPacket = lookPacket.shallowClone();
+                                if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
+                                    PacketContainer selfLookPacket = lookPacket.shallowClone();
+                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
+                                                selfLookPacket, false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
                             try {
                                 Field ping = ReflectionManager.getNmsClass("EntityPlayer").getField("ping");
                                 for (Player player : getPerverts()) {
                                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
                                     StructureModifier<Object> mods = packet.getModifier();
-                                    if (entity == player) {
-                                        if (!isSelfDisguiseVisible())
+                                    if (getEntity() == player) {
+                                        if (!isSelfDisguiseVisible()) {
                                             continue;
-                                        if (selfLookPacket != null) {
-                                            try {
-                                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, selfLookPacket,
-                                                        false);
-                                            } catch (InvocationTargetException e) {
-                                                e.printStackTrace();
-                                            }
                                         }
                                         mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
-                                    } else
+                                    } else {
                                         mods.write(0, entity.getEntityId());
+                                    }
                                     mods.write(1, (int) (vector.getX() * 8000));
                                     mods.write(
                                             2,
                                             (int) (8000 * (vectorY * (double) ping.getInt(ReflectionManager.getNmsEntity(player)) * 0.069)));
                                     mods.write(3, (int) (vector.getZ() * 8000));
-                                    if (lookPacket != null)
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                                    if (lookPacket != null) {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket);
+                                    }
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
 
                                 }
                             } catch (Exception e) {
