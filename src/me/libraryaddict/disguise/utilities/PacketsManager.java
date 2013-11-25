@@ -672,15 +672,13 @@ public class PacketsManager {
                 Packets.Server.ENTITY_VELOCITY, Packets.Server.UPDATE_ATTRIBUTES) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(event.getPlayer().getWorld());
-                org.bukkit.entity.Entity entity = entityModifer.read(0);
-                if (entity == event.getPlayer()) {
-                    int fakeId = DisguiseAPI.getFakeDisguise(entity.getEntityId());
+                final Player observer = event.getPlayer();
+                if (event.getPacket().getEntityModifier(observer.getWorld()).read(0) == observer) {
+                    int fakeId = DisguiseAPI.getFakeDisguise(observer.getEntityId());
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-                        PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
+                        PacketContainer[] packets = transformPacket(event.getPacket(), observer);
                         final PacketContainer[] delayedPackets = new PacketContainer[packets.length > 0 ? packets.length - 1 : 0];
-                        final Player observer = event.getPlayer();
                         for (int i = 0; i < packets.length; i++) {
                             PacketContainer packet = packets[i];
                             if (packet.equals(event.getPacket()))
@@ -693,7 +691,7 @@ public class PacketsManager {
                                     e.printStackTrace();
                                 }
                             } else {
-                                delayedPackets[i - 1] = packets[i];
+                                delayedPackets[i - 1] = packet;
                             }
                         }
                         if (delayedPackets.length > 0) {
@@ -710,7 +708,8 @@ public class PacketsManager {
                             });
                         }
 
-                        if (event.getPacketID() == Packets.Server.ENTITY_METADATA) {
+                        switch (event.getPacketID()) {
+                        case Packets.Server.ENTITY_METADATA:
                             event.setPacket(event.getPacket().deepClone());
                             Iterator<WrappedWatchableObject> itel = event.getPacket().getWatchableCollectionModifier().read(0)
                                     .iterator();
@@ -724,45 +723,38 @@ public class PacketsManager {
                                     watch.setValue(a);
                                 }
                             }
-                        } else {
-                            switch (event.getPacketID()) {
-                            case Packets.Server.NAMED_ENTITY_SPAWN:
-                                PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
-                                StructureModifier<Object> mods = packet.getModifier();
-                                mods.write(0, entity.getEntityId());
-                                List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
-                                byte b = (byte) (0 | 1 << 5);
-                                if (event.getPlayer().isSprinting())
-                                    b = (byte) (b | 1 << 3);
-                                watchableList.add(new WrappedWatchableObject(0, b));
-                                packet.getWatchableCollectionModifier().write(0, watchableList);
-                                try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
-                                event.setCancelled(true);
-                                break;
-                            case Packets.Server.ATTACH_ENTITY:
-                            case Packets.Server.REL_ENTITY_MOVE:
-                            case Packets.Server.REL_ENTITY_MOVE_LOOK:
-                            case Packets.Server.ENTITY_LOOK:
-                            case Packets.Server.ENTITY_TELEPORT:
-                            case Packets.Server.ENTITY_HEAD_ROTATION:
-                            case Packets.Server.MOB_EFFECT:
-                            case Packets.Server.ENTITY_EQUIPMENT:
-                                event.setCancelled(true);
-                                break;
+                            break;
+                        case Packets.Server.NAMED_ENTITY_SPAWN:
+                            PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+                            StructureModifier<Object> mods = packet.getModifier();
+                            mods.write(0, observer.getEntityId());
+                            List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
+                            byte b = (byte) (0 | 1 << 5);
+                            if (observer.isSprinting())
+                                b = (byte) (b | 1 << 3);
+                            watchableList.add(new WrappedWatchableObject(0, b));
+                            packet.getWatchableCollectionModifier().write(0, watchableList);
+                            event.setPacket(packet);
+                            break;
+                        case Packets.Server.ATTACH_ENTITY:
+                        case Packets.Server.REL_ENTITY_MOVE:
+                        case Packets.Server.REL_ENTITY_MOVE_LOOK:
+                        case Packets.Server.ENTITY_LOOK:
+                        case Packets.Server.ENTITY_TELEPORT:
+                        case Packets.Server.ENTITY_HEAD_ROTATION:
+                        case Packets.Server.MOB_EFFECT:
+                        case Packets.Server.ENTITY_EQUIPMENT:
+                            event.setCancelled(true);
+                            break;
 
-                            /*     case Packets.Server.ENTITY_STATUS:
-                                     if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
-                                             && (Byte) event.getPacket().getModifier().read(1) == 1) {
-                                         event.setCancelled(true);
-                                     }
-                                     break;*/
-                            default:
-                                break;
-                            }
+                        /*     case Packets.Server.ENTITY_STATUS:
+                                 if (DisguiseAPI.getDisguise(entity).canHearSelfDisguise()
+                                         && (Byte) event.getPacket().getModifier().read(1) == 1) {
+                                     event.setCancelled(true);
+                                 }
+                                 break;*/
+                        default:
+                            break;
                         }
                     }
                 }
