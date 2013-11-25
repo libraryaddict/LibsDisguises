@@ -194,7 +194,6 @@ public abstract class Disguise {
                             if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
                                 DisguiseUtilities.sendSelfDisguise((Player) getEntity());
                             }
-                            // ProtocolLibrary.getProtocolManager().updateEntity(getEntity(), getPerverts());
                         }
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
