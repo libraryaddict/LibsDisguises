@@ -673,7 +673,7 @@ public class PacketsManager {
             @Override
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
-                if (event.getPacket().getEntityModifier(observer.getWorld()).read(0) == observer) {
+                if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
                     int fakeId = DisguiseAPI.getFakeDisguise(observer.getEntityId());
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
