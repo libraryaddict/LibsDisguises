@@ -265,11 +265,11 @@ public class PacketsManager {
             // But if someone constructing the disguise uses it properly. It will work.
             if (disguise.getType() == DisguiseType.FISHING_HOOK)
                 data = disguise.getEntity().getEntityId();
-            else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
-                data = (int) loc.getYaw();
-                if (data < 0)
-                    data = -data;
-            }
+            /*     else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                     data = (int) loc.getYaw();
+                     if (data < 0)
+                         data = -data;
+                 }*/
             spawnPackets[0] = ProtocolLibrary.getProtocolManager()
                     .createPacketConstructor(Packets.Server.VEHICLE_SPAWN, nmsEntity, id, data).createPacket(nmsEntity, id, data);
             spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
@@ -359,7 +359,7 @@ public class PacketsManager {
         case WITHER_SKULL:
             value -= 128;
             break;
-        case ITEM_FRAME:
+        // case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;
@@ -385,7 +385,7 @@ public class PacketsManager {
         case WITHER_SKULL:
             value += 128;
             break;
-        case ITEM_FRAME:
+        // case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;

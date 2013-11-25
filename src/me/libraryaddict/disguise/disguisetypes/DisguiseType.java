@@ -54,7 +54,7 @@ public enum DisguiseType {
 
     IRON_GOLEM(),
 
-    ITEM_FRAME(71),
+    // ITEM_FRAME(71),
 
     LEASH_HITCH(77),
 

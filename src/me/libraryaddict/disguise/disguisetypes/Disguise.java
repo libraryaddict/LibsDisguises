@@ -139,7 +139,7 @@ public abstract class Disguise {
         case ENDER_CRYSTAL:
         case ENDER_DRAGON:
         case GHAST:
-        case ITEM_FRAME:
+    //    case ITEM_FRAME:
         case MINECART:
         case MINECART_CHEST:
         case MINECART_FURNACE:
