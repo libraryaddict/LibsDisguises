@@ -196,9 +196,9 @@ public abstract class Disguise {
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
                     if (vectorY != 0 && isVelocitySent() && (alwaysSendVelocity || !entity.isOnGround())) {
-                        Vector vector = entity.getVelocity();
+                        Vector vector = getEntity().getVelocity();
                         // If the entity doesn't have velocity changes already
-                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && entity.isOnGround())) {
+                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround())) {
                             return;
                         }
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !entity.isOnGround()) {
@@ -206,8 +206,8 @@ public abstract class Disguise {
                             if (getType() == DisguiseType.WITHER_SKULL) {
                                 lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
-                                mods.write(0, entity.getEntityId());
-                                Location loc = entity.getLocation();
+                                mods.write(0, getEntity().getEntityId());
+                                Location loc = getEntity().getLocation();
                                 mods.write(
                                         4,
                                         PacketsManager.getYaw(getType(), DisguiseType.getType(entity.getType()),
@@ -235,7 +235,7 @@ public abstract class Disguise {
                                         }
                                         mods.write(0, DisguiseAPI.getFakeDisguise(entity.getEntityId()));
                                     } else {
-                                        mods.write(0, entity.getEntityId());
+                                        mods.write(0, getEntity().getEntityId());
                                     }
                                     mods.write(1, (int) (vector.getX() * 8000));
                                     mods.write(
@@ -256,7 +256,7 @@ public abstract class Disguise {
                         if (sendMovementPacket) {
                             PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
                             StructureModifier<Object> mods = packet.getModifier();
-                            mods.write(0, entity.getEntityId());
+                            mods.write(0, getEntity().getEntityId());
                             for (Player player : getPerverts()) {
                                 if (DisguiseAPI.isViewDisguises() || entity != player) {
                                     try {
