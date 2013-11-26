@@ -868,7 +868,7 @@ public class PacketsManager {
                             int slot = event.getPacket().getIntegers().read(0);
                             if (slot >= 5 && slot <= 8) {
                                 if (disguise.isHidingArmorFromSelf()) {
-                                    int armorSlot = Math.abs(slot - 9);
+                                    int armorSlot = Math.abs((slot - 5) - 3);
                                     org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
                                     if (item != null && item.getType() != Material.AIR) {
                                         PacketContainer packet = new PacketContainer(Packets.Server.SET_SLOT);
