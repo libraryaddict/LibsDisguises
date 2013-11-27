@@ -54,7 +54,7 @@ public enum DisguiseType {
 
     IRON_GOLEM(),
 
-    // ITEM_FRAME(71),
+    ITEM_FRAME(71),
 
     LEASH_HITCH(77),
 
@@ -133,8 +133,10 @@ public enum DisguiseType {
     static {
         for (DisguiseType type : values()) {
             try {
-                EntityType entityType;
+                EntityType entityType = null;
                 switch (type) {
+                case ITEM_FRAME:
+                    break;
                 case DONKEY:
                     entityType = EntityType.HORSE;
                     break;

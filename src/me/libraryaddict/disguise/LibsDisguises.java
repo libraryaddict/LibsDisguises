@@ -24,7 +24,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -97,19 +96,7 @@ public class LibsDisguises extends JavaPlugin {
      * for mob noises. As well as setting their watcher class and entity size.
      */
     private void registerValues() {
-        try {
-            DisguiseValues disguiseValues = new DisguiseValues((Enum) Class.forName("org.bukkit.entity.EntityType")
-                    .getField("ITEM_FRAME").get(null), null, 0);
-            for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(
-                    ReflectionManager.getBukkitEntity(ReflectionManager.createEntityInstance("ItemFrame"))).getWatchableObjects())
-                disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         for (DisguiseType disguiseType : DisguiseType.values()) {
-            if (disguiseType.getEntityType() == null) {
-                continue;
-            }
             Class watcherClass = null;
             try {
                 switch (disguiseType) {
@@ -194,6 +181,9 @@ public class LibsDisguises extends JavaPlugin {
             }
             try {
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
+                if (nmsEntity == null) {
+                    continue;
+                }
                 Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
                 int entitySize = 0;
                 for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {

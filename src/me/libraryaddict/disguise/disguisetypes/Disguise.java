@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -444,17 +443,9 @@ public abstract class Disguise {
      */
     private void setupWatcher() {
         HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = null;
-        if (DisguiseType.getType(getEntity().getType()) != null)
-            entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
-        else {
-            DisguiseValues.getEntityValues(getEntity().getType()).getMetaValues();
-        }
-        if (entityValues == null) {
-            entityValues = new HashMap();
-        }
+        HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
         // Start from 2 as they ALL share 0 and 1
-        for (int dataNo = 2; dataNo <= 31; dataNo++) {
+        for (int dataNo = 0; dataNo <= 31; dataNo++) {
             // STEP 1. Find out if the watcher has set data on it.
             // If the watcher already set a metadata on this
             if (getWatcher().hasValue(dataNo)) {
