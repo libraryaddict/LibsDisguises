@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -156,8 +157,7 @@ public class PacketsManager {
             spawnPackets[i + 2] = packets.get(i);
         }
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
-        byte yaw = getYaw(disguise.getType(), DisguiseType.getType(disguise.getEntity().getType()),
-                (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+        byte yaw = getYaw(disguise.getType(), disguise.getEntity().getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -345,7 +345,7 @@ public class PacketsManager {
     /**
      * Add the yaw for the disguises
      */
-    public static byte getYaw(DisguiseType disguiseType, DisguiseType entityType, byte value) {
+    public static byte getYaw(DisguiseType disguiseType, EntityType entityType, byte value) {
         switch (disguiseType) {
         case MINECART:
         case MINECART_CHEST:
@@ -393,7 +393,7 @@ public class PacketsManager {
             value = (byte) -(value - 128);
             break;
         default:
-            if (entityType.isMisc()) {
+            if (!entityType.isAlive()) {
                 value += 64;
             }
             break;
@@ -1172,7 +1172,7 @@ public class PacketsManager {
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Object> mods = packets[0].getModifier();
                         byte yawValue = (Byte) mods.read(4);
-                        mods.write(4, getYaw(disguise.getType(), DisguiseType.getType(entity.getType()), yawValue));
+                        mods.write(4, getYaw(disguise.getType(), entity.getType(), yawValue));
                         byte pitchValue = (Byte) mods.read(5);
                         mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getID() == Packets.Server.ENTITY_TELEPORT) {
