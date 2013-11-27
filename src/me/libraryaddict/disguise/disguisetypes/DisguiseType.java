@@ -167,7 +167,11 @@ public enum DisguiseType {
     }
 
     public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
-        return DisguiseType.valueOf(entityType.name());
+        try {
+            return DisguiseType.valueOf(entityType.name());
+        } catch (Throwable ex) {
+            return null;
+        }
     }
 
     private int defaultData;

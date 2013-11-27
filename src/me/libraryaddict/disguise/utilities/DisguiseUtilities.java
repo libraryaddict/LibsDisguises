@@ -58,13 +58,12 @@ public class DisguiseUtilities {
             if (entityTrackerEntry != null) {
                 HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
                         .get(entityTrackerEntry);
-                Method getBukkitEntity = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
                 Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
                 Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
                         ReflectionManager.getNmsClass("EntityPlayer"));
                 HashSet cloned = (HashSet) trackedPlayers.clone();
                 for (Object player : cloned) {
-                    if (entity instanceof Player && !((Player) getBukkitEntity.invoke(player)).canSee((Player) entity))
+                    if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player) entity))
                         continue;
                     clear.invoke(entityTrackerEntry, player);
                     updatePlayer.invoke(entityTrackerEntry, player);

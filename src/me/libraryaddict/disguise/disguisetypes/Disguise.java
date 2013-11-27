@@ -139,7 +139,7 @@ public abstract class Disguise {
         case ENDER_CRYSTAL:
         case ENDER_DRAGON:
         case GHAST:
-    //    case ITEM_FRAME:
+            // case ITEM_FRAME:
         case MINECART:
         case MINECART_CHEST:
         case MINECART_FURNACE:
@@ -213,7 +213,7 @@ public abstract class Disguise {
                                 Location loc = getEntity().getLocation();
                                 mods.write(
                                         4,
-                                        PacketsManager.getYaw(getType(), DisguiseType.getType(getEntity().getType()),
+                                        PacketsManager.getYaw(getType(), getEntity().getType(),
                                                 (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
                                 mods.write(5, (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F));
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
@@ -295,11 +295,10 @@ public abstract class Disguise {
             Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
                     .invoke(trackedEntities, getEntity().getEntityId());
             if (entityTrackerEntry != null) {
-                Method method = ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity");
                 HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
                         .get(entityTrackerEntry);
                 for (Object p : trackedPlayers) {
-                    players.add((Player) method.invoke(p));
+                    players.add((Player) ReflectionManager.getBukkitEntity(p));
                 }
             }
         } catch (Exception ex) {
@@ -445,7 +444,15 @@ public abstract class Disguise {
      */
     private void setupWatcher() {
         HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
+        HashMap<Integer, Object> entityValues = null;
+        if (DisguiseType.getType(getEntity().getType()) != null)
+            entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
+        else {
+            DisguiseValues.getEntityValues(getEntity().getType()).getMetaValues();
+        }
+        if (entityValues == null) {
+            entityValues = new HashMap();
+        }
         // Start from 2 as they ALL share 0 and 1
         for (int dataNo = 2; dataNo <= 31; dataNo++) {
             // STEP 1. Find out if the watcher has set data on it.

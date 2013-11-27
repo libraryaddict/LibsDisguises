@@ -2,11 +2,13 @@ package me.libraryaddict.disguise.utilities;
 
 import java.util.HashMap;
 
+import org.bukkit.entity.EntityType;
+
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
 public class DisguiseValues {
 
-    private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<DisguiseType, DisguiseValues>();
+    private static HashMap<Enum, DisguiseValues> values = new HashMap<Enum, DisguiseValues>();
 
     public static DisguiseValues getDisguiseValues(DisguiseType type) {
         switch (type) {
@@ -35,6 +37,10 @@ public class DisguiseValues {
         return values.get(type);
     }
 
+    public static DisguiseValues getEntityValues(EntityType type) {
+        return values.get(type);
+    }
+
     public static HashMap<Integer, Object> getMetaValues(DisguiseType type) {
         return getDisguiseValues(type).getMetaValues();
     }
@@ -47,7 +53,7 @@ public class DisguiseValues {
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
     private Class nmsEntityClass;
 
-    public DisguiseValues(DisguiseType type, Class classType, int entitySize) {
+    public DisguiseValues(Enum type, Class classType, int entitySize) {
         values.put(type, this);
         enumEntitySize = entitySize;
         nmsEntityClass = classType;

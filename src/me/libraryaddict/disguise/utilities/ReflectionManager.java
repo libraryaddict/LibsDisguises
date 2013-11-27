@@ -114,7 +114,17 @@ public class ReflectionManager {
         try {
             return Class.forName("net.minecraft.server." + bukkitVersion + "." + className);
         } catch (Exception e) {
-          //  e.printStackTrace();
+            // e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Entity getBukkitEntity(Object nmsEntity) {
+        try {
+            Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity").invoke(nmsEntity);
+            return bukkitEntity;
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
