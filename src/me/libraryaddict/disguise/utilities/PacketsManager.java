@@ -130,23 +130,26 @@ public class PacketsManager {
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
-        for (int i = 0; i < 5; i++) {
-            int slot = i - 1;
-            if (slot < 0)
-                slot = 4;
-            org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
+        // This sends the armor packets so that the player isn't naked.
+        for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
+            int armorSlot = nmsSlot - 1;
+            if (armorSlot < 0)
+                armorSlot = 4;
+            org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
             if (itemstack != null && itemstack.getTypeId() != 0) {
                 ItemStack item = null;
-                if (disguisedEntity instanceof LivingEntity)
-                    if (i != 4)
-                        item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[i];
-                    else
+                if (disguisedEntity instanceof LivingEntity) {
+                    if (nmsSlot == 0) {
                         item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
+                    } else {
+                        item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[armorSlot];
+                    }
+                }
                 if (item == null || item.getType() == Material.AIR) {
                     PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
                     StructureModifier<Object> mods = packet.getModifier();
                     mods.write(0, disguisedEntity.getEntityId());
-                    mods.write(1, i);
+                    mods.write(1, nmsSlot);
                     mods.write(2, ReflectionManager.getNmsItem(itemstack));
                     packets.add(packet);
                 }

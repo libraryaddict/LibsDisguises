@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 public class FlagWatcher {
     public enum SlotType {
         BOOTS(0), CHESTPLATE(2), HELD_ITEM(4), HELMET(3), LEGGINGS(1);
+        // The ints is for bukkit. Not nms slots.
         private int slotNo = 0;
 
         private SlotType(int no) {
