@@ -64,7 +64,7 @@ public class PacketsManager {
                 Packets.Server.REL_ENTITY_MOVE_LOOK, Packets.Server.ENTITY_LOOK, Packets.Server.ENTITY_TELEPORT,
                 Packets.Server.ADD_EXP_ORB, Packets.Server.VEHICLE_SPAWN, Packets.Server.MOB_SPAWN,
                 Packets.Server.ENTITY_PAINTING, Packets.Server.COLLECT, Packets.Server.UPDATE_ATTRIBUTES,
-                Packets.Server.ENTITY_EQUIPMENT, Packets.Server.BED) {
+                Packets.Server.ENTITY_EQUIPMENT, Packets.Server.BED, Packets.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
@@ -1209,6 +1209,15 @@ public class PacketsManager {
                     }
                     break;
                 }
+
+                case Packets.Server.ENTITY_STATUS:
+
+                {
+                    if (packets[0].getBytes().read(0) == (byte) 3) {
+                        packets = new PacketContainer[0];
+                    }
+                }
+
                 default:
                     break;
                 }
