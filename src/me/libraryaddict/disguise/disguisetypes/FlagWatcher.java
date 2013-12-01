@@ -129,7 +129,8 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (disguise.isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null
+                && getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -217,7 +218,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        if (disguise.getWatcher() == null || DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
+        if (getDisguise().getWatcher() == null || !DisguiseAPI.isDisguiseInUse(getDisguise()))
             return;
         if (!entityValues.containsKey(data) || entityValues.get(data) == null)
             return;
@@ -283,7 +284,7 @@ public class FlagWatcher {
         // Itemstack which is null means that its not replacing the disguises itemstack.
         if (itemStack == null) {
             // Find the item to replace it with
-            if (disguise.getEntity() instanceof LivingEntity) {
+            if (getDisguise().getEntity() instanceof LivingEntity) {
                 EntityEquipment enquipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
                 if (slot == 0) {
                     itemStack = enquipment.getItemInHand();
@@ -299,7 +300,7 @@ public class FlagWatcher {
         if (itemStack != null && itemStack.getTypeId() != 0)
             itemToSend = ReflectionManager.getNmsItem(itemStack);
         items[slot] = itemStack;
-        if (DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()))
             return;
         slot++;
         if (slot > 4)

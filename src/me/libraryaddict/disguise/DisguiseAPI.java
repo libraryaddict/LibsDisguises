@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargettedDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargettedDisguise.TargetType;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -48,11 +49,13 @@ public class DisguiseAPI {
      * Disguise this entity with this disguise
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
-        // TODO Make everyone see this disguise. Remove any old disguises.
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null)
             return;
+        // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
+        ((TargettedDisguise) disguise).setTargetType(TargetType.HIDE_FROM_THESE);
+        ((TargettedDisguise) disguise).getObservers().clear();
         // Fire a disguise event
         DisguiseEvent event = new DisguiseEvent(entity, disguise);
         Bukkit.getPluginManager().callEvent(event);
@@ -71,7 +74,7 @@ public class DisguiseAPI {
             // Set the disguise's entity
             disguise.setEntity(entity);
         } // If there was a old disguise
-        Disguise oldDisguise = getDisguise(entity);
+        Disguise[] oldDisguises = getDisguises(entity);
         // Stick the disguise in the disguises bin
         DisguiseUtilities.addDisguise(entity.getEntityId(), (TargettedDisguise) disguise);
         // Resend the disguised entity's packet
@@ -79,8 +82,11 @@ public class DisguiseAPI {
         // If he is a player, then self disguise himself
         DisguiseUtilities.setupFakeDisguise(disguise);
         // Discard the disguise
-        if (oldDisguise != null)
+        for (Disguise oldDisguise : oldDisguises) {
             oldDisguise.removeDisguise();
+            // Make everyone see this disguise. Remove any old disguises.
+            DisguiseUtilities.getDisguises().remove(entity.getEntityId());
+        }
     }
 
     /**
@@ -91,6 +97,15 @@ public class DisguiseAPI {
         if (disguised == null)
             return null;
         return DisguiseUtilities.getDisguise(disguised.getEntityId());
+    }
+
+    /**
+     * Get the disguises of a entity
+     */
+    public static Disguise[] getDisguises(Entity disguised) {
+        if (disguised == null)
+            return null;
+        return DisguiseUtilities.getDisguises(disguised.getEntityId());
     }
 
     /**
@@ -237,15 +252,14 @@ public class DisguiseAPI {
      * the world.
      */
     public static void undisguiseToAll(Entity entity) {
-        // TODO Make all of these disguises be removed
-        Disguise disguise = getDisguise(entity);
-        if (disguise == null)
-            return;
-        UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return;
-        disguise.removeDisguise();
+        Disguise[] disguises = getDisguises(entity);
+        for (Disguise disguise : disguises) {
+            UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                continue;
+            disguise.removeDisguise();
+        }
     }
 
     private DisguiseAPI() {

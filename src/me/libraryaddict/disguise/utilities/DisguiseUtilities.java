@@ -266,6 +266,13 @@ public class DisguiseUtilities {
         return toReturn;
     }
 
+    public static TargettedDisguise[] getDisguises(int entityId) {
+        if (getDisguises().containsKey(entityId)) {
+            return getDisguises().get(entityId).toArray(new TargettedDisguise[getDisguises().get(entityId).size()]);
+        }
+        return new TargettedDisguise[0];
+    }
+
     public static TargettedDisguise getDisguise(Player observer, int entityId) {
         if (getDisguises().containsKey(entityId)) {
             for (TargettedDisguise disguise : getDisguises().get(entityId)) {
