@@ -283,7 +283,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Get all EntityPlayers who have this entity in their Entity Tracker
+     * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
      */
     protected ArrayList<Player> getPerverts() {
         ArrayList<Player> players = new ArrayList<Player>();
@@ -297,7 +297,10 @@ public abstract class Disguise {
                 HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
                         .get(entityTrackerEntry);
                 for (Object p : trackedPlayers) {
-                    players.add((Player) ReflectionManager.getBukkitEntity(p));
+                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                    if (((TargettedDisguise) this).canSee(player)) {
+                        players.add(player);
+                    }
                 }
             }
         } catch (Exception ex) {
