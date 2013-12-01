@@ -175,6 +175,7 @@ public abstract class Disguise {
         final boolean sendMovementPacket = movement;
         final double vectorY = fallSpeed;
         final boolean alwaysSendVelocity = alwaysSend;
+        final TargetedDisguise disguise=(TargetedDisguise) this;
         // A scheduler to clean up any unused disguises.
         velocityRunnable = new BukkitRunnable() {
             private int i = 0;
@@ -189,7 +190,7 @@ public abstract class Disguise {
                         i++;
                         if (i % 40 == 0) {
                             i = 0;
-                            DisguiseUtilities.refreshTrackers(getEntity());
+                            DisguiseUtilities.refreshTrackers(disguise);
                             if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
                                 DisguiseUtilities.sendSelfDisguise((Player) getEntity());
                             }
@@ -298,7 +299,7 @@ public abstract class Disguise {
                         .get(entityTrackerEntry);
                 for (Object p : trackedPlayers) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                    if (((TargettedDisguise) this).canSee(player)) {
+                    if (((TargetedDisguise) this).canSee(player)) {
                         players.add(player);
                     }
                 }
@@ -371,19 +372,19 @@ public abstract class Disguise {
             velocityRunnable.cancel();
         } catch (Exception ex) {
         }
-        HashMap<Integer, HashSet<TargettedDisguise>> disguises = DisguiseUtilities.getDisguises();
+        HashMap<Integer, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If the entity is valid
             if (getEntity().isValid()) {
                 // If this disguise is active
                 // Remove the disguise from the current disguises.
-                if (DisguiseUtilities.removeDisguise((TargettedDisguise) this)) {
+                if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
                     if (getEntity() instanceof Player) {
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                     }
                     // Better refresh the entity to undisguise it
-                    DisguiseUtilities.refreshTrackers(getEntity());
+                    DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 }
             }
         } else {

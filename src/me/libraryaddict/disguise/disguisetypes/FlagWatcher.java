@@ -42,14 +42,14 @@ public class FlagWatcher {
      * This is the entity values I need to add else it could crash them..
      */
     private HashMap<Integer, Object> backupEntityValues = new HashMap<Integer, Object>();
-    private Disguise disguise;
+    private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
 
     public FlagWatcher(Disguise disguise) {
-        this.disguise = disguise;
+        this.disguise = (TargetedDisguise) disguise;
     }
 
     @Override
@@ -158,7 +158,7 @@ public class FlagWatcher {
         return armor;
     }
 
-    protected Disguise getDisguise() {
+    protected TargetedDisguise getDisguise() {
         return disguise;
     }
 

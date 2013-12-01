@@ -26,7 +26,7 @@ public class PaintingWatcher extends FlagWatcher {
     public void setArt(Art newPainting) {
         this.painting = newPainting;
         if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
-            DisguiseUtilities.refreshTrackers(getDisguise().getEntity());
+            DisguiseUtilities.refreshTrackers(getDisguise());
         }
     }
 

@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-public class PlayerDisguise extends TargettedDisguise {
+public class PlayerDisguise extends TargetedDisguise {
     private String playerName;
 
     public PlayerDisguise(String name) {

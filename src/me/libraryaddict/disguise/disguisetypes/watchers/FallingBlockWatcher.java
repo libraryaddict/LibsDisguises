@@ -27,7 +27,7 @@ public class FallingBlockWatcher extends FlagWatcher {
     public void setBlock(ItemStack block) {
         this.block = block;
         if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
-            DisguiseUtilities.refreshTrackers(getDisguise().getEntity());
+            DisguiseUtilities.refreshTrackers(getDisguise());
         }
     }
 }

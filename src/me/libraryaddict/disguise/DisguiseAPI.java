@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
+import java.util.List;
+
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.TargettedDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargettedDisguise.TargetType;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -26,6 +28,18 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> players) {
+        ((TargetedDisguise) disguise).setTargetType(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
+        ((TargetedDisguise) disguise).getObservers().addAll(players);
+        disguiseEntity(entity, disguise);
+    }
+
+    public static void disguiseToEveryoneButThese(Entity entity, Disguise disguise, List<String> players) {
+        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
+        ((TargetedDisguise) disguise).getObservers().addAll(players);
+        disguiseEntity(entity, disguise);
+    }
+
     /**
      * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
      */
@@ -39,23 +53,17 @@ public class DisguiseAPI {
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
-            DisguiseUtilities.addDisguise(id, (TargettedDisguise) disguise);
+            DisguiseUtilities.addDisguise(id, (TargetedDisguise) disguise);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /**
-     * Disguise this entity with this disguise
-     */
-    public static void disguiseToAll(Entity entity, Disguise disguise) {
+    private static void disguiseEntity(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null)
             return;
-        // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
-        ((TargettedDisguise) disguise).setTargetType(TargetType.HIDE_FROM_THESE);
-        ((TargettedDisguise) disguise).getObservers().clear();
         // Fire a disguise event
         DisguiseEvent event = new DisguiseEvent(entity, disguise);
         Bukkit.getPluginManager().callEvent(event);
@@ -73,20 +81,24 @@ public class DisguiseAPI {
             }
             // Set the disguise's entity
             disguise.setEntity(entity);
-        } // If there was a old disguise
-        Disguise[] oldDisguises = getDisguises(entity);
+        }
         // Stick the disguise in the disguises bin
-        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargettedDisguise) disguise);
+        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) disguise);
         // Resend the disguised entity's packet
-        DisguiseUtilities.refreshTrackers(entity);
+        DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         // If he is a player, then self disguise himself
         DisguiseUtilities.setupFakeDisguise(disguise);
-        // Discard the disguise
-        for (Disguise oldDisguise : oldDisguises) {
-            oldDisguise.removeDisguise();
-            // Make everyone see this disguise. Remove any old disguises.
-            DisguiseUtilities.getDisguises().remove(entity.getEntityId());
-        }
+    }
+
+    /**
+     * Disguise this entity with this disguise
+     */
+    public static void disguiseToAll(Entity entity, Disguise disguise) {
+        // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
+        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
+        for (String observer : ((TargetedDisguise) disguise).getObservers())
+            ((TargetedDisguise) disguise).unsetViewDisguise(observer);
+        disguiseEntity(entity, disguise);
     }
 
     /**
