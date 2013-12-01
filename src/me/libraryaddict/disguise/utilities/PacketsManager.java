@@ -111,8 +111,7 @@ public class PacketsManager {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
                     org.bukkit.entity.Entity entity = entityModifer.read(1);
-                    if (DisguiseAPI.isDisguised(entity)
-                            && (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow)) {
+                    if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
                         event.setCancelled(true);
                     }
                 } catch (Exception e) {
