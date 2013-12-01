@@ -260,9 +260,7 @@ public class DisguiseUtilities {
     public static TargettedDisguise getDisguise(Player observer, int entityId) {
         if (getDisguises().containsKey(entityId)) {
             for (TargettedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getTargetType() == TargetType.HIDE_FROM_THESE && !disguise.canSee(observer)) {
-                    return disguise;
-                } else if (disguise.getTargetType() == TargetType.SHOW_TO_THESE && disguise.canSee(observer)) {
+                if (disguise.canSee(observer)) {
                     return disguise;
                 }
             }
