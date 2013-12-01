@@ -12,6 +12,10 @@ public class CreeperWatcher extends LivingWatcher {
         return (Byte) getValue(16, (byte) 0) == 1;
     }
 
+    public boolean isIgnited() {
+        return (Byte) getValue(18, (byte) 0) == 1;
+    }
+
     public boolean isPowered() {
         return (Byte) getValue(17, (byte) 0) == 1;
     }
@@ -25,6 +29,11 @@ public class CreeperWatcher extends LivingWatcher {
     public void setFused(boolean isFused) {
         setValue(16, (byte) (isFused ? 1 : -1));
         sendData(16);
+    }
+
+    public void setIgnited(boolean ignited) {
+        setValue(18, (byte) (ignited ? 1 : 0));
+        sendData(18);
     }
 
     public void setPowered(boolean powered) {
