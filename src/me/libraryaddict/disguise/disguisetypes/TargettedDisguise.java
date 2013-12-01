@@ -17,7 +17,11 @@ public abstract class TargettedDisguise extends Disguise {
     }
 
     public boolean canSee(String playername) {
-        return disguiseViewers.contains(playername);
+        boolean contains = disguiseViewers.contains(playername);
+        if (targetType == TargetType.HIDE_FROM_THESE) {
+            return !contains;
+        }
+        return contains;
     }
 
     public void setViewDisguise(Player player) {
