@@ -11,7 +11,7 @@ import org.bukkit.Art;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-public class MiscDisguise extends Disguise {
+public class MiscDisguise extends TargettedDisguise {
     private int data = -1;
     private int id = -1;
 

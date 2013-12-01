@@ -5,7 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.entity.EntityType;
 
-public class MobDisguise extends Disguise {
+public class MobDisguise extends TargettedDisguise {
 
     private boolean isAdult;
 

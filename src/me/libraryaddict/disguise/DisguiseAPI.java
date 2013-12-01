@@ -2,6 +2,7 @@ package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.TargettedDisguise;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -36,7 +37,7 @@ public class DisguiseAPI {
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
-            DisguiseUtilities.getDisguises().put(id, disguise);
+            DisguiseUtilities.addDisguise(id, (TargettedDisguise) disguise);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -70,7 +71,7 @@ public class DisguiseAPI {
         } // If there was a old disguise
         Disguise oldDisguise = getDisguise(entity);
         // Stick the disguise in the disguises bin
-        DisguiseUtilities.getDisguises().put(entity.getEntityId(), disguise);
+        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargettedDisguise) disguise);
         // Resend the disguised entity's packet
         DisguiseUtilities.refreshTrackers(entity);
         // If he is a player, then self disguise himself
@@ -86,9 +87,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
-        if (DisguiseUtilities.getDisguises().containsKey(disguised.getEntityId()))
-            return DisguiseUtilities.getDisguises().get(disguised.getEntityId());
-        return null;
+        return DisguiseUtilities.getDisguise(disguised.getEntityId());
     }
 
     /**

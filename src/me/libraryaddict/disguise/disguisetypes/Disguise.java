@@ -61,7 +61,7 @@ public abstract class Disguise {
         setReplaceSounds(doSounds);
         // Get if they are a adult now..
         boolean isAdult = true;
-        if (this instanceof MobDisguise) {
+        if (isMobDisguise()) {
             isAdult = ((MobDisguise) this).isAdult();
         }
         try {
@@ -368,17 +368,14 @@ public abstract class Disguise {
             velocityRunnable.cancel();
         } catch (Exception ex) {
         }
-        HashMap<Integer, Disguise> disguises = DisguiseUtilities.getDisguises();
+        HashMap<Integer, HashSet<TargettedDisguise>> disguises = DisguiseUtilities.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If the entity is valid
             if (getEntity().isValid()) {
                 // If this disguise is active
-                if (disguises.containsKey(getEntity().getEntityId()) && disguises.get(getEntity().getEntityId()) == this) {
-                    // Now remove the disguise from the current disguises.
-                    disguises.remove(getEntity().getEntityId());
-                    // Gotta do reflection, copy code or open up calls.
-                    // Reflection is the cleanest?
+                // Remove the disguise from the current disguises.
+                if (DisguiseUtilities.removeDisguise((TargettedDisguise) this)) {
                     if (getEntity() instanceof Player) {
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                     }
@@ -391,7 +388,7 @@ public abstract class Disguise {
             Iterator<Integer> itel = disguises.keySet().iterator();
             while (itel.hasNext()) {
                 int id = itel.next();
-                if (disguises.get(id) == this) {
+                if (disguises.get(id).remove(this) && disguises.get(id).isEmpty()) {
                     itel.remove();
                 }
             }

@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.TargettedDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargettedDisguise.TargetType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,14 +28,14 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
-    private static HashMap<Integer, Disguise> disguises = new HashMap<Integer, Disguise>();
+    private static HashMap<Integer, HashSet<TargettedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargettedDisguise>>();
     private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
 
-    public static HashMap<Integer, Disguise> getDisguises() {
-        return disguises;
+    public static HashMap<Integer, HashSet<TargettedDisguise>> getDisguises() {
+        return targetedDisguises;
     }
 
     public static HashMap<Integer, Integer> getSelfDisguisesIds() {
@@ -222,14 +224,62 @@ public class DisguiseUtilities {
         }
     }
 
+    public static void addDisguise(int entityId, TargettedDisguise disguise) {
+        if (!getDisguises().containsKey(entityId)) {
+            getDisguises().put(entityId, new HashSet<TargettedDisguise>());
+        }
+        getDisguises().get(entityId).add(disguise);
+    }
+
+    public static boolean removeDisguise(TargettedDisguise disguise) {
+        int entityId = disguise.getEntity().getEntityId();
+        if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
+            if (getDisguises().get(entityId).isEmpty()) {
+                getDisguises().remove(entityId);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static TargettedDisguise getDisguise(int entityId) {
+        TargettedDisguise toReturn = null;
+        if (getDisguises().containsKey(entityId)) {
+            for (TargettedDisguise disguise : getDisguises().get(entityId)) {
+                if (disguise.getTargetType() == TargetType.HIDE_FROM_THESE) {
+                    return disguise;
+                }
+                if (toReturn == null) {
+                    toReturn = disguise;
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    public static TargettedDisguise getDisguise(Player observer, int entityId) {
+        if (getDisguises().containsKey(entityId)) {
+            for (TargettedDisguise disguise : getDisguises().get(entityId)) {
+                if (disguise.getTargetType() == TargetType.HIDE_FROM_THESE && !disguise.canSee(observer)) {
+                    return disguise;
+                } else if (disguise.getTargetType() == TargetType.SHOW_TO_THESE && disguise.canSee(observer)) {
+                    return disguise;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Setup it so he can see himself when disguised
      */
     public static void setupFakeDisguise(final Disguise disguise) {
+        Entity e = disguise.getEntity();
         // If the disguises entity is null, or the disguised entity isn't a player return
-        if (disguise.getEntity() == null || !(disguise.getEntity() instanceof Player) || !disguises.containsValue(disguise))
+        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getEntityId())
+                || !getDisguises().get(e).contains(disguise))
             return;
-        Player player = (Player) disguise.getEntity();
+        Player player = (Player) e;
         // Remove the old disguise, else we have weird disguises around the place
         DisguiseUtilities.removeSelfDisguise(player);
         // If the disguised player can't see himself. Return
