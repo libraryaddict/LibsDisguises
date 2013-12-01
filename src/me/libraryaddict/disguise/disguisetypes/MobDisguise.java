@@ -23,15 +23,11 @@ public class MobDisguise extends TargetedDisguise {
     }
  
 
-    public boolean isMobDisguise() {
-        return true;
-    }
-
-
     @Deprecated
     public MobDisguise(EntityType entityType) {
         this(entityType, true);
     }
+
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult) {
@@ -73,5 +69,9 @@ public class MobDisguise extends TargetedDisguise {
             return false;
         }
         return isAdult;
+    }
+
+    public boolean isMobDisguise() {
+        return true;
     }
 }

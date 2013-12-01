@@ -15,11 +15,6 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Override
-    public boolean isPlayerDisguise() {
-        return true;
-    }
-
-    @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise(getName(), isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
@@ -33,6 +28,11 @@ public class PlayerDisguise extends TargetedDisguise {
 
     public String getName() {
         return playerName;
+    }
+
+    @Override
+    public boolean isPlayerDisguise() {
+        return true;
     }
 
 }

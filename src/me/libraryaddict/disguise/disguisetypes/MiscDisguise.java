@@ -29,10 +29,6 @@ public class MiscDisguise extends TargetedDisguise {
                 || disguiseType == DisguiseType.DROPPED_ITEM ? -1 : addictionalData));
     }
 
-    public boolean isMiscDisguise() {
-        return true;
-    }
-
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
         createDisguise(disguiseType, replaceSounds);
         switch (disguiseType) {
@@ -143,6 +139,10 @@ public class MiscDisguise extends TargetedDisguise {
             return ((FallingBlockWatcher) getWatcher()).getBlock().getTypeId();
         }
         return id;
+    }
+
+    public boolean isMiscDisguise() {
+        return true;
     }
 
 }

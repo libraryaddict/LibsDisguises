@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,15 +29,132 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
-    // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
-    private static HashMap<Integer, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
     private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
+    // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
+    private static HashMap<Integer, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+
+    public static void addDisguise(int entityId, TargetedDisguise disguise) {
+        // TODO Make sure that the disguised entity doesn't have the player looking at other girls
+        // ^ Done?
+        if (!getDisguises().containsKey(entityId)) {
+            getDisguises().put(entityId, new HashSet<TargetedDisguise>());
+        }
+        getDisguises().get(entityId).add(disguise);
+        checkConflicts(disguise, null);
+    }
+
+    /**
+     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure that the
+     * observers in the disguise don't see any other disguise.
+     */
+    public static void checkConflicts(TargetedDisguise disguise, String name) {
+        if (DisguiseAPI.isDisguiseInUse(disguise)) {
+            Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getEntityId()).iterator();
+            while (disguiseItel.hasNext()) {
+                TargetedDisguise d = disguiseItel.next();
+                if (d != disguise) {
+                    if (d.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                        // If player is a observer in the loop
+                        if (disguise.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                            // If player is a observer in the disguise
+                            // Remove them from the loop
+                            if (name != null) {
+                                d.unsetViewDisguise(name);
+                            } else {
+                                for (String playername : disguise.getObservers()) {
+                                    d.unsetViewDisguise(playername);
+                                }
+                            }
+                        } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                            // If player is not a observer in the loop
+                            if (name != null) {
+                                if (!disguise.getObservers().contains(name)) {
+                                    d.unsetViewDisguise(name);
+                                }
+                            } else {
+                                for (String playername : new ArrayList<String>(d.getObservers())) {
+                                    if (!disguise.getObservers().contains(playername)) {
+                                        d.unsetViewDisguise(playername);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (d.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                        // Here you add it to the loop if they see the disguise
+                        if (disguise.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                            // Everyone who is in the disguise needs to be added to the loop
+                            if (name != null) {
+                                d.setViewDisguise(name);
+                            } else {
+                                for (String playername : disguise.getObservers()) {
+                                    d.setViewDisguise(playername);
+                                }
+                            }
+                        } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                            // This here is a paradox.
+                            // If fed a name. I can do this.
+                            // But the rest of the time.. Its going to conflict.
+                            System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
+                                    + " on a entity. Removed the old disguise.");
+                            disguiseItel.remove();
+                            /* if (name != null) {
+                                 if (!disguise.getObservers().contains(name)) {
+                                     d.setViewDisguise(name);
+                                 }
+                             } else {
+                                 for (String playername : d.getObservers()) {
+                                     if (!disguise.getObservers().contains(playername)) {
+                                         d.setViewDisguise(playername);
+                                     }
+                                 }
+                             }*/
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Deprecated
+    public static TargetedDisguise getDisguise(int entityId) {
+        TargetedDisguise toReturn = null;
+        if (getDisguises().containsKey(entityId)) {
+            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
+                if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
+                        && disguise.getObservers().isEmpty()) {
+                    return disguise;
+                }
+                if (toReturn == null) {
+                    toReturn = disguise;
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    public static TargetedDisguise getDisguise(Player observer, int entityId) {
+        if (getDisguises().containsKey(entityId)) {
+            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
+                if (disguise.canSee(observer)) {
+                    return disguise;
+                }
+            }
+        }
+        return null;
+    }
 
     public static HashMap<Integer, HashSet<TargetedDisguise>> getDisguises() {
         return targetedDisguises;
+    }
+
+    public static TargetedDisguise[] getDisguises(int entityId) {
+        if (getDisguises().containsKey(entityId)) {
+            return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
+        }
+        return new TargetedDisguise[0];
     }
 
     public static HashMap<Integer, Integer> getSelfDisguisesIds() {
@@ -53,6 +171,36 @@ public class DisguiseUtilities {
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param Resends
+     *            the entity to all the watching players, which is where the magic begins
+     */
+    public static void refreshTracker(TargetedDisguise disguise, String player) {
+        try {
+            Object world = ReflectionManager.getWorld(disguise.getEntity().getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, disguise.getEntity().getEntityId());
+            if (entityTrackerEntry != null) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
+                HashSet cloned = (HashSet) trackedPlayers.clone();
+                for (Object p : cloned) {
+                    if (player.equals(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
+                        clear.invoke(entityTrackerEntry, p);
+                        updatePlayer.invoke(entityTrackerEntry, p);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -87,6 +235,17 @@ public class DisguiseUtilities {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static boolean removeDisguise(TargetedDisguise disguise) {
+        int entityId = disguise.getEntity().getEntityId();
+        if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
+            if (getDisguises().get(entityId).isEmpty()) {
+                getDisguises().remove(entityId);
+            }
+            return true;
+        }
+        return false;
     }
 
     public static void removeSelfDisguise(Player player) {
@@ -237,134 +396,6 @@ public class DisguiseUtilities {
         }
     }
 
-    public static void addDisguise(int entityId, TargetedDisguise disguise) {
-        // TODO Make sure that the disguised entity doesn't have the player looking at other girls
-        // ^ Done?
-        if (!getDisguises().containsKey(entityId)) {
-            getDisguises().put(entityId, new HashSet<TargetedDisguise>());
-        }
-        getDisguises().get(entityId).add(disguise);
-        checkConflicts(disguise, null);
-    }
-
-    /**
-     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure that the
-     * observers in the disguise don't see any other disguise.
-     */
-    public static void checkConflicts(TargetedDisguise disguise, String name) {
-        if (DisguiseAPI.isDisguiseInUse(disguise)) {
-            Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getEntityId()).iterator();
-            while (disguiseItel.hasNext()) {
-                TargetedDisguise d = disguiseItel.next();
-                if (d != disguise) {
-                    if (d.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                        // If player is a observer in the loop
-                        if (disguise.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // If player is a observer in the disguise
-                            // Remove them from the loop
-                            if (name != null) {
-                                d.unsetViewDisguise(name);
-                            } else {
-                                for (String playername : disguise.getObservers()) {
-                                    d.unsetViewDisguise(playername);
-                                }
-                            }
-                        } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // If player is not a observer in the loop
-                            if (name != null) {
-                                if (!disguise.getObservers().contains(name)) {
-                                    d.unsetViewDisguise(name);
-                                }
-                            } else {
-                                for (String playername : d.getObservers()) {
-                                    if (!disguise.getObservers().contains(playername)) {
-                                        d.unsetViewDisguise(playername);
-                                    }
-                                }
-                            }
-                        }
-                    } else if (d.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                        // Here you add it to the loop if they see the disguise
-                        if (disguise.getTargetType() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // Everyone who is in the disguise needs to be added to the loop
-                            if (name != null) {
-                                d.setViewDisguise(name);
-                            } else {
-                                for (String playername : disguise.getObservers()) {
-                                    d.setViewDisguise(playername);
-                                }
-                            }
-                        } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // This here is a paradox.
-                            // If fed a name. I can do this.
-                            // But the rest of the time.. Its going to conflict.
-                            System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
-                                    + " on a entity. Removed the old disguise.");
-                            disguiseItel.remove();
-                            /* if (name != null) {
-                                 if (!disguise.getObservers().contains(name)) {
-                                     d.setViewDisguise(name);
-                                 }
-                             } else {
-                                 for (String playername : d.getObservers()) {
-                                     if (!disguise.getObservers().contains(playername)) {
-                                         d.setViewDisguise(playername);
-                                     }
-                                 }
-                             }*/
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static boolean removeDisguise(TargetedDisguise disguise) {
-        int entityId = disguise.getEntity().getEntityId();
-        if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
-            if (getDisguises().get(entityId).isEmpty()) {
-                getDisguises().remove(entityId);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Deprecated
-    public static TargetedDisguise getDisguise(int entityId) {
-        TargetedDisguise toReturn = null;
-        if (getDisguises().containsKey(entityId)) {
-            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
-                        && disguise.getObservers().isEmpty()) {
-                    return disguise;
-                }
-                if (toReturn == null) {
-                    toReturn = disguise;
-                }
-            }
-        }
-        return toReturn;
-    }
-
-    public static TargetedDisguise[] getDisguises(int entityId) {
-        if (getDisguises().containsKey(entityId)) {
-            return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
-        }
-        return new TargetedDisguise[0];
-    }
-
-    public static TargetedDisguise getDisguise(Player observer, int entityId) {
-        if (getDisguises().containsKey(entityId)) {
-            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.canSee(observer)) {
-                    return disguise;
-                }
-            }
-        }
-        return null;
-    }
-
     /**
      * Setup it so he can see himself when disguised
      */
@@ -372,14 +403,20 @@ public class DisguiseUtilities {
         Entity e = disguise.getEntity();
         // If the disguises entity is null, or the disguised entity isn't a player return
         if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getEntityId())
-                || !getDisguises().get(e.getEntityId()).contains(disguise))
+                || !getDisguises().get(e.getEntityId()).contains(disguise)) {
             return;
+        }
         Player player = (Player) e;
+        // Check if he can even see this..
+        if (!((TargetedDisguise) disguise).canSee(player)) {
+            return;
+        }
         // Remove the old disguise, else we have weird disguises around the place
         DisguiseUtilities.removeSelfDisguise(player);
         // If the disguised player can't see himself. Return
-        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null)
+        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
             return;
+        }
         try {
             // Grab the entity ID the fake disguise will use
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");

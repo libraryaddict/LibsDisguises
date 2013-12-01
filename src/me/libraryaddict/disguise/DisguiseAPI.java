@@ -28,37 +28,6 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
-    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> players) {
-        ((TargetedDisguise) disguise).setTargetType(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
-        ((TargetedDisguise) disguise).getObservers().addAll(players);
-        disguiseEntity(entity, disguise);
-    }
-
-    public static void disguiseToEveryoneButThese(Entity entity, Disguise disguise, List<String> players) {
-        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
-        ((TargetedDisguise) disguise).getObservers().addAll(players);
-        disguiseEntity(entity, disguise);
-    }
-
-    /**
-     * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
-     */
-    public static void disguiseNextEntity(Disguise disguise) {
-        if (disguise == null)
-            return;
-        if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
-            disguise = disguise.clone();
-        }
-        try {
-            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
-            field.setAccessible(true);
-            int id = field.getInt(null);
-            DisguiseUtilities.addDisguise(id, (TargetedDisguise) disguise);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private static void disguiseEntity(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
@@ -90,6 +59,33 @@ public class DisguiseAPI {
         DisguiseUtilities.setupFakeDisguise(disguise);
     }
 
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> players) {
+        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
+        for (String name : players) {
+            ((TargetedDisguise) disguise).setViewDisguise(name);
+        }
+        disguiseEntity(entity, disguise);
+    }
+
+    /**
+     * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
+     */
+    public static void disguiseNextEntity(Disguise disguise) {
+        if (disguise == null)
+            return;
+        if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
+            disguise = disguise.clone();
+        }
+        try {
+            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
+            field.setAccessible(true);
+            int id = field.getInt(null);
+            DisguiseUtilities.addDisguise(id, (TargetedDisguise) disguise);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * Disguise this entity with this disguise
      */
@@ -98,6 +94,14 @@ public class DisguiseAPI {
         ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
         for (String observer : ((TargetedDisguise) disguise).getObservers())
             ((TargetedDisguise) disguise).unsetViewDisguise(observer);
+        disguiseEntity(entity, disguise);
+    }
+
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> players) {
+        ((TargetedDisguise) disguise).setTargetType(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
+        for (String name : players) {
+            ((TargetedDisguise) disguise).setViewDisguise(name);
+        }
         disguiseEntity(entity, disguise);
     }
 
@@ -112,21 +116,21 @@ public class DisguiseAPI {
     }
 
     /**
-     * Get the disguises of a entity
-     */
-    public static Disguise[] getDisguises(Entity disguised) {
-        if (disguised == null)
-            return null;
-        return DisguiseUtilities.getDisguises(disguised.getEntityId());
-    }
-
-    /**
      * Get the disguise of a entity
      */
     public static Disguise getDisguise(Player observer, Entity disguised) {
         if (disguised == null)
             return null;
         return DisguiseUtilities.getDisguise(observer, disguised.getEntityId());
+    }
+
+    /**
+     * Get the disguises of a entity
+     */
+    public static Disguise[] getDisguises(Entity disguised) {
+        if (disguised == null)
+            return null;
+        return DisguiseUtilities.getDisguises(disguised.getEntityId());
     }
 
     /**
@@ -146,15 +150,15 @@ public class DisguiseAPI {
         return getDisguise(disguised) != null;
     }
 
-    public static boolean isDisguiseInUse(Disguise disguise) {
-        return DisguiseUtilities.isDisguiseInUse(disguise);
-    }
-
     /**
      * Is this entity disguised
      */
     public static boolean isDisguised(Player observer, Entity disguised) {
         return getDisguise(observer, disguised) != null;
+    }
+
+    public static boolean isDisguiseInUse(Disguise disguise) {
+        return DisguiseUtilities.isDisguiseInUse(disguise);
     }
 
     public static boolean isEntityAnimationsAdded() {
