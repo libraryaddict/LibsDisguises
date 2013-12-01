@@ -21,6 +21,12 @@ public class MobDisguise extends TargettedDisguise {
         this.isAdult = isAdult;
         createDisguise(disguiseType, replaceSounds);
     }
+ 
+
+    public boolean isMobDisguise() {
+        return true;
+    }
+
 
     @Deprecated
     public MobDisguise(EntityType entityType) {

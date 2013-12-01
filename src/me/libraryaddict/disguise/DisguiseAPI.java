@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class DisguiseAPI {
     private static boolean hearSelfDisguise;
@@ -47,6 +48,7 @@ public class DisguiseAPI {
      * Disguise this entity with this disguise
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
+        // TODO Make everyone see this disguise. Remove any old disguises.
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null)
@@ -84,10 +86,20 @@ public class DisguiseAPI {
     /**
      * Get the disguise of a entity
      */
+    @Deprecated
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
         return DisguiseUtilities.getDisguise(disguised.getEntityId());
+    }
+
+    /**
+     * Get the disguise of a entity
+     */
+    public static Disguise getDisguise(Player observer, Entity disguised) {
+        if (disguised == null)
+            return null;
+        return DisguiseUtilities.getDisguise(observer, disguised.getEntityId());
     }
 
     /**
@@ -102,8 +114,20 @@ public class DisguiseAPI {
     /**
      * Is this entity disguised
      */
+    @Deprecated
     public static boolean isDisguised(Entity disguised) {
         return getDisguise(disguised) != null;
+    }
+
+    public static boolean isDisguiseInUse(Disguise disguise) {
+        return DisguiseUtilities.isDisguiseInUse(disguise);
+    }
+
+    /**
+     * Is this entity disguised
+     */
+    public static boolean isDisguised(Player observer, Entity disguised) {
+        return getDisguise(observer, disguised) != null;
     }
 
     public static boolean isEntityAnimationsAdded() {
@@ -213,6 +237,7 @@ public class DisguiseAPI {
      * the world.
      */
     public static void undisguiseToAll(Entity entity) {
+        // TODO Make all of these disguises be removed
         Disguise disguise = getDisguise(entity);
         if (disguise == null)
             return;

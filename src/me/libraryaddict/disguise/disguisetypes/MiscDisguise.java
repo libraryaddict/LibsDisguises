@@ -29,6 +29,10 @@ public class MiscDisguise extends TargettedDisguise {
                 || disguiseType == DisguiseType.DROPPED_ITEM ? -1 : addictionalData));
     }
 
+    public boolean isMiscDisguise() {
+        return true;
+    }
+
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
         createDisguise(disguiseType, replaceSounds);
         switch (disguiseType) {

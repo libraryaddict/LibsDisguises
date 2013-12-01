@@ -15,6 +15,11 @@ public class PlayerDisguise extends TargettedDisguise {
     }
 
     @Override
+    public boolean isPlayerDisguise() {
+        return true;
+    }
+
+    @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise(getName(), isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());

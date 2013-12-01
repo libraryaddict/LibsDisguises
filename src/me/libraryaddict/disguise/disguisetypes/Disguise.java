@@ -332,15 +332,15 @@ public abstract class Disguise {
     }
 
     public boolean isMiscDisguise() {
-        return this instanceof MiscDisguise;
+        return false;
     }
 
     public boolean isMobDisguise() {
-        return this instanceof MobDisguise;
+        return false;
     }
 
     public boolean isPlayerDisguise() {
-        return this instanceof PlayerDisguise;
+        return false;
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -550,7 +550,7 @@ public abstract class Disguise {
         if (this.viewSelfDisguise != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;
             if (getEntity() != null && getEntity() instanceof Player) {
-                if (DisguiseAPI.getDisguise(getEntity()) == this) {
+                if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
                     if (viewSelfDisguise) {
                         DisguiseUtilities.setupFakeDisguise(this);
                     } else

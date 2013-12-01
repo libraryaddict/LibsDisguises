@@ -46,6 +46,14 @@ public class DisguiseUtilities {
         libsDisguises = disguises;
     }
 
+    public static boolean isDisguiseInUse(Disguise disguise) {
+        if (getDisguises().containsKey(disguise.getEntity().getEntityId())
+                && getDisguises().get(disguise.getEntity().getEntityId()).contains(disguise)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param Resends
      *            the entity to all the watching players, which is where the magic begins
@@ -242,11 +250,12 @@ public class DisguiseUtilities {
         return false;
     }
 
+    @Deprecated
     public static TargettedDisguise getDisguise(int entityId) {
         TargettedDisguise toReturn = null;
         if (getDisguises().containsKey(entityId)) {
             for (TargettedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getTargetType() == TargetType.HIDE_FROM_THESE) {
+                if (disguise.getTargetType() == TargetType.HIDE_FROM_THESE && disguise.getObservers().isEmpty()) {
                     return disguise;
                 }
                 if (toReturn == null) {
