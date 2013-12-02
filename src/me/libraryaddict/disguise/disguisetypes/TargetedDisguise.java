@@ -45,6 +45,18 @@ public abstract class TargetedDisguise extends Disguise {
         targetType = newTargetType;
     }
 
+    public void silentlySetViewDisguise(String playername) {
+        if (!disguiseViewers.contains(playername)) {
+            disguiseViewers.add(playername);
+        }
+    }
+
+    public void silentlyUnsetViewDisguise(String playername) {
+        if (disguiseViewers.contains(playername)) {
+            disguiseViewers.remove(playername);
+        }
+    }
+
     public void setViewDisguise(String playername) {
         if (!disguiseViewers.contains(playername)) {
             disguiseViewers.add(playername);

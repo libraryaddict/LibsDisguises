@@ -65,7 +65,7 @@ public class DisguiseUtilities {
                                 d.unsetViewDisguise(name);
                             } else {
                                 for (String playername : disguise.getObservers()) {
-                                    d.unsetViewDisguise(playername);
+                                    d.silentlyUnsetViewDisguise(playername);
                                 }
                             }
                         } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
@@ -90,7 +90,7 @@ public class DisguiseUtilities {
                                 d.setViewDisguise(name);
                             } else {
                                 for (String playername : disguise.getObservers()) {
-                                    d.setViewDisguise(playername);
+                                    d.silentlySetViewDisguise(playername);
                                 }
                             }
                         } else if (disguise.getTargetType() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
