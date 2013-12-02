@@ -186,7 +186,7 @@ public abstract class Disguise {
                     DisguiseAPI.undisguiseToAll(getEntity());
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-                    if (getType() == DisguiseType.PRIMED_TNT) {
+                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
                         i++;
                         if (i % 40 == 0) {
                             i = 0;

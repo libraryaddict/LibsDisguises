@@ -75,9 +75,9 @@ public class DisguiseUtilities {
                                     d.unsetViewDisguise(name);
                                 }
                             } else {
-                                for (String playername : new ArrayList<String>(d.getObservers())) {
+                                for (String playername : d.getObservers()) {
                                     if (!disguise.getObservers().contains(playername)) {
-                                        d.unsetViewDisguise(playername);
+                                        d.silentlyUnsetViewDisguise(playername);
                                     }
                                 }
                             }
