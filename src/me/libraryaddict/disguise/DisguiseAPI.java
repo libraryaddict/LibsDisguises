@@ -28,7 +28,7 @@ public class DisguiseAPI {
         return hearSelfDisguise;
     }
 
-    private static void disguiseEntity(Entity entity, Disguise disguise) {
+    public static void disguiseEntity(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null)

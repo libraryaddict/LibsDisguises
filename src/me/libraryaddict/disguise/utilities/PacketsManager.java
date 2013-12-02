@@ -770,7 +770,8 @@ public class PacketsManager {
             @Override
             public void onPacketSending(PacketEvent event) {
                 // If the inventory is the players inventory
-                if (event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
+                if (event.getPlayer().isOnline() && event.getPlayer().getVehicle() == null
+                        && event.getPacket().getIntegers().read(0) == 0) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                     // If the player is disguised, views self disguises and is hiding a item.
                     if (disguise != null && disguise.isSelfDisguiseVisible()
