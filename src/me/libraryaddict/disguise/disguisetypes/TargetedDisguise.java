@@ -17,6 +17,7 @@ public abstract class TargetedDisguise extends Disguise {
     private List<String> disguiseViewers = new ArrayList<String>();
 
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
+
     public boolean canSee(Player player) {
         return canSee(player.getName());
     }
@@ -24,10 +25,8 @@ public abstract class TargetedDisguise extends Disguise {
     public boolean canSee(String playername) {
         boolean hasPlayer = disguiseViewers.contains(playername);
         if (targetType == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-            System.out.print(playername + " can see 1: " + !hasPlayer);
             return !hasPlayer;
         }
-        System.out.print(playername + " can see 2: " + hasPlayer);
         return hasPlayer;
     }
 
