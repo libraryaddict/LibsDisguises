@@ -48,12 +48,15 @@ public abstract class Disguise {
     @Override
     public abstract Disguise clone();
 
+    /**
+     * Seems I do this method so I can make cleaner constructors on disguises..
+     */
     protected void createDisguise(DisguiseType newType, boolean doSounds) {
         if (getWatcher() != null)
             return;
         if (newType.getEntityType() == null) {
             throw new RuntimeException("DisguiseType " + newType
-                    + " was used to attempt to construct a disguise, but this version of craftbukkit does not have that entity");
+                    + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
         }
         // Set the disguise type
         disguiseType = newType;

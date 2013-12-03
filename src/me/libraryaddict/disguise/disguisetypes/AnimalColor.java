@@ -10,6 +10,9 @@ public enum AnimalColor {
         value = newValue;
     }
 
+    /**
+     * The color ID as defined by nms internals.
+     */
     public int getId() {
         return value;
     }
