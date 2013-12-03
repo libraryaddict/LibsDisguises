@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -59,12 +60,16 @@ public class DisguiseAPI {
         DisguiseUtilities.setupFakeDisguise(disguise);
     }
 
-    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> players) {
-        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
-        for (String name : players) {
-            ((TargetedDisguise) disguise).setViewDisguise(name);
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
+        ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
+        for (String name : playersToNotSeeDisguise) {
+            ((TargetedDisguise) disguise).addPlayer(name);
         }
         disguiseEntity(entity, disguise);
+    }
+
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, String... playersToNotSeeDisguise) {
+        disguiseIgnorePlayers(entity, disguise, Arrays.asList(playersToNotSeeDisguise));
     }
 
     /**
@@ -91,18 +96,22 @@ public class DisguiseAPI {
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
-        ((TargetedDisguise) disguise).setTargetType(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
+        ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
         for (String observer : ((TargetedDisguise) disguise).getObservers())
-            ((TargetedDisguise) disguise).unsetViewDisguise(observer);
+            ((TargetedDisguise) disguise).removePlayer(observer);
         disguiseEntity(entity, disguise);
     }
 
-    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> players) {
-        ((TargetedDisguise) disguise).setTargetType(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
-        for (String name : players) {
-            ((TargetedDisguise) disguise).setViewDisguise(name);
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> playersToViewDisguise) {
+        ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
+        for (String name : playersToViewDisguise) {
+            ((TargetedDisguise) disguise).addPlayer(name);
         }
         disguiseEntity(entity, disguise);
+    }
+
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, String... playersToViewDisguise) {
+        disguiseToPlayers(entity, disguise, Arrays.asList(playersToViewDisguise));
     }
 
     /**

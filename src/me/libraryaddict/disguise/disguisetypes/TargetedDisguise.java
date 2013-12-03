@@ -18,6 +18,20 @@ public abstract class TargetedDisguise extends Disguise {
 
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
 
+    public void addPlayer(Player player) {
+        addPlayer(player.getName());
+    }
+
+    public void addPlayer(String playername) {
+        if (!disguiseViewers.contains(playername)) {
+            disguiseViewers.add(playername);
+            if (DisguiseAPI.isDisguiseInUse(this)) {
+                DisguiseUtilities.checkConflicts(this, playername);
+                DisguiseUtilities.refreshTracker(this, playername);
+            }
+        }
+    }
+
     public boolean canSee(Player player) {
         return canSee(player.getName());
     }
@@ -30,50 +44,44 @@ public abstract class TargetedDisguise extends Disguise {
         return hasPlayer;
     }
 
+    public TargetType getDisguiseTarget() {
+        return targetType;
+    }
+
     public List<String> getObservers() {
         return Collections.unmodifiableList(disguiseViewers);
     }
 
-    public TargetType getTargetType() {
-        return targetType;
+    public void removePlayer(Player player) {
+        removePlayer(player.getName());
     }
 
-    public void setTargetType(TargetType newTargetType) {
+    public void removePlayer(String playername) {
+        if (disguiseViewers.contains(playername)) {
+            disguiseViewers.remove(playername);
+            if (DisguiseAPI.isDisguiseInUse(this)) {
+                DisguiseUtilities.checkConflicts(this, playername);
+                DisguiseUtilities.refreshTracker(this, playername);
+            }
+        }
+    }
+
+    public void setDisguiseTarget(TargetType newTargetType) {
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             throw new RuntimeException("Cannot set the disguise target after the entity has been disguised");
         }
         targetType = newTargetType;
     }
 
-    public void silentlySetViewDisguise(String playername) {
+    public void silentlyAddPlayer(String playername) {
         if (!disguiseViewers.contains(playername)) {
             disguiseViewers.add(playername);
         }
     }
 
-    public void silentlyUnsetViewDisguise(String playername) {
+    public void silentlyRemovePlayer(String playername) {
         if (disguiseViewers.contains(playername)) {
             disguiseViewers.remove(playername);
-        }
-    }
-
-    public void setViewDisguise(String playername) {
-        if (!disguiseViewers.contains(playername)) {
-            disguiseViewers.add(playername);
-            if (DisguiseAPI.isDisguiseInUse(this)) {
-                DisguiseUtilities.checkConflicts(this, playername);
-                DisguiseUtilities.refreshTracker(this, playername);
-            }
-        }
-    }
-
-    public void unsetViewDisguise(String playername) {
-        if (disguiseViewers.contains(playername)) {
-            disguiseViewers.remove(playername);
-            if (DisguiseAPI.isDisguiseInUse(this)) {
-                DisguiseUtilities.checkConflicts(this, playername);
-                DisguiseUtilities.refreshTracker(this, playername);
-            }
         }
     }
 }
