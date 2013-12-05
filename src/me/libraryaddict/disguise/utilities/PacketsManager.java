@@ -196,8 +196,12 @@ public class PacketsManager {
 
             spawnPackets[0] = new PacketContainer(Packets.Server.NAMED_ENTITY_SPAWN);
             StructureModifier<String> stringMods = spawnPackets[0].getStrings();
-            for (int i = 0; i < stringMods.size(); i++) {
-                stringMods.write(i, ((PlayerDisguise) disguise).getName());
+            if (stringMods.size() > 0) {
+                for (int i = 0; i < stringMods.size(); i++) {
+                    stringMods.write(i, ((PlayerDisguise) disguise).getName());
+                }
+            } else {
+                spawnPackets[0].getModifier().write(1, ReflectionManager.getGameProfile(((PlayerDisguise) disguise).getName()));
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
             intMods.write(0, disguisedEntity.getEntityId());

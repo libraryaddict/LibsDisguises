@@ -51,18 +51,45 @@ public class ReflectionManager {
             Object entityObject;
             Object world = getWorld(Bukkit.getWorlds().get(0));
             if (entityName.equals("Player")) {
+                boolean useOld = false;
+                if (bukkitVersion.startsWith("1.")) {
+                    try {
+                        if (Integer.parseInt(bukkitVersion.split("\\.")[1]) < 7) {
+                            useOld = true;
+                        }
+                    } catch (Exception ex) {
+
+                    }
+                }
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
-                entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
-                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
-                        playerinteractmanager);
+                if (useOld) {
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
+                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
+                            playerinteractmanager);
+                } else {
+                    Object gameProfile = getGameProfile("LibsDisguises");
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                            gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
+                            gameProfile, playerinteractmanager);
+                }
             } else {
                 entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
             }
             return entityObject;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getGameProfile(String playerName) {
+        try {
+            return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
+                    .newInstance(playerName, playerName);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
