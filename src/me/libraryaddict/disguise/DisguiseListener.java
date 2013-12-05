@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 
@@ -14,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -64,6 +66,15 @@ public class DisguiseListener implements Listener {
         Player p = event.getPlayer();
         if (latestVersion != null && p.hasPermission(permission))
             p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        if (DisguiseAPI.isUnusedDisguisesRemoved()) {
+            for (TargetedDisguise disguise : DisguiseUtilities.getSeenDisguises(event.getPlayer().getName())) {
+                disguise.removeDisguise();
+            }
+        }
     }
 
     @EventHandler

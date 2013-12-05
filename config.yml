@@ -28,3 +28,7 @@ RemoveHeldItem: true
 # Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
 # This is only valid if you set a animation on the disguise itself. Because the entitys animations are applied otherwise.
 AddEntityAnimations: true
+# If all players who can see a targeted disguise (Only advalible to plugins) have quit.
+# Does the plugin remove that disguise from valid disguises? If your plugin handles this. Then thats good.
+# Else its a memory leak. This loops through all disguise to see if anyone else is online who can see that disguise.
+RemoveUnusedDisguises: true

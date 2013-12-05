@@ -22,6 +22,7 @@ public class DisguiseAPI {
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
     private static boolean isEntityAnimationsAdded;
+    private static boolean removeUnseenDisguises;
     private static boolean sendVelocity;
 
     @Deprecated
@@ -203,6 +204,10 @@ public class DisguiseAPI {
         return PacketsManager.isHearDisguisesEnabled();
     }
 
+    public static boolean isUnusedDisguisesRemoved() {
+        return removeUnseenDisguises;
+    }
+
     /**
      * Is the velocity packets sent
      */
@@ -259,6 +264,10 @@ public class DisguiseAPI {
      */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
+    }
+
+    public static void setUnusedDisguisesRemoved(boolean remove) {
+        removeUnseenDisguises = remove;
     }
 
     /**

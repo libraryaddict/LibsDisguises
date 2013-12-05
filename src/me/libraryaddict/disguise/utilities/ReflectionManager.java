@@ -84,16 +84,6 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getGameProfile(String playerName) {
-        try {
-            return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
-                    .newInstance(playerName, playerName);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
     public static Entity getBukkitEntity(Object nmsEntity) {
         try {
             Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity").invoke(nmsEntity);
@@ -141,6 +131,16 @@ public class ReflectionManager {
                     return (String) field.get(enumArt);
                 }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getGameProfile(String playerName) {
+        try {
+            return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
+                    .newInstance(playerName, playerName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

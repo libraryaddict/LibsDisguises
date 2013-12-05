@@ -64,6 +64,7 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
         DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
         DisguiseAPI.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
+        DisguiseAPI.setUnusedDisguisesRemoved(getConfig().getBoolean("RemoveUnusedDisguises"));
         if (DisguiseAPI.isHidingArmorFromSelf() || DisguiseAPI.isHidingHeldItemFromSelf()) {
             DisguiseAPI.setInventoryListenerEnabled(true);
         }

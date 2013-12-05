@@ -2,9 +2,11 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -101,10 +103,10 @@ public class DisguiseUtilities {
                             // If fed a name. I can do this.
                             // But the rest of the time.. Its going to conflict.
                             // The below is debug output. Most people wouldn't care for it.
-                            
-                         //   System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
-                         //           + " on a entity. Removed the old disguise.");
-                            
+
+                            // System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
+                            // + " on a entity. Removed the old disguise.");
+
                             disguiseItel.remove();
                             /* if (name != null) {
                                  if (!disguise.getObservers().contains(name)) {
@@ -161,6 +163,27 @@ public class DisguiseUtilities {
             return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
         }
         return new TargetedDisguise[0];
+    }
+
+    public static List<TargetedDisguise> getSeenDisguises(String viewer) {
+        List<TargetedDisguise> dis = new ArrayList<TargetedDisguise>();
+        for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {
+            for (TargetedDisguise disguise : disguises) {
+                if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    if (disguise.canSee(viewer)) {
+                        boolean add = false;
+                        for (String observer : disguise.getObservers()) {
+                            if (!observer.equals(viewer) && Bukkit.getPlayerExact(observer) != null) {
+                                add = true;
+                                break;
+                            }
+                        }
+                        if (add)
+                            dis.add(disguise);
+                    }
+                }
+            }
+        }return dis;
     }
 
     public static HashMap<Integer, Integer> getSelfDisguisesIds() {
