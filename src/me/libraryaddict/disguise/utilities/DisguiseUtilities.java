@@ -171,10 +171,10 @@ public class DisguiseUtilities {
             for (TargetedDisguise disguise : disguises) {
                 if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
                     if (disguise.canSee(viewer)) {
-                        boolean add = false;
+                        boolean add = true;
                         for (String observer : disguise.getObservers()) {
                             if (!observer.equals(viewer) && Bukkit.getPlayerExact(observer) != null) {
-                                add = true;
+                                add = false;
                                 break;
                             }
                         }
