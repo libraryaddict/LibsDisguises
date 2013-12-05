@@ -87,7 +87,8 @@ public class DisguiseValues {
             }
 
             return (int) Math.ceil(paramDouble * 32.0D);
-        case 6:
+        default:
+            break;
         }
         if (d > 0.0D) {
             return (int) Math.ceil(paramDouble * 32.0D);
