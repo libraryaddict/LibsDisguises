@@ -178,12 +178,14 @@ public class DisguiseUtilities {
                                 break;
                             }
                         }
-                        if (add)
+                        if (add) {
                             dis.add(disguise);
+                        }
                     }
                 }
             }
-        }return dis;
+        }
+        return dis;
     }
 
     public static HashMap<Integer, Integer> getSelfDisguisesIds() {
