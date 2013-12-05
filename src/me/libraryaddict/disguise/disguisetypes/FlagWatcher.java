@@ -167,7 +167,12 @@ public class FlagWatcher {
         return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
     }
 
+    @Deprecated
     public org.bukkit.inventory.ItemStack getHeldItem() {
+        return getItemInHand();
+    }
+
+    public org.bukkit.inventory.ItemStack getItemInHand() {
         return getItemStack(SlotType.HELD_ITEM);
     }
 
@@ -272,7 +277,12 @@ public class FlagWatcher {
         }
     }
 
+    @Deprecated
     public void setHeldItem(org.bukkit.inventory.ItemStack itemstack) {
+        setItemInHand(itemstack);
+    }
+
+    public void setItemInHand(org.bukkit.inventory.ItemStack itemstack) {
         setItemStack(SlotType.HELD_ITEM, itemstack);
     }
 

@@ -21,7 +21,13 @@ public class EndermanWatcher extends LivingWatcher {
     }
 
     @Override
+    @Deprecated
     public ItemStack getHeldItem() {
+        return getItemInHand();
+    }
+
+    @Override
+    public ItemStack getItemInHand() {
         return new ItemStack((Byte) getValue(16, (byte) 0), 1, ((Byte) getValue(17, (byte) 0)));
     }
 
@@ -49,7 +55,13 @@ public class EndermanWatcher extends LivingWatcher {
     }
 
     @Override
+    @Deprecated
     public void setHeldItem(ItemStack itemstack) {
+        setItemInHand(itemstack);
+    }
+
+    @Override
+    public void setItemInHand(ItemStack itemstack) {
         setValue(16, (byte) (itemstack.getTypeId() & 255));
         setValue(17, (byte) (itemstack.getDurability() & 255));
     }
