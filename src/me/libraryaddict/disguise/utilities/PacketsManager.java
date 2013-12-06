@@ -110,7 +110,7 @@ public class PacketsManager {
                 try {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                    org.bukkit.entity.Entity entity = entityModifer.read(1);
+                    org.bukkit.entity.Entity entity = entityModifer.read(ReflectionManager.isAfter17() ? 1 : 0);
                     if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
                         event.setCancelled(true);
                     }
@@ -535,7 +535,12 @@ public class PacketsManager {
                                             int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
                                                     soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
                                             Class blockClass = ReflectionManager.getNmsClass("Block");
-                                            Object block = ((Object[]) blockClass.getField("byId").get(null))[typeId];
+                                            Object block;
+                                            if (ReflectionManager.isAfter17()) {
+                                                block = blockClass.getMethod("REGISTRY", int.class).invoke(null, typeId);
+                                            } else {
+                                                block = ((Object[]) blockClass.getField("byId").get(null))[typeId];
+                                            }
                                             if (block != null) {
                                                 Object step = blockClass.getField("stepSound").get(block);
                                                 mods.write(0, step.getClass().getMethod("getStepSound").invoke(step));

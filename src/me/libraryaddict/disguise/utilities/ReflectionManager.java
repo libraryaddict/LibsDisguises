@@ -15,6 +15,7 @@ public class ReflectionManager {
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
     private static Method soundMethod;
+    private static boolean after17 = true;
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
@@ -43,6 +44,17 @@ public class ReflectionManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (bukkitVersion.startsWith("1.")) {
+            try {
+                if (Integer.parseInt(bukkitVersion.split("\\.")[1]) < 7) {
+                    after17 = false;
+                }
+            } catch (Exception ex) {
+
+            }
+        }
+    }public static boolean isAfter17() {
+        return after17;
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -51,20 +63,10 @@ public class ReflectionManager {
             Object entityObject;
             Object world = getWorld(Bukkit.getWorlds().get(0));
             if (entityName.equals("Player")) {
-                boolean useOld = false;
-                if (bukkitVersion.startsWith("1.")) {
-                    try {
-                        if (Integer.parseInt(bukkitVersion.split("\\.")[1]) < 7) {
-                            useOld = true;
-                        }
-                    } catch (Exception ex) {
-
-                    }
-                }
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
-                if (useOld) {
+                if (!isAfter17()) {
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
                             playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
                             playerinteractmanager);
