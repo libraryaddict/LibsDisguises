@@ -42,7 +42,7 @@
 			<url>http://repo.comphenix.net/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>comphenix-rep</id>
+			<id>comphenix-snapshot-rep</id>
 			<name>Comphenix Snapshot Repository</name>
 			<url>http://repo.comphenix.net/content/repositories/snapshots/</url>
 		</repository>
