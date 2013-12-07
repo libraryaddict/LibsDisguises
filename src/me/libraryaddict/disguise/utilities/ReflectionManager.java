@@ -12,10 +12,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
+    private static boolean after17 = true;
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
     private static Method soundMethod;
-    private static boolean after17 = true;
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
@@ -53,11 +53,7 @@ public class ReflectionManager {
 
             }
         }
-    }public static boolean isAfter17() {
-        return after17;
-    }
-
-    public static Object createEntityInstance(String entityName) {
+    }public static Object createEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
@@ -192,6 +188,10 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean isAfter17() {
+        return after17;
     }
 
 }

@@ -282,13 +282,13 @@ public class FlagWatcher {
         setItemInHand(itemstack);
     }
 
-    public void setItemInHand(org.bukkit.inventory.ItemStack itemstack) {
-        setItemStack(SlotType.HELD_ITEM, itemstack);
-    }
-
     public void setInvisible(boolean setInvis) {
         setFlag(0, 5, setInvis);
         sendData(0);
+    }
+
+    public void setItemInHand(org.bukkit.inventory.ItemStack itemstack) {
+        setItemStack(SlotType.HELD_ITEM, itemstack);
     }
 
     public void setItemStack(int slot, org.bukkit.inventory.ItemStack itemStack) {

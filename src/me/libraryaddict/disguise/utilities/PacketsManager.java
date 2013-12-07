@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -539,7 +540,9 @@ public class PacketsManager {
                                             Class blockClass = ReflectionManager.getNmsClass("Block");
                                             Object block;
                                             if (ReflectionManager.isAfter17()) {
-                                                block = blockClass.getMethod("REGISTRY", int.class).invoke(null, typeId);
+                                                block = ReflectionManager.getNmsClass("RegistryMaterials")
+                                                        .getMethod("a", int.class)
+                                                        .invoke(blockClass.getField("REGISTRY").get(null), typeId);
                                             } else {
                                                 block = ((Object[]) blockClass.getField("byId").get(null))[typeId];
                                             }

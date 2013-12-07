@@ -226,6 +226,7 @@ public class DisguiseUtilities {
                     if (player.equals(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
                         clear.invoke(entityTrackerEntry, p);
                         updatePlayer.invoke(entityTrackerEntry, p);
+                        break;
                     }
                 }
             }
@@ -373,9 +374,9 @@ public class DisguiseUtilities {
                 Vector velocity = player.getVelocity();
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
-                                velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(), velocity.getX(),
-                                velocity.getY(), velocity.getZ()));
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(),
+                                velocity.getX(), velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(),
+                                velocity.getX(), velocity.getY(), velocity.getZ()));
             }
 
             // Why the hell would he even need this. Meh.
@@ -399,9 +400,10 @@ public class DisguiseUtilities {
                 }
 
                 if (item != null && item.getType() != Material.AIR) {
-                    manager.sendServerPacket(player,
-                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i, item)
-                                    .createPacket(player.getEntityId(), i, item));
+                    manager.sendServerPacket(
+                            player,
+                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i,
+                                    item).createPacket(player.getEntityId(), i, item));
                 }
             }
             Location loc = player.getLocation();
@@ -409,9 +411,8 @@ public class DisguiseUtilities {
             if (player.isSleeping()) {
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(PacketType.Play.Server.BED, player, 0, loc.getBlockX(),
-                                loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
-                                loc.getBlockZ()));
+                        manager.createPacketConstructor(PacketType.Play.Server.BED, player, 0, loc.getBlockX(), loc.getBlockY(),
+                                loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             }
 
             // Resend any active potion effects
