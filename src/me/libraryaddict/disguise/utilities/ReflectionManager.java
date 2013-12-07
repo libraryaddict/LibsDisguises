@@ -44,16 +44,18 @@ public class ReflectionManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (bukkitVersion.startsWith("1.")) {
+        if (bukkitVersion.startsWith("v1_")) {
             try {
-                if (Integer.parseInt(bukkitVersion.split("\\.")[1]) < 7) {
+                if (Integer.parseInt(bukkitVersion.split("_")[1]) < 7) {
                     after17 = false;
                 }
             } catch (Exception ex) {
 
             }
         }
-    }public static Object createEntityInstance(String entityName) {
+    }
+
+    public static Object createEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
@@ -62,15 +64,15 @@ public class ReflectionManager {
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
-                if (!isAfter17()) {
-                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
-                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
-                            playerinteractmanager);
-                } else {
+                if (isAfter17()) {
                     Object gameProfile = getGameProfile("LibsDisguises");
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
                             gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
                             gameProfile, playerinteractmanager);
+                } else {
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
+                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
+                            playerinteractmanager);
                 }
             } else {
                 entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
