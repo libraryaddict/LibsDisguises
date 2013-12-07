@@ -12,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -232,7 +233,7 @@ public class FlagWatcher {
         Object value = entityValues.get(data);
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
         list.add(new WrappedWatchableObject(data, value));
-        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, entity.getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
@@ -316,7 +317,7 @@ public class FlagWatcher {
         slot++;
         if (slot > 4)
             slot = 0;
-        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, getDisguise().getEntity().getEntityId());
         mods.write(1, slot);

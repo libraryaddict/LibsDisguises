@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -210,7 +211,7 @@ public abstract class Disguise {
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
                             if (getType() == DisguiseType.WITHER_SKULL) {
-                                lookPacket = new PacketContainer(Packets.Server.ENTITY_LOOK);
+                                lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
                                 mods.write(0, getEntity().getEntityId());
                                 Location loc = getEntity().getLocation();
@@ -233,7 +234,7 @@ public abstract class Disguise {
                             try {
                                 Field ping = ReflectionManager.getNmsClass("EntityPlayer").getField("ping");
                                 for (Player player : getPerverts()) {
-                                    PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_VELOCITY);
+                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
                                     StructureModifier<Object> mods = packet.getModifier();
                                     if (getEntity() == player) {
                                         if (!isSelfDisguiseVisible()) {
@@ -260,7 +261,7 @@ public abstract class Disguise {
                         }
                         // If we need to send more packets because else it still 'sinks'
                         if (sendMovementPacket) {
-                            PacketContainer packet = new PacketContainer(Packets.Server.REL_ENTITY_MOVE);
+                            PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, getEntity().getEntityId());
                             for (Player player : getPerverts()) {

@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.Packets;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -282,7 +283,7 @@ public class DisguiseUtilities {
     public static void removeSelfDisguise(Player player) {
         if (selfDisguisesIds.containsKey(player.getEntityId())) {
             // Send a packet to destroy the fake entity
-            PacketContainer packet = new PacketContainer(Packets.Server.DESTROY_ENTITY);
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
             packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getEntityId()) });
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -313,7 +314,7 @@ public class DisguiseUtilities {
                         player,
                         ProtocolLibrary
                                 .getProtocolManager()
-                                .createPacketConstructor(Packets.Server.ENTITY_METADATA, player.getEntityId(),
+                                .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
                                         WrappedDataWatcher.getEntityWatcher(player), true)
                                 .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
             } catch (Exception ex) {
@@ -352,11 +353,11 @@ public class DisguiseUtilities {
                     .getNmsEntity(player));
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             // Send the player a packet with himself being spawned
-            manager.sendServerPacket(player, manager.createPacketConstructor(Packets.Server.NAMED_ENTITY_SPAWN, player)
+            manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
                     .createPacket(player));
             manager.sendServerPacket(
                     player,
-                    manager.createPacketConstructor(Packets.Server.ENTITY_METADATA, player.getEntityId(),
+                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
                             WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
                             WrappedDataWatcher.getEntityWatcher(player), true));
 
@@ -373,7 +374,7 @@ public class DisguiseUtilities {
                 Vector velocity = player.getVelocity();
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(Packets.Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
                                 velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(), velocity.getX(),
                                 velocity.getY(), velocity.getZ()));
             }
@@ -381,11 +382,11 @@ public class DisguiseUtilities {
             // Why the hell would he even need this. Meh.
             if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
                 manager.sendServerPacket(player,
-                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
+                        manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
                                 .createPacket(0, player, player.getVehicle()));
             } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
                 manager.sendServerPacket(player,
-                        manager.createPacketConstructor(Packets.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
+                        manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
                                 .createPacket(0, player.getPassenger(), player));
             }
 
@@ -400,7 +401,7 @@ public class DisguiseUtilities {
 
                 if (item != null && item.getType() != Material.AIR) {
                     manager.sendServerPacket(player,
-                            manager.createPacketConstructor(Packets.Server.ENTITY_EQUIPMENT, player.getEntityId(), i, item)
+                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i, item)
                                     .createPacket(player.getEntityId(), i, item));
                 }
             }
@@ -409,7 +410,7 @@ public class DisguiseUtilities {
             if (player.isSleeping()) {
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(Packets.Server.ENTITY_LOCATION_ACTION, player, 0, loc.getBlockX(),
+                        manager.createPacketConstructor(PacketType.Play.Server.BED, player, 0, loc.getBlockX(),
                                 loc.getBlockY(), loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(),
                                 loc.getBlockZ()));
             }
@@ -419,7 +420,7 @@ public class DisguiseUtilities {
             while (iterator.hasNext()) {
                 PotionEffect potionEffect = (PotionEffect) iterator.next();
                 manager.sendServerPacket(player,
-                        manager.createPacketConstructor(Packets.Server.MOB_EFFECT, player.getEntityId(), potionEffect)
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
                                 .createPacket(player.getEntityId(), potionEffect));
             }
         } catch (Exception ex) {
