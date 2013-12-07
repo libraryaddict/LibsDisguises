@@ -36,7 +36,6 @@ import org.bukkit.util.Vector;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ConnectionSide;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -740,8 +739,7 @@ public class PacketsManager {
                                     watch.setValue(a);
                                 }
                             }
-                        }
-                        if (event.getPacketType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
+                        } else if (event.getPacketType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, observer.getEntityId());
@@ -752,8 +750,7 @@ public class PacketsManager {
                             watchableList.add(new WrappedWatchableObject(0, b));
                             packet.getWatchableCollectionModifier().write(0, watchableList);
                             event.setPacket(packet);
-                        }
-                        if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
+                        } else if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
                                 || event.getPacketType() == PacketType.Play.Server.REL_ENTITY_MOVE
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_LOOK
@@ -824,8 +821,7 @@ public class PacketsManager {
                                     }
                                 }
                             }
-                        }
-                        if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
+                        } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
                             event.setPacket(event.getPacket().deepClone());
                             StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
                             ItemStack[] items = mods.read(0);
@@ -949,9 +945,7 @@ public class PacketsManager {
                                     }
                                 }
                             }
-                        }
-
-                        else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
+                        } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
                             int slot = event.getPacket().getIntegers().read(1);
                             org.bukkit.inventory.ItemStack clickedItem;
                             if (event.getPacket().getIntegers().read(3) == 1) {
@@ -1105,18 +1099,12 @@ public class PacketsManager {
             if (disguise != null) {
                 // If packet is PacketType.Play.Server.UPDATE_ATTRIBUTES
                 // This packet sends attributes
-
-                if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES)
-
-                {
-
+                if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES) {
                     packets = new PacketContainer[0];
                 }
 
                 // Else if the packet is sending entity metadata
-                if (sentPacket.getType() == PacketType.Play.Server.ENTITY_METADATA)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_METADATA) {
                     List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
                             packets[0].getWatchableCollectionModifier().read(0));
                     packets[0] = new PacketContainer(sentPacket.getType());
@@ -1126,37 +1114,31 @@ public class PacketsManager {
                 }
 
                 // Else if the packet is spawning..
-                if (sentPacket.getType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN
+                else if (sentPacket.getType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY
-                        || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING)
+                        || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING) {
                     packets = constructSpawnPackets(disguise, entity);
+                }
 
                 // Else if the disguise is attempting to send players a forbidden packet
-                if (sentPacket.getType() == PacketType.Play.Server.ANIMATION)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
                     if (disguise.getType().isMisc() || (packets[0].getIntegers().read(1) == 3 && !disguise.getType().isPlayer())) {
                         packets = new PacketContainer[0];
                     }
-
                 }
 
-                if (sentPacket.getType() == PacketType.Play.Server.COLLECT)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.COLLECT) {
                     if (disguise.getType().isMisc()) {
                         packets = new PacketContainer[0];
                     }
-
                 }
-                // Else if the disguise is moving.
-                if (sentPacket.getType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
-                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
-                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT)
 
-                {
+                // Else if the disguise is moving.
+                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
+                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
+                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
                     if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
                             && disguise.getType() == DisguiseType.WITHER_SKULL) {
                         packets = new PacketContainer[0];
@@ -1177,9 +1159,7 @@ public class PacketsManager {
                     }
                 }
 
-                if (sentPacket.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
                     int slot = (Integer) packets[0].getModifier().read(1) - 1;
                     if (slot < 0)
                         slot = 4;
@@ -1191,17 +1171,13 @@ public class PacketsManager {
                     }
                 }
 
-                if (sentPacket.getType() == PacketType.Play.Server.BED)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.BED) {
                     if (!disguise.getType().isPlayer()) {
                         packets = new PacketContainer[0];
                     }
                 }
 
-                if (sentPacket.getType() == PacketType.Play.Server.ENTITY_STATUS)
-
-                {
+                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_STATUS) {
                     if (packets[0].getBytes().read(0) == (byte) 3) {
                         packets = new PacketContainer[0];
                     }
