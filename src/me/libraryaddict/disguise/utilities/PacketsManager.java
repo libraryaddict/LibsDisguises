@@ -612,7 +612,7 @@ public class PacketsManager {
                         }
                     }
                 } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 2) {
+                    if ((Byte) mods.read(1) == (ReflectionManager.isAfter17() ? 2 : 1)) {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
@@ -766,7 +766,7 @@ public class PacketsManager {
 
                         else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
                             if (DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer()).isSelfDisguiseSoundsReplaced()
-                                    && (Byte) event.getPacket().getModifier().read(1) == 2) {
+                                    && (Byte) event.getPacket().getModifier().read(1) == (ReflectionManager.isAfter17() ? 2 : 1)) {
                                 event.setCancelled(true);
                             }
                         }
