@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 
@@ -85,6 +86,15 @@ public class DisguiseListener implements Listener {
             disguiseRunnable.remove(event.getPlayer().getName()).cancel();
             String entityName = event.getRightClicked().getType().name().toLowerCase().replace("_", " ");
             if (disguise != null) {
+                if (event.getRightClicked() instanceof Player && DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+                    if (disguise.getWatcher() instanceof LivingWatcher) {
+                        ((LivingWatcher) disguise.getWatcher())
+                                .setCustomName(((Player) event.getRightClicked()).getDisplayName());
+                        if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                            ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                        }
+                    }
+                }
                 DisguiseAPI.disguiseToAll(event.getRightClicked(), disguise);
                 event.getPlayer().sendMessage(
                         ChatColor.RED + "Disguised the " + entityName + " as a "

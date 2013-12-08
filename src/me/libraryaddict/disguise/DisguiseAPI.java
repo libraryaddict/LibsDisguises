@@ -24,6 +24,8 @@ public class DisguiseAPI {
     private static boolean isEntityAnimationsAdded;
     private static boolean removeUnseenDisguises;
     private static boolean sendVelocity;
+    private static boolean showNameAboveHead;
+    private static boolean showNameAboveHeadAlwaysVisible;
 
     @Deprecated
     public static boolean canHearSelfDisguise() {
@@ -189,8 +191,12 @@ public class DisguiseAPI {
         return hidingHeldItem;
     }
 
-    public static boolean isInventoryListenerEnabled() {
-        return PacketsManager.isInventoryListenerEnabled();
+    public static boolean isNameAboveHeadAlwaysVisible() {
+        return showNameAboveHeadAlwaysVisible;
+    }
+
+    public static boolean isNameOfPlayerShownAboveDisguise() {
+        return showNameAboveHead;
     }
 
     public static boolean isSelfDisguisesSoundsReplaced() {
@@ -241,6 +247,7 @@ public class DisguiseAPI {
     public static void setHideArmorFromSelf(boolean hideArmor) {
         if (hidingArmor != hideArmor) {
             hidingArmor = hideArmor;
+            PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
         }
     }
 
@@ -250,13 +257,16 @@ public class DisguiseAPI {
     public static void setHideHeldItemFromSelf(boolean hideHelditem) {
         if (hidingHeldItem != hideHelditem) {
             hidingHeldItem = hideHelditem;
+            PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
         }
     }
 
-    public static void setInventoryListenerEnabled(boolean inventoryListenerEnabled) {
-        if (PacketsManager.isInventoryListenerEnabled() != inventoryListenerEnabled) {
-            PacketsManager.setInventoryListenerEnabled(inventoryListenerEnabled);
-        }
+    public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible) {
+        showNameAboveHeadAlwaysVisible = alwaysVisible;
+    }
+
+    public static void setNameOfPlayerShownAboveDisguise(boolean showNames) {
+        showNameAboveHead = showNames;
     }
 
     /**

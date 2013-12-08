@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
@@ -66,6 +67,15 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
             if (entity == sender)
                 continue;
+            disguise = disguise.clone();
+            if (entity instanceof Player && DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+                if (disguise.getWatcher() instanceof LivingWatcher) {
+                    ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                    if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                        ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                    }
+                }
+            }
             DisguiseAPI.disguiseToAll(entity, disguise);
             disguisedEntitys++;
         }

@@ -32,3 +32,12 @@ AddEntityAnimations: true
 # Does the plugin remove that disguise from valid disguises? If your plugin handles this. Then thats good.
 # Else its a memory leak. This loops through all disguise to see if anyone else is online who can see that disguise.
 RemoveUnusedDisguises: true
+# This is only called into action when the disguise is constructed using the commands.
+# And when the disguise supports that. This will not be used at all for plugins constructing the disguises for instance.
+# Such as prophunt. Its also false because its kind of a retarded feature.
+# This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
+# This also overrides any custom name they have set in their disguise options.
+ShowNamesAboveDisguises:  false
+# This supports the above option.
+# If this is true, then the name shown above the head appears regardless of if you are looking at the disguise directly or not.
+NameAboveHeadAlwaysVisible: true
