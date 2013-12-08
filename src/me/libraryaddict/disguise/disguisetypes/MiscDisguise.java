@@ -11,7 +11,7 @@ import org.bukkit.Art;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-public class MiscDisguise extends Disguise {
+public class MiscDisguise extends TargetedDisguise {
     private int data = -1;
     private int id = -1;
 
@@ -139,6 +139,10 @@ public class MiscDisguise extends Disguise {
             return ((FallingBlockWatcher) getWatcher()).getBlock().getTypeId();
         }
         return id;
+    }
+
+    public boolean isMiscDisguise() {
+        return true;
     }
 
 }

@@ -12,7 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
-import com.comphenix.protocol.Packets;
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -42,14 +42,14 @@ public class FlagWatcher {
      * This is the entity values I need to add else it could crash them..
      */
     private HashMap<Integer, Object> backupEntityValues = new HashMap<Integer, Object>();
-    private Disguise disguise;
+    private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
 
     public FlagWatcher(Disguise disguise) {
-        this.disguise = disguise;
+        this.disguise = (TargetedDisguise) disguise;
     }
 
     @Override
@@ -67,6 +67,7 @@ public class FlagWatcher {
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.items = items.clone();
         cloned.modifiedEntityAnimations = (HashSet) modifiedEntityAnimations.clone();
+        cloned.addEntityAnimations = addEntityAnimations;
         return cloned;
     }
 
@@ -129,7 +130,8 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (disguise.isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null
+                && getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -157,7 +159,7 @@ public class FlagWatcher {
         return armor;
     }
 
-    protected Disguise getDisguise() {
+    protected TargetedDisguise getDisguise() {
         return disguise;
     }
 
@@ -165,7 +167,12 @@ public class FlagWatcher {
         return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
     }
 
+    @Deprecated
     public org.bukkit.inventory.ItemStack getHeldItem() {
+        return getItemInHand();
+    }
+
+    public org.bukkit.inventory.ItemStack getItemInHand() {
         return getItemStack(SlotType.HELD_ITEM);
     }
 
@@ -217,7 +224,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int data) {
-        if (disguise.getWatcher() == null || DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
+        if (getDisguise().getWatcher() == null || !DisguiseAPI.isDisguiseInUse(getDisguise()))
             return;
         if (!entityValues.containsKey(data) || entityValues.get(data) == null)
             return;
@@ -225,7 +232,7 @@ public class FlagWatcher {
         Object value = entityValues.get(data);
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
         list.add(new WrappedWatchableObject(data, value));
-        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_METADATA);
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, entity.getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
@@ -270,8 +277,9 @@ public class FlagWatcher {
         }
     }
 
+    @Deprecated
     public void setHeldItem(org.bukkit.inventory.ItemStack itemstack) {
-        setItemStack(SlotType.HELD_ITEM, itemstack);
+        setItemInHand(itemstack);
     }
 
     public void setInvisible(boolean setInvis) {
@@ -279,11 +287,15 @@ public class FlagWatcher {
         sendData(0);
     }
 
+    public void setItemInHand(org.bukkit.inventory.ItemStack itemstack) {
+        setItemStack(SlotType.HELD_ITEM, itemstack);
+    }
+
     public void setItemStack(int slot, org.bukkit.inventory.ItemStack itemStack) {
         // Itemstack which is null means that its not replacing the disguises itemstack.
         if (itemStack == null) {
             // Find the item to replace it with
-            if (disguise.getEntity() instanceof LivingEntity) {
+            if (getDisguise().getEntity() instanceof LivingEntity) {
                 EntityEquipment enquipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
                 if (slot == 0) {
                     itemStack = enquipment.getItemInHand();
@@ -299,12 +311,12 @@ public class FlagWatcher {
         if (itemStack != null && itemStack.getTypeId() != 0)
             itemToSend = ReflectionManager.getNmsItem(itemStack);
         items[slot] = itemStack;
-        if (DisguiseAPI.getDisguise(disguise.getEntity()) != disguise)
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()))
             return;
         slot++;
         if (slot > 4)
             slot = 0;
-        PacketContainer packet = new PacketContainer(Packets.Server.ENTITY_EQUIPMENT);
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, getDisguise().getEntity().getEntityId());
         mods.write(1, slot);

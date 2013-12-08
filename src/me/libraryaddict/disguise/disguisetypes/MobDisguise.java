@@ -5,7 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.entity.EntityType;
 
-public class MobDisguise extends Disguise {
+public class MobDisguise extends TargetedDisguise {
 
     private boolean isAdult;
 
@@ -21,11 +21,13 @@ public class MobDisguise extends Disguise {
         this.isAdult = isAdult;
         createDisguise(disguiseType, replaceSounds);
     }
+ 
 
     @Deprecated
     public MobDisguise(EntityType entityType) {
         this(entityType, true);
     }
+
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult) {
@@ -67,5 +69,9 @@ public class MobDisguise extends Disguise {
             return false;
         }
         return isAdult;
+    }
+
+    public boolean isMobDisguise() {
+        return true;
     }
 }

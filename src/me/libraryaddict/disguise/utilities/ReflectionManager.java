@@ -12,6 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
+    private static boolean after17 = true;
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
     private static Method soundMethod;
@@ -43,6 +44,15 @@ public class ReflectionManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (bukkitVersion.startsWith("v1_")) {
+            try {
+                if (Integer.parseInt(bukkitVersion.split("_")[1]) < 7) {
+                    after17 = false;
+                }
+            } catch (Exception ex) {
+
+            }
+        }
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -54,9 +64,16 @@ public class ReflectionManager {
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
-                entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
-                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
-                        playerinteractmanager);
+                if (isAfter17()) {
+                    Object gameProfile = getGameProfile("LibsDisguises");
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                            gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
+                            gameProfile, playerinteractmanager);
+                } else {
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
+                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
+                            playerinteractmanager);
+                }
             } else {
                 entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
             }
@@ -120,6 +137,16 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object getGameProfile(String playerName) {
+        try {
+            return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
+                    .newInstance(playerName, playerName);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Class getNmsClass(String className) {
         try {
             return Class.forName("net.minecraft.server." + bukkitVersion + "." + className);
@@ -163,6 +190,10 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean isAfter17() {
+        return after17;
     }
 
 }

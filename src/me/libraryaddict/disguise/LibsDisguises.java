@@ -64,9 +64,8 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
         DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
         DisguiseAPI.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
-        if (DisguiseAPI.isHidingArmorFromSelf() || DisguiseAPI.isHidingHeldItemFromSelf()) {
-            DisguiseAPI.setInventoryListenerEnabled(true);
-        }
+        DisguiseAPI.setNameOfPlayerShownAboveDisguise(getConfig().getBoolean("ShowNamesAboveDisguises"));
+        DisguiseAPI.setNameAboveHeadAlwaysVisible(getConfig().getBoolean("NameAboveHeadAlwaysVisible"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

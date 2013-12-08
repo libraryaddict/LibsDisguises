@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +49,14 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
                 ex.printStackTrace();
             }
             return true;
+        }
+        if (DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+            if (disguise.getWatcher() instanceof LivingWatcher) {
+                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) player).getDisplayName());
+                if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                    ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                }
+            }
         }
         DisguiseAPI.disguiseToAll(player, disguise);
         sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "

@@ -42,6 +42,11 @@
 			<url>http://repo.comphenix.net/content/groups/public</url>
 		</repository>
 		<repository>
+			<id>comphenix-snapshot-rep</id>
+			<name>Comphenix Snapshot Repository</name>
+			<url>http://repo.comphenix.net/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
 		</repository>
@@ -56,7 +61,7 @@
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
 			<artifactId>ProtocolLib</artifactId>
-			<version>2.7.0</version>
+			<version>3.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<version>7.7.5-SNAPSHOT</version>

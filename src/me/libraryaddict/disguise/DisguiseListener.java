@@ -3,6 +3,8 @@ package me.libraryaddict.disguise;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 
@@ -14,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -67,6 +70,15 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        if (DisguiseAPI.isUnusedDisguisesRemoved()) {
+            for (TargetedDisguise disguise : DisguiseUtilities.getSeenDisguises(event.getPlayer().getName())) {
+                disguise.removeDisguise();
+            }
+        }
+    }
+
+    @EventHandler
     public void onRightClick(PlayerInteractEntityEvent event) {
         if (disguiseSlap.containsKey(event.getPlayer().getName())) {
             event.setCancelled(true);
@@ -74,6 +86,15 @@ public class DisguiseListener implements Listener {
             disguiseRunnable.remove(event.getPlayer().getName()).cancel();
             String entityName = event.getRightClicked().getType().name().toLowerCase().replace("_", " ");
             if (disguise != null) {
+                if (event.getRightClicked() instanceof Player && DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+                    if (disguise.getWatcher() instanceof LivingWatcher) {
+                        ((LivingWatcher) disguise.getWatcher())
+                                .setCustomName(((Player) event.getRightClicked()).getDisplayName());
+                        if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                            ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                        }
+                    }
+                }
                 DisguiseAPI.disguiseToAll(event.getRightClicked(), disguise);
                 event.getPlayer().sendMessage(
                         ChatColor.RED + "Disguised the " + entityName + " as a "
@@ -92,8 +113,7 @@ public class DisguiseListener implements Listener {
     public void onVechileEnter(VehicleEnterEvent event) {
         if (event.isCancelled())
             return;
-        Disguise disguise = DisguiseAPI.getDisguise(event.getEntered());
-        if (disguise != null && event.getEntered() instanceof Player) {
+        if (event.getEntered() instanceof Player && DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
             DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
             ((Player) event.getEntered()).updateInventory();
         }
@@ -103,14 +123,16 @@ public class DisguiseListener implements Listener {
     public void onVechileLeave(VehicleExitEvent event) {
         if (event.isCancelled())
             return;
-        final Disguise disguise = DisguiseAPI.getDisguise(event.getExited());
-        if (disguise != null && event.getExited() instanceof Player) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                public void run() {
-                    DisguiseUtilities.setupFakeDisguise(disguise);
-                    ((Player) disguise.getEntity()).updateInventory();
-                }
-            });
+        if (event.getExited() instanceof Player) {
+            final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
+            if (disguise != null) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    public void run() {
+                        DisguiseUtilities.setupFakeDisguise(disguise);
+                        ((Player) disguise.getEntity()).updateInventory();
+                    }
+                });
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-public class PlayerDisguise extends Disguise {
+public class PlayerDisguise extends TargetedDisguise {
     private String playerName;
 
     public PlayerDisguise(String name) {
@@ -28,6 +28,11 @@ public class PlayerDisguise extends Disguise {
 
     public String getName() {
         return playerName;
+    }
+
+    @Override
+    public boolean isPlayerDisguise() {
+        return true;
     }
 
 }
