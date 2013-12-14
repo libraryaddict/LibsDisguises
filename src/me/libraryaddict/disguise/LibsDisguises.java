@@ -193,8 +193,12 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 }
                 DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize);
-                for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects())
+                for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
+                    // Uncomment when I need to find the new datawatcher values for a class..
+                    // System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
+                    // + (watch.getValue() == null ? "null" : watch.getValue()) + ", Value: " + watch.getValue());
+                }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);

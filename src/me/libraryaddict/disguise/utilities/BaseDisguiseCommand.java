@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -371,10 +372,50 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
+    /* private ArrayList<Method> getUsableMethods(DisguiseType disguiseType, CommandSender commandSender) {
+         ArrayList<Method> methods = getSettableMethods(disguiseType);
+         ArrayList<String> allowedDisguises = this.getAllowedDisguises(commandSender);
+     }
+
+     private ArrayList<Method> getSettableMethods(DisguiseType disguiseType) {
+         ArrayList<Method> methods = new ArrayList<Method>();
+         String[] acceptableParams = new String[] { "String", "boolean", "int", "float", "double", "AnimalColor", "ItemStack",
+                 "ItemStack[]", "Style", "Color", "Type", "Profession", "PotionEffectType" };
+         try {
+             for (Method method : disguiseType.getWatcherClass().getMethods()) {
+                 if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
+                         && method.getAnnotation(Deprecated.class) == null) {
+                     Class c = method.getParameterTypes()[0];
+                     for (String acceptable : acceptableParams) {
+                         if (c.getSimpleName().equals(acceptable)) {
+                             methods.add(method);
+                             break;
+                         }
+                     }
+                 }
+             }
+         } catch (Exception ex) {
+             ex.printStackTrace();
+         }
+         return methods;
+     }*/// //
+
     private void doCheck(HashSet<HashSet<String>> optionPermissions, HashSet<String> usedOptions) throws Exception {
         if (!optionPermissions.isEmpty()) {
             for (HashSet<String> perms : optionPermissions) {
-                if (!perms.containsAll(usedOptions)) {
+                HashSet<String> cloned = (HashSet<String>) perms.clone();
+                Iterator<String> itel = cloned.iterator();
+                while (itel.hasNext()) {
+                    String perm = itel.next();
+                    if (perm.startsWith("-")) {
+                        if (usedOptions.contains(perm.substring(1))) {
+                            throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
+                                    + perm.substring(1));
+                        }
+                        itel.remove();
+                    }
+                }
+                if (cloned.size() == perms.size() && !cloned.containsAll(usedOptions)) {
                     throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
                             + usedOptions.toArray(new String[usedOptions.size()])[usedOptions.size() - 1]);
                 }
