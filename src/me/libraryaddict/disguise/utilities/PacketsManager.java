@@ -759,7 +759,8 @@ public class PacketsManager {
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_TELEPORT
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT
-                                || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
+                                || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT
+                                || event.getPacketType() == PacketType.Play.Server.ANIMATION) {
                             event.setCancelled(true);
                         }
 
