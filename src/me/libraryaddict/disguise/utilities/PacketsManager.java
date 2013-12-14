@@ -764,7 +764,8 @@ public class PacketsManager {
                         }
 
                         else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
-                            if (DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer()).isSelfDisguiseSoundsReplaced()
+                            Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+                            if (disguise.getType() != DisguiseType.PLAYER && disguise.isSelfDisguiseSoundsReplaced()
                                     && (Byte) event.getPacket().getModifier().read(1) == (ReflectionManager.isAfter17() ? 2 : 1)) {
                                 event.setCancelled(true);
                             }

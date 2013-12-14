@@ -551,11 +551,11 @@ public abstract class Disguise {
      * Can the disguised view himself as the disguise
      */
     public void setViewSelfDisguise(boolean viewSelfDisguise) {
-        if (this.viewSelfDisguise != viewSelfDisguise) {
+        if (isSelfDisguiseVisible() != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;
             if (getEntity() != null && getEntity() instanceof Player) {
                 if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
-                    if (viewSelfDisguise) {
+                    if (isSelfDisguiseVisible()) {
                         DisguiseUtilities.setupFakeDisguise(this);
                     } else
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
