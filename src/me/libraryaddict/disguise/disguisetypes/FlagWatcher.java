@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -52,15 +53,10 @@ public class FlagWatcher {
         this.disguise = (TargetedDisguise) disguise;
     }
 
-    @Override
-    protected Object clone() {
-        throw new RuntimeException("Please use clone(disguise) instead of clone()");
-    }
-
-    public FlagWatcher clone(Disguise disguise) {
+    public FlagWatcher clone(Disguise owningDisguise) {
         FlagWatcher cloned = null;
         try {
-            cloned = getClass().getConstructor(Disguise.class).newInstance(disguise);
+            cloned = getClass().getConstructor(Disguise.class).newInstance(owningDisguise);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,8 +147,8 @@ public class FlagWatcher {
         return newList;
     }
 
-    public org.bukkit.inventory.ItemStack[] getArmor() {
-        org.bukkit.inventory.ItemStack[] armor = new org.bukkit.inventory.ItemStack[4];
+    public ItemStack[] getArmor() {
+        ItemStack[] armor = new ItemStack[4];
         for (int i = 0; i < 4; i++) {
             armor[i] = items[i];
         }
@@ -163,24 +159,24 @@ public class FlagWatcher {
         return disguise;
     }
 
-    private boolean getFlag(int i) {
-        return ((Byte) getValue(0, (byte) 0) & 1 << i) != 0;
+    private boolean getFlag(int byteValue) {
+        return ((Byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
     }
 
     @Deprecated
-    public org.bukkit.inventory.ItemStack getHeldItem() {
+    public ItemStack getHeldItem() {
         return getItemInHand();
     }
 
-    public org.bukkit.inventory.ItemStack getItemInHand() {
+    public ItemStack getItemInHand() {
         return getItemStack(SlotType.HELD_ITEM);
     }
 
-    public org.bukkit.inventory.ItemStack getItemStack(int slot) {
+    public ItemStack getItemStack(int slot) {
         return items[slot];
     }
 
-    public org.bukkit.inventory.ItemStack getItemStack(SlotType slot) {
+    public ItemStack getItemStack(SlotType slot) {
         return getItemStack(slot.getSlot());
     }
 
@@ -251,7 +247,7 @@ public class FlagWatcher {
         this.addEntityAnimations = isEntityAnimationsAdded;
     }
 
-    public void setArmor(org.bukkit.inventory.ItemStack[] itemstack) {
+    public void setArmor(ItemStack[] itemstack) {
         for (int i = 0; i < itemstack.length; i++)
             setItemStack(i, itemstack[i]);
     }
@@ -261,37 +257,35 @@ public class FlagWatcher {
     }
 
     public void setBurning(boolean setBurning) {
-        setFlag(0, 0, setBurning);
+        setFlag(0, setBurning);
         sendData(0);
     }
 
-    protected void setFlag(int no, int i, boolean flag) {
-        if (no == 0) {
-            modifiedEntityAnimations.add(i);
-        }
-        byte b0 = (Byte) getValue(no, (byte) 0);
+    private void setFlag(int byteValue, boolean flag) {
+        modifiedEntityAnimations.add(byteValue);
+        byte b0 = (Byte) getValue(0, (byte) 0);
         if (flag) {
-            setValue(no, (byte) (b0 | 1 << i));
+            setValue(0, (byte) (b0 | 1 << byteValue));
         } else {
-            setValue(no, (byte) (b0 & ~(1 << i)));
+            setValue(0, (byte) (b0 & ~(1 << byteValue)));
         }
     }
 
     @Deprecated
-    public void setHeldItem(org.bukkit.inventory.ItemStack itemstack) {
+    public void setHeldItem(ItemStack itemstack) {
         setItemInHand(itemstack);
     }
 
     public void setInvisible(boolean setInvis) {
-        setFlag(0, 5, setInvis);
+        setFlag(5, setInvis);
         sendData(0);
     }
 
-    public void setItemInHand(org.bukkit.inventory.ItemStack itemstack) {
+    public void setItemInHand(ItemStack itemstack) {
         setItemStack(SlotType.HELD_ITEM, itemstack);
     }
 
-    public void setItemStack(int slot, org.bukkit.inventory.ItemStack itemStack) {
+    public void setItemStack(int slot, ItemStack itemStack) {
         // Itemstack which is null means that its not replacing the disguises itemstack.
         if (itemStack == null) {
             // Find the item to replace it with
@@ -332,28 +326,28 @@ public class FlagWatcher {
         }
     }
 
-    public void setItemStack(SlotType slot, org.bukkit.inventory.ItemStack itemStack) {
+    public void setItemStack(SlotType slot, ItemStack itemStack) {
         setItemStack(slot.getSlot(), itemStack);
     }
 
     @Deprecated
     public void setRiding(boolean setRiding) {
-        setFlag(0, 2, setRiding);
+        setFlag(2, setRiding);
         sendData(0);
     }
 
     public void setRightClicking(boolean setRightClicking) {
-        setFlag(0, 4, setRightClicking);
+        setFlag(4, setRightClicking);
         sendData(0);
     }
 
     public void setSneaking(boolean setSneaking) {
-        setFlag(0, 1, setSneaking);
+        setFlag(1, setSneaking);
         sendData(0);
     }
 
     public void setSprinting(boolean setSprinting) {
-        setFlag(0, 3, setSprinting);
+        setFlag(3, setSprinting);
         sendData(0);
     }
 

@@ -52,7 +52,7 @@ public class WolfWatcher extends AgeableWatcher {
     private void setFlag(int no, boolean flag) {
         byte b0 = (Byte) getValue(16, (byte) 0);
         if (flag) {
-            setValue(16, (byte) (b0 | (no)));
+            setValue(16, (byte) (b0 | no));
         } else {
             setValue(16, (byte) (b0 & -(no + 1)));
         }

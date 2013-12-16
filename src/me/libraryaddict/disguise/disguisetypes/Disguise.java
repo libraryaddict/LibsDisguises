@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,7 +31,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 public abstract class Disguise {
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
-    private org.bukkit.entity.Entity entity;
+    private Entity entity;
     private boolean hearSelfDisguise = DisguiseAPI.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseAPI.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseAPI.isHidingHeldItemFromSelf();
@@ -282,7 +283,7 @@ public abstract class Disguise {
     /**
      * Get the disguised entity
      */
-    public org.bukkit.entity.Entity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
@@ -410,7 +411,7 @@ public abstract class Disguise {
     /**
      * Set the entity of the disguise. Only used for internal things.
      */
-    public void setEntity(org.bukkit.entity.Entity entity) {
+    public void setEntity(Entity entity) {
         if (this.getEntity() != null) {
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         }

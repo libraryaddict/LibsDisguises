@@ -55,7 +55,7 @@ public class MiscDisguise extends TargetedDisguise {
             if (getType() == DisguiseType.PAINTING) {
                 data = new Random().nextInt(Art.values().length);
             } else {
-                data = disguiseType.getDefaultData();
+                data = 0;
             }
         }
         this.data = data;

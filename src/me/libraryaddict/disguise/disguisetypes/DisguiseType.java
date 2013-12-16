@@ -131,21 +131,19 @@ public enum DisguiseType {
     ZOMBIE_VILLAGER();
 
     static {
+        // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
+        // Without erroring up everything.
         for (DisguiseType type : values()) {
             try {
                 EntityType entityType = null;
                 switch (type) {
+                // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
+                // Usable.
                 case ITEM_FRAME:
                     break;
                 case DONKEY:
-                    entityType = EntityType.HORSE;
-                    break;
                 case MULE:
-                    entityType = EntityType.HORSE;
-                    break;
                 case UNDEAD_HORSE:
-                    entityType = EntityType.HORSE;
-                    break;
                 case SKELETON_HORSE:
                     entityType = EntityType.HORSE;
                     break;
@@ -176,11 +174,10 @@ public enum DisguiseType {
         }
     }
 
-    private int defaultData;
     private int defaultId;
     private int entityId;
     private EntityType entityType;
-    private Class watcherClass;
+    private Class<? extends FlagWatcher> watcherClass;
 
     private DisguiseType(int... obj) {
         for (int i = 0; i < obj.length; i++) {
@@ -192,17 +189,10 @@ public enum DisguiseType {
             case 1:
                 defaultId = value;
                 break;
-            case 2:
-                defaultData = value;
-                break;
             default:
                 break;
             }
         }
-    }
-
-    public int getDefaultData() {
-        return defaultData;
     }
 
     public int getDefaultId() {
@@ -237,7 +227,7 @@ public enum DisguiseType {
         this.entityType = entityType;
     }
 
-    public void setWatcherClass(Class c) {
+    public void setWatcherClass(Class<? extends FlagWatcher> c) {
         watcherClass = c;
     }
 
