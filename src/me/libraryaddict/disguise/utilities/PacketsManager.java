@@ -864,7 +864,7 @@ public class PacketsManager {
                 PacketType.Play.Client.WINDOW_CLICK) {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
-                if (event.getPlayer().getVehicle() == null) {
+                if (event.getPlayer().isOnline() && event.getPlayer().getVehicle() == null) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                     // If player is disguised, views self disguises and has a inventory modifier
                     if (disguise != null && disguise.isSelfDisguiseVisible()
