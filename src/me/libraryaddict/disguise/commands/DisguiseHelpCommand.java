@@ -118,7 +118,6 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                 if (args.length == 0) {
                     sendCommandUsage(sender);
                     return true;
-                    // sender.sendMessage(ChatColor.RED + "/disguisehelp <Disguise> <Option>");
                 } else {
                     EnumHelp help = null;
                     for (EnumHelp s : enumHelp) {

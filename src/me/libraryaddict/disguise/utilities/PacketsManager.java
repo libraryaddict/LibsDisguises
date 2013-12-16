@@ -46,6 +46,10 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
+    /**
+     * This is a fix for the stupidity that is
+     * "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
+     */
     private static boolean cancelSound;
     private static PacketListener inventoryListenerClient;
     private static PacketListener inventoryListenerServer;
@@ -160,7 +164,7 @@ public class PacketsManager {
             spawnPackets[i + 2] = packets.get(i);
         }
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
-        byte yaw = getYaw(disguise.getType(), disguise.getEntity().getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+        byte yaw = getYaw(disguise.getType(), disguisedEntity.getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -271,7 +275,7 @@ public class PacketsManager {
             // This won't actually work.
             // But if someone constructing the disguise uses it properly. It will work.
             if (disguise.getType() == DisguiseType.FISHING_HOOK)
-                data = disguise.getEntity().getEntityId();
+                data = disguisedEntity.getEntityId();
             /*     else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                      data = (int) loc.getYaw();
                      if (data < 0)
@@ -367,7 +371,7 @@ public class PacketsManager {
         case WITHER_SKULL:
             value -= 128;
             break;
-        // case ITEM_FRAME:
+        case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;
@@ -393,7 +397,7 @@ public class PacketsManager {
         case WITHER_SKULL:
             value += 128;
             break;
-        // case ITEM_FRAME:
+        case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;
@@ -487,13 +491,13 @@ public class PacketsManager {
                                     if (entity instanceof LivingEntity) {
                                         try {
                                             obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                            if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
+                                                soundType = SoundType.DEATH;
+                                            } else {
+                                                obj = null;
+                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
-                                        }
-                                        if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-                                            soundType = SoundType.DEATH;
-                                        } else {
-                                            obj = null;
                                         }
                                     }
                                     if (obj == null) {
@@ -624,13 +628,13 @@ public class PacketsManager {
                             if (entity instanceof LivingEntity) {
                                 try {
                                     obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                    if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
+                                        soundType = SoundType.DEATH;
+                                    } else {
+                                        obj = null;
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                }
-                                if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-                                    soundType = SoundType.DEATH;
-                                } else {
-                                    obj = null;
                                 }
                             }
                             if (obj == null) {
