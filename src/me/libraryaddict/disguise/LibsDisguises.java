@@ -196,6 +196,7 @@ public class LibsDisguises extends JavaPlugin {
                 for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..
+
                     // System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
                     // + (watch.getValue() == null ? "null" : watch.getValue()) + ", Value: " + watch.getValue());
                 }
@@ -207,9 +208,13 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 }
             } catch (Exception ex) {
-                System.out.print("[LibsDisguises] Trouble while making values for disguise " + disguiseType.name() + ": "
-                        + ex.getMessage());
-                System.out.print("[LibsDisguises] Please report this to LibsDisguises author");
+                System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name()
+                        + "!");
+                System.out.print("[LibsDisguises] Before reporting this error, "
+                        + "please make sure you are using the latest version of LibsDisguises and ProtocolLib");
+                System.out
+                        .print("[LibsDisguises] You can also try the latest builds at (ProtocolLib) "
+                                + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
                 ex.printStackTrace();
             }
         }

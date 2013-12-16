@@ -27,15 +27,15 @@ public class DisguiseListener implements Listener {
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<String, BukkitRunnable>();
     private HashMap<String, Disguise> disguiseSlap = new HashMap<String, Disguise>();
     private String latestVersion;
-    private String permission;
     private LibsDisguises plugin;
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
+    private String updateNotifyPermission;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
-        permission = plugin.getConfig().getString("Permission");
+        updateNotifyPermission = plugin.getConfig().getString("Permission");
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
             Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
@@ -49,7 +49,7 @@ public class DisguiseListener implements Listener {
                             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                 public void run() {
                                     for (Player p : Bukkit.getOnlinePlayers())
-                                        if (p.hasPermission(permission))
+                                        if (p.hasPermission(updateNotifyPermission))
                                             p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
                                 }
                             });
@@ -65,7 +65,7 @@ public class DisguiseListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (latestVersion != null && p.hasPermission(permission))
+        if (latestVersion != null && p.hasPermission(updateNotifyPermission))
             p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
     }
 
