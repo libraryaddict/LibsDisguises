@@ -213,7 +213,7 @@ public class LibsDisguises extends JavaPlugin {
                 System.out.print("[LibsDisguises] Before reporting this error, "
                         + "please make sure you are using the latest version of LibsDisguises and ProtocolLib");
                 System.out
-                        .print("[LibsDisguises] You can also try the latest builds at (ProtocolLib) "
+                        .print("[LibsDisguises] You can try the latest builds at (ProtocolLib) "
                                 + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
                 ex.printStackTrace();
             }
