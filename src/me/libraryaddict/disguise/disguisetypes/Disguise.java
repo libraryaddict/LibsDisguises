@@ -379,14 +379,15 @@ public abstract class Disguise {
         HashMap<Integer, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {
-            // If the entity is valid
-            if (getEntity().isValid()) {
-                // If this disguise is active
-                // Remove the disguise from the current disguises.
-                if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
-                    if (getEntity() instanceof Player) {
-                        DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                    }
+            // If this disguise is active
+            // Remove the disguise from the current disguises.
+            if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                if (getEntity() instanceof Player) {
+                    DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                }
+
+                // If the entity is not dead
+                if (getEntity().isValid()) {
                     // Better refresh the entity to undisguise it
                     DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 }
