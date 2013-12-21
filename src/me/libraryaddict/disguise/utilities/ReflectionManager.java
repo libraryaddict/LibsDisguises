@@ -55,6 +55,82 @@ public class ReflectionManager {
         }
     }
 
+    public static FakeBoundingBox getBoundingBox(Entity entity) {
+        try {
+            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
+            double x = 0, y = 0, z = 0;
+            int stage = 0;
+            for (Field field : boundingBox.getClass().getFields()) {
+                if (field.getType().getSimpleName().equals("Double")) {
+                    stage++;
+                    switch (stage) {
+                    case 1:
+                        x -= field.getDouble(boundingBox);
+                        break;
+                    case 2:
+                        y -= field.getDouble(boundingBox);
+                        break;
+                    case 3:
+                        z -= field.getDouble(boundingBox);
+                        break;
+                    case 4:
+                        x += field.getDouble(boundingBox);
+                        break;
+                    case 5:
+                        y += field.getDouble(boundingBox);
+                        break;
+                    case 6:
+                        z += field.getDouble(boundingBox);
+                        break;
+                    default:
+                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
+                    }
+                    return new FakeBoundingBox(x, y, z);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void setBoundingBox(Entity entity, double newX, double newY, double newZ) {
+        try {
+            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
+            double x = 0, y = 0, z = 0;
+            int stage = 0;
+            for (Field field : boundingBox.getClass().getFields()) {
+                if (field.getType().getSimpleName().equals("Double")) {
+                    stage++;
+                    switch (stage) {
+                    case 1:
+                        x = field.getDouble(boundingBox);
+                        break;
+                    case 2:
+                        y = field.getDouble(boundingBox);
+                        break;
+                    case 3:
+                        z = field.getDouble(boundingBox);
+                        break;
+                    case 4:
+                        field.setDouble(boundingBox, x);
+                        break;
+                    case 5:
+                        field.setDouble(boundingBox, y);
+                        break;
+                    case 6:
+                        field.setDouble(boundingBox, z);
+                        break;
+                    default:
+                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static Object createEntityInstance(String entityName) {
         try {
             Class entityClass = getNmsClass("Entity" + entityName);

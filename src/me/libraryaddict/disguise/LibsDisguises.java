@@ -25,6 +25,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Zombie;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -206,6 +207,17 @@ public class LibsDisguises extends JavaPlugin {
                     if (soundStrength != null) {
                         sound.setDamageSoundVolume((Float) soundStrength);
                     }
+                }
+
+                // Get the bounding box
+
+                disguiseValues.setAdultBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                if (bukkitEntity instanceof Ageable) {
+                    ((Ageable) bukkitEntity).setBaby();
+                    disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                } else if (bukkitEntity instanceof Zombie) {
+                    ((Zombie) bukkitEntity).setBaby(true);
+                    disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 }
             } catch (Exception ex) {
                 System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name()
