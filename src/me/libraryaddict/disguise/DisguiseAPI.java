@@ -22,6 +22,7 @@ public class DisguiseAPI {
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
     private static boolean isEntityAnimationsAdded;
+    private static boolean modifyBoundingBox;
     private static boolean removeUnseenDisguises;
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
@@ -191,6 +192,10 @@ public class DisguiseAPI {
         return hidingHeldItem;
     }
 
+    public static boolean isModifyBoundingBox() {
+        return modifyBoundingBox;
+    }
+
     public static boolean isNameAboveHeadAlwaysVisible() {
         return showNameAboveHeadAlwaysVisible;
     }
@@ -259,6 +264,10 @@ public class DisguiseAPI {
             hidingHeldItem = hideHelditem;
             PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
         }
+    }
+
+    public static void setModifyBoundingBox(boolean modifyBounding) {
+        modifyBoundingBox = modifyBounding;
     }
 
     public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible) {

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
@@ -35,6 +36,7 @@ public abstract class Disguise {
     private boolean hearSelfDisguise = DisguiseAPI.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseAPI.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseAPI.isHidingHeldItemFromSelf();
+    private boolean modifyBoundingBox = DisguiseAPI.isModifyBoundingBox();
     private boolean replaceSounds = DisguiseAPI.isSoundEnabled();
     private BukkitRunnable velocityRunnable;
     private boolean velocitySent = DisguiseAPI.isVelocitySent();
@@ -56,8 +58,10 @@ public abstract class Disguise {
         if (getWatcher() != null)
             return;
         if (newType.getEntityType() == null) {
-            throw new RuntimeException("DisguiseType " + newType
-                    + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
+            throw new RuntimeException(
+                    "DisguiseType "
+                            + newType
+                            + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
         }
         // Set the disguise type
         disguiseType = newType;
@@ -179,7 +183,7 @@ public abstract class Disguise {
         final boolean sendMovementPacket = movement;
         final double vectorY = fallSpeed;
         final boolean alwaysSendVelocity = alwaysSend;
-        final TargetedDisguise disguise=(TargetedDisguise) this;
+        final TargetedDisguise disguise = (TargetedDisguise) this;
         // A scheduler to clean up any unused disguises.
         velocityRunnable = new BukkitRunnable() {
             private int i = 0;
@@ -344,6 +348,10 @@ public abstract class Disguise {
         return false;
     }
 
+    public boolean isModifyBoundingBox() {
+        return modifyBoundingBox;
+    }
+
     public boolean isPlayerDisguise() {
         return false;
     }
@@ -436,6 +444,19 @@ public abstract class Disguise {
         this.hideHeldItemFromSelf = hideHeldItem;
         if (getEntity() instanceof Player) {
             ((Player) getEntity()).updateInventory();
+        }
+    }
+
+    public void setModifyBoundingBox(boolean modifyBox) {
+        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+            throw new RuntimeException(
+                    "Cannot modify the bounding box of a disguise which is not TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
+        }
+        if (isModifyBoundingBox() != modifyBox) {
+            this.modifyBoundingBox = modifyBox;
+            if (DisguiseUtilities.isDisguiseInUse(this)) {
+                DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
+            }
         }
     }
 

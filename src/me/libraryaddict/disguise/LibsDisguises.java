@@ -67,6 +67,7 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseAPI.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
         DisguiseAPI.setNameOfPlayerShownAboveDisguise(getConfig().getBoolean("ShowNamesAboveDisguises"));
         DisguiseAPI.setNameAboveHeadAlwaysVisible(getConfig().getBoolean("NameAboveHeadAlwaysVisible"));
+        DisguiseAPI.setModifyBoundingBox(getConfig().getBoolean("ModifyBoundingBox"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

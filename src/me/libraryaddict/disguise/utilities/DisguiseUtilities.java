@@ -11,14 +11,19 @@ import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
@@ -38,13 +43,14 @@ public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
 
     public static void addDisguise(int entityId, TargetedDisguise disguise) {
-        // TODO Make sure that the disguised entity doesn't have the player looking at other girls
-        // ^ Done?
         if (!getDisguises().containsKey(entityId)) {
             getDisguises().put(entityId, new HashSet<TargetedDisguise>());
         }
         getDisguises().get(entityId).add(disguise);
         checkConflicts(disguise, null);
+        if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isModifyBoundingBox()) {
+            doBoundingBox(disguise);
+        }
     }
 
     /**
@@ -122,6 +128,36 @@ public class DisguiseUtilities {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public static void doBoundingBox(TargetedDisguise disguise) {
+        // TODO Slimes
+        Entity entity = disguise.getEntity();
+        if (entity != null) {
+            if (isDisguiseInUse(disguise)) {
+                DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
+                FakeBoundingBox fakeBox = values.getAdultBox();
+                if (values.getBabyBox() != null) {
+                    if (disguise.getWatcher() instanceof AgeableWatcher
+                            && (((AgeableWatcher) disguise.getWatcher()).isBaby())
+                            || (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher())
+                                    .isBaby())) {
+                        fakeBox = values.getBabyBox();
+                    }
+                }
+                ReflectionManager.setBoundingBox(entity, fakeBox.getX(), fakeBox.getY(), fakeBox.getZ());
+            } else {
+                DisguiseValues values = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
+                FakeBoundingBox fakeBox = values.getAdultBox();
+                if (values.getBabyBox() != null) {
+                    if (entity instanceof Ageable && !(((Ageable) entity).isAdult())
+                            || (entity instanceof Zombie && ((Zombie) entity).isBaby())) {
+                        fakeBox = values.getBabyBox();
+                    }
+                }
+                ReflectionManager.setBoundingBox(disguise.getEntity(), fakeBox.getX(), fakeBox.getY(), fakeBox.getZ());
             }
         }
     }
@@ -274,6 +310,9 @@ public class DisguiseUtilities {
         if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
             if (getDisguises().get(entityId).isEmpty()) {
                 getDisguises().remove(entityId);
+            }
+            if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isModifyBoundingBox()) {
+                doBoundingBox(disguise);
             }
             return true;
         }

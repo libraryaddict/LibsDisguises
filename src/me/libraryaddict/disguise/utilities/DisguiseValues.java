@@ -43,11 +43,11 @@ public class DisguiseValues {
         return getDisguiseValues(type).getNmsEntityClass();
     }
 
+    private FakeBoundingBox adultBox;
+    private FakeBoundingBox babyBox;
     private int enumEntitySize;
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
     private Class nmsEntityClass;
-    private FakeBoundingBox adultBox;
-    private FakeBoundingBox babyBox;
 
     public DisguiseValues(DisguiseType type, Class classType, int entitySize) {
         values.put(type, this);
@@ -55,20 +55,12 @@ public class DisguiseValues {
         nmsEntityClass = classType;
     }
 
-    public FakeBoundingBox getBabyBox() {
-        return babyBox;
-    }
-
-    public void setAdultBox(FakeBoundingBox newBox) {
-        adultBox = newBox;
-    }
-
-    public void setBabyBox(FakeBoundingBox newBox) {
-        babyBox = newBox;
-    }
-
     public FakeBoundingBox getAdultBox() {
         return adultBox;
+    }
+
+    public FakeBoundingBox getBabyBox() {
+        return babyBox;
     }
 
     public int getEntitySize(double paramDouble) {
@@ -121,6 +113,14 @@ public class DisguiseValues {
 
     public Class getNmsEntityClass() {
         return nmsEntityClass;
+    }
+
+    public void setAdultBox(FakeBoundingBox newBox) {
+        adultBox = newBox;
+    }
+
+    public void setBabyBox(FakeBoundingBox newBox) {
+        babyBox = newBox;
     }
 
     public void setMetaValue(int no, Object value) {
