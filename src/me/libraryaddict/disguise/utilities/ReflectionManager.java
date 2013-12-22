@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -86,37 +87,10 @@ public class ReflectionManager {
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
         try {
-            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
-            double x = 0, y = 0, z = 0;
-            int stage = 0;
-            for (Field field : boundingBox.getClass().getFields()) {
-                if (field.getType().getSimpleName().equals("double")) {
-                    stage++;
-                    switch (stage) {
-                    case 1:
-                        x -= field.getDouble(boundingBox);
-                        break;
-                    case 2:
-                        y -= field.getDouble(boundingBox);
-                        break;
-                    case 3:
-                        z -= field.getDouble(boundingBox);
-                        break;
-                    case 4:
-                        x += field.getDouble(boundingBox);
-                        break;
-                    case 5:
-                        y += field.getDouble(boundingBox);
-                        break;
-                    case 6:
-                        z += field.getDouble(boundingBox);
-                        break;
-                    default:
-                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
-                    }
-                }
-            }
-            return new FakeBoundingBox(x, y, z);
+            float length = getNmsClass("Entity").getField("length").getFloat(getNmsEntity(entity));
+            float width = getNmsClass("Entity").getField("width").getFloat(getNmsEntity(entity));
+            float height = getNmsClass("Entity").getField("height").getFloat(getNmsEntity(entity));
+            return new FakeBoundingBox(length, width, height);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -239,22 +213,28 @@ public class ReflectionManager {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;
+            double x = newBox.getX(), y = newBox.getY(), z = newBox.getZ();
             for (Field field : boundingBox.getClass().getFields()) {
                 if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
                     case 1:
-                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getX() - newBox.getX()));
+                        x += field.getDouble(boundingBox);
                         break;
                     case 2:
-                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getY() - newBox.getY()));
+                        y += field.getDouble(boundingBox);
                         break;
                     case 3:
-                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getZ() - newBox.getZ()));
+                        z += field.getDouble(boundingBox);
                         break;
                     case 4:
+                        field.setDouble(boundingBox, x);
+                        break;
                     case 5:
+                        field.setDouble(boundingBox, y);
+                        break;
                     case 6:
+                        field.setDouble(boundingBox, z);
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
@@ -265,5 +245,4 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
     }
-
 }
