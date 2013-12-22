@@ -211,7 +211,6 @@ public class LibsDisguises extends JavaPlugin {
                 }
 
                 // Get the bounding box
-
                 disguiseValues.setAdultBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 if (bukkitEntity instanceof Ageable) {
                     ((Ageable) bukkitEntity).setBaby();

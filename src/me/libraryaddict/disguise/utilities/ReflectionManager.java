@@ -87,10 +87,38 @@ public class ReflectionManager {
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
         try {
-            float length = getNmsClass("Entity").getField("length").getFloat(getNmsEntity(entity));
-            float width = getNmsClass("Entity").getField("width").getFloat(getNmsEntity(entity));
-            float height = getNmsClass("Entity").getField("height").getFloat(getNmsEntity(entity));
-            return new FakeBoundingBox(length, width, height);
+            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
+            double x = 0, y = 0, z = 0;
+            int stage = 0;
+            for (Field field : boundingBox.getClass().getFields()) {
+                if (field.getType().getSimpleName().equals("double")) {
+                    stage++;
+                    switch (stage) {
+                    case 1:
+                        x -= field.getDouble(boundingBox);
+                        break;
+                    case 2:
+                        y -= field.getDouble(boundingBox);
+                        break;
+                    case 3:
+                        z -= field.getDouble(boundingBox);
+                        break;
+                    case 4:
+                        x += field.getDouble(boundingBox);
+                        break;
+                    case 5:
+                        y += field.getDouble(boundingBox);
+                        break;
+                    case 6:
+                        z += field.getDouble(boundingBox);
+                        break;
+                    default:
+                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
+                    }
+                }
+            }
+            return new FakeBoundingBox(x, y, z);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -213,33 +241,40 @@ public class ReflectionManager {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;
-            double x = newBox.getX(), y = newBox.getY(), z = newBox.getZ();
+            double x = 0, y = 0, z = 0;
             for (Field field : boundingBox.getClass().getFields()) {
                 if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x += field.getDouble(boundingBox);
+                        x = field.getDouble(boundingBox) + oldBox.getX();
+                        field.setDouble(boundingBox, x - newBox.getX());
                         break;
                     case 2:
-                        y += field.getDouble(boundingBox);
+                        y = field.getDouble(boundingBox) + oldBox.getY();
+                        field.setDouble(boundingBox, y - newBox.getY());
                         break;
                     case 3:
-                        z += field.getDouble(boundingBox);
+                        z = field.getDouble(boundingBox) + oldBox.getZ();
+                        field.setDouble(boundingBox, z - newBox.getZ());
                         break;
                     case 4:
-                        field.setDouble(boundingBox, x);
+                        field.setDouble(boundingBox, x + newBox.getX());
                         break;
                     case 5:
-                        field.setDouble(boundingBox, y);
+                        field.setDouble(boundingBox, y + newBox.getY());
                         break;
                     case 6:
-                        field.setDouble(boundingBox, z);
+                        field.setDouble(boundingBox, z + newBox.getZ());
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
+            }
+            if (entity.getType() != EntityType.PLAYER) {
+                // entity.teleport(entity.getLocation().clone()
+                // .subtract(oldBox.getX() - newBox.getX(), oldBox.getY() - newBox.getY(), oldBox.getZ() - newBox.getZ()));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
