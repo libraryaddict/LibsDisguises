@@ -90,7 +90,7 @@ public class ReflectionManager {
             double x = 0, y = 0, z = 0;
             int stage = 0;
             for (Field field : boundingBox.getClass().getFields()) {
-                if (field.getType().getSimpleName().equals("Double")) {
+                if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
                     case 1:
@@ -114,9 +114,9 @@ public class ReflectionManager {
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
-                    return new FakeBoundingBox(x, y, z);
                 }
             }
+            return new FakeBoundingBox(x, y, z);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -235,32 +235,26 @@ public class ReflectionManager {
         return after17;
     }
 
-    public static void setBoundingBox(Entity entity, double newX, double newY, double newZ) {
+    public static void setBoundingBox(Entity entity, FakeBoundingBox oldBox, FakeBoundingBox newBox) {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
-            double x = 0, y = 0, z = 0;
             int stage = 0;
             for (Field field : boundingBox.getClass().getFields()) {
-                if (field.getType().getSimpleName().equals("Double")) {
+                if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x = field.getDouble(boundingBox);
+                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getX() - newBox.getX()));
                         break;
                     case 2:
-                        y = field.getDouble(boundingBox);
+                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getY() - newBox.getY()));
                         break;
                     case 3:
-                        z = field.getDouble(boundingBox);
+                        field.setDouble(boundingBox, field.getDouble(boundingBox) + (oldBox.getZ() - newBox.getZ()));
                         break;
                     case 4:
-                        field.setDouble(boundingBox, x);
-                        break;
                     case 5:
-                        field.setDouble(boundingBox, y);
-                        break;
                     case 6:
-                        field.setDouble(boundingBox, z);
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
