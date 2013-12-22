@@ -289,8 +289,8 @@ public class ReflectionManager {
     public static void setSize(Entity entity, float[] size) {
         try {
             getNmsClass("Entity").getField("length").setFloat(getNmsEntity(entity), size[0]);
-            getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
-            getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
+          //  getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
+          //  getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
