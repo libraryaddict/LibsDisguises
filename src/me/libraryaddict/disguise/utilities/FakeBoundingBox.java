@@ -12,15 +12,15 @@ public class FakeBoundingBox {
     }
 
     public double getX() {
-        return xMod / 2;
+        return xMod;
     }
 
     public double getY() {
-        return yMod / 2;
+        return yMod;
     }
 
     public double getZ() {
-        return zMod / 2;
+        return zMod;
     }
 
 }

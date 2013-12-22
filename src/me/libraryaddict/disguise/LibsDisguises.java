@@ -219,6 +219,7 @@ public class LibsDisguises extends JavaPlugin {
                     ((Zombie) bukkitEntity).setBaby(true);
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 }
+                disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
             } catch (Exception ex) {
                 System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name()
                         + "!");

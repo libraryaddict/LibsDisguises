@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -215,6 +214,18 @@ public class ReflectionManager {
         return null;
     }
 
+    public static float[] getSize(Entity entity) {
+        try {
+            float length = getNmsClass("Entity").getField("length").getFloat(getNmsEntity(entity));
+            float width = getNmsClass("Entity").getField("width").getFloat(getNmsEntity(entity));
+            float height = getNmsClass("Entity").getField("height").getFloat(getNmsEntity(entity));
+            return new float[] { length, width, height };
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Float getSoundModifier(Object entity) {
         try {
             soundMethod.setAccessible(true);
@@ -237,7 +248,7 @@ public class ReflectionManager {
         return after17;
     }
 
-    public static void setBoundingBox(Entity entity, FakeBoundingBox oldBox, FakeBoundingBox newBox) {
+    public static void setBoundingBox(Entity entity, FakeBoundingBox oldBox, FakeBoundingBox newBox, float[] entitySize) {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;
@@ -247,16 +258,16 @@ public class ReflectionManager {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x = field.getDouble(boundingBox) + oldBox.getX();
-                        field.setDouble(boundingBox, x - newBox.getX());
+                        x = field.getDouble(boundingBox); //+ oldBox.getX();
+                 //       field.setDouble(boundingBox, x - newBox.getX());
                         break;
                     case 2:
-                        y = field.getDouble(boundingBox) + oldBox.getY();
-                        field.setDouble(boundingBox, y - newBox.getY());
+                        y = field.getDouble(boundingBox);// + oldBox.getY();
+                   //     field.setDouble(boundingBox, y - newBox.getY());
                         break;
                     case 3:
-                        z = field.getDouble(boundingBox) + oldBox.getZ();
-                        field.setDouble(boundingBox, z - newBox.getZ());
+                        z = field.getDouble(boundingBox); //+ oldBox.getZ();
+                   //     field.setDouble(boundingBox, z - newBox.getZ());
                         break;
                     case 4:
                         field.setDouble(boundingBox, x + newBox.getX());
@@ -272,10 +283,17 @@ public class ReflectionManager {
                     }
                 }
             }
-            if (entity.getType() != EntityType.PLAYER) {
-                // entity.teleport(entity.getLocation().clone()
-                // .subtract(oldBox.getX() - newBox.getX(), oldBox.getY() - newBox.getY(), oldBox.getZ() - newBox.getZ()));
-            }
+            setSize(entity, entitySize);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void setSize(Entity entity, float[] size) {
+        try {
+            getNmsClass("Entity").getField("length").setFloat(getNmsEntity(entity), size[0]);
+            getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
+            getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

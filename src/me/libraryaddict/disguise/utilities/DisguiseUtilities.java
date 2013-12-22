@@ -153,9 +153,9 @@ public class DisguiseUtilities {
                 }
             }
             if (isDisguiseInUse(disguise)) {
-                ReflectionManager.setBoundingBox(entity, entityBox, disguiseBox);
+                ReflectionManager.setBoundingBox(entity, entityBox, disguiseBox, disguiseValues.getEntitySize());
             } else {
-                ReflectionManager.setBoundingBox(entity, disguiseBox, entityBox);
+                ReflectionManager.setBoundingBox(entity, disguiseBox, entityBox, entityValues.getEntitySize());
             }
         }
     }
