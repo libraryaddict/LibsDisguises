@@ -258,16 +258,13 @@ public class ReflectionManager {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x = field.getDouble(boundingBox); //+ oldBox.getX();
-                 //       field.setDouble(boundingBox, x - newBox.getX());
+                        x = field.getDouble(boundingBox);
                         break;
                     case 2:
-                        y = field.getDouble(boundingBox);// + oldBox.getY();
-                   //     field.setDouble(boundingBox, y - newBox.getY());
+                        y = field.getDouble(boundingBox);
                         break;
                     case 3:
-                        z = field.getDouble(boundingBox); //+ oldBox.getZ();
-                   //     field.setDouble(boundingBox, z - newBox.getZ());
+                        z = field.getDouble(boundingBox);
                         break;
                     case 4:
                         field.setDouble(boundingBox, x + newBox.getX());
