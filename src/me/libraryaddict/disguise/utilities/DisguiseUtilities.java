@@ -199,6 +199,33 @@ public class DisguiseUtilities {
         return new TargetedDisguise[0];
     }
 
+    /**
+     * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
+     */
+    public static ArrayList<Player> getPerverts(Disguise disguise) {
+        ArrayList<Player> players = new ArrayList<Player>();
+        try {
+            Object world = ReflectionManager.getWorld(disguise.getEntity().getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, disguise.getEntity().getEntityId());
+            if (entityTrackerEntry != null) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                for (Object p : trackedPlayers) {
+                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                    if (((TargetedDisguise) disguise).canSee(player)) {
+                        players.add(player);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return players;
+    }
+
     public static List<TargetedDisguise> getSeenDisguises(String viewer) {
         List<TargetedDisguise> dis = new ArrayList<TargetedDisguise>();
         for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {

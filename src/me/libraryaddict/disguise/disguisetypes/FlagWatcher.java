@@ -232,7 +232,7 @@ public class FlagWatcher {
         StructureModifier<Object> mods = packet.getModifier();
         mods.write(0, entity.getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
-        for (Player player : getDisguise().getPerverts()) {
+        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             if (DisguiseAPI.isViewDisguises() || player != entity) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -315,7 +315,7 @@ public class FlagWatcher {
         mods.write(0, getDisguise().getEntity().getEntityId());
         mods.write(1, slot);
         mods.write(2, itemToSend);
-        for (Player player : getDisguise().getPerverts()) {
+        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             if (player != getDisguise().getEntity()) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);

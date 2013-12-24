@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -237,7 +236,7 @@ public abstract class Disguise {
                             }
                             try {
                                 Field ping = ReflectionManager.getNmsClass("EntityPlayer").getField("ping");
-                                for (Player player : getPerverts()) {
+                                for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                                     PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
                                     StructureModifier<Object> mods = packet.getModifier();
                                     if (getEntity() == player) {
@@ -268,7 +267,7 @@ public abstract class Disguise {
                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, getEntity().getEntityId());
-                            for (Player player : getPerverts()) {
+                            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                                 if (DisguiseAPI.isViewDisguises() || getEntity() != player) {
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -289,33 +288,6 @@ public abstract class Disguise {
      */
     public Entity getEntity() {
         return entity;
-    }
-
-    /**
-     * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
-     */
-    protected ArrayList<Player> getPerverts() {
-        ArrayList<Player> players = new ArrayList<Player>();
-        try {
-            Object world = ReflectionManager.getWorld(getEntity().getWorld());
-            Object tracker = world.getClass().getField("tracker").get(world);
-            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
-            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
-                    .invoke(trackedEntities, getEntity().getEntityId());
-            if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
-                        .get(entityTrackerEntry);
-                for (Object p : trackedPlayers) {
-                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                    if (((TargetedDisguise) this).canSee(player)) {
-                        players.add(player);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return players;
     }
 
     /**
