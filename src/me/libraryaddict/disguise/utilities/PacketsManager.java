@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 
 import org.bukkit.Art;
@@ -164,7 +165,7 @@ public class PacketsManager {
         for (int i = 0; i < packets.size(); i++) {
             spawnPackets[i + 2] = packets.get(i);
         }
-        Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise.getType()), 0);
+        Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguise), 0);
         byte yaw = getYaw(disguise.getType(), disguisedEntity.getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
@@ -226,6 +227,15 @@ public class PacketsManager {
             byteMods.write(1, (byte) (int) (loc.getPitch() * 256F / 360F));
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+
+            if (((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                spawnPackets[1] = new PacketContainer(PacketType.Play.Server.BED);
+                StructureModifier<Integer> mods = spawnPackets[1].getIntegers();
+                mods.write(0, disguisedEntity.getEntityId());
+                mods.write(1, loc.getBlockX());
+                mods.write(2, loc.getBlockY());
+                mods.write(3, loc.getBlockZ());
+            }
 
         } else if (disguise.getType().isMob()) {
 
@@ -417,18 +427,18 @@ public class PacketsManager {
     /**
      * Get the Y level to add to the disguise for realism.
      */
-    private static double getYModifier(Entity entity, DisguiseType disguiseType) {
-        switch (disguiseType) {
+    private static double getYModifier(Disguise disguise) {
+        switch (disguise.getType()) {
         case BAT:
-            if (entity instanceof LivingEntity)
-                return ((LivingEntity) entity).getEyeHeight();
+            if (disguise.getEntity() instanceof LivingEntity)
+                return ((LivingEntity) disguise.getEntity()).getEyeHeight();
         case MINECART:
         case MINECART_CHEST:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
         case MINECART_TNT:
-            switch (entity.getType()) {
+            switch (disguise.getEntity().getType()) {
             case MINECART:
             case MINECART_CHEST:
             case MINECART_FURNACE:
@@ -452,6 +462,11 @@ public class PacketsManager {
         case THROWN_EXP_BOTTLE:
         case WITHER_SKULL:
             return 0.7;
+        case PLAYER:
+            if (((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                return 0.5;
+            }
+            break;
         default:
             break;
         }
@@ -1141,6 +1156,12 @@ public class PacketsManager {
                 else if (sentPacket.getType() == PacketType.Play.Server.COLLECT) {
                     if (disguise.getType().isMisc()) {
                         packets = new PacketContainer[0];
+                    } else if (disguise.getType().isPlayer() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                        PacketContainer newPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
+                        StructureModifier<Integer> mods = newPacket.getIntegers();
+                        mods.write(0, disguise.getEntity().getEntityId());
+                        mods.write(1, ReflectionManager.isAfter17() ? 3 : 2);
+                        packets = new PacketContainer[] { newPacket, sentPacket };
                     }
                 }
 
@@ -1159,7 +1180,7 @@ public class PacketsManager {
                         byte pitchValue = (Byte) mods.read(5);
                         mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                            double y = getYModifier(entity, disguise.getType());
+                            double y = getYModifier(disguise);
                             if (y != 0) {
                                 y *= 32;
                                 mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
