@@ -158,11 +158,7 @@ public abstract class Disguise {
             fallSpeed = 0;
             break;
         case DROPPED_ITEM:
-        case MAGMA_CUBE:
         case PRIMED_TNT:
-            fallSpeed = 0.2;
-            movement = true;
-            break;
         case WITHER:
         case FALLING_BLOCK:
             fallSpeed = 0.04;
