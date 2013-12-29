@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -267,13 +268,17 @@ public class ReflectionManager {
                         z = field.getDouble(boundingBox);
                         break;
                     case 4:
-                        field.setDouble(boundingBox, x + newBox.getX());
+                        if (entity.getType() != EntityType.PLAYER) {
+                            field.setDouble(boundingBox, x + newBox.getX());
+                        }
                         break;
                     case 5:
                         field.setDouble(boundingBox, y + newBox.getY());
                         break;
                     case 6:
-                        field.setDouble(boundingBox, z + newBox.getZ());
+                        if (entity.getType() != EntityType.PLAYER) {
+                            field.setDouble(boundingBox, z + newBox.getZ());
+                        }
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
@@ -289,8 +294,10 @@ public class ReflectionManager {
     public static void setSize(Entity entity, float[] size) {
         try {
             getNmsClass("Entity").getField("length").setFloat(getNmsEntity(entity), size[0]);
-          //  getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
-          //  getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
+            if (entity.getType() != EntityType.PLAYER) {
+                getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
+                getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
