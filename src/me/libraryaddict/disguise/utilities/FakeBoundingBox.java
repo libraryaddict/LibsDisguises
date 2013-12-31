@@ -16,7 +16,7 @@ public class FakeBoundingBox {
     }
 
     public double getY() {
-        return yMod / 2;
+        return yMod;
     }
 
     public double getZ() {

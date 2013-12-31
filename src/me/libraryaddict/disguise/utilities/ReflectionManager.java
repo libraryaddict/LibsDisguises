@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -250,7 +249,7 @@ public class ReflectionManager {
         return after17;
     }
 
-    public static void setBoundingBox(Entity entity, FakeBoundingBox oldBox, FakeBoundingBox newBox, float[] entitySize) {
+    public static void setBoundingBox(Entity entity, FakeBoundingBox newBox, float[] entitySize) {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;
@@ -281,19 +280,6 @@ public class ReflectionManager {
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
-            }
-            // setSize(entity, entitySize);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void setSize(Entity entity, float[] size) {
-        try {
-            getNmsClass("Entity").getField("length").setFloat(getNmsEntity(entity), size[0]);
-            if (entity.getType() != EntityType.PLAYER) {
-                getNmsClass("Entity").getField("width").setFloat(getNmsEntity(entity), size[1]);
-                getNmsClass("Entity").getField("height").setFloat(getNmsEntity(entity), size[2]);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
