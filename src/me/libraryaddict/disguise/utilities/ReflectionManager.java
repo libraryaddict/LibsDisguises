@@ -271,7 +271,7 @@ public class ReflectionManager {
                         field.setDouble(boundingBox, loc.getX() + newBox.getX());
                         break;
                     case 5:
-                        field.setDouble(boundingBox, loc.getY() + (newBox.getY() * 2));
+                        field.setDouble(boundingBox, loc.getY() + newBox.getY());
                         break;
                     case 6:
                         field.setDouble(boundingBox, loc.getZ() + newBox.getZ());
