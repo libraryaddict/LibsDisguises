@@ -259,33 +259,33 @@ public class ReflectionManager {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x = field.getDouble(boundingBox);
+                        x = field.getDouble(boundingBox) - oldBox.getX();
                         break;
                     case 2:
-                        y = field.getDouble(boundingBox);
+                        y = field.getDouble(boundingBox) - oldBox.getY();
                         break;
                     case 3:
-                        z = field.getDouble(boundingBox);
+                        z = field.getDouble(boundingBox) - oldBox.getZ();
                         break;
                     case 4:
-                       // if (entity.getType() != EntityType.PLAYER) {
-                            field.setDouble(boundingBox, x + newBox.getX());
-                     //   }
+                        // if (entity.getType() != EntityType.PLAYER) {
+                        field.setDouble(boundingBox, x + newBox.getX());
+                        // }
                         break;
                     case 5:
                         field.setDouble(boundingBox, y + newBox.getY());
                         break;
                     case 6:
-                      //  if (entity.getType() != EntityType.PLAYER) {
-                            field.setDouble(boundingBox, z + newBox.getZ());
-                      //  }
+                        // if (entity.getType() != EntityType.PLAYER) {
+                        field.setDouble(boundingBox, z + newBox.getZ());
+                        // }
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
             }
-          //  setSize(entity, entitySize);
+            // setSize(entity, entitySize);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
