@@ -268,24 +268,24 @@ public class ReflectionManager {
                         z = field.getDouble(boundingBox);
                         break;
                     case 4:
-                        if (entity.getType() != EntityType.PLAYER) {
+                       // if (entity.getType() != EntityType.PLAYER) {
                             field.setDouble(boundingBox, x + newBox.getX());
-                        }
+                     //   }
                         break;
                     case 5:
                         field.setDouble(boundingBox, y + newBox.getY());
                         break;
                     case 6:
-                        if (entity.getType() != EntityType.PLAYER) {
+                      //  if (entity.getType() != EntityType.PLAYER) {
                             field.setDouble(boundingBox, z + newBox.getZ());
-                        }
+                      //  }
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
             }
-            setSize(entity, entitySize);
+          //  setSize(entity, entitySize);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

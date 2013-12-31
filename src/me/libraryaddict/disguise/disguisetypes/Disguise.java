@@ -199,6 +199,9 @@ public abstract class Disguise {
                             }
                         }
                     }
+                    if (isModifyBoundingBox()) {
+                        DisguiseUtilities.doBoundingBox(disguise);
+                    }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
                     if (vectorY != 0 && isVelocitySent() && (alwaysSendVelocity || !getEntity().isOnGround())) {
