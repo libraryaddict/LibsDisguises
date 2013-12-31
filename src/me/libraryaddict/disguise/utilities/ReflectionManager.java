@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -253,32 +254,28 @@ public class ReflectionManager {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;
-            double x = 0, y = 0, z = 0;
+            Location loc = entity.getLocation();
             for (Field field : boundingBox.getClass().getFields()) {
                 if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
                     case 1:
-                        x = field.getDouble(boundingBox) - oldBox.getX();
+                        field.setDouble(boundingBox, loc.getX() - newBox.getX());
                         break;
                     case 2:
-                        y = field.getDouble(boundingBox) - oldBox.getY();
+                        field.setDouble(boundingBox, loc.getY() - newBox.getY());
                         break;
                     case 3:
-                        z = field.getDouble(boundingBox) - oldBox.getZ();
+                        field.setDouble(boundingBox, loc.getZ() - newBox.getZ());
                         break;
                     case 4:
-                        // if (entity.getType() != EntityType.PLAYER) {
-                        field.setDouble(boundingBox, x + newBox.getX());
-                        // }
+                        field.setDouble(boundingBox, loc.getX() + newBox.getX());
                         break;
                     case 5:
-                        field.setDouble(boundingBox, y + newBox.getY());
+                        field.setDouble(boundingBox, loc.getY() + newBox.getY());
                         break;
                     case 6:
-                        // if (entity.getType() != EntityType.PLAYER) {
-                        field.setDouble(boundingBox, z + newBox.getZ());
-                        // }
+                        field.setDouble(boundingBox, loc.getZ() + newBox.getZ());
                         break;
                     default:
                         throw new Exception("Error while setting the bounding box, more doubles than I thought??");
