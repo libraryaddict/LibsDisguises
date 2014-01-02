@@ -44,5 +44,4 @@ NameAboveHeadAlwaysVisible: true
 # This modifys the bounding box, This is stuff like can a arrow hit them.
 # If you turn this to true, arrows will act like they hit the disguise in the right place!
 # So someone disguised as a enderdragon will easily get shot down by arrows!
-# But this may also result in a slight performance loss. Not sure how much
 ModifyBoundingBox: false
