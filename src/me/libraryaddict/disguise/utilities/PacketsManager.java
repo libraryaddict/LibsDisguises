@@ -464,7 +464,7 @@ public class PacketsManager {
             return 0.7;
         case PLAYER:
             if (((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                return 0.5;
+                return 0.35;
             }
             break;
         default:
