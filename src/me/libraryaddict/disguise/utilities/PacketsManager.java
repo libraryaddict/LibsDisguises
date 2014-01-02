@@ -1148,7 +1148,9 @@ public class PacketsManager {
 
                 // Else if the disguise is attempting to send players a forbidden packet
                 else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
-                    if (disguise.getType().isMisc() || (packets[0].getIntegers().read(1) == 3 && !disguise.getType().isPlayer())) {
+                    if (disguise.getType().isMisc()
+                            || (packets[0].getIntegers().read(1) == 3 && (!disguise.getType().isPlayer() || ((PlayerWatcher) disguise
+                                    .getWatcher()).isSleeping()))) {
                         packets = new PacketContainer[0];
                     }
                 }
