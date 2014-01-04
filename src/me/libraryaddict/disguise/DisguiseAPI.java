@@ -65,6 +65,9 @@ public class DisguiseAPI {
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
+        if (disguise.getEntity() != null) {
+            disguise = disguise.clone();
+        }
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
         for (String name : playersToNotSeeDisguise) {
             ((TargetedDisguise) disguise).addPlayer(name);
@@ -99,6 +102,9 @@ public class DisguiseAPI {
      * Disguise this entity with this disguise
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
+        if (disguise.getEntity() != null) {
+            disguise = disguise.clone();
+        }
         // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
         for (String observer : ((TargetedDisguise) disguise).getObservers())
@@ -107,6 +113,9 @@ public class DisguiseAPI {
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> playersToViewDisguise) {
+        if (disguise.getEntity() != null) {
+            disguise = disguise.clone();
+        }
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
         for (String name : playersToViewDisguise) {
             ((TargetedDisguise) disguise).addPlayer(name);
