@@ -635,7 +635,8 @@ public class PacketsManager {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-                        if (disguise != null && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
+                        if (disguise != null && !disguise.getType().isPlayer()
+                                && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
                             DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
                             if (disSound == null)
                                 return;
@@ -720,8 +721,9 @@ public class PacketsManager {
                         final PacketContainer[] delayedPackets = new PacketContainer[packets.length > 0 ? packets.length - 1 : 0];
                         for (int i = 0; i < packets.length; i++) {
                             PacketContainer packet = packets[i];
-                            if (packet.equals(event.getPacket()))
+                            if (packet.equals(event.getPacket())) {
                                 packet = packet.deepClone();
+                            }
                             packet.getModifier().write(0, fakeId);
                             if (i == 0) {
                                 try {
@@ -746,7 +748,6 @@ public class PacketsManager {
                                 }
                             });
                         }
-
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
                             Iterator<WrappedWatchableObject> itel = event.getPacket().getWatchableCollectionModifier().read(0)
@@ -789,7 +790,7 @@ public class PacketsManager {
 
                         else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
                             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-                            if (disguise.getType() != DisguiseType.PLAYER && disguise.isSelfDisguiseSoundsReplaced()
+                            if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
                                     && event.getPacket().getBytes().read(0) == (ReflectionManager.isAfter17() ? 2 : 1)) {
                                 event.setCancelled(true);
                             }
