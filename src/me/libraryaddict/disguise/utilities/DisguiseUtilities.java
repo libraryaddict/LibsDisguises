@@ -476,8 +476,8 @@ public class DisguiseUtilities {
             if (player.isSleeping()) {
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(PacketType.Play.Server.BED, player, 0, loc.getBlockX(), loc.getBlockY(),
-                                loc.getBlockZ()).createPacket(player, 0, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                        manager.createPacketConstructor(PacketType.Play.Server.BED, player, loc.getBlockX(), loc.getBlockY(),
+                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             }
 
             // Resend any active potion effects
