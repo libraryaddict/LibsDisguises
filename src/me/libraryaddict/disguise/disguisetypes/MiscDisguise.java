@@ -111,6 +111,7 @@ public class MiscDisguise extends TargetedDisguise {
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
+        disguise.setModifyBoundingBox(isModifyBoundingBox());
         disguise.setWatcher(getWatcher().clone(disguise));
         return disguise;
     }

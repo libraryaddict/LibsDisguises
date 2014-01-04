@@ -21,13 +21,11 @@ public class MobDisguise extends TargetedDisguise {
         this.isAdult = isAdult;
         createDisguise(disguiseType, replaceSounds);
     }
- 
 
     @Deprecated
     public MobDisguise(EntityType entityType) {
         this(entityType, true);
     }
-
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult) {
@@ -48,6 +46,7 @@ public class MobDisguise extends TargetedDisguise {
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
+        disguise.setModifyBoundingBox(isModifyBoundingBox());
         disguise.setWatcher(getWatcher().clone(disguise));
         return disguise;
     }
