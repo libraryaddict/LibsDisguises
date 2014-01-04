@@ -393,6 +393,8 @@ public abstract class Disguise {
      */
     public void setEntity(Entity entity) {
         if (this.getEntity() != null) {
+            if (getEntity() == entity)
+                return;
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         }
         this.entity = entity;
