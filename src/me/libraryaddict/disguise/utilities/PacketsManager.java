@@ -772,6 +772,10 @@ public class PacketsManager {
                             watchableList.add(new WrappedWatchableObject(0, b));
                             packet.getWatchableCollectionModifier().write(0, watchableList);
                             event.setPacket(packet);
+                        } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
+                            if (event.getPacket().getIntegers().read(1) != (ReflectionManager.isAfter17() ? 2 : 3)) {
+                                event.setCancelled(true);
+                            }
                         } else if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
                                 || event.getPacketType() == PacketType.Play.Server.REL_ENTITY_MOVE
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
@@ -779,15 +783,14 @@ public class PacketsManager {
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_TELEPORT
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT
-                                || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT
-                                || event.getPacketType() == PacketType.Play.Server.ANIMATION) {
+                                || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
                             event.setCancelled(true);
                         }
 
                         else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
                             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                             if (disguise.getType() != DisguiseType.PLAYER && disguise.isSelfDisguiseSoundsReplaced()
-                                    && (Byte) event.getPacket().getModifier().read(1) == (ReflectionManager.isAfter17() ? 2 : 1)) {
+                                    && event.getPacket().getBytes().read(0) == (ReflectionManager.isAfter17() ? 2 : 1)) {
                                 event.setCancelled(true);
                             }
                         }
@@ -1149,8 +1152,8 @@ public class PacketsManager {
                 // Else if the disguise is attempting to send players a forbidden packet
                 else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
                     if (disguise.getType().isMisc()
-                            || (packets[0].getIntegers().read(1) == 3 && (!disguise.getType().isPlayer() || ((PlayerWatcher) disguise
-                                    .getWatcher()).isSleeping()))) {
+                            || (packets[0].getIntegers().read(1) == (ReflectionManager.isAfter17() ? 2 : 3) && (!disguise
+                                    .getType().isPlayer() || ((PlayerWatcher) disguise.getWatcher()).isSleeping()))) {
                         packets = new PacketContainer[0];
                     }
                 }
