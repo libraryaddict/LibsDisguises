@@ -3,13 +3,13 @@ package me.libraryaddict.disguise.utilities;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
 import org.bukkit.Sound;
 
 /**
  * Only living disguises go in here!
  */
 public enum DisguiseSound {
+    ARROW(null, null, null, null, "random.bowhit"),
 
     BAT("mob.bat.hurt", null, "mob.bat.death", "mob.bat.idle", "damage.fallsmall", "mob.bat.loop", "damage.fallbig",
             "mob.bat.takeoff"),
@@ -181,10 +181,6 @@ public enum DisguiseSound {
             }
         }
         return null;
-    }
-
-    public boolean isCancelled(String soundName) {
-        return cancelSounds.contains(soundName);
     }
 
     public boolean isCancelSound(String sound) {
