@@ -786,9 +786,9 @@ public class PacketsManager {
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
                             event.setCancelled(true);
-                        }
-
-                        else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
+                        } else if (event.getPacketType() == PacketType.Play.Server.BED) {
+                            ReflectionManager.setAllowSleep(observer);
+                        } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
                             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                             if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
                                     && event.getPacket().getBytes().read(0) == (ReflectionManager.isAfter17() ? 2 : 1)) {

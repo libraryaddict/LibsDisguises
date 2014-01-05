@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
@@ -53,6 +54,17 @@ public class ReflectionManager {
             } catch (Exception ex) {
 
             }
+        }
+    }
+
+    public static void setAllowSleep(Player player) {
+        try {
+            Object nmsEntity = getNmsEntity(player);
+            Object connection = nmsEntity.getClass().getField("playerConnection").get(nmsEntity);
+            Field check = connection.getClass().getField("checkMovement");
+            check.setBoolean(connection, true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
