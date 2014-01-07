@@ -34,6 +34,9 @@ public class UpdateChecker {
             con.setRequestMethod("POST");
             con.getOutputStream().write(("key=" + key + "&resource=" + resourceId).getBytes("UTF-8"));
             version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+            if (version.length() > 7) {
+                version = null;
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
