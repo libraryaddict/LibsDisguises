@@ -805,8 +805,8 @@ public class PacketsManager {
             @Override
             public void onPacketSending(PacketEvent event) {
                 // If the inventory is the players inventory
-                if (event.getPlayer().isOnline() && event.getPlayer().getVehicle() == null
-                        && event.getPacket().getIntegers().read(0) == 0) {
+                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
+                        && event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                     // If the player is disguised, views self disguises and is hiding a item.
                     if (disguise != null && disguise.isSelfDisguiseVisible()
@@ -888,7 +888,8 @@ public class PacketsManager {
                 PacketType.Play.Client.WINDOW_CLICK) {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
-                if (event.getPlayer().isOnline() && event.getPlayer().getVehicle() == null) {
+                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
+                        && event.getPlayer().getVehicle() == null) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                     // If player is disguised, views self disguises and has a inventory modifier
                     if (disguise != null && disguise.isSelfDisguiseVisible()
