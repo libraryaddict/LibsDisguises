@@ -194,7 +194,7 @@ public class ReflectionManager {
     public static Object getGameProfile(String playerName) {
         try {
             return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
-                    .newInstance(UUID.randomUUID().toString(), "a");
+                    .newInstance(UUID.randomUUID().toString(), playerName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
