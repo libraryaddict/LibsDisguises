@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.UUID;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -193,7 +194,7 @@ public class ReflectionManager {
     public static Object getGameProfile(String playerName) {
         try {
             return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
-                    .newInstance(playerName, playerName);
+                    .newInstance(UUID.randomUUID().toString(), "a");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
