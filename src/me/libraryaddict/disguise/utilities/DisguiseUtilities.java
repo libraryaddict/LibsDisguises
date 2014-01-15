@@ -86,7 +86,7 @@ public class DisguiseUtilities {
                                     d.removePlayer(name);
                                 }
                             } else {
-                                for (String playername : d.getObservers()) {
+                                for (String playername : new ArrayList<String>(d.getObservers())) {
                                     if (!disguise.getObservers().contains(playername)) {
                                         d.silentlyRemovePlayer(playername);
                                     }
