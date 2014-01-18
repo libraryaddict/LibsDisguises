@@ -167,6 +167,8 @@ public class PacketsManager {
         }
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguise), 0);
         byte yaw = getYaw(disguise.getType(), disguisedEntity.getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+        byte pitch = getPitch(disguise.getType(), DisguiseType.getType(disguisedEntity.getType()),
+                (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -197,7 +199,7 @@ public class PacketsManager {
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
             mods.write(3, (int) Math.floor(loc.getZ() * 32D));
             mods.write(4, yaw);
-            mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+            mods.write(5, pitch);
 
         } else if (disguise.getType().isPlayer()) {
 
@@ -224,7 +226,7 @@ public class PacketsManager {
             intMods.write(4, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
             StructureModifier<Byte> byteMods = spawnPackets[0].getBytes();
             byteMods.write(0, yaw);
-            byteMods.write(1, (byte) (int) (loc.getPitch() * 256F / 360F));
+            byteMods.write(1, pitch);
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
@@ -268,7 +270,7 @@ public class PacketsManager {
             mods.write(6, (int) (d3 * 8000.0D));
             mods.write(7, (int) (d4 * 8000.0D));
             mods.write(8, yaw);
-            mods.write(9, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+            mods.write(9, pitch);
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
@@ -306,7 +308,7 @@ public class PacketsManager {
             mods.write(2, (int) Math.floor(loc.getY() * 32D));
             mods.write(3, (int) Math.floor(loc.getZ() * 32D));
             mods.write(4, yaw);
-            mods.write(5, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+            mods.write(5, pitch);
 
         }
         if (spawnPackets[1] == null) {
