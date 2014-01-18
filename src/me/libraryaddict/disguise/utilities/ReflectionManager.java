@@ -15,10 +15,45 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
-    private static boolean after17 = true;
+    public enum LibVersion {
+        V1_6, V1_7;
+        private static LibVersion currentVersion;
+        static {
+            if (getBukkitVersion().startsWith("v1_")) {
+                try {
+                    int version = Integer.parseInt(getBukkitVersion().split("_")[1]);
+                    if (version == 7) {
+                        currentVersion = LibVersion.V1_7;
+                    } else {
+                        if (version < 7) {
+                            currentVersion = LibVersion.V1_6;
+                        } else {
+                            currentVersion = LibVersion.V1_7;
+                        }
+                    }
+                } catch (Exception ex) {
+
+                }
+            }
+        }
+
+        public static LibVersion getGameVersion() {
+            return currentVersion;
+        }
+
+        public static boolean is1_6() {
+            return getGameVersion() == V1_6;
+        }
+
+        public static boolean is1_7() {
+            return getGameVersion() == V1_7;
+        }
+    }
+
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
     private static Method soundMethod;
+
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
@@ -47,26 +82,6 @@ public class ReflectionManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (bukkitVersion.startsWith("v1_")) {
-            try {
-                if (Integer.parseInt(bukkitVersion.split("_")[1]) < 7) {
-                    after17 = false;
-                }
-            } catch (Exception ex) {
-
-            }
-        }
-    }
-
-    public static void setAllowSleep(Player player) {
-        try {
-            Object nmsEntity = getNmsEntity(player);
-            Object connection = nmsEntity.getClass().getField("playerConnection").get(nmsEntity);
-            Field check = connection.getClass().getField("checkMovement");
-            check.setBoolean(connection, true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -78,7 +93,7 @@ public class ReflectionManager {
                 Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
-                if (isAfter17()) {
+                if (LibVersion.is1_7()) {
                     Object gameProfile = getGameProfile("LibsDisguises");
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
                             gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
@@ -157,9 +172,13 @@ public class ReflectionManager {
         return null;
     }
 
+    public static String getBukkitVersion() {
+        return bukkitVersion;
+    }
+
     public static Class getCraftClass(String className) {
         try {
-            return Class.forName("org.bukkit.craftbukkit." + bukkitVersion + "." + className);
+            return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,7 +197,7 @@ public class ReflectionManager {
 
     public static String getEnumArt(Art art) {
         try {
-            Class craftArt = Class.forName("org.bukkit.craftbukkit." + bukkitVersion + ".CraftArt");
+            Class craftArt = Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + ".CraftArt");
             Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
             for (Field field : enumArt.getClass().getFields()) {
                 if (field.getType() == String.class) {
@@ -203,7 +222,7 @@ public class ReflectionManager {
 
     public static Class getNmsClass(String className) {
         try {
-            return Class.forName("net.minecraft.server." + bukkitVersion + "." + className);
+            return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
             // e.printStackTrace();
         }
@@ -258,8 +277,15 @@ public class ReflectionManager {
         return null;
     }
 
-    public static boolean isAfter17() {
-        return after17;
+    public static void setAllowSleep(Player player) {
+        try {
+            Object nmsEntity = getNmsEntity(player);
+            Object connection = nmsEntity.getClass().getField("playerConnection").get(nmsEntity);
+            Field check = connection.getClass().getField("checkMovement");
+            check.setBoolean(connection, true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox, float[] entitySize) {

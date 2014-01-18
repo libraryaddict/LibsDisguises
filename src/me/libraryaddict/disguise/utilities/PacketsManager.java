@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -116,7 +117,7 @@ public class PacketsManager {
                 try {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                    org.bukkit.entity.Entity entity = entityModifer.read(ReflectionManager.isAfter17() ? 0 : 1);
+                    org.bukkit.entity.Entity entity = entityModifer.read(LibVersion.is1_7() ? 0 : 1);
                     if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow
                             || entity == observer) {
                         event.setCancelled(true);
@@ -560,7 +561,7 @@ public class PacketsManager {
                                                     soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
                                             Class blockClass = ReflectionManager.getNmsClass("Block");
                                             Object block;
-                                            if (ReflectionManager.isAfter17()) {
+                                            if (LibVersion.is1_7()) {
                                                 block = ReflectionManager.getNmsClass("RegistryMaterials")
                                                         .getMethod("a", int.class)
                                                         .invoke(blockClass.getField("REGISTRY").get(null), typeId);
@@ -633,7 +634,7 @@ public class PacketsManager {
                         }
                     }
                 } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == (ReflectionManager.isAfter17() ? 2 : 1)) {
+                    if ((Byte) mods.read(1) == (LibVersion.is1_7() ? 2 : 1)) {
                         // It made a damage animation
                         Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
                         Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
@@ -776,7 +777,7 @@ public class PacketsManager {
                             packet.getWatchableCollectionModifier().write(0, watchableList);
                             event.setPacket(packet);
                         } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
-                            if (event.getPacket().getIntegers().read(1) != (ReflectionManager.isAfter17() ? 2 : 3)) {
+                            if (event.getPacket().getIntegers().read(1) != (LibVersion.is1_7() ? 2 : 3)) {
                                 event.setCancelled(true);
                             }
                         } else if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
@@ -793,7 +794,7 @@ public class PacketsManager {
                         } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
                             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                             if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
-                                    && event.getPacket().getBytes().read(0) == (ReflectionManager.isAfter17() ? 2 : 1)) {
+                                    && event.getPacket().getBytes().read(0) == (LibVersion.is1_7() ? 2 : 1)) {
                                 event.setCancelled(true);
                             }
                         }
@@ -1156,8 +1157,8 @@ public class PacketsManager {
                 // Else if the disguise is attempting to send players a forbidden packet
                 else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
                     if (disguise.getType().isMisc()
-                            || (packets[0].getIntegers().read(1) == (ReflectionManager.isAfter17() ? 2 : 3) && (!disguise
-                                    .getType().isPlayer() || ((PlayerWatcher) disguise.getWatcher()).isSleeping()))) {
+                            || (packets[0].getIntegers().read(1) == (LibVersion.is1_7() ? 2 : 3) && (!disguise.getType()
+                                    .isPlayer() || ((PlayerWatcher) disguise.getWatcher()).isSleeping()))) {
                         packets = new PacketContainer[0];
                     }
                 }
@@ -1169,7 +1170,7 @@ public class PacketsManager {
                         PacketContainer newPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
                         StructureModifier<Integer> mods = newPacket.getIntegers();
                         mods.write(0, disguise.getEntity().getEntityId());
-                        mods.write(1, ReflectionManager.isAfter17() ? 3 : 2);
+                        mods.write(1, LibVersion.is1_7() ? 3 : 2);
                         packets = new PacketContainer[] { newPacket, sentPacket };
                     }
                 }

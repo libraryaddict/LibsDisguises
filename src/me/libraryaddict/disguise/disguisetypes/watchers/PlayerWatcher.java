@@ -10,7 +10,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 public class PlayerWatcher extends LivingWatcher {
     private boolean isInBed;
@@ -58,7 +58,7 @@ public class PlayerWatcher extends LivingWatcher {
                     packet = new PacketContainer(PacketType.Play.Server.ANIMATION);
                     StructureModifier<Integer> mods = packet.getIntegers();
                     mods.write(0, getDisguise().getEntity().getEntityId());
-                    mods.write(1, ReflectionManager.isAfter17() ? 3 : 2);
+                    mods.write(1, LibVersion.is1_7() ? 3 : 2);
                 }
                 try {
                     for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
