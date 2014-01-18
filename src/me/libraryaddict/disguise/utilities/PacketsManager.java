@@ -584,9 +584,8 @@ public class PacketsManager {
                                         if (soundType == SoundType.HURT || soundType == SoundType.DEATH
                                                 || soundType == SoundType.IDLE) {
                                             // If the volume is the default
-                                            if (soundType != SoundType.IDLE
-                                                    && ((Float) mods.read(4)).equals(entitySound.getDamageSoundVolume())) {
-                                                mods.write(4, dSound.getDamageSoundVolume());
+                                            if (((Float) mods.read(4)).equals(entitySound.getDamageAndIdleSoundVolume())) {
+                                                mods.write(4, dSound.getDamageAndIdleSoundVolume());
                                             }
                                             // Here I assume its the default pitch as I can't calculate if its real.
                                             if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
@@ -678,7 +677,7 @@ public class PacketsManager {
                                         mods.write(1, (int) (loc.getX() * 8D));
                                         mods.write(2, (int) (loc.getY() * 8D));
                                         mods.write(3, (int) (loc.getZ() * 8D));
-                                        mods.write(4, disSound.getDamageSoundVolume());
+                                        mods.write(4, disSound.getDamageAndIdleSoundVolume());
                                         float pitch;
                                         if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
                                             pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;

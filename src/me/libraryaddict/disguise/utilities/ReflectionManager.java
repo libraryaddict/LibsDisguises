@@ -52,24 +52,18 @@ public class ReflectionManager {
 
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Class itemClass;
-    private static Method soundMethod;
+    private static Method damageAndIdleSoundMethod;
 
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
                 if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
                         && method.getParameterTypes().length == 0) {
-                    Object entity = createEntityInstance("Pig");
+                    Object entity = createEntityInstance("Cow");
                     method.setAccessible(true);
-                    method.invoke(entity);
-                    Field random = getNmsClass("Entity").getDeclaredField("random");
-                    random.setAccessible(true);
-                    random.set(entity, null);
-                    method.setAccessible(true);
-                    try {
-                        method.invoke(entity);
-                    } catch (Exception ex) {
-                        soundMethod = method;
+                    float value = (Float) method.invoke(entity);
+                    if (value == 0.4F) {
+                        damageAndIdleSoundMethod = method;
                         break;
                     }
                 }
@@ -261,8 +255,8 @@ public class ReflectionManager {
 
     public static Float getSoundModifier(Object entity) {
         try {
-            soundMethod.setAccessible(true);
-            return (Float) soundMethod.invoke(entity);
+            damageAndIdleSoundMethod.setAccessible(true);
+            return (Float) damageAndIdleSoundMethod.invoke(entity);
         } catch (Exception ex) {
         }
         return null;

@@ -206,7 +206,7 @@ public class LibsDisguises extends JavaPlugin {
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
                     if (soundStrength != null) {
-                        sound.setDamageSoundVolume((Float) soundStrength);
+                        sound.setDamageAndIdleSoundVolume((Float) soundStrength);
                     }
                 }
 

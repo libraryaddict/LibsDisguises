@@ -151,7 +151,7 @@ public enum DisguiseSound {
         }
     }
 
-    public float getDamageSoundVolume() {
+    public float getDamageAndIdleSoundVolume() {
         return damageSoundVolume;
     }
 
@@ -202,7 +202,7 @@ public enum DisguiseSound {
         }
     }
 
-    public void setDamageSoundVolume(float strength) {
+    public void setDamageAndIdleSoundVolume(float strength) {
         this.damageSoundVolume = strength;
     }
 
