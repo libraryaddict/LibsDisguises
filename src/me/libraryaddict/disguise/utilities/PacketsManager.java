@@ -66,11 +66,11 @@ public class PacketsManager {
         manager.addPacketListener(new PacketAdapter(libsDisguises, ListenerPriority.HIGH,
                 PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.ENTITY_METADATA,
                 PacketType.Play.Server.ANIMATION, PacketType.Play.Server.ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
-                PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB,
-                PacketType.Play.Server.SPAWN_ENTITY, PacketType.Play.Server.SPAWN_ENTITY_LIVING,
-                PacketType.Play.Server.SPAWN_ENTITY_PAINTING, PacketType.Play.Server.COLLECT,
-                PacketType.Play.Server.UPDATE_ATTRIBUTES, PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.BED,
-                PacketType.Play.Server.ENTITY_STATUS) {
+                PacketType.Play.Server.ENTITY_HEAD_ROTATION, PacketType.Play.Server.ENTITY_TELEPORT,
+                PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB, PacketType.Play.Server.SPAWN_ENTITY,
+                PacketType.Play.Server.SPAWN_ENTITY_LIVING, PacketType.Play.Server.SPAWN_ENTITY_PAINTING,
+                PacketType.Play.Server.COLLECT, PacketType.Play.Server.UPDATE_ATTRIBUTES,
+                PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.BED, PacketType.Play.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
@@ -1219,6 +1219,24 @@ public class PacketsManager {
                 else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_STATUS) {
                     if (packets[0].getBytes().read(0) == (byte) 3) {
                         packets = new PacketContainer[0];
+                    }
+                }
+
+                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION) {
+                    if (disguise.getType().isPlayer() && entity.getType() != EntityType.PLAYER) {
+                        Location loc = entity.getLocation();
+                        byte pitch = getPitch(disguise.getType(), DisguiseType.getType(entity.getType()),
+                                (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                        byte yaw = getYaw(disguise.getType(), entity.getType(), sentPacket.getBytes().read(0));
+                        PacketContainer rotation = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+                        StructureModifier<Object> mods = rotation.getModifier();
+                        mods.write(0, entity.getEntityId());
+                        mods.write(1, yaw);
+                        packets = new PacketContainer[] {
+                                ProtocolLibrary
+                                        .getProtocolManager()
+                                        .createPacketConstructor(PacketType.Play.Server.ENTITY_LOOK, entity.getEntityId(), yaw,
+                                                pitch).createPacket(entity.getEntityId(), yaw, pitch), rotation };
                     }
                 }
             }
