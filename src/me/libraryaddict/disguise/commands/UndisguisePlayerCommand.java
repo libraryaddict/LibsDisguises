@@ -21,9 +21,9 @@ public class UndisguisePlayerCommand implements CommandExecutor {
                 if (p != null) {
                     if (DisguiseAPI.isDisguised(p)) {
                         DisguiseAPI.undisguiseToAll(p);
-                        sender.sendMessage(ChatColor.RED + "He is no longer disguised");
+                        sender.sendMessage(ChatColor.RED + "The player is no longer disguised");
                     } else
-                        sender.sendMessage(ChatColor.RED + "He is not disguised!");
+                        sender.sendMessage(ChatColor.RED + "The player is not disguised!");
                 } else
                     sender.sendMessage(ChatColor.RED + "Player not found");
             } else
