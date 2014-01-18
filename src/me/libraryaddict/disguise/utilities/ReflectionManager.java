@@ -51,8 +51,8 @@ public class ReflectionManager {
     }
 
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-    private static Class itemClass;
     private static Method damageAndIdleSoundMethod;
+    private static Class itemClass;
 
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
