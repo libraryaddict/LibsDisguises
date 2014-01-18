@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.entity.Entity;
@@ -68,12 +67,10 @@ public class FlagWatcher {
     }
 
     public List<WrappedWatchableObject> convert(List<WrappedWatchableObject> list) {
-        Iterator<WrappedWatchableObject> itel = list.iterator();
         List<WrappedWatchableObject> newList = new ArrayList<WrappedWatchableObject>();
         HashSet<Integer> sentValues = new HashSet<Integer>();
         boolean sendAllCustom = false;
-        while (itel.hasNext()) {
-            WrappedWatchableObject watch = itel.next();
+        for (WrappedWatchableObject watch : list) {
             int dataType = watch.getIndex();
             sentValues.add(dataType);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.

@@ -1208,6 +1208,33 @@ public class PacketsManager {
                         packets[0].getModifier().write(2,
                                 (itemstack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemstack)));
                     }
+                    if (disguise.getWatcher().isRightClicking() && slot == 4) {
+                        ItemStack heldItem = packets[0].getItemModifier().read(0);
+                        if (heldItem != null && heldItem.getType() != Material.AIR) {
+                            // Convert the datawatcher
+                            WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(entity);
+                            List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
+                            for (WrappedWatchableObject value : dataWatcher.getWatchableObjects()) {
+                                if (value.getIndex() == 0) {
+                                    list.add(value);
+                                }
+                            }
+                            list = disguise.getWatcher().convert(list);
+                            // Construct the packets to return
+                            PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                            packetBlock.getModifier().write(0, entity.getEntityId());
+                            packetBlock.getWatchableCollectionModifier().write(0, list);
+                            PacketContainer packetUnblock = packetBlock.deepClone();
+                            // Make a packet to send the 'unblock'
+                            for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
+                                watcher.setValue((byte) ((Byte) watcher.getValue() & ~(1 << 4)));
+                            }
+                            // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why? Scheduler delay.
+                            packets = new PacketContainer[] { packetUnblock, packets[0], packetBlock };
+                            // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset
+                            // it.
+                        }
+                    }
                 }
 
                 else if (sentPacket.getType() == PacketType.Play.Server.BED) {
