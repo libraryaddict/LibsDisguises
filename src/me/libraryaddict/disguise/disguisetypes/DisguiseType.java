@@ -6,21 +6,21 @@ import org.bukkit.entity.EntityType;
 public enum DisguiseType {
     ARROW(60),
 
-    BAT(),
+    BAT,
 
-    BLAZE(),
+    BLAZE,
 
     BOAT(1),
 
-    CAVE_SPIDER(),
+    CAVE_SPIDER,
 
-    CHICKEN(),
+    CHICKEN,
 
-    COW(),
+    COW,
 
-    CREEPER(),
+    CREEPER,
 
-    DONKEY(),
+    DONKEY,
 
     DROPPED_ITEM(2, 1),
 
@@ -28,15 +28,15 @@ public enum DisguiseType {
 
     ENDER_CRYSTAL(51),
 
-    ENDER_DRAGON(),
+    ENDER_DRAGON,
 
     ENDER_PEARL(65),
 
     ENDER_SIGNAL(72),
 
-    ENDERMAN(),
+    ENDERMAN,
 
-    EXPERIENCE_ORB(),
+    EXPERIENCE_ORB,
 
     FALLING_BLOCK(70, 1),
 
@@ -46,19 +46,19 @@ public enum DisguiseType {
 
     FISHING_HOOK(90),
 
-    GHAST(),
+    GHAST,
 
-    GIANT(),
+    GIANT,
 
-    HORSE(),
+    HORSE,
 
-    IRON_GOLEM(),
+    IRON_GOLEM,
 
     ITEM_FRAME(71),
 
     LEASH_HITCH(77),
 
-    MAGMA_CUBE(),
+    MAGMA_CUBE,
 
     MINECART(10, 0),
 
@@ -72,63 +72,63 @@ public enum DisguiseType {
 
     MINECART_TNT(10, 3),
 
-    MULE(),
+    MULE,
 
-    MUSHROOM_COW(),
+    MUSHROOM_COW,
 
-    OCELOT(),
+    OCELOT,
 
-    PAINTING(),
+    PAINTING,
 
-    PIG(),
+    PIG,
 
-    PIG_ZOMBIE(),
+    PIG_ZOMBIE,
 
-    PLAYER(),
+    PLAYER,
 
     PRIMED_TNT(50),
 
-    SHEEP(),
+    SHEEP,
 
-    SILVERFISH(),
+    SILVERFISH,
 
-    SKELETON(),
+    SKELETON,
 
-    SKELETON_HORSE(),
+    SKELETON_HORSE,
 
-    SLIME(),
+    SLIME,
 
     SMALL_FIREBALL(64, 0),
 
     SNOWBALL(61),
 
-    SNOWMAN(),
+    SNOWMAN,
 
-    SPIDER(),
+    SPIDER,
 
     SPLASH_POTION(73),
 
-    SQUID(),
+    SQUID,
 
     THROWN_EXP_BOTTLE(75),
 
-    UNDEAD_HORSE(),
+    UNDEAD_HORSE,
 
-    VILLAGER(),
+    VILLAGER,
 
-    WITCH(),
+    WITCH,
 
-    WITHER(),
+    WITHER,
 
-    WITHER_SKELETON(),
+    WITHER_SKELETON,
 
     WITHER_SKULL(66),
 
-    WOLF(),
+    WOLF,
 
-    ZOMBIE(),
+    ZOMBIE,
 
-    ZOMBIE_VILLAGER();
+    ZOMBIE_VILLAGER;
 
     static {
         // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
@@ -179,9 +179,9 @@ public enum DisguiseType {
     private EntityType entityType;
     private Class<? extends FlagWatcher> watcherClass;
 
-    private DisguiseType(int... obj) {
-        for (int i = 0; i < obj.length; i++) {
-            int value = obj[i];
+    private DisguiseType(int... ints) {
+        for (int i = 0; i < ints.length; i++) {
+            int value = ints[i];
             switch (i) {
             case 0:
                 entityId = value;
