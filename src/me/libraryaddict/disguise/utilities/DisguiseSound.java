@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.utilities;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
+
 import org.bukkit.Sound;
 
 /**
@@ -58,7 +60,8 @@ public enum DisguiseSound {
 
     PIG_ZOMBIE("mob.zombiepig.zpighurt", null, "mob.zombiepig.zpigdeath", "mob.zombiepig.zpig", "mob.zombiepig.zpigangry"),
 
-    PLAYER("damage.hit", "step.grass", "damage.hit", null),
+    PLAYER(LibVersion.is1_7() ? "game.player.hurt" : "damage.hit", "step.grass", LibVersion.is1_7() ? "game.player.hurt"
+            : "damage.hit", null),
 
     SHEEP("mob.sheep.say", "mob.sheep.step", null, "mob.sheep.say", "mob.sheep.shear"),
 
