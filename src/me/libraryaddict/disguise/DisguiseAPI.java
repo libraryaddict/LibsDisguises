@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -27,6 +28,7 @@ public class DisguiseAPI {
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
+    private static boolean targetDisguises;
 
     @Deprecated
     public static boolean canHearSelfDisguise() {
@@ -62,6 +64,16 @@ public class DisguiseAPI {
         DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         // If he is a player, then self disguise himself
         DisguiseUtilities.setupFakeDisguise(disguise);
+        // If the disguised is a player and you can't target disguised players..
+        if (isMonstersIgnoreDisguises() && entity instanceof Player) {
+            for (Entity monster : entity.getWorld().getEntities()) {
+                if (monster instanceof Creature) {
+                    if (((Creature) monster).getTarget() == entity) {
+                        ((Creature) monster).setTarget(null);
+                    }
+                }
+            }
+        }
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
@@ -205,6 +217,10 @@ public class DisguiseAPI {
         return modifyBoundingBox;
     }
 
+    public static boolean isMonstersIgnoreDisguises() {
+        return targetDisguises;
+    }
+
     public static boolean isNameAboveHeadAlwaysVisible() {
         return showNameAboveHeadAlwaysVisible;
     }
@@ -277,6 +293,10 @@ public class DisguiseAPI {
 
     public static void setModifyBoundingBox(boolean modifyBounding) {
         modifyBoundingBox = modifyBounding;
+    }
+
+    public static void setMonstersIgnoreDisguises(boolean ignore) {
+        targetDisguises = ignore;
     }
 
     public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible) {

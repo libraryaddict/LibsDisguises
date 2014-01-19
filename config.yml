@@ -44,4 +44,7 @@ NameAboveHeadAlwaysVisible: true
 # This modifys the bounding box, This is stuff like can a arrow hit them.
 # If you turn this to true, arrows will act like they hit the disguise in the right place!
 # So someone disguised as a enderdragon will easily get shot down by arrows!
+# This may have conflicts with some plugins, such as nocheatplus
 ModifyBoundingBox: false
+# This prevents disguised players from being targeted by monsters.
+MonstersIgnoreDisguises: false
