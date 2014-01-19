@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -113,9 +112,18 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onTarget(EntityTargetEvent event) {
-        if (DisguiseAPI.isMonstersIgnoreDisguises() && event.getReason() != TargetReason.CUSTOM && event.getTarget() != null
-                && event.getTarget() instanceof Player && DisguiseAPI.isDisguised(event.getTarget())) {
-            event.setCancelled(true);
+        if (DisguiseAPI.isMonstersIgnoreDisguises() && event.getTarget() != null && event.getTarget() instanceof Player
+                && DisguiseAPI.isDisguised(event.getTarget())) {
+            switch (event.getReason()) {
+            case TARGET_ATTACKED_ENTITY:
+            case TARGET_ATTACKED_OWNER:
+            case OWNER_ATTACKED_TARGET:
+            case CUSTOM:
+                break;
+            default:
+                event.setCancelled(true);
+                break;
+            }
         }
     }
 

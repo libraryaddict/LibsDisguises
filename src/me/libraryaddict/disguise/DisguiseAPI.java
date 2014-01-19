@@ -14,7 +14,6 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -64,16 +63,6 @@ public class DisguiseAPI {
         DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         // If he is a player, then self disguise himself
         DisguiseUtilities.setupFakeDisguise(disguise);
-        // If the disguised is a player and you can't target disguised players..
-        if (isMonstersIgnoreDisguises() && entity instanceof Player) {
-            for (Entity monster : entity.getWorld().getEntities()) {
-                if (monster instanceof Creature) {
-                    if (((Creature) monster).getTarget() == entity) {
-                        ((Creature) monster).setTarget(null);
-                    }
-                }
-            }
-        }
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
