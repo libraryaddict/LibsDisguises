@@ -161,18 +161,14 @@ public class DisguiseUtilities {
         }
     }
 
-    @Deprecated
-    public static TargetedDisguise getDisguise(int entityId) {
+    public static TargetedDisguise getMainDisguise(int entityId) {
         TargetedDisguise toReturn = null;
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
-                        && disguise.getObservers().isEmpty()) {
+                if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
                     return disguise;
                 }
-                if (toReturn == null) {
-                    toReturn = disguise;
-                }
+                toReturn = disguise;
             }
         }
         return toReturn;

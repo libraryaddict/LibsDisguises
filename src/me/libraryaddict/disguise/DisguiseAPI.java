@@ -119,7 +119,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
-        return DisguiseUtilities.getDisguise(disguised.getEntityId());
+        return DisguiseUtilities.getMainDisguise(disguised.getEntityId());
     }
 
     /**
