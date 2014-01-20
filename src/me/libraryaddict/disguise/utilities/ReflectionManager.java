@@ -53,6 +53,16 @@ public class ReflectionManager {
     private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static Method damageAndIdleSoundMethod;
     private static Class itemClass;
+    private static Field pingField;
+
+    public static double getPing(Player player) {
+        try {
+            return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 0D;
+    }
 
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
@@ -73,6 +83,7 @@ public class ReflectionManager {
         }
         try {
             itemClass = getCraftClass("inventory.CraftItemStack");
+            pingField = getNmsClass("EntityPlayer").getField("ping");
         } catch (Exception e) {
             e.printStackTrace();
         }
