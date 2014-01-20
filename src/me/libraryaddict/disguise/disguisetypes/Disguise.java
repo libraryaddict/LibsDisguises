@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -183,7 +182,7 @@ public abstract class Disguise {
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
-                    removeDisguise();
+                    DisguiseAPI.undisguiseToAll(getEntity());
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
                     if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
@@ -202,7 +201,8 @@ public abstract class Disguise {
                     // If this disguise has velocity sending enabled and the entity is flying.
                     if (vectorY != 0 && isVelocitySent() && (alwaysSendVelocity || !getEntity().isOnGround())) {
                         Vector vector = getEntity().getVelocity();
-                        // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the if statement.
+                        // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the
+                        // if statement.
                         // But it doesn't seem to do anything wrong..
                         if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround())) {
                             return;
@@ -248,17 +248,16 @@ public abstract class Disguise {
                                     }
                                     mods.write(2, (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
                                     if (lookPacket != null) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
                                     }
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, velocityPacket);
-                                    velocityPacket = velocityPacket.shallowClone();
-                                    mods = velocityPacket.getIntegers();
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, velocityPacket.shallowClone(),
+                                            false);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
-                        // If we need to send a packet to update the exp orbs position as it likes to gravitate client sided to
+                        // If we need to send a packet to update the exp position as it likes to gravitate client sided to
                         // players.
                         if (getType() == DisguiseType.EXPERIENCE_ORB) {
                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
