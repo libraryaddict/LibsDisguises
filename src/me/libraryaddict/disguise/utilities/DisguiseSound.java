@@ -98,7 +98,7 @@ public enum DisguiseSound {
     WOLF("mob.wolf.hurt", "mob.wolf.step", "mob.wolf.death", "mob.wolf.bark", "mob.wolf.panting", "mob.wolf.whine",
             "mob.wolf.howl", "mob.wolf.growl", "mob.wolf.shake"),
 
-    ZOMBIE("mob.zombie.hurt", "step.grass", "mob.zombie.death", "mob.zombie.say", "mob.zombie.infect", "mob.zombie.woodbreak",
+    ZOMBIE("mob.zombie.hurt", "mob.zombie.step", "mob.zombie.death", "mob.zombie.say", "mob.zombie.infect", "mob.zombie.woodbreak",
             "mob.zombie.metal", "mob.zombie.wood");
 
     public enum SoundType {
