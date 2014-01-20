@@ -58,17 +58,18 @@ public class LibsDisguises extends JavaPlugin {
         }
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
-        DisguiseAPI.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
-        DisguiseAPI.setVelocitySent(getConfig().getBoolean("SendVelocity"));
-        DisguiseAPI.setViewDisguises(getConfig().getBoolean("ViewSelfDisguises"));
-        DisguiseAPI.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
-        DisguiseAPI.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
-        DisguiseAPI.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
-        DisguiseAPI.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
-        DisguiseAPI.setNameOfPlayerShownAboveDisguise(getConfig().getBoolean("ShowNamesAboveDisguises"));
-        DisguiseAPI.setNameAboveHeadAlwaysVisible(getConfig().getBoolean("NameAboveHeadAlwaysVisible"));
-        DisguiseAPI.setModifyBoundingBox(getConfig().getBoolean("ModifyBoundingBox"));
-        DisguiseAPI.setMonstersIgnoreDisguises(getConfig().getBoolean("MonstersIgnoreDisguises"));
+        DisguiseConfig.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
+        DisguiseConfig.setVelocitySent(getConfig().getBoolean("SendVelocity"));
+        DisguiseConfig.setViewDisguises(getConfig().getBoolean("ViewSelfDisguises"));
+        DisguiseConfig.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
+        DisguiseConfig.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
+        DisguiseConfig.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
+        DisguiseConfig.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
+        DisguiseConfig.setNameOfPlayerShownAboveDisguise(getConfig().getBoolean("ShowNamesAboveDisguises"));
+        DisguiseConfig.setNameAboveHeadAlwaysVisible(getConfig().getBoolean("NameAboveHeadAlwaysVisible"));
+        DisguiseConfig.setModifyBoundingBox(getConfig().getBoolean("ModifyBoundingBox"));
+        DisguiseConfig.setMonstersIgnoreDisguises(getConfig().getBoolean("MonstersIgnoreDisguises"));
+        DisguiseConfig.setDisguiseBlownOnAttack(getConfig().getBoolean("BlowDisguises"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

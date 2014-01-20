@@ -55,15 +55,6 @@ public class ReflectionManager {
     private static Class itemClass;
     private static Field pingField;
 
-    public static double getPing(Player player) {
-        try {
-            return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return 0D;
-    }
-
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
@@ -250,6 +241,15 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static double getPing(Player player) {
+        try {
+            return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 0D;
     }
 
     public static float[] getSize(Entity entity) {

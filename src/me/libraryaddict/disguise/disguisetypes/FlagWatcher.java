@@ -19,6 +19,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
@@ -37,7 +38,7 @@ public class FlagWatcher {
         }
     }
 
-    private boolean addEntityAnimations = DisguiseAPI.isEntityAnimationsAdded();
+    private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
     /**
      * This is the entity values I need to add else it could crash them..
      */
@@ -230,7 +231,7 @@ public class FlagWatcher {
         mods.write(0, entity.getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            if (DisguiseAPI.isViewDisguises() || player != entity) {
+            if (DisguiseConfig.isViewDisguises() || player != entity) {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {

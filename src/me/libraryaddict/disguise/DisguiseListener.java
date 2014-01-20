@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -64,6 +65,22 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
+    public void onAttack(EntityDamageByEntityEvent event) {
+        if (DisguiseConfig.isDisguiseBlownOnAttack() && event.getEntity() instanceof Player) {
+            Disguise[] disguises = DisguiseAPI.getDisguises(event.getEntity());
+            if (disguises.length > 0) {
+                DisguiseAPI.undisguiseToAll(event.getEntity());
+                for (Disguise disguise : disguises) {
+                    if (DisguiseUtilities.isDisguiseInUse(disguise)) {
+                        ((Player) event.getEntity()).sendMessage(ChatColor.RED + "Your disguise was blown!");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (latestVersion != null && p.hasPermission(updateNotifyPermission))
@@ -72,7 +89,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        if (DisguiseAPI.isUnusedDisguisesRemoved()) {
+        if (DisguiseConfig.isUnusedDisguisesRemoved()) {
             for (TargetedDisguise disguise : DisguiseUtilities.getSeenDisguises(event.getPlayer().getName())) {
                 disguise.removeDisguise();
             }
@@ -87,11 +104,11 @@ public class DisguiseListener implements Listener {
             disguiseRunnable.remove(event.getPlayer().getName()).cancel();
             String entityName = event.getRightClicked().getType().name().toLowerCase().replace("_", " ");
             if (disguise != null) {
-                if (event.getRightClicked() instanceof Player && DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+                if (event.getRightClicked() instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
                         ((LivingWatcher) disguise.getWatcher())
                                 .setCustomName(((Player) event.getRightClicked()).getDisplayName());
-                        if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                        if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                             ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                         }
                     }
@@ -112,7 +129,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onTarget(EntityTargetEvent event) {
-        if (DisguiseAPI.isMonstersIgnoreDisguises() && event.getTarget() != null && event.getTarget() instanceof Player
+        if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null && event.getTarget() instanceof Player
                 && DisguiseAPI.isDisguised(event.getTarget())) {
             switch (event.getReason()) {
             case TARGET_ATTACKED_ENTITY:

@@ -1,7 +1,9 @@
 package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
+
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
@@ -68,10 +70,10 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             if (entity == sender)
                 continue;
             disguise = disguise.clone();
-            if (entity instanceof Player && DisguiseAPI.isNameOfPlayerShownAboveDisguise()) {
+            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
                     ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
-                    if (DisguiseAPI.isNameAboveHeadAlwaysVisible()) {
+                    if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                         ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                     }
                 }

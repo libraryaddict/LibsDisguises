@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
@@ -32,14 +33,14 @@ public abstract class Disguise {
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private Entity entity;
-    private boolean hearSelfDisguise = DisguiseAPI.isSelfDisguisesSoundsReplaced();
-    private boolean hideArmorFromSelf = DisguiseAPI.isHidingArmorFromSelf();
-    private boolean hideHeldItemFromSelf = DisguiseAPI.isHidingHeldItemFromSelf();
-    private boolean modifyBoundingBox = DisguiseAPI.isModifyBoundingBox();
-    private boolean replaceSounds = DisguiseAPI.isSoundEnabled();
+    private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
+    private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
+    private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
+    private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
+    private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private BukkitRunnable velocityRunnable;
-    private boolean velocitySent = DisguiseAPI.isVelocitySent();
-    private boolean viewSelfDisguise = DisguiseAPI.isViewDisguises();
+    private boolean velocitySent = DisguiseConfig.isVelocitySent();
+    private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
 
     @Deprecated
@@ -264,7 +265,7 @@ public abstract class Disguise {
                             packet.getIntegers().write(0, getEntity().getEntityId());
                             try {
                                 for (Player player : DisguiseUtilities.getPerverts(disguise)) {
-                                    if (DisguiseAPI.isViewDisguises() || getEntity() != player) {
+                                    if (DisguiseConfig.isViewDisguises() || getEntity() != player) {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                                     }
                                 }

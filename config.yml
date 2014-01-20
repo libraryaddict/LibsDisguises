@@ -50,3 +50,9 @@ ModifyBoundingBox: false
 # This doesn't prevent their targeting you if already targeting when disguised
 # They will just ignore you unless provoked.
 MonstersIgnoreDisguises: false
+# Sigh. People are going to want this.
+# So lets make your disguise blown if you are attacked..
+# Works only for disguised players when attacked by a entity (arrow, monster. etc)
+# This will blow all disguises he has on him
+BlowDisguises: false
+BlownDisguiseMessage: '&cYour disguise was blown!'
