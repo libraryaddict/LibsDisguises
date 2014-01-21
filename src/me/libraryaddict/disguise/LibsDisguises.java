@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+
 import me.libraryaddict.disguise.commands.*;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -20,6 +21,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
@@ -70,6 +72,8 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setModifyBoundingBox(getConfig().getBoolean("ModifyBoundingBox"));
         DisguiseConfig.setMonstersIgnoreDisguises(getConfig().getBoolean("MonstersIgnoreDisguises"));
         DisguiseConfig.setDisguiseBlownOnAttack(getConfig().getBoolean("BlowDisguises"));
+        DisguiseConfig.setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&',
+                getConfig().getString("BlownDisguiseMessage")));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

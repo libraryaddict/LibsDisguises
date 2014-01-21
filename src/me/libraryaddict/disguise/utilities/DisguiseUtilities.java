@@ -161,19 +161,6 @@ public class DisguiseUtilities {
         }
     }
 
-    public static TargetedDisguise getMainDisguise(int entityId) {
-        TargetedDisguise toReturn = null;
-        if (getDisguises().containsKey(entityId)) {
-            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                    return disguise;
-                }
-                toReturn = disguise;
-            }
-        }
-        return toReturn;
-    }
-
     public static TargetedDisguise getDisguise(Player observer, int entityId) {
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
@@ -194,6 +181,19 @@ public class DisguiseUtilities {
             return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
         }
         return new TargetedDisguise[0];
+    }
+
+    public static TargetedDisguise getMainDisguise(int entityId) {
+        TargetedDisguise toReturn = null;
+        if (getDisguises().containsKey(entityId)) {
+            for (TargetedDisguise disguise : getDisguises().get(entityId)) {
+                if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    return disguise;
+                }
+                toReturn = disguise;
+            }
+        }
+        return toReturn;
     }
 
     /**

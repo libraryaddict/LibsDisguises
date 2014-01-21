@@ -72,7 +72,7 @@ public class DisguiseListener implements Listener {
                 DisguiseAPI.undisguiseToAll(event.getEntity());
                 for (Disguise disguise : disguises) {
                     if (DisguiseUtilities.isDisguiseInUse(disguise)) {
-                        ((Player) event.getEntity()).sendMessage(ChatColor.RED + "Your disguise was blown!");
+                        ((Player) event.getEntity()).sendMessage(DisguiseConfig.getDisguiseBlownMessage());
                         break;
                     }
                 }

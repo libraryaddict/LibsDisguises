@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
     private static boolean blowDisguisesOnAttack;
+    private static String disguiseBlownMessage;
     private static boolean entityAnimationsAdded;
     private static boolean hearSelfDisguise;
     private static boolean hidingArmor;
@@ -18,6 +19,10 @@ public class DisguiseConfig {
     @Deprecated
     public static boolean canHearSelfDisguise() {
         return hearSelfDisguise;
+    }
+
+    public static String getDisguiseBlownMessage() {
+        return disguiseBlownMessage;
     }
 
     public static boolean isDisguiseBlownOnAttack() {
@@ -89,6 +94,10 @@ public class DisguiseConfig {
 
     public static void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
         entityAnimationsAdded = isEntityAnimationsAdded;
+    }
+
+    public static void setDisguiseBlownMessage(String newMessage) {
+        disguiseBlownMessage = newMessage;
     }
 
     public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
