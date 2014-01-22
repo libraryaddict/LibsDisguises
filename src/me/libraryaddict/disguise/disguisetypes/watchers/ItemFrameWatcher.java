@@ -2,8 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
-
 import org.bukkit.inventory.ItemStack;
 
 public class ItemFrameWatcher extends FlagWatcher {
@@ -19,7 +17,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     public ItemStack getItemStack() {
         if (getValue(2, null) == null)
             return new ItemStack(0);
-        return ReflectionManager.getBukkitItem(getValue(2, null));
+        return (ItemStack) getValue(2, null);
     }
 
     public void setItemRotation(int rotation) {
@@ -30,7 +28,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     public void setItemStack(ItemStack newItem) {
         newItem = newItem.clone();
         newItem.setAmount(1);
-        setValue(2, ReflectionManager.getNmsItem(newItem));
+        setValue(2, newItem);
         sendData(2);
     }
 
