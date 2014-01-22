@@ -248,7 +248,7 @@ public abstract class Disguise {
                                         mods.write(0, getEntity().getEntityId());
                                     }
                                     mods.write(2, (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
-                                    if (lookPacket != null) {
+                                    if (lookPacket != null && player != getEntity()) {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
                                     }
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, velocityPacket.shallowClone(),
@@ -266,7 +266,7 @@ public abstract class Disguise {
                             try {
                                 for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                                     if (DisguiseConfig.isViewDisguises() || getEntity() != player) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                     }
                                 }
                             } catch (InvocationTargetException e) {
