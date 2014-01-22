@@ -186,8 +186,8 @@ public abstract class Disguise {
                     DisguiseAPI.undisguiseToAll(getEntity());
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
-                        if (refreshDisguise++ % 40 == 0) {
+                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {refreshDisguise++;
+                        if (refreshDisguise % 40 == 0) {
                             refreshDisguise = 0;
                             DisguiseUtilities.refreshTrackers(disguise);
                             if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
