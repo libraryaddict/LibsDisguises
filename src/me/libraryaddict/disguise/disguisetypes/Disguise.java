@@ -117,6 +117,7 @@ public abstract class Disguise {
         case SPLASH_POTION:
         case THROWN_EXP_BOTTLE:
         case WITHER_SKULL:
+        case FIREWORK:
             alwaysSendVelocity = true;
             break;
         default:
@@ -186,7 +187,8 @@ public abstract class Disguise {
                     DisguiseAPI.undisguiseToAll(getEntity());
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {refreshDisguise++;
+                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
+                        refreshDisguise++;
                         if (refreshDisguise % 40 == 0) {
                             refreshDisguise = 0;
                             DisguiseUtilities.refreshTrackers(disguise);
