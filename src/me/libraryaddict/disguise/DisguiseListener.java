@@ -71,7 +71,7 @@ public class DisguiseListener implements Listener {
             if (disguises.length > 0) {
                 DisguiseAPI.undisguiseToAll(event.getEntity());
                 for (Disguise disguise : disguises) {
-                    if (DisguiseUtilities.isDisguiseInUse(disguise)) {
+                    if (DisguiseUtilities.isDisguiseInUse(disguise) && DisguiseConfig.getDisguiseBlownMessage().length() > 0) {
                         ((Player) event.getEntity()).sendMessage(DisguiseConfig.getDisguiseBlownMessage());
                         break;
                     }
@@ -83,8 +83,9 @@ public class DisguiseListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (latestVersion != null && p.hasPermission(updateNotifyPermission))
+        if (latestVersion != null && p.hasPermission(updateNotifyPermission)) {
             p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+        }
     }
 
     @EventHandler
