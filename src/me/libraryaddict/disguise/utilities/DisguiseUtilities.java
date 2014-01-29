@@ -409,6 +409,7 @@ public class DisguiseUtilities {
                 });
                 return;
             }
+            int fakeId = selfDisguisesIds.get(player.getEntityId());
             // Add himself to his own entity tracker
             ((HashSet) entityTrackerEntry.getClass().getField("trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager
                     .getNmsEntity(player));
@@ -418,8 +419,8 @@ public class DisguiseUtilities {
                     .createPacket(player));
             manager.sendServerPacket(
                     player,
-                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
-                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
+                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, fakeId,
+                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(fakeId,
                             WrappedDataWatcher.getEntityWatcher(player), true));
 
             boolean isMoving = false;
@@ -435,9 +436,9 @@ public class DisguiseUtilities {
                 Vector velocity = player.getVelocity();
                 manager.sendServerPacket(
                         player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(),
-                                velocity.getX(), velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(),
-                                velocity.getX(), velocity.getY(), velocity.getZ()));
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, fakeId, velocity.getX(),
+                                velocity.getY(), velocity.getZ()).createPacket(fakeId, velocity.getX(), velocity.getY(),
+                                velocity.getZ()));
             }
 
             // Why the hell would he even need this. Meh.
@@ -461,10 +462,9 @@ public class DisguiseUtilities {
                 }
 
                 if (item != null && item.getType() != Material.AIR) {
-                    manager.sendServerPacket(
-                            player,
-                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i,
-                                    item).createPacket(player.getEntityId(), i, item));
+                    manager.sendServerPacket(player,
+                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, fakeId, i, item)
+                                    .createPacket(fakeId, i, item));
                 }
             }
             Location loc = player.getLocation();
@@ -480,9 +480,10 @@ public class DisguiseUtilities {
             Iterator iterator = player.getActivePotionEffects().iterator();
             while (iterator.hasNext()) {
                 PotionEffect potionEffect = (PotionEffect) iterator.next();
-                manager.sendServerPacket(player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
-                                .createPacket(player.getEntityId(), potionEffect));
+                manager.sendServerPacket(
+                        player,
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, fakeId, potionEffect).createPacket(
+                                fakeId, potionEffect));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
