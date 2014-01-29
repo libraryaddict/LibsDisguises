@@ -70,11 +70,8 @@ public class DisguiseListener implements Listener {
             Disguise[] disguises = DisguiseAPI.getDisguises(event.getEntity());
             if (disguises.length > 0) {
                 DisguiseAPI.undisguiseToAll(event.getEntity());
-                for (Disguise disguise : disguises) {
-                    if (DisguiseUtilities.isDisguiseInUse(disguise) && DisguiseConfig.getDisguiseBlownMessage().length() > 0) {
-                        ((Player) event.getEntity()).sendMessage(DisguiseConfig.getDisguiseBlownMessage());
-                        break;
-                    }
+                if (DisguiseConfig.getDisguiseBlownMessage().length() > 0) {
+                    ((Player) event.getEntity()).sendMessage(DisguiseConfig.getDisguiseBlownMessage());
                 }
             }
         }
