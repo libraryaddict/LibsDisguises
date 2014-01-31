@@ -1118,7 +1118,7 @@ public class PacketsManager {
     /**
      * Transform the packet magically into the one I have always dreamed off. My true luv!!!
      */
-    private static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
+    public static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
         PacketContainer[] packets = new PacketContainer[] { sentPacket };
         try {
             // First get the entity, the one sending this packet
@@ -1229,7 +1229,8 @@ public class PacketsManager {
                             for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
                                 watcher.setValue((byte) ((Byte) watcher.getValue() & ~(1 << 4)));
                             }
-                            // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why? Scheduler delay.
+                            // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why? Scheduler
+                            // delay.
                             packets = new PacketContainer[] { packetUnblock, packets[0], packetBlock };
                             // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset
                             // it.

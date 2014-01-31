@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -386,6 +387,22 @@ public class DisguiseUtilities {
     }
 
     /**
+     * Method to send a packet to the self disguise, translate his entity ID to the fake id.
+     */
+    private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
+        PacketContainer[] packets = PacketsManager.transformPacket(packet, player);
+        try {
+            for (PacketContainer p : packets) {
+                p = p.deepClone();
+                p.getIntegers().write(0, fakeId);
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Sends the self disguise to the player
      */
     public static void sendSelfDisguise(final Player player) {
@@ -415,12 +432,12 @@ public class DisguiseUtilities {
                     .getNmsEntity(player));
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             // Send the player a packet with himself being spawned
-            manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
-                    .createPacket(player));
+            sendSelfPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
+                    .createPacket(player), fakeId);
             manager.sendServerPacket(
                     player,
-                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, fakeId,
-                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(fakeId,
+                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
+                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
                             WrappedDataWatcher.getEntityWatcher(player), true));
 
             boolean isMoving = false;
@@ -434,22 +451,22 @@ public class DisguiseUtilities {
             // Send the velocity packets
             if (isMoving) {
                 Vector velocity = player.getVelocity();
-                manager.sendServerPacket(
+                sendSelfPacket(
                         player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, fakeId, velocity.getX(),
-                                velocity.getY(), velocity.getZ()).createPacket(fakeId, velocity.getX(), velocity.getY(),
-                                velocity.getZ()));
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(),
+                                velocity.getX(), velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(),
+                                velocity.getX(), velocity.getY(), velocity.getZ()), fakeId);
             }
 
             // Why the hell would he even need this. Meh.
             if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
-                manager.sendServerPacket(player,
+                sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
-                                .createPacket(0, player, player.getVehicle()));
+                                .createPacket(0, player, player.getVehicle()), fakeId);
             } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
-                manager.sendServerPacket(player,
+                sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
-                                .createPacket(0, player.getPassenger(), player));
+                                .createPacket(0, player.getPassenger(), player), fakeId);
             }
 
             // Resend the armor
@@ -462,28 +479,28 @@ public class DisguiseUtilities {
                 }
 
                 if (item != null && item.getType() != Material.AIR) {
-                    manager.sendServerPacket(player,
-                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, fakeId, i, item)
-                                    .createPacket(fakeId, i, item));
+                    sendSelfPacket(
+                            player,
+                            manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i,
+                                    item).createPacket(player.getEntityId(), i, item), fakeId);
                 }
             }
             Location loc = player.getLocation();
             // If the disguised is sleeping for w/e reason
             if (player.isSleeping()) {
-                manager.sendServerPacket(
+                sendSelfPacket(
                         player,
                         manager.createPacketConstructor(PacketType.Play.Server.BED, player, loc.getBlockX(), loc.getBlockY(),
-                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), fakeId);
             }
 
             // Resend any active potion effects
             Iterator iterator = player.getActivePotionEffects().iterator();
             while (iterator.hasNext()) {
                 PotionEffect potionEffect = (PotionEffect) iterator.next();
-                manager.sendServerPacket(
-                        player,
-                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, fakeId, potionEffect).createPacket(
-                                fakeId, potionEffect));
+                sendSelfPacket(player,
+                        manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
+                                .createPacket(player.getEntityId(), potionEffect), fakeId);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
