@@ -432,13 +432,13 @@ public class DisguiseUtilities {
                     .getNmsEntity(player));
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             // Send the player a packet with himself being spawned
-            sendSelfPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
-                    .createPacket(player), fakeId);
-            manager.sendServerPacket(
+            manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
+                    .createPacket(player));
+            sendSelfPacket(
                     player,
                     manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
                             WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
-                            WrappedDataWatcher.getEntityWatcher(player), true));
+                            WrappedDataWatcher.getEntityWatcher(player), true), fakeId);
 
             boolean isMoving = false;
             try {
