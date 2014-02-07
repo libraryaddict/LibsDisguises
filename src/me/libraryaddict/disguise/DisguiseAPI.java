@@ -126,7 +126,7 @@ public class DisguiseAPI {
      * Get the disguise of a entity
      */
     public static Disguise getDisguise(Player observer, Entity disguised) {
-        if (disguised == null)
+        if (disguised == null || observer == null)
             return null;
         return DisguiseUtilities.getDisguise(observer, disguised.getEntityId());
     }

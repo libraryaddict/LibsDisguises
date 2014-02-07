@@ -83,7 +83,7 @@ public class PacketsManager {
                 // Prevents problems and there is no advantage to be gained.
                 if (entity == observer)
                     return;
-                PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer());
+                PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
                 if (packets.length == 0)
                     event.setCancelled(true);
                 else {
@@ -719,7 +719,7 @@ public class PacketsManager {
                     int fakeId = DisguiseAPI.getFakeDisguise(observer.getEntityId());
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-                        PacketContainer[] packets = transformPacket(event.getPacket(), observer);
+                        PacketContainer[] packets = transformPacket(event.getPacket(), observer, observer);
                         final PacketContainer[] delayedPackets = new PacketContainer[packets.length > 0 ? packets.length - 1 : 0];
                         for (int i = 0; i < packets.length; i++) {
                             PacketContainer packet = packets[i];
@@ -1118,13 +1118,9 @@ public class PacketsManager {
     /**
      * Transform the packet magically into the one I have always dreamed off. My true luv!!!
      */
-    public static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer) {
+    public static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
         PacketContainer[] packets = new PacketContainer[] { sentPacket };
         try {
-            // First get the entity, the one sending this packet
-            StructureModifier<Entity> entityModifer = sentPacket.getEntityModifier(observer.getWorld());
-            org.bukkit.entity.Entity entity = entityModifer
-                    .read((PacketType.Play.Server.COLLECT == sentPacket.getType() ? 1 : 0));
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
             // If disguised.
             if (disguise != null) {

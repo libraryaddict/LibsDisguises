@@ -390,7 +390,7 @@ public class DisguiseUtilities {
      * Method to send a packet to the self disguise, translate his entity ID to the fake id.
      */
     private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
-        PacketContainer[] packets = PacketsManager.transformPacket(packet, player);
+        PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
         try {
             for (PacketContainer p : packets) {
                 p = p.deepClone();
