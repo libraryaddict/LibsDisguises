@@ -115,7 +115,6 @@ public class DisguiseAPI {
     /**
      * Get the disguise of a entity
      */
-    @Deprecated
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
@@ -152,7 +151,6 @@ public class DisguiseAPI {
     /**
      * Is this entity disguised
      */
-    @Deprecated
     public static boolean isDisguised(Entity disguised) {
         return getDisguise(disguised) != null;
     }
