@@ -71,14 +71,15 @@ public class PacketsManager {
                 PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB, PacketType.Play.Server.SPAWN_ENTITY,
                 PacketType.Play.Server.SPAWN_ENTITY_LIVING, PacketType.Play.Server.SPAWN_ENTITY_PAINTING,
                 PacketType.Play.Server.COLLECT, PacketType.Play.Server.UPDATE_ATTRIBUTES,
-                PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.BED, PacketType.Play.Server.ENTITY_STATUS) {
+                PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.BED, PacketType.Play.Server.ENTITY_STATUS,
+                PacketType.Play.Server.ATTACH_ENTITY) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
                 // First get the entity, the one sending this packet
                 StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                org.bukkit.entity.Entity entity = entityModifer.read((PacketType.Play.Server.COLLECT == event.getPacketType() ? 1
-                        : 0));
+                org.bukkit.entity.Entity entity = entityModifer.read((PacketType.Play.Server.COLLECT == event.getPacketType()
+                        || PacketType.Play.Server.ATTACH_ENTITY == event.getPacketType() ? 1 : 0));
                 // If the entity is the same as the sender. Don't disguise!
                 // Prevents problems and there is no advantage to be gained.
                 if (entity == observer)
@@ -1128,6 +1129,12 @@ public class PacketsManager {
                 // This packet sends attributes
                 if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES) {
                     packets = new PacketContainer[0];
+                }
+
+                else if (sentPacket.getType() == PacketType.Play.Server.ATTACH_ENTITY) {
+                    if (disguise.getType().isMisc()) {
+                        packets = new PacketContainer[0];
+                    }
                 }
 
                 // Else if the packet is sending entity metadata
