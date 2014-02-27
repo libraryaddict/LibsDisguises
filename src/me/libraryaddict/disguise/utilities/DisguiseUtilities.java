@@ -295,6 +295,39 @@ public class DisguiseUtilities {
     }
 
     /**
+     * @param A convidence method for me to refresh trackers in other plugins
+     */
+    public static void refreshTrackers(Entity entity) {
+        try {
+            Object world = ReflectionManager.getWorld(entity.getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, entity.getEntityId());
+            if (entityTrackerEntry != null) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
+                HashSet cloned = (HashSet) trackedPlayers.clone();
+                for (Object p : cloned) {
+                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                    // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
+                    // entity))
+                    // continue;
+                    if (!(entity instanceof Player) || player.canSee((Player) entity)) {
+                        clear.invoke(entityTrackerEntry, p);
+                        updatePlayer.invoke(entityTrackerEntry, p);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
      * @param Resends
      *            the entity to all the watching players, which is where the magic begins
      */
@@ -383,22 +416,6 @@ public class DisguiseUtilities {
                 ex.printStackTrace();
             }
             player.updateInventory();
-        }
-    }
-
-    /**
-     * Method to send a packet to the self disguise, translate his entity ID to the fake id.
-     */
-    private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
-        PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
-        try {
-            for (PacketContainer p : packets) {
-                p = p.deepClone();
-                p.getIntegers().write(0, fakeId);
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
-            }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
     }
 
@@ -504,6 +521,22 @@ public class DisguiseUtilities {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to send a packet to the self disguise, translate his entity ID to the fake id.
+     */
+    private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
+        PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
+        try {
+            for (PacketContainer p : packets) {
+                p = p.deepClone();
+                p.getIntegers().write(0, fakeId);
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 
