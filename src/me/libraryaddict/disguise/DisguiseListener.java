@@ -64,15 +64,24 @@ public class DisguiseListener implements Listener {
         }
     }
 
+    private void checkPlayer(Player entity) {
+        Disguise[] disguises = DisguiseAPI.getDisguises(entity);
+        if (disguises.length > 0) {
+            DisguiseAPI.undisguiseToAll(entity);
+            if (DisguiseConfig.getDisguiseBlownMessage().length() > 0) {
+                entity.sendMessage(DisguiseConfig.getDisguiseBlownMessage());
+            }
+        }
+    }
+
     @EventHandler
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (DisguiseConfig.isDisguiseBlownOnAttack() && event.getEntity() instanceof Player) {
-            Disguise[] disguises = DisguiseAPI.getDisguises(event.getEntity());
-            if (disguises.length > 0) {
-                DisguiseAPI.undisguiseToAll(event.getEntity());
-                if (DisguiseConfig.getDisguiseBlownMessage().length() > 0) {
-                    ((Player) event.getEntity()).sendMessage(DisguiseConfig.getDisguiseBlownMessage());
-                }
+        if (DisguiseConfig.isDisguiseBlownOnAttack()) {
+            if (event.getEntity() instanceof Player) {
+                checkPlayer((Player) event.getEntity());
+            }
+            if (event.getDamager() instanceof Player) {
+                checkPlayer((Player) event.getDamager());
             }
         }
     }
