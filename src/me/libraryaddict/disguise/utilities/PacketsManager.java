@@ -486,8 +486,10 @@ public class PacketsManager {
                 PacketType.Play.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                if (event.isCancelled())
+                if (event.isCancelled()) {
                     return;
+                }
+                event.setPacket(event.getPacket().deepClone());
                 StructureModifier<Object> mods = event.getPacket().getModifier();
                 Player observer = event.getPlayer();
                 if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
