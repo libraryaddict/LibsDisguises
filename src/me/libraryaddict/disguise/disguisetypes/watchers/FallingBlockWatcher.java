@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -26,6 +27,9 @@ public class FallingBlockWatcher extends FlagWatcher {
 
     public void setBlock(ItemStack block) {
         this.block = block;
+        if (block.getType() == null || block.getType() == Material.AIR) {
+            block.setType(Material.STONE);
+        }
         if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());
         }
