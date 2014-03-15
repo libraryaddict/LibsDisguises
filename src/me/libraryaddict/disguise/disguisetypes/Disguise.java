@@ -37,6 +37,7 @@ public abstract class Disguise {
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
+    private boolean removeWhenInvalid;
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private BukkitRunnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
@@ -184,7 +185,9 @@ public abstract class Disguise {
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
-                    DisguiseAPI.undisguiseToAll(getEntity());
+                    if (isRemoveWhenInvalid()) {
+                        removeDisguise();
+                    }
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
                     if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
@@ -326,6 +329,10 @@ public abstract class Disguise {
         return false;
     }
 
+    public boolean isRemoveWhenInvalid() {
+        return !removeWhenInvalid;
+    }
+
     public boolean isSelfDisguiseSoundsReplaced() {
         return hearSelfDisguise;
     }
@@ -430,6 +437,10 @@ public abstract class Disguise {
                 DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
             }
         }
+    }
+
+    public void setRemoveDisguiseWhenInvalid(boolean removeWhenInvalid) {
+        this.removeWhenInvalid = removeWhenInvalid;
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {
