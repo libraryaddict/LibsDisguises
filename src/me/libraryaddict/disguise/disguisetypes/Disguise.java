@@ -270,8 +270,17 @@ public abstract class Disguise {
                             packet.getIntegers().write(0, getEntity().getEntityId());
                             try {
                                 for (Player player : DisguiseUtilities.getPerverts(disguise)) {
-                                    if (DisguiseConfig.isViewDisguises() || getEntity() != player) {
+                                    if (getEntity() != player) {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                                    } else if (isSelfDisguiseVisible()) {
+                                        PacketContainer selfPacket = packet.shallowClone();
+                                        selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getEntityId()));
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
+                                                    selfPacket, false);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
                             } catch (InvocationTargetException e) {
