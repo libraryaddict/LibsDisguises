@@ -37,7 +37,7 @@ public abstract class Disguise {
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
-    private boolean removeWhenInvalid;
+    private boolean removeWhenInvalid = true;
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private BukkitRunnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
@@ -338,8 +338,11 @@ public abstract class Disguise {
         return false;
     }
 
+    /**
+     * Is the disguise removed when the disguised entity is invalid?
+     */
     public boolean isRemoveWhenInvalid() {
-        return !removeWhenInvalid;
+        return removeWhenInvalid;
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
