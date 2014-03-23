@@ -711,18 +711,19 @@ public class PacketsManager {
                     if (fakeId > 0) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), observer, observer);
-                        if (packets != null) {
-                            for (int i = 0; i < packets.length; i++) {
-                                PacketContainer packet = packets[i];
-                                if (packet.equals(event.getPacket())) {
-                                    packet = packet.deepClone();
-                                }
-                                packet.getModifier().write(0, fakeId);
-                                try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
+                        if (packets == null) {
+                            packets = new PacketContainer[] { event.getPacket() };
+                        }
+                        for (int i = 0; i < packets.length; i++) {
+                            PacketContainer packet = packets[i];
+                            if (packet.equals(event.getPacket())) {
+                                packet = packet.deepClone();
+                            }
+                            packet.getModifier().write(0, fakeId);
+                            try {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
                             }
                         }
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
