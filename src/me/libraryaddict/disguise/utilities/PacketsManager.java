@@ -712,36 +712,17 @@ public class PacketsManager {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), observer, observer);
                         if (packets != null) {
-                            final PacketContainer[] delayedPackets = new PacketContainer[packets.length > 0 ? packets.length - 1
-                                    : 0];
                             for (int i = 0; i < packets.length; i++) {
                                 PacketContainer packet = packets[i];
                                 if (packet.equals(event.getPacket())) {
                                     packet = packet.deepClone();
                                 }
                                 packet.getModifier().write(0, fakeId);
-                                if (i == 0) {
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    delayedPackets[i - 1] = packet;
+                                try {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
                                 }
-                            }
-                            if (delayedPackets.length > 0) {
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                    public void run() {
-                                        try {
-                                            for (PacketContainer packet : delayedPackets) {
-                                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                            }
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                });
                             }
                         }
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
