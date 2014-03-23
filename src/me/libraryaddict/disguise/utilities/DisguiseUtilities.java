@@ -295,7 +295,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param A convidence method for me to refresh trackers in other plugins
+     * @param A
+     *            convidence method for me to refresh trackers in other plugins
      */
     public static void refreshTrackers(Entity entity) {
         try {
@@ -530,6 +531,9 @@ public class DisguiseUtilities {
     private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
         PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
         try {
+            if (packets == null) {
+                packets = new PacketContainer[] { packet };
+            }
             for (PacketContainer p : packets) {
                 p = p.deepClone();
                 p.getIntegers().write(0, fakeId);
