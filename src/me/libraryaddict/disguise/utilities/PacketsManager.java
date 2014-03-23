@@ -85,26 +85,14 @@ public class PacketsManager {
                 if (entity == observer)
                     return;
                 PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
-                if (packets.length == 0)
+                if (packets != null) {
                     event.setCancelled(true);
-                else {
-                    event.setPacket(packets[0]);
-                    final PacketContainer[] delayedPackets = new PacketContainer[packets.length - 1];
-                    for (int i = 1; i < packets.length; i++) {
-                        delayedPackets[i - 1] = packets[i];
-                    }
-                    if (delayedPackets.length > 0) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                            public void run() {
-                                try {
-                                    for (PacketContainer packet : delayedPackets) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                    }
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                    try {
+                        for (PacketContainer packet : packets) {
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                        }
+                    } catch (InvocationTargetException ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -768,6 +756,7 @@ public class PacketsManager {
                                 }
                             }
                         } else if (event.getPacketType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
+                            event.setCancelled(true);
                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, observer.getEntityId());
@@ -777,7 +766,11 @@ public class PacketsManager {
                                 b = (byte) (b | 1 << 3);
                             watchableList.add(new WrappedWatchableObject(0, b));
                             packet.getWatchableCollectionModifier().write(0, watchableList);
-                            event.setPacket(packet);
+                            try {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
+                            } catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
                         } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
                             if (event.getPacket().getIntegers().read(1) != (LibVersion.is1_7() ? 2 : 3)) {
                                 event.setCancelled(true);
@@ -1119,14 +1112,17 @@ public class PacketsManager {
     }
 
     /**
-     * Transform the packet magically into the one I have always dreamed off. My true luv!!!
+     * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if its not
+     * transformed
      */
     public static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
-        PacketContainer[] packets = new PacketContainer[] { sentPacket };
+        PacketContainer[] packets = null;
         try {
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
             // If disguised.
             if (disguise != null) {
+                packets = new PacketContainer[] { sentPacket };
+
                 // If packet is PacketType.Play.Server.UPDATE_ATTRIBUTES
                 // This packet sends attributes
                 if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES) {
@@ -1271,6 +1267,10 @@ public class PacketsManager {
                                         .createPacketConstructor(PacketType.Play.Server.ENTITY_LOOK, entity.getEntityId(), yaw,
                                                 pitch).createPacket(entity.getEntityId(), yaw, pitch), rotation };
                     }
+                }
+
+                else {
+                    packets = null;
                 }
             }
         } catch (Exception e) {
