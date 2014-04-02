@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
@@ -142,7 +143,7 @@ public class DisguiseAPI {
     /**
      * Get the ID of a fake disguise for a entityplayer
      */
-    public static int getFakeDisguise(int entityId) {
+    public static int getFakeDisguise(UUID entityId) {
         if (DisguiseUtilities.getSelfDisguisesIds().containsKey(entityId))
             return DisguiseUtilities.getSelfDisguisesIds().get(entityId);
         return -1;

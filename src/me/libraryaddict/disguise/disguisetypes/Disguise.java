@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.UUID;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -33,6 +34,7 @@ public abstract class Disguise {
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private Entity entity;
+    private UUID disguiseUUID;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
@@ -229,7 +231,7 @@ public abstract class Disguise {
                                         (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
-                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getEntityId()));
+                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                 selfLookPacket, false);
@@ -248,7 +250,7 @@ public abstract class Disguise {
                                         if (!isSelfDisguiseVisible()) {
                                             continue;
                                         }
-                                        mods.write(0, DisguiseAPI.getFakeDisguise(getEntity().getEntityId()));
+                                        mods.write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
                                     } else {
                                         mods.write(0, getEntity().getEntityId());
                                     }
@@ -274,7 +276,7 @@ public abstract class Disguise {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                     } else if (isSelfDisguiseVisible()) {
                                         PacketContainer selfPacket = packet.shallowClone();
-                                        selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getEntityId()));
+                                        selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                     selfPacket, false);

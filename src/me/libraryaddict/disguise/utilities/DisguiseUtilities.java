@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -39,7 +40,7 @@ public class DisguiseUtilities {
     private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
-    private static HashMap<Integer, Integer> selfDisguisesIds = new HashMap<Integer, Integer>();
+    private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<Integer, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
 
@@ -247,7 +248,7 @@ public class DisguiseUtilities {
         return dis;
     }
 
-    public static HashMap<Integer, Integer> getSelfDisguisesIds() {
+    public static HashMap<UUID, Integer> getSelfDisguisesIds() {
         return selfDisguisesIds;
     }
 
@@ -377,17 +378,17 @@ public class DisguiseUtilities {
     }
 
     public static void removeSelfDisguise(Player player) {
-        if (selfDisguisesIds.containsKey(player.getEntityId())) {
+        if (selfDisguisesIds.containsKey(player.getUniqueId())) {
             // Send a packet to destroy the fake entity
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-            packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getEntityId()) });
+            packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getUniqueId()) });
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             // Remove the fake entity ID from the disguise bin
-            selfDisguisesIds.remove(player.getEntityId());
+            selfDisguisesIds.remove(player.getUniqueId());
             // Get the entity tracker
             try {
                 Object world = ReflectionManager.getWorld(player.getWorld());
@@ -444,7 +445,7 @@ public class DisguiseUtilities {
                 });
                 return;
             }
-            int fakeId = selfDisguisesIds.get(player.getEntityId());
+            int fakeId = selfDisguisesIds.get(player.getUniqueId());
             // Add himself to his own entity tracker
             ((HashSet) entityTrackerEntry.getClass().getField("trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager
                     .getNmsEntity(player));
@@ -572,7 +573,7 @@ public class DisguiseUtilities {
             int id = field.getInt(null);
             // Set the entitycount plus one so we don't have the id being reused
             field.set(null, id + 1);
-            selfDisguisesIds.put(player.getEntityId(), id);
+            selfDisguisesIds.put(player.getUniqueId(), id);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
