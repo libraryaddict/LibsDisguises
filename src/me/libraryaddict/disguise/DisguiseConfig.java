@@ -9,17 +9,15 @@ public class DisguiseConfig {
     private static boolean hearSelfDisguise;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
+    private static boolean keepDisguiseEntityDespawn;
+    private static boolean keepDisguisePlayerDeath;
+    private static boolean keepDisguisePlayerLogout;
     private static boolean modifyBoundingBox;
     private static boolean removeUnseenDisguises;
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
-
-    @Deprecated
-    public static boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
-    }
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
@@ -45,6 +43,18 @@ public class DisguiseConfig {
      */
     public static boolean isHidingHeldItemFromSelf() {
         return hidingHeldItem;
+    }
+
+    public static boolean isKeepDisguiseOnEntityDespawn() {
+        return keepDisguiseEntityDespawn;
+    }
+
+    public static boolean isKeepDisguiseOnPlayerDeath() {
+        return keepDisguisePlayerDeath;
+    }
+
+    public static boolean isKeepDisguiseOnPlayerLogout() {
+        return keepDisguisePlayerLogout;
     }
 
     public static boolean isModifyBoundingBox() {
@@ -131,6 +141,18 @@ public class DisguiseConfig {
             hidingHeldItem = hideHelditem;
             PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
         }
+    }
+
+    public static void setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+        keepDisguiseEntityDespawn = keepDisguise;
+    }
+
+    public static void setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        keepDisguisePlayerDeath = keepDisguise;
+    }
+
+    public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+        keepDisguisePlayerLogout = keepDisguise;
     }
 
     public static void setModifyBoundingBox(boolean modifyBounding) {

@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
@@ -42,7 +43,7 @@ public class DisguiseAPI {
             disguise.setEntity(entity);
         }
         // Stick the disguise in the disguises bin
-        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) disguise);
+        DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) disguise);
         // Resend the disguised entity's packet
         DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         // If he is a player, then self disguise himself
@@ -77,7 +78,7 @@ public class DisguiseAPI {
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
-            DisguiseUtilities.addDisguise(id, (TargetedDisguise) disguise);
+            DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -118,7 +119,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
-        return DisguiseUtilities.getMainDisguise(disguised.getEntityId());
+        return DisguiseUtilities.getMainDisguise(disguised.getUniqueId());
     }
 
     /**
@@ -127,7 +128,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Player observer, Entity disguised) {
         if (disguised == null || observer == null)
             return null;
-        return DisguiseUtilities.getDisguise(observer, disguised.getEntityId());
+        return DisguiseUtilities.getDisguise(observer, disguised);
     }
 
     /**
@@ -136,13 +137,13 @@ public class DisguiseAPI {
     public static Disguise[] getDisguises(Entity disguised) {
         if (disguised == null)
             return null;
-        return DisguiseUtilities.getDisguises(disguised.getEntityId());
+        return DisguiseUtilities.getDisguises(disguised.getUniqueId());
     }
 
     /**
      * Get the ID of a fake disguise for a entityplayer
      */
-    public static int getFakeDisguise(int entityId) {
+    public static int getFakeDisguise(UUID entityId) {
         if (DisguiseUtilities.getSelfDisguisesIds().containsKey(entityId))
             return DisguiseUtilities.getSelfDisguisesIds().get(entityId);
         return -1;

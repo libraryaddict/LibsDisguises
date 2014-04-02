@@ -10,25 +10,15 @@ public class VillagerWatcher extends AgeableWatcher {
 
     public VillagerWatcher(Disguise disguise) {
         super(disguise);
-        setProfessionId(new Random().nextInt(Profession.values().length));
+        setProfession(Profession.values()[new Random().nextInt(Profession.values().length)]);
     }
 
     public Profession getProfession() {
         return Profession.values()[(Integer) getValue(16, 0)];
     }
 
-    @Deprecated
-    public int getProfessionId() {
-        return (Integer) getValue(16, 0);
-    }
-
     public void setProfession(Profession newProfession) {
-        setProfessionId(newProfession.getId());
-    }
-
-    @Deprecated
-    public void setProfessionId(int profession) {
-        setValue(16, profession % 6);
+        setValue(16, newProfession.getId() % 6);
         sendData(16);
     }
 

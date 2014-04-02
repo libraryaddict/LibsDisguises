@@ -8,29 +8,12 @@ public class CreeperWatcher extends LivingWatcher {
         super(disguise);
     }
 
-    @Deprecated
-    public boolean isFused() {
-        return (Byte) getValue(16, (byte) 0) == 1;
-    }
-
     public boolean isIgnited() {
         return (Byte) getValue(18, (byte) 0) == 1;
     }
 
     public boolean isPowered() {
         return (Byte) getValue(17, (byte) 0) == 1;
-    }
-
-    @Deprecated
-    public void setFuse(boolean isFused) {
-        setValue(16, (byte) (isFused ? 1 : -1));
-        sendData(16);
-    }
-
-    @Deprecated
-    public void setFused(boolean isFused) {
-        setValue(16, (byte) (isFused ? 1 : -1));
-        sendData(16);
     }
 
     public void setIgnited(boolean ignited) {

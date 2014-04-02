@@ -74,6 +74,9 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setDisguiseBlownOnAttack(getConfig().getBoolean("BlowDisguises"));
         DisguiseConfig.setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&',
                 getConfig().getString("BlownDisguiseMessage")));
+        DisguiseConfig.setKeepDisguiseOnPlayerDeath(getConfig().getBoolean("KeepDisguises.PlayerDeath"));
+        DisguiseConfig.setKeepDisguiseOnPlayerLogout(getConfig().getBoolean("KeepDisguises.PlayerLogout"));
+        DisguiseConfig.setKeepDisguiseOnEntityDespawn(getConfig().getBoolean("KeepDisguises.EntityDespawn"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.
