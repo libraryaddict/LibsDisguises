@@ -42,9 +42,9 @@ public class DisguiseUtilities {
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
-    private static HashMap<Integer, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+    private static HashMap<UUID, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<UUID, HashSet<TargetedDisguise>>();
 
-    public static void addDisguise(int entityId, TargetedDisguise disguise) {
+    public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
             getDisguises().put(entityId, new HashSet<TargetedDisguise>());
         }
@@ -62,7 +62,7 @@ public class DisguiseUtilities {
     public static void checkConflicts(TargetedDisguise disguise, String name) {
         // If the disguise is being used.. Else we may accidentally undisguise something else
         if (DisguiseAPI.isDisguiseInUse(disguise)) {
-            Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getEntityId()).iterator();
+            Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getUniqueId()).iterator();
             // Iterate through the disguises
             while (disguiseItel.hasNext()) {
                 TargetedDisguise d = disguiseItel.next();
@@ -163,7 +163,7 @@ public class DisguiseUtilities {
         }
     }
 
-    public static TargetedDisguise getDisguise(Player observer, int entityId) {
+    public static TargetedDisguise getDisguise(Player observer, UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
                 if (disguise.canSee(observer)) {
@@ -174,18 +174,18 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static HashMap<Integer, HashSet<TargetedDisguise>> getDisguises() {
+    public static HashMap<UUID, HashSet<TargetedDisguise>> getDisguises() {
         return targetedDisguises;
     }
 
-    public static TargetedDisguise[] getDisguises(int entityId) {
+    public static TargetedDisguise[] getDisguises(UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
             return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
         }
         return new TargetedDisguise[0];
     }
 
-    public static TargetedDisguise getMainDisguise(int entityId) {
+    public static TargetedDisguise getMainDisguise(UUID entityId) {
         TargetedDisguise toReturn = null;
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
@@ -257,8 +257,8 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        if (disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getEntityId())
-                && getDisguises().get(disguise.getEntity().getEntityId()).contains(disguise)) {
+        if (disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId())
+                && getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise)) {
             return true;
         }
         return false;
@@ -364,7 +364,7 @@ public class DisguiseUtilities {
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
-        int entityId = disguise.getEntity().getEntityId();
+        UUID entityId = disguise.getEntity().getUniqueId();
         if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
             if (getDisguises().get(entityId).isEmpty()) {
                 getDisguises().remove(entityId);
@@ -551,8 +551,8 @@ public class DisguiseUtilities {
     public static void setupFakeDisguise(final Disguise disguise) {
         Entity e = disguise.getEntity();
         // If the disguises entity is null, or the disguised entity isn't a player return
-        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getEntityId())
-                || !getDisguises().get(e.getEntityId()).contains(disguise)) {
+        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId())
+                || !getDisguises().get(e.getUniqueId()).contains(disguise)) {
             return;
         }
         Player player = (Player) e;

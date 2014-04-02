@@ -43,7 +43,7 @@ public class DisguiseAPI {
             disguise.setEntity(entity);
         }
         // Stick the disguise in the disguises bin
-        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) disguise);
+        DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) disguise);
         // Resend the disguised entity's packet
         DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         // If he is a player, then self disguise himself
@@ -119,7 +119,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
             return null;
-        return DisguiseUtilities.getMainDisguise(disguised.getEntityId());
+        return DisguiseUtilities.getMainDisguise(disguised.getUniqueId());
     }
 
     /**
@@ -128,7 +128,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Player observer, Entity disguised) {
         if (disguised == null || observer == null)
             return null;
-        return DisguiseUtilities.getDisguise(observer, disguised.getEntityId());
+        return DisguiseUtilities.getDisguise(observer, disguised.getUniqueId());
     }
 
     /**
@@ -137,7 +137,7 @@ public class DisguiseAPI {
     public static Disguise[] getDisguises(Entity disguised) {
         if (disguised == null)
             return null;
-        return DisguiseUtilities.getDisguises(disguised.getEntityId());
+        return DisguiseUtilities.getDisguises(disguised.getUniqueId());
     }
 
     /**

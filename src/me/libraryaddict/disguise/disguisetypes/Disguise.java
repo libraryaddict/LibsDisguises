@@ -34,7 +34,6 @@ public abstract class Disguise {
     private static JavaPlugin plugin;
     private DisguiseType disguiseType;
     private Entity entity;
-    private UUID disguiseUUID;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
@@ -375,7 +374,7 @@ public abstract class Disguise {
             velocityRunnable.cancel();
         } catch (Exception ex) {
         }
-        HashMap<Integer, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
+        HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
         // If this disguise has a entity set
         if (getEntity() != null) {
             // If this disguise is active
@@ -393,9 +392,9 @@ public abstract class Disguise {
             }
         } else {
             // Loop through the disguises because it could be used with a unknown entity id.
-            Iterator<Integer> itel = disguises.keySet().iterator();
+            Iterator<UUID> itel = disguises.keySet().iterator();
             while (itel.hasNext()) {
-                int id = itel.next();
+                UUID id = itel.next();
                 if (disguises.get(id).remove(this) && disguises.get(id).isEmpty()) {
                     itel.remove();
                 }
