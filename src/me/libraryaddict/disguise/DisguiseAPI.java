@@ -78,7 +78,7 @@ public class DisguiseAPI {
             Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
             field.setAccessible(true);
             int id = field.getInt(null);
-            DisguiseUtilities.addDisguise(id, (TargetedDisguise) disguise);
+            DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -128,7 +128,7 @@ public class DisguiseAPI {
     public static Disguise getDisguise(Player observer, Entity disguised) {
         if (disguised == null || observer == null)
             return null;
-        return DisguiseUtilities.getDisguise(observer, disguised.getUniqueId());
+        return DisguiseUtilities.getDisguise(observer, disguised);
     }
 
     /**

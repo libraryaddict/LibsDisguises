@@ -43,6 +43,14 @@ public class DisguiseUtilities {
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<UUID, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<UUID, HashSet<TargetedDisguise>>();
+    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+
+    public static void addFutureDisguise(int entityId, TargetedDisguise disguise) {
+        if (!futureDisguises.containsKey(entityId)) {
+            futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
+        }
+        futureDisguises.get(entityId).add(disguise);
+    }
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
@@ -163,7 +171,13 @@ public class DisguiseUtilities {
         }
     }
 
-    public static TargetedDisguise getDisguise(Player observer, UUID entityId) {
+    public static TargetedDisguise getDisguise(Player observer, Entity entity) {
+        UUID entityId = entity.getUniqueId();
+        if (futureDisguises.containsKey(entity.getEntityId())) {
+            for (TargetedDisguise disguise : futureDisguises.remove(entity.getEntityId())) {
+                addDisguise(entityId, disguise);
+            }
+        }
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
                 if (disguise.canSee(observer)) {
