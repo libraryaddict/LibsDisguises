@@ -188,6 +188,10 @@ public abstract class Disguise {
                 if (!getEntity().isValid()) {
                     if (isRemoveWhenInvalid()) {
                         removeDisguise();
+                    } else {
+                        entity = null;
+                        watcher = getWatcher().clone(disguise);
+                        cancel();
                     }
                 } else {
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
