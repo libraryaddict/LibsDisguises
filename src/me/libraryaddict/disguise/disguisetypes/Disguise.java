@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
@@ -37,8 +38,10 @@ public abstract class Disguise {
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
+    private boolean keepDisguiseEntityDespawn = DisguiseConfig.isKeepDisguiseOnEntityDespawn();
+    private boolean keepDisguisePlayerDeath = DisguiseConfig.isKeepDisguiseOnPlayerDeath();
+    private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
-    private boolean removeWhenInvalid = true;
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private BukkitRunnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
@@ -186,7 +189,15 @@ public abstract class Disguise {
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
-                    if (isRemoveWhenInvalid()) {
+
+                    if (getEntity() instanceof Player ?
+
+                    (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
+                            : !isKeepDisguiseOnPlayerDeath())
+
+                    :
+
+                    (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead())) {
                         removeDisguise();
                     } else {
                         entity = null;
@@ -327,6 +338,18 @@ public abstract class Disguise {
         return hideHeldItemFromSelf;
     }
 
+    public boolean isKeepDisguiseOnEntityDespawn() {
+        return this.keepDisguiseEntityDespawn;
+    }
+
+    public boolean isKeepDisguiseOnPlayerDeath() {
+        return this.keepDisguisePlayerDeath;
+    }
+
+    public boolean isKeepDisguiseOnPlayerLogout() {
+        return this.keepDisguisePlayerLogout;
+    }
+
     public boolean isMiscDisguise() {
         return false;
     }
@@ -341,13 +364,6 @@ public abstract class Disguise {
 
     public boolean isPlayerDisguise() {
         return false;
-    }
-
-    /**
-     * Is the disguise removed when the disguised entity is invalid?
-     */
-    public boolean isRemoveWhenInvalid() {
-        return removeWhenInvalid;
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -443,6 +459,18 @@ public abstract class Disguise {
         }
     }
 
+    public void setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+        this.keepDisguiseEntityDespawn = keepDisguise;
+    }
+
+    public void setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        this.keepDisguisePlayerDeath = keepDisguise;
+    }
+
+    public void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+        this.keepDisguisePlayerLogout = keepDisguise;
+    }
+
     public void setModifyBoundingBox(boolean modifyBox) {
         if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
             throw new RuntimeException(
@@ -454,10 +482,6 @@ public abstract class Disguise {
                 DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
             }
         }
-    }
-
-    public void setRemoveDisguiseWhenInvalid(boolean removeWhenInvalid) {
-        this.removeWhenInvalid = removeWhenInvalid;
     }
 
     public void setReplaceSounds(boolean areSoundsReplaced) {

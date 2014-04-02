@@ -37,20 +37,13 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
+    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
     private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
     // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
     private static HashMap<UUID, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<UUID, HashSet<TargetedDisguise>>();
-    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
-
-    public static void addFutureDisguise(int entityId, TargetedDisguise disguise) {
-        if (!futureDisguises.containsKey(entityId)) {
-            futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
-        }
-        futureDisguises.get(entityId).add(disguise);
-    }
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
@@ -61,6 +54,13 @@ public class DisguiseUtilities {
         if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise.isModifyBoundingBox()) {
             doBoundingBox(disguise);
         }
+    }
+
+    public static void addFutureDisguise(int entityId, TargetedDisguise disguise) {
+        if (!futureDisguises.containsKey(entityId)) {
+            futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
+        }
+        futureDisguises.get(entityId).add(disguise);
     }
 
     /**
