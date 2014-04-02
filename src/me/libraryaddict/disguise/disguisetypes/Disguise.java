@@ -48,11 +48,6 @@ public abstract class Disguise {
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
 
-    @Deprecated
-    public boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
-    }
-
     @Override
     public abstract Disguise clone();
 
@@ -86,9 +81,9 @@ public abstract class Disguise {
         // Set the disguise if its a baby or not
         if (!isAdult) {
             if (getWatcher() instanceof AgeableWatcher) {
-                ((AgeableWatcher) getWatcher()).setAdult(false);
+                ((AgeableWatcher) getWatcher()).setBaby(true);
             } else if (getWatcher() instanceof ZombieWatcher) {
-                ((ZombieWatcher) getWatcher()).setAdult(false);
+                ((ZombieWatcher) getWatcher()).setBaby(true);
             }
         }
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
@@ -422,11 +417,6 @@ public abstract class Disguise {
         }
     }
 
-    @Deprecated
-    public boolean replaceSounds() {
-        return replaceSounds;
-    }
-
     /**
      * Set the entity of the disguise. Only used for internal things.
      */
@@ -613,10 +603,5 @@ public abstract class Disguise {
 
     public void setWatcher(FlagWatcher newWatcher) {
         watcher = newWatcher;
-    }
-
-    @Deprecated
-    public boolean viewSelfDisguise() {
-        return viewSelfDisguise;
     }
 }

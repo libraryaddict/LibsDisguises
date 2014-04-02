@@ -11,7 +11,7 @@ public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(Disguise disguise) {
         super(disguise);
-        setColorId(new Random().nextInt(Color.values().length));
+        setColor(Color.values()[new Random().nextInt(Color.values().length)]);
     }
 
     public Color getColor() {
@@ -32,11 +32,6 @@ public class HorseWatcher extends AgeableWatcher {
 
     public boolean hasChest() {
         return isTrue(8);
-    }
-
-    @Deprecated
-    public boolean isBredable() {
-        return isTrue(16);
     }
 
     public boolean isBreedable() {
@@ -67,11 +62,6 @@ public class HorseWatcher extends AgeableWatcher {
         return ((Integer) getValue(16, (byte) 0) & i) != 0;
     }
 
-    @Deprecated
-    public void setCanBred(boolean breed) {
-        setFlag(16, breed);
-    }
-
     public void setCanBreed(boolean breed) {
         setFlag(16, breed);
     }
@@ -82,12 +72,6 @@ public class HorseWatcher extends AgeableWatcher {
 
     public void setColor(Color color) {
         setValue(20, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
-        sendData(20);
-    }
-
-    @Deprecated
-    public void setColorId(int color) {
-        setValue(20, (color % Color.values().length) & 0xFF | getStyle().ordinal() << 8);
         sendData(20);
     }
 
@@ -129,12 +113,6 @@ public class HorseWatcher extends AgeableWatcher {
 
     public void setStyle(Style style) {
         setValue(20, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(20);
-    }
-
-    @Deprecated
-    public void setStyleId(int style) {
-        setValue(20, getColor().ordinal() & 0xFF | (style % Style.values().length) << 8);
         sendData(20);
     }
 

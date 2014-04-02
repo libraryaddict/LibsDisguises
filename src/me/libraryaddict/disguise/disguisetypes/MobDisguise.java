@@ -62,9 +62,9 @@ public class MobDisguise extends TargetedDisguise {
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher)
-                return ((AgeableWatcher) getWatcher()).isAdult();
+                return ((AgeableWatcher) getWatcher()).isBaby();
             else if (getWatcher() instanceof ZombieWatcher)
-                return ((ZombieWatcher) getWatcher()).isAdult();
+                return ((ZombieWatcher) getWatcher()).isBaby();
             return false;
         }
         return isAdult;

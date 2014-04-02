@@ -161,11 +161,6 @@ public class FlagWatcher {
         return ((Byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
     }
 
-    @Deprecated
-    public ItemStack getHeldItem() {
-        return getItemInHand();
-    }
-
     public ItemStack getItemInHand() {
         return getItemStack(SlotType.HELD_ITEM);
     }
@@ -198,11 +193,6 @@ public class FlagWatcher {
 
     public boolean isInvisible() {
         return getFlag(5);
-    }
-
-    @Deprecated
-    public boolean isRiding() {
-        return getFlag(2);
     }
 
     public boolean isRightClicking() {
@@ -269,11 +259,6 @@ public class FlagWatcher {
         }
     }
 
-    @Deprecated
-    public void setHeldItem(ItemStack itemstack) {
-        setItemInHand(itemstack);
-    }
-
     public void setInvisible(boolean setInvis) {
         setFlag(5, setInvis);
         sendData(0);
@@ -326,12 +311,6 @@ public class FlagWatcher {
 
     public void setItemStack(SlotType slot, ItemStack itemStack) {
         setItemStack(slot.getSlot(), itemStack);
-    }
-
-    @Deprecated
-    public void setRiding(boolean setRiding) {
-        setFlag(2, setRiding);
-        sendData(0);
     }
 
     public void setRightClicking(boolean setRightClicking) {

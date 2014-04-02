@@ -8,9 +8,8 @@ public class ZombieWatcher extends LivingWatcher {
         super(disguise);
     }
 
-    @Deprecated
     public boolean isAdult() {
-        return (Byte) getValue(12, (byte) 0) == 0;
+        return !isBaby();
     }
 
     public boolean isBaby() {
@@ -21,9 +20,12 @@ public class ZombieWatcher extends LivingWatcher {
         return (Byte) getValue(13, (byte) 0) == 1;
     }
 
-    @Deprecated
-    public void setAdult(boolean adult) {
-        setBaby(!adult);
+    public void setAdult() {
+        setBaby(false);
+    }
+
+    public void setBaby() {
+        setBaby(true);
     }
 
     public void setBaby(boolean baby) {

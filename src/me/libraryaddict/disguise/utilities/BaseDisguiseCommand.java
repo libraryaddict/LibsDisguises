@@ -372,34 +372,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
-    /* private ArrayList<Method> getUsableMethods(DisguiseType disguiseType, CommandSender commandSender) {
-         ArrayList<Method> methods = getSettableMethods(disguiseType);
-         ArrayList<String> allowedDisguises = this.getAllowedDisguises(commandSender);
-     }
-
-     private ArrayList<Method> getSettableMethods(DisguiseType disguiseType) {
-         ArrayList<Method> methods = new ArrayList<Method>();
-         String[] acceptableParams = new String[] { "String", "boolean", "int", "float", "double", "AnimalColor", "ItemStack",
-                 "ItemStack[]", "Style", "Color", "Type", "Profession", "PotionEffectType" };
-         try {
-             for (Method method : disguiseType.getWatcherClass().getMethods()) {
-                 if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
-                         && method.getAnnotation(Deprecated.class) == null) {
-                     Class c = method.getParameterTypes()[0];
-                     for (String acceptable : acceptableParams) {
-                         if (c.getSimpleName().equals(acceptable)) {
-                             methods.add(method);
-                             break;
-                         }
-                     }
-                 }
-             }
-         } catch (Exception ex) {
-             ex.printStackTrace();
-         }
-         return methods;
-     }*/// //
-
     private void doCheck(HashSet<HashSet<String>> optionPermissions, HashSet<String> usedOptions) throws Exception {
         if (!optionPermissions.isEmpty()) {
             for (HashSet<String> perms : optionPermissions) {

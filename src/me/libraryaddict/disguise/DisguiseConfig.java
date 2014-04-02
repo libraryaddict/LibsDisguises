@@ -19,11 +19,6 @@ public class DisguiseConfig {
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
 
-    @Deprecated
-    public static boolean canHearSelfDisguise() {
-        return hearSelfDisguise;
-    }
-
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
     }

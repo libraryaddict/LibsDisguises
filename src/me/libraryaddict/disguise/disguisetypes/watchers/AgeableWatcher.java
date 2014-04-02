@@ -12,7 +12,6 @@ public class AgeableWatcher extends LivingWatcher {
         return (Integer) getValue(12, 0);
     }
 
-    @Deprecated
     public boolean isAdult() {
         return !isBaby();
     }
@@ -21,14 +20,17 @@ public class AgeableWatcher extends LivingWatcher {
         return (Integer) getValue(12, 0) < 0;
     }
 
-    @Deprecated
-    public void setAdult(boolean isAdult) {
-        setBaby(!isAdult);
+    public void setAdult() {
+        setBaby(false);
     }
 
     public void setAge(int newAge) {
         setValue(12, newAge);
         sendData(12);
+    }
+
+    public void setBaby() {
+        setBaby(true);
     }
 
     public void setBaby(boolean isBaby) {

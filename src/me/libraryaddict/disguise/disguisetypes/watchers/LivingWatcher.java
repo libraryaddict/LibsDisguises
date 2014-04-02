@@ -6,7 +6,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class LivingWatcher extends FlagWatcher {
@@ -36,14 +35,6 @@ public class LivingWatcher extends FlagWatcher {
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
-    }
-
-    @Deprecated
-    public void addPotionEffect(PotionEffect potionEffect) {
-        if (hasPotionEffect(potionEffect.getType()))
-            removePotionEffect(potionEffect.getType());
-        potionEffects.add(potionEffect.getType().getId());
-        sendPotionEffects();
     }
 
     public void addPotionEffect(PotionEffectType potionEffect) {
