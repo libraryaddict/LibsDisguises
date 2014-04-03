@@ -399,11 +399,8 @@ public abstract class Disguise {
                     DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                 }
 
-                // If the entity is not dead
-                if (getEntity().isValid()) {
-                    // Better refresh the entity to undisguise it
-                    DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                }
+                // Better refresh the entity to undisguise it
+                DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
             }
         } else {
             // Loop through the disguises because it could be used with a unknown entity id.
