@@ -41,17 +41,25 @@ public class LibsDisguises extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         boolean needToSaveConfig = false;
+        InputStream stream = null;
         try {
-            InputStream stream = getClassLoader().getResource("config.yml").openStream();
+            stream = getClassLoader().getResource("config.yml").openStream();
             for (String option : YamlConfiguration.loadConfiguration(stream).getKeys(false)) {
                 if (!config.contains(option)) {
                     config.set(option, getConfig().get(option));
                     needToSaveConfig = true;
                 }
             }
-            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (needToSaveConfig) {
             try {
