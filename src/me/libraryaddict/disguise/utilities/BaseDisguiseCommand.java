@@ -237,7 +237,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             Object value = null;
             for (Method method : disguise.getWatcher().getClass().getMethods()) {
                 if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
-                        && method.getAnnotation(Deprecated.class) == null) {
+                        && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
                     methodToUse = method;
                     methodName = method.getName();
                     Class<?>[] types = method.getParameterTypes();
