@@ -142,6 +142,35 @@ public class DisguiseUtilities {
         }
     }
 
+    /**
+     * @param Sends
+     *            entity removal packets, as this disguise was removed
+     */
+    public static void destroyEntity(TargetedDisguise disguise) {
+        try {
+            Object world = ReflectionManager.getWorld(disguise.getEntity().getWorld());
+            Object tracker = world.getClass().getField("tracker").get(world);
+            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                    .invoke(trackedEntities, disguise.getEntity().getEntityId());
+            if (entityTrackerEntry != null) {
+                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                        .get(entityTrackerEntry);
+                HashSet cloned = (HashSet) trackedPlayers.clone();
+                PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+                destroyPacket.getIntegerArrays().write(0, new int[] { disguise.getEntity().getEntityId() });
+                for (Object p : cloned) {
+                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                    if (disguise.canSee(player.getName())) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void doBoundingBox(TargetedDisguise disguise) {
         // TODO Slimes
         Entity entity = disguise.getEntity();

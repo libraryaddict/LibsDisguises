@@ -179,27 +179,35 @@ public abstract class Disguise {
         final TargetedDisguise disguise = (TargetedDisguise) this;
         // A scheduler to clean up any unused disguises.
         velocityRunnable = new BukkitRunnable() {
+            private int deadTicks = 0;
             private int refreshDisguise = 0;
 
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
+                    // If it has been dead for 30+ ticks
+                    // This is to ensure that this disguise isn't removed while clients think its the real entity
+                    // The delay is because if it sends the destroy entity packets straight away, then it means no death animation
+                    // This is probably still a problem for wither and enderdragon deaths.
+                    if (deadTicks++ > 30) {
 
-                    if (getEntity() instanceof Player ?
+                        if (getEntity() instanceof Player ?
 
-                    (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
-                            : !isKeepDisguiseOnPlayerDeath())
+                        (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
+                                : !isKeepDisguiseOnPlayerDeath())
 
-                    :
+                        :
 
-                    (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead())) {
-                        removeDisguise();
-                    } else {
-                        entity = null;
-                        watcher = getWatcher().clone(disguise);
-                        cancel();
+                        (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead())) {
+                            removeDisguise();
+                        } else {
+                            entity = null;
+                            watcher = getWatcher().clone(disguise);
+                            cancel();
+                        }
                     }
                 } else {
+                    deadTicks = 0;
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
                     if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK) {
                         refreshDisguise++;
@@ -400,7 +408,11 @@ public abstract class Disguise {
                 }
 
                 // Better refresh the entity to undisguise it
-                DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                if (getEntity().isValid()) {
+                    DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                } else {
+                    DisguiseUtilities.destroyEntity((TargetedDisguise) this);
+                }
             }
         } else {
             // Loop through the disguises because it could be used with a unknown entity id.
