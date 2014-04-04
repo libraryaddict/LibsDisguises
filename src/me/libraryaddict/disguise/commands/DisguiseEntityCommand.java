@@ -51,7 +51,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
         if (allowedDisguises.contains("player"))
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseentity player <Name>");
-        sender.sendMessage(ChatColor.DARK_GREEN + "/disguise <DisguiseType> <Baby>");
+        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseentity <DisguiseType> <Baby>");
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block"))
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseentity <Dropped_Item/Falling_Block> <Id> <Durability>");
     }

@@ -127,7 +127,7 @@ public enum DisguiseSound {
                 s = (String) obj;
             } else if (obj instanceof Sound) {
                 s = ReflectionManager.getCraftSound((Sound) obj);
-                System.out.print("Warning, the sound " + obj + " needs to be converted to a string");
+                System.out.print("Warning! The sound " + obj + " needs to be converted to a string");
             } else {
                 throw new RuntimeException("Was given a unknown object " + obj);
             }
