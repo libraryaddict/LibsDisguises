@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -98,6 +99,16 @@ public class DisguiseListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         if (DisguiseConfig.isUnusedDisguisesRemoved()) {
             for (TargetedDisguise disguise : DisguiseUtilities.getSeenDisguises(event.getPlayer().getName())) {
+                disguise.removeDisguise();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
+        for (Disguise disguise : disguises) {
+            if (disguise.isRemoveDisguiseOnDeath()) {
                 disguise.removeDisguise();
             }
         }

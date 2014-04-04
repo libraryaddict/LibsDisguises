@@ -189,16 +189,8 @@ public abstract class Disguise {
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
                     // The delay is because if it sends the destroy entity packets straight away, then it means no death animation
                     // This is probably still a problem for wither and enderdragon deaths.
-                    if (deadTicks++ > 30) {
-
-                        if (getEntity() instanceof Player ?
-
-                        (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
-                                : !isKeepDisguiseOnPlayerDeath())
-
-                        :
-
-                        (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead())) {
+                    if (deadTicks++ > (getType() == DisguiseType.ENDER_DRAGON ? 200 : 20)) {
+                        if (isRemoveDisguiseOnDeath()) {
                             removeDisguise();
                         } else {
                             entity = null;
@@ -367,6 +359,20 @@ public abstract class Disguise {
 
     public boolean isPlayerDisguise() {
         return false;
+    }
+
+    /**
+     * Internal use
+     */
+    public boolean isRemoveDisguiseOnDeath() {
+        return getEntity() instanceof Player ?
+
+        (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
+                : !isKeepDisguiseOnPlayerDeath())
+
+        :
+
+        (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead());
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
