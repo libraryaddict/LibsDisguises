@@ -2,6 +2,7 @@ package me.libraryaddict.disguise;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 
 import me.libraryaddict.disguise.commands.*;
@@ -41,13 +42,14 @@ public class LibsDisguises extends JavaPlugin {
         FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
         boolean needToSaveConfig = false;
         try {
-            for (String option : YamlConfiguration.loadConfiguration(getClassLoader().getResource("config.yml").openStream())
-                    .getKeys(false)) {
+            InputStream stream = getClassLoader().getResource("config.yml").openStream();
+            for (String option : YamlConfiguration.loadConfiguration(stream).getKeys(false)) {
                 if (!config.contains(option)) {
                     config.set(option, getConfig().get(option));
                     needToSaveConfig = true;
                 }
             }
+            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
