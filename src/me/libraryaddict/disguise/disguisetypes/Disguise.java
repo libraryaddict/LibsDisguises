@@ -190,6 +190,7 @@ public abstract class Disguise {
                     // The delay is because if it sends the destroy entity packets straight away, then it means no death animation
                     // This is probably still a problem for wither and enderdragon deaths.
                     if (deadTicks++ > (getType() == DisguiseType.ENDER_DRAGON ? 200 : 20)) {
+                        deadTicks = 0;
                         if (isRemoveDisguiseOnDeath()) {
                             removeDisguise();
                         } else {
