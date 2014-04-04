@@ -43,7 +43,8 @@ public abstract class Disguise {
     private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
-    private BukkitRunnable velocityRunnable;
+    private Runnable velocityRunnable;
+    private int taskId = -1;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
@@ -178,7 +179,7 @@ public abstract class Disguise {
         final double vectorY = velocitySpeed;
         final TargetedDisguise disguise = (TargetedDisguise) this;
         // A scheduler to clean up any unused disguises.
-        velocityRunnable = new BukkitRunnable() {
+        velocityRunnable = new Runnable() {
             private int deadTicks = 0;
             private int refreshDisguise = 0;
 
@@ -196,7 +197,8 @@ public abstract class Disguise {
                         } else {
                             entity = null;
                             watcher = getWatcher().clone(disguise);
-                            cancel();
+                            Bukkit.getScheduler().cancelTask(taskId);
+                            taskId = -1;
                         }
                     }
                 } else {
@@ -399,35 +401,34 @@ public abstract class Disguise {
      * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
      */
     public void removeDisguise() {
-        // Why the hell can't I safely check if its running?!?!
-        try {
-            velocityRunnable.cancel();
-        } catch (Exception ex) {
-        }
-        HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
-        // If this disguise has a entity set
-        if (getEntity() != null) {
-            // If this disguise is active
-            // Remove the disguise from the current disguises.
-            if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
-                if (getEntity() instanceof Player) {
-                    DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                }
+        if (taskId != -1) {
+            Bukkit.getScheduler().cancelTask(taskId);
+            taskId = -1;
+            HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
+            // If this disguise has a entity set
+            if (getEntity() != null) {
+                // If this disguise is active
+                // Remove the disguise from the current disguises.
+                if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                    if (getEntity() instanceof Player) {
+                        DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                    }
 
-                // Better refresh the entity to undisguise it
-                if (getEntity().isValid()) {
-                    DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                } else {
-                    DisguiseUtilities.destroyEntity((TargetedDisguise) this);
+                    // Better refresh the entity to undisguise it
+                    if (getEntity().isValid()) {
+                        DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                    } else {
+                        DisguiseUtilities.destroyEntity((TargetedDisguise) this);
+                    }
                 }
-            }
-        } else {
-            // Loop through the disguises because it could be used with a unknown entity id.
-            Iterator<UUID> itel = disguises.keySet().iterator();
-            while (itel.hasNext()) {
-                UUID id = itel.next();
-                if (disguises.get(id).remove(this) && disguises.get(id).isEmpty()) {
-                    itel.remove();
+            } else {
+                // Loop through the disguises because it could be used with a unknown entity id.
+                Iterator<UUID> itel = disguises.keySet().iterator();
+                while (itel.hasNext()) {
+                    UUID id = itel.next();
+                    if (disguises.get(id).remove(this) && disguises.get(id).isEmpty()) {
+                        itel.remove();
+                    }
                 }
             }
         }
@@ -444,7 +445,7 @@ public abstract class Disguise {
         }
         this.entity = entity;
         setupWatcher();
-        velocityRunnable.runTaskTimer(plugin, 1, 1);
+        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, velocityRunnable, 1, 1);
     }
 
     public void setHearSelfDisguise(boolean hearSelfDisguise) {
