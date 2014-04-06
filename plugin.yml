@@ -4,6 +4,7 @@ version: ${project.version}
 author: libraryaddict
 depend: [ProtocolLib]
 commands:
+   libsdisguises:
    disguise:
       aliases: [d, dis]
    disguiseentity:
