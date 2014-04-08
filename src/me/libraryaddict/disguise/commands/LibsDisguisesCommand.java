@@ -10,11 +10,12 @@ public class LibsDisguisesCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        sender.sendMessage(ChatColor.GOLD + "Lib's Disguises was created by libraryaddict");
-        if (sender.getName().equals("libraryaddict")) {
-            sender.sendMessage(ChatColor.GRAY + "The server is running version "
-                    + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion());
-        }
+        sender.sendMessage(ChatColor.DARK_GREEN
+                + "This server is running "
+                + "Lib's Disguises "
+                + (sender.getName().equals("libraryaddict") ? "v"
+                        + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion() + " " : "")
+                + "by libraryaddict");
         return true;
     }
 }
