@@ -42,8 +42,8 @@ public abstract class Disguise {
     private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
-    private Runnable velocityRunnable;
     private int taskId = -1;
+    private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
