@@ -318,15 +318,9 @@ public class DisguiseUtilities {
                                 final HashMap<String, UUID> map = fetcher.call();
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                                     public void run() {
-                                        if (!map.containsKey(playerName)) {
+                                        if (map.containsKey(playerName)) {
                                             if (namesUuids.containsKey(playerName) && namesUuids.get(playerName) == null) {
-                                                namesUuids.remove(playerName);
-                                            }
-                                        } else {
-                                            for (String name : map.keySet()) {
-                                                if (namesUuids.containsKey(name) && namesUuids.get(name) == null) {
-                                                    namesUuids.put(name, map.get(name).toString());
-                                                }
+                                                namesUuids.put(playerName, map.get(playerName).toString());
                                             }
                                             if (DisguiseUtilities.isDisguiseInUse(disguise)) {
                                                 DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
