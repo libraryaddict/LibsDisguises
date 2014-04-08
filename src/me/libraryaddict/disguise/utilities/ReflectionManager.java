@@ -90,7 +90,7 @@ public class ReflectionManager {
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
                 if (LibVersion.is1_7()) {
-                    Object gameProfile = getGameProfile("LibsDisguises");
+                    Object gameProfile = getGameProfile(null, "LibsDisguises");
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
                             gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
                             gameProfile, playerinteractmanager);
@@ -206,10 +206,10 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getGameProfile(String playerName) {
+    public static Object getGameProfile(UUID uuid, String playerName) {
         try {
             return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
-                    .newInstance(UUID.randomUUID().toString(), playerName);
+                    .newInstance(uuid != null ? uuid.toString() : UUID.randomUUID().toString(), playerName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
