@@ -16,7 +16,7 @@ commands:
    disguiseradius:
       aliases: [disradius, dradius]
    undisguise:
-      aliases: [u, undis]
+      aliases: [u, und, undis]
    undisguiseentity:
       aliases: [undisentity, undentity]
    undisguiseplayer:
