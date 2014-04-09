@@ -324,6 +324,9 @@ public class DisguiseUtilities {
                                             }
                                             if (DisguiseUtilities.isDisguiseInUse(disguise)) {
                                                 DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                                                if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
+                                                    DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity());
+                                                }
                                             }
                                         }
                                     }
