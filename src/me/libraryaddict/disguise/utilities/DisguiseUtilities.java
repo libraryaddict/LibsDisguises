@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +40,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
     private static LibsDisguises libsDisguises;
-    private static HashMap<String, String> namesUuids = new HashMap<String, String>();
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
@@ -312,45 +310,6 @@ public class DisguiseUtilities {
                     e.printStackTrace();
                 }
             }
-            /*else if (disguise != null) {
-                if (namesUuids.containsKey(playerName)) {
-                    if (namesUuids.get(playerName) != null) {
-                        return UUID.fromString(namesUuids.get(playerName));
-                    }
-                } else {
-                    // Add null so that if this is called again. I already know I'm doing something about it
-                    namesUuids.put(playerName, null);
-                    Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
-                        public void run() {
-                            UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(playerName));
-                            try {
-                                final HashMap<String, UUID> map = fetcher.call();
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                                    public void run() {
-                                        if (map.containsKey(playerName)) {
-                                            if (namesUuids.containsKey(playerName) && namesUuids.get(playerName) == null) {
-                                                namesUuids.put(playerName, map.get(playerName).toString());
-                                            }
-                                            if (DisguiseUtilities.isDisguiseInUse(disguise)) {
-                                                DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                                                if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
-                                                    DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity());
-                                                }
-                                            }
-                                        }
-                                    }
-                                });
-                            } catch (Exception e) {
-                                if (namesUuids.containsKey(playerName) && namesUuids.get(playerName) == null) {
-                                    namesUuids.remove(playerName);
-                                }
-                                System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
-                                        + e.getMessage());
-                            }
-                        }
-                    });
-                }
-              }*/
         }
         return null;
     }
