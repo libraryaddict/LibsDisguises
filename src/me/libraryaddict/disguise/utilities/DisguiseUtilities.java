@@ -299,7 +299,7 @@ public class DisguiseUtilities {
     }
 
     public static UUID getUUID(final Disguise disguise, final String playerName) {
-        if (LibVersion.getGameVersion() == LibVersion.V1_7) {
+       /* if (LibVersion.getGameVersion() == LibVersion.V1_7) {
             Player p = Bukkit.getPlayerExact(playerName);
             if (p != null) {
                 return p.getUniqueId();
@@ -342,7 +342,7 @@ public class DisguiseUtilities {
                     });
                 }
             }
-        }
+        }*/
         return null;
     }
 
