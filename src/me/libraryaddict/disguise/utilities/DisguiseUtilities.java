@@ -302,8 +302,17 @@ public class DisguiseUtilities {
         if (LibVersion.getGameVersion() == LibVersion.V1_7) {
             Player p = Bukkit.getPlayerExact(playerName);
             if (p != null) {
-                return p.getUniqueId();
-            } /*else if (disguise != null) {
+                try {
+                    Field field = ReflectionManager.getNmsClass("PlayerConnection").getDeclaredField("processedDisconnect");
+                    field.setAccessible(true);
+                    if (field.getBoolean(ReflectionManager.getNmsClass("EntityPlayer").getField("playerConnection")
+                            .get(p.getClass().getDeclaredMethod("getHandle").invoke(p))))
+                        return p.getUniqueId();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            /*else if (disguise != null) {
                 if (namesUuids.containsKey(playerName)) {
                     if (namesUuids.get(playerName) != null) {
                         return UUID.fromString(namesUuids.get(playerName));
@@ -341,7 +350,7 @@ public class DisguiseUtilities {
                         }
                     });
                 }
-            }*/
+              }*/
         }
         return null;
     }
