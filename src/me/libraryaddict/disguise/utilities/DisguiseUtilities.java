@@ -305,7 +305,7 @@ public class DisguiseUtilities {
                 try {
                     Field field = ReflectionManager.getNmsClass("PlayerConnection").getDeclaredField("processedDisconnect");
                     field.setAccessible(true);
-                    if (field.getBoolean(ReflectionManager.getNmsClass("EntityPlayer").getField("playerConnection")
+                    if (!field.getBoolean(ReflectionManager.getNmsClass("EntityPlayer").getField("playerConnection")
                             .get(p.getClass().getDeclaredMethod("getHandle").invoke(p))))
                         return p.getUniqueId();
                 } catch (Exception e) {
