@@ -299,11 +299,11 @@ public class DisguiseUtilities {
     }
 
     public static UUID getUUID(final Disguise disguise, final String playerName) {
-       /* if (LibVersion.getGameVersion() == LibVersion.V1_7) {
+        if (LibVersion.getGameVersion() == LibVersion.V1_7) {
             Player p = Bukkit.getPlayerExact(playerName);
             if (p != null) {
                 return p.getUniqueId();
-            } else if (disguise != null) {
+            } /*else if (disguise != null) {
                 if (namesUuids.containsKey(playerName)) {
                     if (namesUuids.get(playerName) != null) {
                         return UUID.fromString(namesUuids.get(playerName));
@@ -341,8 +341,8 @@ public class DisguiseUtilities {
                         }
                     });
                 }
-            }
-        }*/
+            }*/
+        }
         return null;
     }
 
