@@ -36,6 +36,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
 
 public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
@@ -310,6 +313,9 @@ public class DisguiseUtilities {
                     e.printStackTrace();
                 }
             }
+            EthernetAddress addr = EthernetAddress.fromInterface();
+            TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(addr);
+            return uuidGenerator.generate();
         }
         return null;
     }
