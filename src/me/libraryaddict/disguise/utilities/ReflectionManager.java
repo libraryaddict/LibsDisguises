@@ -16,14 +16,18 @@ import org.bukkit.inventory.ItemStack;
 
 public class ReflectionManager {
     public enum LibVersion {
-        V1_6, V1_7;
+        V1_6, V1_7, V1_7_3;
         private static LibVersion currentVersion;
         static {
             if (getBukkitVersion().startsWith("v1_")) {
                 try {
                     int version = Integer.parseInt(getBukkitVersion().split("_")[1]);
                     if (version == 7) {
-                        currentVersion = LibVersion.V1_7;
+                        if (Integer.parseInt(getBukkitVersion().split("_")[1]) < 3) {
+                            currentVersion = LibVersion.V1_7;
+                        } else {
+                            currentVersion = LibVersion.V1_7_3;
+                        }
                     } else {
                         if (version < 7) {
                             currentVersion = LibVersion.V1_6;
@@ -32,7 +36,7 @@ public class ReflectionManager {
                         }
                     }
                 } catch (Exception ex) {
-
+                    ex.printStackTrace();
                 }
             }
         }
@@ -46,7 +50,11 @@ public class ReflectionManager {
         }
 
         public static boolean is1_7() {
-            return getGameVersion() == V1_7;
+            return getGameVersion() == V1_7 || getGameVersion() == V1_7_3;
+        }
+
+        public static boolean is1_7_3() {
+            return getGameVersion() == V1_7_3;
         }
     }
 
@@ -202,6 +210,17 @@ public class ReflectionManager {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getGameProfile(Player player) {
+        if (LibVersion.is1_7_3()) {
+            try {
+                return getNmsClass("EntityHuman").getMethod("getProfile").invoke(getNmsEntity(player));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         return null;
     }

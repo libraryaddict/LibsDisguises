@@ -300,7 +300,7 @@ public class DisguiseUtilities {
     }
 
     public static UUID getUUID() {
-        if (LibVersion.getGameVersion() == LibVersion.V1_7) {
+        if (LibVersion.is1_7()) {
             EthernetAddress addr = EthernetAddress.fromInterface();
             TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(addr);
             return uuidGenerator.generate();

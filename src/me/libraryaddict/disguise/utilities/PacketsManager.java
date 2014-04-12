@@ -121,7 +121,7 @@ public class PacketsManager {
     /**
      * Construct the packets I need to spawn in the disguise
      */
-    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
+    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity, Player observer) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
@@ -200,8 +200,16 @@ public class PacketsManager {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                spawnPackets[0].getModifier().write(1,
-                        ReflectionManager.getGameProfile(DisguiseUtilities.getUUID(), ((PlayerDisguise) disguise).getName()));
+                Object gameProfile = null;
+                if (disguisedEntity instanceof Player
+                        && ((Player) disguisedEntity).getName().equals(((PlayerDisguise) disguise).getName())
+                        && disguisedEntity != observer) {
+                    gameProfile = ReflectionManager.getGameProfile((Player) disguisedEntity);
+                } else {
+                    gameProfile = ReflectionManager.getGameProfile(DisguiseUtilities.getUUID(),
+                            ((PlayerDisguise) disguise).getName());
+                }
+                spawnPackets[0].getModifier().write(1, gameProfile);
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
             intMods.write(0, disguisedEntity.getEntityId());
@@ -1137,7 +1145,7 @@ public class PacketsManager {
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING) {
-                    packets = constructSpawnPackets(disguise, entity);
+                    packets = constructSpawnPackets(disguise, entity, observer);
                 }
 
                 // Else if the disguise is attempting to send players a forbidden packet
