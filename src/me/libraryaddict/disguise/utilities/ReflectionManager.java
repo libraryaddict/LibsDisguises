@@ -208,8 +208,14 @@ public class ReflectionManager {
 
     public static Object getGameProfile(UUID uuid, String playerName) {
         try {
-            return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile").getConstructor(String.class, String.class)
-                    .newInstance(uuid != null ? uuid.toString() : "", playerName);
+            try {
+                return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
+                        .getConstructor(UUID.class, String.class)
+                        .newInstance(uuid != null ? uuid : DisguiseUtilities.getUUID(), playerName);
+            } catch (NoSuchMethodException ex) {
+                return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
+                        .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }

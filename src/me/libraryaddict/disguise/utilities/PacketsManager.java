@@ -200,11 +200,8 @@ public class PacketsManager {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                spawnPackets[0].getModifier().write(
-                        1,
-                        ReflectionManager.getGameProfile(
-                                DisguiseUtilities.getUUID(disguise, ((PlayerDisguise) disguise).getName()),
-                                ((PlayerDisguise) disguise).getName()));
+                spawnPackets[0].getModifier().write(1,
+                        ReflectionManager.getGameProfile(DisguiseUtilities.getUUID(), ((PlayerDisguise) disguise).getName()));
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
             intMods.write(0, disguisedEntity.getEntityId());

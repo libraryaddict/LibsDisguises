@@ -299,20 +299,8 @@ public class DisguiseUtilities {
         return selfDisguisesIds;
     }
 
-    public static UUID getUUID(final Disguise disguise, final String playerName) {
+    public static UUID getUUID() {
         if (LibVersion.getGameVersion() == LibVersion.V1_7) {
-            Player p = Bukkit.getPlayerExact(playerName);
-            if (p != null) {
-                try {
-                    Field field = ReflectionManager.getNmsClass("PlayerConnection").getDeclaredField("processedDisconnect");
-                    field.setAccessible(true);
-                    if (!field.getBoolean(ReflectionManager.getNmsClass("EntityPlayer").getField("playerConnection")
-                            .get(p.getClass().getDeclaredMethod("getHandle").invoke(p))))
-                        return p.getUniqueId();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
             EthernetAddress addr = EthernetAddress.fromInterface();
             TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(addr);
             return uuidGenerator.generate();
