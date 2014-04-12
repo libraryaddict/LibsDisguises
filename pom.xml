@@ -90,7 +90,7 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	<version>8.0.7</version>
+	<version>8.0.8</version>
 
 	<distributionManagement>
 		<repository>
