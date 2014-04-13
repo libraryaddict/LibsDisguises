@@ -134,7 +134,7 @@ public class FlagWatcher {
                         float newHealth = (Float) value;
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
-                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity());
+                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), disguise);
                         } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }

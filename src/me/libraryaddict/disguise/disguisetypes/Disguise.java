@@ -209,7 +209,7 @@ public abstract class Disguise {
                             refreshDisguise = 0;
                             DisguiseUtilities.refreshTrackers(disguise);
                             if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
-                                DisguiseUtilities.sendSelfDisguise((Player) getEntity());
+                                DisguiseUtilities.sendSelfDisguise((Player) getEntity(), disguise);
                             }
                         }
                     }

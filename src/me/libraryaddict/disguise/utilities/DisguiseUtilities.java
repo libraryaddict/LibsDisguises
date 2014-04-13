@@ -480,9 +480,9 @@ public class DisguiseUtilities {
     /**
      * Sends the self disguise to the player
      */
-    public static void sendSelfDisguise(final Player player) {
+    public static void sendSelfDisguise(final Player player, final Disguise disguise) {
         try {
-            if (!player.isValid()) {
+            if (!player.isValid() || !player.isOnline()) {
                 return;
             }
             Object world = ReflectionManager.getWorld(player.getWorld());
@@ -494,9 +494,12 @@ public class DisguiseUtilities {
                 // A check incase the tracker is null.
                 // If it is, then this method will be run again in one tick. Which is when it should be constructed.
                 // Else its going to run in a infinite loop hue hue hue..
+                // At least until this disguise is discarded
                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                     public void run() {
-                        sendSelfDisguise(player);
+                        if (DisguiseAPI.getDisguise(player, player) == disguise) {
+                            sendSelfDisguise(player, disguise);
+                        }
                     }
                 });
                 return;
@@ -633,7 +636,7 @@ public class DisguiseUtilities {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        sendSelfDisguise(player);
+        sendSelfDisguise(player, disguise);
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
             if (PacketsManager.isInventoryListenerEnabled()) {
                 player.updateInventory();
