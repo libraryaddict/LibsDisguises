@@ -201,14 +201,7 @@ public class PacketsManager {
                 }
             } else {
                 Object gameProfile = null;
-                if (disguisedEntity instanceof Player
-                        && ((Player) disguisedEntity).getName().equals(((PlayerDisguise) disguise).getName())
-                        && disguisedEntity != observer) {
-                    gameProfile = ReflectionManager.getGameProfile((Player) disguisedEntity);
-                } else {
-                    gameProfile = ReflectionManager.getGameProfile(DisguiseUtilities.getUUID(),
-                            ((PlayerDisguise) disguise).getName());
-                }
+                gameProfile = DisguiseUtilities.getProfile(disguise, ((PlayerDisguise) disguise).getName());
                 spawnPackets[0].getModifier().write(1, gameProfile);
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();

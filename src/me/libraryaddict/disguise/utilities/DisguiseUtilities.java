@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +19,6 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,12 +36,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.impl.TimeBasedGenerator;
 
 public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+    private static HashMap<String, Object> gameProfiles = new HashMap<String, Object>();
     private static LibsDisguises libsDisguises;
     // A internal storage of fake entity ID's I can use.
     // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
@@ -272,6 +270,60 @@ public class DisguiseUtilities {
         return players;
     }
 
+    public static Object getProfile(final Disguise disguise, final String playerName) {
+        Player player = null;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getName().equalsIgnoreCase(playerName)) {
+                player = p;
+                break;
+            }
+        }
+        if (player != null) {
+            return ReflectionManager.getGameProfile(player);
+        } else if (disguise != null) {
+            if (gameProfiles.containsKey(playerName)) {
+                if (gameProfiles.get(playerName) != null) {
+                    return gameProfiles.get(playerName);
+                }
+            } else {
+                // Add null so that if this is called again. I already know I'm doing something about it
+                gameProfiles.put(playerName, null);
+                Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
+                    public void run() {
+                        try {
+                            UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(playerName));
+                            HashMap<String, UUID> map = fetcher.call();
+                            if (map.containsKey(playerName)) {
+                                Object gameprofile = ReflectionManager.getGameProfile(map.get(playerName), playerName);
+                                final Object gameProfile = ReflectionManager.grabSkullBlob(gameprofile);
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    public void run() {
+                                        if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                                            gameProfiles.put(playerName, gameProfile);
+                                        }
+                                        if (DisguiseUtilities.isDisguiseInUse(disguise)) {
+                                            DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                                            if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
+                                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                                gameProfiles.remove(playerName);
+                            }
+                            System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
+                                    + e.getMessage());
+                        }
+                    }
+                });
+            }
+        }
+        return ReflectionManager.getGameProfile(null, playerName);
+    }
+
     public static List<TargetedDisguise> getSeenDisguises(String viewer) {
         List<TargetedDisguise> dis = new ArrayList<TargetedDisguise>();
         for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {
@@ -297,15 +349,6 @@ public class DisguiseUtilities {
 
     public static HashMap<UUID, Integer> getSelfDisguisesIds() {
         return selfDisguisesIds;
-    }
-
-    public static UUID getUUID() {
-        if (LibVersion.is1_7()) {
-            EthernetAddress addr = EthernetAddress.fromInterface();
-            TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(addr);
-            return uuidGenerator.generate();
-        }
-        return null;
     }
 
     public static void init(LibsDisguises disguises) {

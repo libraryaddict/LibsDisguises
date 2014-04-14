@@ -222,7 +222,7 @@ public class ReflectionManager {
             try {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(UUID.class, String.class)
-                        .newInstance(uuid != null ? uuid : DisguiseUtilities.getUUID(), playerName);
+                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
             } catch (NoSuchMethodException ex) {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
@@ -295,6 +295,22 @@ public class ReflectionManager {
             return getCraftClass("CraftWorld").getMethod("getHandle").invoke(world);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object grabSkullBlob(Object gameProfile) {
+        try {
+            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                    Object session = method.invoke(minecraftServer);
+                    return session.getClass().getMethod("fillProfileProperties", gameProfile.getClass(), boolean.class)
+                            .invoke(session, gameProfile, true);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
