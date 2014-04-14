@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -285,10 +284,9 @@ public class DisguiseUtilities {
                 Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
                     public void run() {
                         try {
-                            UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(playerName));
-                            HashMap<String, UUID> map = fetcher.call();
-                            if (map.containsKey(playerName)) {
-                                Object gameprofile = ReflectionManager.getGameProfile(map.get(playerName), playerName);
+                            Object gameprofile = ReflectionManager.grabUUID(ReflectionManager.getGameProfile(null, playerName,
+                                    false));
+                            if (gameprofile != null) {
                                 final Object gameProfile = ReflectionManager.grabSkullBlob(gameprofile);
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                                     public void run() {

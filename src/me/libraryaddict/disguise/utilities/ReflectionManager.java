@@ -218,11 +218,15 @@ public class ReflectionManager {
     }
 
     public static Object getGameProfile(UUID uuid, String playerName) {
+        return getGameProfile(uuid, playerName, true);
+    }
+
+    public static Object getGameProfile(UUID uuid, String playerName, boolean createUuid) {
         try {
             try {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(UUID.class, String.class)
-                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
+                        .newInstance(uuid != null || !createUuid ? uuid : UUID.randomUUID(), playerName);
             } catch (NoSuchMethodException ex) {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
@@ -307,6 +311,22 @@ public class ReflectionManager {
                     Object session = method.invoke(minecraftServer);
                     return session.getClass().getMethod("fillProfileProperties", gameProfile.getClass(), boolean.class)
                             .invoke(session, gameProfile, true);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object grabUUID(Object gameProfile) {
+        try {
+            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                    Object session = method.invoke(minecraftServer);
+                    return session.getClass().getMethod("hasJoinedServer", gameProfile.getClass(), String.class)
+                            .invoke(session, gameProfile, null);
                 }
             }
         } catch (Exception ex) {
