@@ -271,13 +271,7 @@ public class DisguiseUtilities {
     }
 
     public static Object getProfile(final Disguise disguise, final String playerName) {
-        Player player = null;
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getName().equalsIgnoreCase(playerName)) {
-                player = p;
-                break;
-            }
-        }
+        Player player = Bukkit.getPlayerExact(playerName);
         if (player != null) {
             return ReflectionManager.getGameProfile(player);
         } else if (disguise != null) {
