@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
@@ -269,11 +270,11 @@ public class DisguiseUtilities {
         return players;
     }
 
-    public static Object getProfile(final Disguise disguise, final String playerName) {
+    public static Object getProfile(final String playerName) {
         Player player = Bukkit.getPlayerExact(playerName);
         if (player != null) {
             return ReflectionManager.getGameProfile(player);
-        } else if (disguise != null) {
+        } else {
             if (gameProfiles.containsKey(playerName)) {
                 if (gameProfiles.get(playerName) != null) {
                     return gameProfiles.get(playerName);
@@ -293,10 +294,17 @@ public class DisguiseUtilities {
                                         if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                                             gameProfiles.put(playerName, gameProfile);
                                         }
-                                        if (DisguiseUtilities.isDisguiseInUse(disguise)) {
-                                            DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                                            if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
-                                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                                        for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                                            for (TargetedDisguise disguise : disguises) {
+                                                if (disguise.getType() == DisguiseType.PLAYER
+                                                        && ((PlayerDisguise) disguise).getName().equals(playerName)) {
+                                                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                                                    if (disguise.getEntity() instanceof Player
+                                                            && disguise.isSelfDisguiseVisible()) {
+                                                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(),
+                                                                disguise);
+                                                    }
+                                                }
                                             }
                                         }
                                     }

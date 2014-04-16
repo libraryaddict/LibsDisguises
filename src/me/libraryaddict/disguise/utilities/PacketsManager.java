@@ -201,7 +201,7 @@ public class PacketsManager {
                 }
             } else {
                 Object gameProfile = null;
-                gameProfile = DisguiseUtilities.getProfile(disguise, ((PlayerDisguise) disguise).getName());
+                gameProfile = DisguiseUtilities.getProfile(((PlayerDisguise) disguise).getName());
                 spawnPackets[0].getModifier().write(1, gameProfile);
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
