@@ -12,9 +12,13 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -27,27 +31,51 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
-        ArrayList<String> names = new ArrayList<String>();
-        ArrayList<String> forbiddenDisguises = new ArrayList<String>();
+        HashSet<String> singleAllowed = new HashSet<String>();
+        HashSet<String> singleForbidden = new HashSet<String>();
+        HashSet<String> globalForbidden = new HashSet<String>();
+        HashSet<String> globalAllowed = new HashSet<String>();
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
             String perm = permission.getPermission().toLowerCase();
             if (perm.startsWith(permissionNode)) {
                 perm = perm.substring(permissionNode.length());
+                String disguiseType = perm.split("\\.")[0];
+                HashSet<String> perms;
                 for (DisguiseType type : DisguiseType.values()) {
                     if (type.getEntityType() == null) {
                         continue;
                     }
+                    Class entityClass = type.getEntityType().getEntityClass();
                     String name = type.name().toLowerCase();
-                    if (perm.split("\\.")[0].equals("*") && permission.getValue()) {
-                        if (!names.contains(name))
-                            names.add(name);
-                    } else if (perm.split("\\.")[0].equals(name)) {
-                        if (permission.getValue()) {
-                            if (!names.contains(name))
-                                names.add(name);
-                        } else {
-                            forbiddenDisguises.add(name);
+                    if (!perm.equalsIgnoreCase(name)) {
+                        perms = (permission.getValue() ? globalAllowed : globalForbidden);
+                    } else {
+                        perms = (permission.getValue() ? singleAllowed : singleForbidden);
+                    }
+                    if (perm.equals("mob")) {
+                        if (type.isMob()) {
+                            perms.add(name);
                         }
+                    } else if (perm.equals("animal") || perm.equals("animals")) {
+                        if (Animals.class.isAssignableFrom(entityClass)) {
+                            perms.add(name);
+                        }
+                    } else if (perm.equals("monster") || perm.equals("monsters")) {
+                        if (Monster.class.isAssignableFrom(entityClass)) {
+                            perms.add(name);
+                        }
+                    } else if (perm.equals("misc")) {
+                        if (type.isMisc()) {
+                            perms.add(name);
+                        }
+                    } else if (perm.equals("ageable")) {
+                        if (Ageable.class.isAssignableFrom(entityClass)) {
+                            perms.add(name);
+                        }
+                    } else if (disguiseType.equals("*")) {
+                        perms.add(name);
+                    } else if (disguiseType.equals(name)) {
+                        perms.add(name);
                     }
                 }
             }
@@ -57,16 +85,19 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (type.getEntityType() == null) {
                 continue;
             }
-            if (!names.contains(type.name().toLowerCase())) {
+            if (!globalAllowed.contains(type.name().toLowerCase())) {
                 if (sender.hasPermission(permissionNode + "*")
                         || sender.hasPermission(permissionNode + type.name().toLowerCase())) {
-                    names.add(type.name().toLowerCase());
+                    globalAllowed.add(type.name().toLowerCase());
                 }
             }
         }
-        names.removeAll(forbiddenDisguises);
-        Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
-        return names;
+        globalAllowed.removeAll(globalForbidden);
+        globalAllowed.removeAll(singleForbidden);
+        singleAllowed.addAll(globalAllowed);
+        ArrayList<String> disguiseTypes = new ArrayList<String>(singleAllowed);
+        Collections.sort(disguiseTypes, String.CASE_INSENSITIVE_ORDER);
+        return disguiseTypes;
     }
 
     protected boolean isDouble(String string) {
