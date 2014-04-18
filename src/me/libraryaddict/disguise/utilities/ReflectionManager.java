@@ -218,15 +218,11 @@ public class ReflectionManager {
     }
 
     public static Object getGameProfile(UUID uuid, String playerName) {
-        return getGameProfile(uuid, playerName, true);
-    }
-
-    public static Object getGameProfile(UUID uuid, String playerName, boolean createUuid) {
         try {
             try {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(UUID.class, String.class)
-                        .newInstance(uuid != null || !createUuid ? uuid : UUID.randomUUID(), playerName);
+                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
             } catch (NoSuchMethodException ex) {
                 return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
                         .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
@@ -303,6 +299,28 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object grabProfileAddUUID(String playername) {
+        try {
+            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
+                    Object profileRepo = method.invoke(minecraftServer);
+                    Object agent = Class.forName("net.minecraft.util.com.mojang.authlib.Agent").getField("MINECRAFT").get(null);
+                    LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
+                    profileRepo
+                            .getClass()
+                            .getMethod("findProfilesByNames", String[].class, agent.getClass(),
+                                    Class.forName("net.minecraft.util.com.mojang.authlib.ProfileLookupCallback"))
+                            .invoke(profileRepo, new String[] { playername }, agent, callback);
+                    return callback.getGameProfile();
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Object grabSkullBlob(Object gameProfile) {
         try {
             Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
@@ -319,20 +337,20 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object grabUUID(Object gameProfile) {
+    public static boolean hasSkinBlob(Object gameprofile) {
         try {
-            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
-            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                    Object session = method.invoke(minecraftServer);
-                    return session.getClass().getMethod("hasJoinedServer", gameProfile.getClass(), String.class)
-                            .invoke(session, gameProfile, null);
-                }
-            }
+            Field propField = gameprofile.getClass().getDeclaredField("properties");
+            propField.setAccessible(true);
+            Object propMap = propField.get(gameprofile);
+            propField = propMap.getClass().getDeclaredField("properties");
+            propField.setAccessible(true);
+            propMap = propField.get(propMap);
+            return !(Boolean) propMap.getClass().getMethod("isEmpty").invoke(propMap);
+        } catch (NoSuchFieldException ex) {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        return true;
     }
 
     public static void setAllowSleep(Player player) {

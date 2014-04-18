@@ -126,17 +126,6 @@ public class DisguiseUtilities {
                             // + " on a entity. Removed the old disguise.");
 
                             disguiseItel.remove();
-                            /* if (name != null) {
-                                 if (!disguise.getObservers().contains(name)) {
-                                     d.setViewDisguise(name);
-                                 }
-                             } else {
-                                 for (String playername : d.getObservers()) {
-                                     if (!disguise.getObservers().contains(playername)) {
-                                         d.setViewDisguise(playername);
-                                     }
-                                 }
-                             }*/
                         }
                     }
                 }
@@ -230,6 +219,10 @@ public class DisguiseUtilities {
         return new TargetedDisguise[0];
     }
 
+    public static Object getGameProfile(String playerName) {
+        return gameProfiles.get(playerName);
+    }
+
     public static TargetedDisguise getMainDisguise(UUID entityId) {
         TargetedDisguise toReturn = null;
         if (getDisguises().containsKey(entityId)) {
@@ -271,55 +264,52 @@ public class DisguiseUtilities {
     }
 
     public static Object getProfile(final String playerName) {
-        Player player = Bukkit.getPlayerExact(playerName);
-        if (player != null) {
-            return ReflectionManager.getGameProfile(player);
+        if (gameProfiles.containsKey(playerName)) {
+            if (gameProfiles.get(playerName) != null) {
+                return gameProfiles.get(playerName);
+            }
         } else {
-            if (gameProfiles.containsKey(playerName)) {
-                if (gameProfiles.get(playerName) != null) {
-                    return gameProfiles.get(playerName);
+            Player player = Bukkit.getPlayerExact(playerName);
+            if (player != null) {
+                Object gameProfile = ReflectionManager.getGameProfile(player);
+                if (ReflectionManager.hasSkinBlob(gameProfile)) {
+                    gameProfiles.put(playerName, gameProfile);
+                    return gameProfile;
                 }
-            } else {
-                // Add null so that if this is called again. I already know I'm doing something about it
-                gameProfiles.put(playerName, null);
-                Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
-                    public void run() {
-                        try {
-                            Object gameprofile = ReflectionManager.grabUUID(ReflectionManager.getGameProfile(null, playerName,
-                                    false));
-                            if (gameprofile != null) {
-                                final Object gameProfile = ReflectionManager.grabSkullBlob(gameprofile);
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                                    public void run() {
-                                        if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                            gameProfiles.put(playerName, gameProfile);
-                                        }
-                                        for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-                                            for (TargetedDisguise disguise : disguises) {
-                                                if (disguise.getType() == DisguiseType.PLAYER
-                                                        && ((PlayerDisguise) disguise).getName().equals(playerName)) {
-                                                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                                                    if (disguise.getEntity() instanceof Player
-                                                            && disguise.isSelfDisguiseVisible()) {
-                                                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(),
-                                                                disguise);
-                                                    }
+            }
+            // Add null so that if this is called again. I already know I'm doing something about it
+            gameProfiles.put(playerName, null);
+            Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
+                public void run() {
+                    try {
+                        final Object gameProfile = lookupGameProfile(playerName);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                            public void run() {
+                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                                    gameProfiles.put(playerName, gameProfile);
+                                    for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                                        for (TargetedDisguise disguise : disguises) {
+                                            if (disguise.getType() == DisguiseType.PLAYER
+                                                    && ((PlayerDisguise) disguise).getName().equals(playerName)) {
+                                                DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                                                if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
+                                                    DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                                                 }
                                             }
                                         }
                                     }
-                                });
+                                }
                             }
-                        } catch (Exception e) {
-                            if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                gameProfiles.remove(playerName);
-                            }
-                            System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
-                                    + e.getMessage());
+                        });
+                    } catch (Exception e) {
+                        if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                            gameProfiles.remove(playerName);
                         }
+                        System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
+                                + e.getMessage());
                     }
-                });
-            }
+                }
+            });
         }
         return ReflectionManager.getGameProfile(null, playerName);
     }
@@ -351,6 +341,10 @@ public class DisguiseUtilities {
         return selfDisguisesIds;
     }
 
+    public static boolean hasGameProfile(String playerName) {
+        return getGameProfile(playerName) != null;
+    }
+
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
     }
@@ -361,6 +355,39 @@ public class DisguiseUtilities {
             return true;
         }
         return false;
+    }
+
+    /**
+     * This is called on a thread as it is thread blocking
+     */
+    public static Object lookupGameProfile(String playerName) {
+        Object gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
+        return ReflectionManager.grabSkullBlob(gameprofile);
+    }
+
+    /**
+     * This is safe to call from the main thread
+     */
+    public static void lookupGameProfileAndStore(final String playerName) {
+        if (!gameProfiles.containsKey(playerName)) {
+            gameProfiles.put(playerName, null);
+            Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
+                public void run() {
+                    try {
+                        final Object gameProfile = lookupGameProfile(playerName);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                            public void run() {
+                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                                    gameProfiles.put(playerName, gameProfile);
+                                }
+                            }
+                        });
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     /**
