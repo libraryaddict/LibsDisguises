@@ -93,8 +93,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             }
         }
         globalAllowed.removeAll(globalForbidden);
-        globalAllowed.removeAll(singleForbidden);
         singleAllowed.addAll(globalAllowed);
+        singleAllowed.removeAll(singleForbidden);
         ArrayList<String> disguiseTypes = new ArrayList<String>(singleAllowed);
         Collections.sort(disguiseTypes, String.CASE_INSENSITIVE_ORDER);
         return disguiseTypes;
