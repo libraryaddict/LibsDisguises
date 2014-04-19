@@ -263,15 +263,28 @@ public class DisguiseUtilities {
         return players;
     }
 
-    public static Object getProfileFromMojang(String playerName) {
-        return getProfileFromMojang(playerName, true);
+    public static Object getProfileFromMojang(final String playerName) {
+        return getProfileFromMojang(playerName, new Runnable() {
+            public void run() {
+                for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                    for (TargetedDisguise disguise : disguises) {
+                        if (disguise.getType() == DisguiseType.PLAYER && ((PlayerDisguise) disguise).getName().equals(playerName)) {
+                            DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                            if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
+                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
      * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
-     * using schedulers.
+     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
-    public static Object getProfileFromMojang(final String playerName, final boolean updateDisguises) {
+    public static Object getProfileFromMojang(final String playerName, final Runnable runnable) {
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -295,20 +308,8 @@ public class DisguiseUtilities {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                                     gameProfiles.put(playerName, gameProfile);
-                                    if (updateDisguises) {
-                                        for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-                                            for (TargetedDisguise disguise : disguises) {
-                                                if (disguise.getType() == DisguiseType.PLAYER
-                                                        && ((PlayerDisguise) disguise).getName().equals(playerName)) {
-                                                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                                                    if (disguise.getEntity() instanceof Player
-                                                            && disguise.isSelfDisguiseVisible()) {
-                                                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(),
-                                                                disguise);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                    if (runnable != null) {
+                                        runnable.run();
                                     }
                                 }
                             }
