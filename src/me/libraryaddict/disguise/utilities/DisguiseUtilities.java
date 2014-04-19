@@ -383,29 +383,32 @@ public class DisguiseUtilities {
      *            the entity to all the watching players, which is where the magic begins
      */
     public static void refreshTracker(TargetedDisguise disguise, String player) {
-        try {
-            Object world = ReflectionManager.getWorld(disguise.getEntity().getWorld());
-            Object tracker = world.getClass().getField("tracker").get(world);
-            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
-            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
-                    .invoke(trackedEntities, disguise.getEntity().getEntityId());
-            if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
-                        .get(entityTrackerEntry);
-                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
-                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
-                HashSet cloned = (HashSet) trackedPlayers.clone();
-                for (Object p : cloned) {
-                    if (player.equals(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
-                        clear.invoke(entityTrackerEntry, p);
-                        updatePlayer.invoke(entityTrackerEntry, p);
-                        break;
+        if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
+            try {
+                Object world = ReflectionManager.getWorld(disguise.getEntity().getWorld());
+                Object tracker = world.getClass().getField("tracker").get(world);
+                Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+                Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                        .invoke(trackedEntities, disguise.getEntity().getEntityId());
+                if (entityTrackerEntry != null) {
+                    HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                            .get(entityTrackerEntry);
+                    Method clear = entityTrackerEntry.getClass()
+                            .getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                    Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
+                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    HashSet cloned = (HashSet) trackedPlayers.clone();
+                    for (Object p : cloned) {
+                        if (player.equals(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
+                            clear.invoke(entityTrackerEntry, p);
+                            updatePlayer.invoke(entityTrackerEntry, p);
+                            break;
+                        }
                     }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -414,32 +417,35 @@ public class DisguiseUtilities {
      *            convidence method for me to refresh trackers in other plugins
      */
     public static void refreshTrackers(Entity entity) {
-        try {
-            Object world = ReflectionManager.getWorld(entity.getWorld());
-            Object tracker = world.getClass().getField("tracker").get(world);
-            Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
-            Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
-                    .invoke(trackedEntities, entity.getEntityId());
-            if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
-                        .get(entityTrackerEntry);
-                Method clear = entityTrackerEntry.getClass().getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
-                Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
-                HashSet cloned = (HashSet) trackedPlayers.clone();
-                for (Object p : cloned) {
-                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                    // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
-                    // entity))
-                    // continue;
-                    if (!(entity instanceof Player) || player.canSee((Player) entity)) {
-                        clear.invoke(entityTrackerEntry, p);
-                        updatePlayer.invoke(entityTrackerEntry, p);
+        if (entity.isValid()) {
+            try {
+                Object world = ReflectionManager.getWorld(entity.getWorld());
+                Object tracker = world.getClass().getField("tracker").get(world);
+                Object trackedEntities = tracker.getClass().getField("trackedEntities").get(tracker);
+                Object entityTrackerEntry = trackedEntities.getClass().getMethod("get", int.class)
+                        .invoke(trackedEntities, entity.getEntityId());
+                if (entityTrackerEntry != null) {
+                    HashSet trackedPlayers = (HashSet) entityTrackerEntry.getClass().getField("trackedPlayers")
+                            .get(entityTrackerEntry);
+                    Method clear = entityTrackerEntry.getClass()
+                            .getMethod("clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                    Method updatePlayer = entityTrackerEntry.getClass().getMethod("updatePlayer",
+                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    HashSet cloned = (HashSet) trackedPlayers.clone();
+                    for (Object p : cloned) {
+                        Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                        // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
+                        // entity))
+                        // continue;
+                        if (!(entity instanceof Player) || player.canSee((Player) entity)) {
+                            clear.invoke(entityTrackerEntry, p);
+                            updatePlayer.invoke(entityTrackerEntry, p);
+                        }
                     }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
