@@ -263,7 +263,15 @@ public class DisguiseUtilities {
         return players;
     }
 
-    public static Object getProfile(final String playerName) {
+    public static Object getProfileFromMojang(String playerName) {
+        return getProfileFromMojang(playerName, true);
+    }
+
+    /**
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * using schedulers.
+     */
+    public static Object getProfileFromMojang(final String playerName, final boolean updateDisguises) {
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -287,13 +295,17 @@ public class DisguiseUtilities {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                                     gameProfiles.put(playerName, gameProfile);
-                                    for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-                                        for (TargetedDisguise disguise : disguises) {
-                                            if (disguise.getType() == DisguiseType.PLAYER
-                                                    && ((PlayerDisguise) disguise).getName().equals(playerName)) {
-                                                DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                                                if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
-                                                    DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                                    if (updateDisguises) {
+                                        for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                                            for (TargetedDisguise disguise : disguises) {
+                                                if (disguise.getType() == DisguiseType.PLAYER
+                                                        && ((PlayerDisguise) disguise).getName().equals(playerName)) {
+                                                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                                                    if (disguise.getEntity() instanceof Player
+                                                            && disguise.isSelfDisguiseVisible()) {
+                                                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(),
+                                                                disguise);
+                                                    }
                                                 }
                                             }
                                         }
@@ -363,31 +375,6 @@ public class DisguiseUtilities {
     public static Object lookupGameProfile(String playerName) {
         Object gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
         return ReflectionManager.grabSkullBlob(gameprofile);
-    }
-
-    /**
-     * This is safe to call from the main thread
-     */
-    public static void lookupGameProfileAndStore(final String playerName) {
-        if (!gameProfiles.containsKey(playerName)) {
-            gameProfiles.put(playerName, null);
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
-                public void run() {
-                    try {
-                        final Object gameProfile = lookupGameProfile(playerName);
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                            public void run() {
-                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                    gameProfiles.put(playerName, gameProfile);
-                                }
-                            }
-                        });
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-        }
     }
 
     /**
