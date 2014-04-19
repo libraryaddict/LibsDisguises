@@ -375,7 +375,7 @@ public class DisguiseUtilities {
      */
     public static Object lookupGameProfile(String playerName) {
         Object gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
-        return ReflectionManager.grabSkullBlob(gameprofile);
+        return ReflectionManager.getSkullBlob(gameprofile);
     }
 
     /**

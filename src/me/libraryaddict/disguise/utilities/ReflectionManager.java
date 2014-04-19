@@ -321,7 +321,7 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object grabSkullBlob(Object gameProfile) {
+    public static Object getSkullBlob(Object gameProfile) {
         try {
             Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
             for (Method method : getNmsClass("MinecraftServer").getMethods()) {
