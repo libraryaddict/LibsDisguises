@@ -206,7 +206,7 @@ public class PacketsManager {
                 if (!DisguiseUtilities.hasGameProfile(name)) {
                     removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
                 }
-                gameProfile = DisguiseUtilities.getProfileFromMojang(((PlayerDisguise) disguise).getName());
+                gameProfile = DisguiseUtilities.getProfileFromMojang(name);
                 if (removeName) {
                     DisguiseUtilities.getAddedByPlugins().remove(name);
                 }
