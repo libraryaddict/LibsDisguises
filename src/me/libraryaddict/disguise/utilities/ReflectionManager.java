@@ -281,6 +281,22 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object getSkullBlob(Object gameProfile) {
+        try {
+            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                    Object session = method.invoke(minecraftServer);
+                    return session.getClass().getMethod("fillProfileProperties", gameProfile.getClass(), boolean.class)
+                            .invoke(session, gameProfile, true);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Float getSoundModifier(Object entity) {
         try {
             damageAndIdleSoundMethod.setAccessible(true);
@@ -313,22 +329,6 @@ public class ReflectionManager {
                                     Class.forName("net.minecraft.util.com.mojang.authlib.ProfileLookupCallback"))
                             .invoke(profileRepo, new String[] { playername }, agent, callback);
                     return callback.getGameProfile();
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Object getSkullBlob(Object gameProfile) {
-        try {
-            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
-            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                    Object session = method.invoke(minecraftServer);
-                    return session.getClass().getMethod("fillProfileProperties", gameProfile.getClass(), boolean.class)
-                            .invoke(session, gameProfile, true);
                 }
             }
         } catch (Exception ex) {

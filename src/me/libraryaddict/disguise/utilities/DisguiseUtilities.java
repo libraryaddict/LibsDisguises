@@ -38,6 +38,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
+    private static HashSet<String> addedByPlugins = new HashSet<String>();
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
     private static HashMap<String, Object> gameProfiles = new HashMap<String, Object>();
     private static LibsDisguises libsDisguises;
@@ -191,6 +192,10 @@ public class DisguiseUtilities {
         }
     }
 
+    public static HashSet<String> getAddedByPlugins() {
+        return addedByPlugins;
+    }
+
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
         UUID entityId = entity.getUniqueId();
         if (futureDisguises.containsKey(entity.getEntityId())) {
@@ -290,6 +295,7 @@ public class DisguiseUtilities {
                 return gameProfiles.get(playerName);
             }
         } else {
+            getAddedByPlugins().add(playerName);
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
                 Object gameProfile = ReflectionManager.getGameProfile(player);
@@ -317,6 +323,7 @@ public class DisguiseUtilities {
                     } catch (Exception e) {
                         if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                             gameProfiles.remove(playerName);
+                            getAddedByPlugins().remove(playerName);
                         }
                         System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
                                 + e.getMessage());
@@ -495,6 +502,10 @@ public class DisguiseUtilities {
             return true;
         }
         return false;
+    }
+
+    public static void removeGameprofile(String string) {
+        gameProfiles.remove(string);
     }
 
     public static void removeSelfDisguise(Player player) {

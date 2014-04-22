@@ -201,7 +201,15 @@ public class PacketsManager {
                 }
             } else {
                 Object gameProfile = null;
+                String name = ((PlayerDisguise) disguise).getName();
+                boolean removeName = false;
+                if (!DisguiseUtilities.hasGameProfile(name)) {
+                    removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
+                }
                 gameProfile = DisguiseUtilities.getProfileFromMojang(((PlayerDisguise) disguise).getName());
+                if (removeName) {
+                    DisguiseUtilities.getAddedByPlugins().remove(name);
+                }
                 spawnPackets[0].getModifier().write(1, gameProfile);
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();

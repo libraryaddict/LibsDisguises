@@ -430,6 +430,20 @@ public abstract class Disguise {
                     }
                 }
             }
+
+            if (isPlayerDisguise()) {
+                String name = ((PlayerDisguise) this).getName();
+                if (!DisguiseUtilities.getAddedByPlugins().contains(name)) {
+                    for (HashSet<TargetedDisguise> disguise : disguises.values()) {
+                        for (Disguise d : disguise) {
+                            if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
+                                return;
+                            }
+                        }
+                    }
+                    DisguiseUtilities.removeGameprofile(name);
+                }
+            }
         }
     }
 
