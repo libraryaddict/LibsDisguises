@@ -68,9 +68,9 @@ public class DisguiseAPI {
     /**
      * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
      */
-    public static void disguiseNextEntity(Disguise disguise) {
+    public static int disguiseNextEntity(Disguise disguise) {
         if (disguise == null)
-            return;
+            return -1;
         if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
             disguise = disguise.clone();
         }
@@ -79,9 +79,11 @@ public class DisguiseAPI {
             field.setAccessible(true);
             int id = field.getInt(null);
             DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
+            return id;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return -1;
     }
 
     /**
