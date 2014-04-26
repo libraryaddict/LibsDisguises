@@ -220,7 +220,7 @@ public class LibsDisguises extends JavaPlugin {
                     // Uncomment when I need to find the new datawatcher values for a class..
 
                     // System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
-                    // + (watch.getValue() == null ? "null" : watch.getValue()) + ", Value: " + watch.getValue());
+                    // + (watch.getValue() == null ? "null" : watch.getValue().getClass()) + ", Value: " + watch.getValue());
                 }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
