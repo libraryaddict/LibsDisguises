@@ -557,7 +557,7 @@ public class DisguiseUtilities {
      */
     public static void sendSelfDisguise(final Player player, final Disguise disguise) {
         try {
-            if (!player.isValid() || !player.isOnline()) {
+            if (!player.isValid() || !player.isOnline() || !disguise.isSelfDisguiseVisible()) {
                 return;
             }
             Object world = ReflectionManager.getWorld(player.getWorld());
