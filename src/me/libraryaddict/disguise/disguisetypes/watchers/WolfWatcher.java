@@ -43,6 +43,9 @@ public class WolfWatcher extends AgeableWatcher {
     }
 
     public void setCollarColor(AnimalColor newColor) {
+        if (!isTamed()) {
+            setTamed(true);
+        }
         if (newColor != getCollarColor()) {
             setValue(20, (byte) newColor.getId());
             sendData(20);
