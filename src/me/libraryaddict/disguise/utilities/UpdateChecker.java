@@ -25,8 +25,10 @@ public class UpdateChecker {
         if (version == null) {
             version = getBukkitVersion();
         }
-        if (checkHigher(currentVersion, version)) {
-            latestVersion = version;
+        if (version != null) {
+            if (checkHigher(currentVersion, version)) {
+                latestVersion = version;
+            }
         }
     }
 
@@ -48,8 +50,7 @@ public class UpdateChecker {
                 }
             }
         } catch (Exception e) {
-            System.out.print("[LibsDisguises] Failed to check for a update on bukkit.");
-            e.printStackTrace();
+            System.out.print("[LibsDisguises] Failed to check for a update on bukkit. " + e.getMessage());
         }
         return null;
     }
@@ -74,7 +75,6 @@ public class UpdateChecker {
             }
         } catch (Exception ex) {
             System.out.print("[LibsDisguises] Failed to check for a update on spigot. Now checking bukkit..");
-            ex.printStackTrace();
         }
         return null;
     }
