@@ -632,6 +632,10 @@ public abstract class Disguise {
     }
 
     public void setWatcher(FlagWatcher newWatcher) {
+        if (!getType().getWatcherClass().isInstance(newWatcher)) {
+            throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of "
+                    + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
+        }
         watcher = newWatcher;
     }
 }
