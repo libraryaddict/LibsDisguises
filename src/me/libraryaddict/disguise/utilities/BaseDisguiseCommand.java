@@ -206,14 +206,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (disguiseType.isMob()) { // Its a mob, use the mob constructor
                 boolean adult = true;
                 if (args.length > 1) {
-                    if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
-                        usedOptions.add("setbaby");
-                        doCheck(optionPermissions, usedOptions);
-                        adult = "false".equalsIgnoreCase(args[1]);
-                        sender.sendMessage(ChatColor.RED
-                                + "I notice you are using true/false for constructing a mob disguise! This will soon be removed in favor of the simple 'baby'");
-                        toSkip++;
-                    } else if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
+                    if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
                         usedOptions.add("setbaby");
                         doCheck(optionPermissions, usedOptions);
                         adult = args[1].equalsIgnoreCase("adult");
