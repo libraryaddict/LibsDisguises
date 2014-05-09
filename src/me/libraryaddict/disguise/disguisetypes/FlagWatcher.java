@@ -99,15 +99,15 @@ public class FlagWatcher {
                     }
                     value = valueByte;
                 }
-                boolean doD = watch.getDirtyState();
+                boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, value);
-                if (!doD)
-                    watch.setDirtyState(doD);
+                if (!isDirty)
+                    watch.setDirtyState(false);
             } else {
-                boolean doD = watch.getDirtyState();
+                boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, watch.getValue());
-                if (!doD)
-                    watch.setDirtyState(doD);
+                if (!isDirty)
+                    watch.setDirtyState(false);
             }
             newList.add(watch);
         }
