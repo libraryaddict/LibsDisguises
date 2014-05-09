@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +62,14 @@ public class DisguiseAPI {
         disguiseEntity(entity, disguise);
     }
 
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Player... playersToNotSeeDisguise) {
+        ArrayList<String> names = new ArrayList<String>();
+        for (Player p : playersToNotSeeDisguise) {
+            names.add(p.getName());
+        }
+        disguiseIgnorePlayers(entity, disguise, names);
+    }
+
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, String... playersToNotSeeDisguise) {
         disguiseIgnorePlayers(entity, disguise, Arrays.asList(playersToNotSeeDisguise));
     }
@@ -109,6 +118,14 @@ public class DisguiseAPI {
             ((TargetedDisguise) disguise).addPlayer(name);
         }
         disguiseEntity(entity, disguise);
+    }
+
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, Player... playersToViewDisguise) {
+        ArrayList<String> names = new ArrayList<String>();
+        for (Player p : playersToViewDisguise) {
+            names.add(p.getName());
+        }
+        disguiseToPlayers(entity, disguise, names);
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, String... playersToViewDisguise) {
