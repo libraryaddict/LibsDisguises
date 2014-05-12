@@ -21,7 +21,7 @@ public class ReflectionManager {
         static {
             if (getBukkitVersion().startsWith("v1_")) {
                 try {
-                    int version = Integer.parseInt(getBukkitVersion().replace(".", "").split("_")[1]);
+                    int version = Integer.parseInt(getBukkitVersion().split("_")[1]);
                     if (version == 7) {
                         currentVersion = LibVersion.V1_7;
                     } else {
@@ -34,8 +34,6 @@ public class ReflectionManager {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            } else {
-                currentVersion = V1_7;
             }
         }
 
@@ -58,9 +56,6 @@ public class ReflectionManager {
     private static Field pingField;
 
     static {
-        if (bukkitVersion.length() > 0) {
-            bukkitVersion += ".";
-        }
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
                 if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
@@ -179,7 +174,7 @@ public class ReflectionManager {
 
     public static Class getCraftClass(String className) {
         try {
-            return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + className);
+            return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,7 +193,7 @@ public class ReflectionManager {
 
     public static String getEnumArt(Art art) {
         try {
-            Class craftArt = Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "CraftArt");
+            Class craftArt = Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + ".CraftArt");
             Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
             for (Field field : enumArt.getClass().getFields()) {
                 if (field.getType() == String.class) {
@@ -240,7 +235,7 @@ public class ReflectionManager {
 
     public static Class getNmsClass(String className) {
         try {
-            return Class.forName("net.minecraft.server." + getBukkitVersion() + className);
+            return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
             // e.printStackTrace();
         }
