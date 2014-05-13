@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 public class ReflectionManager {
     public enum LibVersion {
         V1_6, V1_7;
-        private static LibVersion currentVersion;
+        private static LibVersion currentVersion = LibVersion.V1_7;
         static {
             if (getBukkitVersion().startsWith("v1_")) {
                 try {
