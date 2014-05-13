@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.security.InvalidParameterException;
+
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
@@ -14,6 +16,10 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
+        if (!disguiseType.isMob()) {
+            throw new InvalidParameterException("Expected a living DisguiseType while constructing MobDisguise. Received "
+                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise") + " instead");
+        }
         this.isAdult = isAdult;
         createDisguise(disguiseType);
     }

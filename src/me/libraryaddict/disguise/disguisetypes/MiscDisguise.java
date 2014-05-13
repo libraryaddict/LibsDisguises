@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.security.InvalidParameterException;
 import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
@@ -42,6 +43,10 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
+        if (!disguiseType.isMisc()) {
+            throw new InvalidParameterException("Expected a non-living DisguiseType while constructing MiscDisguise. Received "
+                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") + " instead");
+        }
         createDisguise(disguiseType);
         switch (disguiseType) {
         // The only disguises which should use a custom data.
