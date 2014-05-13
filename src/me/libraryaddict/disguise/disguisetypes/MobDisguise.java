@@ -14,12 +14,14 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
-        this(disguiseType, isAdult, true);
+        this.isAdult = isAdult;
+        createDisguise(disguiseType);
     }
 
+    @Deprecated
     public MobDisguise(DisguiseType disguiseType, boolean isAdult, boolean replaceSounds) {
-        this.isAdult = isAdult;
-        createDisguise(disguiseType, replaceSounds);
+        this(disguiseType, isAdult);
+        this.setReplaceSounds(replaceSounds);
     }
 
     @Deprecated
@@ -29,18 +31,19 @@ public class MobDisguise extends TargetedDisguise {
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult) {
-        this(entityType, isAdult, true);
+        this(DisguiseType.getType(entityType), isAdult);
     }
 
     @Deprecated
     public MobDisguise(EntityType entityType, boolean isAdult, boolean replaceSounds) {
-        this.isAdult = isAdult;
-        createDisguise(DisguiseType.getType(entityType), replaceSounds);
+        this(entityType, isAdult);
+        this.setReplaceSounds(replaceSounds);
     }
 
     @Override
     public MobDisguise clone() {
-        MobDisguise disguise = new MobDisguise(getType(), isAdult(), isSoundsReplaced());
+        MobDisguise disguise = new MobDisguise(getType(), isAdult());
+        disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());

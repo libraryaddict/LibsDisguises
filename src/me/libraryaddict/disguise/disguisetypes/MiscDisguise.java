@@ -16,21 +16,33 @@ public class MiscDisguise extends TargetedDisguise {
     private int id = -1;
 
     public MiscDisguise(DisguiseType disguiseType) {
-        this(disguiseType, true, -1, -1);
+        this(disguiseType, -1, -1);
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds) {
         this(disguiseType, replaceSounds, -1, -1);
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int addictionalData) {
         this(disguiseType, replaceSounds, (disguiseType == DisguiseType.FALLING_BLOCK
                 || disguiseType == DisguiseType.DROPPED_ITEM ? addictionalData : -1), (disguiseType == DisguiseType.FALLING_BLOCK
                 || disguiseType == DisguiseType.DROPPED_ITEM ? -1 : addictionalData));
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, boolean replaceSounds, int id, int data) {
-        createDisguise(disguiseType, replaceSounds);
+        this(disguiseType, id, data);
+        this.setReplaceSounds(replaceSounds);
+    }
+
+    public MiscDisguise(DisguiseType disguiseType, int id) {
+        this(disguiseType, id, -1);
+    }
+
+    public MiscDisguise(DisguiseType disguiseType, int id, int data) {
+        createDisguise(disguiseType);
         switch (disguiseType) {
         // The only disguises which should use a custom data.
         case FISHING_HOOK:
@@ -46,6 +58,7 @@ public class MiscDisguise extends TargetedDisguise {
             data = -1;
             break;
         }
+        // Only falling block should set the id
         if (getType() == DisguiseType.FALLING_BLOCK && id != -1) {
             this.id = id;
         } else {
@@ -79,13 +92,14 @@ public class MiscDisguise extends TargetedDisguise {
         }
     }
 
-    public MiscDisguise(DisguiseType disguiseType, int id, int data) {
-        this(disguiseType, true, id, data);
+    @Deprecated
+    public MiscDisguise(EntityType entityType) {
+        this(entityType, -1, -1);
     }
 
     @Deprecated
-    public MiscDisguise(EntityType entityType) {
-        this(entityType, true, -1, -1);
+    public MiscDisguise(EntityType entityType, int id) {
+        this(entityType, id, -1);
     }
 
     @Deprecated
@@ -100,12 +114,13 @@ public class MiscDisguise extends TargetedDisguise {
 
     @Deprecated
     public MiscDisguise(EntityType disguiseType, int id, int data) {
-        this(disguiseType, true, id, data);
+        this(DisguiseType.getType(disguiseType), id, data);
     }
 
     @Override
     public MiscDisguise clone() {
-        MiscDisguise disguise = new MiscDisguise(getType(), isSoundsReplaced(), getData());
+        MiscDisguise disguise = new MiscDisguise(getType(), getData());
+        disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());

@@ -54,7 +54,7 @@ public abstract class Disguise {
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
      */
-    protected void createDisguise(DisguiseType newType, boolean doSounds) {
+    protected void createDisguise(DisguiseType newType) {
         if (getWatcher() != null)
             return;
         if (newType.getEntityType() == null) {
@@ -65,8 +65,6 @@ public abstract class Disguise {
         }
         // Set the disguise type
         disguiseType = newType;
-        // Set the option to replace the sounds
-        setReplaceSounds(doSounds);
         // Get if they are a adult now..
         boolean isAdult = true;
         if (isMobDisguise()) {

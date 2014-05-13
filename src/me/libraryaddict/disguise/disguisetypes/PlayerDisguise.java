@@ -4,19 +4,22 @@ public class PlayerDisguise extends TargetedDisguise {
     private String playerName;
 
     public PlayerDisguise(String name) {
-        this(name, true);
-    }
-
-    public PlayerDisguise(String name, boolean replaceSounds) {
         if (name.length() > 16)
             name = name.substring(0, 16);
         playerName = name;
-        createDisguise(DisguiseType.PLAYER, replaceSounds);
+        createDisguise(DisguiseType.PLAYER);
+    }
+
+    @Deprecated
+    public PlayerDisguise(String name, boolean replaceSounds) {
+        this(name);
+        this.setReplaceSounds(replaceSounds);
     }
 
     @Override
     public PlayerDisguise clone() {
-        PlayerDisguise disguise = new PlayerDisguise(getName(), isSoundsReplaced());
+        PlayerDisguise disguise = new PlayerDisguise(getName());
+        disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
         disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
