@@ -38,15 +38,30 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 public class DisguiseUtilities {
+    /**
+     * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of
+     * the plugin to do that.
+     */
     private static HashSet<String> addedByPlugins = new HashSet<String>();
+    /**
+     * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
+     * a max of a second.
+     */
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+    /**
+     * A hashmap storing the uuid and skin of a playername
+     */
     private static HashMap<String, Object> gameProfiles = new HashMap<String, Object>();
     private static LibsDisguises libsDisguises;
-    // A internal storage of fake entity ID's I can use.
-    // Realistically I could probably use a ID like "4" for everyone, seeing as no one shares the ID
+    /**
+     * A internal storage of fake entity ID's each entity has. Realistically I could probably use a ID like "4" for everyone,
+     * seeing as no one sees each others entity ID
+     **/
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
-    // Store the entity IDs instead of entitys because then I can disguise entitys even before they exist
-    private static HashMap<UUID, HashSet<TargetedDisguise>> targetedDisguises = new HashMap<UUID, HashSet<TargetedDisguise>>();
+    /**
+     * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
+     **/
+    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<UUID, HashSet<TargetedDisguise>>();
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
@@ -214,7 +229,7 @@ public class DisguiseUtilities {
     }
 
     public static HashMap<UUID, HashSet<TargetedDisguise>> getDisguises() {
-        return targetedDisguises;
+        return disguisesInUse;
     }
 
     public static TargetedDisguise[] getDisguises(UUID entityId) {
