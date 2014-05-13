@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.utilities.UpdateChecker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -62,10 +63,11 @@ public class DisguiseListener implements Listener {
                     }
                 }
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
+            // 20 ticks * 60 seconds * 60 minutes * 6 hours
         }
     }
 
-    private void checkPlayer(Player entity) {
+    private void checkPlayerCanBlowDisguise(Player entity) {
         Disguise[] disguises = DisguiseAPI.getDisguises(entity);
         if (disguises.length > 0) {
             DisguiseAPI.undisguiseToAll(entity);
@@ -79,10 +81,10 @@ public class DisguiseListener implements Listener {
     public void onAttack(EntityDamageByEntityEvent event) {
         if (DisguiseConfig.isDisguiseBlownOnAttack()) {
             if (event.getEntity() instanceof Player) {
-                checkPlayer((Player) event.getEntity());
+                checkPlayerCanBlowDisguise((Player) event.getEntity());
             }
             if (event.getDamager() instanceof Player) {
-                checkPlayer((Player) event.getDamager());
+                checkPlayerCanBlowDisguise((Player) event.getDamager());
             }
         }
     }
@@ -120,27 +122,35 @@ public class DisguiseListener implements Listener {
             event.setCancelled(true);
             Disguise disguise = disguiseSlap.remove(event.getPlayer().getName());
             disguiseRunnable.remove(event.getPlayer().getName()).cancel();
-            String entityName = event.getRightClicked().getType().name().toLowerCase().replace("_", " ");
+            Entity entity = event.getRightClicked();
+            String entityName = entity.getType().name().toLowerCase().replace("_", " ");
+            if (entity instanceof Player) {
+                entityName = ((Player) entity).getName();
+            } else {
+                String[] split = entity.getType().name().split("_");
+                entityName = split[0].substring(1).toLowerCase() + " " + split[1].substring(1).toLowerCase();
+            }
             if (disguise != null) {
-                if (event.getRightClicked() instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
-                        ((LivingWatcher) disguise.getWatcher())
-                                .setCustomName(((Player) event.getRightClicked()).getDisplayName());
+                        ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
                         if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                             ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                         }
                     }
                 }
-                DisguiseAPI.disguiseToAll(event.getRightClicked(), disguise);
+                DisguiseAPI.disguiseToAll(entity, disguise);
                 event.getPlayer().sendMessage(
-                        ChatColor.RED + "Disguised the " + entityName + " as a "
+                        ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as a "
                                 + disguise.getType().name().toLowerCase().replace("_", " ") + "!");
             } else {
-                if (DisguiseAPI.isDisguised(event.getRightClicked())) {
-                    DisguiseAPI.undisguiseToAll(event.getRightClicked());
-                    event.getPlayer().sendMessage(ChatColor.RED + "Undisguised the " + entityName);
+                if (DisguiseAPI.isDisguised(entity)) {
+                    DisguiseAPI.undisguiseToAll(entity);
+                    event.getPlayer().sendMessage(
+                            ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
                 } else
-                    event.getPlayer().sendMessage(ChatColor.RED + entityName + " isn't disguised!");
+                    event.getPlayer().sendMessage(
+                            ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
             }
         }
     }
