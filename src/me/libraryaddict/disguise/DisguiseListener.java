@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -123,12 +124,17 @@ public class DisguiseListener implements Listener {
             Disguise disguise = disguiseSlap.remove(event.getPlayer().getName());
             disguiseRunnable.remove(event.getPlayer().getName()).cancel();
             Entity entity = event.getRightClicked();
-            String entityName = entity.getType().name().toLowerCase().replace("_", " ");
+            String entityName = "";
             if (entity instanceof Player) {
                 entityName = ((Player) entity).getName();
             } else {
                 String[] split = entity.getType().name().split("_");
-                entityName = split[0].substring(1).toLowerCase() + " " + split[1].substring(1).toLowerCase();
+                for (int i = 0; i < split.length; i++) {
+                    entityName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
+                    if (i + 1 < split.length) {
+                        entityName += " ";
+                    }
+                }
             }
             if (disguise != null) {
                 if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
@@ -140,9 +146,21 @@ public class DisguiseListener implements Listener {
                     }
                 }
                 DisguiseAPI.disguiseToAll(entity, disguise);
+                String disguiseName = "a ";
+                if (disguise instanceof PlayerDisguise) {
+                    disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
+                } else {
+                    String[] split = disguise.getType().name().split("_");
+                    for (int i = 0; i < split.length; i++) {
+                        disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
+                        if (i + 1 < split.length) {
+                            disguiseName += " ";
+                        }
+                    }
+                }
                 event.getPlayer().sendMessage(
-                        ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as a "
-                                + disguise.getType().name().toLowerCase().replace("_", " ") + "!");
+                        ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as "
+                                + disguiseName + "!");
             } else {
                 if (DisguiseAPI.isDisguised(entity)) {
                     DisguiseAPI.undisguiseToAll(entity);
