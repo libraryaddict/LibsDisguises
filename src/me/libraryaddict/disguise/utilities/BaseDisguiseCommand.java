@@ -185,7 +185,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this disguise!");
         }
-        HashSet<String> usedOptions = new HashSet<String>();
+        ArrayList<String> usedOptions = new ArrayList<String>();
         Disguise disguise = null;
         // How many args to skip due to the disugise being constructed
         int toSkip = 1;
@@ -392,7 +392,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (methodToUse == null) {
                 throw new Exception(ChatColor.RED + "Cannot find the option " + methodName);
             }
-            usedOptions.add(methodName.toLowerCase());
+            if (!usedOptions.contains(methodName.toLowerCase())) {
+                usedOptions.add(methodName.toLowerCase());
+            }
             doCheck(optionPermissions, usedOptions);
             methodToUse.invoke(disguise.getWatcher(), value);
         }
@@ -400,7 +402,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
-    private void doCheck(HashSet<HashSet<String>> optionPermissions, HashSet<String> usedOptions) throws Exception {
+    private void doCheck(HashSet<HashSet<String>> optionPermissions, ArrayList<String> usedOptions) throws Exception {
         if (!optionPermissions.isEmpty()) {
             for (HashSet<String> perms : optionPermissions) {
                 HashSet<String> cloned = (HashSet<String>) perms.clone();
@@ -417,7 +419,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
                 if (cloned.size() == perms.size() && !cloned.containsAll(usedOptions)) {
                     throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
-                            + usedOptions.toArray(new String[usedOptions.size()])[usedOptions.size() - 1]);
+                            + usedOptions.get(usedOptions.size() - 1));
                 }
             }
         }
