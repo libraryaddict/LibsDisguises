@@ -327,7 +327,6 @@ public class PacketsManager {
     private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            // Calling c() gets the watchable objects exactly as they are.
             List<WrappedWatchableObject> list = watcher.getWatchableObjects();
             for (WrappedWatchableObject watchableObject : flagWatcher.convert(list)) {
                 newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
@@ -336,7 +335,6 @@ public class PacketsManager {
             ex.printStackTrace();
         }
         return newWatcher;
-
     }
 
     public static byte getPitch(DisguiseType disguiseType, DisguiseType entityType, byte value) {
