@@ -404,23 +404,34 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     private void doCheck(HashSet<HashSet<String>> optionPermissions, ArrayList<String> usedOptions) throws Exception {
         if (!optionPermissions.isEmpty()) {
+            boolean hasPermission = true;
             for (HashSet<String> perms : optionPermissions) {
                 HashSet<String> cloned = (HashSet<String>) perms.clone();
                 Iterator<String> itel = cloned.iterator();
                 while (itel.hasNext()) {
                     String perm = itel.next();
                     if (perm.startsWith("-")) {
-                        if (usedOptions.contains(perm.substring(1))) {
-                            throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
-                                    + perm.substring(1));
-                        }
                         itel.remove();
+                        if (usedOptions.contains(perm.substring(1))) {
+                            hasPermission = false;
+                            break;
+                        }
                     }
                 }
-                if (cloned.size() == perms.size() && !cloned.containsAll(usedOptions)) {
-                    throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
-                            + usedOptions.get(usedOptions.size() - 1));
+                // If this wasn't modified by the above check
+                if (perms.size() == cloned.size()) {
+                    // If there is a option used that the perms don't allow
+                    if (!perms.containsAll(usedOptions)) {
+                        hasPermission = false;
+                    } else {
+                        // The perms allow it. Return true
+                        return;
+                    }
                 }
+            }
+            if (!hasPermission) {
+                throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
+                        + usedOptions.get(usedOptions.size() - 1));
             }
         }
     }
