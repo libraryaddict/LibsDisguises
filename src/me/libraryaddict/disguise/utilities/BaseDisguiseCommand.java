@@ -141,6 +141,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     for (String str : s.split("\\.")) {
                         if (str.equals("baby"))
                             str = "setbaby";
+                        if (str.equals("-baby"))
+                            str = "-setbaby";
                         p.add(str);
                     }
                     perms.add(p);
