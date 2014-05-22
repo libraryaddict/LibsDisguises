@@ -99,27 +99,29 @@ public class PacketsManager {
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
-        for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
-            int armorSlot = nmsSlot - 1;
-            if (armorSlot < 0)
-                armorSlot = 4;
-            ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
-            if (itemstack != null && itemstack.getTypeId() != 0) {
-                ItemStack item = null;
-                if (disguisedEntity instanceof LivingEntity) {
-                    if (nmsSlot == 0) {
-                        item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
-                    } else {
-                        item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[armorSlot];
+        if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+            for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
+                int armorSlot = nmsSlot - 1;
+                if (armorSlot < 0)
+                    armorSlot = 4;
+                ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
+                if (itemstack != null && itemstack.getTypeId() != 0) {
+                    ItemStack item = null;
+                    if (disguisedEntity instanceof LivingEntity) {
+                        if (nmsSlot == 0) {
+                            item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
+                        } else {
+                            item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[armorSlot];
+                        }
                     }
-                }
-                if (item == null || item.getType() == Material.AIR) {
-                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-                    StructureModifier<Object> mods = packet.getModifier();
-                    mods.write(0, disguisedEntity.getEntityId());
-                    mods.write(1, nmsSlot);
-                    mods.write(2, ReflectionManager.getNmsItem(itemstack));
-                    packets.add(packet);
+                    if (item == null || item.getType() == Material.AIR) {
+                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+                        StructureModifier<Object> mods = packet.getModifier();
+                        mods.write(0, disguisedEntity.getEntityId());
+                        mods.write(1, nmsSlot);
+                        mods.write(2, ReflectionManager.getNmsItem(itemstack));
+                        packets.add(packet);
+                    }
                 }
             }
         }
