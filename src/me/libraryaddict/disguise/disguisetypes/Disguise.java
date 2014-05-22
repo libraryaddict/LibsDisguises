@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -227,7 +228,7 @@ public abstract class Disguise {
                         // If disguise isn't a experience orb, or the entity isn't standing on the ground
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
-                            if (getType() == DisguiseType.WITHER_SKULL) {
+                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
                                 lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
                                 mods.write(0, getEntity().getEntityId());
@@ -453,6 +454,10 @@ public abstract class Disguise {
             if (getEntity() == entity)
                 return;
             throw new RuntimeException("This disguise is already in use! Try .clone()");
+        }
+        if (this.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+            throw new RuntimeException(
+                    "Cannot disguise a living entity with a misc disguise. Renable MiscDisguisesForLiving in the config to do this");
         }
         this.entity = entity;
         setupWatcher();

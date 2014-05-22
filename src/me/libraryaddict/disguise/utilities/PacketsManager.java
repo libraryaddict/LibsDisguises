@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -32,12 +33,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -57,50 +56,18 @@ public class PacketsManager {
     private static PacketListener inventoryListenerServer;
     private static boolean inventoryModifierEnabled;
     private static LibsDisguises libsDisguises;
+    private static PacketListener mainListener;
     private static PacketListener soundsListener;
+    private static PacketListener useEntityListener;
     private static boolean soundsListenerEnabled;
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
 
-    public static void addPacketListeners(JavaPlugin libsDisguises) {
-        ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-        manager.addPacketListener(new PacketAdapter(libsDisguises, ListenerPriority.HIGH,
-                PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.ENTITY_METADATA,
-                PacketType.Play.Server.ANIMATION, PacketType.Play.Server.ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
-                PacketType.Play.Server.ENTITY_HEAD_ROTATION, PacketType.Play.Server.ENTITY_TELEPORT,
-                PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB, PacketType.Play.Server.SPAWN_ENTITY,
-                PacketType.Play.Server.SPAWN_ENTITY_LIVING, PacketType.Play.Server.SPAWN_ENTITY_PAINTING,
-                PacketType.Play.Server.COLLECT, PacketType.Play.Server.UPDATE_ATTRIBUTES,
-                PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.BED, PacketType.Play.Server.ENTITY_STATUS,
-                PacketType.Play.Server.ATTACH_ENTITY) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                final Player observer = event.getPlayer();
-                // First get the entity, the one sending this packet
-                StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                org.bukkit.entity.Entity entity = entityModifer.read((PacketType.Play.Server.COLLECT == event.getPacketType()
-                        || PacketType.Play.Server.ATTACH_ENTITY == event.getPacketType() ? 1 : 0));
-                // If the entity is the same as the sender. Don't disguise!
-                // Prevents problems and there is no advantage to be gained.
-                if (entity == observer)
-                    return;
-                PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
-                if (packets != null) {
-                    event.setCancelled(true);
-                    try {
-                        for (PacketContainer packet : packets) {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                        }
-                    } catch (InvocationTargetException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-        // Now add a client listener to cancel them interacting with uninteractable disguised entitys.
+    public static void addPacketListeners() {
+        // Add a client listener to cancel them interacting with uninteractable disguised entitys.
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
         // Because it kicks you for hacking.
-        manager.addPacketListener(new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+        useEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 try {
@@ -115,7 +82,10 @@ public class PacketsManager {
                     e.printStackTrace();
                 }
             }
-        });
+        };
+        ProtocolLibrary.getProtocolManager().addPacketListener(useEntityListener);
+        // Now I call this and the main listener is registered!
+        setupMainPacketsListener();
     }
 
     /**
@@ -156,9 +126,12 @@ public class PacketsManager {
             spawnPackets[i + 2] = packets.get(i);
         }
         Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguise), 0);
-        byte yaw = getYaw(disguise.getType(), disguisedEntity.getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-        byte pitch = getPitch(disguise.getType(), DisguiseType.getType(disguisedEntity.getType()),
-                (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+        byte yaw = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
+        byte pitch = (byte) (int) (loc.getPitch() * 256.0F / 360.0F);
+        if (DisguiseConfig.isMovementPacketsEnabled()) {
+            yaw = getYaw(disguise.getType(), disguisedEntity.getType(), yaw);
+            pitch = getPitch(disguise.getType(), DisguiseType.getType(disguisedEntity.getType()), pitch);
+        }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
 
@@ -230,7 +203,7 @@ public class PacketsManager {
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
-            if (((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+            if (((PlayerWatcher) disguise.getWatcher()).isSleeping() && DisguiseConfig.isBedPacketsEnabled()) {
                 spawnPackets[1] = new PacketContainer(PacketType.Play.Server.BED);
                 StructureModifier<Integer> mods = spawnPackets[1].getIntegers();
                 mods.write(0, disguisedEntity.getEntityId());
@@ -463,7 +436,7 @@ public class PacketsManager {
         case WITHER_SKULL:
             return 0.7;
         case PLAYER:
-            if (((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+            if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                 return 0.35;
             }
             break;
@@ -1078,6 +1051,85 @@ public class PacketsManager {
         }
     }
 
+    public static void setupMainPacketsListener() {
+        if (useEntityListener != null) {
+            if (mainListener != null) {
+                ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
+            }
+            List<PacketType> packetsToListen = new ArrayList<PacketType>();
+            // Add spawn packets
+            {
+                packetsToListen.add(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
+                packetsToListen.add(PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB);
+                packetsToListen.add(PacketType.Play.Server.SPAWN_ENTITY);
+                packetsToListen.add(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+                packetsToListen.add(PacketType.Play.Server.SPAWN_ENTITY_PAINTING);
+            }
+            // Add packets that always need to be enabled to ensure safety
+            {
+                packetsToListen.add(PacketType.Play.Server.ENTITY_METADATA);
+            }
+            if (DisguiseConfig.isRidingPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.ATTACH_ENTITY);
+            }
+            if (DisguiseConfig.isCollectPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.COLLECT);
+            }
+            if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+            }
+            // The bed packet.
+            if (DisguiseConfig.isBedPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.BED);
+            }
+            // Add movement packets
+            if (DisguiseConfig.isMovementPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.ENTITY_LOOK);
+                packetsToListen.add(PacketType.Play.Server.ENTITY_MOVE_LOOK);
+                packetsToListen.add(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+                packetsToListen.add(PacketType.Play.Server.ENTITY_TELEPORT);
+            }
+            // Add enquipment packet
+            if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.ENTITY_EQUIPMENT);
+            }
+            // Add the packet that ensures if they are sleeping or not
+            if (DisguiseConfig.isAnimationPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.ANIMATION);
+            }
+            // Add the packet that makes sure that entities with armor do not send unpickupable armor on death
+            if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
+                packetsToListen.add(PacketType.Play.Server.ENTITY_STATUS);
+            }
+            mainListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH, packetsToListen) {
+                @Override
+                public void onPacketSending(PacketEvent event) {
+                    final Player observer = event.getPlayer();
+                    // First get the entity, the one sending this packet
+                    StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
+                    org.bukkit.entity.Entity entity = entityModifer.read((PacketType.Play.Server.COLLECT == event.getPacketType()
+                            || PacketType.Play.Server.ATTACH_ENTITY == event.getPacketType() ? 1 : 0));
+                    // If the entity is the same as the sender. Don't disguise!
+                    // Prevents problems and there is no advantage to be gained.
+                    if (entity == observer)
+                        return;
+                    PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
+                    if (packets != null) {
+                        event.setCancelled(true);
+                        try {
+                            for (PacketContainer packet : packets) {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                            }
+                        } catch (InvocationTargetException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            };
+            ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
+        }
+    }
+
     public static void setViewDisguisesListener(boolean enabled) {
         if (viewDisguisesListenerEnabled != enabled) {
             viewDisguisesListenerEnabled = enabled;
@@ -1151,7 +1203,8 @@ public class PacketsManager {
                 else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
                     if (disguise.getType().isMisc()
                             || (packets[0].getIntegers().read(1) == (LibVersion.is1_7() ? 2 : 3) && (!disguise.getType()
-                                    .isPlayer() || ((PlayerWatcher) disguise.getWatcher()).isSleeping()))) {
+                                    .isPlayer() || (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise
+                                    .getWatcher()).isSleeping())))) {
                         packets = new PacketContainer[0];
                     }
                 }
@@ -1159,7 +1212,8 @@ public class PacketsManager {
                 else if (sentPacket.getType() == PacketType.Play.Server.COLLECT) {
                     if (disguise.getType().isMisc()) {
                         packets = new PacketContainer[0];
-                    } else if (disguise.getType().isPlayer() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                    } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType().isPlayer()
+                            && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                         PacketContainer newPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
                         StructureModifier<Integer> mods = newPacket.getIntegers();
                         mods.write(0, disguise.getEntity().getEntityId());

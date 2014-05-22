@@ -3,32 +3,61 @@ package me.libraryaddict.disguise;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
+    private static boolean animationEnabled;
+    private static boolean bedEnabled;
     private static boolean blowDisguisesOnAttack;
+    private static boolean collectEnabled;
     private static String disguiseBlownMessage;
+    private static boolean enquipmentEnabled;
     private static boolean entityAnimationsAdded;
+    private static boolean entityStatusEnabled;
     private static boolean hearSelfDisguise;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
     private static boolean keepDisguiseEntityDespawn;
     private static boolean keepDisguisePlayerDeath;
     private static boolean keepDisguisePlayerLogout;
+    private static boolean miscDisguisesForLivingEnabled;
     private static boolean modifyBoundingBox;
+    private static boolean movementEnabled;
     private static boolean removeUnseenDisguises;
+    private static boolean ridingEnabled;
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
+    private static boolean witherSkullEnabled;
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
+    }
+
+    public static boolean isAnimationPacketsEnabled() {
+        return animationEnabled;
+    }
+
+    public static boolean isBedPacketsEnabled() {
+        return bedEnabled;
+    }
+
+    public static boolean isCollectPacketsEnabled() {
+        return collectEnabled;
     }
 
     public static boolean isDisguiseBlownOnAttack() {
         return blowDisguisesOnAttack;
     }
 
+    public static boolean isEnquipmentPacketsEnabled() {
+        return enquipmentEnabled;
+    }
+
     public static boolean isEntityAnimationsAdded() {
         return entityAnimationsAdded;
+    }
+
+    public static boolean isEntityStatusPacketsEnabled() {
+        return entityStatusEnabled;
     }
 
     /**
@@ -57,6 +86,10 @@ public class DisguiseConfig {
         return keepDisguisePlayerLogout;
     }
 
+    public static boolean isMiscDisguisesForLivingEnabled() {
+        return miscDisguisesForLivingEnabled;
+    }
+
     public static boolean isModifyBoundingBox() {
         return modifyBoundingBox;
     }
@@ -65,12 +98,20 @@ public class DisguiseConfig {
         return targetDisguises;
     }
 
+    public static boolean isMovementPacketsEnabled() {
+        return movementEnabled;
+    }
+
     public static boolean isNameAboveHeadAlwaysVisible() {
         return showNameAboveHeadAlwaysVisible;
     }
 
     public static boolean isNameOfPlayerShownAboveDisguise() {
         return showNameAboveHead;
+    }
+
+    public static boolean isRidingPacketsEnabled() {
+        return ridingEnabled;
     }
 
     public static boolean isSelfDisguisesSoundsReplaced() {
@@ -102,8 +143,33 @@ public class DisguiseConfig {
         return PacketsManager.isViewDisguisesListenerEnabled();
     }
 
+    public static boolean isWitherSkullPacketsEnabled() {
+        return witherSkullEnabled;
+    }
+
     public static void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
         entityAnimationsAdded = isEntityAnimationsAdded;
+    }
+
+    public static void setAnimationPacketsEnabled(boolean enabled) {
+        if (enabled != isAnimationPacketsEnabled()) {
+            animationEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
+    public static void setBedPacketsEnabled(boolean enabled) {
+        if (enabled != isBedPacketsEnabled()) {
+            bedEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
+    public static void setCollectPacketsEnabled(boolean enabled) {
+        if (enabled != isCollectPacketsEnabled()) {
+            collectEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
     }
 
     public static void setDisguiseBlownMessage(String newMessage) {
@@ -112,6 +178,20 @@ public class DisguiseConfig {
 
     public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
         blowDisguisesOnAttack = blowDisguise;
+    }
+
+    public static void setEnquipmentPacketsEnabled(boolean enabled) {
+        if (enabled != isEnquipmentPacketsEnabled()) {
+            enquipmentEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
+    public static void setEntityStatusPacketsEnabled(boolean enabled) {
+        if (enabled != isEntityStatusPacketsEnabled()) {
+            entityStatusEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
     }
 
     /**
@@ -155,6 +235,13 @@ public class DisguiseConfig {
         keepDisguisePlayerLogout = keepDisguise;
     }
 
+    public static void setMiscDisguisesForLivingEnabled(boolean enabled) {
+        if (enabled != isMiscDisguisesForLivingEnabled()) {
+            miscDisguisesForLivingEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
     public static void setModifyBoundingBox(boolean modifyBounding) {
         modifyBoundingBox = modifyBounding;
     }
@@ -163,12 +250,26 @@ public class DisguiseConfig {
         targetDisguises = ignore;
     }
 
+    public static void setMovementPacketsEnabled(boolean enabled) {
+        if (enabled != isMovementPacketsEnabled()) {
+            movementEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
     public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible) {
         showNameAboveHeadAlwaysVisible = alwaysVisible;
     }
 
     public static void setNameOfPlayerShownAboveDisguise(boolean showNames) {
         showNameAboveHead = showNames;
+    }
+
+    public static void setRidingPacketsEnabled(boolean enabled) {
+        if (enabled != isRidingPacketsEnabled()) {
+            ridingEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
     }
 
     /**
@@ -191,6 +292,10 @@ public class DisguiseConfig {
 
     public static void setViewDisguises(boolean seeOwnDisguise) {
         PacketsManager.setViewDisguisesListener(seeOwnDisguise);
+    }
+
+    public static void setWitherSkullPacketsEnabled(boolean enabled) {
+        witherSkullEnabled = enabled;
     }
 
     private DisguiseConfig() {

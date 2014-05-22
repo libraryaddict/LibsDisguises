@@ -44,6 +44,10 @@ public class DisguiseUtilities {
      */
     private static HashSet<String> addedByPlugins = new HashSet<String>();
     /**
+     * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
+     **/
+    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<UUID, HashSet<TargetedDisguise>>();
+    /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
      * a max of a second.
      */
@@ -58,10 +62,6 @@ public class DisguiseUtilities {
      * seeing as no one sees each others entity ID
      **/
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
-    /**
-     * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
-     **/
-    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<UUID, HashSet<TargetedDisguise>>();
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {

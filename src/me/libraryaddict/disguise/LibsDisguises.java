@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
@@ -46,14 +47,16 @@ public class LibsDisguises extends JavaPlugin {
             stream = getClassLoader().getResource("config.yml").openStream();
             YamlConfiguration internalConfig = YamlConfiguration.loadConfiguration(stream);
             for (String option : internalConfig.getKeys(false)) {
-                if (!config.contains(option)) {
-                    if (internalConfig.isConfigurationSection(option)) {
-                        for (String secondOption : internalConfig.getConfigurationSection(option).getKeys(false)) {
-                            config.set(option, getConfig().get(option + "." + secondOption));
+                if (internalConfig.isConfigurationSection(option)) {
+                    ConfigurationSection section = internalConfig.getConfigurationSection(option);
+                    for (String secondOption : section.getKeys(false)) {
+                        if (!config.contains(secondOption)) {
+                            config.set(option + "." + secondOption, section.get(secondOption));
+                            needToSaveConfig = true;
                         }
-                    } else {
-                        config.set(option, getConfig().get(option));
                     }
+                } else if (!config.contains(option)) {
+                    config.set(option, getConfig().get(option));
                     needToSaveConfig = true;
                 }
             }
@@ -94,6 +97,15 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setKeepDisguiseOnPlayerDeath(getConfig().getBoolean("KeepDisguises.PlayerDeath"));
         DisguiseConfig.setKeepDisguiseOnPlayerLogout(getConfig().getBoolean("KeepDisguises.PlayerLogout"));
         DisguiseConfig.setKeepDisguiseOnEntityDespawn(getConfig().getBoolean("KeepDisguises.EntityDespawn"));
+        DisguiseConfig.setMiscDisguisesForLivingEnabled(getConfig().getBoolean("MiscDisguisesForLiving"));
+        DisguiseConfig.setMovementPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Movement"));
+        DisguiseConfig.setWitherSkullPacketsEnabled(getConfig().getBoolean("PacketsEnabled.WitherSkull"));
+        DisguiseConfig.setEnquipmentPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Enquipment"));
+        DisguiseConfig.setAnimationPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Animation"));
+        DisguiseConfig.setBedPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Bed"));
+        DisguiseConfig.setRidingPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Riding"));
+        DisguiseConfig.setEntityStatusPacketsEnabled(getConfig().getBoolean("PacketsEnabled.EntityStatus"));
+        DisguiseConfig.setCollectPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Collect"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.
@@ -103,7 +115,7 @@ public class LibsDisguises extends JavaPlugin {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        PacketsManager.addPacketListeners(this);
+        PacketsManager.addPacketListeners();
         DisguiseListener listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());

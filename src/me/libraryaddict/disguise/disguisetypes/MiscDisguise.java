@@ -103,11 +103,6 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public MiscDisguise(EntityType entityType, int id) {
-        this(entityType, id, -1);
-    }
-
-    @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds) {
         this(entityType, replaceSounds, -1, -1);
     }
@@ -115,6 +110,11 @@ public class MiscDisguise extends TargetedDisguise {
     @Deprecated
     public MiscDisguise(EntityType entityType, boolean replaceSounds, int id, int data) {
         this(DisguiseType.getType(entityType), replaceSounds, id, data);
+    }
+
+    @Deprecated
+    public MiscDisguise(EntityType entityType, int id) {
+        this(entityType, id, -1);
     }
 
     @Deprecated

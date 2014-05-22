@@ -61,6 +61,34 @@ BlownDisguiseMessage: '&cYour disguise was blown!'
 # These disguises, as normal will not persist after a server restart.
 # There is also no EntityDeath option as entities do not revive after death.
 KeepDisguises:
+  EntityDespawn: false
   PlayerDeath: false
   PlayerLogout: false
-  EntityDespawn: false
+
+# This here is a option to turn off misc disguises.
+# This means you can not have a living entity disguise as a non-living entity.
+# This disables the Attributes packet, Non-living entities can still disguise as other non-living
+MiscDisguisesForLiving: true
+
+# This will help performance, especially with CPU
+# Due to safety reasons, self disguises can never have their packets disabled.
+PacketsEnabled:
+  # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
+  # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
+  Animation: true
+  # Disabling this means that you can't use the setSleeping option on a player disguise. Also you will crash anyone watching when you try to sleep in a bed
+  Bed: true
+  # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
+  # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
+  Collect: true
+  # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
+  EntityStatus: true
+  # Entity enquipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
+  # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
+  Enquipment: true
+  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up
+  Movement: true
+  # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
+  Riding: true
+  # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
+  WitherSkull: true

@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
@@ -44,7 +45,7 @@ public class PlayerWatcher extends LivingWatcher {
     public void setSleeping(boolean sleep) {
         if (sleep != isSleeping()) {
             isInBed = sleep;
-            if (DisguiseUtilities.isDisguiseInUse(getDisguise())) {
+            if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise())) {
                 PacketContainer packet;
                 if (isSleeping()) {
                     packet = new PacketContainer(PacketType.Play.Server.BED);
