@@ -67,7 +67,8 @@ public class PacketsManager {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
         // Because it kicks you for hacking.
-        clientInteractEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+        clientInteractEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL,
+                PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 try {
@@ -97,11 +98,12 @@ public class PacketsManager {
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         // This sends the armor packets so that the player isn't naked.
+        // Please note it only sends the packets that wouldn't be sent normally
         for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
             int armorSlot = nmsSlot - 1;
             if (armorSlot < 0)
                 armorSlot = 4;
-            org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
+            ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
             if (itemstack != null && itemstack.getTypeId() != 0) {
                 ItemStack item = null;
                 if (disguisedEntity instanceof LivingEntity) {
