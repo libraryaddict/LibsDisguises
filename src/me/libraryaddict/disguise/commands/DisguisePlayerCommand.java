@@ -52,6 +52,11 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             }
             return true;
         }
+        if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+            sender.sendMessage(ChatColor.RED
+                    + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
+            return true;
+        }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
                 ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) player).getDisplayName());

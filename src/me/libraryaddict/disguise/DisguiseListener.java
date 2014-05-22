@@ -12,6 +12,7 @@ import me.libraryaddict.disguise.utilities.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -120,9 +121,10 @@ public class DisguiseListener implements Listener {
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent event) {
         if (disguiseSlap.containsKey(event.getPlayer().getName())) {
+            Player p = event.getPlayer();
             event.setCancelled(true);
-            Disguise disguise = disguiseSlap.remove(event.getPlayer().getName());
-            disguiseRunnable.remove(event.getPlayer().getName()).cancel();
+            Disguise disguise = disguiseSlap.remove(p.getName());
+            disguiseRunnable.remove(p.getName()).cancel();
             Entity entity = event.getRightClicked();
             String entityName = "";
             if (entity instanceof Player) {
@@ -137,38 +139,41 @@ public class DisguiseListener implements Listener {
                 }
             }
             if (disguise != null) {
-                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
-                    if (disguise.getWatcher() instanceof LivingWatcher) {
-                        ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
-                        if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                            ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
-                        }
-                    }
-                }
-                DisguiseAPI.disguiseToAll(entity, disguise);
-                String disguiseName = "a ";
-                if (disguise instanceof PlayerDisguise) {
-                    disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
+                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
+                        && entity instanceof LivingEntity) {
+                    p.sendMessage(ChatColor.RED
+                            + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
                 } else {
-                    String[] split = disguise.getType().name().split("_");
-                    for (int i = 0; i < split.length; i++) {
-                        disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
-                        if (i + 1 < split.length) {
-                            disguiseName += " ";
+                    if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                        if (disguise.getWatcher() instanceof LivingWatcher) {
+                            ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                            if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
+                                ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                            }
                         }
                     }
+                    DisguiseAPI.disguiseToAll(entity, disguise);
+                    String disguiseName = "a ";
+                    if (disguise instanceof PlayerDisguise) {
+                        disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
+                    } else {
+                        String[] split = disguise.getType().name().split("_");
+                        for (int i = 0; i < split.length; i++) {
+                            disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
+                            if (i + 1 < split.length) {
+                                disguiseName += " ";
+                            }
+                        }
+                    }
+                    p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as "
+                            + disguiseName + "!");
                 }
-                event.getPlayer().sendMessage(
-                        ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as "
-                                + disguiseName + "!");
             } else {
                 if (DisguiseAPI.isDisguised(entity)) {
                     DisguiseAPI.undisguiseToAll(entity);
-                    event.getPlayer().sendMessage(
-                            ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
+                    p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
                 } else
-                    event.getPlayer().sendMessage(
-                            ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
+                    p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
             }
         }
     }

@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class DisguiseRadiusCommand extends BaseDisguiseCommand {
@@ -66,9 +67,14 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             return true;
         } // Time to use it!
         int disguisedEntitys = 0;
+        int miscDisguises = 0;
         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
             if (entity == sender)
                 continue;
+            if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+                miscDisguises++;
+                continue;
+            }
             disguise = disguise.clone();
             if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
@@ -81,7 +87,15 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             DisguiseAPI.disguiseToAll(entity, disguise);
             disguisedEntitys++;
         }
-        sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");
+        if (disguisedEntitys > 0) {
+            sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");
+        } else {
+            sender.sendMessage(ChatColor.RED + "Couldn't find any entities to disguise!");
+        }
+        if (miscDisguises > 0) {
+            sender.sendMessage(ChatColor.RED + "Failed to disguise " + miscDisguises
+                    + " entities because the option to disguise a living entity as a non-living has been disabled in the config");
+        }
         return true;
     }
 
