@@ -1,12 +1,14 @@
 package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
+import me.libraryaddict.disguise.utilities.ClassGetter;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -18,9 +20,15 @@ import org.bukkit.entity.Player;
 
 public class DisguiseRadiusCommand extends BaseDisguiseCommand {
     private int maxRadius = 30;
+    private ArrayList<Class> validClasses = new ArrayList<Class>();
 
     public DisguiseRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
+        for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
+            if (c.getAnnotation(Deprecated.class) == null && Entity.class.isAssignableFrom(c)) {
+                validClasses.add(c);
+            }
+        }
     }
 
     @Override
@@ -38,22 +46,49 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             sendCommandUsage(sender);
             return true;
         }
-        if (args.length == 1) {
-            sender.sendMessage(ChatColor.RED + "You need to supply a disguise as well as the radius");
+        if (args[0].equalsIgnoreCase("entitytypes")) {
+            ArrayList<String> classes = new ArrayList<String>();
+            for (Class c : validClasses) {
+                classes.add(c.getSimpleName());
+            }
+            Collections.sort(classes);
+            sender.sendMessage(ChatColor.DARK_GREEN + "EntityTypes usable are: " + ChatColor.GREEN
+                    + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN) + ChatColor.DARK_GREEN + ".");
             return true;
         }
-        if (!isNumeric(args[0])) {
-            sender.sendMessage(ChatColor.RED + args[0] + " is not a number");
+        Class entityClass = Entity.class;
+        int starting = 0;
+        try {
+            for (Class c : validClasses) {
+                if (c.getSimpleName().equalsIgnoreCase(args[0])) {
+                    entityClass = c;
+                    starting = 1;
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+        }
+        if (starting == 0 && !isNumeric(args[0])) {
+            sender.sendMessage(ChatColor.RED + "Unrecognised EntityType " + args[0]);
             return true;
         }
-        int radius = Integer.parseInt(args[0]);
+        if (args.length == starting + 1) {
+            sender.sendMessage(ChatColor.RED + "You need to supply a disguise as well as the radius"
+                    + (starting != 0 ? " and EntityType" : ""));
+            return true;
+        }
+        if (!isNumeric(args[starting])) {
+            sender.sendMessage(ChatColor.RED + args[starting] + " is not a number");
+            return true;
+        }
+        int radius = Integer.parseInt(args[starting]);
         if (radius > maxRadius) {
             sender.sendMessage(ChatColor.RED + "Limited radius to " + maxRadius + "! Don't want to make too much lag right?");
             radius = maxRadius;
         }
-        String[] newArgs = new String[args.length - 1];
+        String[] newArgs = new String[args.length - (starting + 1)];
         for (int i = 0; i < newArgs.length; i++) {
-            newArgs[i] = args[i + 1];
+            newArgs[i] = args[i + (starting + 1)];
         }
         Disguise disguise;
         try {
@@ -71,21 +106,24 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
             if (entity == sender)
                 continue;
-            if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
-                miscDisguises++;
-                continue;
-            }
-            disguise = disguise.clone();
-            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
-                if (disguise.getWatcher() instanceof LivingWatcher) {
-                    ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
-                    if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                        ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+            if (entityClass.isAssignableFrom(entity.getClass())) {
+                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
+                        && entity instanceof LivingEntity) {
+                    miscDisguises++;
+                    continue;
+                }
+                disguise = disguise.clone();
+                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                    if (disguise.getWatcher() instanceof LivingWatcher) {
+                        ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                        if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
+                            ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                        }
                     }
                 }
+                DisguiseAPI.disguiseToAll(entity, disguise);
+                disguisedEntitys++;
             }
-            DisguiseAPI.disguiseToAll(entity, disguise);
-            disguisedEntitys++;
         }
         if (disguisedEntitys > 0) {
             sender.sendMessage(ChatColor.RED + "Successfully disguised " + disguisedEntitys + " entities!");
@@ -107,10 +145,20 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at 30 blocks!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
-        if (allowedDisguises.contains("player"))
-            sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseradius <Radius> player <Name>");
-        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseradius <Radius> <DisguiseType> <Baby>");
-        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block"))
-            sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseradius <Radius> <Dropped_Item/Falling_Block> <Id> <Durability>");
+        String optional = ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")";
+        if (allowedDisguises.contains("player")) {
+            sender.sendMessage((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional + "> <Radius> player <Name>")
+                    .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">"));
+        }
+        sender.sendMessage((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional + "> <Radius> <DisguiseType> <Baby"
+                + optional + ">").replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">"));
+        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
+            sender.sendMessage((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional
+                    + "> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" + optional + ">").replace("<",
+                    "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">"));
+        }
+        sender.sendMessage(ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN
+                + "/disguiseradius EntityTypes");
     }
+
 }

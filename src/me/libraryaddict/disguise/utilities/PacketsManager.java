@@ -58,8 +58,8 @@ public class PacketsManager {
     private static LibsDisguises libsDisguises;
     private static PacketListener mainListener;
     private static PacketListener soundsListener;
-    private static PacketListener useEntityListener;
     private static boolean soundsListenerEnabled;
+    private static PacketListener clientInteractEntityListener;
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
 
@@ -67,7 +67,7 @@ public class PacketsManager {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
         // Because it kicks you for hacking.
-        useEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+        clientInteractEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 try {
@@ -83,7 +83,7 @@ public class PacketsManager {
                 }
             }
         };
-        ProtocolLibrary.getProtocolManager().addPacketListener(useEntityListener);
+        ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();
     }
@@ -1052,7 +1052,7 @@ public class PacketsManager {
     }
 
     public static void setupMainPacketsListener() {
-        if (useEntityListener != null) {
+        if (clientInteractEntityListener != null) {
             if (mainListener != null) {
                 ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
             }
