@@ -44,9 +44,16 @@ public class LibsDisguises extends JavaPlugin {
         InputStream stream = null;
         try {
             stream = getClassLoader().getResource("config.yml").openStream();
-            for (String option : YamlConfiguration.loadConfiguration(stream).getKeys(false)) {
+            YamlConfiguration internalConfig = YamlConfiguration.loadConfiguration(stream);
+            for (String option : internalConfig.getKeys(false)) {
                 if (!config.contains(option)) {
-                    config.set(option, getConfig().get(option));
+                    if (internalConfig.isConfigurationSection(option)) {
+                        for (String secondOption : internalConfig.getConfigurationSection(option).getKeys(false)) {
+                            config.set(option, getConfig().get(option + "." + secondOption));
+                        }
+                    } else {
+                        config.set(option, getConfig().get(option));
+                    }
                     needToSaveConfig = true;
                 }
             }
