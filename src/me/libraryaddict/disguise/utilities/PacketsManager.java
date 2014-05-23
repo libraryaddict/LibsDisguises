@@ -1269,15 +1269,18 @@ public class PacketsManager {
                         ItemStack heldItem = packets[0].getItemModifier().read(0);
                         if (heldItem != null && heldItem.getType() != Material.AIR) {
                             // Convert the datawatcher
-                            WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(entity);
                             List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
-                            for (WrappedWatchableObject value : dataWatcher.getWatchableObjects()) {
-                                if (value.getIndex() == 0) {
-                                    list.add(value);
-                                    break;
+                            if (DisguiseConfig.isMetadataPacketsEnabled()) {
+                                list.add(new WrappedWatchableObject(0, WrappedDataWatcher.getEntityWatcher(entity).getObject(0)));
+                                list = disguise.getWatcher().convert(list);
+                            } else {
+                                for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
+                                    if (obj.getIndex() == 0) {
+                                        list.add(obj);
+                                        break;
+                                    }
                                 }
                             }
-                            list = DisguiseConfig.isMetadataPacketsEnabled() ? disguise.getWatcher().convert(list) : list;
                             // Construct the packets to return
                             PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             packetBlock.getModifier().write(0, entity.getEntityId());
