@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -235,21 +234,18 @@ public class FlagWatcher {
             return;
         if (!entityValues.containsKey(data) || entityValues.get(data) == null)
             return;
-        Entity entity = getDisguise().getEntity();
         Object value = entityValues.get(data);
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
         list.add(new WrappedWatchableObject(data, value));
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         StructureModifier<Object> mods = packet.getModifier();
-        mods.write(0, entity.getEntityId());
+        mods.write(0, getDisguise().getEntity().getEntityId());
         packet.getWatchableCollectionModifier().write(0, list);
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            if (DisguiseConfig.isViewDisguises() || player != entity) {
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -322,12 +318,10 @@ public class FlagWatcher {
         mods.write(1, slot);
         mods.write(2, itemToSend);
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            if (player != getDisguise().getEntity()) {
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
     }
