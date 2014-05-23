@@ -368,8 +368,7 @@ public abstract class Disguise {
     public boolean isRemoveDisguiseOnDeath() {
         return getEntity() instanceof Player ?
 
-        (Bukkit.getPlayerExact(((Player) getEntity()).getName()) == null ? !isKeepDisguiseOnPlayerLogout()
-                : !isKeepDisguiseOnPlayerDeath())
+        (((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
 
         :
 
