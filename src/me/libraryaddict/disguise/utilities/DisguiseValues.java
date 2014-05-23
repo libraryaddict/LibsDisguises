@@ -47,13 +47,15 @@ public class DisguiseValues {
     private FakeBoundingBox babyBox;
     private float[] entitySize;
     private int enumEntitySize;
+    private double maxHealth;
     private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
     private Class nmsEntityClass;
 
-    public DisguiseValues(DisguiseType type, Class classType, int entitySize) {
+    public DisguiseValues(DisguiseType type, Class classType, int entitySize, double maxHealth) {
         values.put(type, this);
         enumEntitySize = entitySize;
         nmsEntityClass = classType;
+        this.maxHealth = maxHealth;
     }
 
     public FakeBoundingBox getAdultBox() {
@@ -110,6 +112,10 @@ public class DisguiseValues {
         }
 
         return (int) Math.floor(paramDouble * 32.0D);
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
     }
 
     public HashMap<Integer, Object> getMetaValues() {

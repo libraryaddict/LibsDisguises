@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
@@ -43,6 +44,8 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedAttribute;
+import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
@@ -1173,10 +1176,39 @@ public class PacketsManager {
             if (disguise != null) {
                 packets = new PacketContainer[] { sentPacket };
 
-                // If packet is PacketType.Play.Server.UPDATE_ATTRIBUTES
                 // This packet sends attributes
                 if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES) {
-                    packets = new PacketContainer[0];
+                    if (disguise.isMiscDisguise()) {
+                        packets = new PacketContainer[0];
+                    } else {
+                        List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+                        for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
+                            if (attribute.getAttributeKey().equals("generic.maxHealth")) {
+                                packets[0] = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+                                Builder builder;
+                                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                                    builder = WrappedAttribute.newBuilder();
+                                    builder.attributeKey("generic.maxHealth");
+                                    builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
+                                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity()) {
+                                    builder = WrappedAttribute.newBuilder(attribute);
+                                } else {
+                                    builder = WrappedAttribute.newBuilder();
+                                    builder.attributeKey("generic.maxHealth");
+                                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
+                                }
+                                builder.packet(packets[0]);
+                                attributes.add(builder.build());
+                                break;
+                            }
+                        }
+                        if (!attributes.isEmpty()) {
+                            packets[0].getIntegers().write(0, entity.getEntityId());
+                            packets[0].getAttributeCollectionModifier().write(0, attributes);
+                        } else {
+                            packets = new PacketContainer[0];
+                        }
+                    }
                 }
 
                 else if (sentPacket.getType() == PacketType.Play.Server.ATTACH_ENTITY) {

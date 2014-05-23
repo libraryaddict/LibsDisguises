@@ -27,6 +27,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
@@ -107,6 +108,7 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setEntityStatusPacketsEnabled(getConfig().getBoolean("PacketsEnabled.EntityStatus"));
         DisguiseConfig.setCollectPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Collect"));
         DisguiseConfig.setMetadataPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Metadata"));
+        DisguiseConfig.setMaxHealthDeterminedByDisguisedEntity(getConfig().getBoolean("MaxHealthDeterminedByEntity"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.
@@ -234,7 +236,8 @@ public class LibsDisguises extends JavaPlugin {
                         break;
                     }
                 }
-                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize);
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize,
+                        bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
                 for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..

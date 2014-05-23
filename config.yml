@@ -64,6 +64,12 @@ KeepDisguises:
   EntityDespawn: false
   PlayerDeath: false
   PlayerLogout: false
+  
+# This controls if a entitys max health is determined by the entity, or by the disguise.
+# Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
+# Else it will be 1/20 of the boss bar when he is full health.
+# Setting this in LivingWatcher overrides both values.
+MaxHealthDeterminedByEntity: true
 
 # This here is a option to turn off misc disguises.
 # This means you can not have a living entity disguise as a non-living entity.
@@ -91,6 +97,7 @@ PacketsEnabled:
   # This is good if performance is extremely in need.
   # This is bad to disable unless you are ONLY going to use the disguises for decorations.
   # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
+  # Animations set by use of the api or through the disguise command are still in effect.
   Metadata: true
   # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up
   Movement: true

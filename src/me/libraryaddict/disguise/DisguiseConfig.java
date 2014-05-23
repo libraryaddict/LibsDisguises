@@ -17,6 +17,7 @@ public class DisguiseConfig {
     private static boolean keepDisguiseEntityDespawn;
     private static boolean keepDisguisePlayerDeath;
     private static boolean keepDisguisePlayerLogout;
+    private static boolean maxHealthIsDisguisedEntity;
     private static boolean miscDisguisesForLivingEnabled;
     private static boolean modifyBoundingBox;
     private static boolean movementEnabled;
@@ -85,6 +86,10 @@ public class DisguiseConfig {
 
     public static boolean isKeepDisguiseOnPlayerLogout() {
         return keepDisguisePlayerLogout;
+    }
+
+    public static boolean isMaxHealthDeterminedByDisguisedEntity() {
+        return maxHealthIsDisguisedEntity;
     }
 
     public static boolean isMetadataPacketsEnabled() {
@@ -238,6 +243,10 @@ public class DisguiseConfig {
 
     public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         keepDisguisePlayerLogout = keepDisguise;
+    }
+
+    public static void setMaxHealthDeterminedByDisguisedEntity(boolean isDetermined) {
+        maxHealthIsDisguisedEntity = isDetermined;
     }
 
     public static void setMetadataPacketsEnabled(boolean enabled) {

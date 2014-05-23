@@ -31,6 +31,8 @@ public class LivingWatcher extends FlagWatcher {
             ex.printStackTrace();
         }
     }
+    private double maxHealth;
+    private boolean maxHealthSet;
     private HashSet<Integer> potionEffects = new HashSet<Integer>();
 
     public LivingWatcher(Disguise disguise) {
@@ -48,6 +50,8 @@ public class LivingWatcher extends FlagWatcher {
     public LivingWatcher clone(Disguise disguise) {
         LivingWatcher clone = (LivingWatcher) super.clone(disguise);
         clone.potionEffects = (HashSet<Integer>) potionEffects.clone();
+        clone.maxHealth = maxHealth;
+        clone.maxHealthSet = maxHealthSet;
         return clone;
     }
 
@@ -57,6 +61,10 @@ public class LivingWatcher extends FlagWatcher {
 
     public float getHealth() {
         return (Float) getValue(6, 0F);
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
     }
 
     public boolean getPotionParticlesRemoved() {
@@ -105,6 +113,10 @@ public class LivingWatcher extends FlagWatcher {
         return (Byte) getValue(11, (byte) 0) == 1;
     }
 
+    public boolean isMaxHealthSet() {
+        return maxHealthSet;
+    }
+
     public void removePotionEffect(PotionEffectType type) {
         if (potionEffects.contains(type.getId())) {
             potionEffects.remove(type.getId());
@@ -137,6 +149,12 @@ public class LivingWatcher extends FlagWatcher {
     public void setHealth(float health) {
         setValue(6, health);
         sendData(6);
+    }
+
+    public void setMaxHealth(double newHealth) {
+        this.maxHealth = newHealth;
+        maxHealthSet = true;
+        // TODO Send packet
     }
 
 }
