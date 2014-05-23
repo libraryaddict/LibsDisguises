@@ -229,23 +229,27 @@ public class FlagWatcher {
         }
     }
 
-    protected void sendData(int data) {
+    protected void sendData(int... dataValues) {
         if (!DisguiseAPI.isDisguiseInUse(getDisguise()))
             return;
-        if (!entityValues.containsKey(data) || entityValues.get(data) == null)
-            return;
-        Object value = entityValues.get(data);
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
-        list.add(new WrappedWatchableObject(data, value));
-        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        StructureModifier<Object> mods = packet.getModifier();
-        mods.write(0, getDisguise().getEntity().getEntityId());
-        packet.getWatchableCollectionModifier().write(0, list);
-        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+        for (int data : dataValues) {
+            if (!entityValues.containsKey(data) || entityValues.get(data) == null)
+                continue;
+            Object value = entityValues.get(data);
+            list.add(new WrappedWatchableObject(data, value));
+        }
+        if (!list.isEmpty()) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            StructureModifier<Object> mods = packet.getModifier();
+            mods.write(0, getDisguise().getEntity().getEntityId());
+            packet.getWatchableCollectionModifier().write(0, list);
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

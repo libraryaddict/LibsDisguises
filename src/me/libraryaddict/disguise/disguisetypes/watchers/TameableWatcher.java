@@ -42,8 +42,8 @@ public class TameableWatcher extends AgeableWatcher {
     @Override
     public void setHealth(float newHealth) {
         setValue(18, newHealth);
-        sendData(18);
-        super.setHealth(newHealth);
+        setValue(6, newHealth);
+        sendData(6, 18);
     }
 
     public void setOwner(String owner) {
