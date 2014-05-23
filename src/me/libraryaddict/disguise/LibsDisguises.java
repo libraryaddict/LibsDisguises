@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -30,6 +31,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Zombie;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -171,7 +173,9 @@ public class LibsDisguises extends JavaPlugin {
             } catch (ClassNotFoundException ex) {
                 // There is no explicit watcher for this entity.
                 Class entityClass = disguiseType.getEntityType().getEntityClass();
-                if (Ageable.class.isAssignableFrom(entityClass)) {
+                if (Tameable.class.isAssignableFrom(entityClass)) {
+                    watcherClass = TameableWatcher.class;
+                } else if (Ageable.class.isAssignableFrom(entityClass)) {
                     watcherClass = AgeableWatcher.class;
                 } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
                     watcherClass = LivingWatcher.class;
