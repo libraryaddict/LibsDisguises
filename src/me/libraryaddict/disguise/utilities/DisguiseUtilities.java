@@ -234,7 +234,8 @@ public class DisguiseUtilities {
 
     public static TargetedDisguise[] getDisguises(UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
-            return getDisguises().get(entityId).toArray(new TargetedDisguise[getDisguises().get(entityId).size()]);
+            HashSet<TargetedDisguise> disguises = getDisguises().get(entityId);
+            return disguises.toArray(new TargetedDisguise[disguises.size()]);
         }
         return new TargetedDisguise[0];
     }
@@ -402,7 +403,7 @@ public class DisguiseUtilities {
 
     /**
      * @param Resends
-     *            the entity to all the watching players, which is where the magic begins
+     *            the entity to this specific player
      */
     public static void refreshTracker(TargetedDisguise disguise, String player) {
         if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
