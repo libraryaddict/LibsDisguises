@@ -52,6 +52,7 @@ public class PacketsManager {
      * "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
      */
     private static boolean cancelSound;
+    private static PacketListener clientInteractEntityListener;
     private static PacketListener inventoryListenerClient;
     private static PacketListener inventoryListenerServer;
     private static boolean inventoryModifierEnabled;
@@ -59,7 +60,6 @@ public class PacketsManager {
     private static PacketListener mainListener;
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
-    private static PacketListener clientInteractEntityListener;
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
 
@@ -304,8 +304,9 @@ public class PacketsManager {
     private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            List<WrappedWatchableObject> list = watcher.getWatchableObjects();
-            for (WrappedWatchableObject watchableObject : flagWatcher.convert(list)) {
+            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ? flagWatcher.convert(watcher
+                    .getWatchableObjects()) : flagWatcher.getWatchableObjects();
+            for (WrappedWatchableObject watchableObject : list) {
                 newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
         } catch (Exception ex) {
@@ -1186,12 +1187,16 @@ public class PacketsManager {
 
                 // Else if the packet is sending entity metadata
                 else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_METADATA) {
-                    List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
-                            packets[0].getWatchableCollectionModifier().read(0));
-                    packets[0] = new PacketContainer(sentPacket.getType());
-                    StructureModifier<Object> newMods = packets[0].getModifier();
-                    newMods.write(0, entity.getEntityId());
-                    packets[0].getWatchableCollectionModifier().write(0, watchableObjects);
+                    if (DisguiseConfig.isMetadataPacketsEnabled()) {
+                        List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
+                                packets[0].getWatchableCollectionModifier().read(0));
+                        packets[0] = new PacketContainer(sentPacket.getType());
+                        StructureModifier<Object> newMods = packets[0].getModifier();
+                        newMods.write(0, entity.getEntityId());
+                        packets[0].getWatchableCollectionModifier().write(0, watchableObjects);
+                    } else {
+                        packets = new PacketContainer[0];
+                    }
                 }
 
                 // Else if the packet is spawning..
@@ -1269,9 +1274,10 @@ public class PacketsManager {
                             for (WrappedWatchableObject value : dataWatcher.getWatchableObjects()) {
                                 if (value.getIndex() == 0) {
                                     list.add(value);
+                                    break;
                                 }
                             }
-                            list = disguise.getWatcher().convert(list);
+                            list = DisguiseConfig.isMetadataPacketsEnabled() ? disguise.getWatcher().convert(list) : list;
                             // Construct the packets to return
                             PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             packetBlock.getModifier().write(0, entity.getEntityId());

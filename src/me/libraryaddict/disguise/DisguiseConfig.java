@@ -22,6 +22,7 @@ public class DisguiseConfig {
     private static boolean movementEnabled;
     private static boolean removeUnseenDisguises;
     private static boolean ridingEnabled;
+    private static boolean sendsEntityMetadata;
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
@@ -84,6 +85,10 @@ public class DisguiseConfig {
 
     public static boolean isKeepDisguiseOnPlayerLogout() {
         return keepDisguisePlayerLogout;
+    }
+
+    public static boolean isMetadataPacketsEnabled() {
+        return sendsEntityMetadata;
     }
 
     public static boolean isMiscDisguisesForLivingEnabled() {
@@ -233,6 +238,10 @@ public class DisguiseConfig {
 
     public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         keepDisguisePlayerLogout = keepDisguise;
+    }
+
+    public static void setMetadataPacketsEnabled(boolean enabled) {
+        sendsEntityMetadata = enabled;
     }
 
     public static void setMiscDisguisesForLivingEnabled(boolean enabled) {

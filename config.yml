@@ -86,6 +86,12 @@ PacketsEnabled:
   # Entity enquipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
   # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
   Enquipment: true
+  # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.
+  # This means that entity metadata will not change, and will only be sent in the spawn packet.
+  # This is good if performance is extremely in need.
+  # This is bad to disable unless you are ONLY going to use the disguises for decorations.
+  # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
+  Metadata: true
   # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up
   Movement: true
   # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity

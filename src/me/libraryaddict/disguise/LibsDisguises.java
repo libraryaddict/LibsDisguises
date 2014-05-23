@@ -106,6 +106,7 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setRidingPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Riding"));
         DisguiseConfig.setEntityStatusPacketsEnabled(getConfig().getBoolean("PacketsEnabled.EntityStatus"));
         DisguiseConfig.setCollectPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Collect"));
+        DisguiseConfig.setMetadataPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Metadata"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

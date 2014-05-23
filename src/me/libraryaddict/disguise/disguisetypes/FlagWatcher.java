@@ -48,6 +48,7 @@ public class FlagWatcher {
     private boolean hasDied;
     private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
+    private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -179,6 +180,13 @@ public class FlagWatcher {
         return backup;
     }
 
+    public List<WrappedWatchableObject> getWatchableObjects() {
+        if (watchableObjects == null) {
+            rebuildWatchableObjects();
+        }
+        return watchableObjects;
+    }
+
     protected boolean hasValue(int no) {
         return entityValues.containsKey(no);
     }
@@ -205,6 +213,21 @@ public class FlagWatcher {
 
     public boolean isSprinting() {
         return getFlag(3);
+    }
+
+    public void rebuildWatchableObjects() {
+        watchableObjects = new ArrayList<WrappedWatchableObject>();
+        for (int i = 0; i <= 31; i++) {
+            WrappedWatchableObject watchable = null;
+            if (this.entityValues.containsKey(i) && this.entityValues.get(i) != null) {
+                watchable = new WrappedWatchableObject(i, entityValues.get(i));
+            } else if (this.backupEntityValues.containsKey(i) && this.backupEntityValues.get(i) != null) {
+                watchable = new WrappedWatchableObject(i, backupEntityValues.get(i));
+            }
+            if (watchable != null) {
+                watchableObjects.add(watchable);
+            }
+        }
     }
 
     protected void sendData(int data) {
@@ -330,6 +353,9 @@ public class FlagWatcher {
 
     protected void setValue(int no, Object value) {
         entityValues.put(no, value);
+        if (!DisguiseConfig.isMetadataPacketsEnabled()) {
+            this.rebuildWatchableObjects();
+        }
     }
 
 }
