@@ -58,7 +58,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         }
         Class entityClass = Entity.class;
         int starting = 0;
-        try {
+        if (!isNumeric(args[0])) {
             for (Class c : validClasses) {
                 if (c.getSimpleName().equalsIgnoreCase(args[0])) {
                     entityClass = c;
@@ -66,11 +66,10 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
                     break;
                 }
             }
-        } catch (Exception ex) {
-        }
-        if (starting == 0 && !isNumeric(args[0])) {
-            sender.sendMessage(ChatColor.RED + "Unrecognised EntityType " + args[0]);
-            return true;
+            if (starting == 0) {
+                sender.sendMessage(ChatColor.RED + "Unrecognised EntityType " + args[0]);
+                return true;
+            }
         }
         if (args.length == starting + 1) {
             sender.sendMessage(ChatColor.RED + "You need to supply a disguise as well as the radius"
