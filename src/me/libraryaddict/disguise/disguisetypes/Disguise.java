@@ -217,7 +217,7 @@ public abstract class Disguise {
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
-                    if (vectorY != 0 && isVelocitySent() && (alwaysSendVelocity || !getEntity().isOnGround())) {
+                    if (isVelocitySent() && vectorY != 0 && (alwaysSendVelocity || !getEntity().isOnGround())) {
                         Vector vector = getEntity().getVelocity();
                         // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the
                         // if statement.
@@ -277,27 +277,27 @@ public abstract class Disguise {
                         }
                         // If we need to send a packet to update the exp position as it likes to gravitate client sided to
                         // players.
-                        if (getType() == DisguiseType.EXPERIENCE_ORB) {
-                            PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-                            packet.getIntegers().write(0, getEntity().getEntityId());
-                            try {
-                                for (Player player : DisguiseUtilities.getPerverts(disguise)) {
-                                    if (getEntity() != player) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                                    } else if (isSelfDisguiseVisible()) {
-                                        PacketContainer selfPacket = packet.shallowClone();
-                                        selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
-                                                    selfPacket, false);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
+                    }
+                    if (getType() == DisguiseType.EXPERIENCE_ORB) {
+                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+                        packet.getIntegers().write(0, getEntity().getEntityId());
+                        try {
+                            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                                if (getEntity() != player) {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                                } else if (isSelfDisguiseVisible()) {
+                                    PacketContainer selfPacket = packet.shallowClone();
+                                    selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
+                                                false);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
                                     }
                                 }
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
                             }
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
