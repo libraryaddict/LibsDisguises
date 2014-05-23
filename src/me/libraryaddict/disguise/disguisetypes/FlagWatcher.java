@@ -267,8 +267,9 @@ public class FlagWatcher {
     }
 
     public void setArmor(ItemStack[] itemstack) {
-        for (int i = 0; i < itemstack.length; i++)
+        for (int i = 0; i < itemstack.length; i++) {
             setItemStack(i, itemstack[i]);
+        }
     }
 
     protected void setBackupValue(int no, Object value) {
@@ -310,14 +311,16 @@ public class FlagWatcher {
                 } else {
                     itemStack = enquipment.getArmorContents()[slot];
                 }
-                if (itemStack != null && itemStack.getTypeId() == 0)
+                if (itemStack != null && itemStack.getTypeId() == 0) {
                     itemStack = null;
+                }
             }
         }
 
         Object itemToSend = null;
-        if (itemStack != null && itemStack.getTypeId() != 0)
+        if (itemStack != null && itemStack.getTypeId() != 0) {
             itemToSend = ReflectionManager.getNmsItem(itemStack);
+        }
         items[slot] = itemStack;
         if (DisguiseAPI.isDisguiseInUse(getDisguise())) {
             slot++;

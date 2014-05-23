@@ -18,7 +18,8 @@ public class MobDisguise extends TargetedDisguise {
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
         if (!disguiseType.isMob()) {
             throw new InvalidParameterException("Expected a living DisguiseType while constructing MobDisguise. Received "
-                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise") + " instead");
+                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise")
+                    + " instead");
         }
         this.isAdult = isAdult;
         createDisguise(disguiseType);
@@ -70,11 +71,12 @@ public class MobDisguise extends TargetedDisguise {
 
     public boolean isAdult() {
         if (getWatcher() != null) {
-            if (getWatcher() instanceof AgeableWatcher)
-                return ((AgeableWatcher) getWatcher()).isBaby();
-            else if (getWatcher() instanceof ZombieWatcher)
-                return ((ZombieWatcher) getWatcher()).isBaby();
-            return false;
+            if (getWatcher() instanceof AgeableWatcher) {
+                return ((AgeableWatcher) getWatcher()).isAdult();
+            } else if (getWatcher() instanceof ZombieWatcher) {
+                return ((ZombieWatcher) getWatcher()).isAdult();
+            }
+            return true;
         }
         return isAdult;
     }
