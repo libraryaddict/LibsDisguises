@@ -1,12 +1,26 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
+
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedAttribute;
+import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 
 public class LivingWatcher extends FlagWatcher {
     static Object[] list;
@@ -153,8 +167,27 @@ public class LivingWatcher extends FlagWatcher {
 
     public void setMaxHealth(double newHealth) {
         this.maxHealth = newHealth;
-        maxHealthSet = true;
-        // TODO Send packet
+        this.maxHealthSet = true;
+        if (getDisguise().getWatcher() != null && DisguiseAPI.isDisguiseInUse(getDisguise())) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+            List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+            Builder builder;
+            builder = WrappedAttribute.newBuilder();
+            builder.attributeKey("generic.maxHealth");
+            builder.baseValue(getMaxHealth());
+            builder.packet(packet);
+            attributes.add(builder.build());
+            Entity entity = getDisguise().getEntity();
+            packet.getIntegers().write(0, entity.getEntityId());
+            packet.getAttributeCollectionModifier().write(0, attributes);
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }
