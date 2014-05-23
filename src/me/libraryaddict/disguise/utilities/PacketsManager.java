@@ -1303,7 +1303,7 @@ public class PacketsManager {
                             // Convert the datawatcher
                             List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
                             if (DisguiseConfig.isMetadataPacketsEnabled()) {
-                                list.add(new WrappedWatchableObject(0, WrappedDataWatcher.getEntityWatcher(entity).getObject(0)));
+                                list.add(new WrappedWatchableObject(0, WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
                                 list = disguise.getWatcher().convert(list);
                             } else {
                                 for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {

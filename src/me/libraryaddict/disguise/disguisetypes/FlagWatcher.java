@@ -15,6 +15,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -45,12 +46,23 @@ public class FlagWatcher {
     private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
     private boolean hasDied;
-    private org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[5];
+    private ItemStack[] items = new ItemStack[5];
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
+    }
+
+    private byte addEntityAnimations(byte originalValue, byte entityValue) {
+        byte valueByte = (Byte) originalValue;
+        for (int i = 0; i < 6; i++) {
+            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
+                valueByte = (byte) (valueByte | 1 << i);
+            }
+        }
+        originalValue = valueByte;
+        return originalValue;
     }
 
     public FlagWatcher clone(Disguise owningDisguise) {
@@ -89,15 +101,8 @@ public class FlagWatcher {
                 value = backupEntityValues.get(dataType);
             }
             if (value != null) {
-                if (addEntityAnimations && dataType == 0) {
-                    byte watcher = (Byte) watch.getValue();
-                    byte valueByte = (Byte) value;
-                    for (int i = 0; i < 6; i++) {
-                        if ((watcher & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
-                            valueByte = (byte) (valueByte | 1 << i);
-                        }
-                    }
-                    value = valueByte;
+                if (isEntityAnimationsAdded() && dataType == 0) {
+                    value = this.addEntityAnimations((Byte) value, (Byte) watch.getValue());
                 }
                 boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, value);
@@ -237,6 +242,9 @@ public class FlagWatcher {
             if (!entityValues.containsKey(data) || entityValues.get(data) == null)
                 continue;
             Object value = entityValues.get(data);
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
+                value = addEntityAnimations((Byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+            }
             list.add(new WrappedWatchableObject(data, value));
         }
         if (!list.isEmpty()) {
