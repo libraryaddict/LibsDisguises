@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -43,30 +44,34 @@ public class ClassGetter {
     }
 
     private static void processJarfile(URL resource, String pkgname, ArrayList<Class<?>> classes) {
-        String relPath = pkgname.replace('.', '/');
-        String resPath = resource.getPath().replace("%20", " ");
-        String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-        JarFile jarFile;
         try {
-            jarFile = new JarFile(jarPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Unexpected IOException reading JAR File '" + jarPath
-                    + "'. Do you have strange characters in your folders? Such as #?", e);
-        }
-        Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String entryName = entry.getName();
-            String className = null;
-            if (entryName.endsWith(".class") && entryName.startsWith(relPath)
-                    && entryName.length() > (relPath.length() + "/".length())) {
-                className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+            String relPath = pkgname.replace('.', '/');
+            String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
+            String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+            JarFile jarFile;
+            try {
+                jarFile = new JarFile(jarPath);
+            } catch (IOException e) {
+                throw new RuntimeException("Unexpected IOException reading JAR File '" + jarPath
+                        + "'. Do you have strange characters in your folders? Such as #?", e);
             }
-            if (className != null) {
-                Class<?> c = loadClass(className);
-                if (c != null)
-                    classes.add(c);
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+                String className = null;
+                if (entryName.endsWith(".class") && entryName.startsWith(relPath)
+                        && entryName.length() > (relPath.length() + "/".length())) {
+                    className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
+                }
+                if (className != null) {
+                    Class<?> c = loadClass(className);
+                    if (c != null)
+                        classes.add(c);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
