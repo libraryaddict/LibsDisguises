@@ -48,13 +48,7 @@ public class ClassGetter {
             String relPath = pkgname.replace('.', '/');
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
             String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
-            JarFile jarFile;
-            try {
-                jarFile = new JarFile(jarPath);
-            } catch (IOException e) {
-                throw new RuntimeException("Unexpected IOException reading JAR File '" + jarPath
-                        + "'. Do you have strange characters in your folders? Such as #?", e);
-            }
+            JarFile jarFile = new JarFile(jarPath);
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
