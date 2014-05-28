@@ -53,7 +53,7 @@ public class LibsDisguises extends JavaPlugin {
                 if (internalConfig.isConfigurationSection(option)) {
                     ConfigurationSection section = internalConfig.getConfigurationSection(option);
                     for (String secondOption : section.getKeys(false)) {
-                        if (!config.contains(secondOption)) {
+                        if (!config.contains(option + "." + secondOption)) {
                             config.set(option + "." + secondOption, section.get(secondOption));
                             needToSaveConfig = true;
                         }
