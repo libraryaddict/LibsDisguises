@@ -603,11 +603,11 @@ public class DisguiseUtilities {
             // Send the player a packet with himself being spawned
             manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)
                     .createPacket(player));
+            WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(player);
             sendSelfPacket(
                     player,
-                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
-                            WrappedDataWatcher.getEntityWatcher(player), true).createPacket(player.getEntityId(),
-                            WrappedDataWatcher.getEntityWatcher(player), true), fakeId);
+                    manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(), dataWatcher,
+                            true).createPacket(player.getEntityId(), dataWatcher, true), fakeId);
 
             boolean isMoving = false;
             try {
