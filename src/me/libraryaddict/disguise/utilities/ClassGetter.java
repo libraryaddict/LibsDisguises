@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities;
 
 import org.bukkit.entity.Entity;
 
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.CodeSource;

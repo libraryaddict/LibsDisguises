@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,15 +52,24 @@ public class DisguiseAPI {
         DisguiseUtilities.setupFakeDisguise(disguise);
     }
 
-    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Collection playersToNotSeeDisguise) {
         if (disguise.getEntity() != null) {
             disguise = disguise.clone();
         }
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
-        for (String name : playersToNotSeeDisguise) {
-            ((TargetedDisguise) disguise).addPlayer(name);
+        for (Object obj : playersToNotSeeDisguise) {
+            if (obj instanceof String) {
+                ((TargetedDisguise) disguise).addPlayer((String) obj);
+            } else if (obj instanceof Player) {
+                ((TargetedDisguise) disguise).addPlayer(((Player) obj).getName());
+            }
         }
         disguiseEntity(entity, disguise);
+    }
+
+    @Deprecated
+    public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
+        disguiseIgnorePlayers(entity, disguise, playersToNotSeeDisguise);
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Player... playersToNotSeeDisguise) {
@@ -109,15 +119,24 @@ public class DisguiseAPI {
         disguiseEntity(entity, disguise);
     }
 
-    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> playersToViewDisguise) {
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, Collection playersToViewDisguise) {
         if (disguise.getEntity() != null) {
             disguise = disguise.clone();
         }
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
-        for (String name : playersToViewDisguise) {
-            ((TargetedDisguise) disguise).addPlayer(name);
+        for (Object obj : playersToViewDisguise) {
+            if (obj instanceof String) {
+                ((TargetedDisguise) disguise).addPlayer((String) obj);
+            } else if (obj instanceof Player) {
+                ((TargetedDisguise) disguise).addPlayer(((Player) obj).getName());
+            }
         }
         disguiseEntity(entity, disguise);
+    }
+
+    @Deprecated
+    public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> playersToViewDisguise) {
+        disguiseToPlayers(entity, disguise, playersToViewDisguise);
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, Player... playersToViewDisguise) {

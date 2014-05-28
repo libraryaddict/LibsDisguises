@@ -15,7 +15,6 @@ public abstract class TargetedDisguise extends Disguise {
     }
 
     private List<String> disguiseViewers = new ArrayList<String>();
-
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
 
     public void addPlayer(Player player) {
