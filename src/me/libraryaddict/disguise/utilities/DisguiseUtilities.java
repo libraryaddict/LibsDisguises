@@ -141,6 +141,7 @@ public class DisguiseUtilities {
                             // System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
                             // + " on a entity. Removed the old disguise.");
 
+                            d.removeDisguise();
                             disguiseItel.remove();
                         }
                     }
