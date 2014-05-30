@@ -55,7 +55,7 @@ public class LibsDisguises extends JavaPlugin {
             toWrite = read(new InputStreamReader(stream));
             reader = new FileReader(configFile);
             toRead = read(reader);
-            
+
             if (!toRead.equals(toWrite)) {
                 try {
                     FileWriter writer = new FileWriter(configFile);
@@ -144,43 +144,50 @@ public class LibsDisguises extends JavaPlugin {
 
     private String read(Reader reader) {
         String toWrite = "";
-        try {
-            BufferedReader input = new BufferedReader(reader);
-            String currentPath = "";
-            try {
-                String line;
+        BufferedReader input = null;
 
-                while ((line = input.readLine()) != null) {
-                    if (line.replace(" ", "").startsWith("#")) {
+        try {
+            input = new BufferedReader(reader);
+            String currentPath = "";
+            String line;
+
+            while ((line = input.readLine()) != null) {
+                if (line.replace(" ", "").startsWith("#")) {
+                    toWrite += line;
+                } else if (line.contains(":")) {
+                    if (line.substring(line.indexOf(":") + 1).equals("")) {
+                        currentPath = line.substring(0, line.length() - 1) + ".";
                         toWrite += line;
-                    } else if (line.contains(":")) {
-                        if (line.substring(line.indexOf(":") + 1).equals("")) {
-                            currentPath = line.substring(0, line.length() - 1) + ".";
-                            toWrite += line;
-                        } else {
-                            if (!line.startsWith("  ")) {
-                                currentPath = "";
-                            }
-                            String obj = line.substring(0, line.indexOf(":")).replace(" ", "");
-                            Object value = getConfig().get(currentPath + obj);
-                            if (value instanceof String) {
-                                value = "'" + value + "'";
-                            }
-                            toWrite += (currentPath.length() == 0 ? "" : "  ") + obj + ": " + value;
+                    } else {
+                        if (!line.startsWith("  ")) {
+                            currentPath = "";
                         }
-                    }
-                    if (input.ready()) {
-                        toWrite += "\n";
+                        String obj = line.substring(0, line.indexOf(":")).replace(" ", "");
+                        Object value = getConfig().get(currentPath + obj);
+                        if (value instanceof String) {
+                            value = "'" + value + "'";
+                        }
+                        toWrite += (currentPath.length() == 0 ? "" : "  ") + obj + ": " + value;
                     }
                 }
-            } finally {
-                input.close();
+                if (input.ready()) {
+                    toWrite += "\n";
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             try {
-                reader.close();
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
