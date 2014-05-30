@@ -1,8 +1,13 @@
 package me.libraryaddict.disguise;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Field;
 
 import me.libraryaddict.disguise.commands.*;
@@ -24,9 +29,6 @@ import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -43,24 +45,27 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        FileConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
-        boolean needToSaveConfig = false;
+        File configFile = new File(getDataFolder(), "config.yml");
         InputStream stream = null;
+        FileReader reader = null;
+        String toWrite = "";
+        String toRead = "";
         try {
             stream = getClassLoader().getResource("config.yml").openStream();
-            YamlConfiguration internalConfig = YamlConfiguration.loadConfiguration(stream);
-            for (String option : internalConfig.getKeys(false)) {
-                if (internalConfig.isConfigurationSection(option)) {
-                    ConfigurationSection section = internalConfig.getConfigurationSection(option);
-                    for (String secondOption : section.getKeys(false)) {
-                        if (!config.contains(option + "." + secondOption)) {
-                            config.set(option + "." + secondOption, section.get(secondOption));
-                            needToSaveConfig = true;
-                        }
+            toWrite = read(new InputStreamReader(stream));
+            reader = new FileReader(configFile);
+            toRead = read(reader);
+            
+            if (!toRead.equals(toWrite)) {
+                try {
+                    FileWriter writer = new FileWriter(configFile);
+                    try {
+                        writer.write(toWrite);
+                    } finally {
+                        writer.close();
                     }
-                } else if (!config.contains(option)) {
-                    config.set(option, getConfig().get(option));
-                    needToSaveConfig = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
@@ -73,14 +78,15 @@ public class LibsDisguises extends JavaPlugin {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        if (needToSaveConfig) {
             try {
-                config.save(new File(getDataFolder(), "config.yml"));
+                if (reader != null) {
+                    reader.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
         DisguiseConfig.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
@@ -134,6 +140,52 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguisehelp").setExecutor(new DisguiseHelpCommand());
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         registerValues();
+    }
+
+    private String read(Reader reader) {
+        String toWrite = "";
+        try {
+            BufferedReader input = new BufferedReader(reader);
+            String currentPath = "";
+            try {
+                String line;
+
+                while ((line = input.readLine()) != null) {
+                    if (line.replace(" ", "").startsWith("#")) {
+                        toWrite += line;
+                    } else if (line.contains(":")) {
+                        if (line.substring(line.indexOf(":") + 1).equals("")) {
+                            currentPath = line.substring(0, line.length() - 1) + ".";
+                            toWrite += line;
+                        } else {
+                            if (!line.startsWith("  ")) {
+                                currentPath = "";
+                            }
+                            String obj = line.substring(0, line.indexOf(":")).replace(" ", "");
+                            Object value = getConfig().get(currentPath + obj);
+                            if (value instanceof String) {
+                                value = "'" + value + "'";
+                            }
+                            toWrite += (currentPath.length() == 0 ? "" : "  ") + obj + ": " + value;
+                        }
+                    }
+                    if (input.ready()) {
+                        toWrite += "\n";
+                    }
+                }
+            } finally {
+                input.close();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return toWrite;
     }
 
     /**
