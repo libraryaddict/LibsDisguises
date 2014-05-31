@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import org.bukkit.entity.Player;
+
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
@@ -58,7 +60,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
             return ReflectionManager.getGameProfile(null, getName());
         } else {
-            return DisguiseUtilities.getProfileFromMojang(getName());
+            return DisguiseUtilities.getProfileFromMojang(this);
         }
     }
 
@@ -100,6 +102,9 @@ public class PlayerDisguise extends TargetedDisguise {
                             setGameProfile(gameProfile);
                             if (DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
                                 DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
+                                if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
+                                    DisguiseUtilities.sendSelfDisguise((Player) getEntity(), PlayerDisguise.this);
+                                }
                             }
                         }
                     }

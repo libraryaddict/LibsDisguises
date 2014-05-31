@@ -294,20 +294,16 @@ public class DisguiseUtilities {
         return players;
     }
 
-    public static Object getProfileFromMojang(final String playerName) {
-        return getProfileFromMojang(playerName, new LibsProfileLookup() {
+    public static Object getProfileFromMojang(final PlayerDisguise disguise) {
+        return getProfileFromMojang(disguise.getName(), new LibsProfileLookup() {
 
             @Override
             public void onLookup(Object gameProfile) {
-                getAddedByPlugins().remove(playerName);
-                for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-                    for (TargetedDisguise disguise : disguises) {
-                        if (disguise.getType() == DisguiseType.PLAYER && ((PlayerDisguise) disguise).getName().equals(playerName)) {
-                            DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-                            if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
-                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                            }
-                        }
+                getAddedByPlugins().remove(disguise.getName());
+                if (DisguiseAPI.isDisguiseInUse(disguise)) {
+                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                    if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
+                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     }
                 }
             }
