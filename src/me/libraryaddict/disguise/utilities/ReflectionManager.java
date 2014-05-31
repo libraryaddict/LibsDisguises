@@ -233,6 +233,27 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object getGameProfileWithThisSkin(UUID uuid, String playerName, Object profileWithSkin) {
+        try {
+            Object gameProfile;
+            try {
+                gameProfile = Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
+                        .getConstructor(UUID.class, String.class)
+                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
+            } catch (NoSuchMethodException ex) {
+                gameProfile = Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
+                        .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
+            }
+            Field properties = gameProfile.getClass().getDeclaredField("properties");
+            properties.setAccessible(true);
+            properties.set(gameProfile, properties.get(profileWithSkin));
+            return gameProfile;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static Class getNmsClass(String className) {
         try {
             return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);

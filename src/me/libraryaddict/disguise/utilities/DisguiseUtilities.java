@@ -19,7 +19,6 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,6 +56,7 @@ public class DisguiseUtilities {
      */
     private static HashMap<String, Object> gameProfiles = new HashMap<String, Object>();
     private static LibsDisguises libsDisguises;
+    private static HashMap<String, ArrayList<Object>> runnables = new HashMap<String, ArrayList<Object>>();
     /**
      * A internal storage of fake entity ID's each entity has. Realistically I could probably use a ID like "4" for everyone,
      * seeing as no one sees each others entity ID
@@ -79,6 +79,11 @@ public class DisguiseUtilities {
             futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
         }
         futureDisguises.get(entityId).add(disguise);
+    }
+
+    public static void addGameProfile(String string, Object gameProfile) {
+        getGameProfiles().put(string, gameProfile);
+        addedByPlugins.add(string);
     }
 
     /**
@@ -245,6 +250,10 @@ public class DisguiseUtilities {
         return gameProfiles.get(playerName);
     }
 
+    public static HashMap<String, Object> getGameProfiles() {
+        return gameProfiles;
+    }
+
     public static TargetedDisguise getMainDisguise(UUID entityId) {
         TargetedDisguise toReturn = null;
         if (getDisguises().containsKey(entityId)) {
@@ -286,8 +295,11 @@ public class DisguiseUtilities {
     }
 
     public static Object getProfileFromMojang(final String playerName) {
-        return getProfileFromMojang(playerName, new Runnable() {
-            public void run() {
+        return getProfileFromMojang(playerName, new LibsProfileLookup() {
+
+            @Override
+            public void onLookup(Object gameProfile) {
+                getAddedByPlugins().remove(playerName);
                 for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                     for (TargetedDisguise disguise : disguises) {
                         if (disguise.getType() == DisguiseType.PLAYER && ((PlayerDisguise) disguise).getName().equals(playerName)) {
@@ -306,7 +318,11 @@ public class DisguiseUtilities {
      * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
-    public static Object getProfileFromMojang(final String playerName, final Runnable runnable) {
+    public static Object getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn) {
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
+    }
+
+    private static Object getProfileFromMojang(final String playerName, final Object runnable) {
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -331,8 +347,14 @@ public class DisguiseUtilities {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                                     gameProfiles.put(playerName, gameProfile);
-                                    if (runnable != null) {
-                                        runnable.run();
+                                }
+                                if (runnables.containsKey(playerName)) {
+                                    for (Object obj : runnables.remove(playerName)) {
+                                        if (obj instanceof Runnable) {
+                                            ((Runnable) obj).run();
+                                        } else if (obj instanceof LibsProfileLookup) {
+                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                        }
                                     }
                                 }
                             }
@@ -348,7 +370,21 @@ public class DisguiseUtilities {
                 }
             });
         }
+        if (runnable != null) {
+            if (!runnables.containsKey(playerName)) {
+                runnables.put(playerName, new ArrayList<Object>());
+            }
+            runnables.get(playerName).add(runnable);
+        }
         return ReflectionManager.getGameProfile(null, playerName);
+    }
+
+    /**
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
+     */
+    public static Object getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
     public static List<TargetedDisguise> getSeenDisguises(String viewer) {
@@ -521,7 +557,12 @@ public class DisguiseUtilities {
         return false;
     }
 
+    @Deprecated
     public static void removeGameprofile(String string) {
+        gameProfiles.remove(string);
+    }
+
+    public static void removeGameProfile(String string) {
         gameProfiles.remove(string);
     }
 

@@ -10,6 +10,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
@@ -37,6 +38,10 @@ public class PlayerWatcher extends LivingWatcher {
     public void setArrowsSticking(int arrowsNo) {
         setValue(9, (byte) arrowsNo);
         sendData(9);
+    }
+
+    public void setSkin(String playerName) {
+        ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
     /**

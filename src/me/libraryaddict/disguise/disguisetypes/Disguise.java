@@ -439,7 +439,7 @@ public abstract class Disguise {
                             }
                         }
                     }
-                    DisguiseUtilities.removeGameprofile(name);
+                    DisguiseUtilities.getGameProfiles().remove(name);
                 }
             }
         }
