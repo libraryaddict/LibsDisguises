@@ -47,10 +47,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
                     + " seconds to disguise as it!");
         } else {
-            sender.sendMessage(ChatColor.RED + "There was once a curious little boy,"
-                    + " he liked to try out these strange sounding commands."
-                    + " One day, that curious little boy tried out the wrong command and was set on fire!" + " Aka.");
-            sender.sendMessage(ChatColor.DARK_RED + "You are forbidden to use this command.");
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         }
         return true;
     }
