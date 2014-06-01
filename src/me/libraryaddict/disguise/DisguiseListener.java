@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -127,7 +128,7 @@ public class DisguiseListener implements Listener {
             disguiseRunnable.remove(p.getName()).cancel();
             Entity entity = event.getRightClicked();
             String entityName = "";
-            if (entity instanceof Player) {
+            if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
                 entityName = ((Player) entity).getName();
             } else {
                 String[] split = entity.getType().name().split("_");
@@ -138,62 +139,73 @@ public class DisguiseListener implements Listener {
                     }
                 }
             }
-            Disguise disguise = null;
-            Entity disguiseTarget = null;
             if (disguiseClone.containsKey(p.getName())) {
                 Boolean[] options = disguiseClone.remove(p.getName());
-                disguiseTarget = p;
-                disguise = DisguiseAPI.getDisguise(p, entity);
+                Disguise disguise = DisguiseAPI.getDisguise(p, entity);
                 if (disguise == null) {
                     disguise = DisguiseAPI.constructDisguise(entity, options[0], options[1], options[2]);
                 } else {
                     disguise = disguise.clone();
                 }
-            } else if (disguiseEntity.containsKey(p.getName())) {
-                disguiseTarget = entity;
-                disguise = disguiseEntity.remove(p.getName());
-            }
-            if (disguise != null) {
-                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
-                        && disguiseTarget instanceof LivingEntity) {
-                    p.sendMessage(ChatColor.RED
-                            + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
+                char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+                String reference = null;
+                int referenceLength = Math.max(2, (int) Math.ceil((0.1D + DisguiseConfig.getMaxClonedDisguises()) / 26D));
+                int attempts = 0;
+                while (reference == null && attempts++ < 1000) {
+                    reference = "@";
+                    for (int i = 0; i < referenceLength; i++) {
+                        reference += alphabet[new Random().nextInt(alphabet.length)];
+                    }
+                    if (DisguiseUtilities.getClonedDisguise(reference) != null) {
+                        reference = null;
+                    }
+                }
+                if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
+                    p.sendMessage(ChatColor.RED + "Constructed a " + entityName + " disguise! Your reference is " + reference);
+                    p.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
                 } else {
-                    if (disguiseTarget instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
-                        if (disguise.getWatcher() instanceof LivingWatcher) {
-                            ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) disguiseTarget).getDisplayName());
-                            if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                                ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                    p.sendMessage(ChatColor.RED
+                            + "Failed to store the reference due to lack of size. Please set this in the config");
+                }
+            } else if (disguiseEntity.containsKey(p.getName())) {
+                Disguise disguise = disguiseEntity.remove(p.getName());
+                if (disguise != null) {
+                    if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
+                            && entity instanceof LivingEntity) {
+                        p.sendMessage(ChatColor.RED
+                                + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
+                    } else {
+                        if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                            if (disguise.getWatcher() instanceof LivingWatcher) {
+                                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                                if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
+                                    ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                                }
                             }
                         }
-                    }
-                    DisguiseAPI.disguiseToAll(disguiseTarget, disguise);
-                    String disguiseName = "a ";
-                    if (disguise instanceof PlayerDisguise) {
-                        disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
-                    } else {
-                        String[] split = disguise.getType().name().split("_");
-                        for (int i = 0; i < split.length; i++) {
-                            disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
-                            if (i + 1 < split.length) {
-                                disguiseName += " ";
+                        DisguiseAPI.disguiseToAll(entity, disguise);
+                        String disguiseName = "a ";
+                        if (disguise instanceof PlayerDisguise) {
+                            disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
+                        } else {
+                            String[] split = disguise.getType().name().split("_");
+                            for (int i = 0; i < split.length; i++) {
+                                disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
+                                if (i + 1 < split.length) {
+                                    disguiseName += " ";
+                                }
                             }
                         }
-                    }
-                    if (disguiseTarget == p) {
-                        p.sendMessage(ChatColor.RED + "Disguised yourself" + " as " + (entity instanceof Player ? "" : "a ")
-                                + entityName + "!");
-                    } else {
                         p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
                                 + " as " + disguiseName + "!");
                     }
+                } else {
+                    if (DisguiseAPI.isDisguised(entity)) {
+                        DisguiseAPI.undisguiseToAll(entity);
+                        p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
+                    } else
+                        p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
                 }
-            } else {
-                if (DisguiseAPI.isDisguised(entity)) {
-                    DisguiseAPI.undisguiseToAll(entity);
-                    p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
-                } else
-                    p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
             }
         }
     }

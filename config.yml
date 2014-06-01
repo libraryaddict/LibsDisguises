@@ -62,6 +62,8 @@ DisguiseEntityExpire: 10
 
 # Another option to choose the same thing for DisguiseClone command
 DisguiseCloneExpire: 10
+# Max disguises to store at a time with the DisguiseClone command
+DisguiseCloneSize: 3
 
 # This I don't really recommend turning on as it can make a memory leak..
 # These disguises, as normal will not persist after a server restart.

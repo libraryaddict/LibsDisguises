@@ -119,6 +119,7 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.setMaxHealthDeterminedByDisguisedEntity(getConfig().getBoolean("MaxHealthDeterminedByEntity"));
         DisguiseConfig.setDisguiseEntityExpire(getConfig().getInt("DisguiseEntityExpire"));
         DisguiseConfig.setDisguiseCloneExpire(getConfig().getInt("DisguiseCloneExpire"));
+        DisguiseConfig.setMaxClonedDisguises(getConfig().getInt("DisguiseCloneSize"));
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.

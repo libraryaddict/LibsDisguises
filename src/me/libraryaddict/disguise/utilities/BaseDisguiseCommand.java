@@ -166,89 +166,101 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             sendCommandUsage(sender);
             throw new Exception();
         }
-        DisguiseType disguiseType = null;
-        if (args[0].equalsIgnoreCase("p")) {
-            disguiseType = DisguiseType.PLAYER;
-        } else {
-            for (DisguiseType type : DisguiseType.values()) {
-                if (type.getEntityType() == null) {
-                    continue;
-                }
-                if (args[0].equalsIgnoreCase(type.name()) || args[0].equalsIgnoreCase(type.name().replace("_", ""))) {
-                    disguiseType = type;
-                    break;
-                }
-            }
-        }
-        if (disguiseType == null) {
-            throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
-                    + " doesn't exist!");
-        }
-        if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
-            throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
-        }
-        ArrayList<String> usedOptions = new ArrayList<String>();
-        Disguise disguise = null;
         // How many args to skip due to the disugise being constructed
-        int toSkip = 1;
         // Time to start constructing the disguise.
         // We will need to check between all 3 kinds of disguises
-
-        HashSet<HashSet<String>> optionPermissions = this.getPermissions(sender, disguiseType.name().toLowerCase());
-        if (disguiseType.isPlayer()) {// If he is doing a player disguise
-            if (args.length == 1) {
-                // He needs to give the player name
-                throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
+        int toSkip = 1;
+        ArrayList<String> usedOptions = new ArrayList<String>();
+        Disguise disguise = null;
+        HashSet<HashSet<String>> optionPermissions;
+        if (args[0].startsWith("@")) {
+            if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
+                disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
+                if (disguise == null) {
+                    throw new Exception(ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
+                }
             } else {
-                // Construct the player disguise
-                disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
-                toSkip++;
+                throw new Exception(ChatColor.RED + "You do not have perimssion to use disguise references!");
             }
+            optionPermissions = this.getPermissions(sender, disguise.getType().name().toLowerCase());
         } else {
-            if (disguiseType.isMob()) { // Its a mob, use the mob constructor
-                boolean adult = true;
-                if (args.length > 1) {
-                    if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
-                        usedOptions.add("setbaby");
-                        doCheck(optionPermissions, usedOptions);
-                        adult = args[1].equalsIgnoreCase("adult");
-                        toSkip++;
+            DisguiseType disguiseType = null;
+            if (args[0].equalsIgnoreCase("p")) {
+                disguiseType = DisguiseType.PLAYER;
+            } else {
+                for (DisguiseType type : DisguiseType.values()) {
+                    if (type.getEntityType() == null) {
+                        continue;
+                    }
+                    if (args[0].equalsIgnoreCase(type.name()) || args[0].equalsIgnoreCase(type.name().replace("_", ""))) {
+                        disguiseType = type;
+                        break;
                     }
                 }
-                disguise = new MobDisguise(disguiseType, adult);
-            } else if (disguiseType.isMisc()) {
-                // Its a misc, we are going to use the MiscDisguise constructor.
-                int miscId = -1;
-                int miscData = -1;
-                if (args.length > 1) {
-                    // They have defined more arguements!
-                    // If the first arg is a number
-                    if (isNumeric(args[1])) {
-                        miscId = Integer.parseInt(args[1]);
-                        toSkip++;
-                        // If they also defined a data value
-                        if (args.length > 2) {
-                            if (isNumeric(args[2])) {
-                                miscData = Integer.parseInt(args[2]);
-                                toSkip++;
+            }
+            if (disguiseType == null) {
+                throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
+                        + " doesn't exist!");
+            }
+            if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
+                throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
+            }
+            optionPermissions = this.getPermissions(sender, disguiseType.name().toLowerCase());
+            if (disguiseType.isPlayer()) {// If he is doing a player disguise
+                if (args.length == 1) {
+                    // He needs to give the player name
+                    throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
+                } else {
+                    // Construct the player disguise
+                    disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
+                    toSkip++;
+                }
+            } else {
+                if (disguiseType.isMob()) { // Its a mob, use the mob constructor
+                    boolean adult = true;
+                    if (args.length > 1) {
+                        if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
+                            usedOptions.add("setbaby");
+                            doCheck(optionPermissions, usedOptions);
+                            adult = args[1].equalsIgnoreCase("adult");
+                            toSkip++;
+                        }
+                    }
+                    disguise = new MobDisguise(disguiseType, adult);
+                } else if (disguiseType.isMisc()) {
+                    // Its a misc, we are going to use the MiscDisguise constructor.
+                    int miscId = -1;
+                    int miscData = -1;
+                    if (args.length > 1) {
+                        // They have defined more arguements!
+                        // If the first arg is a number
+                        if (isNumeric(args[1])) {
+                            miscId = Integer.parseInt(args[1]);
+                            toSkip++;
+                            // If they also defined a data value
+                            if (args.length > 2) {
+                                if (isNumeric(args[2])) {
+                                    miscData = Integer.parseInt(args[2]);
+                                    toSkip++;
+                                }
                             }
                         }
                     }
-                }
-                if (miscId != -1) {
-                    if (disguiseType == DisguiseType.FALLING_BLOCK) {
-                        usedOptions.add("setblock");
-                        doCheck(optionPermissions, usedOptions);
-                    } else if (disguiseType == DisguiseType.PAINTING) {
-                        usedOptions.add("setpainting");
-                        doCheck(optionPermissions, usedOptions);
-                    } else if (disguiseType == DisguiseType.SPLASH_POTION) {
-                        usedOptions.add("setpotionid");
-                        doCheck(optionPermissions, usedOptions);
+                    if (miscId != -1) {
+                        if (disguiseType == DisguiseType.FALLING_BLOCK) {
+                            usedOptions.add("setblock");
+                            doCheck(optionPermissions, usedOptions);
+                        } else if (disguiseType == DisguiseType.PAINTING) {
+                            usedOptions.add("setpainting");
+                            doCheck(optionPermissions, usedOptions);
+                        } else if (disguiseType == DisguiseType.SPLASH_POTION) {
+                            usedOptions.add("setpotionid");
+                            doCheck(optionPermissions, usedOptions);
+                        }
                     }
+                    // Construct the disguise
+                    disguise = new MiscDisguise(disguiseType, miscId, miscData);
                 }
-                // Construct the disguise
-                disguise = new MiscDisguise(disguiseType, miscId, miscData);
             }
         }
         // Copy strings to their new range

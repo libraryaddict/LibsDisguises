@@ -19,6 +19,7 @@ public class DisguiseConfig {
     private static boolean keepDisguiseEntityDespawn;
     private static boolean keepDisguisePlayerDeath;
     private static boolean keepDisguisePlayerLogout;
+    private static int maxClonedDisguises;
     private static boolean maxHealthIsDisguisedEntity;
     private static boolean miscDisguisesForLivingEnabled;
     private static boolean modifyBoundingBox;
@@ -42,6 +43,10 @@ public class DisguiseConfig {
 
     public static int getDisguiseEntityExpire() {
         return disguiseEntityExpire;
+    }
+
+    public static int getMaxClonedDisguises() {
+        return maxClonedDisguises;
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -261,6 +266,10 @@ public class DisguiseConfig {
 
     public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         keepDisguisePlayerLogout = keepDisguise;
+    }
+
+    public static void setMaxClonedDisguises(int newMax) {
+        maxClonedDisguises = newMax;
     }
 
     public static void setMaxHealthDeterminedByDisguisedEntity(boolean isDetermined) {

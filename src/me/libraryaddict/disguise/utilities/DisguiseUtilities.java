@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -19,6 +21,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +45,7 @@ public class DisguiseUtilities {
      * the plugin to do that.
      */
     private static HashSet<String> addedByPlugins = new HashSet<String>();
+    private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<String, Disguise>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      **/
@@ -62,6 +66,21 @@ public class DisguiseUtilities {
      * seeing as no one sees each others entity ID
      **/
     private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
+
+    public static boolean addClonedDisguise(String key, Disguise disguise) {
+        if (DisguiseConfig.getMaxClonedDisguises() > 0) {
+            if (clonedDisguises.containsKey(key)) {
+                clonedDisguises.remove(key);
+            } else if (DisguiseConfig.getMaxClonedDisguises() == clonedDisguises.size()) {
+                clonedDisguises.remove(clonedDisguises.keySet().iterator().next());
+            }
+            if (DisguiseConfig.getMaxClonedDisguises() > clonedDisguises.size()) {
+                clonedDisguises.put(key, disguise);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
@@ -215,6 +234,13 @@ public class DisguiseUtilities {
 
     public static HashSet<String> getAddedByPlugins() {
         return addedByPlugins;
+    }
+
+    public static Disguise getClonedDisguise(String key) {
+        if (clonedDisguises.containsKey(key)) {
+            return clonedDisguises.get(key);
+        }
+        return null;
     }
 
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {

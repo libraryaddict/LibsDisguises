@@ -45,7 +45,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
             }
             listener.setDisguiseClone(sender.getName(), new Boolean[] { doEnquipment, doSneak, doSprint });
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
-                    + " seconds to disguise as it!");
+                    + " seconds to grab the disguise reference!");
         } else {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         }
@@ -56,7 +56,9 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender) {
-        sender.sendMessage(ChatColor.DARK_GREEN + "Disguise as the entity you right click! Or as their disguise!");
+        sender.sendMessage(ChatColor.DARK_GREEN
+                + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
+        sender.sendMessage(ChatColor.DARK_GREEN + "Beware however, the reference bypasses all permissions checks");
         sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEnquipment" + ChatColor.DARK_GREEN + "("
                 + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")");
     }
