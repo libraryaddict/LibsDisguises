@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public enum DisguiseType {
@@ -166,7 +169,46 @@ public enum DisguiseType {
         }
     }
 
-    public static DisguiseType getType(org.bukkit.entity.EntityType entityType) {
+    public static DisguiseType getType(Entity entity) {
+        DisguiseType disguiseType = getType(entity.getType());
+        switch (disguiseType) {
+        case ZOMBIE:
+            try {
+                Method isVillager = entity.getClass().getMethod("isVillager");
+                if ((Boolean) isVillager.invoke(entity)) {
+                    disguiseType = DisguiseType.ZOMBIE_VILLAGER;
+                }
+            } catch (NoSuchMethodException ex) {
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            break;
+        case HORSE:
+            try {
+                Object variant = entity.getClass().getMethod("getVariant").invoke(entity);
+                disguiseType = DisguiseType.valueOf(((Enum) variant).name());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            break;
+        case SKELETON:
+            try {
+                Object type = entity.getClass().getMethod("getSkeletonType").invoke(entity);
+                if (((Enum) type).name().equals("WITHER")) {
+                    disguiseType = DisguiseType.WITHER_SKELETON;
+                }
+            } catch (NoSuchMethodException ex) {
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            break;
+        default:
+            break;
+        }
+        return disguiseType;
+    }
+
+    public static DisguiseType getType(EntityType entityType) {
         try {
             return DisguiseType.valueOf(entityType.name());
         } catch (Throwable ex) {
