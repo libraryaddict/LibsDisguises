@@ -4,8 +4,10 @@ import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.inventory.ItemStack;
 
 public class HorseWatcher extends AgeableWatcher {
 
@@ -67,7 +69,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setCarryingChest(boolean chest) {
-        setFlag(8, true);
+        setFlag(8, chest);
     }
 
     public void setColor(Color color) {
@@ -76,7 +78,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     private void setFlag(int i, boolean flag) {
-        int j = (Byte) getValue(16, (byte) 0);
+        int j = (Integer) getValue(16, 0);
         if (flag) {
             setValue(16, j | i);
         } else {
@@ -89,9 +91,25 @@ public class HorseWatcher extends AgeableWatcher {
         setFlag(32, grazing);
     }
 
+    @Deprecated
     public void setHorseArmor(int armor) {
         setValue(22, armor % 4);
         sendData(22);
+    }
+
+    public void setHorseArmor(ItemStack item) {
+        int value = 0;
+        if (item != null) {
+            Material mat = item.getType();
+            if (mat.name().equals("IRON_BARDING")) {
+                value = 1;
+            } else if (mat.name().equals("GOLD_BARDING")) {
+                value = 2;
+            } else if (mat.name().equals("DIAMOND_BARDING")) {
+                value = 3;
+            }
+        }
+        setHorseArmor(value);
     }
 
     public void setMouthOpen(boolean mouthOpen) {
