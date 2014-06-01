@@ -11,7 +11,7 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public AnimalColor getColor() {
-        return AnimalColor.values()[(Byte) getValue(16, (byte) 0) & 15];
+        return AnimalColor.getColor((Byte) getValue(16, (byte) 0) & 15);
     }
 
     public boolean isSheared() {
