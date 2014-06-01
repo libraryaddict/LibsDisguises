@@ -59,7 +59,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             }
             sender.sendMessage(ChatColor.RED + "Successfully undisguised " + disguisedEntitys + " entities!");
         } else
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command!");
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         return true;
     }
 }

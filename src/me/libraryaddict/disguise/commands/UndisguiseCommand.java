@@ -26,7 +26,7 @@ public class UndisguiseCommand implements CommandExecutor {
             } else
                 sender.sendMessage(ChatColor.RED + "You are not disguised!");
         } else
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command!");
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         return true;
     }
 }

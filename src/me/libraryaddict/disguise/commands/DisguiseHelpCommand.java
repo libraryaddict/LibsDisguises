@@ -195,7 +195,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                 }
             }
         }
-        sender.sendMessage(ChatColor.RED + "You are forbidden from using this command!");
+        sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         return true;
     }
 
