@@ -8,6 +8,8 @@ public class DisguiseConfig {
     private static boolean blowDisguisesOnAttack;
     private static boolean collectEnabled;
     private static String disguiseBlownMessage;
+    private static int disguiseCloneExpire;
+    private static int disguiseEntityExpire;
     private static boolean enquipmentEnabled;
     private static boolean entityAnimationsAdded;
     private static boolean entityStatusEnabled;
@@ -32,6 +34,14 @@ public class DisguiseConfig {
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
+    }
+
+    public static int getDisguiseCloneExpire() {
+        return disguiseCloneExpire;
+    }
+
+    public static int getDisguiseEntityExpire() {
+        return disguiseEntityExpire;
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -188,6 +198,14 @@ public class DisguiseConfig {
 
     public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
         blowDisguisesOnAttack = blowDisguise;
+    }
+
+    public static void setDisguiseCloneExpire(int newExpires) {
+        disguiseCloneExpire = newExpires;
+    }
+
+    public static void setDisguiseEntityExpire(int newExpires) {
+        disguiseEntityExpire = newExpires;
     }
 
     public static void setEnquipmentPacketsEnabled(boolean enabled) {

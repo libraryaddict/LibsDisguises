@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
@@ -43,7 +44,8 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
                 }
             }
             listener.setDisguiseClone(sender.getName(), new Boolean[] { doEnquipment, doSneak, doSprint });
-            sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise as it!");
+            sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
+                    + " seconds to disguise as it!");
         } else {
             sender.sendMessage(ChatColor.RED + "There was once a curious little boy,"
                     + " he liked to try out these strange sounding commands."

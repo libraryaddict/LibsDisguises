@@ -57,6 +57,12 @@ MonstersIgnoreDisguises: false
 BlowDisguises: false
 BlownDisguiseMessage: '&cYour disguise was blown!'
 
+# A option to choose how many seconds a DisguiseEntity command is valid for people to right click a entity to disguise it before expiring
+DisguiseEntityExpire: 10
+
+# Another option to choose the same thing for DisguiseClone command
+DisguiseCloneExpire: 10
+
 # This I don't really recommend turning on as it can make a memory leak..
 # These disguises, as normal will not persist after a server restart.
 # There is also no EntityDeath option as entities do not revive after death.

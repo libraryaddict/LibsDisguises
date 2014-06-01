@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
+
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
@@ -36,8 +38,8 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             return true;
         }
         listener.setDisguiseEntity(sender.getName(), disguise);
-        sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise it as a "
-                + disguise.getType().toReadable() + "!");
+        sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseEntityExpire()
+                + " seconds to disguise it as a " + disguise.getType().toReadable() + "!");
         return true;
     }
 

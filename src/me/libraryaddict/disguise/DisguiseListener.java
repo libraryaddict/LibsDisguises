@@ -254,7 +254,7 @@ public class DisguiseListener implements Listener {
                 disguiseRunnable.remove(player);
             }
         };
-        runnable.runTaskLater(plugin, 20 * 10);
+        runnable.runTaskLater(plugin, 20 * DisguiseConfig.getDisguiseCloneExpire());
         disguiseRunnable.put(player, runnable);
         disguiseClone.put(player, options);
     }
@@ -271,7 +271,7 @@ public class DisguiseListener implements Listener {
                 disguiseRunnable.remove(player);
             }
         };
-        runnable.runTaskLater(plugin, 20 * 10);
+        runnable.runTaskLater(plugin, 20 * DisguiseConfig.getDisguiseEntityExpire());
         disguiseRunnable.put(player, runnable);
         disguiseEntity.put(player, disguise);
     }
