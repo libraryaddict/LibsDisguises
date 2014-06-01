@@ -70,7 +70,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public String getCustomName() {
-        return (String) getValue(10, "");
+        return (String) getValue(10, null);
     }
 
     public float getHealth() {
