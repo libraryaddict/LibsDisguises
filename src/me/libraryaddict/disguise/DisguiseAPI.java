@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,18 +9,138 @@ import java.util.List;
 import java.util.UUID;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class DisguiseAPI {
+
+    public static Disguise constructDisguise(Entity entity) {
+        return constructDisguise(entity, true, true, true);
+    }
+
+    public static Disguise constructDisguise(Entity entity, boolean doEnquipment, boolean doSneak, boolean doSprint) {
+        DisguiseType disguiseType = DisguiseType.getType(entity);
+        Disguise disguise;
+        if (disguiseType.isMisc()) {
+            disguise = new MiscDisguise(disguiseType);
+        } else if (disguiseType.isMob()) {
+            disguise = new MobDisguise(disguiseType);
+        } else {
+            disguise = new PlayerDisguise(((Player) entity).getName());
+        }
+        FlagWatcher watcher = disguise.getWatcher();
+        if (entity instanceof LivingEntity) {
+            for (PotionEffect effect : ((LivingEntity) entity).getActivePotionEffects()) {
+                ((LivingWatcher) watcher).addPotionEffect(effect.getType());
+                if (effect.getType().getName().equals("INVISIBILITY")) {
+                    watcher.setInvisible(true);
+                }
+            }
+        }
+        if (entity.getFireTicks() > 0) {
+            watcher.setBurning(true);
+        }
+        if (doEnquipment && entity instanceof LivingEntity) {
+            EntityEquipment enquip = ((LivingEntity) entity).getEquipment();
+            watcher.setArmor(enquip.getArmorContents());
+            watcher.setItemInHand(enquip.getItemInHand());
+            if (disguiseType.getEntityType().name().equals("HORSE")) {
+                try {
+                    Object horseInv = entity.getClass().getMethod("getInventory").invoke(entity);
+                    Object item = horseInv.getClass().getMethod("getSaddle").invoke(horseInv);
+                    if (item != null && ((ItemStack) item).getType() == Material.SADDLE) {
+                        ((HorseWatcher) watcher).setSaddled(true);
+                    }
+                    ((HorseWatcher) watcher)
+                            .setHorseArmor((ItemStack) horseInv.getClass().getMethod("getArmor").invoke(horseInv));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        for (Method method : entity.getClass().getMethods()) {
+            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName().equals("setSprinting"))
+                    && method.getParameterTypes().length == 0 && method.getReturnType() != void.class) {
+                Class methodReturn = method.getReturnType();
+                if (methodReturn == float.class || methodReturn == Float.class || methodReturn == Double.class) {
+                    methodReturn = double.class;
+                }
+                int firstCapitalMethod = firstCapital(method.getName());
+                if (firstCapitalMethod > 0) {
+                    for (Method watcherMethod : watcher.getClass().getMethods()) {
+                        if (!watcherMethod.getName().startsWith("get") && watcherMethod.getReturnType() == void.class
+                                && watcherMethod.getParameterTypes().length == 1) {
+                            int firstCapitalWatcher = firstCapital(watcherMethod.getName());
+                            if (firstCapitalWatcher > 0
+                                    && method.getName().substring(firstCapitalMethod)
+                                            .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
+                                Class methodParam = watcherMethod.getParameterTypes()[0];
+                                if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
+                                    methodParam = double.class;
+                                } else if (methodParam == PotionEffect.class) {
+                                    methodParam = PotionEffectType.class;
+                                }
+                                if (methodReturn == methodParam) {
+                                    try {
+                                        Object value = method.invoke(entity);
+                                        if (value != null) {
+                                            Class toCast = watcherMethod.getParameterTypes()[0];
+                                            if (!(toCast.isInstance(value))) {
+                                                if (toCast == float.class) {
+                                                    if (value instanceof Float) {
+                                                        value = ((Float) value).floatValue();
+                                                    } else {
+                                                        double d = (Double) value;
+                                                        value = (float) d;
+                                                    }
+                                                } else if (toCast == double.class) {
+                                                    if (value instanceof Double) {
+                                                        value = ((Double) value).doubleValue();
+                                                    } else {
+                                                        float d = (Float) value;
+                                                        value = (double) d;
+                                                    }
+                                                }
+                                            }
+                                            if (value instanceof Boolean && !(Boolean) value
+                                                    && watcherMethod.getDeclaringClass() == FlagWatcher.class) {
+                                                continue;
+                                            }
+                                        }
+                                        watcherMethod.invoke(watcher, value);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return disguise;
+    }
 
     public static void disguiseEntity(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
@@ -149,6 +270,15 @@ public class DisguiseAPI {
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, String... playersToViewDisguise) {
         disguiseToPlayers(entity, disguise, Arrays.asList(playersToViewDisguise));
+    }
+
+    private static int firstCapital(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.isUpperCase(str.charAt(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
