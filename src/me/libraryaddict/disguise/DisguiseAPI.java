@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -24,6 +25,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +33,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class DisguiseAPI {
 
@@ -98,8 +99,8 @@ public class DisguiseAPI {
                                 Class methodParam = watcherMethod.getParameterTypes()[0];
                                 if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
                                     methodParam = double.class;
-                                } else if (methodParam == PotionEffect.class) {
-                                    methodParam = PotionEffectType.class;
+                                } else if (methodParam == AnimalColor.class) {
+                                    methodParam = DyeColor.class;
                                 }
                                 if (methodReturn == methodParam) {
                                     try {
@@ -121,6 +122,8 @@ public class DisguiseAPI {
                                                         float d = (Float) value;
                                                         value = (double) d;
                                                     }
+                                                } else if (toCast == AnimalColor.class) {
+                                                    value = AnimalColor.valueOf(((DyeColor) value).name());
                                                 }
                                             }
                                             if (value instanceof Boolean && !(Boolean) value
