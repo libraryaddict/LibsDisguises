@@ -23,3 +23,5 @@ commands:
       aliases: [undisplayer, undplayer]
    undisguiseradius:
       aliases: [undisradius, undradius]
+   disguiseclone:
+      aliases: [disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis]

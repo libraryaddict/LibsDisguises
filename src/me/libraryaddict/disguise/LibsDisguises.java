@@ -138,6 +138,7 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
         getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
         getCommand("disguisehelp").setExecutor(new DisguiseHelpCommand());
+        getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand(listener));
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         registerValues();
     }

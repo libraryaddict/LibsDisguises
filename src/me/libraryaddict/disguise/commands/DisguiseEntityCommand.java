@@ -35,7 +35,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             }
             return true;
         }
-        listener.setSlap(sender.getName(), disguise);
+        listener.setDisguiseEntity(sender.getName(), disguise);
         sender.sendMessage(ChatColor.RED + "Right click a entity in the next 10 seconds to disguise it as a "
                 + disguise.getType().toReadable() + "!");
         return true;

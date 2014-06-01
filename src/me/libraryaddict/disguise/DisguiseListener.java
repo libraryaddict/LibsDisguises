@@ -30,8 +30,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class DisguiseListener implements Listener {
 
     private String currentVersion;
+    private HashMap<String, Boolean[]> disguiseClone = new HashMap<String, Boolean[]>();
+    private HashMap<String, Disguise> disguiseEntity = new HashMap<String, Disguise>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<String, BukkitRunnable>();
-    private HashMap<String, Disguise> disguiseSlap = new HashMap<String, Disguise>();
     private String latestVersion;
     private LibsDisguises plugin;
     private String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
@@ -120,10 +121,9 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent event) {
-        if (disguiseSlap.containsKey(event.getPlayer().getName())) {
+        if (disguiseEntity.containsKey(event.getPlayer().getName()) || disguiseClone.containsKey(event.getPlayer().getName())) {
             Player p = event.getPlayer();
             event.setCancelled(true);
-            Disguise disguise = disguiseSlap.remove(p.getName());
             disguiseRunnable.remove(p.getName()).cancel();
             Entity entity = event.getRightClicked();
             String entityName = "";
@@ -138,21 +138,36 @@ public class DisguiseListener implements Listener {
                     }
                 }
             }
+            Disguise disguise = null;
+            Entity disguiseTarget = null;
+            if (disguiseClone.containsKey(p.getName())) {
+                Boolean[] options = disguiseClone.remove(p.getName());
+                disguiseTarget = p;
+                disguise = DisguiseAPI.getDisguise(p, entity);
+                if (disguise == null) {
+                    disguise = DisguiseAPI.constructDisguise(entity, options[0], options[1], options[2]);
+                } else {
+                    disguise = disguise.clone();
+                }
+            } else if (disguiseEntity.containsKey(p.getName())) {
+                disguiseTarget = entity;
+                disguise = disguiseEntity.remove(p.getName());
+            }
             if (disguise != null) {
                 if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
-                        && entity instanceof LivingEntity) {
+                        && disguiseTarget instanceof LivingEntity) {
                     p.sendMessage(ChatColor.RED
                             + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
                 } else {
-                    if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                    if (disguiseTarget instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                         if (disguise.getWatcher() instanceof LivingWatcher) {
-                            ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                            ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) disguiseTarget).getDisplayName());
                             if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                                 ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                             }
                         }
                     }
-                    DisguiseAPI.disguiseToAll(entity, disguise);
+                    DisguiseAPI.disguiseToAll(disguiseTarget, disguise);
                     String disguiseName = "a ";
                     if (disguise instanceof PlayerDisguise) {
                         disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
@@ -165,8 +180,13 @@ public class DisguiseListener implements Listener {
                             }
                         }
                     }
-                    p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName + " as "
-                            + disguiseName + "!");
+                    if (disguiseTarget == p) {
+                        p.sendMessage(ChatColor.RED + "Disguised yourself" + " as " + (entity instanceof Player ? "" : "a ")
+                                + entityName + "!");
+                    } else {
+                        p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
+                                + " as " + disguiseName + "!");
+                    }
                 }
             } else {
                 if (DisguiseAPI.isDisguised(entity)) {
@@ -222,20 +242,38 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    public void setSlap(final String player, Disguise disguise) {
-        if (disguiseSlap.containsKey(player)) {
-            disguiseSlap.remove(player);
-            disguiseRunnable.remove(player).cancel();
+    public void setDisguiseClone(final String player, Boolean[] options) {
+        if (disguiseRunnable.containsKey(player)) {
+            BukkitRunnable run = disguiseRunnable.remove(player);
+            run.cancel();
+            run.run();
         }
         BukkitRunnable runnable = new BukkitRunnable() {
             public void run() {
-                disguiseSlap.remove(player);
+                disguiseClone.remove(player);
                 disguiseRunnable.remove(player);
             }
         };
         runnable.runTaskLater(plugin, 20 * 10);
         disguiseRunnable.put(player, runnable);
-        disguiseSlap.put(player, disguise);
+        disguiseClone.put(player, options);
+    }
+
+    public void setDisguiseEntity(final String player, Disguise disguise) {
+        if (disguiseRunnable.containsKey(player)) {
+            BukkitRunnable run = disguiseRunnable.remove(player);
+            run.cancel();
+            run.run();
+        }
+        BukkitRunnable runnable = new BukkitRunnable() {
+            public void run() {
+                disguiseEntity.remove(player);
+                disguiseRunnable.remove(player);
+            }
+        };
+        runnable.runTaskLater(plugin, 20 * 10);
+        disguiseRunnable.put(player, runnable);
+        disguiseEntity.put(player, disguise);
     }
 
 }
