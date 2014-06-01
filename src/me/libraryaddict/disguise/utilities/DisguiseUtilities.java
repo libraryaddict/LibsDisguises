@@ -238,7 +238,7 @@ public class DisguiseUtilities {
 
     public static Disguise getClonedDisguise(String key) {
         if (clonedDisguises.containsKey(key)) {
-            return clonedDisguises.get(key);
+            return clonedDisguises.get(key).clone();
         }
         return null;
     }
