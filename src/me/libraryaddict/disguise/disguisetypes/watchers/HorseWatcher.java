@@ -20,12 +20,28 @@ public class HorseWatcher extends AgeableWatcher {
         return Color.values()[((Integer) getValue(20, 0) & 0xFF)];
     }
 
-    public int getHorseArmor() {
+    public ItemStack getHorseArmor() {
+        int horseValue = getHorseArmorAsInt();
+        switch (horseValue) {
+        case 1:
+            return new ItemStack(Material.getMaterial("IRON_BARDING"));
+        case 2:
+            return new ItemStack(Material.getMaterial("GOLD_BARDING"));
+        case 3:
+            return new ItemStack(Material.getMaterial("DIAMOND_BARDING"));
+        default:
+            break;
+        }
+        return null;
+    }
+
+    @Deprecated
+    public int getHorseArmorAsInt() {
         return (Integer) getValue(22, 0);
     }
 
     public String getOwnerName() {
-        return (String) getValue(21, "");
+        return (String) getValue(21, null);
     }
 
     public Style getStyle() {
