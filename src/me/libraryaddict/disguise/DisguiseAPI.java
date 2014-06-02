@@ -2,7 +2,6 @@ package me.libraryaddict.disguise;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -193,19 +192,15 @@ public class DisguiseAPI {
 
     @Deprecated
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, List<String> playersToNotSeeDisguise) {
-        disguiseIgnorePlayers(entity, disguise, playersToNotSeeDisguise);
+        disguiseIgnorePlayers(entity, disguise, (Collection) playersToNotSeeDisguise);
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Player... playersToNotSeeDisguise) {
-        ArrayList<String> names = new ArrayList<String>();
-        for (Player p : playersToNotSeeDisguise) {
-            names.add(p.getName());
-        }
-        disguiseIgnorePlayers(entity, disguise, names);
+        disguiseIgnorePlayers(entity, disguise, (Collection) Arrays.asList(playersToNotSeeDisguise));
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, String... playersToNotSeeDisguise) {
-        disguiseIgnorePlayers(entity, disguise, Arrays.asList(playersToNotSeeDisguise));
+        disguiseIgnorePlayers(entity, disguise, (Collection) Arrays.asList(playersToNotSeeDisguise));
     }
 
     /**
@@ -260,19 +255,15 @@ public class DisguiseAPI {
 
     @Deprecated
     public static void disguiseToPlayers(Entity entity, Disguise disguise, List<String> playersToViewDisguise) {
-        disguiseToPlayers(entity, disguise, playersToViewDisguise);
+        disguiseToPlayers(entity, disguise, (Collection) playersToViewDisguise);
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, Player... playersToViewDisguise) {
-        ArrayList<String> names = new ArrayList<String>();
-        for (Player p : playersToViewDisguise) {
-            names.add(p.getName());
-        }
-        disguiseToPlayers(entity, disguise, names);
+        disguiseToPlayers(entity, disguise, (Collection) Arrays.asList(playersToViewDisguise));
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, String... playersToViewDisguise) {
-        disguiseToPlayers(entity, disguise, Arrays.asList(playersToViewDisguise));
+        disguiseToPlayers(entity, disguise, (Collection) Arrays.asList(playersToViewDisguise));
     }
 
     private static int firstCapital(String str) {
