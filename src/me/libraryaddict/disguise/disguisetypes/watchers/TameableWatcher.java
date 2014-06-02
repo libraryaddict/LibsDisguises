@@ -14,7 +14,7 @@ public class TameableWatcher extends AgeableWatcher {
     }
 
     public String getOwner() {
-        return (String) getValue(17, "");
+        return (String) getValue(17, null);
     }
 
     public boolean isSitting() {
