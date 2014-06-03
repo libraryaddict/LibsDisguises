@@ -235,7 +235,7 @@ public class FlagWatcher {
     }
 
     protected void sendData(int... dataValues) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()))
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this)
             return;
         List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
         for (int data : dataValues) {
@@ -322,7 +322,7 @@ public class FlagWatcher {
             itemToSend = ReflectionManager.getNmsItem(itemStack);
         }
         items[slot] = itemStack;
-        if (DisguiseAPI.isDisguiseInUse(getDisguise())) {
+        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             slot++;
             if (slot > 4)
                 slot = 0;

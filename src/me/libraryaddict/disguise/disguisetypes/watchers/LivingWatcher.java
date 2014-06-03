@@ -168,7 +168,7 @@ public class LivingWatcher extends FlagWatcher {
     public void setMaxHealth(double newHealth) {
         this.maxHealth = newHealth;
         this.maxHealthSet = true;
-        if (DisguiseAPI.isDisguiseInUse(getDisguise())) {
+        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
             List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
             Builder builder;
