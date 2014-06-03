@@ -47,13 +47,11 @@ public class LibsDisguises extends JavaPlugin {
         File configFile = new File(getDataFolder(), "config.yml");
         InputStream stream = null;
         FileReader reader = null;
-        String toWrite = "";
-        String toRead = "";
         try {
             stream = getClassLoader().getResource("config.yml").openStream();
-            toWrite = read(new InputStreamReader(stream));
+            String toWrite = read(new InputStreamReader(stream));
             reader = new FileReader(configFile);
-            toRead = read(reader);
+            String toRead = read(reader);
 
             if (!toRead.equals(toWrite)) {
                 try {
@@ -92,7 +90,7 @@ public class LibsDisguises extends JavaPlugin {
 
         try {
             // Here I use reflection to set the plugin for Disguise..
-            // Kind of stupid but I don't want open API calls for a commonly used object.
+            // Kind of stupid but I don't want open API calls for a commonly used class.
             Field field = Disguise.class.getDeclaredField("plugin");
             field.setAccessible(true);
             field.set(null, this);
