@@ -56,8 +56,7 @@ public class PacketsManager {
      */
     private static boolean cancelSound;
     private static PacketListener clientInteractEntityListener;
-    private static PacketListener inventoryListenerClient;
-    private static PacketListener inventoryListenerServer;
+    private static PacketListener inventoryListener;
     private static boolean inventoryModifierEnabled;
     private static LibsDisguises libsDisguises;
     private static PacketListener mainListener;
@@ -771,93 +770,9 @@ public class PacketsManager {
                 }
             }
         };
-        // TODO Potentionally combine both listeners.
-        inventoryListenerServer = new PacketAdapter(libsDisguises, ListenerPriority.HIGHEST, PacketType.Play.Server.SET_SLOT,
-                PacketType.Play.Server.WINDOW_ITEMS) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                // If the inventory is the players inventory
-                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
-                        && event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
-                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-                    // If the player is disguised, views self disguises and is hiding a item.
-                    if (disguise != null && disguise.isSelfDisguiseVisible()
-                            && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
-                        // If the server is setting the slot
-                        // Need to set it to air if its in a place it shouldn't be.
-                        // Things such as picking up a item, spawned in item. Plugin sets the item. etc. Will fire this
-                        /**
-                         * Done
-                         */
-                        if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
-                            // The raw slot
-                            // nms code has the start of the hotbar being 36.
-                            int slot = event.getPacket().getIntegers().read(1);
-                            // If the slot is a armor slot
-                            if (slot >= 5 && slot <= 8) {
-                                if (disguise.isHidingArmorFromSelf()) {
-                                    // Get the bukkit armor slot!
-                                    int armorSlot = Math.abs((slot - 5) - 3);
-                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
-                                    if (item != null && item.getType() != Material.AIR) {
-                                        event.setPacket(event.getPacket().shallowClone());
-                                        event.getPacket().getModifier()
-                                                .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                    }
-                                }
-                                // Else if its a hotbar slot
-                            } else if (slot >= 36 && slot <= 44) {
-                                if (disguise.isHidingHeldItemFromSelf()) {
-                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                    // Check if the player is on the same slot as the slot that its setting
-                                    if (slot == currentSlot + 36) {
-                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-                                        if (item != null && item.getType() != Material.AIR) {
-                                            event.setPacket(event.getPacket().shallowClone());
-                                            event.getPacket()
-                                                    .getModifier()
-                                                    .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
-                            event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
-                            ItemStack[] items = mods.read(0);
-                            for (int slot = 0; slot < items.length; slot++) {
-                                if (slot >= 5 && slot <= 8) {
-                                    if (disguise.isHidingArmorFromSelf()) {
-                                        // Get the bukkit armor slot!
-                                        int armorSlot = Math.abs((slot - 5) - 3);
-                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
-                                        if (item != null && item.getType() != Material.AIR) {
-                                            items[slot] = new org.bukkit.inventory.ItemStack(0);
-                                        }
-                                    }
-                                    // Else if its a hotbar slot
-                                } else if (slot >= 36 && slot <= 44) {
-                                    if (disguise.isHidingHeldItemFromSelf()) {
-                                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                        // Check if the player is on the same slot as the slot that its setting
-                                        if (slot == currentSlot + 36) {
-                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-                                            if (item != null && item.getType() != Material.AIR) {
-                                                items[slot] = new org.bukkit.inventory.ItemStack(0);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            mods.write(0, items);
-                        }
-                    }
-                }
-            }
-        };
-        inventoryListenerClient = new PacketAdapter(libsDisguises, ListenerPriority.HIGHEST,
-                PacketType.Play.Client.HELD_ITEM_SLOT, PacketType.Play.Client.SET_CREATIVE_SLOT,
-                PacketType.Play.Client.WINDOW_CLICK) {
+        inventoryListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGHEST, PacketType.Play.Server.SET_SLOT,
+                PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Client.HELD_ITEM_SLOT,
+                PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
                 if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
@@ -1011,6 +926,87 @@ public class PacketsManager {
                     }
                 }
             }
+
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                // If the inventory is the players inventory
+                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
+                        && event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
+                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+                    // If the player is disguised, views self disguises and is hiding a item.
+                    if (disguise != null && disguise.isSelfDisguiseVisible()
+                            && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                        // If the server is setting the slot
+                        // Need to set it to air if its in a place it shouldn't be.
+                        // Things such as picking up a item, spawned in item. Plugin sets the item. etc. Will fire this
+                        /**
+                         * Done
+                         */
+                        if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+                            // The raw slot
+                            // nms code has the start of the hotbar being 36.
+                            int slot = event.getPacket().getIntegers().read(1);
+                            // If the slot is a armor slot
+                            if (slot >= 5 && slot <= 8) {
+                                if (disguise.isHidingArmorFromSelf()) {
+                                    // Get the bukkit armor slot!
+                                    int armorSlot = Math.abs((slot - 5) - 3);
+                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                    if (item != null && item.getType() != Material.AIR) {
+                                        event.setPacket(event.getPacket().shallowClone());
+                                        event.getPacket().getModifier()
+                                                .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                    }
+                                }
+                                // Else if its a hotbar slot
+                            } else if (slot >= 36 && slot <= 44) {
+                                if (disguise.isHidingHeldItemFromSelf()) {
+                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                    // Check if the player is on the same slot as the slot that its setting
+                                    if (slot == currentSlot + 36) {
+                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                        if (item != null && item.getType() != Material.AIR) {
+                                            event.setPacket(event.getPacket().shallowClone());
+                                            event.getPacket()
+                                                    .getModifier()
+                                                    .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
+                            event.setPacket(event.getPacket().deepClone());
+                            StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
+                            ItemStack[] items = mods.read(0);
+                            for (int slot = 0; slot < items.length; slot++) {
+                                if (slot >= 5 && slot <= 8) {
+                                    if (disguise.isHidingArmorFromSelf()) {
+                                        // Get the bukkit armor slot!
+                                        int armorSlot = Math.abs((slot - 5) - 3);
+                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                        if (item != null && item.getType() != Material.AIR) {
+                                            items[slot] = new org.bukkit.inventory.ItemStack(0);
+                                        }
+                                    }
+                                    // Else if its a hotbar slot
+                                } else if (slot >= 36 && slot <= 44) {
+                                    if (disguise.isHidingHeldItemFromSelf()) {
+                                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                        // Check if the player is on the same slot as the slot that its setting
+                                        if (slot == currentSlot + 36) {
+                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                            if (item != null && item.getType() != Material.AIR) {
+                                                items[slot] = new org.bukkit.inventory.ItemStack(0);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            mods.write(0, items);
+                        }
+                    }
+                }
+            }
         };
     }
 
@@ -1041,11 +1037,9 @@ public class PacketsManager {
         if (inventoryModifierEnabled != enabled) {
             inventoryModifierEnabled = enabled;
             if (inventoryModifierEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListenerClient);
-                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListenerServer);
+                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
             } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListenerClient);
-                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListenerServer);
+                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListener);
             }
             for (Player player : Bukkit.getOnlinePlayers()) {
                 Disguise disguise = DisguiseAPI.getDisguise(player, player);
