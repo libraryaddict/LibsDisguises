@@ -289,58 +289,55 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             Class<?>[] types = methodToUse.getParameterTypes();
             if (types.length == 1) {
                 Class param = types[0];
-                // Parse to number
                 if (int.class == param) {
+                    // Parse to integer
                     if (isNumeric(valueString)) {
                         value = (int) Integer.parseInt(valueString);
                     } else {
                         throw parseToException("number", valueString, methodName);
                     }
-                    // Parse to boolean
                 } else if (float.class == param || double.class == param) {
+                    // Parse to number
                     if (isDouble(valueString)) {
                         float obj = Float.parseFloat(valueString);
                         if (param == float.class) {
                             value = (float) obj;
-                        } else if (param == int.class) {
-                            value = (int) obj;
                         } else if (param == double.class) {
                             value = (double) obj;
                         }
                     } else {
                         throw parseToException("number.0", valueString, methodName);
                     }
-                    // Parse to boolean
                 } else if (boolean.class == param) {
+                    // Parse to boolean
                     if (!("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString)))
                         throw parseToException("true/false", valueString, methodName);
                     value = (boolean) "true".equalsIgnoreCase(valueString);
-                    // Parse to string
                 } else if (param == String.class) {
+                    // Parse to string
                     value = ChatColor.translateAlternateColorCodes('&', valueString);
-                    // Parse to animal color
                 } else if (param == AnimalColor.class) {
+                    // Parse to animal color
                     try {
                         value = AnimalColor.valueOf(valueString.toUpperCase());
                     } catch (Exception ex) {
                         throw parseToException("animal color", valueString, methodName);
                     }
-                    // Parse to itemstack
                 } else if (param == ItemStack.class) {
+                    // Parse to itemstack
                     try {
                         value = parseToItemstack(valueString);
                     } catch (Exception ex) {
                         throw new Exception(String.format(ex.getMessage(), methodName));
                     }
-                    // Parse to itemstack array
                 } else if (param == ItemStack[].class) {
+                    // Parse to itemstack array
                     ItemStack[] items = new ItemStack[4];
                     String[] split = valueString.split(",");
                     if (split.length == 4) {
                         for (int a = 0; a < 4; a++) {
                             try {
-                                ItemStack item = parseToItemstack(split[a]);
-                                items[a] = item;
+                                items[a] = parseToItemstack(split[a]);
                             } catch (Exception ex) {
                                 throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
                                         + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
@@ -351,45 +348,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                     }
                     value = items;
-                    // Parse to horse color
                 } else if (param.getSimpleName().equals("Color")) {
-                    try {
-                        value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-                    } catch (Exception ex) {
-                        throw parseToException("a horse color", valueString, methodName);
-                    }
-                    // Parse to horse style
+                    // Parse to horse color
+                    value = callValueOf(param, valueString, methodName, "a horse color");
                 } else if (param.getSimpleName().equals("Style")) {
-                    try {
-                        value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-                    } catch (Exception ex) {
-                        throw parseToException("a horse style", valueString, methodName);
-                    }
-                    // Parse to villager profession
+                    // Parse to horse style
+                    value = callValueOf(param, valueString, methodName, "a horse style");
                 } else if (param.getSimpleName().equals("Profession")) {
-                    try {
-                        value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-                    } catch (Exception ex) {
-                        throw parseToException("a villager profession", valueString, methodName);
-                    }
-                    // Parse to ocelot type
+                    // Parse to villager profession
+                    value = callValueOf(param, valueString, methodName, "a villager profession");
                 } else if (param.getSimpleName().equals("Art")) {
-                    try {
-                        value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        throw parseToException("a painting art", valueString, methodName);
-                    }
-                    // Parse to ocelot type
+                    // Parse to art type
+                    value = callValueOf(param, valueString, methodName, "a painting art");
                 } else if (param.getSimpleName().equals("Type")) {
-                    try {
-                        value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-                    } catch (Exception ex) {
-                        throw parseToException("a ocelot type", valueString, methodName);
-                    }
-
-                    // Parse to potion effect
+                    // Parse to ocelot type
+                    value = callValueOf(param, valueString, methodName, "a ocelot type");
                 } else if (param == PotionEffectType.class) {
+                    // Parse to potion effect
                     try {
                         PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
                         if (potionType == null && isNumeric(valueString)) {
@@ -411,6 +386,16 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
         // Alright. We've constructed our disguise.
         return disguise;
+    }
+
+    private Object callValueOf(Class<?> param, String valueString, String methodName, String description) throws Exception {
+        Object value;
+        try {
+            value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
+        } catch (Exception ex) {
+            throw parseToException(description, valueString, methodName);
+        }
+        return value;
     }
 
     private void doCheck(HashSet<HashSet<String>> optionPermissions, ArrayList<String> usedOptions) throws Exception {
