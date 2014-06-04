@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.UUID;
 
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -405,29 +404,6 @@ public class DisguiseUtilities {
      */
     public static Object getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
-    }
-
-    public static List<TargetedDisguise> getSeenDisguises(String viewer) {
-        List<TargetedDisguise> dis = new ArrayList<TargetedDisguise>();
-        for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {
-            for (TargetedDisguise disguise : disguises) {
-                if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                    if (disguise.canSee(viewer)) {
-                        boolean add = true;
-                        for (String observer : disguise.getObservers()) {
-                            if (!observer.equals(viewer) && Bukkit.getPlayerExact(observer) != null) {
-                                add = false;
-                                break;
-                            }
-                        }
-                        if (add) {
-                            dis.add(disguise);
-                        }
-                    }
-                }
-            }
-        }
-        return dis;
     }
 
     public static HashMap<UUID, Integer> getSelfDisguisesIds() {

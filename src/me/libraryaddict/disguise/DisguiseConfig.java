@@ -26,7 +26,6 @@ public class DisguiseConfig {
     private static boolean miscDisguisesForLivingEnabled;
     private static boolean modifyBoundingBox;
     private static boolean movementEnabled;
-    private static boolean removeUnseenDisguises;
     private static boolean ridingEnabled;
     private static boolean sendsEntityMetadata;
     private static boolean sendVelocity;
@@ -64,8 +63,7 @@ public class DisguiseConfig {
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
         setDisguiseBlownOnAttack(config.getBoolean("BlowDisguises"));
-        setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&',
-                config.getString("BlownDisguiseMessage")));
+        setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&', config.getString("BlownDisguiseMessage")));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setKeepDisguiseOnPlayerLogout(config.getBoolean("KeepDisguises.PlayerLogout"));
         setKeepDisguiseOnEntityDespawn(config.getBoolean("KeepDisguises.EntityDespawn"));
@@ -83,7 +81,6 @@ public class DisguiseConfig {
         setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
         setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
-        setUnusedDisguisesRemoved(config.getBoolean("RemoveUnusedDisguises"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -185,10 +182,6 @@ public class DisguiseConfig {
      */
     public static boolean isSoundEnabled() {
         return PacketsManager.isHearDisguisesEnabled();
-    }
-
-    public static boolean isUnusedDisguisesRemoved() {
-        return removeUnseenDisguises;
     }
 
     /**
@@ -359,10 +352,6 @@ public class DisguiseConfig {
      */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
-    }
-
-    public static void setUnusedDisguisesRemoved(boolean remove) {
-        removeUnseenDisguises = remove;
     }
 
     /**
