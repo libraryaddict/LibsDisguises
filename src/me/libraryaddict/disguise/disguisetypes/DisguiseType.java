@@ -133,6 +133,8 @@ public enum DisguiseType {
 
     ZOMBIE_VILLAGER;
 
+    private static Method isVillager, getVariant, getSkeletonType;
+
     static {
         // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
         // Without erroring up everything.
@@ -167,6 +169,20 @@ public enum DisguiseType {
                 // This version of craftbukkit doesn't have the disguise.
             }
         }
+        try {
+            isVillager = org.bukkit.entity.Zombie.class.getMethod("isVillager");
+        } catch (Throwable ignored) {
+            // This version doesn't have villagers
+        }
+        try {
+            getVariant = org.bukkit.entity.Horse.class.getMethod("getVariant");
+        } catch (Throwable ignored) {
+            // This version doesn't have horses
+        }
+        try {
+            getSkeletonType = org.bukkit.entity.Skeleton.class.getMethod("getSkeletonType");
+        } catch (Throwable ignored) {
+        }
     }
 
     public static DisguiseType getType(Entity entity) {
@@ -174,18 +190,16 @@ public enum DisguiseType {
         switch (disguiseType) {
         case ZOMBIE:
             try {
-                Method isVillager = entity.getClass().getMethod("isVillager");
                 if ((Boolean) isVillager.invoke(entity)) {
                     disguiseType = DisguiseType.ZOMBIE_VILLAGER;
                 }
-            } catch (NoSuchMethodException ex) {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             break;
         case HORSE:
             try {
-                Object variant = entity.getClass().getMethod("getVariant").invoke(entity);
+                Object variant = getVariant.invoke(entity);
                 disguiseType = DisguiseType.valueOf(((Enum) variant).name());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -193,11 +207,10 @@ public enum DisguiseType {
             break;
         case SKELETON:
             try {
-                Object type = entity.getClass().getMethod("getSkeletonType").invoke(entity);
-                if (((Enum) type).name().equals("WITHER")) {
+                Object type = getSkeletonType.invoke(entity);
+                if (type == org.bukkit.entity.Skeleton.SkeletonType.WITHER) {
                     disguiseType = DisguiseType.WITHER_SKELETON;
                 }
-            } catch (NoSuchMethodException ex) {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
