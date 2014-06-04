@@ -68,20 +68,8 @@ public class LibsDisguises extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            tryClose(stream);
+            tryClose(reader);
         }
 
         PacketsManager.init(this);
@@ -149,22 +137,20 @@ public class LibsDisguises extends JavaPlugin {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
+            tryClose(input);
+            tryClose(reader);
+        }
+        return toWrite;
+    }
+
+    private static void tryClose(Closeable input) {
+        if (input != null) {
             try {
-                if (input != null) {
-                    input.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
+                input.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return toWrite;
     }
 
     /**
