@@ -30,7 +30,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
@@ -175,8 +174,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Sends
-     *            entity removal packets, as this disguise was removed
+     * Sends entity removal packets, as this disguise was removed
      */
     public static void destroyEntity(TargetedDisguise disguise) {
         try {
@@ -217,7 +215,7 @@ public class DisguiseUtilities {
                         disguiseBox = disguiseValues.getBabyBox();
                     }
                 }
-                ReflectionManager.setBoundingBox(entity, disguiseBox, disguiseValues.getEntitySize());
+                ReflectionManager.setBoundingBox(entity, disguiseBox);
             } else {
                 DisguiseValues entityValues = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
                 FakeBoundingBox entityBox = entityValues.getAdultBox();
@@ -227,7 +225,7 @@ public class DisguiseUtilities {
                         entityBox = entityValues.getBabyBox();
                     }
                 }
-                ReflectionManager.setBoundingBox(entity, entityBox, entityValues.getEntitySize());
+                ReflectionManager.setBoundingBox(entity, entityBox);
             }
         }
     }
@@ -327,7 +325,7 @@ public class DisguiseUtilities {
             public void onLookup(Object gameProfile) {
                 getAddedByPlugins().remove(disguise.getName());
                 if (DisguiseAPI.isDisguiseInUse(disguise)) {
-                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                    DisguiseUtilities.refreshTrackers(disguise);
                     if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
                         DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     }
@@ -445,11 +443,8 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        if (disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId())
-                && getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise)) {
-            return true;
-        }
-        return false;
+        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId())
+                && getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise);
     }
 
     /**
@@ -461,8 +456,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Resends
-     *            the entity to this specific player
+     * Resends the entity to this specific player
      */
     public static void refreshTracker(TargetedDisguise disguise, String player) {
         if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
@@ -495,8 +489,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param A
-     *            convidence method for me to refresh trackers in other plugins
+     * A convenience method for me to refresh trackers in other plugins
      */
     public static void refreshTrackers(Entity entity) {
         if (entity.isValid()) {
@@ -532,8 +525,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Resends
-     *            the entity to all the watching players, which is where the magic begins
+     * Resends the entity to all the watching players, which is where the magic begins
      */
     public static void refreshTrackers(TargetedDisguise disguise) {
         try {
@@ -728,9 +720,7 @@ public class DisguiseUtilities {
             }
 
             // Resend any active potion effects
-            Iterator iterator = player.getActivePotionEffects().iterator();
-            while (iterator.hasNext()) {
-                PotionEffect potionEffect = (PotionEffect) iterator.next();
+            for (Object potionEffect : player.getActivePotionEffects()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
                                 .createPacket(player.getEntityId(), potionEffect), fakeId);

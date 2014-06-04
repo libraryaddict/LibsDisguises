@@ -94,7 +94,7 @@ public class PacketsManager {
     /**
      * Construct the packets I need to spawn in the disguise
      */
-    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity, Player observer) {
+    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
@@ -179,7 +179,7 @@ public class PacketsManager {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                Object gameProfile = null;
+                Object gameProfile;
                 String name = ((PlayerDisguise) disguise).getName();
                 boolean removeName = false;
                 if (!DisguiseUtilities.hasGameProfile(name)) {
@@ -529,8 +529,9 @@ public class PacketsManager {
                             if (disguise.isSoundsReplaced()) {
                                 String sound = null;
                                 DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-                                if (dSound != null && soundType != null)
+                                if (dSound != null)
                                     sound = dSound.getSound(soundType);
+
                                 if (sound == null) {
                                     event.setCancelled(true);
                                 } else {
@@ -563,7 +564,7 @@ public class PacketsManager {
                                         if (soundType == SoundType.HURT || soundType == SoundType.DEATH
                                                 || soundType == SoundType.IDLE) {
                                             // If the volume is the default
-                                            if (((Float) mods.read(4)).equals(entitySound.getDamageAndIdleSoundVolume())) {
+                                            if (mods.read(4).equals(entitySound.getDamageAndIdleSoundVolume())) {
                                                 mods.write(4, dSound.getDamageAndIdleSoundVolume());
                                             }
                                             // Here I assume its the default pitch as I can't calculate if its real.
@@ -702,8 +703,7 @@ public class PacketsManager {
                         if (packets == null) {
                             packets = new PacketContainer[] { event.getPacket() };
                         }
-                        for (int i = 0; i < packets.length; i++) {
-                            PacketContainer packet = packets[i];
+                        for (PacketContainer packet : packets) {
                             if (packet.equals(event.getPacket())) {
                                 packet = packet.deepClone();
                             }
@@ -716,10 +716,7 @@ public class PacketsManager {
                         }
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
-                            Iterator<WrappedWatchableObject> itel = event.getPacket().getWatchableCollectionModifier().read(0)
-                                    .iterator();
-                            while (itel.hasNext()) {
-                                WrappedWatchableObject watch = itel.next();
+                            for (WrappedWatchableObject watch : event.getPacket().getWatchableCollectionModifier().read(0)) {
                                 if (watch.getIndex() == 0) {
                                     byte b = (Byte) watch.getValue();
                                     byte a = (byte) (b | 1 << 5);
@@ -1231,7 +1228,7 @@ public class PacketsManager {
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING) {
-                    packets = constructSpawnPackets(disguise, entity, observer);
+                    packets = constructSpawnPackets(disguise, entity);
                 }
 
                 // Else if the disguise is attempting to send players a forbidden packet

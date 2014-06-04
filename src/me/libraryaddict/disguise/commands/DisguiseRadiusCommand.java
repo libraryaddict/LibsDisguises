@@ -86,9 +86,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             radius = maxRadius;
         }
         String[] newArgs = new String[args.length - (starting + 1)];
-        for (int i = 0; i < newArgs.length; i++) {
-            newArgs[i] = args[i + (starting + 1)];
-        }
+        System.arraycopy(args, starting + 1, newArgs, 0, newArgs.length);
         Disguise disguise;
         try {
             disguise = parseDisguise(sender, newArgs);

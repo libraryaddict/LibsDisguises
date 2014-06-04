@@ -68,20 +68,8 @@ public class LibsDisguises extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            tryClose(stream);
+            tryClose(reader);
         }
 
         PacketsManager.init(this);
@@ -149,20 +137,8 @@ public class LibsDisguises extends JavaPlugin {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            tryClose(input);
+            tryClose(reader);
         }
         return toWrite;
     }
@@ -314,9 +290,19 @@ public class LibsDisguises extends JavaPlugin {
     private String toReadable(String string) {
         StringBuilder builder = new StringBuilder();
         for (String s : string.split("_")) {
-            builder.append(s.substring(0, 1) + s.substring(1).toLowerCase());
+            builder.append(s.substring(0, 1)).append(s.substring(1).toLowerCase());
         }
         return builder.toString();
+    }
+
+    private void tryClose(Closeable input) {
+        if (input != null) {
+            try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

@@ -70,6 +70,7 @@ public class FlagWatcher {
         try {
             cloned = getClass().getConstructor(Disguise.class).newInstance(owningDisguise);
         } catch (Exception e) {
+            // TODO: This will throw NPE
             e.printStackTrace();
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
@@ -152,9 +153,7 @@ public class FlagWatcher {
 
     public ItemStack[] getArmor() {
         ItemStack[] armor = new ItemStack[4];
-        for (int i = 0; i < 4; i++) {
-            armor[i] = items[i];
-        }
+        System.arraycopy(items, 0, armor, 0, 4);
         return armor;
     }
 
@@ -305,11 +304,11 @@ public class FlagWatcher {
         if (itemStack == null) {
             // Find the item to replace it with
             if (getDisguise().getEntity() instanceof LivingEntity) {
-                EntityEquipment enquipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
+                EntityEquipment equipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
                 if (slot == 4) {
-                    itemStack = enquipment.getItemInHand();
+                    itemStack = equipment.getItemInHand();
                 } else {
-                    itemStack = enquipment.getArmorContents()[slot];
+                    itemStack = equipment.getArmorContents()[slot];
                 }
                 if (itemStack != null && itemStack.getTypeId() == 0) {
                     itemStack = null;

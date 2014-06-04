@@ -38,9 +38,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             return true;
         }
         String[] newArgs = new String[args.length - 1];
-        for (int i = 0; i < newArgs.length; i++) {
-            newArgs[i] = args[i + 1];
-        }
+        System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         Disguise disguise;
         try {
             disguise = parseDisguise(sender, newArgs);
@@ -59,7 +57,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
         }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) player).getDisplayName());
+                ((LivingWatcher) disguise.getWatcher()).setCustomName(player.getDisplayName());
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                 }

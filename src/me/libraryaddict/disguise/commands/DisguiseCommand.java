@@ -22,7 +22,7 @@ public class DisguiseCommand extends BaseDisguiseCommand {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
-        Disguise disguise = null;
+        Disguise disguise;
         try {
             disguise = parseDisguise(sender, args);
         } catch (Exception ex) {

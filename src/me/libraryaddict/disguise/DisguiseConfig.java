@@ -83,6 +83,7 @@ public class DisguiseConfig {
         setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
         setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
+        setUnusedDisguisesRemoved(config.getBoolean("RemoveUnusedDisguises"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
