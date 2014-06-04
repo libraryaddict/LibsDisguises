@@ -143,16 +143,6 @@ public class LibsDisguises extends JavaPlugin {
         return toWrite;
     }
 
-    private static void tryClose(Closeable input) {
-        if (input != null) {
-            try {
-                input.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume
      * for mob noises. As well as setting their watcher class and entity size.
@@ -303,6 +293,16 @@ public class LibsDisguises extends JavaPlugin {
             builder.append(s.substring(0, 1) + s.substring(1).toLowerCase());
         }
         return builder.toString();
+    }
+
+    private void tryClose(Closeable input) {
+        if (input != null) {
+            try {
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
