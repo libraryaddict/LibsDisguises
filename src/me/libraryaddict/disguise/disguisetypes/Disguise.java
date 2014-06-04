@@ -181,6 +181,7 @@ public abstract class Disguise {
             private int deadTicks = 0;
             private int refreshDisguise = 0;
 
+            // TODO refactor
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
