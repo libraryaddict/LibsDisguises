@@ -85,6 +85,11 @@ public class LivingWatcher extends FlagWatcher {
         return (Byte) getValue(8, (byte) 0) == 1;
     }
 
+    /**
+     * This method constructs the insane potion effect format used by Vanilla.
+     *
+     * @return potion value to send in packet
+     */
     private int getPotions() {
         int m = 3694022;
 
@@ -101,7 +106,7 @@ public class LivingWatcher extends FlagWatcher {
                 int n = (Integer) potionNo.invoke(list[localMobEffect]);
                 f1 += (n >> 16 & 0xFF) / 255.0F;
                 f2 += (n >> 8 & 0xFF) / 255.0F;
-                f3 += (n >> 0 & 0xFF) / 255.0F;
+                f3 += (n & 0xFF) / 255.0F;
                 f4 += 1.0F;
             }
         } catch (Exception ex) {
