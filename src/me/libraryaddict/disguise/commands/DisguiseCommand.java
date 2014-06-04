@@ -42,7 +42,11 @@ public class DisguiseCommand extends BaseDisguiseCommand {
             }
         }
         DisguiseAPI.disguiseToAll((Player) sender, disguise);
-        sender.sendMessage(ChatColor.RED + "Now disguised as a " + disguise.getType().toReadable());
+        if (disguise.isDisguiseInUse()) {
+            sender.sendMessage(ChatColor.RED + "Now disguised as a " + disguise.getType().toReadable());
+        } else {
+            sender.sendMessage(ChatColor.RED + "Failed to disguise as a " + disguise.getType().toReadable());
+        }
         return true;
     }
 

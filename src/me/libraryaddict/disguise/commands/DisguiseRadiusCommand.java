@@ -119,7 +119,9 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
                     }
                 }
                 DisguiseAPI.disguiseToAll(entity, disguise);
-                disguisedEntitys++;
+                if (disguise.isDisguiseInUse()) {
+                    disguisedEntitys++;
+                }
             }
         }
         if (disguisedEntitys > 0) {

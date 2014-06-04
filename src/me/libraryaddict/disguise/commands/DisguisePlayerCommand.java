@@ -64,8 +64,13 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             }
         }
         DisguiseAPI.disguiseToAll(player, disguise);
-        sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "
-                + disguise.getType().toReadable() + "!");
+        if (disguise.isDisguiseInUse()) {
+            sender.sendMessage(ChatColor.RED + "Successfully disguised " + player.getName() + " as a "
+                    + disguise.getType().toReadable() + "!");
+        } else {
+            sender.sendMessage(ChatColor.RED + "Failed to disguise " + player.getName() + " as a "
+                    + disguise.getType().toReadable() + "!");
+        }
         return true;
     }
 

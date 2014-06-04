@@ -185,8 +185,13 @@ public class DisguiseListener implements Listener {
                                 }
                             }
                         }
-                        p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
-                                + " as " + disguiseName + "!");
+                        if (disguise.isDisguiseInUse()) {
+                            p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
+                                    + " as " + disguiseName + "!");
+                        } else {
+                            p.sendMessage(ChatColor.RED + "Failed to disguise " + (entity instanceof Player ? "" : "the ") + entityName
+                                    + " as " + disguiseName + "!");
+                        }
                     }
                 } else {
                     if (DisguiseAPI.isDisguised(entity)) {
