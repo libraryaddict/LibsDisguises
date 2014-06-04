@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.utilities.PacketsManager;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class DisguiseConfig {
     private static boolean animationEnabled;
@@ -346,4 +348,37 @@ public class DisguiseConfig {
     private DisguiseConfig() {
     }
 
+    public static void initConfig(ConfigurationSection config) {
+        setSoundsEnabled(config.getBoolean("DisguiseSounds"));
+        setVelocitySent(config.getBoolean("SendVelocity"));
+        setViewDisguises(config.getBoolean("ViewSelfDisguises"));
+        setHearSelfDisguise(config.getBoolean("HearSelfDisguise"));
+        setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
+        setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
+        setAddEntityAnimations(config.getBoolean("AddEntityAnimations"));
+        setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
+        setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
+        setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
+        setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
+        setDisguiseBlownOnAttack(config.getBoolean("BlowDisguises"));
+        setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&',
+                config.getString("BlownDisguiseMessage")));
+        setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
+        setKeepDisguiseOnPlayerLogout(config.getBoolean("KeepDisguises.PlayerLogout"));
+        setKeepDisguiseOnEntityDespawn(config.getBoolean("KeepDisguises.EntityDespawn"));
+        setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
+        setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
+        setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
+        setEnquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Enquipment"));
+        setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
+        setBedPacketsEnabled(config.getBoolean("PacketsEnabled.Bed"));
+        setRidingPacketsEnabled(config.getBoolean("PacketsEnabled.Riding"));
+        setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
+        setCollectPacketsEnabled(config.getBoolean("PacketsEnabled.Collect"));
+        setMetadataPacketsEnabled(config.getBoolean("PacketsEnabled.Metadata"));
+        setMaxHealthDeterminedByDisguisedEntity(config.getBoolean("MaxHealthDeterminedByEntity"));
+        setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
+        setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
+        setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
+    }
 }
