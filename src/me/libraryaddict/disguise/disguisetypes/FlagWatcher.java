@@ -68,10 +68,10 @@ public class FlagWatcher {
     public FlagWatcher clone(Disguise owningDisguise) {
         FlagWatcher cloned = null;
         try {
-            cloned = getClass().getConstructor(Disguise.class).newInstance(owningDisguise);
+            cloned = getClass().getConstructor(Disguise.class).newInstance(getDisguise());
         } catch (Exception e) {
-            // TODO: This will throw NPE
             e.printStackTrace();
+            cloned = new FlagWatcher(getDisguise());
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.items = items.clone();
