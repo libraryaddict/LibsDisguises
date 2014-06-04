@@ -105,7 +105,8 @@ public class DisguiseListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         if (DisguiseConfig.isUnusedDisguisesRemoved()) {
             for (TargetedDisguise disguise : DisguiseUtilities.getSeenDisguises(event.getPlayer().getName())) {
-                disguise.removeDisguise();
+                // TODO fix
+                // disguise.removeDisguise();
             }
         }
     }
