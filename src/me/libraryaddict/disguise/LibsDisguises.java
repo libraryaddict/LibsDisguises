@@ -290,7 +290,7 @@ public class LibsDisguises extends JavaPlugin {
     private String toReadable(String string) {
         StringBuilder builder = new StringBuilder();
         for (String s : string.split("_")) {
-            builder.append(s.substring(0, 1) + s.substring(1).toLowerCase());
+            builder.append(s.substring(0, 1)).append(s.substring(1).toLowerCase());
         }
         return builder.toString();
     }

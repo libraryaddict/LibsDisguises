@@ -30,7 +30,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
@@ -175,8 +174,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Sends
-     *            entity removal packets, as this disguise was removed
+     * Sends entity removal packets, as this disguise was removed
      */
     public static void destroyEntity(TargetedDisguise disguise) {
         try {
@@ -461,8 +459,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Resends
-     *            the entity to this specific player
+     * Resends the entity to this specific player
      */
     public static void refreshTracker(TargetedDisguise disguise, String player) {
         if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
@@ -495,8 +492,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param A
-     *            convidence method for me to refresh trackers in other plugins
+     * A convenience method for me to refresh trackers in other plugins
      */
     public static void refreshTrackers(Entity entity) {
         if (entity.isValid()) {
@@ -532,8 +528,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * @param Resends
-     *            the entity to all the watching players, which is where the magic begins
+     * Resends the entity to all the watching players, which is where the magic begins
      */
     public static void refreshTrackers(TargetedDisguise disguise) {
         try {

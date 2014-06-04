@@ -305,11 +305,11 @@ public class FlagWatcher {
         if (itemStack == null) {
             // Find the item to replace it with
             if (getDisguise().getEntity() instanceof LivingEntity) {
-                EntityEquipment enquipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
+                EntityEquipment equipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
                 if (slot == 4) {
-                    itemStack = enquipment.getItemInHand();
+                    itemStack = equipment.getItemInHand();
                 } else {
-                    itemStack = enquipment.getArmorContents()[slot];
+                    itemStack = equipment.getArmorContents()[slot];
                 }
                 if (itemStack != null && itemStack.getTypeId() == 0) {
                     itemStack = null;

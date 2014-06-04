@@ -350,7 +350,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             // Parse to horse color
                         } else if (param.getSimpleName().equals("Color")) {
                             try {
-
                                 value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
                             } catch (Exception ex) {
                                 throw parseToException("a horse color", valueString, methodName);
