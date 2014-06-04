@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.commands;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -149,6 +151,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         return true;
                     }
                     ArrayList<String> methods = new ArrayList<String>();
+                    HashMap<String, ChatColor> map = new HashMap<String, ChatColor>();
                     Class watcher = type.getWatcherClass();
                     try {
                         for (Method method : watcher.getMethods()) {
@@ -189,8 +192,10 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     } else if (declaring == FlagWatcher.class) {
                                         methodColor = ChatColor.GRAY;
                                     }
-                                    methods.add(methodColor + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
-                                            + valueType + ChatColor.DARK_RED + ")");
+                                    String str = method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN + valueType
+                                            + ChatColor.DARK_RED + ")";
+                                    map.put(str, methodColor);
+                                    methods.add(str);
                                 }
                             }
                         }
@@ -198,6 +203,9 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         ex.printStackTrace();
                     }
                     Collections.sort(methods, String.CASE_INSENSITIVE_ORDER);
+                    for (int i = 0; i < methods.size(); i++) {
+                        methods.set(i, map.get(methods.get(i)) + methods.get(i));
+                    }
                     sender.sendMessage(ChatColor.DARK_RED + type.toReadable() + " options: "
                             + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
                     return true;
