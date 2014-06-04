@@ -33,6 +33,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 
 public abstract class Disguise {
     private static JavaPlugin plugin;
+    private boolean disguiseInUse;
     private DisguiseType disguiseType;
     private Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
@@ -326,6 +327,14 @@ public abstract class Disguise {
         return watcher;
     }
 
+    /**
+     * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise.
+     * getEntity() can still return null if this disguise is active after despawn, logout, etc.
+     */
+    public boolean isDisguiseInUse() {
+        return disguiseInUse;
+    }
+
     public boolean isHidingArmorFromSelf() {
         return hideArmorFromSelf;
     }
@@ -398,9 +407,12 @@ public abstract class Disguise {
      * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
      */
     public void removeDisguise() {
-        if (taskId != -1) {
-            Bukkit.getScheduler().cancelTask(taskId);
-            taskId = -1;
+        if (disguiseInUse) {
+            disguiseInUse = false;
+            if (taskId != -1) {
+                Bukkit.getScheduler().cancelTask(taskId);
+                taskId = -1;
+            }
             HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
             // If this disguise has a entity set
             if (getEntity() != null) {
@@ -461,7 +473,6 @@ public abstract class Disguise {
         }
         this.entity = entity;
         setupWatcher();
-        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, velocityRunnable, 1, 1);
     }
 
     public void setHearSelfDisguise(boolean hearSelfDisguise) {
@@ -640,5 +651,24 @@ public abstract class Disguise {
                     + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
         watcher = newWatcher;
+        if (getEntity() != null) {
+            setupWatcher();
+        }
+    }
+
+    public void startDisguise() {
+        if (!isDisguiseInUse()) {
+            if (getEntity() == null) {
+                throw new RuntimeException("No entity is assigned to this disguise!");
+            }
+            disguiseInUse = true;
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, velocityRunnable, 1, 1);
+            // Stick the disguise in the disguises bin
+            DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+            // Resend the disguised entity's packet
+            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+            // If he is a player, then self disguise himself
+            DisguiseUtilities.setupFakeDisguise(this);
+        }
     }
 }

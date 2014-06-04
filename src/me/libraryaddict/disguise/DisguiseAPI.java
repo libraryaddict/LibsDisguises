@@ -167,12 +167,7 @@ public class DisguiseAPI {
             // Set the disguise's entity
             disguise.setEntity(entity);
         }
-        // Stick the disguise in the disguises bin
-        DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) disguise);
-        // Resend the disguised entity's packet
-        DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-        // If he is a player, then self disguise himself
-        DisguiseUtilities.setupFakeDisguise(disguise);
+        disguise.startDisguise();
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Collection playersToNotSeeDisguise) {
@@ -326,7 +321,7 @@ public class DisguiseAPI {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        return DisguiseUtilities.isDisguiseInUse(disguise);
+        return disguise.isDisguiseInUse();
     }
 
     /**
