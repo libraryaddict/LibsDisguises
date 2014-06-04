@@ -443,11 +443,8 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        if (disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId())
-                && getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise)) {
-            return true;
-        }
-        return false;
+        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId())
+                && getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise);
     }
 
     /**

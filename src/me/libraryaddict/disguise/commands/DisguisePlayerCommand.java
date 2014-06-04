@@ -57,7 +57,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
         }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) player).getDisplayName());
+                ((LivingWatcher) disguise.getWatcher()).setCustomName(player.getDisplayName());
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
                 }

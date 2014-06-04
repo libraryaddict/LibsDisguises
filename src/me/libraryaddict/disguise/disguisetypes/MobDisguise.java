@@ -62,11 +62,8 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     public boolean doesDisguiseAge() {
-        if (getWatcher() != null) {
-            return getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher;
-        }
-        return false;
-
+        return getWatcher() != null &&
+                (getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher);
     }
 
     public boolean isAdult() {

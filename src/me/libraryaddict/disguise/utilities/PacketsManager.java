@@ -179,7 +179,7 @@ public class PacketsManager {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                Object gameProfile = null;
+                Object gameProfile;
                 String name = ((PlayerDisguise) disguise).getName();
                 boolean removeName = false;
                 if (!DisguiseUtilities.hasGameProfile(name)) {
@@ -529,8 +529,9 @@ public class PacketsManager {
                             if (disguise.isSoundsReplaced()) {
                                 String sound = null;
                                 DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-                                if (dSound != null && soundType != null)
+                                if (dSound != null)
                                     sound = dSound.getSound(soundType);
+
                                 if (sound == null) {
                                     event.setCancelled(true);
                                 } else {
@@ -563,7 +564,7 @@ public class PacketsManager {
                                         if (soundType == SoundType.HURT || soundType == SoundType.DEATH
                                                 || soundType == SoundType.IDLE) {
                                             // If the volume is the default
-                                            if (((Float) mods.read(4)).equals(entitySound.getDamageAndIdleSoundVolume())) {
+                                            if (mods.read(4).equals(entitySound.getDamageAndIdleSoundVolume())) {
                                                 mods.write(4, dSound.getDamageAndIdleSoundVolume());
                                             }
                                             // Here I assume its the default pitch as I can't calculate if its real.

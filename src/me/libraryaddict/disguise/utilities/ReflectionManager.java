@@ -151,8 +151,7 @@ public class ReflectionManager {
 
     public static Entity getBukkitEntity(Object nmsEntity) {
         try {
-            Entity bukkitEntity = (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity").invoke(nmsEntity);
-            return bukkitEntity;
+            return (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity").invoke(nmsEntity);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
