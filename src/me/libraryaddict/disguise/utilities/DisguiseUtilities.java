@@ -263,7 +263,7 @@ public class DisguiseUtilities {
         }
         return null;
     }
-
+    
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
         UUID entityId = entity.getUniqueId();
         if (futureDisguises.containsKey(entity.getEntityId())) {
@@ -291,6 +291,10 @@ public class DisguiseUtilities {
             return disguises.toArray(new TargetedDisguise[disguises.size()]);
         }
         return new TargetedDisguise[0];
+    }
+
+    public static HashMap<Integer, HashSet<TargetedDisguise>> getFutureDisguises() {
+        return futureDisguises;
     }
 
     public static Object getGameProfile(String playerName) {

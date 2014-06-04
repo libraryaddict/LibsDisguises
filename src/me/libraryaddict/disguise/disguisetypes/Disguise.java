@@ -420,10 +420,11 @@ public abstract class Disguise {
                 }
             } else {
                 // Loop through the disguises because it could be used with a unknown entity id.
-                Iterator<UUID> itel = disguises.keySet().iterator();
+                HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
+                Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
                 while (itel.hasNext()) {
-                    UUID id = itel.next();
-                    if (disguises.get(id).remove(this) && disguises.get(id).isEmpty()) {
+                    int id = itel.next();
+                    if (future.get(id).remove(this) && future.get(id).isEmpty()) {
                         itel.remove();
                     }
                 }
