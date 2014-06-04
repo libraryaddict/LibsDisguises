@@ -28,7 +28,6 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -89,37 +88,8 @@ public class LibsDisguises extends JavaPlugin {
 
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
-        DisguiseConfig.setSoundsEnabled(getConfig().getBoolean("DisguiseSounds"));
-        DisguiseConfig.setVelocitySent(getConfig().getBoolean("SendVelocity"));
-        DisguiseConfig.setViewDisguises(getConfig().getBoolean("ViewSelfDisguises"));
-        DisguiseConfig.setHearSelfDisguise(getConfig().getBoolean("HearSelfDisguise"));
-        DisguiseConfig.setHideArmorFromSelf(getConfig().getBoolean("RemoveArmor"));
-        DisguiseConfig.setHideHeldItemFromSelf(getConfig().getBoolean("RemoveHeldItem"));
-        DisguiseConfig.setAddEntityAnimations(getConfig().getBoolean("AddEntityAnimations"));
-        DisguiseConfig.setNameOfPlayerShownAboveDisguise(getConfig().getBoolean("ShowNamesAboveDisguises"));
-        DisguiseConfig.setNameAboveHeadAlwaysVisible(getConfig().getBoolean("NameAboveHeadAlwaysVisible"));
-        DisguiseConfig.setModifyBoundingBox(getConfig().getBoolean("ModifyBoundingBox"));
-        DisguiseConfig.setMonstersIgnoreDisguises(getConfig().getBoolean("MonstersIgnoreDisguises"));
-        DisguiseConfig.setDisguiseBlownOnAttack(getConfig().getBoolean("BlowDisguises"));
-        DisguiseConfig.setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&',
-                getConfig().getString("BlownDisguiseMessage")));
-        DisguiseConfig.setKeepDisguiseOnPlayerDeath(getConfig().getBoolean("KeepDisguises.PlayerDeath"));
-        DisguiseConfig.setKeepDisguiseOnPlayerLogout(getConfig().getBoolean("KeepDisguises.PlayerLogout"));
-        DisguiseConfig.setKeepDisguiseOnEntityDespawn(getConfig().getBoolean("KeepDisguises.EntityDespawn"));
-        DisguiseConfig.setMiscDisguisesForLivingEnabled(getConfig().getBoolean("MiscDisguisesForLiving"));
-        DisguiseConfig.setMovementPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Movement"));
-        DisguiseConfig.setWitherSkullPacketsEnabled(getConfig().getBoolean("PacketsEnabled.WitherSkull"));
-        DisguiseConfig.setEnquipmentPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Enquipment"));
-        DisguiseConfig.setAnimationPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Animation"));
-        DisguiseConfig.setBedPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Bed"));
-        DisguiseConfig.setRidingPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Riding"));
-        DisguiseConfig.setEntityStatusPacketsEnabled(getConfig().getBoolean("PacketsEnabled.EntityStatus"));
-        DisguiseConfig.setCollectPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Collect"));
-        DisguiseConfig.setMetadataPacketsEnabled(getConfig().getBoolean("PacketsEnabled.Metadata"));
-        DisguiseConfig.setMaxHealthDeterminedByDisguisedEntity(getConfig().getBoolean("MaxHealthDeterminedByEntity"));
-        DisguiseConfig.setDisguiseEntityExpire(getConfig().getInt("DisguiseEntityExpire"));
-        DisguiseConfig.setDisguiseCloneExpire(getConfig().getInt("DisguiseCloneExpire"));
-        DisguiseConfig.setMaxClonedDisguises(getConfig().getInt("DisguiseCloneSize"));
+        DisguiseConfig.initConfig(getConfig());
+
         try {
             // Here I use reflection to set the plugin for Disguise..
             // Kind of stupid but I don't want open API calls for a commonly used object.
