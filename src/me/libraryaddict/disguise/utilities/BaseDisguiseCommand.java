@@ -265,9 +265,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];
-        for (int i = toSkip; i < args.length; i++) {
-            newArgs[i - toSkip] = args[i];
-        }
+        System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
         args = newArgs;
         for (int i = 0; i < args.length; i += 2) {
             String methodName = args[i];

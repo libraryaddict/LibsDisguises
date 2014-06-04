@@ -152,9 +152,7 @@ public class FlagWatcher {
 
     public ItemStack[] getArmor() {
         ItemStack[] armor = new ItemStack[4];
-        for (int i = 0; i < 4; i++) {
-            armor[i] = items[i];
-        }
+        System.arraycopy(items, 0, armor, 0, 4);
         return armor;
     }
 
