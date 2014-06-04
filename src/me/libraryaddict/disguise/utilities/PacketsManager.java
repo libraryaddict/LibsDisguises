@@ -8,6 +8,7 @@ import java.util.Random;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -16,6 +17,8 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
@@ -75,10 +78,25 @@ public class PacketsManager {
                 try {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                    org.bukkit.entity.Entity entity = entityModifer.read(LibVersion.is1_7() ? 0 : 1);
+                    Entity entity = entityModifer.read(LibVersion.is1_7() ? 0 : 1);
                     if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow
                             || entity == observer) {
                         event.setCancelled(true);
+                    }
+                    ItemStack item = observer.getItemInHand();
+                    if (item != null && item.getType() == Material.INK_SACK) {
+                        Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+                        if (disguise != null
+                                && (disguise.getType() == DisguiseType.SHEEP || disguise.getType() == DisguiseType.WOLF)) {
+                            AnimalColor color = AnimalColor.getColor(item.getDurability());
+                            if (disguise.getType() == DisguiseType.SHEEP) {
+                                SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
+                                watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
+                            } else {
+                                WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
+                                watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -28,6 +28,12 @@ RemoveHeldItem: false
 # Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
 # This is only valid if you set a animation on the disguise itself. Because the entitys animations are applied otherwise.
 AddEntityAnimations: true
+# When a sheep or wolf is right clicked with dye. The client automatically assumes it was successful and displays the sheeps wool or the wolfs collar as dyed.
+# This is a option that either prevents that happening, or it changes their color officially in the plugin so that everyone sees it changed.
+# Its currently set to false which means that the color is not changed and will refresh itself to the player.
+# Please note that this will not remove the dye from their hands. This also does not check if the disguised entity is actually a sheep/wolf and wants a say in its color.
+DyeableSheep: false
+DyeableWolf: false
 # This is only called into action when the disguise is constructed using the commands.
 # And when the disguise supports that. This will not be used at all for plugins constructing the disguises for instance.
 # Such as prophunt. Its also false because its kind of a retarded feature.

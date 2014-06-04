@@ -9,6 +9,8 @@ public class DisguiseConfig {
     private static boolean bedEnabled;
     private static boolean blowDisguisesOnAttack;
     private static boolean collectEnabled;
+    private static boolean colorizeSheep;
+    private static boolean colorizeWolf;
     private static String disguiseBlownMessage;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
@@ -81,6 +83,8 @@ public class DisguiseConfig {
         setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
         setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
+        setSheepDyeable(config.getBoolean("DyeableSheep"));
+        setWolfDyeable(config.getBoolean("DyeableWolf"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -177,6 +181,10 @@ public class DisguiseConfig {
         return hearSelfDisguise;
     }
 
+    public static boolean isSheepDyeable() {
+        return colorizeSheep;
+    }
+
     /**
      * Is the sound packets caught and modified
      */
@@ -200,6 +208,10 @@ public class DisguiseConfig {
 
     public static boolean isWitherSkullPacketsEnabled() {
         return witherSkullEnabled;
+    }
+
+    public static boolean isWolfDyeable() {
+        return colorizeWolf;
     }
 
     public static void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
@@ -347,6 +359,10 @@ public class DisguiseConfig {
         }
     }
 
+    public static void setSheepDyeable(boolean color) {
+        colorizeSheep = color;
+    }
+
     /**
      * Set if the disguises play sounds when hurt
      */
@@ -367,6 +383,10 @@ public class DisguiseConfig {
 
     public static void setWitherSkullPacketsEnabled(boolean enabled) {
         witherSkullEnabled = enabled;
+    }
+
+    public static void setWolfDyeable(boolean color) {
+        colorizeWolf = color;
     }
 
     private DisguiseConfig() {
