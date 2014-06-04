@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
 
 public enum DisguiseType {
     ARROW(60),
@@ -170,17 +173,16 @@ public enum DisguiseType {
             }
         }
         try {
-            isVillager = org.bukkit.entity.Zombie.class.getMethod("isVillager");
+            isVillager = Zombie.class.getMethod("isVillager");
         } catch (Throwable ignored) {
-            // This version doesn't have villagers
         }
         try {
-            getVariant = org.bukkit.entity.Horse.class.getMethod("getVariant");
+            getVariant = Horse.class.getMethod("getVariant");
         } catch (Throwable ignored) {
-            // This version doesn't have horses
+            // Pre-1.6, but that isn't even supported
         }
         try {
-            getSkeletonType = org.bukkit.entity.Skeleton.class.getMethod("getSkeletonType");
+            getSkeletonType = Skeleton.class.getMethod("getSkeletonType");
         } catch (Throwable ignored) {
         }
     }
@@ -208,7 +210,7 @@ public enum DisguiseType {
         case SKELETON:
             try {
                 Object type = getSkeletonType.invoke(entity);
-                if (type == org.bukkit.entity.Skeleton.SkeletonType.WITHER) {
+                if (type == Skeleton.SkeletonType.WITHER) {
                     disguiseType = DisguiseType.WITHER_SKELETON;
                 }
             } catch (Exception ex) {
