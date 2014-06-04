@@ -55,7 +55,7 @@ public class FlagWatcher {
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
-        byte valueByte = (Byte) originalValue;
+        byte valueByte = originalValue;
         for (int i = 0; i < 6; i++) {
             if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
                 valueByte = (byte) (valueByte | 1 << i);
@@ -66,7 +66,7 @@ public class FlagWatcher {
     }
 
     public FlagWatcher clone(Disguise owningDisguise) {
-        FlagWatcher cloned = null;
+        FlagWatcher cloned;
         try {
             cloned = getClass().getConstructor(Disguise.class).newInstance(getDisguise());
         } catch (Exception e) {
