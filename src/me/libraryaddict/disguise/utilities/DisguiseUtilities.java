@@ -24,11 +24,13 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
@@ -91,11 +93,33 @@ public class DisguiseUtilities {
         }
     }
 
-    public static void addFutureDisguise(int entityId, TargetedDisguise disguise) {
+    public static void addFutureDisguise(final int entityId, final TargetedDisguise disguise) {
         if (!futureDisguises.containsKey(entityId)) {
             futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
         }
         futureDisguises.get(entityId).add(disguise);
+        final BukkitRunnable runnable = new BukkitRunnable() {
+            public void run() {
+                if (futureDisguises.containsKey(entityId) && futureDisguises.get(entityId).contains(disguise)) {
+                    for (World world : Bukkit.getWorlds()) {
+                        for (Entity entity : world.getEntities()) {
+                            if (entity.getEntityId() == entityId) {
+                                UUID uniqueId = entity.getUniqueId();
+                                for (TargetedDisguise disguise : futureDisguises.remove(entityId)) {
+                                    addDisguise(uniqueId, disguise);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                    futureDisguises.get(entityId).remove(disguise);
+                    if (futureDisguises.get(entityId).isEmpty()) {
+                        futureDisguises.remove(entityId);
+                    }
+                }
+            }
+        };
+        runnable.runTaskLater(libsDisguises, 20);
     }
 
     public static void addGameProfile(String string, Object gameProfile) {
