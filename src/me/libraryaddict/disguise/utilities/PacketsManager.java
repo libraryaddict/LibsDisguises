@@ -703,8 +703,7 @@ public class PacketsManager {
                         if (packets == null) {
                             packets = new PacketContainer[] { event.getPacket() };
                         }
-                        for (PacketContainer packet1 : packets) {
-                            PacketContainer packet = packet1;
+                        for (PacketContainer packet : packets) {
                             if (packet.equals(event.getPacket())) {
                                 packet = packet.deepClone();
                             }
