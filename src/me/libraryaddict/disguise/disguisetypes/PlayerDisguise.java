@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
@@ -9,7 +11,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 public class PlayerDisguise extends TargetedDisguise {
     private LibsProfileLookup currentLookup;
-    private Object gameProfile;
+    private WrappedGameProfile gameProfile;
     private String playerName;
     private String skinToUse;
 
@@ -53,7 +55,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public Object getGameProfile() {
+    public WrappedGameProfile getGameProfile() {
         if (getSkin() != null) {
             if (gameProfile != null) {
                 return gameProfile;
@@ -79,7 +81,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public void setGameProfile(Object gameProfile) {
+    public void setGameProfile(WrappedGameProfile gameProfile) {
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
     }
 
@@ -97,7 +99,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 currentLookup = new LibsProfileLookup() {
 
                     @Override
-                    public void onLookup(Object gameProfile) {
+                    public void onLookup(WrappedGameProfile gameProfile) {
                         if (currentLookup == this && gameProfile != null) {
                             setGameProfile(gameProfile);
                             if (DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
@@ -109,7 +111,7 @@ public class PlayerDisguise extends TargetedDisguise {
                         }
                     }
                 };
-                Object obj = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
+                WrappedGameProfile obj = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
                 if (obj != null) {
                     setGameProfile(obj);
                 }

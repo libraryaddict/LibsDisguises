@@ -38,6 +38,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 public class DisguiseUtilities {
     /**
@@ -58,7 +59,7 @@ public class DisguiseUtilities {
     /**
      * A hashmap storing the uuid and skin of a playername
      */
-    private static HashMap<String, Object> gameProfiles = new HashMap<String, Object>();
+    private static HashMap<String, WrappedGameProfile> gameProfiles = new HashMap<String, WrappedGameProfile>();
     private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<String, ArrayList<Object>>();
     /**
@@ -122,7 +123,7 @@ public class DisguiseUtilities {
         runnable.runTaskLater(libsDisguises, 20);
     }
 
-    public static void addGameProfile(String string, Object gameProfile) {
+    public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
         getGameProfiles().put(string, gameProfile);
         addedByPlugins.add(string);
     }
@@ -263,7 +264,7 @@ public class DisguiseUtilities {
         }
         return null;
     }
-    
+
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
         UUID entityId = entity.getUniqueId();
         if (futureDisguises.containsKey(entity.getEntityId())) {
@@ -297,11 +298,11 @@ public class DisguiseUtilities {
         return futureDisguises;
     }
 
-    public static Object getGameProfile(String playerName) {
+    public static WrappedGameProfile getGameProfile(String playerName) {
         return gameProfiles.get(playerName);
     }
 
-    public static HashMap<String, Object> getGameProfiles() {
+    public static HashMap<String, WrappedGameProfile> getGameProfiles() {
         return gameProfiles;
     }
 
@@ -345,11 +346,11 @@ public class DisguiseUtilities {
         return players;
     }
 
-    public static Object getProfileFromMojang(final PlayerDisguise disguise) {
+    public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise) {
         return getProfileFromMojang(disguise.getName(), new LibsProfileLookup() {
 
             @Override
-            public void onLookup(Object gameProfile) {
+            public void onLookup(WrappedGameProfile gameProfile) {
                 getAddedByPlugins().remove(disguise.getName());
                 if (DisguiseAPI.isDisguiseInUse(disguise)) {
                     DisguiseUtilities.refreshTrackers(disguise);
@@ -365,11 +366,11 @@ public class DisguiseUtilities {
      * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
-    public static Object getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn) {
+    public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
-    private static Object getProfileFromMojang(final String playerName, final Object runnable) {
+    private static WrappedGameProfile getProfileFromMojang(final String playerName, final Object runnable) {
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -378,7 +379,7 @@ public class DisguiseUtilities {
             getAddedByPlugins().add(playerName);
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
-                Object gameProfile = ReflectionManager.getGameProfile(player);
+                WrappedGameProfile gameProfile = ReflectionManager.getGameProfile(player);
                 if (ReflectionManager.hasSkinBlob(gameProfile)) {
                     gameProfiles.put(playerName, gameProfile);
                     return gameProfile;
@@ -389,7 +390,7 @@ public class DisguiseUtilities {
             Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
                 public void run() {
                     try {
-                        final Object gameProfile = lookupGameProfile(playerName);
+                        final WrappedGameProfile gameProfile = lookupGameProfile(playerName);
                         Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
@@ -430,7 +431,7 @@ public class DisguiseUtilities {
      * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
-    public static Object getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
+    public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
@@ -454,8 +455,8 @@ public class DisguiseUtilities {
     /**
      * This is called on a thread as it is thread blocking
      */
-    public static Object lookupGameProfile(String playerName) {
-        Object gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
+    public static WrappedGameProfile lookupGameProfile(String playerName) {
+        WrappedGameProfile gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
         return ReflectionManager.getSkullBlob(gameprofile);
     }
 

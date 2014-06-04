@@ -49,6 +49,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
@@ -196,7 +197,7 @@ public class PacketsManager {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                Object gameProfile;
+                WrappedGameProfile gameProfile;
                 String name = ((PlayerDisguise) disguise).getName();
                 boolean removeName = false;
                 if (!DisguiseUtilities.hasGameProfile(name)) {
@@ -206,7 +207,7 @@ public class PacketsManager {
                 if (removeName) {
                     DisguiseUtilities.getAddedByPlugins().remove(name);
                 }
-                spawnPackets[0].getModifier().write(1, gameProfile);
+                spawnPackets[0].getGameProfiles().write(0, gameProfile);
             }
             StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
             intMods.write(0, disguisedEntity.getEntityId());

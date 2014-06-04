@@ -3,13 +3,15 @@ package me.libraryaddict.disguise.utilities;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.ProfileLookupCallback;
 
 public class LibsProfileLookupCaller implements ProfileLookupCallback {
-    private GameProfile gameProfile;
+    private WrappedGameProfile gameProfile;
 
-    public GameProfile getGameProfile() {
+    public WrappedGameProfile getGameProfile() {
         return gameProfile;
     }
 
@@ -27,7 +29,7 @@ public class LibsProfileLookupCaller implements ProfileLookupCallback {
 
     @Override
     public void onProfileLookupSucceeded(GameProfile profile) {
-        gameProfile = profile;
+        gameProfile = WrappedGameProfile.fromHandle(profile);
     }
 
 }

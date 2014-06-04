@@ -14,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+
 public class ReflectionManager {
     public enum LibVersion {
         V1_6, V1_7;
@@ -90,10 +92,10 @@ public class ReflectionManager {
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
                 if (LibVersion.is1_7()) {
-                    Object gameProfile = getGameProfile(null, "LibsDisguises");
+                    WrappedGameProfile gameProfile = getGameProfile(null, "LibsDisguises");
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                            gameProfile.getClass(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
-                            gameProfile, playerinteractmanager);
+                            gameProfile.getHandleType(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
+                            gameProfile.getHandle(), playerinteractmanager);
                 } else {
                     entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("World"), String.class,
                             playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
@@ -205,47 +207,26 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getGameProfile(Player player) {
+    public static WrappedGameProfile getGameProfile(Player player) {
         if (LibVersion.is1_7()) {
-            try {
-                return getNmsClass("EntityHuman").getMethod("getProfile").invoke(getNmsEntity(player));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            return WrappedGameProfile.fromPlayer(player);
         }
         return null;
     }
 
-    public static Object getGameProfile(UUID uuid, String playerName) {
+    public static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
         try {
-            try {
-                return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
-                        .getConstructor(UUID.class, String.class)
-                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
-            } catch (NoSuchMethodException ex) {
-                return Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
-                        .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
-            }
+            return new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-    public static Object getGameProfileWithThisSkin(UUID uuid, String playerName, Object profileWithSkin) {
+    public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
         try {
-            Object gameProfile;
-            try {
-                gameProfile = Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
-                        .getConstructor(UUID.class, String.class)
-                        .newInstance(uuid != null ? uuid : UUID.randomUUID(), playerName);
-            } catch (NoSuchMethodException ex) {
-                gameProfile = Class.forName("net.minecraft.util.com.mojang.authlib.GameProfile")
-                        .getConstructor(String.class, String.class).newInstance(uuid != null ? uuid.toString() : "", playerName);
-            }
-            Field properties = gameProfile.getClass().getDeclaredField("properties");
-            properties.setAccessible(true);
-            properties.set(gameProfile, properties.get(profileWithSkin));
+            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
+            gameProfile.getProperties().putAll(profileWithSkin.getProperties());
             return gameProfile;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -301,14 +282,15 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getSkullBlob(Object gameProfile) {
+    public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         try {
             Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
             for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                 if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
                     Object session = method.invoke(minecraftServer);
-                    return session.getClass().getMethod("fillProfileProperties", gameProfile.getClass(), boolean.class)
-                            .invoke(session, gameProfile, true);
+                    return WrappedGameProfile.fromHandle(session.getClass()
+                            .getMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
+                            .invoke(session, gameProfile.getHandle(), true));
                 }
             }
         } catch (Exception ex) {
@@ -335,7 +317,7 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object grabProfileAddUUID(String playername) {
+    public static WrappedGameProfile grabProfileAddUUID(String playername) {
         try {
             Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
             for (Method method : getNmsClass("MinecraftServer").getMethods()) {
@@ -357,20 +339,8 @@ public class ReflectionManager {
         return null;
     }
 
-    public static boolean hasSkinBlob(Object gameprofile) {
-        try {
-            Field propField = gameprofile.getClass().getDeclaredField("properties");
-            propField.setAccessible(true);
-            Object propMap = propField.get(gameprofile);
-            propField = propMap.getClass().getDeclaredField("properties");
-            propField.setAccessible(true);
-            propMap = propField.get(propMap);
-            return !(Boolean) propMap.getClass().getMethod("isEmpty").invoke(propMap);
-        } catch (NoSuchFieldException ex) {
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return true;
+    public static boolean hasSkinBlob(WrappedGameProfile gameProfile) {
+        return !gameProfile.getProperties().isEmpty();
     }
 
     public static void setAllowSleep(Player player) {
