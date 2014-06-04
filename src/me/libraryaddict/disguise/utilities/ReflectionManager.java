@@ -384,7 +384,7 @@ public class ReflectionManager {
         }
     }
 
-    public static void setBoundingBox(Entity entity, FakeBoundingBox newBox, float[] entitySize) {
+    public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
             Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
             int stage = 0;

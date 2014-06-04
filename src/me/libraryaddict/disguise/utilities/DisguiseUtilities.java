@@ -215,7 +215,7 @@ public class DisguiseUtilities {
                         disguiseBox = disguiseValues.getBabyBox();
                     }
                 }
-                ReflectionManager.setBoundingBox(entity, disguiseBox, disguiseValues.getEntitySize());
+                ReflectionManager.setBoundingBox(entity, disguiseBox);
             } else {
                 DisguiseValues entityValues = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
                 FakeBoundingBox entityBox = entityValues.getAdultBox();
@@ -225,7 +225,7 @@ public class DisguiseUtilities {
                         entityBox = entityValues.getBabyBox();
                     }
                 }
-                ReflectionManager.setBoundingBox(entity, entityBox, entityValues.getEntitySize());
+                ReflectionManager.setBoundingBox(entity, entityBox);
             }
         }
     }
@@ -325,7 +325,7 @@ public class DisguiseUtilities {
             public void onLookup(Object gameProfile) {
                 getAddedByPlugins().remove(disguise.getName());
                 if (DisguiseAPI.isDisguiseInUse(disguise)) {
-                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                    DisguiseUtilities.refreshTrackers(disguise);
                     if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
                         DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                     }
@@ -720,9 +720,7 @@ public class DisguiseUtilities {
             }
 
             // Resend any active potion effects
-            Iterator iterator = player.getActivePotionEffects().iterator();
-            while (iterator.hasNext()) {
-                PotionEffect potionEffect = (PotionEffect) iterator.next();
+            for (Object potionEffect : player.getActivePotionEffects()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
                                 .createPacket(player.getEntityId(), potionEffect), fakeId);
