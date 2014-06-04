@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
@@ -161,13 +163,13 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                 } else if (int.class == c) {
                                     valueType = "Number";
                                 } else if (float.class == c || double.class == c) {
-                                    valueType = "Number.0";
+                                    valueType = "Decimal";
                                 } else if (AnimalColor.class == c) {
                                     valueType = "Color";
                                 } else if (ItemStack.class == c) {
-                                    valueType = "Item ID with optional :Durability";
+                                    valueType = "Item (id:damage)";
                                 } else if (ItemStack[].class == c) {
-                                    valueType = "Item ID,ID,ID,ID with optional :Durability";
+                                    valueType = "4 items (id:damage,id,...)";
                                 } else if (c.getSimpleName().equals("Style")) {
                                     valueType = "Horse Style";
                                 } else if (c.getSimpleName().equals("Color")) {
@@ -177,10 +179,17 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                 } else if (c.getSimpleName().equals("Profession")) {
                                     valueType = "Villager Profession";
                                 } else if (PotionEffectType.class == c) {
-                                    valueType = "Potioneffect";
+                                    valueType = "Potion effect";
                                 }
                                 if (valueType != null) {
-                                    methods.add(ChatColor.RED + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
+                                    ChatColor methodColor = ChatColor.YELLOW;
+                                    Class<?> declaring = method.getDeclaringClass();
+                                    if (declaring == LivingWatcher.class) {
+                                        methodColor = ChatColor.AQUA;
+                                    } else if (declaring == FlagWatcher.class) {
+                                        methodColor = ChatColor.GRAY;
+                                    }
+                                    methods.add(methodColor + method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN
                                             + valueType + ChatColor.DARK_RED + ")");
                                 }
                             }

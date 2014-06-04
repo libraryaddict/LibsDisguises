@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Zombie;
 
 public enum DisguiseType {
     ARROW(60),
@@ -133,6 +136,8 @@ public enum DisguiseType {
 
     ZOMBIE_VILLAGER;
 
+    private static Method isVillager, getVariant, getSkeletonType;
+
     static {
         // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
         // Without erroring up everything.
@@ -167,6 +172,19 @@ public enum DisguiseType {
                 // This version of craftbukkit doesn't have the disguise.
             }
         }
+        try {
+            isVillager = Zombie.class.getMethod("isVillager");
+        } catch (Throwable ignored) {
+        }
+        try {
+            getVariant = Horse.class.getMethod("getVariant");
+        } catch (Throwable ignored) {
+            // Pre-1.6, but that isn't even supported
+        }
+        try {
+            getSkeletonType = Skeleton.class.getMethod("getSkeletonType");
+        } catch (Throwable ignored) {
+        }
     }
 
     public static DisguiseType getType(Entity entity) {
@@ -174,18 +192,16 @@ public enum DisguiseType {
         switch (disguiseType) {
         case ZOMBIE:
             try {
-                Method isVillager = entity.getClass().getMethod("isVillager");
                 if ((Boolean) isVillager.invoke(entity)) {
                     disguiseType = DisguiseType.ZOMBIE_VILLAGER;
                 }
-            } catch (NoSuchMethodException ex) {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             break;
         case HORSE:
             try {
-                Object variant = entity.getClass().getMethod("getVariant").invoke(entity);
+                Object variant = getVariant.invoke(entity);
                 disguiseType = DisguiseType.valueOf(((Enum) variant).name());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -193,11 +209,10 @@ public enum DisguiseType {
             break;
         case SKELETON:
             try {
-                Object type = entity.getClass().getMethod("getSkeletonType").invoke(entity);
-                if (((Enum) type).name().equals("WITHER")) {
+                Object type = getSkeletonType.invoke(entity);
+                if (type == Skeleton.SkeletonType.WITHER) {
                     disguiseType = DisguiseType.WITHER_SKELETON;
                 }
-            } catch (NoSuchMethodException ex) {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

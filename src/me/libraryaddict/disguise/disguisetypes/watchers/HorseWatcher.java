@@ -138,7 +138,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setRearing(boolean rear) {
-        setFlag(64, true);
+        setFlag(64, rear);
     }
 
     public void setSaddled(boolean saddled) {

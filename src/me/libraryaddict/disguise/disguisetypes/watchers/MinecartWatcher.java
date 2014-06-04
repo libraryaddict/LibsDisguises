@@ -12,7 +12,7 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public ItemStack getBlockInCart() {
-        int id = (Integer) getValue(20, 0) & '\uffff';
+        int id = (Integer) getValue(20, 0) & 0xffff;
         int data = (Integer) getValue(20, 0) >> 16;
         return new ItemStack(id, 1, (short) data);
     }
@@ -32,7 +32,7 @@ public class MinecartWatcher extends FlagWatcher {
     public void setBlockInCart(ItemStack item) {
         int id = item.getTypeId();
         int data = item.getDurability();
-        setValue(20, (int) (id & '\uffff' | data << 16));
+        setValue(20, (int) (id & 0xffff | data << 16));
         sendData(20);
         setViewBlockInCart(true);
     }

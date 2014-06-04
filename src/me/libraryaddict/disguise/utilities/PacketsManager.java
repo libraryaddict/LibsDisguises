@@ -749,7 +749,7 @@ public class PacketsManager {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, observer.getEntityId());
                             List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
-                            byte b = (byte) (0 | 1 << 5);
+                            byte b = (byte) 1 << 5;
                             if (observer.isSprinting())
                                 b = (byte) (b | 1 << 3);
                             watchableList.add(new WrappedWatchableObject(0, b));
