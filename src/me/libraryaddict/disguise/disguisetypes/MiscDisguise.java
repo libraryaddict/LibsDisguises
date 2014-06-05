@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
 import java.security.InvalidParameterException;
-import java.util.Random;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -42,55 +40,35 @@ public class MiscDisguise extends TargetedDisguise {
         this(disguiseType, id, -1);
     }
 
-    public MiscDisguise(DisguiseType disguiseType, int id, int data) {
+    public MiscDisguise(DisguiseType disguiseType, int firstParam, int secondParam) {
         if (!disguiseType.isMisc()) {
             throw new InvalidParameterException("Expected a non-living DisguiseType while constructing MiscDisguise. Received "
-                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") + " instead");
+                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise")
+                    + " instead");
         }
         createDisguise(disguiseType);
         switch (disguiseType) {
         // The only disguises which should use a custom data.
+        case PAINTING:
+            ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, firstParam) % Art.values().length]);
+            break;
+        case FALLING_BLOCK:
+            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, firstParam), 1, (short) Math.max(0, secondParam)));
+            break;
+        case SPLASH_POTION:
+            ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, firstParam));
+            break;
+        case DROPPED_ITEM:
+            if (firstParam > 0) {
+                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(firstParam, Math.max(0, secondParam)));
+            }
+            break;
         case FISHING_HOOK:
         case ARROW:
-        case SPLASH_POTION:
         case SMALL_FIREBALL:
         case FIREBALL:
         case WITHER_SKULL:
-        case PAINTING:
-        case FALLING_BLOCK:
-            break;
-        default:
-            data = -1;
-            break;
-        }
-        // Only falling block should set the id
-        if (getType() == DisguiseType.FALLING_BLOCK && id != -1) {
-            this.id = id;
-        } else {
-            this.id = disguiseType.getDefaultId();
-        }
-        if (data == -1) {
-            if (getType() == DisguiseType.PAINTING) {
-                data = new Random().nextInt(Art.values().length);
-            } else {
-                data = 0;
-            }
-        }
-        this.data = data;
-        switch (getType()) {
-        case DROPPED_ITEM:
-            if (id > 0) {
-                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, data));
-            }
-            break;
-        case FALLING_BLOCK:
-            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(this.id, 1, (short) this.data));
-            break;
-        case PAINTING:
-            ((PaintingWatcher) getWatcher()).setArt(Art.values()[this.data % Art.values().length]);
-            break;
-        case SPLASH_POTION:
-            ((SplashPotionWatcher) getWatcher()).setPotionId(this.data);
+            this.data = firstParam;
             break;
         default:
             break;
