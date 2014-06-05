@@ -59,10 +59,10 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public WrappedGameProfile getGameProfile() {
+        if (gameProfile != null) {
+            return gameProfile;
+        }
         if (getSkin() != null) {
-            if (gameProfile != null) {
-                return gameProfile;
-            }
             return ReflectionManager.getGameProfile(null, getName());
         } else {
             return DisguiseUtilities.getProfileFromMojang(this);
