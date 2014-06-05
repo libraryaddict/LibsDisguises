@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -82,7 +84,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public void setGameProfile(WrappedGameProfile gameProfile) {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(
+                gameProfile.getId() != null ? UUID.fromString(gameProfile.getId()) : null, getName(), gameProfile);
     }
 
     @Deprecated
