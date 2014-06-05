@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.util.UUID;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -83,12 +84,6 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public void setGameProfile(WrappedGameProfile gameProfile) {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(
-                gameProfile.getId() != null ? UUID.fromString(gameProfile.getId()) : null, getName(), gameProfile);
-    }
-
-    @Deprecated
     public void setSkin(String skinToUse) {
         this.skinToUse = skinToUse;
         if (skinToUse == null) {
@@ -104,7 +99,7 @@ public class PlayerDisguise extends TargetedDisguise {
                     @Override
                     public void onLookup(WrappedGameProfile gameProfile) {
                         if (currentLookup == this && gameProfile != null) {
-                            setGameProfile(gameProfile);
+                            setSkin(gameProfile);
                             if (DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
                                 DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
                                 if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
@@ -116,10 +111,31 @@ public class PlayerDisguise extends TargetedDisguise {
                 };
                 WrappedGameProfile obj = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
                 if (obj != null) {
-                    setGameProfile(obj);
+                    setSkin(obj);
                 }
             }
         }
+    }
+
+    /**
+     * Set the GameProfile, without tampering.
+     * 
+     * @param gameProfile
+     *            GameProfile
+     */
+    @Deprecated
+    public void setSkin(WrappedGameProfile gameProfile) {
+        if (gameProfile == null) {
+            this.gameProfile = null;
+            this.skinToUse = null;
+            return;
+        }
+
+        Validate.notEmpty(gameProfile.getName(), "Name must be set");
+        this.skinToUse = gameProfile.getName();
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(
+                gameProfile.getId() != null ? UUID.fromString(gameProfile.getId()) : null, getName(), gameProfile);
+
     }
 
 }
