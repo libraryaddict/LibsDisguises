@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -56,10 +57,10 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public WrappedGameProfile getGameProfile() {
+        if (gameProfile != null) {
+            return gameProfile;
+        }
         if (getSkin() != null) {
-            if (gameProfile != null) {
-                return gameProfile;
-            }
             return ReflectionManager.getGameProfile(null, getName());
         } else {
             return DisguiseUtilities.getProfileFromMojang(this);
@@ -83,6 +84,25 @@ public class PlayerDisguise extends TargetedDisguise {
     @Deprecated
     public void setGameProfile(WrappedGameProfile gameProfile) {
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
+    }
+
+    /**
+     * Set the GameProfile, without tampering.
+     *
+     * @param gameProfile GameProfile
+     */
+    public void setGameProfileRaw(WrappedGameProfile gameProfile) {
+        if (gameProfile == null) {
+            this.gameProfile = null;
+            this.skinToUse = null;
+            return;
+        }
+
+        Validate.notEmpty(gameProfile.getId(), "UUID must be set");
+        Validate.notEmpty(gameProfile.getName(), "Name must be set");
+        Validate.isTrue(!gameProfile.getProperties().isEmpty(), "Skin data must be set");
+
+        this.gameProfile = gameProfile;
     }
 
     @Deprecated
