@@ -274,18 +274,16 @@ public class PacketsManager {
         } else if (disguise.getType().isMisc()) {
 
             int id = disguise.getType().getEntityId();
-            int data = 0;
-            if (((MiscDisguise) disguise).getId() >= 0) {
-                if (((MiscDisguise) disguise).getData() >= 0) {
-                    data = (((MiscDisguise) disguise).getId() | ((MiscDisguise) disguise).getData() << 16);
-                } else {
-                    data = ((MiscDisguise) disguise).getId();
-                }
+            int data = ((MiscDisguise) disguise).getData();
+            if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
+                data = (((MiscDisguise) disguise).getId() | data << 16);
+            } else if (data < 0) {
+                data = 0;
             }
-            // This won't actually work.
-            // But if someone constructing the disguise uses it properly. It will work.
-            if (disguise.getType() == DisguiseType.FISHING_HOOK)
+            // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
+            if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 data = disguisedEntity.getEntityId();
+            }
             /*     else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                      data = (int) loc.getYaw();
                      if (data < 0)

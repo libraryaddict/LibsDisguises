@@ -47,8 +47,8 @@ public class MiscDisguise extends TargetedDisguise {
                     + " instead");
         }
         createDisguise(disguiseType);
-        this.id = getType().getDefaultId();
-        this.data = getType().getEntityId();
+        this.id = getType().getEntityId();
+        this.data = getType().getDefaultId();
         switch (disguiseType) {
         // The only disguises which should use a custom data.
         case PAINTING:
