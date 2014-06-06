@@ -47,13 +47,16 @@ public class MiscDisguise extends TargetedDisguise {
                     + " instead");
         }
         createDisguise(disguiseType);
+        this.id = getType().getDefaultId();
+        this.data = getType().getEntityId();
         switch (disguiseType) {
         // The only disguises which should use a custom data.
         case PAINTING:
             ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, firstParam) % Art.values().length]);
             break;
         case FALLING_BLOCK:
-            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, firstParam), 1, (short) Math.max(0, secondParam)));
+            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, firstParam), 1, (short) Math.max(0,
+                    secondParam)));
             break;
         case SPLASH_POTION:
             ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, firstParam));

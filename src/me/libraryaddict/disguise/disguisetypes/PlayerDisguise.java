@@ -109,9 +109,9 @@ public class PlayerDisguise extends TargetedDisguise {
                         }
                     }
                 };
-                WrappedGameProfile obj = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
-                if (obj != null) {
-                    setSkin(obj);
+                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
+                if (gameProfile != null) {
+                    setSkin(gameProfile);
                 }
             }
         }
