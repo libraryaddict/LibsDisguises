@@ -72,7 +72,7 @@ public enum DisguiseType {
 
     MINECART_FURNACE(10, 2),
 
-    MINECART_HOPPER(10),
+    MINECART_HOPPER(10, 5),
 
     MINECART_MOB_SPAWNER(10, 4),
 
