@@ -143,7 +143,6 @@ public enum DisguiseType {
         // Without erroring up everything.
         for (DisguiseType type : values()) {
             try {
-                EntityType entityType = null;
                 switch (type) {
                 // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                 // Usable.
@@ -153,18 +152,18 @@ public enum DisguiseType {
                 case MULE:
                 case UNDEAD_HORSE:
                 case SKELETON_HORSE:
-                    entityType = EntityType.HORSE;
+                    type = DisguiseType.HORSE;
                     break;
                 case ZOMBIE_VILLAGER:
-                    entityType = EntityType.ZOMBIE;
+                    type = DisguiseType.ZOMBIE;
                     break;
                 case WITHER_SKELETON:
-                    entityType = EntityType.SKELETON;
+                    type = DisguiseType.SKELETON;
                     break;
                 default:
-                    entityType = EntityType.valueOf(type.name());
                     break;
                 }
+                EntityType entityType = EntityType.valueOf(type.name());
                 if (entityType != null) {
                     type.setEntityType(entityType);
                 }
