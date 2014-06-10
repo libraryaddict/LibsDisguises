@@ -150,6 +150,9 @@ public class LibsDisguises extends JavaPlugin {
      */
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
+            if (disguiseType.getEntityType() == null) {
+                continue;
+            }
             Class watcherClass = null;
             try {
                 switch (disguiseType) {
