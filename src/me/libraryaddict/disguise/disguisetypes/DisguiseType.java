@@ -143,30 +143,26 @@ public enum DisguiseType {
         // Without erroring up everything.
         for (DisguiseType type : values()) {
             try {
+                DisguiseType toUse = type;
                 switch (type) {
                 // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                 // Usable.
-                case ITEM_FRAME:
-                    break;
                 case DONKEY:
                 case MULE:
                 case UNDEAD_HORSE:
                 case SKELETON_HORSE:
-                    type = DisguiseType.HORSE;
+                    toUse = DisguiseType.HORSE;
                     break;
                 case ZOMBIE_VILLAGER:
-                    type = DisguiseType.ZOMBIE;
+                    toUse = DisguiseType.ZOMBIE;
                     break;
                 case WITHER_SKELETON:
-                    type = DisguiseType.SKELETON;
+                    toUse = DisguiseType.SKELETON;
                     break;
                 default:
                     break;
                 }
-                EntityType entityType = EntityType.valueOf(type.name());
-                if (entityType != null) {
-                    type.setEntityType(entityType);
-                }
+                type.setEntityType(EntityType.valueOf(toUse.name()));
             } catch (Throwable ex) {
                 // This version of craftbukkit doesn't have the disguise.
             }
