@@ -26,11 +26,10 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
     public DisguiseRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
         for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
-            if (c.getAnnotation(Deprecated.class) == null && Entity.class.isAssignableFrom(c)) {
+            if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
                 validClasses.add(c);
             }
         }
-        validClasses.remove(Entity.class);
     }
 
     @Override
