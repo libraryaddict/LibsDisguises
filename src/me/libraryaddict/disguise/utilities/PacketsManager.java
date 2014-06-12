@@ -149,7 +149,7 @@ public class PacketsManager {
         for (int i = 0; i < packets.size(); i++) {
             spawnPackets[i + 2] = packets.get(i);
         }
-        Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguise), 0);
+        Location loc = disguisedEntity.getLocation().clone().add(0, getYModifier(disguisedEntity, disguise), 0);
         byte yaw = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
         byte pitch = (byte) (int) (loc.getPitch() * 256.0F / 360.0F);
         if (DisguiseConfig.isMovementPacketsEnabled()) {
@@ -423,27 +423,31 @@ public class PacketsManager {
     /**
      * Get the Y level to add to the disguise for realism.
      */
-    private static double getYModifier(Disguise disguise) {
+    private static double getYModifier(Entity entity, Disguise disguise) {
+        double yMod = 0;
+        if (entity.getType() == EntityType.DROPPED_ITEM) {
+            yMod -= 0.13;
+        }
         switch (disguise.getType()) {
         case BAT:
-            if (disguise.getEntity() instanceof LivingEntity)
-                return ((LivingEntity) disguise.getEntity()).getEyeHeight();
+            if (entity instanceof LivingEntity)
+                return yMod + ((LivingEntity) entity).getEyeHeight();
         case MINECART:
         case MINECART_CHEST:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
         case MINECART_TNT:
-            switch (disguise.getEntity().getType()) {
+            switch (entity.getType()) {
             case MINECART:
             case MINECART_CHEST:
             case MINECART_FURNACE:
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-                return 0;
+                return yMod;
             default:
-                return 0.4;
+                return yMod + 0.4;
             }
         case ARROW:
         case BOAT:
@@ -457,16 +461,18 @@ public class PacketsManager {
         case SPLASH_POTION:
         case THROWN_EXP_BOTTLE:
         case WITHER_SKULL:
-            return 0.7;
+            return yMod + 0.7;
         case PLAYER:
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                return 0.35;
+                return yMod + 0.35;
             }
             break;
+        case DROPPED_ITEM:
+            return yMod + 0.13;
         default:
             break;
         }
-        return 0;
+        return yMod;
     }
 
     /**
@@ -1285,7 +1291,7 @@ public class PacketsManager {
                         byte pitchValue = (Byte) mods.read(5);
                         mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                            double y = getYModifier(disguise);
+                            double y = getYModifier(entity, disguise);
                             if (y != 0) {
                                 y *= 32;
                                 mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
