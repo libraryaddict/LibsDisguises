@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -29,6 +30,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
                 validClasses.add(c);
             }
         }
+        validClasses.remove(Entity.class);
     }
 
     @Override
@@ -57,6 +59,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             return true;
         }
         Class entityClass = Entity.class;
+        EntityType type = null;
         int starting = 0;
         if (!isNumeric(args[0])) {
             for (Class c : validClasses) {
@@ -67,8 +70,14 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
                 }
             }
             if (starting == 0) {
-                sender.sendMessage(ChatColor.RED + "Unrecognised EntityType " + args[0]);
-                return true;
+                try {
+                    type = EntityType.valueOf(args[0].toUpperCase());
+                } catch (Exception ex) {
+                }
+                if (type == null) {
+                    sender.sendMessage(ChatColor.RED + "Unrecognised EntityType " + args[0]);
+                    return true;
+                }
             }
         }
         if (args.length == starting + 1) {
@@ -103,7 +112,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
             if (entity == sender)
                 continue;
-            if (entityClass.isAssignableFrom(entity.getClass())) {
+            if (type != null ? entity.getType() == type : entityClass.isAssignableFrom(entity.getClass())) {
                 if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
                         && entity instanceof LivingEntity) {
                     miscDisguises++;
