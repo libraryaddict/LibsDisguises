@@ -46,7 +46,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             sendCommandUsage(sender);
             return true;
         }
-        if (args[0].equalsIgnoreCase("entitytypes")) {
+        if (args[0].equalsIgnoreCase("entitytype") || args[0].equalsIgnoreCase("entitytypes")) {
             ArrayList<String> classes = new ArrayList<String>();
             for (Class c : validClasses) {
                 classes.add(c.getSimpleName());
