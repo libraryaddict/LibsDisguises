@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -215,6 +216,9 @@ public abstract class Disguise {
                     }
                     if (isModifyBoundingBox()) {
                         DisguiseUtilities.doBoundingBox(disguise);
+                    }
+                    if (getType() == DisguiseType.BAT && !((BatWatcher) getWatcher()).isFlying()) {
+                        return;
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
