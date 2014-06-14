@@ -45,7 +45,7 @@ public class DisguiseListener implements Listener {
         updateNotifyPermission = plugin.getConfig().getString("Permission");
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
-            Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
                 public void run() {
                     try {
                         UpdateChecker updateChecker = new UpdateChecker();
@@ -53,7 +53,7 @@ public class DisguiseListener implements Listener {
                         latestVersion = updateChecker.getLatestVersion();
                         if (latestVersion != null) {
                             latestVersion = "v" + latestVersion;
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            Bukkit.getScheduler().runTask(plugin, new Runnable() {
                                 public void run() {
                                     for (Player p : Bukkit.getOnlinePlayers())
                                         if (p.hasPermission(updateNotifyPermission))
@@ -239,7 +239,7 @@ public class DisguiseListener implements Listener {
         if (event.getExited() instanceof Player) {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
             if (disguise != null) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                Bukkit.getScheduler().runTask(plugin, new Runnable() {
                     public void run() {
                         DisguiseUtilities.setupFakeDisguise(disguise);
                         ((Player) disguise.getEntity()).updateInventory();
