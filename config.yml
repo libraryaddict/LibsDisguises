@@ -84,6 +84,7 @@ MaxHealthDeterminedByEntity: true
 # This here is a option to turn off misc disguises.
 # This means you can not have a living entity disguise as a non-living entity.
 # This disables the Attributes packet, Non-living entities can still disguise as other non-living
+# This means that the above option will not work as it uses the attribute packet.
 MiscDisguisesForLiving: true
 
 # Turn this to true to have players undisguised when switching worlds
