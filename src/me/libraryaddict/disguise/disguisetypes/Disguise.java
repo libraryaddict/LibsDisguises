@@ -160,8 +160,9 @@ public abstract class Disguise {
             velocitySpeed = 0.0221;
             break;
         case SPIDER:
+        case BAT:
         case CAVE_SPIDER:
-            velocitySpeed = 0.0040;
+            velocitySpeed = 0.004;
             break;
         default:
             break;
