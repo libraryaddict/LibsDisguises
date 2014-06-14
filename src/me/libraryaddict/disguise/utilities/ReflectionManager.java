@@ -1,10 +1,16 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -56,8 +62,83 @@ public class ReflectionManager {
     private static Method damageAndIdleSoundMethod;
     private static Class itemClass;
     private static Field pingField;
+    private static boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+    /**
+     * Map of mc-dev simple class name to fully qualified Forge class name.
+     */
+    private static Map<String, String> ForgeClassMappings;
+    /**
+     * Map of Forge fully qualified class names to a map from mc-dev field names to Forge field names.
+     */
+    private static Map<String, Map<String, String>> ForgeFieldMappings;
+    /**
+     * Map of Forge fully qualified class names to a map from mc-dev method names to Forge method names.
+     */
+    private static Map<String, Map<String, String>> ForgeMethodMappings;
+
+    private static String dir2fqn(String s) {
+        return s.replaceAll("/", ".");
+    }
 
     static {
+        if (isForge) {
+            // Initialize the maps by reading the srg file
+            ForgeClassMappings = new HashMap<String, String>();
+            ForgeFieldMappings = new HashMap<String, Map<String, String>>();
+            //ForgeMethodMappings = new HashMap<String, Map<String, String>>();
+            try {
+                InputStream stream = Class.forName("net.minecraftforge.common.MinecraftForge").getClassLoader()
+                        .getResourceAsStream("mappings/" + getBukkitVersion() + "/cb2numpkg.srg");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                // 1: cb-simpleName
+                // 2: forge-fullName (Needs dir2fqn())
+                Pattern classPattern = Pattern.compile("^CL: net/minecraft/server/(\\w+) ([a-zA-Z0-9$/_]+)$");
+                // 1: cb-simpleName
+                // 2: cb-fieldName
+                // 3: forge-fullName (Needs dir2fqn())
+                // 4: forge-fieldName
+                Pattern fieldPattern = Pattern.compile("^FD: net/minecraft/server/(\\w+)/(\\w+) ([a-zA-Z0-9$/_]+)/([a-zA-Z0-9$/_]+)$");
+
+                Pattern methodPattern = Pattern.compile("!XXX todo");
+
+                String line;
+                System.out.println("Reading");
+                while ((line = reader.readLine()) != null) {
+                    Matcher classMatcher = classPattern.matcher(line);
+                    if (classMatcher.matches()) {
+                        ForgeClassMappings.put(classMatcher.group(1), dir2fqn(classMatcher.group(2)));
+                        continue;
+                    }
+                    Matcher fieldMatcher = fieldPattern.matcher(line);
+                    if (fieldMatcher.matches()) {
+                        Map<String, String> innerMap = ForgeFieldMappings.get(dir2fqn(fieldMatcher.group(3)));
+                        if (innerMap == null) {
+                            innerMap = new HashMap<String, String>();
+                            ForgeFieldMappings.put(dir2fqn(fieldMatcher.group(3)), innerMap);
+                        }
+                        innerMap.put(fieldMatcher.group(2), fieldMatcher.group(4));
+                        continue;
+                    }
+                    Matcher methodMatcher = methodPattern.matcher(line);
+                    if (methodMatcher.matches()) {
+                        // todo
+                    }
+                }
+                System.out.println(ForgeClassMappings.size() + " class mappings loaded");
+                System.out.println(ForgeFieldMappings.size() + " field mappings loaded");
+                System.out.println(ForgeMethodMappings.size() + " method mappings loaded");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file");
+            }
+
+            System.out.println(ForgeClassMappings.get("EntityLiving"));
+            System.out.println(getNmsClass("EntityLiving"));
+        }
+
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
                 if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
@@ -76,7 +157,7 @@ public class ReflectionManager {
         }
         try {
             itemClass = getCraftClass("inventory.CraftItemStack");
-            pingField = getNmsClass("EntityPlayer").getField("ping");
+            pingField = getNmsField("EntityPlayer", "ping");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,7 +194,7 @@ public class ReflectionManager {
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
         try {
-            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
+            Object boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
             double x = 0, y = 0, z = 0;
             int stage = 0;
             for (Field field : boundingBox.getClass().getFields()) {
@@ -236,9 +317,17 @@ public class ReflectionManager {
 
     public static Class getNmsClass(String className) {
         try {
+            if (isForge) {
+                String forgeName = ForgeClassMappings.get(className);
+                if (forgeName == null) {
+                    throw new RuntimeException("Missing Forge mapping for " + className);
+                }
+                return Class.forName(forgeName);
+            }
+
             return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -261,6 +350,38 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Field getNmsField(String className, String fieldName) {
+        return getNmsField(getNmsClass(className), fieldName);
+    }
+
+    public static Field getNmsField(Class clazz, String fieldName) {
+        try {
+            if (isForge) {
+                return clazz.getField(ForgeFieldMappings.get(clazz.getName()).get(fieldName));
+            }
+            return clazz.getField(fieldName);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Method getNmsMethod(String className, String methodName, Class<?>... parameters) {
+        return getNmsMethod(getNmsClass(className), methodName, parameters);
+    }
+
+    public static Method getNmsMethod(Class clazz, String methodName, Class<?>... parameters) {
+        try {
+            if (isForge) {
+                return clazz.getMethod(ForgeMethodMappings.get(clazz.getName()).get(methodName), parameters);
+            }
+            return clazz.getMethod(methodName, parameters);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static double getPing(Player player) {
         try {
             return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
@@ -272,7 +393,7 @@ public class ReflectionManager {
 
     public static float[] getSize(Entity entity) {
         try {
-            float length = getNmsClass("Entity").getField("length").getFloat(getNmsEntity(entity));
+            float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
             float width = getNmsClass("Entity").getField("width").getFloat(getNmsEntity(entity));
             float height = getNmsClass("Entity").getField("height").getFloat(getNmsEntity(entity));
             return new float[] { length, width, height };
