@@ -28,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -143,6 +144,25 @@ public class PacketsManager {
                         packets.add(packet);
                     }
                 }
+            }
+        }
+        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+            if (disguise.getWatcher() instanceof LivingWatcher) {
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+                List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+                Builder builder = WrappedAttribute.newBuilder().attributeKey("generic.maxHealth");
+                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                    builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
+                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity() && disguisedEntity instanceof Damageable) {
+                    builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
+                } else {
+                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
+                }
+                builder.packet(packet);
+                attributes.add(builder.build());
+                packet.getIntegers().write(0, disguisedEntity.getEntityId());
+                packet.getAttributeCollectionModifier().write(0, attributes);
+                packets.add(packet);
             }
         }
         PacketContainer[] spawnPackets = new PacketContainer[2 + packets.size()];
