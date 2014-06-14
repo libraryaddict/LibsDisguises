@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
@@ -189,8 +190,8 @@ public class DisguiseListener implements Listener {
                             p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
                                     + " as " + disguiseName + "!");
                         } else {
-                            p.sendMessage(ChatColor.RED + "Failed to disguise " + (entity instanceof Player ? "" : "the ") + entityName
-                                    + " as " + disguiseName + "!");
+                            p.sendMessage(ChatColor.RED + "Failed to disguise " + (entity instanceof Player ? "" : "the ")
+                                    + entityName + " as " + disguiseName + "!");
                         }
                     }
                 } else {
@@ -244,6 +245,15 @@ public class DisguiseListener implements Listener {
                         ((Player) disguise.getEntity()).updateInventory();
                     }
                 });
+            }
+        }
+    }
+
+    @EventHandler
+    public void onWorldSwitch(PlayerPortalEvent event) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
+            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
+                disguise.removeDisguise();
             }
         }
     }

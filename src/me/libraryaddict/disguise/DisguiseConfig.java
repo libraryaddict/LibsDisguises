@@ -34,6 +34,7 @@ public class DisguiseConfig {
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
+    private static boolean undisguiseSwitchWorlds;
     private static boolean witherSkullEnabled;
 
     public static String getDisguiseBlownMessage() {
@@ -85,6 +86,7 @@ public class DisguiseConfig {
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
+        setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -190,6 +192,10 @@ public class DisguiseConfig {
      */
     public static boolean isSoundEnabled() {
         return PacketsManager.isHearDisguisesEnabled();
+    }
+
+    public static boolean isUndisguiseOnWorldChange() {
+        return undisguiseSwitchWorlds;
     }
 
     /**
@@ -368,6 +374,10 @@ public class DisguiseConfig {
      */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
+    }
+
+    public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
+        undisguiseSwitchWorlds = isUndisguise;
     }
 
     /**

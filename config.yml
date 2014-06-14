@@ -86,6 +86,9 @@ MaxHealthDeterminedByEntity: true
 # This disables the Attributes packet, Non-living entities can still disguise as other non-living
 MiscDisguisesForLiving: true
 
+# Turn this to true to have players undisguised when switching worlds
+UndisguiseOnWorldChange: false
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:
