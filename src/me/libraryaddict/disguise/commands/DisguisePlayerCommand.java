@@ -1,10 +1,12 @@
 package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
@@ -19,13 +21,13 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
-        if (allowedDisguises.isEmpty()) {
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        if (map.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
             return true;
         }
         if (args.length == 0) {
-            sendCommandUsage(sender);
+            sendCommandUsage(sender, map);
             return true;
         }
         if (args.length == 1) {
@@ -41,7 +43,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         Disguise disguise;
         try {
-            disguise = parseDisguise(sender, newArgs);
+            disguise = parseDisguise(sender, newArgs, map);
         } catch (Exception ex) {
             if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
@@ -77,8 +79,8 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
-    protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

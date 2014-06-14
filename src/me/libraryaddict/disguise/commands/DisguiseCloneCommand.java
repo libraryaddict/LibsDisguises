@@ -1,7 +1,11 @@
 package me.libraryaddict.disguise.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseListener;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +59,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
-    protected void sendCommandUsage(CommandSender sender) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
         sender.sendMessage(ChatColor.DARK_GREEN + "Beware however, the reference bypasses all permissions checks");

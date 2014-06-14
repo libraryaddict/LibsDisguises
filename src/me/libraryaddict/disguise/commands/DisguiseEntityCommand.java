@@ -1,10 +1,12 @@
 package me.libraryaddict.disguise.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +30,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
         }
         Disguise disguise;
         try {
-            disguise = parseDisguise(sender, args);
+            disguise = parseDisguise(sender, args, getPermissions(sender));
         } catch (Exception ex) {
             if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
@@ -46,8 +48,8 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
-    protected void sendCommandUsage(CommandSender sender) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise then right click a entity to disguise it!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));

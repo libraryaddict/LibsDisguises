@@ -117,10 +117,9 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         for (String node : new String[] { "disguise", "disguiseradius", "disguiseentity", "disguiseplayer" }) {
-            ArrayList<String> allowedDisguises = getAllowedDisguises(sender, "libsdisguises." + node + ".");
-            if (!allowedDisguises.isEmpty()) {
+            if (!getPermissions(sender, "libsdisguises." + node + ".").isEmpty()) {
                 if (args.length == 0) {
-                    sendCommandUsage(sender);
+                    sendCommandUsage(sender, null);
                     return true;
                 } else {
                     EnumHelp help = null;
@@ -219,7 +218,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
-    protected void sendCommandUsage(CommandSender sender) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN
                 + "- View the options you can set on a disguise");
         for (EnumHelp s : enumHelp) {

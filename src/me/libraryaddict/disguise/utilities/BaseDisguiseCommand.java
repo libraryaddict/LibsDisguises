@@ -3,8 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -25,79 +24,179 @@ import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
 
-    protected ArrayList<String> getAllowedDisguises(CommandSender sender) {
-        String permissionNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
-        return getAllowedDisguises(sender, permissionNode);
+    protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
+        ArrayList<String> allowedDisguises = new ArrayList<String>();
+        for (DisguiseType type : hashMap.keySet()) {
+            allowedDisguises.add(type.toReadable().replace(" ", "_"));
+        }
+        Collections.sort(allowedDisguises, String.CASE_INSENSITIVE_ORDER);
+        return allowedDisguises;
     }
 
-    protected ArrayList<String> getAllowedDisguises(CommandSender sender, String permissionNode) {
-        HashSet<String> singleAllowed = new HashSet<String>();
-        HashSet<String> singleForbidden = new HashSet<String>();
-        HashSet<String> globalForbidden = new HashSet<String>();
-        HashSet<String> globalAllowed = new HashSet<String>();
+    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
+        return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
+    }
+
+    /**
+     * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
+     */
+    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender,
+            String permissionNode) {
+
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> rangeDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
+        HashMap<String, Boolean> perms = new HashMap<String, Boolean>();
+
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
             String perm = permission.getPermission().toLowerCase();
-            if (perm.startsWith(permissionNode)) {
+            if (perm.startsWith(permissionNode) && (!perms.containsKey(perm) || !permission.getValue())) {
+                perms.put(perm, permission.getValue());
+            }
+        }
+        if (!perms.containsKey(permissionNode + "*") && sender.hasPermission(permissionNode + "*")) {
+            perms.put(permissionNode + "*", true);
+        }
+
+        for (String perm : perms.keySet()) {
+            if (perms.get(perm)) {
                 perm = perm.substring(permissionNode.length());
                 String disguiseType = perm.split("\\.")[0];
-                HashSet<String> perms;
-                for (DisguiseType type : DisguiseType.values()) {
-                    if (type.getEntityType() == null) {
+                try {
+                    DisguiseType type = DisguiseType.valueOf(disguiseType.toUpperCase());
+                    if (type.getEntityType() == null)
                         continue;
-                    }
-                    Class entityClass = type.getEntityType().getEntityClass();
-                    String name = type.name().toLowerCase();
-                    if (!perm.equalsIgnoreCase(name)) {
-                        perms = (permission.getValue() ? globalAllowed : globalForbidden);
+                    HashMap<ArrayList<String>, Boolean> list;
+                    if (singleDisguises.containsKey(type)) {
+                        list = singleDisguises.get(type);
                     } else {
-                        perms = (permission.getValue() ? singleAllowed : singleForbidden);
+                        list = new HashMap<ArrayList<String>, Boolean>();
+                        singleDisguises.put(type, list);
                     }
-                    if (perm.equals("mob")) {
-                        if (type.isMob()) {
-                            perms.add(name);
+                    HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
+                    list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
+                } catch (Exception ex) {
+                    for (DisguiseType type : DisguiseType.values()) {
+                        if (type.getEntityType() == null) {
+                            continue;
                         }
-                    } else if (perm.equals("animal") || perm.equals("animals")) {
-                        if (Animals.class.isAssignableFrom(entityClass)) {
-                            perms.add(name);
+                        HashMap<ArrayList<String>, Boolean> options = null;
+                        Class entityClass = type.getEntityType().getEntityClass();
+                        if (disguiseType.equals("mob")) {
+                            if (type.isMob()) {
+                                options = getOptions(perm);
+                            }
+                        } else if (disguiseType.equals("animal") || disguiseType.equals("animals")) {
+                            if (Animals.class.isAssignableFrom(entityClass)) {
+                                options = getOptions(perm);
+                            }
+                        } else if (disguiseType.equals("monster") || disguiseType.equals("monsters")) {
+                            if (Monster.class.isAssignableFrom(entityClass)) {
+                                options = getOptions(perm);
+                            }
+                        } else if (disguiseType.equals("misc")) {
+                            if (type.isMisc()) {
+                                options = getOptions(perm);
+                            }
+                        } else if (disguiseType.equals("ageable")) {
+                            if (Ageable.class.isAssignableFrom(entityClass)) {
+                                options = getOptions(perm);
+                            }
+                        } else if (disguiseType.equals("*")) {
+                            options = getOptions(perm);
                         }
-                    } else if (perm.equals("monster") || perm.equals("monsters")) {
-                        if (Monster.class.isAssignableFrom(entityClass)) {
-                            perms.add(name);
+                        if (options != null) {
+                            HashMap<ArrayList<String>, Boolean> list;
+                            if (rangeDisguises.containsKey(type)) {
+                                list = rangeDisguises.get(type);
+                            } else {
+                                list = new HashMap<ArrayList<String>, Boolean>();
+                                rangeDisguises.put(type, list);
+                            }
+                            HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
+                            list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
                         }
-                    } else if (perm.equals("misc")) {
-                        if (type.isMisc()) {
-                            perms.add(name);
-                        }
-                    } else if (perm.equals("ageable")) {
-                        if (Ageable.class.isAssignableFrom(entityClass)) {
-                            perms.add(name);
-                        }
-                    } else if (disguiseType.equals("*")) {
-                        perms.add(name);
-                    } else if (disguiseType.equals(name)) {
-                        perms.add(name);
                     }
                 }
             }
         }
-        // This does the disguises for OP's.
+        for (String perm : perms.keySet()) {
+            if (!perms.get(perm)) {
+                perm = perm.substring(permissionNode.length());
+                String disguiseType = perm.split("\\.")[0];
+                try {
+                    DisguiseType type = DisguiseType.valueOf(disguiseType.toUpperCase());
+                    singleDisguises.remove(type);
+                } catch (Exception ex) {
+                    for (DisguiseType type : DisguiseType.values()) {
+                        if (type.getEntityType() == null) {
+                            continue;
+                        }
+                        boolean foundHim = false;
+                        Class entityClass = type.getEntityType().getEntityClass();
+                        if (disguiseType.equals("mob")) {
+                            if (type.isMob()) {
+                                foundHim = true;
+                            }
+                        } else if (disguiseType.equals("animal") || disguiseType.equals("animals")) {
+                            if (Animals.class.isAssignableFrom(entityClass)) {
+                                foundHim = true;
+                            }
+                        } else if (disguiseType.equals("monster") || disguiseType.equals("monsters")) {
+                            if (Monster.class.isAssignableFrom(entityClass)) {
+                                foundHim = true;
+                            }
+                        } else if (disguiseType.equals("misc")) {
+                            if (type.isMisc()) {
+                                foundHim = true;
+                            }
+                        } else if (disguiseType.equals("ageable")) {
+                            if (Ageable.class.isAssignableFrom(entityClass)) {
+                                foundHim = true;
+                            }
+                        } else if (disguiseType.equals("*")) {
+                            foundHim = true;
+                        }
+                        if (foundHim) {
+                            rangeDisguises.remove(type);
+                        }
+                    }
+                }
+            }
+        }
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
         for (DisguiseType type : DisguiseType.values()) {
-            if (type.getEntityType() == null) {
-                continue;
+            HashMap<ArrayList<String>, Boolean> temp = new HashMap<ArrayList<String>, Boolean>();
+            if (singleDisguises.containsKey(type)) {
+                temp.putAll(singleDisguises.get(type));
             }
-            if (!globalAllowed.contains(type.name().toLowerCase())) {
-                if (sender.hasPermission(permissionNode + "*")
-                        || sender.hasPermission(permissionNode + type.name().toLowerCase())) {
-                    globalAllowed.add(type.name().toLowerCase());
-                }
+            if (rangeDisguises.containsKey(type)) {
+                temp.putAll(rangeDisguises.get(type));
+            }
+            if (!temp.isEmpty()) {
+                map.put(type, temp);
             }
         }
-        globalAllowed.removeAll(globalForbidden);
-        singleAllowed.addAll(globalAllowed);
-        singleAllowed.removeAll(singleForbidden);
-        ArrayList<String> disguiseTypes = new ArrayList<String>(singleAllowed);
-        Collections.sort(disguiseTypes, String.CASE_INSENSITIVE_ORDER);
-        return disguiseTypes;
+        return map;
+    }
+
+    private HashMap<ArrayList<String>, Boolean> getOptions(String perm) {
+        ArrayList<String> list = new ArrayList<String>();
+        boolean isRemove = true;
+        String[] split = perm.split("\\.");
+        for (int i = 1; i < split.length; i++) {
+            String option = split[i];
+            boolean value = option.startsWith("-");
+            if (value) {
+                option = option.substring(1);
+                isRemove = false;
+            }
+            if (option.equals("baby"))
+                option = "setbaby";
+            list.add(option);
+        }
+        HashMap<ArrayList<String>, Boolean> options = new HashMap<ArrayList<String>, Boolean>();
+        options.put(list, isRemove);
+        return options;
     }
 
     protected boolean isDouble(String string) {
@@ -119,51 +218,17 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     /**
-     * Returns null if they have all perms. Else they can only use the options in the returned
-     */
-    protected HashSet<HashSet<String>> getPermissions(CommandSender sender, String disguiseType) {
-        HashSet<HashSet<String>> perms = new HashSet<HashSet<String>>();
-        String permNode = "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".";
-        for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-            if (permission.getValue()) {
-                String s = permission.getPermission().toLowerCase();
-                if (s.startsWith(permNode + disguiseType) || s.startsWith(permNode + "*")) {
-                    if (s.startsWith(permNode + disguiseType))
-                        s = s.substring((permNode + disguiseType).length());
-                    else if (s.startsWith(permNode + "*")) {
-                        s = s.substring((permNode + "*").length());
-                        if (s.length() == 0)
-                            continue;
-                    }
-                    if (s.length() == 0)
-                        return new HashSet<HashSet<String>>();
-                    HashSet<String> p = new HashSet<String>();
-                    for (String str : s.split("\\.")) {
-                        if (str.equals("baby"))
-                            str = "setbaby";
-                        if (str.equals("-baby"))
-                            str = "-setbaby";
-                        p.add(str);
-                    }
-                    perms.add(p);
-                }
-            }
-        }
-        return perms;
-    }
-
-    /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
      * disguise has been feed a proper disguisetype.
      */
-    protected Disguise parseDisguise(CommandSender sender, String[] args) throws Exception {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(sender);
-        if (allowedDisguises.isEmpty()) {
+    protected Disguise parseDisguise(CommandSender sender, String[] args,
+            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws Exception {
+        if (map.isEmpty()) {
             throw new Exception(ChatColor.RED + "You are forbidden to use this command.");
         }
         if (args.length == 0) {
-            sendCommandUsage(sender);
+            sendCommandUsage(sender, map);
             throw new Exception();
         }
         // How many args to skip due to the disugise being constructed
@@ -172,7 +237,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         int toSkip = 1;
         ArrayList<String> usedOptions = new ArrayList<String>();
         Disguise disguise = null;
-        HashSet<HashSet<String>> optionPermissions;
+        HashMap<ArrayList<String>, Boolean> optionPermissions;
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
                 disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
@@ -182,7 +247,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             } else {
                 throw new Exception(ChatColor.RED + "You do not have perimssion to use disguise references!");
             }
-            optionPermissions = this.getPermissions(sender, disguise.getType().name().toLowerCase());
+            optionPermissions = (map.containsKey(disguise.getType()) ? map.get(disguise.getType())
+                    : new HashMap<ArrayList<String>, Boolean>());
         } else {
             DisguiseType disguiseType = null;
             if (args[0].equalsIgnoreCase("p")) {
@@ -202,10 +268,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
                         + " doesn't exist!");
             }
-            if (!allowedDisguises.contains(disguiseType.name().toLowerCase())) {
+            if (!map.containsKey(disguiseType)) {
                 throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
             }
-            optionPermissions = this.getPermissions(sender, disguiseType.name().toLowerCase());
+            optionPermissions = map.get(disguiseType);
             if (disguiseType.isPlayer()) {// If he is doing a player disguise
                 if (args.length == 1) {
                     // He needs to give the player name
@@ -398,37 +464,27 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return value;
     }
 
-    private void doCheck(HashSet<HashSet<String>> optionPermissions, ArrayList<String> usedOptions) throws Exception {
-        if (!optionPermissions.isEmpty()) {
-            boolean hasPermission = true;
-            for (HashSet<String> perms : optionPermissions) {
-                HashSet<String> cloned = (HashSet<String>) perms.clone();
-                Iterator<String> itel = cloned.iterator();
-                while (itel.hasNext()) {
-                    String perm = itel.next();
-                    if (perm.startsWith("-")) {
-                        itel.remove();
-                        if (usedOptions.contains(perm.substring(1))) {
-                            hasPermission = false;
-                            break;
-                        }
-                    }
-                }
-                // If this wasn't modified by the above check
-                if (perms.size() == cloned.size()) {
-                    // If there is a option used that the perms don't allow
-                    if (!perms.containsAll(usedOptions)) {
-                        hasPermission = false;
-                    } else {
-                        // The perms allow it. Return true
-                        return;
-                    }
+    private boolean passesCheck(HashMap<ArrayList<String>, Boolean> map1, ArrayList<String> usedOptions) {
+        boolean hasPermission = false;
+        for (ArrayList<String> list : map1.keySet()) {
+            boolean myPerms = true;
+            for (String option : usedOptions) {
+                if (!(map1.get(list) && list.contains("*")) && (list.contains(option) != map1.get(list))) {
+                    myPerms = false;
+                    break;
                 }
             }
-            if (!hasPermission) {
-                throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
-                        + usedOptions.get(usedOptions.size() - 1));
+            if (myPerms) {
+                hasPermission = true;
             }
+        }
+        return hasPermission;
+    }
+
+    private void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions) throws Exception {
+        if (!passesCheck(optionPermissions, usedOptions)) {
+            throw new Exception(ChatColor.RED + "You do not have the permission to use the option "
+                    + usedOptions.get(usedOptions.size() - 1));
         }
     }
 
@@ -459,5 +515,5 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
     }
 
-    protected abstract void sendCommandUsage(CommandSender sender);
+    protected abstract void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map);
 }
