@@ -53,8 +53,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 perms.put(perm, permission.getValue());
             }
         }
-        if (!perms.containsKey(permissionNode + "*") && sender.hasPermission(permissionNode + "*")) {
-            perms.put(permissionNode + "*", true);
+        if (!perms.containsKey(permissionNode + "*.*") && sender.hasPermission(permissionNode + "*.*")) {
+            perms.put(permissionNode + "*.*", true);
         }
 
         for (String perm : perms.keySet()) {
