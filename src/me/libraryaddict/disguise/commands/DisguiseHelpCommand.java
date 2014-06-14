@@ -229,7 +229,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         methods.set(i, map.get(methods.get(i)) + methods.get(i));
                     }
                     if (methods.isEmpty()) {
-                        methods.add("No options with permission to use");
+                        methods.add(ChatColor.RED + "No options with permission to use");
                     }
                     sender.sendMessage(ChatColor.DARK_RED + type.toReadable() + " options: "
                             + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
