@@ -117,7 +117,9 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         for (String node : new String[] { "disguise", "disguiseradius", "disguiseentity", "disguiseplayer" }) {
-            if (!getPermissions(sender, "libsdisguises." + node + ".").isEmpty()) {
+            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> permMap = getPermissions(sender, "libsdisguises." + node
+                    + ".");
+            if (!permMap.isEmpty()) {
                 if (args.length == 0) {
                     sendCommandUsage(sender, null);
                     return true;
@@ -149,6 +151,10 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         sender.sendMessage(ChatColor.RED + "Cannot find the disguise " + args[0]);
                         return true;
                     }
+                    if (!permMap.containsKey(type)) {
+                        sender.sendMessage(ChatColor.RED + "You do not have permission for that disguise!");
+                        return true;
+                    }
                     ArrayList<String> methods = new ArrayList<String>();
                     HashMap<String, ChatColor> map = new HashMap<String, ChatColor>();
                     Class watcher = type.getWatcherClass();
@@ -156,6 +162,23 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         for (Method method : watcher.getMethods()) {
                             if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
                                     && method.getAnnotation(Deprecated.class) == null) {
+                                if (args.length < 2 || !args[1].equalsIgnoreCase("show")) {
+                                    boolean allowed = false;
+                                    for (ArrayList<String> key : permMap.get(type).keySet()) {
+                                        if (permMap.get(type).get(key)) {
+                                            if (key.contains("*") || key.contains(method.getName().toLowerCase())) {
+                                                allowed = true;
+                                                break;
+                                            }
+                                        } else if (!key.contains(method.getName().toLowerCase())) {
+                                            allowed = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!allowed) {
+                                        continue;
+                                    }
+                                }
                                 Class c = method.getParameterTypes()[0];
                                 String valueType = null;
                                 if (c == String.class) {
@@ -205,6 +228,9 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     for (int i = 0; i < methods.size(); i++) {
                         methods.set(i, map.get(methods.get(i)) + methods.get(i));
                     }
+                    if (methods.isEmpty()) {
+                        methods.add("No options with permission to use");
+                    }
                     sender.sendMessage(ChatColor.DARK_RED + type.toReadable() + " options: "
                             + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
                     return true;
@@ -219,8 +245,10 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
-        sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN
-                + "- View the options you can set on a disguise");
+        sender.sendMessage(ChatColor.RED
+                + "/disguisehelp <DisguiseType> "
+                + ChatColor.GREEN
+                + "- View the options you can set on a disguise. Add 'show' to reveal the options you don't have permission to use");
         for (EnumHelp s : enumHelp) {
             sender.sendMessage(s.getEnumDescription());
         }
