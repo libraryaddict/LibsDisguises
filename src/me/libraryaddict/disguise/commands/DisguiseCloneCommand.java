@@ -28,12 +28,12 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
             return true;
         }
         if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
-            boolean doEnquipment = true;
+            boolean doEquipment = true;
             boolean doSneak = false;
             boolean doSprint = false;
             for (String option : args) {
-                if (StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
-                    doEnquipment = false;
+                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip") || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
+                    doEquipment = false;
                 } else if (option.equalsIgnoreCase("doSneakSprint")) {
                     doSneak = true;
                     doSprint = true;
@@ -43,11 +43,11 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
                     doSprint = true;
                 } else {
                     sender.sendMessage(ChatColor.DARK_RED + "Unknown option '" + option
-                            + "' - Valid options are 'IgnoreEnquipment' 'DoSneakSprint' 'DoSneak' 'DoSprint'");
+                            + "' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' 'DoSneak' 'DoSprint'");
                     return true;
                 }
             }
-            listener.setDisguiseClone(sender.getName(), new Boolean[] { doEnquipment, doSneak, doSprint });
+            listener.setDisguiseClone(sender.getName(), new Boolean[] { doEquipment, doSneak, doSprint });
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
                     + " seconds to grab the disguise reference!");
         } else {
@@ -62,8 +62,8 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
-        sender.sendMessage(ChatColor.DARK_GREEN + "Beware however, the reference bypasses all permissions checks");
-        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEnquipment" + ChatColor.DARK_GREEN + "("
+        sender.sendMessage(ChatColor.DARK_GREEN + "Security note: Any references you create will be available to all players able to use disguise references.");
+        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "("
                 + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")");
     }
 }

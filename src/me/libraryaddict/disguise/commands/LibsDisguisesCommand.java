@@ -10,6 +10,7 @@ public class LibsDisguisesCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        // TODO is public version disclosure a problem?
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "This server is running "
                 + "Lib's Disguises "
