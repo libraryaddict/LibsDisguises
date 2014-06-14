@@ -130,16 +130,6 @@ public abstract class Disguise {
         case FIREWORK:
             velocitySpeed = -0.040;
             break;
-        case EGG:
-        case ENDER_PEARL:
-        case ENDER_SIGNAL:
-        case FIREBALL:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-            velocitySpeed = 0.0005;
-            break;
         case WITHER_SKULL:
             velocitySpeed = 0.000001D;
             break;
