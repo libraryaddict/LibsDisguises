@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 public class ReflectionManager {
+
     public enum LibVersion {
         V1_6, V1_7;
         private static LibVersion currentVersion = LibVersion.V1_7;
@@ -58,11 +58,16 @@ public class ReflectionManager {
         }
     }
 
-    private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static final Class craftItemClass = getCraftClass("inventory.CraftItemStack");
+    private static final Field pingField = getNmsField("EntityPlayer", "ping");
+    private static final Field trackerField = getNmsField("World", "tracker");
+    private static final Field entitiesField = getNmsField("EntityTracker", "trackedEntities");
+    private static final Method ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+    private static final boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+
     private static Method damageAndIdleSoundMethod;
-    private static Class itemClass;
-    private static Field pingField;
-    private static boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+
     /**
      * Map of mc-dev simple class name to fully qualified Forge class name.
      */
@@ -74,7 +79,7 @@ public class ReflectionManager {
     /**
      * Map of Forge fully qualified class names to a map from mc-dev method names to Forge method names.
      */
-    private static Map<String, Map<String, String>> ForgeMethodMappings;
+    private static Map<String, Map<String, Map<Class<?>[], String>>> ForgeMethodMappings;
 
     private static String dir2fqn(String s) {
         return s.replaceAll("/", ".");
@@ -85,7 +90,7 @@ public class ReflectionManager {
             // Initialize the maps by reading the srg file
             ForgeClassMappings = new HashMap<String, String>();
             ForgeFieldMappings = new HashMap<String, Map<String, String>>();
-            //ForgeMethodMappings = new HashMap<String, Map<String, String>>();
+            ForgeMethodMappings = new HashMap<String, Map<String, Map<Class<?>[], String>>>();
             try {
                 InputStream stream = Class.forName("net.minecraftforge.common.MinecraftForge").getClassLoader()
                         .getResourceAsStream("mappings/" + getBukkitVersion() + "/cb2numpkg.srg");
@@ -155,21 +160,15 @@ public class ReflectionManager {
                 ex.printStackTrace();
             }
         }
-        try {
-            itemClass = getCraftClass("inventory.CraftItemStack");
-            pingField = getNmsField("EntityPlayer", "ping");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static Object createEntityInstance(String entityName) {
         try {
-            Class entityClass = getNmsClass("Entity" + entityName);
+            Class<?> entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
             Object world = getWorld(Bukkit.getWorlds().get(0));
             if (entityName.equals("Player")) {
-                Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+                Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
                 Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
                         .newInstance(world);
                 if (LibVersion.is1_7()) {
@@ -243,7 +242,7 @@ public class ReflectionManager {
 
     public static ItemStack getBukkitItem(Object nmsItem) {
         try {
-            return (ItemStack) itemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
+            return (ItemStack) craftItemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -286,6 +285,13 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    static Object getEntityTrackerEntry(Entity target) throws Exception {
+        Object world = getWorld(target.getWorld());
+        Object tracker = trackerField.get(world);
+        Object trackedEntities = entitiesField.get(tracker);
+        return ihmGet.invoke(trackedEntities, target.getEntityId());
     }
 
     public static WrappedGameProfile getGameProfile(Player player) {
@@ -343,7 +349,7 @@ public class ReflectionManager {
 
     public static Object getNmsItem(ItemStack itemstack) {
         try {
-            return itemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
+            return craftItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -370,10 +376,11 @@ public class ReflectionManager {
         return getNmsMethod(getNmsClass(className), methodName, parameters);
     }
 
-    public static Method getNmsMethod(Class clazz, String methodName, Class<?>... parameters) {
+    public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         try {
             if (isForge) {
-                return clazz.getMethod(ForgeMethodMappings.get(clazz.getName()).get(methodName), parameters);
+                String trName = ForgeMethodMappings.get(clazz.getName()).get(methodName).get(parameters);
+                return clazz.getMethod(trName, parameters);
             }
             return clazz.getMethod(methodName, parameters);
         } catch (NoSuchMethodException e) {
@@ -394,8 +401,8 @@ public class ReflectionManager {
     public static float[] getSize(Entity entity) {
         try {
             float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
-            float width = getNmsClass("Entity").getField("width").getFloat(getNmsEntity(entity));
-            float height = getNmsClass("Entity").getField("height").getFloat(getNmsEntity(entity));
+            float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
+            float height = getNmsField("Entity", "height").getFloat(getNmsEntity(entity));
             return new float[] { length, width, height };
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -405,7 +412,7 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         try {
-            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
             for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                 if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
                     Object session = method.invoke(minecraftServer);
@@ -467,8 +474,8 @@ public class ReflectionManager {
     public static void setAllowSleep(Player player) {
         try {
             Object nmsEntity = getNmsEntity(player);
-            Object connection = nmsEntity.getClass().getField("playerConnection").get(nmsEntity);
-            Field check = connection.getClass().getField("checkMovement");
+            Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity);
+            Field check = getNmsField(connection.getClass(), "checkMovement");
             check.setBoolean(connection, true);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -477,7 +484,7 @@ public class ReflectionManager {
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
-            Object boundingBox = getNmsClass("Entity").getField("boundingBox").get(getNmsEntity(entity));
+            Object boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
             int stage = 0;
             Location loc = entity.getLocation();
             for (Field field : boundingBox.getClass().getFields()) {
