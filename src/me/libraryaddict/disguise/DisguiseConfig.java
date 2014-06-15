@@ -28,7 +28,6 @@ public class DisguiseConfig {
     private static boolean miscDisguisesForLivingEnabled;
     private static boolean modifyBoundingBox;
     private static boolean movementEnabled;
-    private static boolean ridingEnabled;
     private static boolean sendsEntityMetadata;
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
@@ -76,7 +75,6 @@ public class DisguiseConfig {
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
         setBedPacketsEnabled(config.getBoolean("PacketsEnabled.Bed"));
-        setRidingPacketsEnabled(config.getBoolean("PacketsEnabled.Riding"));
         setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
         setCollectPacketsEnabled(config.getBoolean("PacketsEnabled.Collect"));
         setMetadataPacketsEnabled(config.getBoolean("PacketsEnabled.Metadata"));
@@ -181,10 +179,6 @@ public class DisguiseConfig {
 
     public static boolean isNameOfPlayerShownAboveDisguise() {
         return showNameAboveHead;
-    }
-
-    public static boolean isRidingPacketsEnabled() {
-        return ridingEnabled;
     }
 
     public static boolean isSelfDisguisesSoundsReplaced() {
@@ -369,13 +363,6 @@ public class DisguiseConfig {
 
     public static void setNameOfPlayerShownAboveDisguise(boolean showNames) {
         showNameAboveHead = showNames;
-    }
-
-    public static void setRidingPacketsEnabled(boolean enabled) {
-        if (enabled != isRidingPacketsEnabled()) {
-            ridingEnabled = enabled;
-            PacketsManager.setupMainPacketsListener();
-        }
     }
 
     public static void setSheepDyeable(boolean color) {
