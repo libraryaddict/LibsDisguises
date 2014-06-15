@@ -13,6 +13,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.events.DisguiseEvent;
+import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
@@ -404,6 +406,10 @@ public abstract class Disguise {
      */
     public void removeDisguise() {
         if (disguiseInUse) {
+            UndisguiseEvent event = new UndisguiseEvent(entity, this);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                return;
             disguiseInUse = false;
             if (task != null) {
                 task.cancel();
@@ -657,6 +663,13 @@ public abstract class Disguise {
             if (getEntity() == null) {
                 throw new RuntimeException("No entity is assigned to this disguise!");
             }
+            // Fire a disguise event
+            DisguiseEvent event = new DisguiseEvent(entity, this);
+            Bukkit.getPluginManager().callEvent(event);
+            // If they cancelled this disguise event. No idea why.
+            // Just return.
+            if (event.isCancelled())
+                return;
             disguiseInUse = true;
             task = Bukkit.getScheduler().runTaskTimer(plugin, velocityRunnable, 1, 1);
             // Stick the disguise in the disguises bin

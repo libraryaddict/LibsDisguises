@@ -18,7 +18,6 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
@@ -148,13 +147,6 @@ public class DisguiseAPI {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null)
-            return;
-        // Fire a disguise event
-        DisguiseEvent event = new DisguiseEvent(entity, disguise);
-        Bukkit.getPluginManager().callEvent(event);
-        // If they cancelled this disguise event. No idea why.
-        // Just return.
-        if (event.isCancelled())
             return;
         // The event wasn't cancelled.
         // If the disguise entity isn't the same as the one we are disguising
@@ -331,10 +323,6 @@ public class DisguiseAPI {
     public static void undisguiseToAll(Entity entity) {
         Disguise[] disguises = getDisguises(entity);
         for (Disguise disguise : disguises) {
-            UndisguiseEvent event = new UndisguiseEvent(entity, disguise);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                continue;
             disguise.removeDisguise();
         }
     }
