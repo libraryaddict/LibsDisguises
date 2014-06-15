@@ -120,7 +120,7 @@ public class PacketsManager {
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
-        if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
                 int armorSlot = nmsSlot - 1;
                 if (armorSlot < 0)
@@ -1126,8 +1126,8 @@ public class PacketsManager {
                 packetsToListen.add(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
                 packetsToListen.add(PacketType.Play.Server.ENTITY_TELEPORT);
             }
-            // Add enquipment packet
-            if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+            // Add equipment packet
+            if (DisguiseConfig.isEquipmentPacketsEnabled()) {
                 packetsToListen.add(PacketType.Play.Server.ENTITY_EQUIPMENT);
             }
             // Add the packet that ensures if they are sleeping or not

@@ -42,7 +42,7 @@ public class DisguiseAPI {
         return constructDisguise(entity, true, true, true);
     }
 
-    public static Disguise constructDisguise(Entity entity, boolean doEnquipment, boolean doSneak, boolean doSprint) {
+    public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean doSneak, boolean doSprint) {
         DisguiseType disguiseType = DisguiseType.getType(entity);
         Disguise disguise;
         if (disguiseType.isMisc()) {
@@ -64,10 +64,10 @@ public class DisguiseAPI {
         if (entity.getFireTicks() > 0) {
             watcher.setBurning(true);
         }
-        if (doEnquipment && entity instanceof LivingEntity) {
-            EntityEquipment enquip = ((LivingEntity) entity).getEquipment();
-            watcher.setArmor(enquip.getArmorContents());
-            watcher.setItemInHand(enquip.getItemInHand());
+        if (doEquipment && entity instanceof LivingEntity) {
+            EntityEquipment equip = ((LivingEntity) entity).getEquipment();
+            watcher.setArmor(equip.getArmorContents());
+            watcher.setItemInHand(equip.getItemInHand());
             if (disguiseType.getEntityType() == EntityType.HORSE) {
                 Horse horse = (Horse) entity;
                 HorseInventory horseInventory = horse.getInventory();
