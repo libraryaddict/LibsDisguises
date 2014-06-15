@@ -249,9 +249,10 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onWorldSwitch(PlayerPortalEvent event) {
-        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
+        if (!event.isCancelled() && DisguiseConfig.isUndisguiseOnWorldChange()
+                && event.getFrom().getWorld() != event.getTo().getWorld()) {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
