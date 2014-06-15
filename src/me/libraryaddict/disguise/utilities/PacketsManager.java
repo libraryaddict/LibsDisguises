@@ -741,8 +741,7 @@ public class PacketsManager {
             public void onPacketSending(PacketEvent event) {
                 final Player observer = event.getPlayer();
                 if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
-                    int fakeId = DisguiseAPI.getFakeDisguise(observer.getUniqueId());
-                    if (fakeId > 0) {
+                    if (DisguiseAPI.isSelfDisguised(observer)) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
                         PacketContainer[] packets = transformPacket(event.getPacket(), observer, observer);
                         if (packets == null) {
@@ -752,7 +751,7 @@ public class PacketsManager {
                             if (packet.equals(event.getPacket())) {
                                 packet = packet.deepClone();
                             }
-                            packet.getModifier().write(0, fakeId);
+                            packet.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                             } catch (InvocationTargetException e) {

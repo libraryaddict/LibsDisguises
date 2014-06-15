@@ -289,9 +289,12 @@ public class DisguiseAPI {
     /**
      * Get the ID of a fake disguise for a entityplayer
      */
+    @Deprecated
     public static int getFakeDisguise(UUID entityId) {
-        if (DisguiseUtilities.getSelfDisguisesIds().containsKey(entityId))
-            return DisguiseUtilities.getSelfDisguisesIds().get(entityId);
+        return -1;
+    }
+
+    public static int getSelfDisguiseId() {
         return -1;
     }
 
@@ -311,6 +314,10 @@ public class DisguiseAPI {
 
     public static boolean isDisguiseInUse(Disguise disguise) {
         return disguise.isDisguiseInUse();
+    }
+
+    public static boolean isSelfDisguised(Player player) {
+        return DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId());
     }
 
     /**

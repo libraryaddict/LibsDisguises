@@ -240,7 +240,7 @@ public abstract class Disguise {
                                         (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
-                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
+                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                 selfLookPacket, false);
@@ -259,7 +259,7 @@ public abstract class Disguise {
                                         if (!isSelfDisguiseVisible()) {
                                             continue;
                                         }
-                                        mods.write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
+                                        mods.write(0, DisguiseAPI.getSelfDisguiseId());
                                     } else {
                                         mods.write(0, getEntity().getEntityId());
                                     }
@@ -286,7 +286,7 @@ public abstract class Disguise {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 } else if (isSelfDisguiseVisible()) {
                                     PacketContainer selfPacket = packet.shallowClone();
-                                    selfPacket.getModifier().write(0, DisguiseAPI.getFakeDisguise(getEntity().getUniqueId()));
+                                    selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
                                                 false);

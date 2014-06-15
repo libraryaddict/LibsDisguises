@@ -62,11 +62,7 @@ public class DisguiseUtilities {
     private static HashMap<String, WrappedGameProfile> gameProfiles = new HashMap<String, WrappedGameProfile>();
     private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<String, ArrayList<Object>>();
-    /**
-     * A internal storage of fake entity ID's each entity has. Realistically I could probably use a ID like "4" for everyone,
-     * seeing as no one sees each others entity ID
-     **/
-    private static HashMap<UUID, Integer> selfDisguisesIds = new HashMap<UUID, Integer>();
+    private static HashSet<UUID> selfDisguised = new HashSet<UUID>();
 
     public static boolean addClonedDisguise(String key, Disguise disguise) {
         if (DisguiseConfig.getMaxClonedDisguises() > 0) {
@@ -428,8 +424,8 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
-    public static HashMap<UUID, Integer> getSelfDisguisesIds() {
-        return selfDisguisesIds;
+    public static HashSet<UUID> getSelfDisguised() {
+        return selfDisguised;
     }
 
     public static boolean hasGameProfile(String playerName) {
@@ -568,17 +564,17 @@ public class DisguiseUtilities {
     }
 
     public static void removeSelfDisguise(Player player) {
-        if (selfDisguisesIds.containsKey(player.getUniqueId())) {
+        if (selfDisguised.contains(player.getUniqueId())) {
             // Send a packet to destroy the fake entity
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-            packet.getModifier().write(0, new int[] { selfDisguisesIds.get(player.getUniqueId()) });
+            packet.getModifier().write(0, new int[] { DisguiseAPI.getSelfDisguiseId() });
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
             // Remove the fake entity ID from the disguise bin
-            selfDisguisesIds.remove(player.getUniqueId());
+            selfDisguised.remove(player.getUniqueId());
             // Get the entity tracker
             try {
                 Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
@@ -630,7 +626,6 @@ public class DisguiseUtilities {
                 });
                 return;
             }
-            int fakeId = selfDisguisesIds.get(player.getUniqueId());
             // Add himself to his own entity tracker
             ((HashSet<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry))
                     .add(ReflectionManager.getNmsEntity(player));
@@ -642,7 +637,7 @@ public class DisguiseUtilities {
             sendSelfPacket(
                     player,
                     manager.createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(), dataWatcher,
-                            true).createPacket(player.getEntityId(), dataWatcher, true), fakeId);
+                            true).createPacket(player.getEntityId(), dataWatcher, true));
 
             boolean isMoving = false;
             try {
@@ -659,18 +654,18 @@ public class DisguiseUtilities {
                         player,
                         manager.createPacketConstructor(PacketType.Play.Server.ENTITY_VELOCITY, player.getEntityId(),
                                 velocity.getX(), velocity.getY(), velocity.getZ()).createPacket(player.getEntityId(),
-                                velocity.getX(), velocity.getY(), velocity.getZ()), fakeId);
+                                velocity.getX(), velocity.getY(), velocity.getZ()));
             }
 
             // Why the hell would he even need this. Meh.
             if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
-                                .createPacket(0, player, player.getVehicle()), fakeId);
+                                .createPacket(0, player, player.getVehicle()));
             } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
-                                .createPacket(0, player.getPassenger(), player), fakeId);
+                                .createPacket(0, player.getPassenger(), player));
             }
 
             // Resend the armor
@@ -686,7 +681,7 @@ public class DisguiseUtilities {
                     sendSelfPacket(
                             player,
                             manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EQUIPMENT, player.getEntityId(), i,
-                                    item).createPacket(player.getEntityId(), i, item), fakeId);
+                                    item).createPacket(player.getEntityId(), i, item));
                 }
             }
             Location loc = player.getLocation();
@@ -695,14 +690,14 @@ public class DisguiseUtilities {
                 sendSelfPacket(
                         player,
                         manager.createPacketConstructor(PacketType.Play.Server.BED, player, loc.getBlockX(), loc.getBlockY(),
-                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), fakeId);
+                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             }
 
             // Resend any active potion effects
             for (Object potionEffect : player.getActivePotionEffects()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), potionEffect)
-                                .createPacket(player.getEntityId(), potionEffect), fakeId);
+                                .createPacket(player.getEntityId(), potionEffect));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -712,7 +707,7 @@ public class DisguiseUtilities {
     /**
      * Method to send a packet to the self disguise, translate his entity ID to the fake id.
      */
-    private static void sendSelfPacket(Player player, PacketContainer packet, int fakeId) {
+    private static void sendSelfPacket(Player player, PacketContainer packet) {
         PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
         try {
             if (packets == null) {
@@ -720,7 +715,7 @@ public class DisguiseUtilities {
             }
             for (PacketContainer p : packets) {
                 p = p.deepClone();
-                p.getIntegers().write(0, fakeId);
+                p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
             }
         } catch (InvocationTargetException e) {
@@ -749,17 +744,7 @@ public class DisguiseUtilities {
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
             return;
         }
-        try {
-            // Grab the entity ID the fake disguise will use
-            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
-            field.setAccessible(true);
-            int id = field.getInt(null);
-            // Set the entitycount plus one so we don't have the id being reused
-            field.set(null, id + 1);
-            selfDisguisesIds.put(player.getUniqueId(), id);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        selfDisguised.add(player.getUniqueId());
         sendSelfDisguise(player, disguise);
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
             if (PacketsManager.isInventoryListenerEnabled()) {
