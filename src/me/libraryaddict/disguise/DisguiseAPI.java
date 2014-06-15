@@ -27,9 +27,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
@@ -65,18 +68,14 @@ public class DisguiseAPI {
             EntityEquipment enquip = ((LivingEntity) entity).getEquipment();
             watcher.setArmor(enquip.getArmorContents());
             watcher.setItemInHand(enquip.getItemInHand());
-            if (disguiseType.getEntityType().name().equals("HORSE")) {
-                try {
-                    Object horseInv = entity.getClass().getMethod("getInventory").invoke(entity);
-                    Object item = horseInv.getClass().getMethod("getSaddle").invoke(horseInv);
-                    if (item != null && ((ItemStack) item).getType() == Material.SADDLE) {
-                        ((HorseWatcher) watcher).setSaddled(true);
-                    }
-                    ((HorseWatcher) watcher)
-                            .setHorseArmor((ItemStack) horseInv.getClass().getMethod("getArmor").invoke(horseInv));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+            if (disguiseType.getEntityType() == EntityType.HORSE) {
+                Horse horse = (Horse) entity;
+                HorseInventory horseInventory = horse.getInventory();
+                ItemStack saddle = horseInventory.getSaddle();
+                if (saddle != null && saddle.getType() == Material.SADDLE) {
+                    ((HorseWatcher) watcher).setSaddled(true);
                 }
+                ((HorseWatcher) watcher).setHorseArmor(horseInventory.getArmor());
             }
         }
         for (Method method : entity.getClass().getMethods()) {
