@@ -909,7 +909,7 @@ public class PacketsManager {
                                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {
                                     // Rather than predict the clients actions
                                     // Lets just update the entire inventory..
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                                         public void run() {
                                             event.getPlayer().updateInventory();
                                         }

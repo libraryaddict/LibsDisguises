@@ -387,11 +387,11 @@ public class DisguiseUtilities {
             }
             // Add null so that if this is called again. I already know I'm doing something about it
             gameProfiles.put(playerName, null);
-            Bukkit.getScheduler().scheduleAsyncDelayedTask(libsDisguises, new Runnable() {
+            Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable() {
                 public void run() {
                     try {
                         final WrappedGameProfile gameProfile = lookupGameProfile(playerName);
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                        Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
                                     gameProfiles.put(playerName, gameProfile);
@@ -647,7 +647,7 @@ public class DisguiseUtilities {
                 // If it is, then this method will be run again in one tick. Which is when it should be constructed.
                 // Else its going to run in a infinite loop hue hue hue..
                 // At least until this disguise is discarded
-                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                     public void run() {
                         if (DisguiseAPI.getDisguise(player, player) == disguise) {
                             sendSelfDisguise(player, disguise);
