@@ -65,7 +65,6 @@ public class ReflectionManager {
 
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static final Class<?> craftItemClass;
-
     private static Method damageAndIdleSoundMethod;
     private static final Field entitiesField;
     /**
@@ -82,7 +81,6 @@ public class ReflectionManager {
      * names.
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
-
     private static final Method ihmGet;
     private static final boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
     private static final Field pingField;
@@ -205,11 +203,6 @@ public class ReflectionManager {
         trackerField = getNmsField("WorldServer", "tracker");
         entitiesField = getNmsField("EntityTracker", "trackedEntities");
         ihmGet = getNmsMethod("IntHashMap", "get", int.class);
-
-        Method m = getNmsMethod("Item", "getItemOf", getNmsClass("Block"));
-        System.out.println(m);
-
-        DisguiseType.ARROW.isMisc();
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -240,8 +233,6 @@ public class ReflectionManager {
         }
         return null;
     }
-
-    // ===
 
     private static String dir2fqn(String s) {
         return s.replaceAll("/", ".");
@@ -327,7 +318,7 @@ public class ReflectionManager {
         return null;
     }
 
-    static Object getEntityTrackerEntry(Entity target) throws Exception {
+    public static Object getEntityTrackerEntry(Entity target) throws Exception {
         Object world = getWorld(target.getWorld());
         Object tracker = trackerField.get(world);
         Object trackedEntities = entitiesField.get(tracker);
