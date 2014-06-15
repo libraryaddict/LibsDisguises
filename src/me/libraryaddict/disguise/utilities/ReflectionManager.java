@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -528,10 +527,6 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
         return null;
-    }
-
-    public static boolean hasSkinBlob(WrappedGameProfile gameProfile) {
-        return !gameProfile.getProperties().isEmpty();
     }
 
     private static String methodSignaturePart(Class<?> param) {

@@ -362,7 +362,8 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
-    private static WrappedGameProfile getProfileFromMojang(final String playerName, final Object runnable) {
+    private static WrappedGameProfile getProfileFromMojang(String name, final Object runnable) {
+        final String playerName = name.toLowerCase();
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -372,7 +373,7 @@ public class DisguiseUtilities {
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
                 WrappedGameProfile gameProfile = ReflectionManager.getGameProfile(player);
-                if (ReflectionManager.hasSkinBlob(gameProfile)) {
+                if (!gameProfile.getProperties().isEmpty()) {
                     gameProfiles.put(playerName, gameProfile);
                     return gameProfile;
                 }
