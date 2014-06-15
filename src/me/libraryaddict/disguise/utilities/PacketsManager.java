@@ -530,6 +530,7 @@ public class PacketsManager {
                                     Object obj = null;
                                     if (entity instanceof LivingEntity) {
                                         try {
+                                            // Use reflection so that this works for either int or double methods
                                             obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
                                             if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
                                                 soundType = SoundType.DEATH;

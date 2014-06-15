@@ -631,7 +631,7 @@ public class DisguiseUtilities {
             }
             int fakeId = selfDisguisesIds.get(player.getUniqueId());
             // Add himself to his own entity tracker
-            ((HashSet<?>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager.getNmsEntity(player));
+            ((HashSet<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager.getNmsEntity(player));
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             // Send the player a packet with himself being spawned
             manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)

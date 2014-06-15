@@ -1,15 +1,21 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -81,11 +87,26 @@ public class ReflectionManager {
      */
     private static Map<String, Map<String, Map<Class<?>[], String>>> ForgeMethodMappings;
 
-    private static String dir2fqn(String s) {
-        return s.replaceAll("/", ".");
-    }
+    private static Map<String, Class<?>> primitiveTypes;
+    private static Pattern signatureSegment;
 
     static {
+        final String nameseg_class = "a-zA-Z0-9$_";
+        final String fqn_class = "a-zA-Z0-9$_/";
+        final String fqn_component = "L[" + fqn_class + "]+;";
+
+        signatureSegment = Pattern.compile("\\[*(?:Z|B|C|S|I|J|F|D|V|" + fqn_component + ")");
+        primitiveTypes = ImmutableMap.<String, Class<?>>builder()
+                .put("Z", boolean.class)
+                .put("B", byte.class)
+                .put("C", char.class)
+                .put("S", short.class)
+                .put("I", int.class)
+                .put("J", long.class)
+                .put("F", float.class)
+                .put("D", double.class)
+                .put("V", void.class).build();
+
         if (isForge) {
             // Initialize the maps by reading the srg file
             ForgeClassMappings = new HashMap<String, String>();
@@ -95,16 +116,25 @@ public class ReflectionManager {
                 InputStream stream = Class.forName("net.minecraftforge.common.MinecraftForge").getClassLoader()
                         .getResourceAsStream("mappings/" + getBukkitVersion() + "/cb2numpkg.srg");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
                 // 1: cb-simpleName
                 // 2: forge-fullName (Needs dir2fqn())
-                Pattern classPattern = Pattern.compile("^CL: net/minecraft/server/(\\w+) ([a-zA-Z0-9$/_]+)$");
+                Pattern classPattern = Pattern.compile("^CL: net/minecraft/server/([" + nameseg_class + "]+) ([" + fqn_class + "]+)$");
                 // 1: cb-simpleName
                 // 2: cb-fieldName
                 // 3: forge-fullName (Needs dir2fqn())
                 // 4: forge-fieldName
-                Pattern fieldPattern = Pattern.compile("^FD: net/minecraft/server/(\\w+)/(\\w+) ([a-zA-Z0-9$/_]+)/([a-zA-Z0-9$/_]+)$");
-
-                Pattern methodPattern = Pattern.compile("!XXX todo");
+                Pattern fieldPattern = Pattern.compile("^FD: net/minecraft/server/([" + nameseg_class + "]+)/([" + nameseg_class + "]+) ([" + fqn_class + "]+)/([" + nameseg_class + "]+)$");
+                // 1: cb-simpleName
+                // 2: cb-methodName
+                // 3: cb-signature-args
+                // 4: cb-signature-ret
+                // 5: forge-fullName (Needs dir2fqn())
+                // 6: forge-methodName
+                // 7: forge-signature-args
+                // 8: forge-signature-ret
+                Pattern methodPattern = Pattern.compile("^MD: net/minecraft/server/([" + fqn_class + "]+)/([" + nameseg_class + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+) " +
+                        "([" + fqn_class + "]+)/([" + nameseg_class + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+)$");
 
                 String line;
                 System.out.println("Reading");
@@ -161,6 +191,36 @@ public class ReflectionManager {
             }
         }
     }
+
+    private static String dir2fqn(String s) {
+        return s.replaceAll("/", ".");
+    }
+
+    public static List<Class<?>> parseSignatureArguments(String args) throws ClassNotFoundException {
+        List<Class<?>> classes = new ArrayList<Class<?>>();
+        Matcher matcher = signatureSegment.matcher(args);
+        while (matcher.find()) {
+            classes.add(parseClass(matcher.group()));
+        }
+        return classes;
+    }
+
+    private static Class<?> parseClass(String str) throws ClassNotFoundException {
+        if (str.startsWith("[")) {
+            // Array
+            // http://stackoverflow.com/a/4901192/1210278
+            return java.lang.reflect.Array.newInstance(parseClass(str.substring(1)), 0).getClass();
+        } else if (str.length() == 1) {
+            return primitiveTypes.get(str);
+        } else if (str.startsWith("L")) {
+            // Chop off L and ;
+            return Class.forName(str.substring(1, str.length() - 1));
+        } else {
+            throw new ClassNotFoundException("Malformed method signature fragment? Argument: " + str);
+        }
+    }
+
+    // ===
 
     public static Object createEntityInstance(String entityName) {
         try {
