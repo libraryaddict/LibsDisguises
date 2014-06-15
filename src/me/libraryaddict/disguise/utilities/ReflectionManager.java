@@ -7,15 +7,14 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -76,36 +75,31 @@ public class ReflectionManager {
      */
     private static Map<String, Map<String, String>> ForgeFieldMappings;
     /**
-     * Map of Forge fully qualified class names to a map from mc-dev method names to Forge method names.
-     *
-     * There may be a mapping from null in the innermost map, which may be ignored.
+     * Map of Forge fully qualified class names to a map from mc-dev method names to a map from method signatures to Forge method names.
      */
-    private static Map<String, Map<String, Map<Class<?>[], String>>> ForgeMethodMappings;
-    private static Map<String, Class<?>> primitiveTypes;
-    private static Pattern signatureSegment;
+    private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
+    private static Map<Class<?>, String> primitiveTypes;
 
     static {
         final String nameseg_class = "a-zA-Z0-9$_";
-        final String fqn_class = "a-zA-Z0-9$_/";
-        final String fqn_component = "L[" + fqn_class + "]+;";
+        final String fqn_class = nameseg_class + "/";
 
-        signatureSegment = Pattern.compile("\\[*(?:Z|B|C|S|I|J|F|D|V|" + fqn_component + ")");
-        primitiveTypes = ImmutableMap.<String, Class<?>>builder()
-                .put("Z", boolean.class)
-                .put("B", byte.class)
-                .put("C", char.class)
-                .put("S", short.class)
-                .put("I", int.class)
-                .put("J", long.class)
-                .put("F", float.class)
-                .put("D", double.class)
-                .put("V", void.class).build();
+        primitiveTypes = ImmutableMap.<Class<?>, String>builder()
+                .put(boolean.class,"Z")
+                .put(byte.class,   "B")
+                .put(char.class,   "C")
+                .put(short.class,  "S")
+                .put(int.class,    "I")
+                .put(long.class,   "J")
+                .put(float.class,  "F")
+                .put(double.class, "D")
+                .put(void.class,   "V").build();
 
         if (isForge) {
             // Initialize the maps by reading the srg file
             ForgeClassMappings = new HashMap<String, String>();
             ForgeFieldMappings = new HashMap<String, Map<String, String>>();
-            ForgeMethodMappings = new HashMap<String, Map<String, Map<Class<?>[], String>>>();
+            ForgeMethodMappings = new HashMap<String, Map<String, Map<String, String>>>();
             try {
                 InputStream stream = Class.forName("net.minecraftforge.common.MinecraftForge").getClassLoader()
                         .getResourceAsStream("mappings/" + getBukkitVersion() + "/cb2numpkg.srg");
@@ -153,49 +147,37 @@ public class ReflectionManager {
                     Matcher methodMatcher = methodPattern.matcher(line);
                     if (methodMatcher.matches()) {
                         // get by CB class name
-                        Map<String, Map<Class<?>[], String>> middleMap = ForgeMethodMappings.get(dir2fqn(methodMatcher.group(5)));
+                        Map<String, Map<String, String>> middleMap = ForgeMethodMappings.get(dir2fqn(methodMatcher.group(5)));
                         if (middleMap == null) {
-                            middleMap = new HashMap<String, Map<Class<?>[], String>>();
+                            middleMap = new HashMap<String, Map<String, String>>();
                             ForgeMethodMappings.put(dir2fqn(methodMatcher.group(5)), middleMap);
                         }
                         // get by CB method name
-                        Map<Class<?>[], String> innerMap = middleMap.get(methodMatcher.group(2));
+                        Map<String, String> innerMap = middleMap.get(methodMatcher.group(2));
                         if (innerMap == null) {
-                            innerMap = new HashMap<Class<?>[], String>();
+                            innerMap = new HashMap<String, String>();
                             middleMap.put(methodMatcher.group(2), innerMap);
                         }
-                        // parse the class array
-                        Class<?>[] argsCb = null, argsForge = null;
-                        try {
-                            argsCb = parseSignatureArguments(methodMatcher.group(3));
-                        } catch (Throwable ignored) {
-                        }
-                        try {
-                            argsForge = parseSignatureArguments(methodMatcher.group(7));
-                        } catch (Throwable ignored) {
-                        }
-
-                        innerMap.put(argsCb, methodMatcher.group(6));
-                        innerMap.put(argsForge, methodMatcher.group(6));
-                        System.out.println(methodMatcher.group(5) + "/" + methodMatcher.group(2) + "(" + argsForge + ") -> " + methodMatcher.group(6));
-                        continue;
+                        // store the parameter strings
+                        innerMap.put(methodMatcher.group(3), methodMatcher.group(6));
+                        innerMap.put(methodMatcher.group(7), methodMatcher.group(6));
                     }
                 }
                 System.out.println("[LibsDisguises] Loaded in Cauldron/Forge mode");
-                System.out.println("[LibsDisguises]" + ForgeClassMappings.size() + " Cauldron class mappings loaded");
-                System.out.println("[LibsDisguises]" + ForgeFieldMappings.size() + " Cauldron field mappings loaded");
-                System.out.println("[LibsDisguises]" + ForgeMethodMappings.size() + " Cauldron method mappings loaded");
+                System.out.println("[LibsDisguises] Loaded " + ForgeClassMappings.size() + " Cauldron class mappings");
+                System.out.println("[LibsDisguises] Loaded " + ForgeFieldMappings.size() + " Cauldron field mappings");
+                System.out.println("[LibsDisguises] Loaded " + ForgeMethodMappings.size() + " Cauldron method mappings");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
-                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file");
+                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file");
+                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             }
         }
     }
 
-    private static final Class craftItemClass;
+    private static final Class<?> craftItemClass;
     private static final Field pingField;
     private static final Field trackerField;
     private static final Field entitiesField;
@@ -224,34 +206,15 @@ public class ReflectionManager {
         trackerField = getNmsField("WorldServer", "tracker");
         entitiesField = getNmsField("EntityTracker", "trackedEntities");
         ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+
+        Method m = getNmsMethod("Item", "getItemOf", getNmsClass("Block"));
+        System.out.println(m);
+
+        DisguiseType.ARROW.isMisc();
     }
 
     private static String dir2fqn(String s) {
         return s.replaceAll("/", ".");
-    }
-
-    public static Class<?>[] parseSignatureArguments(String args) throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        Matcher matcher = signatureSegment.matcher(args);
-        while (matcher.find()) {
-            classes.add(parseClass(matcher.group()));
-        }
-        return classes.toArray(new Class<?>[classes.size()]);
-    }
-
-    private static Class<?> parseClass(String str) throws ClassNotFoundException {
-        if (str.startsWith("[")) {
-            // Array
-            // http://stackoverflow.com/a/4901192/1210278
-            return java.lang.reflect.Array.newInstance(parseClass(str.substring(1)), 0).getClass();
-        } else if (str.length() == 1) {
-            return primitiveTypes.get(str);
-        } else if (str.startsWith("L")) {
-            // Chop off L and ;
-            return Class.forName(str.substring(1, str.length() - 1));
-        } else {
-            throw new ClassNotFoundException("Malformed method signature fragment? Argument: " + str);
-        }
     }
 
     // ===
@@ -327,7 +290,7 @@ public class ReflectionManager {
 
     public static Entity getBukkitEntity(Object nmsEntity) {
         try {
-            return (Entity) ReflectionManager.getNmsClass("Entity").getMethod("getBukkitEntity").invoke(nmsEntity);
+            return (Entity) getNmsMethod("Entity", "getBukkitEntity").invoke(nmsEntity);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -347,7 +310,7 @@ public class ReflectionManager {
         return bukkitVersion;
     }
 
-    public static Class getCraftClass(String className) {
+    public static Class<?> getCraftClass(String className) {
         try {
             return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
@@ -358,8 +321,7 @@ public class ReflectionManager {
 
     public static String getCraftSound(Sound sound) {
         try {
-            Class c = getCraftClass("CraftSound");
-            return (String) c.getMethod("getSound", Sound.class).invoke(null, sound);
+            return (String) getCraftClass("CraftSound").getMethod("getSound", Sound.class).invoke(null, sound);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -368,8 +330,7 @@ public class ReflectionManager {
 
     public static String getEnumArt(Art art) {
         try {
-            Class craftArt = Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + ".CraftArt");
-            Object enumArt = craftArt.getMethod("BukkitToNotch", Art.class).invoke(null, art);
+            Object enumArt = getCraftClass("CraftArt").getMethod("BukkitToNotch", Art.class).invoke(null, art);
             for (Field field : enumArt.getClass().getFields()) {
                 if (field.getType() == String.class) {
                     return (String) field.get(enumArt);
@@ -416,15 +377,17 @@ public class ReflectionManager {
     }
 
     public static Class getNmsClass(String className) {
-        try {
-            if (isForge) {
-                String forgeName = ForgeClassMappings.get(className);
-                if (forgeName == null) {
-                    throw new RuntimeException("Missing Forge mapping for " + className);
+        if (isForge) {
+            String forgeName = ForgeClassMappings.get(className);
+            if (forgeName != null) {
+                try {
+                    return Class.forName(forgeName);
+                } catch (ClassNotFoundException ignored) {
                 }
-                return Class.forName(forgeName);
-            }
-
+            } else
+                throw new RuntimeException("Missing Forge mapping for " + className);
+        }
+        try {
             return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
             e.printStackTrace();
@@ -455,14 +418,21 @@ public class ReflectionManager {
     }
 
     public static Field getNmsField(Class clazz, String fieldName) {
-        try {
-            if (isForge) {
-                Map<String, String> fieldMap = ForgeFieldMappings.get(clazz.getName());
-                if (fieldMap == null) { throw new RuntimeException("No field mappings for " + clazz.getName()); }
+        if (isForge) {
+            Map<String, String> fieldMap = ForgeFieldMappings.get(clazz.getName());
+            if (fieldMap != null) {
                 String forgeName = fieldMap.get(fieldName);
-                if (forgeName == null) { throw new RuntimeException("No field mapping for " + clazz.getName() + "." + fieldName); }
-                return clazz.getField(forgeName);
-            }
+                if (forgeName != null) {
+                    try {
+                        return clazz.getField(forgeName);
+                    } catch (NoSuchFieldException ignored) {
+                    }
+                } else
+                    throw new RuntimeException("No field mapping for " + clazz.getName() + "." + fieldName);
+            } else
+                throw new RuntimeException("No field mappings for " + clazz.getName());
+        }
+        try {
             return clazz.getField(fieldName);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -474,17 +444,40 @@ public class ReflectionManager {
         return getNmsMethod(getNmsClass(className), methodName, parameters);
     }
 
+    private static String methodSignaturePart(Class<?> param) {
+        if (param.isArray()) {
+            return "[" + methodSignaturePart(param.getComponentType());
+        } else if (param.isPrimitive()) {
+            return primitiveTypes.get(param);
+        } else {
+            return "L" + param.getName().replaceAll("\\.", "/") + ";";
+        }
+    }
+
     public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
+        if (isForge) {
+            Map<String, Map<String, String>> middleMap = ForgeMethodMappings.get(clazz.getName());
+            if (middleMap != null) {
+                Map<String, String> innerMap = middleMap.get(methodName);
+                if (innerMap != null) {
+                    StringBuilder sb = new StringBuilder();
+                    for (Class<?> cl : parameters) {
+                        sb.append(methodSignaturePart(cl));
+                    }
+                    String trName = innerMap.get(sb.toString());
+                    if (trName != null) {
+                        try {
+                            return clazz.getMethod(trName, parameters);
+                        } catch (NoSuchMethodException ignored) {
+                        }
+                    } else
+                        throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName + "(" + sb.toString() + ")");
+                } else
+                    throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName);
+            } else
+                throw new RuntimeException("No method mappings for " + clazz.getName());
+        }
         try {
-            if (isForge) {
-                Map<String, Map<Class<?>[], String>> middleMap = ForgeMethodMappings.get(clazz.getName());
-                if (middleMap == null) { throw new RuntimeException("No method mappings for " + clazz.getName()); }
-                Map<Class<?>[], String> innerMap = middleMap.get(methodName);
-                if (innerMap == null) { throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName); }
-                String trName = innerMap.get(parameters);
-                if (trName == null) { throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName + "(" + parameters + ")"); }
-                return clazz.getMethod(trName, parameters);
-            }
             return clazz.getMethod(methodName, parameters);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -550,7 +543,7 @@ public class ReflectionManager {
 
     public static WrappedGameProfile grabProfileAddUUID(String playername) {
         try {
-            Object minecraftServer = getNmsClass("MinecraftServer").getMethod("getServer").invoke(null);
+            Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
             for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                 if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
                     Object profileRepo = method.invoke(minecraftServer);
