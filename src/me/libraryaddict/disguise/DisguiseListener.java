@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -121,13 +122,7 @@ public class DisguiseListener implements Listener {
             if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
                 entityName = ((Player) entity).getName();
             } else {
-                String[] split = entity.getType().name().split("_");
-                for (int i = 0; i < split.length; i++) {
-                    entityName += split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-                    if (i + 1 < split.length) {
-                        entityName += " ";
-                    }
-                }
+                entityName = DisguiseType.getType(entity).toReadable();
             }
             if (disguiseClone.containsKey(p.getName())) {
                 Boolean[] options = disguiseClone.remove(p.getName());
@@ -178,13 +173,7 @@ public class DisguiseListener implements Listener {
                         if (disguise instanceof PlayerDisguise) {
                             disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
                         } else {
-                            String[] split = disguise.getType().name().split("_");
-                            for (int i = 0; i < split.length; i++) {
-                                disguiseName += split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
-                                if (i + 1 < split.length) {
-                                    disguiseName += " ";
-                                }
-                            }
+                            disguiseName += disguise.getType().toReadable();
                         }
                         if (disguise.isDisguiseInUse()) {
                             p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
