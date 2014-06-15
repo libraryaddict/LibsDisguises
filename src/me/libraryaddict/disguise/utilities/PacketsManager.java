@@ -518,7 +518,9 @@ public class PacketsManager {
                     Entity disguisedEntity = null;
                     DisguiseSound entitySound = null;
                     Disguise disguise = null;
-                    for (Entity entity : soundLoc.getChunk().getEntities()) {
+                    Entity[] entities = soundLoc.getChunk().getEntities();
+                    for (int i = 0; i < entities.length; i++) {
+                        Entity entity = entities[i];
                         Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
                         if (entityDisguise != null) {
                             Location loc = entity.getLocation();
@@ -546,10 +548,12 @@ public class PacketsManager {
                                         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
                                         try {
                                             if (entity instanceof LivingEntity) {
-                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(nmsEntity) ==
-                                                        ReflectionManager.getNmsField("EntityLiving", "maxNoDamageTicks").getInt(nmsEntity);
+                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
+                                                        nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
+                                                        "maxNoDamageTicks").getInt(nmsEntity);
                                             } else {
-                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable").invoke(nmsEntity);
+                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable")
+                                                        .invoke(nmsEntity);
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
@@ -583,13 +587,15 @@ public class PacketsManager {
                                             Object block;
                                             if (LibVersion.is1_7()) {
                                                 block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
-                                                        .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null), typeId);
+                                                        .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
+                                                                typeId);
                                             } else {
                                                 block = ((Object[]) ReflectionManager.getNmsField("Block", "byId").get(null))[typeId];
                                             }
                                             if (block != null) {
                                                 Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
-                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
+                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound")
+                                                        .invoke(step));
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
