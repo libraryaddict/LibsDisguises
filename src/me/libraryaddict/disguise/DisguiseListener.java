@@ -180,7 +180,7 @@ public class DisguiseListener implements Listener {
                         } else {
                             String[] split = disguise.getType().name().split("_");
                             for (int i = 0; i < split.length; i++) {
-                                disguiseName += split[0].substring(0, 1) + split[0].substring(1).toLowerCase();
+                                disguiseName += split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
                                 if (i + 1 < split.length) {
                                     disguiseName += " ";
                                 }
