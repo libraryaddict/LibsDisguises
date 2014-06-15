@@ -384,8 +384,10 @@ public class ReflectionManager {
                     return Class.forName(forgeName);
                 } catch (ClassNotFoundException ignored) {
                 }
-            } else
+            } else {
+                // Throw, because the default cannot possibly work
                 throw new RuntimeException("Missing Forge mapping for " + className);
+            }
         }
         try {
             return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
@@ -419,18 +421,12 @@ public class ReflectionManager {
 
     public static Field getNmsField(Class clazz, String fieldName) {
         if (isForge) {
-            Map<String, String> fieldMap = ForgeFieldMappings.get(clazz.getName());
-            if (fieldMap != null) {
-                String forgeName = fieldMap.get(fieldName);
-                if (forgeName != null) {
-                    try {
-                        return clazz.getField(forgeName);
-                    } catch (NoSuchFieldException ignored) {
-                    }
-                } else
-                    throw new RuntimeException("No field mapping for " + clazz.getName() + "." + fieldName);
-            } else
-                throw new RuntimeException("No field mappings for " + clazz.getName());
+            try {
+                return clazz.getField(ForgeFieldMappings.get(clazz.getName()).get(fieldName));
+            } catch (NoSuchFieldException ex) {
+                ex.printStackTrace();
+            } catch (NullPointerException ignored) {
+            }
         }
         try {
             return clazz.getField(fieldName);
@@ -456,26 +452,17 @@ public class ReflectionManager {
 
     public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         if (isForge) {
-            Map<String, Map<String, String>> middleMap = ForgeMethodMappings.get(clazz.getName());
-            if (middleMap != null) {
-                Map<String, String> innerMap = middleMap.get(methodName);
-                if (innerMap != null) {
-                    StringBuilder sb = new StringBuilder();
-                    for (Class<?> cl : parameters) {
-                        sb.append(methodSignaturePart(cl));
-                    }
-                    String trName = innerMap.get(sb.toString());
-                    if (trName != null) {
-                        try {
-                            return clazz.getMethod(trName, parameters);
-                        } catch (NoSuchMethodException ignored) {
-                        }
-                    } else
-                        throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName + "(" + sb.toString() + ")");
-                } else
-                    throw new RuntimeException("No method mapping for " + clazz.getName() + "." + methodName);
-            } else
-                throw new RuntimeException("No method mappings for " + clazz.getName());
+            try {
+                Map<String, String> innerMap = ForgeMethodMappings.get(clazz.getName()).get(methodName);
+                StringBuilder sb = new StringBuilder();
+                for (Class<?> cl : parameters) {
+                    sb.append(methodSignaturePart(cl));
+                }
+                return clazz.getMethod(innerMap.get(sb.toString()), parameters);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (NullPointerException ignored) {
+            }
         }
         try {
             return clazz.getMethod(methodName, parameters);
