@@ -73,7 +73,7 @@ public class DisguiseConfig {
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
-        setEnquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Enquipment"));
+        setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
         setBedPacketsEnabled(config.getBoolean("PacketsEnabled.Bed"));
         setRidingPacketsEnabled(config.getBoolean("PacketsEnabled.Riding"));
