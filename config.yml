@@ -103,7 +103,7 @@ PacketsEnabled:
   Collect: true
   # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
   EntityStatus: true
-  # Entity enquipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
+  # Entity equipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
   # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
   Enquipment: true
   # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.

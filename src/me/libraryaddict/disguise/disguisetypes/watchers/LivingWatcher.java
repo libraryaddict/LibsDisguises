@@ -27,8 +27,7 @@ public class LivingWatcher extends FlagWatcher {
     static Method potionNo;
     static {
         try {
-            Class mobEffectList = ReflectionManager.getNmsClass("MobEffectList");
-            list = (Object[]) mobEffectList.getField("byId").get(null);
+            list = (Object[]) ReflectionManager.getNmsField("MobEffectList", "byId").get(null);
             for (Object obj : list) {
                 if (obj != null) {
                     for (Method field : obj.getClass().getMethods()) {

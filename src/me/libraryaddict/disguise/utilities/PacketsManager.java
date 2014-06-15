@@ -120,7 +120,7 @@ public class PacketsManager {
         ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
-        if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
                 int armorSlot = nmsSlot - 1;
                 if (armorSlot < 0)
@@ -530,6 +530,7 @@ public class PacketsManager {
                                     Object obj = null;
                                     if (entity instanceof LivingEntity) {
                                         try {
+                                            // Use reflection so that this works for either int or double methods
                                             obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
                                             if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
                                                 soundType = SoundType.DEATH;
@@ -544,13 +545,11 @@ public class PacketsManager {
                                         boolean hasInvun = false;
                                         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
                                         try {
-                                            Class entityClass = ReflectionManager.getNmsClass("Entity");
                                             if (entity instanceof LivingEntity) {
-                                                hasInvun = entityClass.getField("noDamageTicks").getInt(nmsEntity) == ReflectionManager
-                                                        .getNmsClass("EntityLiving").getField("maxNoDamageTicks")
-                                                        .getInt(nmsEntity);
+                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(nmsEntity) ==
+                                                        ReflectionManager.getNmsField("EntityLiving", "maxNoDamageTicks").getInt(nmsEntity);
                                             } else {
-                                                hasInvun = (Boolean) entityClass.getMethod("isInvulnerable").invoke(nmsEntity);
+                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable").invoke(nmsEntity);
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
@@ -581,18 +580,16 @@ public class PacketsManager {
                                         try {
                                             int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
                                                     soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
-                                            Class blockClass = ReflectionManager.getNmsClass("Block");
                                             Object block;
                                             if (LibVersion.is1_7()) {
-                                                block = ReflectionManager.getNmsClass("RegistryMaterials")
-                                                        .getMethod("a", int.class)
-                                                        .invoke(blockClass.getField("REGISTRY").get(null), typeId);
+                                                block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
+                                                        .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null), typeId);
                                             } else {
-                                                block = ((Object[]) blockClass.getField("byId").get(null))[typeId];
+                                                block = ((Object[]) ReflectionManager.getNmsField("Block", "byId").get(null))[typeId];
                                             }
                                             if (block != null) {
-                                                Object step = blockClass.getField("stepSound").get(block);
-                                                mods.write(0, step.getClass().getMethod("getStepSound").invoke(step));
+                                                Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
+                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
@@ -1130,8 +1127,8 @@ public class PacketsManager {
                 packetsToListen.add(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
                 packetsToListen.add(PacketType.Play.Server.ENTITY_TELEPORT);
             }
-            // Add enquipment packet
-            if (DisguiseConfig.isEnquipmentPacketsEnabled()) {
+            // Add equipment packet
+            if (DisguiseConfig.isEquipmentPacketsEnabled()) {
                 packetsToListen.add(PacketType.Play.Server.ENTITY_EQUIPMENT);
             }
             // Add the packet that ensures if they are sleeping or not
