@@ -1,31 +1,28 @@
 package me.libraryaddict.disguise.utilities;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ReflectionManagerTests {
 
     @Test
     public void testParseSignatureArguments() throws Exception {
-        List<Class<?>> expect, actual;
+        Class<?>[] expect, actual;
 
-        expect = ImmutableList.<Class<?>>of(boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class);
+        expect = new Class<?>[] {boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
         actual = ReflectionManager.parseSignatureArguments("ZBCSIJFD");
         assertEquals(expect, actual);
 
-        expect = ImmutableList.<Class<?>>of(int.class, String[].class, int.class);
-        actual = ReflectionManager.parseSignatureArguments("I[Ljava/lang/String;I");
+        expect = new Class<?>[] {int.class, String[].class, int.class, String.class};
+        actual = ReflectionManager.parseSignatureArguments("I[Ljava/lang/String;ILjava/lang/String;");
         assertEquals(expect, actual);
 
-        expect = ImmutableList.<Class<?>>of();
+        expect = new Class<?>[] {};
         actual = ReflectionManager.parseSignatureArguments("");
         assertEquals(expect, actual);
 
-        expect = ImmutableList.<Class<?>>of(boolean[][][][][][].class);
+        expect = new Class<?>[] {boolean[][][][][][].class};
         actual = ReflectionManager.parseSignatureArguments("[[[[[[Z");
         assertEquals(expect, actual);
     }
