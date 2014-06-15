@@ -147,6 +147,8 @@ public enum DisguiseType {
                 switch (type) {
                 // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                 // Usable.
+                case ITEM_FRAME:
+                    break;
                 case DONKEY:
                 case MULE:
                 case UNDEAD_HORSE:
