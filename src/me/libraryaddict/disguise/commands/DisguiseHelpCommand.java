@@ -158,6 +158,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     ArrayList<String> methods = new ArrayList<String>();
                     HashMap<String, ChatColor> map = new HashMap<String, ChatColor>();
                     Class watcher = type.getWatcherClass();
+                    int ignored = 0;
                     try {
                         for (Method method : watcher.getMethods()) {
                             if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
@@ -176,6 +177,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                         }
                                     }
                                     if (!allowed) {
+                                        ignored++;
                                         continue;
                                     }
                                 }
@@ -233,6 +235,10 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     }
                     sender.sendMessage(ChatColor.DARK_RED + type.toReadable() + " options: "
                             + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
+                    if (ignored > 0) {
+                        sender.sendMessage(ChatColor.RED + "Ignored " + ignored
+                                + " options you do not have permission to view. Add 'show' to view unusable options.");
+                    }
                     return true;
                 }
             }
