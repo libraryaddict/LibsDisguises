@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.commands;
 
-
 import me.libraryaddict.disguise.DisguiseAPI;
 
 import org.bukkit.ChatColor;
@@ -9,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
 
 public class UndisguiseCommand implements CommandExecutor {
 

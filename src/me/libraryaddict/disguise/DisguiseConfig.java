@@ -14,9 +14,9 @@ public class DisguiseConfig {
     private static String disguiseBlownMessage;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
-    private static boolean equipmentEnabled;
     private static boolean entityAnimationsAdded;
     private static boolean entityStatusEnabled;
+    private static boolean equipmentEnabled;
     private static boolean hearSelfDisguise;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
@@ -105,13 +105,13 @@ public class DisguiseConfig {
         return blowDisguisesOnAttack;
     }
 
-    public static boolean isEquipmentPacketsEnabled() {
-        return equipmentEnabled;
-    }
     /**
      * @deprecated Spelling mistake.
      */
-    @Deprecated public static boolean isEnquipmentPacketsEnabled() { return equipmentEnabled; }
+    @Deprecated
+    public static boolean isEnquipmentPacketsEnabled() {
+        return equipmentEnabled;
+    }
 
     public static boolean isEntityAnimationsAdded() {
         return entityAnimationsAdded;
@@ -119,6 +119,10 @@ public class DisguiseConfig {
 
     public static boolean isEntityStatusPacketsEnabled() {
         return entityStatusEnabled;
+    }
+
+    public static boolean isEquipmentPacketsEnabled() {
+        return equipmentEnabled;
     }
 
     /**

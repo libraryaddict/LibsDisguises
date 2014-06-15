@@ -204,8 +204,8 @@ public class DisguiseUtilities {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry);
+                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                        entityTrackerEntry);
                 HashSet cloned = (HashSet) trackedPlayers.clone();
                 PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
                 destroyPacket.getIntegerArrays().write(0, new int[] { disguise.getEntity().getEntityId() });
@@ -323,8 +323,8 @@ public class DisguiseUtilities {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry);
+                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                        entityTrackerEntry);
                 for (Object p : trackedPlayers) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
                     if (((TargetedDisguise) disguise).canSee(player)) {
@@ -460,8 +460,8 @@ public class DisguiseUtilities {
             try {
                 Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                 if (entityTrackerEntry != null) {
-                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry);
+                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                            entityTrackerEntry);
                     Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
@@ -489,8 +489,8 @@ public class DisguiseUtilities {
             try {
                 Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
                 if (entityTrackerEntry != null) {
-                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry);
+                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                            entityTrackerEntry);
                     Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
@@ -520,8 +520,8 @@ public class DisguiseUtilities {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
-                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry);
+                HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                        entityTrackerEntry);
                 Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                         ReflectionManager.getNmsClass("EntityPlayer"));
                 Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
@@ -582,8 +582,8 @@ public class DisguiseUtilities {
             try {
                 Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
                 if (entityTrackerEntry != null) {
-                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry);
+                    HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
+                            entityTrackerEntry);
                     // If the tracker exists. Remove himself from his tracker
                     trackedPlayers.remove(ReflectionManager.getNmsEntity(player));
                 }
@@ -631,7 +631,8 @@ public class DisguiseUtilities {
             }
             int fakeId = selfDisguisesIds.get(player.getUniqueId());
             // Add himself to his own entity tracker
-            ((HashSet<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry)).add(ReflectionManager.getNmsEntity(player));
+            ((HashSet<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry))
+                    .add(ReflectionManager.getNmsEntity(player));
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
             // Send the player a packet with himself being spawned
             manager.sendServerPacket(player, manager.createPacketConstructor(PacketType.Play.Server.NAMED_ENTITY_SPAWN, player)

@@ -32,7 +32,8 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
             boolean doSneak = false;
             boolean doSprint = false;
             for (String option : args) {
-                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip") || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
+                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip")
+                        || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
                     doEquipment = false;
                 } else if (option.equalsIgnoreCase("doSneakSprint")) {
                     doSneak = true;
@@ -62,8 +63,9 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
-        sender.sendMessage(ChatColor.DARK_GREEN + "Security note: Any references you create will be available to all players able to use disguise references.");
-        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "("
-                + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")");
+        sender.sendMessage(ChatColor.DARK_GREEN
+                + "Security note: Any references you create will be available to all players able to use disguise references.");
+        sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN
+                + "Optional" + ChatColor.DARK_GREEN + ")");
     }
 }

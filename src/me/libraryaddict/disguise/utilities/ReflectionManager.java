@@ -64,8 +64,10 @@ public class ReflectionManager {
     }
 
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-    private static final boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+    private static final Class<?> craftItemClass;
 
+    private static Method damageAndIdleSoundMethod;
+    private static final Field entitiesField;
     /**
      * Map of mc-dev simple class name to fully qualified Forge class name.
      */
@@ -74,26 +76,25 @@ public class ReflectionManager {
      * Map of Forge fully qualified class names to a map from mc-dev field names to Forge field names.
      */
     private static Map<String, Map<String, String>> ForgeFieldMappings;
+
     /**
-     * Map of Forge fully qualified class names to a map from mc-dev method names to a map from method signatures to Forge method names.
+     * Map of Forge fully qualified class names to a map from mc-dev method names to a map from method signatures to Forge method
+     * names.
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
-    private static Map<Class<?>, String> primitiveTypes;
 
+    private static final Method ihmGet;
+    private static final boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+    private static final Field pingField;
+    private static Map<Class<?>, String> primitiveTypes;
+    private static final Field trackerField;
     static {
         final String nameseg_class = "a-zA-Z0-9$_";
         final String fqn_class = nameseg_class + "/";
 
-        primitiveTypes = ImmutableMap.<Class<?>, String>builder()
-                .put(boolean.class,"Z")
-                .put(byte.class,   "B")
-                .put(char.class,   "C")
-                .put(short.class,  "S")
-                .put(int.class,    "I")
-                .put(long.class,   "J")
-                .put(float.class,  "F")
-                .put(double.class, "D")
-                .put(void.class,   "V").build();
+        primitiveTypes = ImmutableMap.<Class<?>, String> builder().put(boolean.class, "Z").put(byte.class, "B")
+                .put(char.class, "C").put(short.class, "S").put(int.class, "I").put(long.class, "J").put(float.class, "F")
+                .put(double.class, "D").put(void.class, "V").build();
 
         if (isForge) {
             // Initialize the maps by reading the srg file
@@ -107,12 +108,14 @@ public class ReflectionManager {
 
                 // 1: cb-simpleName
                 // 2: forge-fullName (Needs dir2fqn())
-                Pattern classPattern = Pattern.compile("^CL: net/minecraft/server/([" + nameseg_class + "]+) ([" + fqn_class + "]+)$");
+                Pattern classPattern = Pattern.compile("^CL: net/minecraft/server/([" + nameseg_class + "]+) ([" + fqn_class
+                        + "]+)$");
                 // 1: cb-simpleName
                 // 2: cb-fieldName
                 // 3: forge-fullName (Needs dir2fqn())
                 // 4: forge-fieldName
-                Pattern fieldPattern = Pattern.compile("^FD: net/minecraft/server/([" + nameseg_class + "]+)/([" + nameseg_class + "]+) ([" + fqn_class + "]+)/([" + nameseg_class + "]+)$");
+                Pattern fieldPattern = Pattern.compile("^FD: net/minecraft/server/([" + nameseg_class + "]+)/([" + nameseg_class
+                        + "]+) ([" + fqn_class + "]+)/([" + nameseg_class + "]+)$");
                 // 1: cb-simpleName
                 // 2: cb-methodName
                 // 3: cb-signature-args
@@ -121,8 +124,9 @@ public class ReflectionManager {
                 // 6: forge-methodName
                 // 7: forge-signature-args
                 // 8: forge-signature-ret
-                Pattern methodPattern = Pattern.compile("^MD: net/minecraft/server/([" + fqn_class + "]+)/([" + nameseg_class + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+) " +
-                        "([" + fqn_class + "]+)/([" + nameseg_class + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+)$");
+                Pattern methodPattern = Pattern.compile("^MD: net/minecraft/server/([" + fqn_class + "]+)/([" + nameseg_class
+                        + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+) " + "([" + fqn_class + "]+)/(["
+                        + nameseg_class + "]+) \\(([;\\[" + fqn_class + "]*)\\)([;\\[" + fqn_class + "]+)$");
 
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -169,20 +173,15 @@ public class ReflectionManager {
                 System.out.println("[LibsDisguises] Loaded " + ForgeMethodMappings.size() + " Cauldron method mappings");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
-                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
+                System.err
+                        .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             } catch (IOException e) {
                 e.printStackTrace();
-                System.err.println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
+                System.err
+                        .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             }
         }
     }
-
-    private static final Class<?> craftItemClass;
-    private static final Field pingField;
-    private static final Field trackerField;
-    private static final Field entitiesField;
-    private static final Method ihmGet;
-    private static Method damageAndIdleSoundMethod;
 
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
@@ -213,12 +212,6 @@ public class ReflectionManager {
         DisguiseType.ARROW.isMisc();
     }
 
-    private static String dir2fqn(String s) {
-        return s.replaceAll("/", ".");
-    }
-
-    // ===
-
     public static Object createEntityInstance(String entityName) {
         try {
             Class<?> entityClass = getNmsClass("Entity" + entityName);
@@ -246,6 +239,12 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // ===
+
+    private static String dir2fqn(String s) {
+        return s.replaceAll("/", ".");
     }
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
@@ -328,6 +327,13 @@ public class ReflectionManager {
         return null;
     }
 
+    static Object getEntityTrackerEntry(Entity target) throws Exception {
+        Object world = getWorld(target.getWorld());
+        Object tracker = trackerField.get(world);
+        Object trackedEntities = entitiesField.get(tracker);
+        return ihmGet.invoke(trackedEntities, target.getEntityId());
+    }
+
     public static String getEnumArt(Art art) {
         try {
             Object enumArt = getCraftClass("CraftArt").getMethod("BukkitToNotch", Art.class).invoke(null, art);
@@ -340,13 +346,6 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
         return null;
-    }
-
-    static Object getEntityTrackerEntry(Entity target) throws Exception {
-        Object world = getWorld(target.getWorld());
-        Object tracker = trackerField.get(world);
-        Object trackedEntities = entitiesField.get(tracker);
-        return ihmGet.invoke(trackedEntities, target.getEntityId());
     }
 
     public static WrappedGameProfile getGameProfile(Player player) {
@@ -406,19 +405,6 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getNmsItem(ItemStack itemstack) {
-        try {
-            return craftItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Field getNmsField(String className, String fieldName) {
-        return getNmsField(getNmsClass(className), fieldName);
-    }
-
     public static Field getNmsField(Class clazz, String fieldName) {
         if (isForge) {
             try {
@@ -436,18 +422,17 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Method getNmsMethod(String className, String methodName, Class<?>... parameters) {
-        return getNmsMethod(getNmsClass(className), methodName, parameters);
+    public static Field getNmsField(String className, String fieldName) {
+        return getNmsField(getNmsClass(className), fieldName);
     }
 
-    private static String methodSignaturePart(Class<?> param) {
-        if (param.isArray()) {
-            return "[" + methodSignaturePart(param.getComponentType());
-        } else if (param.isPrimitive()) {
-            return primitiveTypes.get(param);
-        } else {
-            return "L" + param.getName().replaceAll("\\.", "/") + ";";
+    public static Object getNmsItem(ItemStack itemstack) {
+        try {
+            return craftItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
@@ -470,6 +455,10 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Method getNmsMethod(String className, String methodName, Class<?>... parameters) {
+        return getNmsMethod(getNmsClass(className), methodName, parameters);
     }
 
     public static double getPing(Player player) {
@@ -552,6 +541,16 @@ public class ReflectionManager {
 
     public static boolean hasSkinBlob(WrappedGameProfile gameProfile) {
         return !gameProfile.getProperties().isEmpty();
+    }
+
+    private static String methodSignaturePart(Class<?> param) {
+        if (param.isArray()) {
+            return "[" + methodSignaturePart(param.getComponentType());
+        } else if (param.isPrimitive()) {
+            return primitiveTypes.get(param);
+        } else {
+            return "L" + param.getName().replaceAll("\\.", "/") + ";";
+        }
     }
 
     public static void setAllowSleep(Player player) {
