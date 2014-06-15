@@ -269,16 +269,21 @@ public class DisguiseConfig {
         disguiseEntityExpire = newExpires;
     }
 
+    @Deprecated
     public static void setEnquipmentPacketsEnabled(boolean enabled) {
-        if (enabled != isEquipmentPacketsEnabled()) {
-            equipmentEnabled = enabled;
-            PacketsManager.setupMainPacketsListener();
-        }
+        setEquipmentPacketsEnabled(enabled);
     }
 
     public static void setEntityStatusPacketsEnabled(boolean enabled) {
         if (enabled != isEntityStatusPacketsEnabled()) {
             entityStatusEnabled = enabled;
+            PacketsManager.setupMainPacketsListener();
+        }
+    }
+
+    public static void setEquipmentPacketsEnabled(boolean enabled) {
+        if (enabled != isEquipmentPacketsEnabled()) {
+            equipmentEnabled = enabled;
             PacketsManager.setupMainPacketsListener();
         }
     }
