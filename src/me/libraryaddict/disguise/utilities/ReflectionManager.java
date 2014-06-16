@@ -85,6 +85,15 @@ public class ReflectionManager {
     private static final Field pingField;
     private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
+    
+    /*
+     * This portion of code is originally Copyright (C) 2014-2014 Kane York.
+     *
+     * In addition to the implicit license granted to libraryaddict to redistribuite the code, the
+     * code is also licensed to the public under the BSD 2-clause license.
+     *
+     * The publicly licensed version may be viewed here: https://gist.github.com/riking/2f330f831c30e2276df7
+     */
     static {
         final String nameseg_class = "a-zA-Z0-9$_";
         final String fqn_class = nameseg_class + "/";
