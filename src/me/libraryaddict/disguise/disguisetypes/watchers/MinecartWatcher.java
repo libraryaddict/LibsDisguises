@@ -17,8 +17,13 @@ public class MinecartWatcher extends FlagWatcher {
         return new ItemStack(id, 1, (short) data);
     }
 
-    public int getBlockOffSet() {
+    public int getBlockOffset() {
         return (Integer) getValue(21, 0);
+    }
+
+    @Deprecated
+    public int getBlockOffSet() {
+        return getBlockOffset();
     }
 
     public float getDamage() {
@@ -33,13 +38,18 @@ public class MinecartWatcher extends FlagWatcher {
         int id = item.getTypeId();
         int data = item.getDurability();
         setValue(20, (int) (id & 0xffff | data << 16));
-        sendData(20);
-        setViewBlockInCart(true);
+        setValue(22, (byte) 1);
+        sendData(20, 22);
     }
 
-    public void setBlockOffSet(int i) {
+    public void setBlockOffset(int i) {
         setValue(21, i);
         sendData(21);
+    }
+
+    @Deprecated
+    public void setBlockOffSet(int i) {
+        setBlockOffset(i);
     }
 
     public void setDamage(float damage) {
@@ -47,8 +57,8 @@ public class MinecartWatcher extends FlagWatcher {
         sendData(19);
     }
 
-    public void setViewBlockInCart(boolean custom) {
-        setValue(22, (byte) (custom ? 1 : 0));
+    public void setViewBlockInCart(boolean viewBlock) {
+        setValue(22, (byte) (viewBlock ? 1 : 0));
         sendData(22);
     }
 }
