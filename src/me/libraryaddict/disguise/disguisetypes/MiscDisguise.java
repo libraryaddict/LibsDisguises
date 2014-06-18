@@ -11,8 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class MiscDisguise extends TargetedDisguise {
-    private Integer data;
-    private int id = -1;
+    private int id = -1, data = 0;
 
     public MiscDisguise(DisguiseType disguiseType) {
         this(disguiseType, -1, -1);
@@ -120,7 +119,7 @@ public class MiscDisguise extends TargetedDisguise {
     /**
      * This is the getId of everything but falling block.
      */
-    public Integer getData() {
+    public int getData() {
         switch (getType()) {
         case FALLING_BLOCK:
             return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();

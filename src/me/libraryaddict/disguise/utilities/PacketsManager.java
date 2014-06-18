@@ -294,16 +294,12 @@ public class PacketsManager {
         } else if (disguise.getType().isMisc()) {
 
             int id = disguise.getType().getEntityId();
-            Integer data = ((MiscDisguise) disguise).getData();
+            int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 data = (((MiscDisguise) disguise).getId() | data << 16);
-            } else if (disguise.getType() == DisguiseType.FISHING_HOOK) {
+            } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
-                if (data == null) {
-                    data = disguisedEntity.getEntityId();
-                }
-            } else if (data == null) {
-                data = 0;
+                data = disguisedEntity.getEntityId();
             }
             /*     else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                      data = (int) loc.getYaw();
