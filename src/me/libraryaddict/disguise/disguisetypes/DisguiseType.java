@@ -70,6 +70,8 @@ public enum DisguiseType {
 
     MINECART_CHEST(10, 1),
 
+    MINECART_COMMAND(10, 6),
+
     MINECART_FURNACE(10, 2),
 
     MINECART_HOPPER(10, 5),
