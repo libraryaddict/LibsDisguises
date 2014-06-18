@@ -156,11 +156,12 @@ public class LibsDisguises extends JavaPlugin {
             Class watcherClass = null;
             try {
                 switch (disguiseType) {
+                case MINECART_CHEST:
+                case MINECART_COMMAND:
                 case MINECART_FURNACE:
                 case MINECART_HOPPER:
                 case MINECART_MOB_SPAWNER:
                 case MINECART_TNT:
-                case MINECART_CHEST:
                     watcherClass = MinecartWatcher.class;
                     break;
                 case DONKEY:
