@@ -144,6 +144,7 @@ public abstract class Disguise {
         case ITEM_FRAME:
         case MINECART:
         case MINECART_CHEST:
+        case MINECART_COMMAND:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:

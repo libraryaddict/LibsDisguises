@@ -17,6 +17,7 @@ public class DisguiseValues {
             type = DisguiseType.HORSE;
             break;
         case MINECART_CHEST:
+        case MINECART_COMMAND:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_TNT:

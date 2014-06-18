@@ -359,6 +359,7 @@ public class PacketsManager {
         switch (disguiseType) {
         case MINECART:
         case MINECART_CHEST:
+        case MINECART_COMMAND:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
@@ -390,6 +391,7 @@ public class PacketsManager {
         switch (disguiseType) {
         case MINECART:
         case MINECART_CHEST:
+        case MINECART_COMMAND:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
         case MINECART_MOB_SPAWNER:
@@ -455,6 +457,7 @@ public class PacketsManager {
             if (entity instanceof LivingEntity)
                 return yMod + ((LivingEntity) entity).getEyeHeight();
         case MINECART:
+        case MINECART_COMMAND:
         case MINECART_CHEST:
         case MINECART_FURNACE:
         case MINECART_HOPPER:
