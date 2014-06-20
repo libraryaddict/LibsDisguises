@@ -138,9 +138,6 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     }
                     DisguiseType type = null;
                     for (DisguiseType disguiseType : DisguiseType.values()) {
-                        if (disguiseType.getEntityType() == null) {
-                            continue;
-                        }
                         if (args[0].equalsIgnoreCase(disguiseType.name())
                                 || disguiseType.name().replace("_", "").equalsIgnoreCase(args[0])) {
                             type = disguiseType;

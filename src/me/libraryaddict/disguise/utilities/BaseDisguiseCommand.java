@@ -17,6 +17,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -66,8 +67,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 String disguiseType = perm.split("\\.")[0];
                 try {
                     DisguiseType type = DisguiseType.valueOf(disguiseType.toUpperCase());
-                    if (type.getEntityType() == null)
-                        continue;
                     HashMap<ArrayList<String>, Boolean> list;
                     if (singleDisguises.containsKey(type)) {
                         list = singleDisguises.get(type);
@@ -79,11 +78,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
                 } catch (Exception ex) {
                     for (DisguiseType type : DisguiseType.values()) {
-                        if (type.getEntityType() == null) {
-                            continue;
-                        }
                         HashMap<ArrayList<String>, Boolean> options = null;
-                        Class entityClass = type.getEntityType().getEntityClass();
+                        Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
                         if (disguiseType.equals("mob")) {
                             if (type.isMob()) {
                                 options = getOptions(perm);
@@ -131,11 +127,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     singleDisguises.remove(type);
                 } catch (Exception ex) {
                     for (DisguiseType type : DisguiseType.values()) {
-                        if (type.getEntityType() == null) {
-                            continue;
-                        }
                         boolean foundHim = false;
-                        Class entityClass = type.getEntityType().getEntityClass();
+                        Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
                         if (disguiseType.equals("mob")) {
                             if (type.isMob()) {
                                 foundHim = true;
@@ -258,9 +251,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 disguiseType = DisguiseType.PLAYER;
             } else {
                 for (DisguiseType type : DisguiseType.values()) {
-                    if (type.getEntityType() == null) {
-                        continue;
-                    }
                     if (args[0].equalsIgnoreCase(type.name()) || args[0].equalsIgnoreCase(type.name().replace("_", ""))) {
                         disguiseType = type;
                         break;
@@ -270,6 +260,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (disguiseType == null) {
                 throw new Exception(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED
                         + " doesn't exist!");
+            }
+            if (disguiseType.getEntityType() == null) {
+                throw new Exception(ChatColor.RED + "Error! This version of minecraft does not have that disguise!");
             }
             if (!map.containsKey(disguiseType)) {
                 throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
