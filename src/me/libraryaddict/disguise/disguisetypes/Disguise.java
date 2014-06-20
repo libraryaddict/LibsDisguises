@@ -177,6 +177,7 @@ public abstract class Disguise {
         velocityRunnable = new Runnable() {
             private int deadTicks = 0;
             private int refreshDisguise = 0;
+            private int blockX, blockY, blockZ, facing;
 
             public void run() {
                 // If entity is no longer valid. Remove it.
@@ -204,9 +205,18 @@ public abstract class Disguise {
                         if (refreshDisguise % 40 == 0) {
                             refreshDisguise = 0;
                             DisguiseUtilities.refreshTrackers(disguise);
-                            if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
-                                DisguiseUtilities.sendSelfDisguise((Player) getEntity(), disguise);
-                            }
+                        }
+                    }
+                    if (getType() == DisguiseType.ITEM_FRAME) {
+                        Location loc = getEntity().getLocation();
+                        int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
+                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ
+                                || newFacing != facing) {
+                            blockX = loc.getBlockX();
+                            blockY = loc.getBlockY();
+                            blockZ = loc.getBlockZ();
+                            facing = newFacing;
+                            DisguiseUtilities.refreshTrackers(disguise);
                         }
                     }
                     if (isModifyBoundingBox()) {

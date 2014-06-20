@@ -300,28 +300,20 @@ public class PacketsManager {
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
+            } else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                data = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
             }
-            /*     else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
-                     data = (int) loc.getYaw();
-                     if (data < 0)
-                         data = -data;
-                 }*/
             spawnPackets[0] = ProtocolLibrary.getProtocolManager()
                     .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, id, data)
                     .createPacket(nmsEntity, id, data);
             spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
             spawnPackets[0].getModifier().write(8, yaw);
-
-            if (disguise.getType() == DisguiseType.PAINTING) {
-                // Make the teleport packet to make it visible..
-                spawnPackets[1] = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-                StructureModifier<Object> mods = spawnPackets[1].getModifier();
-                mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, (int) Math.floor(loc.getX() * 32D));
-                mods.write(2, (int) Math.floor(loc.getY() * 32D));
-                mods.write(3, (int) Math.floor(loc.getZ() * 32D));
-                mods.write(4, yaw);
-                mods.write(5, pitch);
+            if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                if (data % 2 == 0) {
+                    spawnPackets[0].getModifier().write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
+                } else {
+                    spawnPackets[0].getModifier().write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
+                }
             }
         }
         if (spawnPackets[1] == null) {
@@ -398,11 +390,11 @@ public class PacketsManager {
         case WITHER_SKULL:
             value -= 128;
             break;
-        case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;
         case PAINTING:
+        case ITEM_FRAME:
             value = (byte) -(value + 128);
             break;
         default:
@@ -424,11 +416,11 @@ public class PacketsManager {
         case WITHER_SKULL:
             value += 128;
             break;
-        case ITEM_FRAME:
         case ARROW:
             value = (byte) -value;
             break;
         case PAINTING:
+        case ITEM_FRAME:
             value = (byte) -(value - 128);
             break;
         default:
@@ -1305,10 +1297,21 @@ public class PacketsManager {
                         byte pitchValue = (Byte) mods.read(5);
                         mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                            double y = getYModifier(entity, disguise);
-                            if (y != 0) {
-                                y *= 32;
-                                mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
+                            if (disguise.getType() == DisguiseType.ITEM_FRAME) {
+                                Location loc = entity.getLocation();
+                                int data = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
+                                if (data % 2 == 0) {
+                                    if (data % 2 == 0) {
+                                        mods.write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
+                                    } else {
+                                        mods.write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
+                                    }
+                                }
+                                double y = getYModifier(entity, disguise);
+                                if (y != 0) {
+                                    y *= 32;
+                                    mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
+                                }
                             }
                         }
                     }
