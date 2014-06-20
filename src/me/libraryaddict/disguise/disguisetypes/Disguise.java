@@ -175,9 +175,9 @@ public abstract class Disguise {
         final TargetedDisguise disguise = (TargetedDisguise) this;
         // A scheduler to clean up any unused disguises.
         velocityRunnable = new Runnable() {
+            private int blockX, blockY, blockZ, facing;
             private int deadTicks = 0;
             private int refreshDisguise = 0;
-            private int blockX, blockY, blockZ, facing;
 
             public void run() {
                 // If entity is no longer valid. Remove it.
