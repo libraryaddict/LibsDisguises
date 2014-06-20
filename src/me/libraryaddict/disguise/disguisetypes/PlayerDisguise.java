@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
-import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
@@ -102,9 +101,6 @@ public class PlayerDisguise extends TargetedDisguise {
                             setSkin(gameProfile);
                             if (DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
                                 DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
-                                if (getEntity() instanceof Player && isSelfDisguiseVisible()) {
-                                    DisguiseUtilities.sendSelfDisguise((Player) getEntity(), PlayerDisguise.this);
-                                }
                             }
                         }
                     }

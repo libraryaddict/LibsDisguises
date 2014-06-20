@@ -345,9 +345,6 @@ public class DisguiseUtilities {
                 }
                 if (DisguiseAPI.isDisguiseInUse(disguise)) {
                     DisguiseUtilities.refreshTrackers(disguise);
-                    if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
-                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                    }
                 }
             }
         });
@@ -518,6 +515,9 @@ public class DisguiseUtilities {
      */
     public static void refreshTrackers(TargetedDisguise disguise) {
         try {
+            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player) {
+                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+            }
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
                 HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
@@ -532,7 +532,7 @@ public class DisguiseUtilities {
                     // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
                     // entity))
                     // continue;
-                    if (player == disguise.getEntity() || disguise.canSee(player.getName())) {
+                    if (disguise.canSee(player.getName())) {
                         clear.invoke(entityTrackerEntry, p);
                         updatePlayer.invoke(entityTrackerEntry, p);
                     }
@@ -609,9 +609,10 @@ public class DisguiseUtilities {
     /**
      * Sends the self disguise to the player
      */
-    public static void sendSelfDisguise(final Player player, final Disguise disguise) {
+    public static void sendSelfDisguise(final Player player, final TargetedDisguise disguise) {
         try {
-            if (!player.isValid() || !player.isOnline() || !disguise.isSelfDisguiseVisible()) {
+            if (!disguise.isDisguiseInUse() || !player.isValid() || !player.isOnline() || !disguise.isSelfDisguiseVisible()
+                    || !disguise.canSee(player)) {
                 return;
             }
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
@@ -748,7 +749,7 @@ public class DisguiseUtilities {
             return;
         }
         selfDisguised.add(player.getUniqueId());
-        sendSelfDisguise(player, disguise);
+        sendSelfDisguise(player, (TargetedDisguise) disguise);
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
             if (PacketsManager.isInventoryListenerEnabled()) {
                 player.updateInventory();
