@@ -10,26 +10,28 @@ public class ItemFrameWatcher extends FlagWatcher {
         super(disguise);
     }
 
-    public int getItemRotation() {
-        return (Integer) getValue(3, 0);
-    }
-
-    public ItemStack getItemStack() {
+    public ItemStack getItem() {
         if (getValue(2, null) == null)
             return new ItemStack(0);
         return (ItemStack) getValue(2, null);
     }
 
-    public void setItemRotation(int rotation) {
-        setValue(3, (byte) (rotation % 4));
-        sendData(3);
+    public int getRotation() {
+        return (Integer) getValue(3, 0);
     }
 
-    public void setItemStack(ItemStack newItem) {
+    public void setItem(ItemStack newItem) {
+        if (newItem == null)
+            newItem = new ItemStack(0);
         newItem = newItem.clone();
         newItem.setAmount(1);
         setValue(2, newItem);
         sendData(2);
+    }
+
+    public void setRotation(int rotation) {
+        setValue(3, (byte) (rotation % 4));
+        sendData(3);
     }
 
 }

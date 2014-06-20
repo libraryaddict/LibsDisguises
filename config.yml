@@ -113,7 +113,8 @@ PacketsEnabled:
   # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
   # Animations set by use of the api or through the disguise command are still in effect.
   Metadata: true
-  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up
+  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up.
+  # If you are using the Item_Frame disguise, when a packet is sent (Roughly every 2min) the disguise will bug up until they move.
   Movement: true
   # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
   Riding: true
