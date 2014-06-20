@@ -207,7 +207,7 @@ public class DisguiseUtilities {
                 destroyPacket.getIntegerArrays().write(0, new int[] { disguise.getEntity().getEntityId() });
                 for (Object p : cloned) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                    if (disguise.canSee(player.getName())) {
+                    if (player == disguise.getEntity() || disguise.canSee(player.getName())) {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                     }
                 }
@@ -532,7 +532,7 @@ public class DisguiseUtilities {
                     // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
                     // entity))
                     // continue;
-                    if (disguise.canSee(player.getName())) {
+                    if (player == disguise.getEntity() || disguise.canSee(player.getName())) {
                         clear.invoke(entityTrackerEntry, p);
                         updatePlayer.invoke(entityTrackerEntry, p);
                     }
