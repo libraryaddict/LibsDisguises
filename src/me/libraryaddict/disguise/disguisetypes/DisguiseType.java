@@ -230,8 +230,7 @@ public enum DisguiseType {
         }
     }
 
-    private Integer defaultId;
-    private int entityId;
+    private int defaultId, entityId;
     private EntityType entityType;
     private Class<? extends FlagWatcher> watcherClass;
 
@@ -251,7 +250,7 @@ public enum DisguiseType {
         }
     }
 
-    public Integer getDefaultId() {
+    public int getDefaultId() {
         return defaultId;
     }
 
