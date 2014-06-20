@@ -224,7 +224,7 @@ public enum DisguiseType {
 
     public static DisguiseType getType(EntityType entityType) {
         try {
-            return DisguiseType.valueOf(entityType.name());
+            return valueOf(entityType.name().toUpperCase());
         } catch (Throwable ex) {
             return null;
         }

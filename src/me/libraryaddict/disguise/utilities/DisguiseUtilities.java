@@ -121,7 +121,7 @@ public class DisguiseUtilities {
 
     public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
         getGameProfiles().put(string, gameProfile);
-        addedByPlugins.add(string);
+        getAddedByPlugins().add(string.toLowerCase());
     }
 
     /**
@@ -291,7 +291,7 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
-        return gameProfiles.get(playerName);
+        return gameProfiles.get(playerName.toLowerCase());
     }
 
     public static HashMap<String, WrappedGameProfile> getGameProfiles() {
@@ -335,11 +335,14 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise) {
+        final boolean remove = getAddedByPlugins().contains(disguise.getName().toLowerCase());
         return getProfileFromMojang(disguise.getName(), new LibsProfileLookup() {
 
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
-                getAddedByPlugins().remove(disguise.getName());
+                if (remove) {
+                    getAddedByPlugins().remove(disguise.getName().toLowerCase());
+                }
                 if (DisguiseAPI.isDisguiseInUse(disguise)) {
                     DisguiseUtilities.refreshTrackers(disguise);
                     if (disguise.getEntity() instanceof Player && disguise.isSelfDisguiseVisible()) {
@@ -358,8 +361,8 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
-    private static WrappedGameProfile getProfileFromMojang(String name, final Object runnable) {
-        final String playerName = name.toLowerCase();
+    private static WrappedGameProfile getProfileFromMojang(String origName, final Object runnable) {
+        final String playerName = origName.toLowerCase();
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
@@ -413,7 +416,7 @@ public class DisguiseUtilities {
             }
             runnables.get(playerName).add(runnable);
         }
-        return ReflectionManager.getGameProfile(null, playerName);
+        return ReflectionManager.getGameProfile(null, origName);
     }
 
     /**
@@ -556,11 +559,11 @@ public class DisguiseUtilities {
 
     @Deprecated
     public static void removeGameprofile(String string) {
-        gameProfiles.remove(string);
+        removeGameProfile(string);
     }
 
     public static void removeGameProfile(String string) {
-        gameProfiles.remove(string);
+        gameProfiles.remove(string.toLowerCase());
     }
 
     public static void removeSelfDisguise(Player player) {

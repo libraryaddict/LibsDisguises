@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableMap;
+
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -85,7 +86,7 @@ public class ReflectionManager {
     private static final Field pingField;
     private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
-    
+
     /*
      * This portion of code is originally Copyright (C) 2014-2014 Kane York.
      *

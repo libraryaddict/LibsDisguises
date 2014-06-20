@@ -447,7 +447,7 @@ public abstract class Disguise {
 
             if (isPlayerDisguise()) {
                 String name = ((PlayerDisguise) this).getName();
-                if (!DisguiseUtilities.getAddedByPlugins().contains(name)) {
+                if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase())) {
                     for (HashSet<TargetedDisguise> disguise : disguises.values()) {
                         for (Disguise d : disguise) {
                             if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
@@ -455,7 +455,7 @@ public abstract class Disguise {
                             }
                         }
                     }
-                    DisguiseUtilities.getGameProfiles().remove(name);
+                    DisguiseUtilities.getGameProfiles().remove(name.toLowerCase());
                 }
             }
         }
