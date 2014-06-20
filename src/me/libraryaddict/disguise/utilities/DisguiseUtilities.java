@@ -503,7 +503,7 @@ public class DisguiseUtilities {
                         // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
                         // entity))
                         // continue;
-                        if (!(entity instanceof Player) || player.canSee((Player) entity)) {
+                        if (player != entity) {
                             clear.invoke(entityTrackerEntry, p);
                             updatePlayer.invoke(entityTrackerEntry, p);
                         }
@@ -521,7 +521,7 @@ public class DisguiseUtilities {
     public static void refreshTrackers(TargetedDisguise disguise) {
         if (disguise.getEntity().isValid()) {
             try {
-                if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player) {
+                if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
                     DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                 }
                 Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
@@ -538,7 +538,7 @@ public class DisguiseUtilities {
                         // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
                         // entity))
                         // continue;
-                        if (disguise.canSee(player.getName())) {
+                        if (disguise.getEntity() != player && disguise.canSee(player.getName())) {
                             clear.invoke(entityTrackerEntry, p);
                             updatePlayer.invoke(entityTrackerEntry, p);
                         }
