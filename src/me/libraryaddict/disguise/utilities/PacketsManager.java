@@ -301,7 +301,7 @@ public class PacketsManager {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
             } else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
-                data = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
+                data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
             }
             spawnPackets[0] = ProtocolLibrary.getProtocolManager()
                     .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, id, data)
@@ -1299,7 +1299,7 @@ public class PacketsManager {
                         if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
                             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                                 Location loc = entity.getLocation();
-                                int data = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
+                                int data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
                                 if (data % 2 == 0) {
                                     if (data % 2 == 0) {
                                         mods.write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
