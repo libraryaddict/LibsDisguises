@@ -65,18 +65,24 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (perms.get(perm)) {
                 perm = perm.substring(permissionNode.length());
                 String disguiseType = perm.split("\\.")[0];
-                try {
-                    DisguiseType type = DisguiseType.valueOf(disguiseType.toUpperCase());
+                DisguiseType dType = null;
+                for (DisguiseType t : DisguiseType.values()) {
+                    if (t.name().replace("_", "").equalsIgnoreCase(disguiseType.replace("_", ""))) {
+                        dType = t;
+                        break;
+                    }
+                }
+                if (dType != null) {
                     HashMap<ArrayList<String>, Boolean> list;
-                    if (singleDisguises.containsKey(type)) {
-                        list = singleDisguises.get(type);
+                    if (singleDisguises.containsKey(dType)) {
+                        list = singleDisguises.get(dType);
                     } else {
                         list = new HashMap<ArrayList<String>, Boolean>();
-                        singleDisguises.put(type, list);
+                        singleDisguises.put(dType, list);
                     }
                     HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
                     list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
-                } catch (Exception ex) {
+                } else {
                     for (DisguiseType type : DisguiseType.values()) {
                         HashMap<ArrayList<String>, Boolean> options = null;
                         Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
@@ -122,10 +128,16 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (!perms.get(perm)) {
                 perm = perm.substring(permissionNode.length());
                 String disguiseType = perm.split("\\.")[0];
-                try {
-                    DisguiseType type = DisguiseType.valueOf(disguiseType.toUpperCase());
-                    singleDisguises.remove(type);
-                } catch (Exception ex) {
+                DisguiseType dType = null;
+                for (DisguiseType t : DisguiseType.values()) {
+                    if (t.name().replace("_", "").equalsIgnoreCase(disguiseType.replace("_", ""))) {
+                        dType = t;
+                        break;
+                    }
+                }
+                if (dType != null) {
+                    singleDisguises.remove(dType);
+                } else {
                     for (DisguiseType type : DisguiseType.values()) {
                         boolean foundHim = false;
                         Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
