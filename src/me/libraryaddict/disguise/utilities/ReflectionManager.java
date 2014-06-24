@@ -539,6 +539,10 @@ public class ReflectionManager {
         return null;
     }
 
+    public static boolean isForge() {
+        return isForge;
+    }
+
     private static String methodSignaturePart(Class<?> param) {
         if (param.isArray()) {
             return "[" + methodSignaturePart(param.getComponentType());
