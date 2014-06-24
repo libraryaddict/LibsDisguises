@@ -282,10 +282,16 @@ public class LibsDisguises extends JavaPlugin {
                 System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name()
                         + "!");
                 System.out.print("[LibsDisguises] Before reporting this error, "
-                        + "please make sure you are using the latest version of LibsDisguises and ProtocolLib");
-                System.out
-                        .print("[LibsDisguises] You can try the latest builds at (ProtocolLib) "
-                                + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
+                        + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+                if (ReflectionManager.isForge()) {
+                    System.out.print("[LibsDisguises] Development builds are available at (ProtocolLib) "
+                                    + "http://assets.comphenix.net/job/ProtocolLib%20-%20Cauldron/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
+                } else {
+                    System.out.print("[LibsDisguises] Development builds are available at (ProtocolLib) "
+                            + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
+                }
+                System.out.print("[LibsDisguises] Note that these builds have not been reviewed by Bukkit for safety.");
+
                 ex.printStackTrace();
             }
         }
