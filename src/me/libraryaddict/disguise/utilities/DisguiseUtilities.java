@@ -343,7 +343,9 @@ public class DisguiseUtilities {
                 if (remove) {
                     getAddedByPlugins().remove(disguise.getName().toLowerCase());
                 }
-                if (DisguiseAPI.isDisguiseInUse(disguise)) {
+                if (DisguiseAPI.isDisguiseInUse(disguise)
+                        && (!gameProfile.getName().equals(disguise.getName()) || !gameProfile.getProperties().isEmpty())) {
+                    // TODO Resend for UUID? Might need to in the future.
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
             }

@@ -99,7 +99,7 @@ public class PlayerDisguise extends TargetedDisguise {
                     public void onLookup(WrappedGameProfile gameProfile) {
                         if (currentLookup == this && gameProfile != null) {
                             setSkin(gameProfile);
-                            if (DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
+                            if (!gameProfile.getProperties().isEmpty() && DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
                                 DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
                             }
                         }
