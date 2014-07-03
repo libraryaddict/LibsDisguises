@@ -530,7 +530,10 @@ public class ReflectionManager {
                             .getMethod("findProfilesByNames", String[].class, agent.getClass(),
                                     Class.forName("net.minecraft.util.com.mojang.authlib.ProfileLookupCallback"))
                             .invoke(profileRepo, new String[] { playername }, agent, callback);
-                    return callback.getGameProfile();
+                    if (callback.getGameProfile() != null) {
+                        return callback.getGameProfile();
+                    }
+                    return getGameProfile(null, playername);
                 }
             }
         } catch (Exception ex) {

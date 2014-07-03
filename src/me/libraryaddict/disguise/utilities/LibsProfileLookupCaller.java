@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.Field;
-import java.util.UUID;
-
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -17,14 +14,6 @@ public class LibsProfileLookupCaller implements ProfileLookupCallback {
 
     @Override
     public void onProfileLookupFailed(GameProfile gameProfile, Exception arg1) {
-        try {
-            Field field = GameProfile.class.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(gameProfile, UUID.randomUUID());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.onProfileLookupSucceeded(gameProfile);
     }
 
     @Override

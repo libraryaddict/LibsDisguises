@@ -358,7 +358,7 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
     }
 
-    private static WrappedGameProfile getProfileFromMojang(String origName, final Object runnable) {
+    private static WrappedGameProfile getProfileFromMojang(final String origName, final Object runnable) {
         final String playerName = origName.toLowerCase();
         if (gameProfiles.containsKey(playerName)) {
             if (gameProfiles.get(playerName) != null) {
@@ -379,7 +379,7 @@ public class DisguiseUtilities {
             Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable() {
                 public void run() {
                     try {
-                        final WrappedGameProfile gameProfile = lookupGameProfile(playerName);
+                        final WrappedGameProfile gameProfile = lookupGameProfile(origName);
                         Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                             public void run() {
                                 if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
