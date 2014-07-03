@@ -53,10 +53,11 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void addPotionEffect(PotionEffectType potionEffect) {
-        if (hasPotionEffect(potionEffect))
+        if (!hasPotionEffect(potionEffect)) {
             removePotionEffect(potionEffect);
-        potionEffects.add(potionEffect.getId());
-        sendPotionEffects();
+            potionEffects.add(potionEffect.getId());
+            sendPotionEffects();
+        }
     }
 
     @Override
@@ -115,7 +116,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public boolean hasCustomName() {
-        return getCustomName().length() > 0;
+        return getCustomName() != null;
     }
 
     public boolean hasPotionEffect(PotionEffectType type) {
@@ -148,8 +149,9 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setCustomName(String name) {
-        if (name != null && name.length() > 64)
+        if (name != null && name.length() > 64) {
             name = name.substring(0, 64);
+        }
         setValue(10, name);
         sendData(10);
     }
