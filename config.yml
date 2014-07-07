@@ -20,8 +20,7 @@ HearSelfDisguise: false
 SendVelocity: true
 # For self disguises, they need to have the armor and the held item removed
 # Else they see floating armor, floating held items.
-# However! This doesn't actually remove the armor!
-# It just makes the client think the armor was removed so that it doesn't render it!
+# This turns the items invisible in the disguised players inventory. It does not actually remove them!
 RemoveArmor: true
 RemoveHeldItem: false
 # If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
