@@ -65,11 +65,11 @@ public class MiscDisguise extends TargetedDisguise {
                 ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(firstParam, Math.max(0, secondParam)));
             }
             break;
-        case FISHING_HOOK:
-        case ARROW:
-        case SMALL_FIREBALL:
-        case FIREBALL:
-        case WITHER_SKULL:
+        case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
+        case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+        case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+        case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+        case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
             this.data = firstParam;
             break;
         default:
