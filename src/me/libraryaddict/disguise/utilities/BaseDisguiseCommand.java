@@ -11,8 +11,8 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
@@ -36,6 +36,35 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
         return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
+    }
+
+    protected ArrayList<String> getDisguisePermission(CommandSender sender, DisguiseType type) {
+        switch (type) {
+        case PLAYER:
+        case FALLING_BLOCK:
+        case PAINTING:
+        case SPLASH_POTION:
+        case FISHING_HOOK:
+        case DROPPED_ITEM:
+            ArrayList<String> returns = new ArrayList<String>();
+            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase() + ".";
+            for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+                String lowerPerm = permission.getPermission().toLowerCase();
+                if (lowerPerm.startsWith(beginning)) {
+                    String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+                    if (split.length > 1) {
+                        if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
+                            for (int i = 1; i < split.length; i++) {
+                                returns.add(split[i]);
+                            }
+                        }
+                    }
+                }
+            }
+            return returns;
+        default:
+            return new ArrayList<String>();
+        }
     }
 
     /**
@@ -280,11 +309,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
             }
             optionPermissions = map.get(disguiseType);
+            ArrayList<String> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
             if (disguiseType.isPlayer()) {// If he is doing a player disguise
                 if (args.length == 1) {
                     // He needs to give the player name
                     throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
                 } else {
+                    if (!disguiseOptions.isEmpty() && disguiseOptions.contains(args[1].toLowerCase())) {
+                        throw new Exception(ChatColor.RED + "Error! You don't have permission to use that name!");
+                    }
                     // Construct the player disguise
                     disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
                     toSkip++;
@@ -305,19 +338,69 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     // Its a misc, we are going to use the MiscDisguise constructor.
                     int miscId = -1;
                     int miscData = -1;
+                    String secondArg = null;
                     if (args.length > 1) {
                         // They have defined more arguements!
                         // If the first arg is a number
+                        if (args[1].contains(":")) {
+                            String[] split = args[1].split(":");
+                            if (isNumeric(split[1])) {
+                                secondArg = split[1];
+                            }
+                            args[1] = split[0];
+                        }
                         if (isNumeric(args[1])) {
                             miscId = Integer.parseInt(args[1]);
-                            toSkip++;
-                            // If they also defined a data value
-                            if (args.length > 2) {
-                                if (isNumeric(args[2])) {
-                                    miscData = Integer.parseInt(args[2]);
-                                    toSkip++;
+                        } else {
+                            if (disguiseType == DisguiseType.FALLING_BLOCK || disguiseType == DisguiseType.DROPPED_ITEM) {
+                                for (Material mat : Material.values()) {
+                                    if (mat.name().replace("_", "").equalsIgnoreCase(args[1].replace("_", ""))) {
+                                        miscId = mat.getId();
+                                        break;
+                                    }
                                 }
                             }
+                        }
+                        if (miscId != -1) {
+                            switch (disguiseType) {
+                            case PAINTING:
+                            case FALLING_BLOCK:
+                            case SPLASH_POTION:
+                            case DROPPED_ITEM:
+                            case FISHING_HOOK:
+                            case ARROW:
+                            case SMALL_FIREBALL:
+                            case FIREBALL:
+                            case WITHER_SKULL:
+                                break;
+                            default:
+                                throw new Exception(ChatColor.RED + "Error! " + disguiseType.toReadable()
+                                        + " doesn't know what to do with " + args[1] + "!");
+                            }
+                            toSkip++;
+                            // If they also defined a data value
+                            if (args.length > 2 && secondArg == null && isNumeric(args[2])) {
+                                secondArg = args[2];
+                                toSkip++;
+                            }
+                            if (secondArg != null) {
+                                if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
+                                    throw new Exception(ChatColor.RED + "Error! Only the disguises "
+                                            + DisguiseType.FALLING_BLOCK.toReadable() + " and "
+                                            + DisguiseType.DROPPED_ITEM.toReadable() + " uses a second number!");
+                                }
+                                miscData = Integer.parseInt(secondArg);
+                            }
+                        }
+                    }
+                    if (!disguiseOptions.isEmpty() && miscId != -1) {
+                        String toCheck = "" + miscId;
+                        if (miscData != -1) {
+                            toCheck += ":" + miscData;
+                        }
+                        if (!disguiseOptions.contains(toCheck)) {
+                            throw new Exception(ChatColor.RED + "Error! You do not have permission to use the parameter "
+                                    + toCheck + " on the " + disguiseType.toReadable() + " disguise!");
                         }
                     }
                     if (miscId != -1) {
