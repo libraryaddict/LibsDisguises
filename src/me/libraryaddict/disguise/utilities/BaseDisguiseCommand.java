@@ -395,7 +395,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     }
                     if (!disguiseOptions.isEmpty() && miscId != -1) {
                         String toCheck = "" + miscId;
-                        if (miscData != -1) {
+                        if (miscData == 0 || miscData == -1) {
+                            if (!disguiseOptions.contains(toCheck)) {
+                                toCheck += ":0";
+                            }
+                        } else {
                             toCheck += ":" + miscData;
                         }
                         if (!disguiseOptions.contains(toCheck)) {
