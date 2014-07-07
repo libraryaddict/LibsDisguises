@@ -437,7 +437,8 @@ public class PacketsManager {
      */
     private static double getYModifier(Entity entity, Disguise disguise) {
         double yMod = 0;
-        if (entity.getType() == EntityType.DROPPED_ITEM) {
+        if ((disguise.getType() != DisguiseType.PLAYER || !((PlayerWatcher) disguise.getWatcher()).isSleeping())
+                && entity.getType() == EntityType.DROPPED_ITEM) {
             yMod -= 0.13;
         }
         switch (disguise.getType()) {
