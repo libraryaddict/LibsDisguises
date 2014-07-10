@@ -47,7 +47,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         case FISHING_HOOK:
         case DROPPED_ITEM:
             ArrayList<String> returns = new ArrayList<String>();
-            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase() + ".";
+            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
             for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
                 String lowerPerm = permission.getPermission().toLowerCase();
                 if (lowerPerm.startsWith(beginning)) {
