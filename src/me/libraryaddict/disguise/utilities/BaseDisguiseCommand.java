@@ -315,7 +315,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     // He needs to give the player name
                     throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
                 } else {
-                    if (!disguiseOptions.isEmpty() && disguiseOptions.contains(args[1].toLowerCase())) {
+                    if (!disguiseOptions.isEmpty() && !disguiseOptions.contains(args[1].toLowerCase())) {
                         throw new Exception(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
                     // Construct the player disguise
