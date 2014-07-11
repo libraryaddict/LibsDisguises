@@ -412,10 +412,6 @@ public abstract class Disguise {
         return velocitySent;
     }
 
-    public boolean stopDisguise() {
-        return removeDisguise();
-    }
-
     /**
      * Removes the disguise and undisguises the entity if its using this disguise.
      * 
@@ -714,5 +710,9 @@ public abstract class Disguise {
             }
         }
         return false;
+    }
+
+    public boolean stopDisguise() {
+        return removeDisguise();
     }
 }

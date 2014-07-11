@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import org.bukkit.Art;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class MiscDisguise extends TargetedDisguise {
@@ -104,6 +105,14 @@ public class MiscDisguise extends TargetedDisguise {
         this(DisguiseType.getType(disguiseType), id, data);
     }
 
+    public PlayerDisguise addPlayer(Player player) {
+        return (PlayerDisguise) super.addPlayer(player);
+    }
+
+    public MiscDisguise addPlayer(String playername) {
+        return (MiscDisguise) super.addPlayer(playername);
+    }
+
     @Override
     public MiscDisguise clone() {
         MiscDisguise disguise = new MiscDisguise(getType(), getData());
@@ -148,10 +157,24 @@ public class MiscDisguise extends TargetedDisguise {
         return true;
     }
 
+    public MiscDisguise removePlayer(Player player) {
+        return (MiscDisguise) super.removePlayer(player);
+    }
+
+    public MiscDisguise removePlayer(String playername) {
+        return (MiscDisguise) super.removePlayer(playername);
+    }
+
+    public MiscDisguise setDisguiseTarget(TargetType newTargetType) {
+        return (MiscDisguise) super.setDisguiseTarget(newTargetType);
+    }
+
     @Override
     public MiscDisguise setEntity(Entity entity) {
         return (MiscDisguise) super.setEntity(entity);
-    }  public MiscDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
+    }
+
+    public MiscDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
         return (MiscDisguise) super.setHearSelfDisguise(hearSelfDisguise);
     }
 
@@ -193,6 +216,14 @@ public class MiscDisguise extends TargetedDisguise {
 
     public MiscDisguise setWatcher(FlagWatcher newWatcher) {
         return (MiscDisguise) super.setWatcher(newWatcher);
+    }
+
+    public MiscDisguise silentlyAddPlayer(String playername) {
+        return (MiscDisguise) super.silentlyAddPlayer(playername);
+    }
+
+    public MiscDisguise silentlyRemovePlayer(String playername) {
+        return (MiscDisguise) super.silentlyRemovePlayer(playername);
     }
 
 }

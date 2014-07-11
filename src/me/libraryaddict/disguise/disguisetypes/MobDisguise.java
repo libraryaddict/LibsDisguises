@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 public class MobDisguise extends TargetedDisguise {
 
@@ -48,6 +49,14 @@ public class MobDisguise extends TargetedDisguise {
         this.setReplaceSounds(replaceSounds);
     }
 
+    public PlayerDisguise addPlayer(Player player) {
+        return (PlayerDisguise) super.addPlayer(player);
+    }
+
+    public MobDisguise addPlayer(String playername) {
+        return (MobDisguise) super.addPlayer(playername);
+    }
+
     @Override
     public MobDisguise clone() {
         MobDisguise disguise = new MobDisguise(getType(), isAdult());
@@ -82,6 +91,18 @@ public class MobDisguise extends TargetedDisguise {
         return true;
     }
 
+    public MobDisguise removePlayer(Player player) {
+        return (MobDisguise) super.removePlayer(player);
+    }
+
+    public MobDisguise removePlayer(String playername) {
+        return (MobDisguise) super.removePlayer(playername);
+    }
+
+    public MobDisguise setDisguiseTarget(TargetType newTargetType) {
+        return (MobDisguise) super.setDisguiseTarget(newTargetType);
+    }
+
     @Override
     public MobDisguise setEntity(Entity entity) {
         return (MobDisguise) super.setEntity(entity);
@@ -109,9 +130,7 @@ public class MobDisguise extends TargetedDisguise {
 
     public MobDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
-    }
-
-    public MobDisguise setModifyBoundingBox(boolean modifyBox) {
+    }  public MobDisguise setModifyBoundingBox(boolean modifyBox) {
         return (MobDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
@@ -129,5 +148,13 @@ public class MobDisguise extends TargetedDisguise {
 
     public MobDisguise setWatcher(FlagWatcher newWatcher) {
         return (MobDisguise) super.setWatcher(newWatcher);
+    }
+
+    public MobDisguise silentlyAddPlayer(String playername) {
+        return (MobDisguise) super.silentlyAddPlayer(playername);
+    }
+
+    public MobDisguise silentlyRemovePlayer(String playername) {
+        return (MobDisguise) super.silentlyRemovePlayer(playername);
     }
 }

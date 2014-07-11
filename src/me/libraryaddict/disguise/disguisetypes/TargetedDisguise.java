@@ -17,11 +17,12 @@ public abstract class TargetedDisguise extends Disguise {
     private List<String> disguiseViewers = new ArrayList<String>();
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
 
-    public void addPlayer(Player player) {
+    public TargetedDisguise addPlayer(Player player) {
         addPlayer(player.getName());
+        return this;
     }
 
-    public void addPlayer(String playername) {
+    public TargetedDisguise addPlayer(String playername) {
         if (!disguiseViewers.contains(playername)) {
             disguiseViewers.add(playername);
             if (DisguiseAPI.isDisguiseInUse(this)) {
@@ -29,6 +30,7 @@ public abstract class TargetedDisguise extends Disguise {
                 DisguiseUtilities.refreshTracker(this, playername);
             }
         }
+        return this;
     }
 
     public boolean canSee(Player player) {
@@ -51,11 +53,12 @@ public abstract class TargetedDisguise extends Disguise {
         return Collections.unmodifiableList(disguiseViewers);
     }
 
-    public void removePlayer(Player player) {
+    public TargetedDisguise removePlayer(Player player) {
         removePlayer(player.getName());
+        return this;
     }
 
-    public void removePlayer(String playername) {
+    public TargetedDisguise removePlayer(String playername) {
         if (disguiseViewers.contains(playername)) {
             disguiseViewers.remove(playername);
             if (DisguiseAPI.isDisguiseInUse(this)) {
@@ -63,24 +66,28 @@ public abstract class TargetedDisguise extends Disguise {
                 DisguiseUtilities.refreshTracker(this, playername);
             }
         }
+        return this;
     }
 
-    public void setDisguiseTarget(TargetType newTargetType) {
+    public TargetedDisguise setDisguiseTarget(TargetType newTargetType) {
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             throw new RuntimeException("Cannot set the disguise target after the entity has been disguised");
         }
         targetType = newTargetType;
+        return this;
     }
 
-    public void silentlyAddPlayer(String playername) {
+    public TargetedDisguise silentlyAddPlayer(String playername) {
         if (!disguiseViewers.contains(playername)) {
             disguiseViewers.add(playername);
         }
+        return this;
     }
 
-    public void silentlyRemovePlayer(String playername) {
+    public TargetedDisguise silentlyRemovePlayer(String playername) {
         if (disguiseViewers.contains(playername)) {
             disguiseViewers.remove(playername);
         }
+        return this;
     }
 }

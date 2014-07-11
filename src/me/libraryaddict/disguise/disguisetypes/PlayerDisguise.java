@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -34,6 +36,14 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise(String name, String skinToUse) {
         this(name);
         setSkin(skinToUse);
+    }
+
+    public PlayerDisguise addPlayer(Player player) {
+        return (PlayerDisguise) super.addPlayer(player);
+    }
+
+    public PlayerDisguise addPlayer(String playername) {
+        return (PlayerDisguise) super.addPlayer(playername);
     }
 
     @Override
@@ -80,6 +90,18 @@ public class PlayerDisguise extends TargetedDisguise {
     @Override
     public boolean isPlayerDisguise() {
         return true;
+    }
+
+    public PlayerDisguise removePlayer(Player player) {
+        return (PlayerDisguise) super.removePlayer(player);
+    }
+
+    public PlayerDisguise removePlayer(String playername) {
+        return (PlayerDisguise) super.removePlayer(playername);
+    }
+
+    public PlayerDisguise setDisguiseTarget(TargetType newTargetType) {
+        return (PlayerDisguise) super.setDisguiseTarget(newTargetType);
     }
 
     @Override
@@ -183,5 +205,13 @@ public class PlayerDisguise extends TargetedDisguise {
 
     public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
         return (PlayerDisguise) super.setWatcher(newWatcher);
+    }
+
+    public PlayerDisguise silentlyAddPlayer(String playername) {
+        return (PlayerDisguise) super.silentlyAddPlayer(playername);
+    }
+
+    public PlayerDisguise silentlyRemovePlayer(String playername) {
+        return (PlayerDisguise) super.silentlyRemovePlayer(playername);
     }
 }
