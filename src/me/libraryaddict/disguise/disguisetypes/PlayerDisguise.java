@@ -95,7 +95,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Deprecated
-    public void setSkin(String skinToUse) {
+    public PlayerDisguise setSkin(String skinToUse) {
         this.skinToUse = skinToUse;
         if (skinToUse == null) {
             this.currentLookup = null;
@@ -123,6 +123,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 }
             }
         }
+        return this;
     }
 
     /**
@@ -130,9 +131,10 @@ public class PlayerDisguise extends TargetedDisguise {
      * 
      * @param gameProfile
      *            GameProfile
+     * @return 
      */
     @Deprecated
-    public void setSkin(WrappedGameProfile gameProfile) {
+    public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
         if (gameProfile == null) {
             this.gameProfile = null;
             this.skinToUse = null;
@@ -143,7 +145,7 @@ public class PlayerDisguise extends TargetedDisguise {
         this.skinToUse = gameProfile.getName();
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(
                 gameProfile.getId() != null ? UUID.fromString(gameProfile.getId()) : null, getName(), gameProfile);
-
+        return this;
     }
 
 }
