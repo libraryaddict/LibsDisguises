@@ -5,6 +5,7 @@ import java.security.InvalidParameterException;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class MobDisguise extends TargetedDisguise {
@@ -79,5 +80,17 @@ public class MobDisguise extends TargetedDisguise {
 
     public boolean isMobDisguise() {
         return true;
+    }
+
+    @Override
+    public MobDisguise setEntity(Entity entity) {
+        if (this.getEntity() != null) {
+            if (getEntity() == entity)
+                return this;
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        }
+        this.entity = entity;
+        setupWatcher();
+        return this;
     }
 }

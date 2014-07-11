@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -39,7 +38,7 @@ public abstract class Disguise {
     private static JavaPlugin plugin;
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
-    private Entity entity;
+    protected Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
@@ -413,7 +412,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Removes the disguise and undisguises the entity if its using this disguise. This doesn't fire a UndisguiseEvent
+     * Removes the disguise and undisguises the entity if its using this disguise.
      */
     public void removeDisguise() {
         if (disguiseInUse) {
@@ -474,19 +473,7 @@ public abstract class Disguise {
     /**
      * Set the entity of the disguise. Only used for internal things.
      */
-    public void setEntity(Entity entity) {
-        if (this.getEntity() != null) {
-            if (getEntity() == entity)
-                return;
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        }
-        if (this.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
-            throw new RuntimeException(
-                    "Cannot disguise a living entity with a misc disguise. Renable MiscDisguisesForLiving in the config to do this");
-        }
-        this.entity = entity;
-        setupWatcher();
-    }
+    public abstract Disguise setEntity(Entity entity);
 
     public void setHearSelfDisguise(boolean hearSelfDisguise) {
         this.hearSelfDisguise = hearSelfDisguise;
@@ -539,7 +526,7 @@ public abstract class Disguise {
      * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
      * datawatcher.
      */
-    private void setupWatcher() {
+    protected void setupWatcher() {
         HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
         // Start from 2 as they ALL share 0 and 1

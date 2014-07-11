@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
-
+import org.bukkit.entity.Entity;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -80,6 +80,18 @@ public class PlayerDisguise extends TargetedDisguise {
     @Override
     public boolean isPlayerDisguise() {
         return true;
+    }
+
+    @Override
+    public PlayerDisguise setEntity(Entity entity) {
+        if (this.getEntity() != null) {
+            if (getEntity() == entity)
+                return this;
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        }
+        this.entity = entity;
+        setupWatcher();
+        return this;
     }
 
     @Deprecated
