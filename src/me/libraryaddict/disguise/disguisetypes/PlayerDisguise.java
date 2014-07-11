@@ -84,14 +84,39 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Override
     public PlayerDisguise setEntity(Entity entity) {
-        if (this.getEntity() != null) {
-            if (getEntity() == entity)
-                return this;
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        }
-        this.entity = entity;
-        setupWatcher();
-        return this;
+        return (PlayerDisguise) super.setEntity(entity);
+    }
+
+    public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
+        return (PlayerDisguise) super.setHearSelfDisguise(hearSelfDisguise);
+    }
+
+    public PlayerDisguise setHideArmorFromSelf(boolean hideArmor) {
+        return (PlayerDisguise) super.setHideArmorFromSelf(hideArmor);
+    }
+
+    public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
+        return (PlayerDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
+    }
+
+    public PlayerDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+        return (PlayerDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
+    }
+
+    public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        return (PlayerDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
+    }
+
+    public PlayerDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+        return (PlayerDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
+    }
+
+    public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
+        return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced) {
+        return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
     @Deprecated
@@ -131,7 +156,7 @@ public class PlayerDisguise extends TargetedDisguise {
      * 
      * @param gameProfile
      *            GameProfile
-     * @return 
+     * @return
      */
     @Deprecated
     public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
@@ -148,4 +173,15 @@ public class PlayerDisguise extends TargetedDisguise {
         return this;
     }
 
+    public PlayerDisguise setVelocitySent(boolean sendVelocity) {
+        return (PlayerDisguise) super.setVelocitySent(sendVelocity);
+    }
+
+    public PlayerDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        return (PlayerDisguise) super.setViewSelfDisguise(viewSelfDisguise);
+    }
+
+    public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
+        return (PlayerDisguise) super.setWatcher(newWatcher);
+    }
 }

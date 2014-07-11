@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.security.InvalidParameterException;
 
-import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -11,7 +10,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import org.bukkit.Art;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 public class MiscDisguise extends TargetedDisguise {
@@ -152,18 +150,49 @@ public class MiscDisguise extends TargetedDisguise {
 
     @Override
     public MiscDisguise setEntity(Entity entity) {
-        if (this.getEntity() != null) {
-            if (getEntity() == entity)
-                return this;
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        }
-        if (!DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
-            throw new RuntimeException(
-                    "Cannot disguise a living entity with a misc disguise. Renable MiscDisguisesForLiving in the config to do this");
-        }
-        this.entity = entity;
-        setupWatcher();
-        return this;
+        return (MiscDisguise) super.setEntity(entity);
+    }  public MiscDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
+        return (MiscDisguise) super.setHearSelfDisguise(hearSelfDisguise);
+    }
+
+    public MiscDisguise setHideArmorFromSelf(boolean hideArmor) {
+        return (MiscDisguise) super.setHideArmorFromSelf(hideArmor);
+    }
+
+    public MiscDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
+        return (MiscDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
+    }
+
+    public MiscDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+        return (MiscDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
+    }
+
+    public MiscDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        return (MiscDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
+    }
+
+    public MiscDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+        return (MiscDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
+    }
+
+    public MiscDisguise setModifyBoundingBox(boolean modifyBox) {
+        return (MiscDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    public MiscDisguise setReplaceSounds(boolean areSoundsReplaced) {
+        return (MiscDisguise) super.setReplaceSounds(areSoundsReplaced);
+    }
+
+    public MiscDisguise setVelocitySent(boolean sendVelocity) {
+        return (MiscDisguise) super.setVelocitySent(sendVelocity);
+    }
+
+    public MiscDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        return (MiscDisguise) super.setViewSelfDisguise(viewSelfDisguise);
+    }
+
+    public MiscDisguise setWatcher(FlagWatcher newWatcher) {
+        return (MiscDisguise) super.setWatcher(newWatcher);
     }
 
 }

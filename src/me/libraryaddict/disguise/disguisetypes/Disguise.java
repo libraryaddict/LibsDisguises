@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.DisguiseValues;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +39,7 @@ public abstract class Disguise {
     private static JavaPlugin plugin;
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
-    protected Entity entity;
+    private Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
@@ -411,101 +412,128 @@ public abstract class Disguise {
         return velocitySent;
     }
 
+    public boolean stopDisguise() {
+        return removeDisguise();
+    }
+
     /**
      * Removes the disguise and undisguises the entity if its using this disguise.
+     * 
+     * @return
      */
-    public void removeDisguise() {
+    public boolean removeDisguise() {
         if (disguiseInUse) {
             UndisguiseEvent event = new UndisguiseEvent(entity, this);
             Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                return;
-            disguiseInUse = false;
-            if (task != null) {
-                task.cancel();
-                task = null;
-            }
-            HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
-            // If this disguise has a entity set
-            if (getEntity() != null) {
-                // If this disguise is active
-                // Remove the disguise from the current disguises.
-                if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
-                    if (getEntity() instanceof Player) {
-                        DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                    }
-
-                    // Better refresh the entity to undisguise it
-                    if (getEntity().isValid()) {
-                        DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                    } else {
-                        DisguiseUtilities.destroyEntity((TargetedDisguise) this);
-                    }
+            if (!event.isCancelled()) {
+                disguiseInUse = false;
+                if (task != null) {
+                    task.cancel();
+                    task = null;
                 }
-            } else {
-                // Loop through the disguises because it could be used with a unknown entity id.
-                HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
-                Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
-                while (itel.hasNext()) {
-                    int id = itel.next();
-                    if (future.get(id).remove(this) && future.get(id).isEmpty()) {
-                        itel.remove();
-                    }
-                }
-            }
+                HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
+                // If this disguise has a entity set
+                if (getEntity() != null) {
+                    // If this disguise is active
+                    // Remove the disguise from the current disguises.
+                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                        if (getEntity() instanceof Player) {
+                            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                        }
 
-            if (isPlayerDisguise()) {
-                String name = ((PlayerDisguise) this).getName();
-                if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase())) {
-                    for (HashSet<TargetedDisguise> disguise : disguises.values()) {
-                        for (Disguise d : disguise) {
-                            if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
-                                return;
-                            }
+                        // Better refresh the entity to undisguise it
+                        if (getEntity().isValid()) {
+                            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                        } else {
+                            DisguiseUtilities.destroyEntity((TargetedDisguise) this);
                         }
                     }
-                    DisguiseUtilities.getGameProfiles().remove(name.toLowerCase());
+                } else {
+                    // Loop through the disguises because it could be used with a unknown entity id.
+                    HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
+                    Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
+                    while (itel.hasNext()) {
+                        int id = itel.next();
+                        if (future.get(id).remove(this) && future.get(id).isEmpty()) {
+                            itel.remove();
+                        }
+                    }
                 }
+
+                if (isPlayerDisguise()) {
+                    String name = ((PlayerDisguise) this).getName();
+                    if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase())) {
+                        for (HashSet<TargetedDisguise> disguise : disguises.values()) {
+                            for (Disguise d : disguise) {
+                                if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        DisguiseUtilities.getGameProfiles().remove(name.toLowerCase());
+                    }
+                }
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * Set the entity of the disguise. Only used for internal things.
      */
-    public abstract Disguise setEntity(Entity entity);
-
-    public void setHearSelfDisguise(boolean hearSelfDisguise) {
-        this.hearSelfDisguise = hearSelfDisguise;
+    public Disguise setEntity(Entity entity) {
+        if (this.getEntity() != null) {
+            if (getEntity() == entity)
+                return this;
+            throw new RuntimeException("This disguise is already in use! Try .clone()");
+        }
+        if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+            throw new RuntimeException(
+                    "Cannot disguise a living entity with a misc disguise. Renable MiscDisguisesForLiving in the config to do this");
+        }
+        this.entity = entity;
+        setupWatcher();
+        return this;
     }
 
-    public void setHideArmorFromSelf(boolean hideArmor) {
+    public Disguise setHearSelfDisguise(boolean hearSelfDisguise) {
+        this.hearSelfDisguise = hearSelfDisguise;
+        return this;
+    }
+
+    public Disguise setHideArmorFromSelf(boolean hideArmor) {
         this.hideArmorFromSelf = hideArmor;
         if (getEntity() instanceof Player) {
             ((Player) getEntity()).updateInventory();
         }
+        return this;
     }
 
-    public void setHideHeldItemFromSelf(boolean hideHeldItem) {
+    public Disguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         this.hideHeldItemFromSelf = hideHeldItem;
         if (getEntity() instanceof Player) {
             ((Player) getEntity()).updateInventory();
         }
+        return this;
     }
 
-    public void setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+    public Disguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         this.keepDisguiseEntityDespawn = keepDisguise;
+        return this;
     }
 
-    public void setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+    public Disguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         this.keepDisguisePlayerDeath = keepDisguise;
+        return this;
     }
 
-    public void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+    public Disguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         this.keepDisguisePlayerLogout = keepDisguise;
+        return this;
     }
 
-    public void setModifyBoundingBox(boolean modifyBox) {
+    public Disguise setModifyBoundingBox(boolean modifyBox) {
         if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
             throw new RuntimeException(
                     "Cannot modify the bounding box of a disguise which is not TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
@@ -516,17 +544,19 @@ public abstract class Disguise {
                 DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
             }
         }
+        return this;
     }
 
-    public void setReplaceSounds(boolean areSoundsReplaced) {
+    public Disguise setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
+        return this;
     }
 
     /**
      * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
      * datawatcher.
      */
-    protected void setupWatcher() {
+    private void setupWatcher() {
         HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
         HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
         // Start from 2 as they ALL share 0 and 1
@@ -624,14 +654,17 @@ public abstract class Disguise {
         }
     }
 
-    public void setVelocitySent(boolean sendVelocity) {
+    public Disguise setVelocitySent(boolean sendVelocity) {
         this.velocitySent = sendVelocity;
+        return this;
     }
 
     /**
      * Can the disguised view himself as the disguise
+     * 
+     * @return
      */
-    public void setViewSelfDisguise(boolean viewSelfDisguise) {
+    public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
         if (isSelfDisguiseVisible() != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;
             if (getEntity() != null && getEntity() instanceof Player) {
@@ -643,9 +676,10 @@ public abstract class Disguise {
                 }
             }
         }
+        return this;
     }
 
-    public void setWatcher(FlagWatcher newWatcher) {
+    public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of "
                     + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
@@ -654,9 +688,10 @@ public abstract class Disguise {
         if (getEntity() != null) {
             setupWatcher();
         }
+        return this;
     }
 
-    public void startDisguise() {
+    public boolean startDisguise() {
         if (!isDisguiseInUse()) {
             if (getEntity() == null) {
                 throw new RuntimeException("No entity is assigned to this disguise!");
@@ -666,16 +701,18 @@ public abstract class Disguise {
             Bukkit.getPluginManager().callEvent(event);
             // If they cancelled this disguise event. No idea why.
             // Just return.
-            if (event.isCancelled())
-                return;
-            disguiseInUse = true;
-            task = Bukkit.getScheduler().runTaskTimer(plugin, velocityRunnable, 1, 1);
-            // Stick the disguise in the disguises bin
-            DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
-            // Resend the disguised entity's packet
-            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-            // If he is a player, then self disguise himself
-            DisguiseUtilities.setupFakeDisguise(this);
+            if (!event.isCancelled()) {
+                disguiseInUse = true;
+                task = Bukkit.getScheduler().runTaskTimer(plugin, velocityRunnable, 1, 1);
+                // Stick the disguise in the disguises bin
+                DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+                // Resend the disguised entity's packet
+                DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                // If he is a player, then self disguise himself
+                DisguiseUtilities.setupFakeDisguise(this);
+                return true;
+            }
         }
+        return false;
     }
 }

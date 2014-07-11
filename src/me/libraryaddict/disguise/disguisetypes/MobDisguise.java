@@ -84,13 +84,50 @@ public class MobDisguise extends TargetedDisguise {
 
     @Override
     public MobDisguise setEntity(Entity entity) {
-        if (this.getEntity() != null) {
-            if (getEntity() == entity)
-                return this;
-            throw new RuntimeException("This disguise is already in use! Try .clone()");
-        }
-        this.entity = entity;
-        setupWatcher();
-        return this;
+        return (MobDisguise) super.setEntity(entity);
+    }
+
+    public MobDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
+        return (MobDisguise) super.setHearSelfDisguise(hearSelfDisguise);
+    }
+
+    public MobDisguise setHideArmorFromSelf(boolean hideArmor) {
+        return (MobDisguise) super.setHideArmorFromSelf(hideArmor);
+    }
+
+    public MobDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
+        return (MobDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
+    }
+
+    public MobDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
+        return (MobDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
+    }
+
+    public MobDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        return (MobDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
+    }
+
+    public MobDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
+        return (MobDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
+    }
+
+    public MobDisguise setModifyBoundingBox(boolean modifyBox) {
+        return (MobDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    public MobDisguise setReplaceSounds(boolean areSoundsReplaced) {
+        return (MobDisguise) super.setReplaceSounds(areSoundsReplaced);
+    }
+
+    public MobDisguise setVelocitySent(boolean sendVelocity) {
+        return (MobDisguise) super.setVelocitySent(sendVelocity);
+    }
+
+    public MobDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        return (MobDisguise) super.setViewSelfDisguise(viewSelfDisguise);
+    }
+
+    public MobDisguise setWatcher(FlagWatcher newWatcher) {
+        return (MobDisguise) super.setWatcher(newWatcher);
     }
 }
