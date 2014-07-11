@@ -16,7 +16,7 @@ public class EndermanWatcher extends LivingWatcher {
     }
 
     public boolean isAgressive() {
-        return (Integer) getValue(18, (byte) 0) == 1;
+        return (Byte) getValue(18, (byte) 0) == 1;
     }
 
     public void setAgressive(boolean isAgressive) {
