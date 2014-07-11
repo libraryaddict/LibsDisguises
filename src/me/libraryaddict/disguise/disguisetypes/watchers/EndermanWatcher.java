@@ -15,13 +15,23 @@ public class EndermanWatcher extends LivingWatcher {
         return new ItemStack((Byte) getValue(16, (byte) 0), 1, ((Byte) getValue(17, (byte) 0)));
     }
 
-    public boolean isAgressive() {
+    public boolean isAggressive() {
         return (Byte) getValue(18, (byte) 0) == 1;
     }
 
-    public void setAgressive(boolean isAgressive) {
-        setValue(18, (byte) (isAgressive ? 1 : 0));
+    @Deprecated
+    public boolean isAgressive() {
+        return isAggressive();
+    }
+
+    public void setAggressive(boolean isAggressive) {
+        setValue(18, (byte) (isAggressive ? 1 : 0));
         sendData(18);
+    }
+
+    @Deprecated
+    public void setAgressive(boolean isAgressive) {
+        setAggressive(isAgressive);
     }
 
     @Override
