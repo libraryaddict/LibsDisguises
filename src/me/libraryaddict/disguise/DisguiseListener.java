@@ -81,9 +81,9 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (DisguiseConfig.isDisguiseBlownOnAttack()) {
+        if (DisguiseConfig.isDisguiseBlownOnAttack() && !event.isCancelled()) {
             if (event.getEntity() instanceof Player) {
                 checkPlayerCanBlowDisguise((Player) event.getEntity());
             }
