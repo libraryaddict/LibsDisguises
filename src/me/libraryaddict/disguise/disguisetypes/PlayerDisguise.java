@@ -138,7 +138,7 @@ public class PlayerDisguise extends TargetedDisguise {
         if (gameProfile == null) {
             this.gameProfile = null;
             this.skinToUse = null;
-            return;
+            return this;
         }
 
         Validate.notEmpty(gameProfile.getName(), "Name must be set");
