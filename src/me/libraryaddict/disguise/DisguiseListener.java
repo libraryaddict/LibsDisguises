@@ -212,7 +212,7 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onVechileEnter(VehicleEnterEvent event) {
+    public void onVehicleEnter(VehicleEnterEvent event) {
         if (event.isCancelled())
             return;
         if (event.getEntered() instanceof Player && DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
@@ -222,7 +222,7 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onVechileLeave(VehicleExitEvent event) {
+    public void onVehicleLeave(VehicleExitEvent event) {
         if (event.isCancelled())
             return;
         if (event.getExited() instanceof Player) {
