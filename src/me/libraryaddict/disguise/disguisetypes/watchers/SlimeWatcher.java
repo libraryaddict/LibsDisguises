@@ -12,7 +12,7 @@ public class SlimeWatcher extends LivingWatcher {
     }
 
     public int getSize() {
-        return (Integer) getValue(16, (byte) 1);
+        return (Byte) getValue(16, (byte) 1);
     }
 
     public void setSize(int size) {
