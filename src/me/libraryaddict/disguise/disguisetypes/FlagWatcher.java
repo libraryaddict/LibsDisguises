@@ -177,7 +177,7 @@ public class FlagWatcher {
         return getItemStack(slot.getSlot());
     }
 
-    protected <T extends Object> T getValue(int no, Object backup) {
+    protected <T extends Object> T getValue(int no, T backup) {
         if (entityValues.containsKey(no))
             return (T) entityValues.get(no);
         return (T) backup;
