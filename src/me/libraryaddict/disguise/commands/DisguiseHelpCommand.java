@@ -204,6 +204,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "Villager Profession";
                                 } else if (PotionEffectType.class == c) {
                                     valueType = "Potion effect";
+                                } else if (c == int[].class) {
+                                    valueType = "number,number,number...";
                                 }
                                 if (valueType != null) {
                                     ChatColor methodColor = ChatColor.YELLOW;

@@ -541,6 +541,17 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         } catch (Exception ex) {
                             throw parseToException("a potioneffect type", valueString, methodName);
                         }
+                    } else if (param == int[].class) {
+                        String[] split = valueString.split(",");
+                        int[] values = new int[split.length];
+                        for (int b = 0; b < values.length; b++) {
+                            try {
+                                values[b] = Integer.parseInt(split[b]);
+                            } catch (NumberFormatException ex) {
+                                throw parseToException("Number,Number,Number...", valueString, methodName);
+                            }
+                        }
+                        value = values;
                     }
                 }
             }
