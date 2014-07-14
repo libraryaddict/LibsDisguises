@@ -28,6 +28,15 @@ public class ZombieWatcher extends LivingWatcher {
         setBaby(true);
     }
 
+    public void setShaking(boolean shaking) {
+        setValue(14, (byte) (shaking ? 1 : 0));
+        sendData(14);
+    }
+
+    public boolean isShaking() {
+        return getValue(14, (byte) 0) == 1;
+    }
+
     public void setBaby(boolean baby) {
         setValue(12, (byte) (baby ? 1 : 0));
         sendData(12);
