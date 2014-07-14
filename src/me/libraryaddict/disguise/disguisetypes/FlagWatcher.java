@@ -177,10 +177,10 @@ public class FlagWatcher {
         return getItemStack(slot.getSlot());
     }
 
-    protected Object getValue(int no, Object backup) {
+    protected <T extends Object> T getValue(int no, Object backup) {
         if (entityValues.containsKey(no))
-            return entityValues.get(no);
-        return backup;
+            return (T) entityValues.get(no);
+        return (T) backup;
     }
 
     public List<WrappedWatchableObject> getWatchableObjects() {
