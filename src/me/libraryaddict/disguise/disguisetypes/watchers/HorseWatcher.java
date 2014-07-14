@@ -77,7 +77,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     private boolean isTrue(int i) {
-        return (getValue(16, (byte) 0) & i) != 0;
+        return ((Integer) getValue(16, (byte) 0) & i) != 0;
     }
 
     public void setCanBreed(boolean breed) {

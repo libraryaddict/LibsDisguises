@@ -34,7 +34,7 @@ public class ZombieWatcher extends LivingWatcher {
     }
 
     public boolean isShaking() {
-        return getValue(14, (byte) 0) == 1;
+        return (Byte) getValue(14, (byte) 0) == 1;
     }
 
     public void setBaby(boolean baby) {
