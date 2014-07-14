@@ -12,8 +12,8 @@ public class GhastWatcher extends LivingWatcher {
         return (Byte) getValue(16, (byte) 0) == 1;
     }
 
-    public void setAggressive(boolean isAgressive) {
-        setValue(16, (byte) (isAgressive ? 1 : 0));
+    public void setAggressive(boolean isAggressive) {
+        setValue(16, (byte) (isAggressive ? 1 : 0));
         sendData(16);
     }
 
