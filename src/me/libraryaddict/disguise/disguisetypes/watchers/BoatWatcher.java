@@ -10,7 +10,7 @@ public class BoatWatcher extends FlagWatcher {
     }
 
     public int getDamage() {
-        return (Integer) getValue(19, 40F);
+        return Math.round(getValue(19, 40F));
     }
 
     public int getHealth() {
