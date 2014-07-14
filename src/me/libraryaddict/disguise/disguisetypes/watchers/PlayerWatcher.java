@@ -31,35 +31,26 @@ public class PlayerWatcher extends LivingWatcher {
         return (Byte) getValue(9, (byte) 0);
     }
 
-    public boolean isSleeping() {
-        return isInBed;
-    }
-
-    public void setHideCape(boolean hideCape) {
-        setValue16(1, hideCape);
-        sendData(16);
+    private boolean getValue16(int i) {
+        return ((Byte) getValue(16, (byte) 0) & 1 << i) != 0;
     }
 
     public boolean isHideCape() {
         return getValue16(1);
     }
 
-    private boolean getValue16(int i) {
-        return ((Byte) getValue(16, (byte) 0) & 1 << i) != 0;
-    }
-
-    private void setValue16(int i, boolean flag) {
-        byte b0 = (Byte) getValue(16, (byte) 0);
-        if (flag) {
-            setValue(16, Byte.valueOf((byte) (b0 | 1 << i)));
-        } else {
-            setValue(16, Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))));
-        }
+    public boolean isSleeping() {
+        return isInBed;
     }
 
     public void setArrowsSticking(int arrowsNo) {
         setValue(9, (byte) arrowsNo);
         sendData(9);
+    }
+
+    public void setHideCape(boolean hideCape) {
+        setValue16(1, hideCape);
+        sendData(16);
     }
 
     public void setSkin(String playerName) {
@@ -96,6 +87,15 @@ public class PlayerWatcher extends LivingWatcher {
                     ex.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void setValue16(int i, boolean flag) {
+        byte b0 = (Byte) getValue(16, (byte) 0);
+        if (flag) {
+            setValue(16, Byte.valueOf((byte) (b0 | 1 << i)));
+        } else {
+            setValue(16, Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))));
         }
     }
 

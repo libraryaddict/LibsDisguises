@@ -20,6 +20,10 @@ public class WitherWatcher extends LivingWatcher {
         return (Integer) getValue(20, 0);
     }
 
+    public int[] getTargets() {
+        return new int[] { (Integer) getValue(17, 0), (Integer) getValue(18, 0), (Integer) getValue(19, 0) };
+    }
+
     public void setInvul(int invulnerability) {
         setInvulnerability(invulnerability);
     }
@@ -38,10 +42,6 @@ public class WitherWatcher extends LivingWatcher {
         setValue(18, targets[1]);
         setValue(19, targets[2]);
         sendData(17, 18, 19);
-    }
-
-    public int[] getTargets() {
-        return new int[] { (Integer) getValue(17, 0), (Integer) getValue(18, 0), (Integer) getValue(19, 0) };
     }
 
 }

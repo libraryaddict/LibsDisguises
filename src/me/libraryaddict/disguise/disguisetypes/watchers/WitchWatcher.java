@@ -8,13 +8,13 @@ public class WitchWatcher extends LivingWatcher {
         super(disguise);
     }
 
+    public boolean isAggressive() {
+        return (Byte) getValue(21, (byte) 0) == 1;
+    }
+
     public void setAggressive(boolean isTrue) {
         setValue(21, (byte) (isTrue ? 1 : 0));
         sendData(21);
-    }
-
-    public boolean isAggressive() {
-        return (Byte) getValue(21, (byte) 0) == 1;
     }
 
 }
