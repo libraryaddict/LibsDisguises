@@ -307,6 +307,7 @@ public class PacketsManager {
                     .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, id, data)
                     .createPacket(nmsEntity, id, data);
             spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
+            spawnPackets[0].getModifier().write(7, pitch);
             spawnPackets[0].getModifier().write(8, yaw);
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
