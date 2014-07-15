@@ -166,6 +166,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
                 if (dType != null) {
                     singleDisguises.remove(dType);
+                    rangeDisguises.remove(dType);
                 } else {
                     for (DisguiseType type : DisguiseType.values()) {
                         boolean foundHim = false;
