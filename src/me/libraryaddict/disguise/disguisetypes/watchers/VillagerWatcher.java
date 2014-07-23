@@ -18,8 +18,11 @@ public class VillagerWatcher extends AgeableWatcher {
     }
 
     public void setProfession(Profession newProfession) {
-        setValue(16, newProfession.getId() % 6);
+        setProfession(newProfession.getId() % 6);
+    }
+    
+    public void setProfession(int professionId){
+        setValue(16, professionId);
         sendData(16);
     }
-
 }
