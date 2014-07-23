@@ -82,7 +82,7 @@ public class ReflectionManager {
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
     private static final Method ihmGet;
-    private static final boolean isForge = Bukkit.getServer().getName().equalsIgnoreCase("Cauldron");
+    private static final boolean isForge = Bukkit.getServer().getName().contains("Cauldron") || Bukkit.getServer().getName().contains("MCPC-Plus");
     private static final Field pingField;
     private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
