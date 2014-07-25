@@ -143,17 +143,15 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public PlayerDisguise setSkin(String skinToUse) {
-        if (LibVersion.is1_6())
-            return this;
-        this.skinToUse = skinToUse;
-        if (skinToUse == null) {
-            this.currentLookup = null;
-            this.gameProfile = null;
-        } else {
-            if (skinToUse.length() > 16) {
-                this.skinToUse = skinToUse.substring(0, 16);
-            }
-            if (LibVersion.is1_7_6()) {
+        if (LibVersion.is1_7_6()) {
+            this.skinToUse = skinToUse;
+            if (skinToUse == null) {
+                this.currentLookup = null;
+                this.gameProfile = null;
+            } else {
+                if (skinToUse.length() > 16) {
+                    this.skinToUse = skinToUse.substring(0, 16);
+                }
                 currentLookup = new LibsProfileLookup() {
 
                     @Override
