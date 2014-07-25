@@ -143,6 +143,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public PlayerDisguise setSkin(String skinToUse) {
+        if (LibVersion.is1_6())
+            return this;
         this.skinToUse = skinToUse;
         if (skinToUse == null) {
             this.currentLookup = null;
