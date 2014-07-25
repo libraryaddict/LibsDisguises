@@ -29,23 +29,15 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 public class ReflectionManager {
 
     public enum LibVersion {
-        V1_6, V1_7;
+        V1_6, V1_7, V1_7_6;
         private static LibVersion currentVersion = LibVersion.V1_7;
         static {
-            if (getBukkitVersion().startsWith("v1_")) {
-                try {
-                    int version = Integer.parseInt(getBukkitVersion().split("_")[1]);
-                    if (version == 7) {
-                        currentVersion = LibVersion.V1_7;
-                    } else {
-                        if (version < 7) {
-                            currentVersion = LibVersion.V1_6;
-                        } else {
-                            currentVersion = LibVersion.V1_7;
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+            String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
+            if (mcVersion.startsWith("1.")) {
+                if (mcVersion.compareTo("1.7") < 0) {
+                    currentVersion = LibVersion.V1_6;
+                } else {
+                    currentVersion = mcVersion.compareTo("1.7.6") < 0 ? LibVersion.V1_7 : LibVersion.V1_7_6;
                 }
             }
         }
@@ -59,7 +51,11 @@ public class ReflectionManager {
         }
 
         public static boolean is1_7() {
-            return getGameVersion() == V1_7;
+            return is1_7_6() || getGameVersion() == V1_7;
+        }
+
+        public static boolean is1_7_6() {
+            return getGameVersion() == V1_7_6;
         }
     }
 
@@ -82,7 +78,8 @@ public class ReflectionManager {
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
     private static final Method ihmGet;
-    private static final boolean isForge = Bukkit.getServer().getName().contains("Cauldron") || Bukkit.getServer().getName().contains("MCPC-Plus");
+    private static final boolean isForge = Bukkit.getServer().getName().contains("Cauldron")
+            || Bukkit.getServer().getName().contains("MCPC-Plus");
     private static final Field pingField;
     private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
