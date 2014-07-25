@@ -51,7 +51,7 @@ public class ReflectionManager {
         }
 
         public static boolean is1_7() {
-            return is1_7_6() || getGameVersion() == V1_7;
+            return getGameVersion() == V1_7 || is1_7_6();
         }
 
         public static boolean is1_7_6() {
