@@ -20,6 +20,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -344,7 +345,7 @@ public class DisguiseUtilities {
                     getAddedByPlugins().remove(disguise.getName().toLowerCase());
                 }
                 if (DisguiseAPI.isDisguiseInUse(disguise)
-                        && (!gameProfile.getName().equals(disguise.getName()) || !gameProfile.getProperties().isEmpty())) {
+                        && (!gameProfile.getName().equals(disguise.getName()) || (LibVersion.is1_7_6() && !gameProfile.getProperties().isEmpty()))) {
                     // TODO Resend for UUID? Might need to in the future.
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
@@ -371,7 +372,7 @@ public class DisguiseUtilities {
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
                 WrappedGameProfile gameProfile = ReflectionManager.getGameProfile(player);
-                if (!gameProfile.getProperties().isEmpty()) {
+                if (!LibVersion.is1_7_6() || !gameProfile.getProperties().isEmpty()) {
                     gameProfiles.put(playerName, gameProfile);
                     return gameProfile;
                 }

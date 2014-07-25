@@ -364,7 +364,9 @@ public class ReflectionManager {
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
         try {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
-            gameProfile.getProperties().putAll(profileWithSkin.getProperties());
+            if (LibVersion.is1_7_6()) {
+                gameProfile.getProperties().putAll(profileWithSkin.getProperties());
+            }
             return gameProfile;
         } catch (Exception ex) {
             ex.printStackTrace();

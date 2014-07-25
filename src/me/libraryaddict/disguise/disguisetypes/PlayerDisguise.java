@@ -151,7 +151,7 @@ public class PlayerDisguise extends TargetedDisguise {
             if (skinToUse.length() > 16) {
                 this.skinToUse = skinToUse.substring(0, 16);
             }
-            if (LibVersion.is1_7()) {
+            if (LibVersion.is1_7_6()) {
                 currentLookup = new LibsProfileLookup() {
 
                     @Override
