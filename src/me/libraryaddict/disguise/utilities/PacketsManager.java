@@ -41,7 +41,6 @@ import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.async.AsyncListenerHandler;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -55,7 +54,6 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class PacketsManager {
-    private static AsyncListenerHandler asyncSoundsListener;
     /**
      * This is a fix for the stupidity that is
      * "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
@@ -1064,10 +1062,9 @@ public class PacketsManager {
         if (soundsListenerEnabled != enabled) {
             soundsListenerEnabled = enabled;
             if (soundsListenerEnabled) {
-                asyncSoundsListener = ProtocolLibrary.getProtocolManager().getAsynchronousManager()
-                        .registerAsyncHandler(soundsListener);
+                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
             } else {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(asyncSoundsListener);
+                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
             }
         }
     }
