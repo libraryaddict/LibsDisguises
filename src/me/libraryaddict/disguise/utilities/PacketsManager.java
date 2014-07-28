@@ -506,6 +506,9 @@ public class PacketsManager {
                 StructureModifier<Object> mods = event.getPacket().getModifier();
                 Player observer = event.getPlayer();
                 if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+                    if (event.isAsync()) {
+                        return;
+                    }
                     String soundName = (String) mods.read(0);
                     SoundType soundType = null;
                     Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(1)) / 8D,
