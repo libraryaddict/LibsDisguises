@@ -1066,8 +1066,10 @@ public class PacketsManager {
             if (soundsListenerEnabled) {
                 asyncSoundsListener = ProtocolLibrary.getProtocolManager().getAsynchronousManager()
                         .registerAsyncHandler(soundsListener);
+                asyncSoundsListener.syncStart();
             } else {
                 ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(asyncSoundsListener);
+                asyncSoundsListener.syncStop();
             }
         }
     }
