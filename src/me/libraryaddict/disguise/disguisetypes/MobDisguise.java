@@ -49,8 +49,8 @@ public class MobDisguise extends TargetedDisguise {
         this.setReplaceSounds(replaceSounds);
     }
 
-    public PlayerDisguise addPlayer(Player player) {
-        return (PlayerDisguise) super.addPlayer(player);
+    public MobDisguise addPlayer(Player player) {
+        return (MobDisguise) super.addPlayer(player);
     }
 
     public MobDisguise addPlayer(String playername) {
