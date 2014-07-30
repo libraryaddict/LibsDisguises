@@ -105,8 +105,8 @@ public class MiscDisguise extends TargetedDisguise {
         this(DisguiseType.getType(disguiseType), id, data);
     }
 
-    public PlayerDisguise addPlayer(Player player) {
-        return (PlayerDisguise) super.addPlayer(player);
+    public MiscDisguise addPlayer(Player player) {
+        return (MiscDisguise) super.addPlayer(player);
     }
 
     public MiscDisguise addPlayer(String playername) {
