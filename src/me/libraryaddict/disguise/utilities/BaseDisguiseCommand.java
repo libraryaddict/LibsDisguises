@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
@@ -38,7 +39,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
     }
 
-    protected ArrayList<String> getDisguisePermission(CommandSender sender, DisguiseType type) {
+    protected HashMap<String, Boolean> getDisguisePermission(CommandSender sender, DisguiseType type) {
         switch (type) {
         case PLAYER:
         case FALLING_BLOCK:
@@ -46,7 +47,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         case SPLASH_POTION:
         case FISHING_HOOK:
         case DROPPED_ITEM:
-            ArrayList<String> returns = new ArrayList<String>();
+            HashMap<String, Boolean> returns = new HashMap<String, Boolean>();
             String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
             for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
                 String lowerPerm = permission.getPermission().toLowerCase();
@@ -55,7 +56,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     if (split.length > 1) {
                         if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
                             for (int i = 1; i < split.length; i++) {
-                                returns.add(split[i]);
+                                returns.put(split[i], permission.getValue());
                             }
                         }
                     }
@@ -63,7 +64,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             }
             return returns;
         default:
-            return new ArrayList<String>();
+            return new HashMap<String, Boolean>();
         }
     }
 
@@ -310,13 +311,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 throw new Exception(ChatColor.RED + "You are forbidden to use this disguise.");
             }
             optionPermissions = map.get(disguiseType);
-            ArrayList<String> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
+            HashMap<String, Boolean> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
             if (disguiseType.isPlayer()) {// If he is doing a player disguise
                 if (args.length == 1) {
                     // He needs to give the player name
                     throw new Exception(ChatColor.RED + "Error! You need to give a player name!");
                 } else {
-                    if (!disguiseOptions.isEmpty() && !disguiseOptions.contains(args[1].toLowerCase())) {
+                    if (!disguiseOptions.isEmpty()
+                            && (!disguiseOptions.containsKey(args[1].toLowerCase()) || !disguiseOptions
+                                    .get(args[1].toLowerCase()))) {
                         throw new Exception(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
                     // Construct the player disguise
@@ -397,13 +400,13 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     if (!disguiseOptions.isEmpty() && miscId != -1) {
                         String toCheck = "" + miscId;
                         if (miscData == 0 || miscData == -1) {
-                            if (!disguiseOptions.contains(toCheck)) {
+                            if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
                                 toCheck += ":0";
                             }
                         } else {
                             toCheck += ":" + miscData;
                         }
-                        if (!disguiseOptions.contains(toCheck)) {
+                        if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
                             throw new Exception(ChatColor.RED + "Error! You do not have permission to use the parameter "
                                     + toCheck + " on the " + disguiseType.toReadable() + " disguise!");
                         }
