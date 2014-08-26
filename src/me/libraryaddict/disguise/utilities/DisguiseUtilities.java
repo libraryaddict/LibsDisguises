@@ -337,17 +337,19 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise) {
-        final boolean remove = getAddedByPlugins().contains(disguise.getName().toLowerCase());
-        return getProfileFromMojang(disguise.getName(), new LibsProfileLookup() {
+        final String nameToFetch = disguise.getSkin() != null ? disguise.getSkin() : disguise.getName();
+        final boolean remove = getAddedByPlugins().contains(nameToFetch.toLowerCase());
+        return getProfileFromMojang(nameToFetch, new LibsProfileLookup() {
 
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
                 if (remove) {
-                    getAddedByPlugins().remove(disguise.getName().toLowerCase());
+                    getAddedByPlugins().remove(nameToFetch.toLowerCase());
                 }
                 if (DisguiseAPI.isDisguiseInUse(disguise)
-                        && (!gameProfile.getName().equals(disguise.getName()) || (LibVersion.is1_7_6() && !gameProfile
-                                .getProperties().isEmpty()))) {
+                        && (!gameProfile.getName().equals(
+                                disguise.getSkin() != null && LibVersion.is1_7_6() ? disguise.getSkin() : disguise.getName()) || (LibVersion
+                                .is1_7_6() && !gameProfile.getProperties().isEmpty()))) {
                     // TODO Resend for UUID? Might need to in the future.
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
@@ -411,12 +413,14 @@ public class DisguiseUtilities {
                     }
                 }
             });
-            if (runnable != null) {
-                if (!runnables.containsKey(playerName)) {
-                    runnables.put(playerName, new ArrayList<Object>());
-                }
-                runnables.get(playerName).add(runnable);
+        } else {
+            return ReflectionManager.getGameProfile(null, origName);
+        }
+        if (runnable != null) {
+            if (!runnables.containsKey(playerName)) {
+                runnables.put(playerName, new ArrayList<Object>());
             }
+            runnables.get(playerName).add(runnable);
         }
         return ReflectionManager.getGameProfile(null, origName);
     }
