@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -345,7 +346,8 @@ public class DisguiseUtilities {
                     getAddedByPlugins().remove(disguise.getName().toLowerCase());
                 }
                 if (DisguiseAPI.isDisguiseInUse(disguise)
-                        && (!gameProfile.getName().equals(disguise.getName()) || (LibVersion.is1_7_6() && !gameProfile.getProperties().isEmpty()))) {
+                        && (!gameProfile.getName().equals(disguise.getName()) || (LibVersion.is1_7_6() && !gameProfile
+                                .getProperties().isEmpty()))) {
                     // TODO Resend for UUID? Might need to in the future.
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
@@ -367,7 +369,7 @@ public class DisguiseUtilities {
             if (gameProfiles.get(playerName) != null) {
                 return gameProfiles.get(playerName);
             }
-        } else {
+        } else if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
             getAddedByPlugins().add(playerName);
             Player player = Bukkit.getPlayerExact(playerName);
             if (player != null) {
@@ -409,12 +411,12 @@ public class DisguiseUtilities {
                     }
                 }
             });
-        }
-        if (runnable != null) {
-            if (!runnables.containsKey(playerName)) {
-                runnables.put(playerName, new ArrayList<Object>());
+            if (runnable != null) {
+                if (!runnables.containsKey(playerName)) {
+                    runnables.put(playerName, new ArrayList<Object>());
+                }
+                runnables.get(playerName).add(runnable);
             }
-            runnables.get(playerName).add(runnable);
         }
         return ReflectionManager.getGameProfile(null, origName);
     }
