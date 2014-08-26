@@ -37,7 +37,7 @@ public class ReflectionManager {
                 if (mcVersion.compareTo("1.7") < 0) {
                     currentVersion = LibVersion.V1_6;
                 } else {
-                    currentVersion = mcVersion.compareTo("1.7.6") < 0 ? LibVersion.V1_7 : LibVersion.V1_7_6;
+                    currentVersion = mcVersion.compareTo("1.7.6") < 0 && !mcVersion.equals("1.7.10") ? LibVersion.V1_7 : LibVersion.V1_7_6;
                 }
             }
         }
