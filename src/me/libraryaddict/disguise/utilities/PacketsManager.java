@@ -218,12 +218,13 @@ public class PacketsManager {
                 }
             } else {
                 WrappedGameProfile gameProfile;
-                String name = ((PlayerDisguise) disguise).getName();
+                PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
+                String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
                 boolean removeName = false;
                 if (!DisguiseUtilities.hasGameProfile(name)) {
                     removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
                 }
-                gameProfile = ((PlayerDisguise) disguise).getGameProfile();
+                gameProfile = playerDisguise.getGameProfile();
                 if (removeName) {
                     DisguiseUtilities.getAddedByPlugins().remove(name);
                 }
