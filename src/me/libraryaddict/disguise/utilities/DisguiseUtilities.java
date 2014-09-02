@@ -389,15 +389,17 @@ public class DisguiseUtilities {
                         final WrappedGameProfile gameProfile = lookupGameProfile(origName);
                         Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                             public void run() {
-                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                    gameProfiles.put(playerName, gameProfile);
-                                }
-                                if (runnables.containsKey(playerName)) {
-                                    for (Object obj : runnables.remove(playerName)) {
-                                        if (obj instanceof Runnable) {
-                                            ((Runnable) obj).run();
-                                        } else if (obj instanceof LibsProfileLookup) {
-                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                if (!LibVersion.is1_7_6() || !gameProfile.getProperties().isEmpty()) {
+                                    if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
+                                        gameProfiles.put(playerName, gameProfile);
+                                    }
+                                    if (runnables.containsKey(playerName)) {
+                                        for (Object obj : runnables.remove(playerName)) {
+                                            if (obj instanceof Runnable) {
+                                                ((Runnable) obj).run();
+                                            } else if (obj instanceof LibsProfileLookup) {
+                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                            }
                                         }
                                     }
                                 }
