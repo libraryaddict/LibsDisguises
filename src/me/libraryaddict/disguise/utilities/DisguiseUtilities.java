@@ -463,26 +463,44 @@ public class DisguiseUtilities {
     /**
      * Resends the entity to this specific player
      */
-    public static void refreshTracker(TargetedDisguise disguise, String player) {
+    public static void refreshTracker(final TargetedDisguise disguise, String player) {
         if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
             try {
                 if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player
                         && ((Player) disguise.getEntity()).getName().equalsIgnoreCase(player)) {
+                    removeSelfDisguise((Player) disguise.getEntity());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                        public void run() {
+                            try {
+                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
                     DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                 } else {
-                    Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+                    final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                     if (entityTrackerEntry != null) {
                         HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
                                 .get(entityTrackerEntry);
                         Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                                 ReflectionManager.getNmsClass("EntityPlayer"));
-                        Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
+                        final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                                 ReflectionManager.getNmsClass("EntityPlayer"));
                         HashSet cloned = (HashSet) trackedPlayers.clone();
-                        for (Object p : cloned) {
+                        for (final Object p : cloned) {
                             if (player.equalsIgnoreCase(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
                                 clear.invoke(entityTrackerEntry, p);
-                                updatePlayer.invoke(entityTrackerEntry, p);
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    public void run() {
+                                        try {
+                                            updatePlayer.invoke(entityTrackerEntry, p);
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                });
                                 break;
                             }
                         }
@@ -500,23 +518,28 @@ public class DisguiseUtilities {
     public static void refreshTrackers(Entity entity) {
         if (entity.isValid()) {
             try {
-                Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
+                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
                 if (entityTrackerEntry != null) {
                     HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
                             entityTrackerEntry);
                     Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
+                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     HashSet cloned = (HashSet) trackedPlayers.clone();
-                    for (Object p : cloned) {
+                    for (final Object p : cloned) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                        // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
-                        // entity))
-                        // continue;
                         if (player != entity) {
                             clear.invoke(entityTrackerEntry, p);
-                            updatePlayer.invoke(entityTrackerEntry, p);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                public void run() {
+                                    try {
+                                        updatePlayer.invoke(entityTrackerEntry, p);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -529,29 +552,43 @@ public class DisguiseUtilities {
     /**
      * Resends the entity to all the watching players, which is where the magic begins
      */
-    public static void refreshTrackers(TargetedDisguise disguise) {
+    public static void refreshTrackers(final TargetedDisguise disguise) {
         if (disguise.getEntity().isValid()) {
             try {
                 if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
-                    DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                    removeSelfDisguise((Player) disguise.getEntity());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                        public void run() {
+                            try {
+                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
                 }
-                Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
+                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                 if (entityTrackerEntry != null) {
                     HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
                             entityTrackerEntry);
                     Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
+                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     HashSet cloned = (HashSet) trackedPlayers.clone();
-                    for (Object p : cloned) {
+                    for (final Object p : cloned) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
-                        // if (entity instanceof Player && !((Player) ReflectionManager.getBukkitEntity(player)).canSee((Player)
-                        // entity))
-                        // continue;
                         if (disguise.getEntity() != player && disguise.canSee(player.getName())) {
                             clear.invoke(entityTrackerEntry, p);
-                            updatePlayer.invoke(entityTrackerEntry, p);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                public void run() {
+                                    try {
+                                        updatePlayer.invoke(entityTrackerEntry, p);
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            });
                         }
                     }
                 }
