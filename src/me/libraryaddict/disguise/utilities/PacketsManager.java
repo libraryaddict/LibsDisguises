@@ -1389,11 +1389,11 @@ public class PacketsManager {
                         StructureModifier<Object> mods = rotation.getModifier();
                         mods.write(0, entity.getEntityId());
                         mods.write(1, yaw);
-                        packets = new PacketContainer[] {
-                                ProtocolLibrary
-                                        .getProtocolManager()
-                                        .createPacketConstructor(PacketType.Play.Server.ENTITY_LOOK, entity.getEntityId(), yaw,
-                                                pitch).createPacket(entity.getEntityId(), yaw, pitch), rotation };
+                        PacketContainer look = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+                        look.getIntegers().write(0, entity.getEntityId());
+                        look.getBytes().write(0, yaw);
+                        look.getBytes().write(1, pitch);
+                        packets = new PacketContainer[] { look, rotation };
                     }
                 }
 
