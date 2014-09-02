@@ -750,7 +750,7 @@ public class PacketsManager {
                             if (packet.equals(event.getPacket())) {
                                 packet = packet.deepClone();
                             }
-                            packet.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
+                            packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                             } catch (InvocationTargetException e) {
