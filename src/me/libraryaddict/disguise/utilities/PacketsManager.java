@@ -113,7 +113,7 @@ public class PacketsManager {
     /**
      * Construct the packets I need to spawn in the disguise
      */
-    public static PacketContainer[] constructSpawnPackets(Disguise disguise, Entity disguisedEntity) {
+    public static PacketContainer[] constructSpawnPackets(Player player, Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
@@ -246,7 +246,7 @@ public class PacketsManager {
             byteMods.write(0, yaw);
             byteMods.write(1, pitch);
             spawnPackets[0].getDataWatcherModifier().write(0,
-                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+                    createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
             if (((PlayerWatcher) disguise.getWatcher()).isSleeping() && DisguiseConfig.isBedPacketsEnabled()) {
                 spawnPackets[1] = new PacketContainer(PacketType.Play.Server.BED);
@@ -290,7 +290,7 @@ public class PacketsManager {
             mods.write(8, yaw);
             mods.write(9, pitch);
             spawnPackets[0].getDataWatcherModifier().write(0,
-                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+                    createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
         } else if (disguise.getType().isMisc()) {
 
@@ -331,11 +331,12 @@ public class PacketsManager {
     /**
      * Create a new datawatcher but with the 'correct' values
      */
-    private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
+    private static WrappedDataWatcher createDataWatcher(Player player, WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
             List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ? flagWatcher.convert(watcher
                     .getWatchableObjects()) : flagWatcher.getWatchableObjects();
+            list = DisguiseUtilities.rebuildForVersion(player, flagWatcher, list);
             for (WrappedWatchableObject watchableObject : list) {
                 newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
@@ -1247,6 +1248,7 @@ public class PacketsManager {
                     if (DisguiseConfig.isMetadataPacketsEnabled()) {
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
                                 packets[0].getWatchableCollectionModifier().read(0));
+                        watchableObjects = DisguiseUtilities.rebuildForVersion(observer, disguise.getWatcher(), watchableObjects);
                         packets[0] = new PacketContainer(sentPacket.getType());
                         StructureModifier<Object> newMods = packets[0].getModifier();
                         newMods.write(0, entity.getEntityId());
@@ -1262,7 +1264,7 @@ public class PacketsManager {
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING) {
-                    packets = constructSpawnPackets(disguise, entity);
+                    packets = constructSpawnPackets(observer, disguise, entity);
                 }
 
                 // Else if the disguise is attempting to send players a forbidden packet
@@ -1349,6 +1351,7 @@ public class PacketsManager {
                                     }
                                 }
                             }
+                            list = DisguiseUtilities.rebuildForVersion(observer, disguise.getWatcher(), list);
                             // Construct the packets to return
                             PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             packetBlock.getModifier().write(0, entity.getEntityId());

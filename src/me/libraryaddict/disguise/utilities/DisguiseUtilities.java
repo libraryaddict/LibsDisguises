@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -16,9 +17,12 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
@@ -41,6 +45,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class DisguiseUtilities {
     /**
@@ -460,6 +465,65 @@ public class DisguiseUtilities {
         return ReflectionManager.getSkullBlob(gameprofile);
     }
 
+    public static List<WrappedWatchableObject> rebuildForVersion(Player player, FlagWatcher watcher,
+            List<WrappedWatchableObject> list) {
+        if (!ReflectionManager.is1_8(player))
+            return list;
+        ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<WrappedWatchableObject>();
+        ArrayList<WrappedWatchableObject> backups = new ArrayList<WrappedWatchableObject>();
+        // TODO Player and Minecart
+        for (WrappedWatchableObject obj : list) {
+            if (obj.getValue().getClass().getName().startsWith("org.")) {
+                backups.add(obj);
+                continue;
+            }
+            switch (obj.getIndex()) {
+            case 2:
+            case 3:
+                if (watcher instanceof ItemFrameWatcher) {
+                    rebuiltList.add(new WrappedWatchableObject(obj.getIndex() + 6, obj.getValue()));
+                } else {
+                    backups.add(obj);
+                }
+                break;
+            case 10:
+            case 11:
+                rebuiltList.add(new WrappedWatchableObject(obj.getIndex() - 8, obj.getValue()));
+                break;
+            case 12:
+                if (watcher instanceof AgeableWatcher) {
+                    int i = (Integer) obj.getValue();
+                    rebuiltList.add(new WrappedWatchableObject(obj.getIndex(), (byte) (i < 0 ? -1 : (i >= 6000 ? 1 : 0))));
+                } else {
+                    backups.add(obj);
+                }
+                break;
+            case 16:
+                if (watcher instanceof EndermanWatcher) {
+                    rebuiltList.add(new WrappedWatchableObject(obj.getIndex(), ((Short) obj.getValue()).byteValue()));
+                } else {
+                    backups.add(obj);
+                }
+                break;
+            default:
+                backups.add(obj);
+                break;
+            }
+        }
+        Iterator<WrappedWatchableObject> itel = backups.iterator();
+        while (itel.hasNext()) {
+            int index = itel.next().getIndex();
+            for (WrappedWatchableObject obj2 : rebuiltList) {
+                if (index == obj2.getIndex()) {
+                    itel.remove();
+                    break;
+                }
+            }
+        }
+        rebuiltList.addAll(backups);
+        return rebuiltList;
+    }
+
     /**
      * Resends the entity to this specific player
      */
@@ -477,7 +541,7 @@ public class DisguiseUtilities {
                                 ex.printStackTrace();
                             }
                         }
-                    });
+                    }, 2);
                     DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                 } else {
                     final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
@@ -500,7 +564,7 @@ public class DisguiseUtilities {
                                             ex.printStackTrace();
                                         }
                                     }
-                                });
+                                }, 2);
                                 break;
                             }
                         }
@@ -539,7 +603,7 @@ public class DisguiseUtilities {
                                         ex.printStackTrace();
                                     }
                                 }
-                            });
+                            }, 2);
                         }
                     }
                 }
@@ -565,7 +629,7 @@ public class DisguiseUtilities {
                                 ex.printStackTrace();
                             }
                         }
-                    });
+                    }, 2);
                 }
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                 if (entityTrackerEntry != null) {
@@ -588,7 +652,7 @@ public class DisguiseUtilities {
                                         ex.printStackTrace();
                                     }
                                 }
-                            });
+                            }, 2);
                         }
                     }
                 }
