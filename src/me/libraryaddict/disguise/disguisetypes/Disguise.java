@@ -241,7 +241,7 @@ public abstract class Disguise {
                             if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
                                 lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
-                                mods.write(0, getEntity().getEntityId());
+                                lookPacket.getIntegers().write(0, getEntity().getEntityId());
                                 Location loc = getEntity().getLocation();
                                 mods.write(
                                         4,
@@ -251,7 +251,7 @@ public abstract class Disguise {
                                         (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
-                                    selfLookPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
+                                    selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                 selfLookPacket, false);
