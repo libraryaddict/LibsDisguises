@@ -530,9 +530,11 @@ public class DisguiseUtilities {
     public static void refreshTracker(final TargetedDisguise disguise, String player) {
         if (disguise.getEntity() != null && disguise.getEntity().isValid()) {
             try {
+                PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
                 if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player
                         && ((Player) disguise.getEntity()).getName().equalsIgnoreCase(player)) {
                     removeSelfDisguise((Player) disguise.getEntity());
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                         public void run() {
                             try {
@@ -554,8 +556,10 @@ public class DisguiseUtilities {
                                 ReflectionManager.getNmsClass("EntityPlayer"));
                         HashSet cloned = (HashSet) trackedPlayers.clone();
                         for (final Object p : cloned) {
-                            if (player.equalsIgnoreCase(((Player) ReflectionManager.getBukkitEntity(p)).getName())) {
+                            Player pl = (Player) ReflectionManager.getBukkitEntity(p);
+                            if (player.equalsIgnoreCase((pl).getName())) {
                                 clear.invoke(entityTrackerEntry, p);
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                                     public void run() {
                                         try {
@@ -582,6 +586,7 @@ public class DisguiseUtilities {
     public static void refreshTrackers(Entity entity) {
         if (entity.isValid()) {
             try {
+                PacketContainer destroyPacket = getDestroyPacket(entity.getEntityId());
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
                 if (entityTrackerEntry != null) {
                     HashSet trackedPlayers = (HashSet) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
@@ -595,6 +600,7 @@ public class DisguiseUtilities {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (player != entity) {
                             clear.invoke(entityTrackerEntry, p);
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                                 public void run() {
                                     try {
@@ -618,9 +624,11 @@ public class DisguiseUtilities {
      */
     public static void refreshTrackers(final TargetedDisguise disguise) {
         if (disguise.getEntity().isValid()) {
+            PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
             try {
                 if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
                     removeSelfDisguise((Player) disguise.getEntity());
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                         public void run() {
                             try {
@@ -644,6 +652,7 @@ public class DisguiseUtilities {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (disguise.getEntity() != player && disguise.canSee(player.getName())) {
                             clear.invoke(entityTrackerEntry, p);
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                                 public void run() {
                                     try {
@@ -660,6 +669,12 @@ public class DisguiseUtilities {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static PacketContainer getDestroyPacket(int... ids) {
+        PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        destroyPacket.getIntegerArrays().write(0, ids);
+        return destroyPacket;
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
