@@ -1302,9 +1302,10 @@ public class PacketsManager {
                         StructureModifier<Byte> bytes = packets[0].getBytes();
                         boolean tele = sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT;
                         byte yawValue = (Byte) bytes.read(tele ? 0 : 3);
-                        bytes.write(3, getYaw(disguise.getType(), entity.getType(), yawValue));
+                        bytes.write(tele ? 0 : 3, getYaw(disguise.getType(), entity.getType(), yawValue));
                         byte pitchValue = (Byte) bytes.read(tele ? 1 : 4);
-                        bytes.write(4, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
+                        bytes.write(tele ? 1 : 4,
+                                getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (tele && disguise.getType() == DisguiseType.ITEM_FRAME) {
                             StructureModifier<Integer> ints = packets[0].getIntegers();
                             Location loc = entity.getLocation();
