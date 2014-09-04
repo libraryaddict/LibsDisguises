@@ -1299,27 +1299,27 @@ public class PacketsManager {
                         packets = new PacketContainer[0];
                     } else {
                         packets[0] = sentPacket.shallowClone();
-                        StructureModifier<Object> mods = packets[0].getModifier();
-                        byte yawValue = (Byte) mods.read(4);
-                        mods.write(4, getYaw(disguise.getType(), entity.getType(), yawValue));
-                        byte pitchValue = (Byte) mods.read(5);
-                        mods.write(5, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
-                        if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                            if (disguise.getType() == DisguiseType.ITEM_FRAME) {
-                                Location loc = entity.getLocation();
-                                int data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
+                        StructureModifier<Byte> bytes = packets[0].getBytes();
+                        boolean tele = sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT;
+                        byte yawValue = (Byte) bytes.read(tele ? 0 : 3);
+                        bytes.write(3, getYaw(disguise.getType(), entity.getType(), yawValue));
+                        byte pitchValue = (Byte) bytes.read(tele ? 1 : 4);
+                        bytes.write(4, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
+                        if (tele && disguise.getType() == DisguiseType.ITEM_FRAME) {
+                            StructureModifier<Integer> ints = packets[0].getIntegers();
+                            Location loc = entity.getLocation();
+                            int data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
+                            if (data % 2 == 0) {
                                 if (data % 2 == 0) {
-                                    if (data % 2 == 0) {
-                                        mods.write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
-                                    } else {
-                                        mods.write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
-                                    }
+                                    ints.write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
+                                } else {
+                                    ints.write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
                                 }
-                                double y = getYModifier(entity, disguise);
-                                if (y != 0) {
-                                    y *= 32;
-                                    mods.write(2, (Integer) mods.read(2) + (int) Math.floor(y));
-                                }
+                            }
+                            double y = getYModifier(entity, disguise);
+                            if (y != 0) {
+                                y *= 32;
+                                ints.write(2, (Integer) ints.read(2) + (int) Math.floor(y));
                             }
                         }
                     }
