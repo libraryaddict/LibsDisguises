@@ -1,4 +1,4 @@
-LibsDisguises
+Fuzzy_BotDisguises
 =============
 
-Disguises which doesn't suck
+The Best Disguises
