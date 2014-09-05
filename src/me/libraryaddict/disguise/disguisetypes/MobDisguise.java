@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import java.security.InvalidParameterException;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 import org.bukkit.entity.Entity;
@@ -75,6 +76,11 @@ public class MobDisguise extends TargetedDisguise {
         return getWatcher() != null && (getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher);
     }
 
+    @Override
+    public LivingWatcher getWatcher() {
+        return (LivingWatcher) super.getWatcher();
+    }
+
     public boolean isAdult() {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher) {
@@ -130,7 +136,9 @@ public class MobDisguise extends TargetedDisguise {
 
     public MobDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
-    }  public MobDisguise setModifyBoundingBox(boolean modifyBox) {
+    }
+
+    public MobDisguise setModifyBoundingBox(boolean modifyBox) {
         return (MobDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
