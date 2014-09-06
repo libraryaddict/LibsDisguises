@@ -206,6 +206,31 @@ public class FlagWatcher {
         return getFlag(5);
     }
 
+    public String getCustomName() {
+        return (String) getValue(10, null);
+    }
+
+    public boolean hasCustomName() {
+        return getCustomName() != null;
+    }
+
+    public boolean isCustomNameVisible() {
+        return (Byte) getValue(11, (byte) 0) == 1;
+    }
+
+    public void setCustomName(String name) {
+        if (name != null && name.length() > 64) {
+            name = name.substring(0, 64);
+        }
+        setValue(10, name);
+        sendData(10);
+    }
+
+    public void setCustomNameVisible(boolean display) {
+        setValue(11, (byte) (display ? 1 : 0));
+        sendData(11);
+    }
+
     public boolean isRightClicking() {
         return getFlag(4);
     }
