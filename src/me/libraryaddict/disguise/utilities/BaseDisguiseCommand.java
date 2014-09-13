@@ -2,12 +2,14 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -66,6 +68,21 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         default:
             return new HashMap<String, Boolean>();
         }
+    }
+
+    protected Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
+        Method[] methods = watcherClass.getMethods();
+        methods = Arrays.copyOf(methods, methods.length + 4);
+        int i = 4;
+        for (String methodName : new String[] { "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
+                "setHearSelfDisguise" }) {
+            try {
+                methods[methods.length - i--] = Disguise.class.getMethod(methodName, boolean.class);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return methods;
     }
 
     /**
@@ -432,12 +449,13 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
         args = newArgs;
+        Method[] methods = this.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
         for (int i = 0; i < args.length; i += 2) {
             String methodName = args[i];
             String valueString = (args.length - 1 == i ? null : args[i + 1]);
             Method methodToUse = null;
             Object value = null;
-            for (Method method : disguise.getWatcher().getClass().getMethods()) {
+            for (Method method : methods) {
                 if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
                         && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
                     methodToUse = method;

@@ -157,7 +157,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     Class watcher = type.getWatcherClass();
                     int ignored = 0;
                     try {
-                        for (Method method : watcher.getMethods()) {
+                        for (Method method : this.getDisguiseWatcherMethods(watcher)) {
                             if (!method.getName().startsWith("get") && method.getParameterTypes().length == 1
                                     && method.getAnnotation(Deprecated.class) == null) {
                                 if (args.length < 2 || !args[1].equalsIgnoreCase("show")) {
