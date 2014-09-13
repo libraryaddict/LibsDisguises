@@ -77,6 +77,7 @@ public class PacketsManager {
                 PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
+                if (event.isCancelled()) return;
                 try {
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
@@ -739,6 +740,7 @@ public class PacketsManager {
                 PacketType.Play.Server.UPDATE_ATTRIBUTES, PacketType.Play.Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
+                if (event.isCancelled()) return;
                 final Player observer = event.getPlayer();
                 if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
                     if (DisguiseAPI.isSelfDisguised(observer)) {
@@ -816,6 +818,7 @@ public class PacketsManager {
                 PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK) {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
+                if (event.isCancelled()) return;
                 if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
                         && event.getPlayer().getVehicle() == null) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
@@ -1144,6 +1147,7 @@ public class PacketsManager {
             mainListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH, packetsToListen) {
                 @Override
                 public void onPacketSending(PacketEvent event) {
+                    if (event.isCancelled()) return;
                     final Player observer = event.getPlayer();
                     // First get the entity, the one sending this packet
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
