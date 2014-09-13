@@ -212,7 +212,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     Class<?> declaring = method.getDeclaringClass();
                                     if (declaring == LivingWatcher.class) {
                                         methodColor = ChatColor.AQUA;
-                                    } else if (declaring == FlagWatcher.class) {
+                                    } else if (!(declaring.isAssignableFrom(FlagWatcher.class)) || declaring == FlagWatcher.class) {
                                         methodColor = ChatColor.GRAY;
                                     }
                                     String str = method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN + valueType
