@@ -291,11 +291,11 @@ public class DisguiseAPI {
      */
     @Deprecated
     public static int getFakeDisguise(UUID entityId) {
-        return -1;
+        return -10;
     }
 
     public static int getSelfDisguiseId() {
-        return -1;
+        return -10;
     }
 
     /**
