@@ -103,7 +103,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
             if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
                 sender.sendMessage(ex.getMessage());
-            } else if (ex.getCause() != null) {
+            } else {
                 ex.printStackTrace();
             }
             return true;
