@@ -581,7 +581,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 usedOptions.add(methodName.toLowerCase());
             }
             doCheck(optionPermissions, usedOptions);
-            if (methodToUse.getDeclaringClass().isAssignableFrom(FlagWatcher.class))
+            if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass()))
                 methodToUse.invoke(disguise.getWatcher(), value);
             else
                 methodToUse.invoke(disguise, value);
