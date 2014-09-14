@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -9,8 +10,8 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 
 import org.bukkit.Bukkit;
@@ -24,14 +25,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 
 public class DisguiseListener implements Listener {
 
@@ -86,6 +92,39 @@ public class DisguiseListener implements Listener {
         }
     }
 
+    private void chunkMove(Player player, Location newLoc, Location oldLoc) {
+        try {
+            if (ReflectionManager.is1_8(player)) {
+                for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(player, newLoc, oldLoc)) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                }
+            }
+            if (newLoc != null) {
+                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
+                    for (TargetedDisguise disguise : list) {
+                        if (disguise.getType() == DisguiseType.PLAYER && disguise.canSee(player)
+                                && ((PlayerDisguise) disguise).getWatcher().isSleeping()
+                                && DisguiseUtilities.getPerverts(disguise).contains(player)) {
+                            PacketContainer[] packets = DisguiseUtilities.getBedPackets(player,
+                                    disguise.getEntity() == player ? newLoc : disguise.getEntity().getLocation(), newLoc,
+                                    (PlayerDisguise) disguise);
+                            if (disguise.getEntity() == player) {
+                                for (PacketContainer packet : packets) {
+                                    packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                                }
+                            }
+                            for (PacketContainer packet : packets) {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
         if (DisguiseConfig.isDisguiseBlownOnAttack()) {
@@ -103,6 +142,33 @@ public class DisguiseListener implements Listener {
         Player p = event.getPlayer();
         if (latestVersion != null && p.hasPermission(updateNotifyPermission)) {
             p.sendMessage(String.format(updateMessage, currentVersion, latestVersion));
+        }
+        if (DisguiseConfig.isBedPacketsEnabled()) {
+            chunkMove(p, p.getLocation(), null);
+        }
+    }
+
+    /**
+     * Most likely faster if we don't bother doing checks if he sees a player disguise
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMove(PlayerMoveEvent event) {
+        if (DisguiseConfig.isBedPacketsEnabled()) {
+            Location to = event.getTo();
+            Location from = event.getFrom();
+            if (Math.floor(to.getBlockX() / 160D) != Math.floor(from.getBlockX() / 160D)
+                    || Math.floor(to.getBlockZ() / 160D) != Math.floor(from.getBlockZ() / 160D)) {
+                chunkMove(event.getPlayer(), to, from);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPortalEnter(PlayerPortalEvent event) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
+            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
+                disguise.removeDisguise();
+            }
         }
     }
 
@@ -217,6 +283,27 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onTeleport(final PlayerTeleportEvent event) {
+        if (DisguiseConfig.isBedPacketsEnabled()) {
+            Location to = event.getTo();
+            Location from = event.getFrom();
+            if (Math.floor(to.getBlockX() / 160D) != Math.floor(from.getBlockX() / 160D)
+                    || Math.floor(to.getBlockZ() / 160D) != Math.floor(from.getBlockZ() / 160D)) {
+                chunkMove(event.getPlayer(), null, from);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    public void run() {
+                        if (!event.isCancelled()) {
+                            chunkMove(event.getPlayer(), event.getTo(), null);
+                        } else {
+                            chunkMove(event.getPlayer(), event.getPlayer().getLocation(), null);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
         if (event.getEntered() instanceof Player && DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
             DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
@@ -240,11 +327,9 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onWorldSwitch(PlayerPortalEvent event) {
-        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
-            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
-                disguise.removeDisguise();
-            }
+    public void onWorldSwitch(final PlayerChangedWorldEvent event) {
+        if (DisguiseConfig.isBedPacketsEnabled()) {
+            chunkMove(event.getPlayer(), event.getPlayer().getLocation(), null);
         }
     }
 

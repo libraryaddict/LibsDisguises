@@ -29,7 +29,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 public class ReflectionManager {
 
     public enum LibVersion {
-        V1_6, V1_7, V1_7_6, V1_7_10, V1_8;
+        V1_6, V1_7, V1_7_10, V1_7_6, V1_8;
         private static LibVersion currentVersion = LibVersion.V1_7;
         static {
             String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
@@ -58,12 +58,12 @@ public class ReflectionManager {
             return getGameVersion() == V1_7 || is1_7_6();
         }
 
-        public static boolean is1_7_6() {
-            return getGameVersion() == V1_7_6 || is1_7_10();
-        }
-
         public static boolean is1_7_10() {
             return getGameVersion() == V1_7_10;
+        }
+
+        public static boolean is1_7_6() {
+            return getGameVersion() == V1_7_6 || is1_7_10();
         }
     }
 

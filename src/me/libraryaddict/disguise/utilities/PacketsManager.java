@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -250,12 +251,13 @@ public class PacketsManager {
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
             if (((PlayerWatcher) disguise.getWatcher()).isSleeping() && DisguiseConfig.isBedPacketsEnabled()) {
-                spawnPackets[1] = new PacketContainer(PacketType.Play.Server.BED);
-                StructureModifier<Integer> mods = spawnPackets[1].getIntegers();
-                mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, loc.getBlockX());
-                mods.write(2, loc.getBlockY());
-                mods.write(3, loc.getBlockZ());
+                spawnPackets = Arrays.copyOf(spawnPackets, spawnPackets.length);
+                PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(player,
+                        loc.clone().subtract(0, PacketsManager.getYModifier(disguisedEntity, disguise), 0), player.getLocation(),
+                        ((PlayerDisguise) disguise));
+                for (int i = 0; i < 2; i++) {
+                    spawnPackets[i + 1] = bedPackets[i];
+                }
             }
 
         } else if (disguise.getType().isMob()) {
@@ -439,7 +441,7 @@ public class PacketsManager {
     /**
      * Get the Y level to add to the disguise for realism.
      */
-    private static double getYModifier(Entity entity, Disguise disguise) {
+    public static double getYModifier(Entity entity, Disguise disguise) {
         double yMod = 0;
         if ((disguise.getType() != DisguiseType.PLAYER || !((PlayerWatcher) disguise.getWatcher()).isSleeping())
                 && entity.getType() == EntityType.DROPPED_ITEM) {

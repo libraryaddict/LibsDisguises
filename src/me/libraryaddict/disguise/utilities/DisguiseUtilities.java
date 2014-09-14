@@ -1,9 +1,11 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +25,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
@@ -31,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -43,6 +47,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
@@ -53,6 +58,7 @@ public class DisguiseUtilities {
      * the plugin to do that.
      */
     private static HashSet<String> addedByPlugins = new HashSet<String>();
+    private static Object bedChunk;
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<String, Disguise>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
@@ -70,6 +76,43 @@ public class DisguiseUtilities {
     private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<String, ArrayList<Object>>();
     private static HashSet<UUID> selfDisguised = new HashSet<UUID>();
+    private static Field xChunk, zChunk;
+
+    static {
+        try {
+            bedChunk = ReflectionManager.getNmsClass("Chunk")
+                    .getConstructor(ReflectionManager.getNmsClass("World"), int.class, int.class).newInstance(null, 0, 0);
+            Field cSection = bedChunk.getClass().getDeclaredField("sections");
+            cSection.setAccessible(true);
+            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class, boolean.class)
+                    .newInstance(0, false);
+            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
+                    .invoke(null, Material.BED_BLOCK.getId()); // TODO Method name exists in older versions?
+            Method setId = chunkSection.getClass().getMethod("setTypeId", int.class, int.class, int.class,
+                    ReflectionManager.getNmsClass("Block"));
+            Method setData = chunkSection.getClass().getMethod("setData", int.class, int.class, int.class, int.class);
+            Method setSky = chunkSection.getClass().getMethod("setSkyLight", int.class, int.class, int.class, int.class);
+            Method setEmitted = chunkSection.getClass().getMethod("setEmittedLight", int.class, int.class, int.class, int.class);
+            for (BlockFace face : new BlockFace[] { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH }) {
+                setId.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), block);
+                setData.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), face.ordinal());
+                setSky.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
+                setEmitted.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
+            }
+            Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
+            array[0] = chunkSection;
+            cSection.set(bedChunk, array);
+            Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
+            Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
+            bedChunk.getClass().getField("world").set(bedChunk, world);
+            xChunk = bedChunk.getClass().getField("locX");
+            xChunk.setAccessible(true);
+            zChunk = bedChunk.getClass().getField("locZ");
+            zChunk.setAccessible(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static boolean addClonedDisguise(String key, Disguise disguise) {
         if (DisguiseConfig.getMaxClonedDisguises() > 0) {
@@ -257,11 +300,85 @@ public class DisguiseUtilities {
         return addedByPlugins;
     }
 
+    public static PacketContainer[] getBedChunkPacket(Player player, Location newLoc, Location oldLoc) {
+        int i = 0;
+        PacketContainer[] packets = new PacketContainer[newLoc != null ? 2 + (oldLoc != null ? 1 : 0) : 1];
+        for (Location loc : new Location[] { oldLoc, newLoc }) {
+            if (loc == null) {
+                continue;
+            }
+            try {
+                int chunkX = (int) Math.floor(loc.getBlockX() / 16D) + 20, chunkZ = (int) Math.floor(loc.getBlockZ() / 16D) + 20;
+                chunkX -= chunkX % 10;
+                chunkZ -= chunkZ % 10;
+                xChunk.set(bedChunk, chunkX);
+                zChunk.set(bedChunk, chunkZ);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            try {
+                packets[i++] = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0, 40)
+                        .createPacket(bedChunk, true, 0, ReflectionManager.is1_8(player) ? 48 : 0);
+            } catch (IllegalArgumentException ex) {
+                packets[i++] = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0)
+                        .createPacket(bedChunk, true, 0);
+            }
+            if (oldLoc == null || i > 1) {
+                try {
+                    packets[i++] = ProtocolLibrary.getProtocolManager()
+                            .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk), 40)
+                            .createPacket(Arrays.asList(bedChunk), ReflectionManager.is1_8(player) ? 48 : 0);
+                } catch (IllegalArgumentException ex) {
+                    packets[i++] = ProtocolLibrary.getProtocolManager()
+                            .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk))
+                            .createPacket(Arrays.asList(bedChunk));
+                }
+            }
+        }
+        return packets;
+    }
+
+    public static PacketContainer[] getBedPackets(Player player, Location loc, Location playerLocation, PlayerDisguise disguise) {
+        Entity entity = disguise.getEntity();
+        PacketContainer setBed = new PacketContainer(PacketType.Play.Server.BED);
+        StructureModifier<Integer> bedInts = setBed.getIntegers();
+        bedInts.write(0, entity.getEntityId());
+        if (ReflectionManager.is1_8(player)) {
+            PlayerWatcher watcher = disguise.getWatcher();
+            int chunkX = (int) Math.floor(playerLocation.getBlockX() / 16D) + 20, chunkZ = (int) Math.floor(playerLocation
+                    .getBlockZ() / 16D) + 20;
+            chunkX -= chunkX % 10;
+            chunkZ -= chunkZ % 10;
+            bedInts.write(1, (chunkX * 16) + 1 + watcher.getSleepingDirection().getModX());
+            bedInts.write(3, (chunkZ * 16) + 1 + watcher.getSleepingDirection().getModZ());
+        } else {
+            bedInts.write(1, loc.getBlockX());
+            bedInts.write(2, loc.getBlockY());
+            bedInts.write(3, loc.getBlockZ());
+        }
+        PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+        StructureModifier<Integer> ints = teleport.getIntegers();
+        ints.write(0, entity.getEntityId());
+        ints.write(1, (int) Math.floor(loc.getX() * 32));
+        ints.write(2, (int) Math.floor((PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY()) * 32));
+        ints.write(3, (int) Math.floor(loc.getZ() * 32));
+        return new PacketContainer[] { setBed, teleport };
+
+    }
+
     public static Disguise getClonedDisguise(String key) {
         if (clonedDisguises.containsKey(key)) {
             return clonedDisguises.get(key).clone();
         }
         return null;
+    }
+
+    public static PacketContainer getDestroyPacket(int... ids) {
+        PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        destroyPacket.getIntegerArrays().write(0, ids);
+        return destroyPacket;
     }
 
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
@@ -669,12 +786,6 @@ public class DisguiseUtilities {
                 ex.printStackTrace();
             }
         }
-    }
-
-    public static PacketContainer getDestroyPacket(int... ids) {
-        PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroyPacket.getIntegerArrays().write(0, ids);
-        return destroyPacket;
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {

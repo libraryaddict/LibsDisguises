@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -8,6 +8,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -16,6 +17,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 public class PlayerWatcher extends LivingWatcher {
     private boolean isInBed;
+    private BlockFace sleepingDirection;
 
     public PlayerWatcher(Disguise disguise) {
         super(disguise);
@@ -29,6 +31,10 @@ public class PlayerWatcher extends LivingWatcher {
 
     public int getArrowsSticking() {
         return (Byte) getValue(9, (byte) 0);
+    }
+
+    public BlockFace getSleepingDirection() {
+        return sleepingDirection;
     }
 
     private boolean getValue16(int i) {
@@ -57,31 +63,57 @@ public class PlayerWatcher extends LivingWatcher {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
-    /**
-     * The facing direction for the bed is the block metadata. 0 - 90 degrees. 1 - 0 degrees. 2 - 270 degrees. 3 - 180 degrees.
-     */
+    public void setSleeping(BlockFace sleepingDirection) {
+        setSleeping(true, sleepingDirection);
+    }
+
     public void setSleeping(boolean sleep) {
-        if (sleep != isSleeping()) {
-            isInBed = sleep;
+        setSleeping(sleep, null);
+    }
+
+    /**
+     * If no BlockFace is supplied. It grabs it from the entities facing direction if applicable.
+     */
+    public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
+        if (sleepingDirection != null) {
+            this.sleepingDirection = BlockFace.values()[sleepingDirection.ordinal() % 4];
+        } else if (sleeping) {
+            if (this.getDisguise().getEntity() != null) {
+                this.sleepingDirection = BlockFace.values()[Math
+                        .round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
+            } else {
+                this.sleepingDirection = BlockFace.EAST;
+            }
+        }
+        if (sleeping != isSleeping()) {
+            isInBed = sleeping;
             if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise())) {
-                PacketContainer packet;
-                if (isSleeping()) {
-                    packet = new PacketContainer(PacketType.Play.Server.BED);
-                    StructureModifier<Integer> mods = packet.getIntegers();
-                    mods.write(0, getDisguise().getEntity().getEntityId());
-                    Location loc = getDisguise().getEntity().getLocation();
-                    mods.write(1, loc.getBlockX());
-                    mods.write(2, loc.getBlockY());
-                    mods.write(3, loc.getBlockZ());
-                } else {
-                    packet = new PacketContainer(PacketType.Play.Server.ANIMATION);
-                    StructureModifier<Integer> mods = packet.getIntegers();
-                    mods.write(0, getDisguise().getEntity().getEntityId());
-                    mods.write(1, LibVersion.is1_7() ? 3 : 2);
-                }
                 try {
-                    for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    if (isSleeping()) {
+                        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                            PacketContainer[] packets = DisguiseUtilities.getBedPackets(player, this.getDisguise().getEntity()
+                                    .getLocation(), player.getLocation(), (PlayerDisguise) this.getDisguise());
+                            if (getDisguise().getEntity() == player) {
+                                for (PacketContainer packet : packets) {
+                                    packet = packet.shallowClone();
+                                    packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                                }
+                            } else {
+                                for (PacketContainer packet : packets) {
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                                }
+                            }
+                        }
+                    } else {
+                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ANIMATION);
+                        StructureModifier<Integer> mods = packet.getIntegers();
+                        mods.write(0, getDisguise().getEntity().getEntityId());
+                        mods.write(1, LibVersion.is1_7() ? 3 : 2);
+                        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
