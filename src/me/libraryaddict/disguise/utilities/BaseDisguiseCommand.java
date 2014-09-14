@@ -573,14 +573,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
                         }
                         if (value == null && boolean.class == param) {
-                            // Parse to boolean
-                            if (valueString == null
-                                    || !("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString))) {
+                            if (valueString == null) {
                                 value = true;
                                 i--;
-                            } else {
-                                value = "true".equalsIgnoreCase(valueString);
-                            }
+                            } else if (valueString.equalsIgnoreCase("true")) {
+                                value = true;
+                            } else if (valueString.equalsIgnoreCase("false")) {
+                                value = false;
+                            } else
+                                throw parseToException("true/false", valueString, methodName);
                         }
                         if (value != null) {
                             break;
