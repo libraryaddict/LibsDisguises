@@ -1,17 +1,21 @@
 package me.libraryaddict.disguise;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
@@ -81,9 +86,9 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (DisguiseConfig.isDisguiseBlownOnAttack() && !event.isCancelled()) {
+        if (DisguiseConfig.isDisguiseBlownOnAttack()) {
             if (event.getEntity() instanceof Player) {
                 checkPlayerCanBlowDisguise((Player) event.getEntity());
             }
@@ -211,20 +216,16 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
-        if (event.isCancelled())
-            return;
         if (event.getEntered() instanceof Player && DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
             DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
             ((Player) event.getEntered()).updateInventory();
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleLeave(VehicleExitEvent event) {
-        if (event.isCancelled())
-            return;
         if (event.getExited() instanceof Player) {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
             if (disguise != null) {
@@ -238,10 +239,9 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldSwitch(PlayerPortalEvent event) {
-        if (!event.isCancelled() && DisguiseConfig.isUndisguiseOnWorldChange()
-                && event.getFrom().getWorld() != event.getTo().getWorld()) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
