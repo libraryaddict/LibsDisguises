@@ -29,7 +29,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 public class ReflectionManager {
 
     public enum LibVersion {
-        V1_6, V1_7, V1_7_6, V1_8;
+        V1_6, V1_7, V1_7_6, V1_7_10, V1_8;
         private static LibVersion currentVersion = LibVersion.V1_7;
         static {
             String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
@@ -37,8 +37,11 @@ public class ReflectionManager {
                 if (mcVersion.compareTo("1.7") < 0) {
                     currentVersion = LibVersion.V1_6;
                 } else {
-                    currentVersion = mcVersion.compareTo("1.7.6") < 0 && !mcVersion.equals("1.7.10") ? LibVersion.V1_7
-                            : LibVersion.V1_7_6;
+                    if (mcVersion.equals("1.7.10")) {
+                        currentVersion = LibVersion.V1_7_10;
+                    } else {
+                        currentVersion = mcVersion.compareTo("1.7.6") < 0 ? LibVersion.V1_7 : LibVersion.V1_7_6;
+                    }
                 }
             }
         }
@@ -52,11 +55,15 @@ public class ReflectionManager {
         }
 
         public static boolean is1_7() {
-            return getGameVersion() == V1_7 || is1_7_6();
+            return getGameVersion() == V1_7 || is1_7_6() || is1_7_10();
         }
 
         public static boolean is1_7_6() {
             return getGameVersion() == V1_7_6;
+        }
+
+        public static boolean is1_7_10() {
+            return getGameVersion() == V1_7_10;
         }
     }
 
@@ -543,14 +550,16 @@ public class ReflectionManager {
     }
 
     public static boolean is1_8(Player player) {
-        try {
-            Object cPlayer = getNmsEntity(player);
-            Field playerConnection = cPlayer.getClass().getField("playerConnection");
-            Field networkManager = getNmsClass("PlayerConnection").getField("networkManager");
-            Method getVersion = getNmsClass("NetworkManager").getMethod("getVersion");
-            return (Integer) getVersion.invoke(networkManager.get(playerConnection.get(cPlayer))) >= 28;
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (LibVersion.is1_7_10()) {
+            try {
+                Object nmsEntity = getNmsEntity(player);
+                Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity);
+                Field networkManager = getNmsField(connection.getClass(), "networkManager");
+                Method getVersion = getNmsMethod(networkManager.getType(), "getVersion");
+                return (Integer) getVersion.invoke(networkManager.get(connection)) >= 28;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
     }
