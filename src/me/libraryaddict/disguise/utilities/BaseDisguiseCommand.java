@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
@@ -467,113 +468,120 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             }
             methodName = methodToUse.getName();
             Class<?>[] types = methodToUse.getParameterTypes();
-            if (types.length == 1) {
-                Class param = types[0];
-                if (boolean.class == param) {
-                    // Parse to boolean
-                    if (valueString == null || !("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString))) {
-                        value = true;
-                        i--;
-                    } else {
-                        value = "true".equalsIgnoreCase(valueString);
-                    }
+            Class param = types[0];
+            if (boolean.class == param) {
+                // Parse to boolean
+                if (valueString == null || !("true".equalsIgnoreCase(valueString) || "false".equalsIgnoreCase(valueString))) {
+                    value = true;
+                    i--;
                 } else {
-                    if (valueString == null) {
-                        throw new Exception(ChatColor.RED + "No value was given for the option " + methodName);
+                    value = "true".equalsIgnoreCase(valueString);
+                }
+            } else {
+                if (valueString == null) {
+                    throw new Exception(ChatColor.RED + "No value was given for the option " + methodName);
+                }
+                if (int.class == param) {
+                    // Parse to integer
+                    if (isNumeric(valueString)) {
+                        value = (int) Integer.parseInt(valueString);
+                    } else {
+                        throw parseToException("number", valueString, methodName);
                     }
-                    if (int.class == param) {
-                        // Parse to integer
-                        if (isNumeric(valueString)) {
-                            value = (int) Integer.parseInt(valueString);
-                        } else {
-                            throw parseToException("number", valueString, methodName);
+                } else if (float.class == param || double.class == param) {
+                    // Parse to number
+                    if (isDouble(valueString)) {
+                        float obj = Float.parseFloat(valueString);
+                        if (param == float.class) {
+                            value = (float) obj;
+                        } else if (param == double.class) {
+                            value = (double) obj;
                         }
-                    } else if (float.class == param || double.class == param) {
-                        // Parse to number
-                        if (isDouble(valueString)) {
-                            float obj = Float.parseFloat(valueString);
-                            if (param == float.class) {
-                                value = (float) obj;
-                            } else if (param == double.class) {
-                                value = (double) obj;
-                            }
-                        } else {
-                            throw parseToException("number.0", valueString, methodName);
-                        }
-                    } else if (param == String.class) {
-                        // Parse to string
-                        value = ChatColor.translateAlternateColorCodes('&', valueString);
-                    } else if (param == AnimalColor.class) {
-                        // Parse to animal color
-                        try {
-                            value = AnimalColor.valueOf(valueString.toUpperCase());
-                        } catch (Exception ex) {
-                            throw parseToException("animal color", valueString, methodName);
-                        }
-                    } else if (param == ItemStack.class) {
-                        // Parse to itemstack
-                        try {
-                            value = parseToItemstack(valueString);
-                        } catch (Exception ex) {
-                            throw new Exception(String.format(ex.getMessage(), methodName));
-                        }
-                    } else if (param == ItemStack[].class) {
-                        // Parse to itemstack array
-                        ItemStack[] items = new ItemStack[4];
-                        String[] split = valueString.split(",");
-                        if (split.length == 4) {
-                            for (int a = 0; a < 4; a++) {
-                                try {
-                                    items[a] = parseToItemstack(split[a]);
-                                } catch (Exception ex) {
-                                    throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
-                                            + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
-                                }
-                            }
-                        } else {
-                            throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
-                                    + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
-                        }
-                        value = items;
-                    } else if (param.getSimpleName().equals("Color")) {
-                        // Parse to horse color
-                        value = callValueOf(param, valueString, methodName, "a horse color");
-                    } else if (param.getSimpleName().equals("Style")) {
-                        // Parse to horse style
-                        value = callValueOf(param, valueString, methodName, "a horse style");
-                    } else if (param.getSimpleName().equals("Profession")) {
-                        // Parse to villager profession
-                        value = callValueOf(param, valueString, methodName, "a villager profession");
-                    } else if (param.getSimpleName().equals("Art")) {
-                        // Parse to art type
-                        value = callValueOf(param, valueString, methodName, "a painting art");
-                    } else if (param.getSimpleName().equals("Type")) {
-                        // Parse to ocelot type
-                        value = callValueOf(param, valueString, methodName, "a ocelot type");
-                    } else if (param == PotionEffectType.class) {
-                        // Parse to potion effect
-                        try {
-                            PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
-                            if (potionType == null && isNumeric(valueString)) {
-                                potionType = PotionEffectType.getById(Integer.parseInt(valueString));
-                            }
-                            if (potionType == null)
-                                throw new Exception();
-                            value = potionType;
-                        } catch (Exception ex) {
-                            throw parseToException("a potioneffect type", valueString, methodName);
-                        }
-                    } else if (param == int[].class) {
-                        String[] split = valueString.split(",");
-                        int[] values = new int[split.length];
-                        for (int b = 0; b < values.length; b++) {
+                    } else {
+                        throw parseToException("number.0", valueString, methodName);
+                    }
+                } else if (param == String.class) {
+                    // Parse to string
+                    value = ChatColor.translateAlternateColorCodes('&', valueString);
+                } else if (param == AnimalColor.class) {
+                    // Parse to animal color
+                    try {
+                        value = AnimalColor.valueOf(valueString.toUpperCase());
+                    } catch (Exception ex) {
+                        throw parseToException("animal color", valueString, methodName);
+                    }
+                } else if (param == ItemStack.class) {
+                    // Parse to itemstack
+                    try {
+                        value = parseToItemstack(valueString);
+                    } catch (Exception ex) {
+                        throw new Exception(String.format(ex.getMessage(), methodName));
+                    }
+                } else if (param == ItemStack[].class) {
+                    // Parse to itemstack array
+                    ItemStack[] items = new ItemStack[4];
+                    String[] split = valueString.split(",");
+                    if (split.length == 4) {
+                        for (int a = 0; a < 4; a++) {
                             try {
-                                values[b] = Integer.parseInt(split[b]);
-                            } catch (NumberFormatException ex) {
-                                throw parseToException("Number,Number,Number...", valueString, methodName);
+                                items[a] = parseToItemstack(split[a]);
+                            } catch (Exception ex) {
+                                throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                        + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                             }
                         }
-                        value = values;
+                    } else {
+                        throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
+                    }
+                    value = items;
+                } else if (param.getSimpleName().equals("Color")) {
+                    // Parse to horse color
+                    value = callValueOf(param, valueString, methodName, "a horse color");
+                } else if (param.getSimpleName().equals("Style")) {
+                    // Parse to horse style
+                    value = callValueOf(param, valueString, methodName, "a horse style");
+                } else if (param.getSimpleName().equals("Profession")) {
+                    // Parse to villager profession
+                    value = callValueOf(param, valueString, methodName, "a villager profession");
+                } else if (param.getSimpleName().equals("Art")) {
+                    // Parse to art type
+                    value = callValueOf(param, valueString, methodName, "a painting art");
+                } else if (param.getSimpleName().equals("Type")) {
+                    // Parse to ocelot type
+                    value = callValueOf(param, valueString, methodName, "a ocelot type");
+                } else if (param == PotionEffectType.class) {
+                    // Parse to potion effect
+                    try {
+                        PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
+                        if (potionType == null && isNumeric(valueString)) {
+                            potionType = PotionEffectType.getById(Integer.parseInt(valueString));
+                        }
+                        if (potionType == null)
+                            throw new Exception();
+                        value = potionType;
+                    } catch (Exception ex) {
+                        throw parseToException("a potioneffect type", valueString, methodName);
+                    }
+                } else if (param == int[].class) {
+                    String[] split = valueString.split(",");
+                    int[] values = new int[split.length];
+                    for (int b = 0; b < values.length; b++) {
+                        try {
+                            values[b] = Integer.parseInt(split[b]);
+                        } catch (NumberFormatException ex) {
+                            throw parseToException("Number,Number,Number...", valueString, methodName);
+                        }
+                    }
+                    value = values;
+                } else if (param == BlockFace.class) {
+                    try {
+                        BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
+                        if (face.ordinal() > 3)
+                            throw new Exception();
+                        value = face;
+                    } catch (Exception ex) {
+                        throw parseToException("a direction (north, east, south, west)", valueString, methodName);
                     }
                 }
             }

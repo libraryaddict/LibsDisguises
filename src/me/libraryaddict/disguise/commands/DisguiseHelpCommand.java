@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -13,6 +14,7 @@ import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -112,6 +114,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     "org.bukkit.entity.Villager$Profession").getEnumConstants()));
         } catch (Exception ex) {
         }
+        enumHelp.add(new EnumHelp("Direction", "Directions", ChatColor.RED + "/disguisehelp Directions " + ChatColor.GREEN
+                + "- View the four directions usable on player setsleeping disguise", Arrays.copyOf(BlockFace.values(), 4)));
     }
 
     @Override
@@ -206,6 +210,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "Potion effect";
                                 } else if (c == int[].class) {
                                     valueType = "number,number,number...";
+                                } else if (c == BlockFace.class) {
+                                    valueType = "direction";
                                 }
                                 if (valueType != null) {
                                     ChatColor methodColor = ChatColor.YELLOW;
