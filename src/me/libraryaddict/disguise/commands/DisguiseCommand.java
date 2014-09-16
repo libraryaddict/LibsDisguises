@@ -27,12 +27,13 @@ public class DisguiseCommand extends BaseDisguiseCommand {
         Disguise disguise;
         try {
             disguise = parseDisguise(sender, args, getPermissions(sender));
-        } catch (Exception ex) {
-            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
+        } catch (DisguiseParseException ex) {
+            if (ex.getMessage() != null) {
                 sender.sendMessage(ex.getMessage());
-            } else {
-                ex.printStackTrace();
             }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return true;
         }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {

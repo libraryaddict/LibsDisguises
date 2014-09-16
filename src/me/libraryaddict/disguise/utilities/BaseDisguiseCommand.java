@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,19 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
+
+    public class DisguiseParseException extends Exception {
+        public DisguiseParseException(String string) {
+            super(string);
+        }
+
+        public DisguiseParseException() {
+            super();
+        }
+
+        private static final long serialVersionUID = 1276971370793124510L;
+
+    }
 
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
         ArrayList<String> allowedDisguises = new ArrayList<String>();
@@ -280,13 +294,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * disguise has been feed a proper disguisetype.
      */
     protected Disguise parseDisguise(CommandSender sender, String[] args,
-            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws Exception {
+            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
+            IllegalAccessException, InvocationTargetException {
         if (map.isEmpty()) {
-            throw new IllegalArgumentException(ChatColor.RED + "You are forbidden to use this command.");
+            throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
         }
         if (args.length == 0) {
             sendCommandUsage(sender, map);
-            throw new IllegalArgumentException();
+            throw new DisguiseParseException();
         }
         // How many args to skip due to the disugise being constructed
         // Time to start constructing the disguise.
@@ -299,10 +314,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
                 disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
                 if (disguise == null) {
-                    throw new IllegalArgumentException(ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
+                    throw new DisguiseParseException(ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
                 }
             } else {
-                throw new IllegalArgumentException(ChatColor.RED + "You do not have perimssion to use disguise references!");
+                throw new DisguiseParseException(ChatColor.RED + "You do not have perimssion to use disguise references!");
             }
             optionPermissions = (map.containsKey(disguise.getType()) ? map.get(disguise.getType())
                     : new HashMap<ArrayList<String>, Boolean>());
@@ -319,27 +334,26 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
             }
             if (disguiseType == null) {
-                throw new IllegalArgumentException(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0]
+                throw new DisguiseParseException(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0]
                         + ChatColor.RED + " doesn't exist!");
             }
             if (disguiseType.getEntityType() == null) {
-                throw new IllegalArgumentException(ChatColor.RED
-                        + "Error! This version of minecraft does not have that disguise!");
+                throw new DisguiseParseException(ChatColor.RED + "Error! This version of minecraft does not have that disguise!");
             }
             if (!map.containsKey(disguiseType)) {
-                throw new IllegalArgumentException(ChatColor.RED + "You are forbidden to use this disguise.");
+                throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this disguise.");
             }
             optionPermissions = map.get(disguiseType);
             HashMap<String, Boolean> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
             if (disguiseType.isPlayer()) {// If he is doing a player disguise
                 if (args.length == 1) {
                     // He needs to give the player name
-                    throw new IllegalArgumentException(ChatColor.RED + "Error! You need to give a player name!");
+                    throw new DisguiseParseException(ChatColor.RED + "Error! You need to give a player name!");
                 } else {
                     if (!disguiseOptions.isEmpty()
                             && (!disguiseOptions.containsKey(args[1].toLowerCase()) || !disguiseOptions
                                     .get(args[1].toLowerCase()))) {
-                        throw new IllegalArgumentException(ChatColor.RED + "Error! You don't have permission to use that name!");
+                        throw new DisguiseParseException(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
                     // Construct the player disguise
                     disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
@@ -397,7 +411,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             case WITHER_SKULL:
                                 break;
                             default:
-                                throw new IllegalArgumentException(ChatColor.RED + "Error! " + disguiseType.toReadable()
+                                throw new DisguiseParseException(ChatColor.RED + "Error! " + disguiseType.toReadable()
                                         + " doesn't know what to do with " + args[1] + "!");
                             }
                             toSkip++;
@@ -408,7 +422,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
                             if (secondArg != null) {
                                 if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
-                                    throw new IllegalArgumentException(ChatColor.RED + "Error! Only the disguises "
+                                    throw new DisguiseParseException(ChatColor.RED + "Error! Only the disguises "
                                             + DisguiseType.FALLING_BLOCK.toReadable() + " and "
                                             + DisguiseType.DROPPED_ITEM.toReadable() + " uses a second number!");
                                 }
@@ -426,7 +440,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             toCheck += ":" + miscData;
                         }
                         if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
-                            throw new IllegalArgumentException(ChatColor.RED
+                            throw new DisguiseParseException(ChatColor.RED
                                     + "Error! You do not have permission to use the parameter " + toCheck + " on the "
                                     + disguiseType.toReadable() + " disguise!");
                         }
@@ -458,7 +472,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             String valueString = (args.length - 1 == i ? null : args[i + 1]);
             Method methodToUse = null;
             Object value = null;
-            IllegalArgumentException storedEx = null;
+            DisguiseParseException storedEx = null;
             for (Method method : methods) {
                 if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
                         && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
@@ -502,7 +516,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 try {
                                     value = parseToItemstack(valueString);
                                 } catch (Exception ex) {
-                                    throw new IllegalArgumentException(String.format(ex.getMessage(), methodName));
+                                    throw new DisguiseParseException(String.format(ex.getMessage(), methodName));
                                 }
                             } else if (param == ItemStack[].class) {
                                 // Parse to itemstack array
@@ -545,7 +559,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                         potionType = PotionEffectType.getById(Integer.parseInt(valueString));
                                     }
                                     if (potionType == null)
-                                        throw new IllegalArgumentException();
+                                        throw new DisguiseParseException();
                                     value = potionType;
                                 } catch (Exception ex) {
                                     throw parseToException("a potioneffect type", valueString, methodName);
@@ -565,7 +579,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 try {
                                     BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
                                     if (face.ordinal() > 3)
-                                        throw new IllegalArgumentException();
+                                        throw new DisguiseParseException();
                                     value = face;
                                 } catch (Exception ex) {
                                     throw parseToException("a direction (north, east, south, west)", valueString, methodName);
@@ -586,7 +600,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         if (value != null) {
                             break;
                         }
-                    } catch (IllegalArgumentException ex) {
+                    } catch (DisguiseParseException ex) {
                         storedEx = ex;
                         methodToUse = null;
                     } catch (Exception ex) {
@@ -599,10 +613,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 if (storedEx != null) {
                     throw storedEx;
                 }
-                throw new IllegalArgumentException(ChatColor.RED + "Cannot find the option " + methodName);
+                throw new DisguiseParseException(ChatColor.RED + "Cannot find the option " + methodName);
             }
             if (value == null) {
-                throw new IllegalArgumentException(ChatColor.RED + "No value was given for the option " + methodName);
+                throw new DisguiseParseException(ChatColor.RED + "No value was given for the option " + methodName);
             }
             if (!usedOptions.contains(methodName.toLowerCase())) {
                 usedOptions.add(methodName.toLowerCase());
@@ -617,7 +631,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
-    private Object callValueOf(Class<?> param, String valueString, String methodName, String description) throws Exception {
+    private Object callValueOf(Class<?> param, String valueString, String methodName, String description)
+            throws DisguiseParseException {
         Object value;
         try {
             value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
@@ -644,15 +659,16 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return hasPermission;
     }
 
-    private void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions) throws Exception {
+    private void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions)
+            throws DisguiseParseException {
         if (!passesCheck(optionPermissions, usedOptions)) {
-            throw new IllegalArgumentException(ChatColor.RED + "You do not have the permission to use the option "
+            throw new DisguiseParseException(ChatColor.RED + "You do not have the permission to use the option "
                     + usedOptions.get(usedOptions.size() - 1));
         }
     }
 
-    private IllegalArgumentException parseToException(String expectedValue, String receivedInstead, String methodName) {
-        return new IllegalArgumentException(ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED
+    private DisguiseParseException parseToException(String expectedValue, String receivedInstead, String methodName) {
+        return new DisguiseParseException(ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED
                 + ", received " + ChatColor.GREEN + receivedInstead + ChatColor.RED + " instead for " + ChatColor.GREEN
                 + methodName);
     }

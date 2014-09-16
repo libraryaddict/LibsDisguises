@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 import me.libraryaddict.disguise.utilities.ClassGetter;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -100,12 +99,13 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         Disguise disguise;
         try {
             disguise = parseDisguise(sender, newArgs, map);
-        } catch (Exception ex) {
-            if (ex.getMessage() != null && !ChatColor.getLastColors(ex.getMessage()).equals("")) {
+        } catch (DisguiseParseException ex) {
+            if (ex.getMessage() != null) {
                 sender.sendMessage(ex.getMessage());
-            } else {
-                ex.printStackTrace();
             }
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return true;
         } // Time to use it!
         int disguisedEntitys = 0;
