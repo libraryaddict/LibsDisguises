@@ -163,15 +163,6 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPortalEnter(PlayerPortalEvent event) {
-        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
-            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
-                disguise.removeDisguise();
-            }
-        }
-    }
-
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
@@ -330,6 +321,11 @@ public class DisguiseListener implements Listener {
     public void onWorldSwitch(final PlayerChangedWorldEvent event) {
         if (DisguiseConfig.isBedPacketsEnabled()) {
             chunkMove(event.getPlayer(), event.getPlayer().getLocation(), null);
+        }
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && event.getFrom().getWorld() != event.getTo().getWorld()) {
+            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
+                disguise.removeDisguise();
+            }
         }
     }
 
