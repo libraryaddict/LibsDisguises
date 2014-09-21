@@ -970,8 +970,10 @@ public class DisguiseUtilities {
     /**
      * Method to send a packet to the self disguise, translate his entity ID to the fake id.
      */
-    private static void sendSelfPacket(Player player, PacketContainer packet) {
-        PacketContainer[] packets = PacketsManager.transformPacket(packet, player, player);
+    private static void sendSelfPacket(final Player player, PacketContainer packet) {
+        PacketContainer[][] transformed = PacketsManager.transformPacket(packet, player, player);
+        PacketContainer[] packets = transformed == null ? null : transformed[0];
+        final PacketContainer[] delayed = transformed == null ? null : transformed[1];
         try {
             if (packets == null) {
                 packets = new PacketContainer[] { packet };
@@ -980,6 +982,19 @@ public class DisguiseUtilities {
                 p = p.deepClone();
                 p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+            }
+            if (delayed != null && delayed.length > 0) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                    public void run() {
+                        try {
+                            for (PacketContainer packet : delayed) {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                            }
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         } catch (InvocationTargetException e) {
             e.printStackTrace();

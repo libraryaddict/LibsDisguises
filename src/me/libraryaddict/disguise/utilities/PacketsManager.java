@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -116,7 +115,7 @@ public class PacketsManager {
     /**
      * Construct the packets I need to spawn in the disguise
      */
-    public static PacketContainer[] constructSpawnPackets(Player player, Disguise disguise, Entity disguisedEntity) {
+    public static PacketContainer[][] constructSpawnPackets(final Player player, Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
@@ -169,6 +168,7 @@ public class PacketsManager {
             }
         }
         PacketContainer[] spawnPackets = new PacketContainer[2 + packets.size()];
+        PacketContainer[] delayedPackets = new PacketContainer[0];
         for (int i = 0; i < packets.size(); i++) {
             spawnPackets[i + 2] = packets.get(i);
         }
@@ -215,12 +215,12 @@ public class PacketsManager {
 
             spawnPackets[0] = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
             StructureModifier<String> stringMods = spawnPackets[0].getStrings();
+            WrappedGameProfile gameProfile = null; // TODO Will this throw a error for older MC's? Namely pre-1.7
             if (stringMods.size() > 0) {
                 for (int i = 0; i < stringMods.size(); i++) {
                     stringMods.write(i, ((PlayerDisguise) disguise).getName());
                 }
             } else {
-                WrappedGameProfile gameProfile;
                 PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
                 String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
                 boolean removeName = false;
@@ -251,14 +251,30 @@ public class PacketsManager {
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
-            if (((PlayerWatcher) disguise.getWatcher()).isSleeping() && DisguiseConfig.isBedPacketsEnabled()) {
-                spawnPackets = Arrays.copyOf(spawnPackets, spawnPackets.length);
+            if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                 PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(player,
                         loc.clone().subtract(0, PacketsManager.getYModifier(disguisedEntity, disguise), 0), player.getLocation(),
                         ((PlayerDisguise) disguise));
                 for (int i = 0; i < 2; i++) {
                     spawnPackets[i + 1] = bedPackets[i];
                 }
+            }
+
+            if (ReflectionManager.is1_8(player)) {
+                ArrayList<PacketContainer> newPackets = new ArrayList<PacketContainer>();
+                newPackets.add(null);
+                for (int i = 0; i < spawnPackets.length; i++) {
+                    if (spawnPackets[i] != null) {
+                        newPackets.add(spawnPackets[i]);
+                    }
+                }
+                spawnPackets = newPackets.toArray(new PacketContainer[newPackets.size()]);
+                spawnPackets[0] = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                spawnPackets[0].getGameProfiles().write(0, gameProfile);
+                spawnPackets[0].getModifier().write(4, gameProfile.getName());
+                PacketContainer delayedPacket = spawnPackets[0].shallowClone();
+                delayedPacket.getModifier().write(0, 4);
+                delayedPackets = new PacketContainer[] { delayedPacket };
             }
 
         } else if (disguise.getType().isMob()) {
@@ -329,7 +345,7 @@ public class PacketsManager {
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, yaw);
         }
-        return spawnPackets;
+        return new PacketContainer[][] { spawnPackets, delayedPackets };
     }
 
     /**
@@ -749,7 +765,9 @@ public class PacketsManager {
                 if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
                     if (DisguiseAPI.isSelfDisguised(observer)) {
                         // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-                        PacketContainer[] packets = transformPacket(event.getPacket(), observer, observer);
+                        PacketContainer[][] transformed = transformPacket(event.getPacket(), observer, observer);
+                        PacketContainer[] packets = transformed == null ? null : transformed[0];
+                        final PacketContainer[] delayedPackets = transformed == null ? null : transformed[1];
                         if (packets == null) {
                             packets = new PacketContainer[] { event.getPacket() };
                         }
@@ -763,6 +781,19 @@ public class PacketsManager {
                             } catch (InvocationTargetException e) {
                                 e.printStackTrace();
                             }
+                        }
+                        if (delayedPackets != null && delayedPackets.length > 0) {
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                public void run() {
+                                    try {
+                                        for (PacketContainer packet : delayedPackets) {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                        }
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                         }
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
@@ -1163,12 +1194,26 @@ public class PacketsManager {
                     // Prevents problems and there is no advantage to be gained.
                     if (entity == observer)
                         return;
-                    PacketContainer[] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
+                    PacketContainer[][] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
                     if (packets != null) {
                         event.setCancelled(true);
                         try {
-                            for (PacketContainer packet : packets) {
+                            for (PacketContainer packet : packets[0]) {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                            }
+                            final PacketContainer[] delayed = packets[1];
+                            if (delayed.length > 0) {
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    public void run() {
+                                        try {
+                                            for (PacketContainer packet : delayed) {
+                                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                            }
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, 2);
                             }
                         } catch (InvocationTargetException ex) {
                             ex.printStackTrace();
@@ -1210,8 +1255,9 @@ public class PacketsManager {
      * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if its not
      * transformed
      */
-    public static PacketContainer[] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
+    public static PacketContainer[][] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
         PacketContainer[] packets = null;
+        PacketContainer[] delayedPackets = new PacketContainer[0];
         try {
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
             // If disguised.
@@ -1274,7 +1320,9 @@ public class PacketsManager {
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_PAINTING) {
-                    packets = constructSpawnPackets(observer, disguise, entity);
+                    PacketContainer[][] spawnPackets = constructSpawnPackets(observer, disguise, entity);
+                    packets = spawnPackets[0];
+                    delayedPackets = spawnPackets[1];
                 }
 
                 // Else if the disguise is attempting to send players a forbidden packet
@@ -1418,6 +1466,6 @@ public class PacketsManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return packets;
+        return packets == null ? null : new PacketContainer[][] { packets, delayedPackets };
     }
 }
