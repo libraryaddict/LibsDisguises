@@ -355,7 +355,7 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getGameProfile(Player player) {
         if (LibVersion.is1_7()) {
-            return WrappedGameProfile.fromPlayer(player);
+            return getGameProfileWithThisSkin(null, player.getName(), WrappedGameProfile.fromPlayer(player));
         }
         return null;
     }

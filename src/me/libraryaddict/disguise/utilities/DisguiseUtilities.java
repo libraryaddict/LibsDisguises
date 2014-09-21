@@ -580,15 +580,14 @@ public class DisguiseUtilities {
      */
     public static WrappedGameProfile lookupGameProfile(String playerName) {
         WrappedGameProfile gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
-        return ReflectionManager.getSkullBlob(gameprofile);
+        return ReflectionManager.getGameProfileWithThisSkin(null, gameprofile.getName(),
+                ReflectionManager.getSkullBlob(gameprofile));
     }
 
     /**
-     * Please note that in the future when 'DualInt' and the like are removed. This should break..
-     * 
-     * However, that should be negated in the future as I'd be able to set the watcher index's as per the spigot version.
-     * 
-     * Instead of checking on the player's version every single packet..
+     * Please note that in the future when 'DualInt' and the like are removed. This should break.. However, that should be negated
+     * in the future as I'd be able to set the watcher index's as per the spigot version. Instead of checking on the player's
+     * version every single packet..
      */
     public static List<WrappedWatchableObject> rebuildForVersion(Player player, FlagWatcher watcher,
             List<WrappedWatchableObject> list) {
