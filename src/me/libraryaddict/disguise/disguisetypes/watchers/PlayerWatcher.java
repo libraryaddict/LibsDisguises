@@ -34,6 +34,14 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public BlockFace getSleepingDirection() {
+        if (sleepingDirection == null) {
+            if (this.getDisguise().getEntity() != null && isSleeping()) {
+                this.sleepingDirection = BlockFace.values()[Math
+                        .round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
+            } else {
+                return BlockFace.EAST;
+            }
+        }
         return sleepingDirection;
     }
 
@@ -77,13 +85,6 @@ public class PlayerWatcher extends LivingWatcher {
     public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
         if (sleepingDirection != null) {
             this.sleepingDirection = BlockFace.values()[sleepingDirection.ordinal() % 4];
-        } else if (sleeping) {
-            if (this.getDisguise().getEntity() != null) {
-                this.sleepingDirection = BlockFace.values()[Math
-                        .round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
-            } else {
-                this.sleepingDirection = BlockFace.EAST;
-            }
         }
         if (sleeping != isSleeping()) {
             isInBed = sleeping;
