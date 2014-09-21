@@ -1453,8 +1453,8 @@ public class PacketsManager {
                         mods.write(1, yaw);
                         PacketContainer look = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
                         look.getIntegers().write(0, entity.getEntityId());
-                        look.getBytes().write(0, yaw);
-                        look.getBytes().write(1, pitch);
+                        look.getBytes().write(3, yaw);
+                        look.getBytes().write(4, pitch);
                         packets = new PacketContainer[] { look, rotation };
                     }
                 }
