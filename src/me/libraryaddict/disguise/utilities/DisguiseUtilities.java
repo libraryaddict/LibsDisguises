@@ -87,8 +87,14 @@ public class DisguiseUtilities {
             cSection.setAccessible(true);
             Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class, boolean.class)
                     .newInstance(0, false);
-            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
-                    .invoke(null, Material.BED_BLOCK.getId()); // TODO Method name exists in older versions?
+            Object block;
+            try {
+                block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
+                        .invoke(null, Material.BED_BLOCK.getId()); // TODO Method name exists in older versions?
+            } catch (Exception ex) {
+                block = ((Object[]) ReflectionManager.getNmsField(ReflectionManager.getNmsClass("Block"), "byId").get(null))[Material.BED_BLOCK
+                        .getId()];
+            }
             Method setId = chunkSection.getClass().getMethod("setTypeId", int.class, int.class, int.class,
                     ReflectionManager.getNmsClass("Block"));
             Method setData = chunkSection.getClass().getMethod("setData", int.class, int.class, int.class, int.class);
