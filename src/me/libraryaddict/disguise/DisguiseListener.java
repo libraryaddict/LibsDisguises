@@ -29,6 +29,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
@@ -160,6 +161,11 @@ public class DisguiseListener implements Listener {
                 chunkMove(event.getPlayer(), to, from);
             }
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        ReflectionManager.removePlayer(event.getPlayer());
     }
 
     @EventHandler
@@ -361,5 +367,5 @@ public class DisguiseListener implements Listener {
         disguiseRunnable.put(player, runnable);
         disguiseEntity.put(player, disguise);
     }
-
+    
 }

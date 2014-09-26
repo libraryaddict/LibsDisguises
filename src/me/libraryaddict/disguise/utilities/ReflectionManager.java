@@ -86,6 +86,7 @@ public class ReflectionManager {
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
     private static final Method ihmGet;
+    private static HashMap<String, Boolean> is1_8 = new HashMap<String, Boolean>();
     private static final boolean isForge = Bukkit.getServer().getName().contains("Cauldron")
             || Bukkit.getServer().getName().contains("MCPC-Plus");
     private static final Field pingField;
@@ -551,12 +552,17 @@ public class ReflectionManager {
 
     public static boolean is1_8(Player player) {
         if (LibVersion.is1_7_10()) {
+            if (is1_8.containsKey(player.getName())) {
+                return is1_8.get(player.getName());
+            }
             try {
                 Object nmsEntity = getNmsEntity(player);
                 Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity);
                 Field networkManager = getNmsField(connection.getClass(), "networkManager");
                 Method getVersion = getNmsMethod(networkManager.getType(), "getVersion");
-                return (Integer) getVersion.invoke(networkManager.get(connection)) >= 28;
+                boolean is18 = (Integer) getVersion.invoke(networkManager.get(connection)) >= 28;
+                is1_8.put(player.getName(), is18);
+                return is18;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -576,6 +582,10 @@ public class ReflectionManager {
         } else {
             return "L" + param.getName().replaceAll("\\.", "/") + ";";
         }
+    }
+
+    public static void removePlayer(Player player) {
+        is1_8.remove(player.getName());
     }
 
     public static void setAllowSleep(Player player) {
