@@ -30,7 +30,7 @@ public class ReflectionManager {
 
     public enum LibVersion {
         V1_6, V1_7, V1_7_10, V1_7_6, V1_8;
-        private static LibVersion currentVersion = LibVersion.V1_7;
+        private static LibVersion currentVersion;
         static {
             String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
             if (mcVersion.startsWith("1.")) {
@@ -43,6 +43,12 @@ public class ReflectionManager {
                         currentVersion = mcVersion.compareTo("1.7.6") < 0 ? LibVersion.V1_7 : LibVersion.V1_7_6;
                     }
                 }
+            }
+            try {
+                Class.forName("org.spigotmc.ProtocolData");
+                currentVersion = V1_8;
+            } catch (Exception ex) {
+                // Its not 1.8
             }
         }
 
@@ -59,11 +65,15 @@ public class ReflectionManager {
         }
 
         public static boolean is1_7_10() {
-            return getGameVersion() == V1_7_10;
+            return getGameVersion() == V1_7_10 || is1_8();
         }
 
         public static boolean is1_7_6() {
             return getGameVersion() == V1_7_6 || is1_7_10();
+        }
+
+        public static boolean is1_8() {
+            return getGameVersion() == V1_8;
         }
     }
 
@@ -551,7 +561,7 @@ public class ReflectionManager {
     }
 
     public static boolean is1_8(Player player) {
-        if (LibVersion.is1_7_10()) {
+        if (LibVersion.is1_8()) {
             if (is1_8.containsKey(player.getName())) {
                 return is1_8.get(player.getName());
             }
