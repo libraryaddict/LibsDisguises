@@ -8,4 +8,9 @@ public class GuardianWatcher extends LivingWatcher {
         super(disguise);
     }
 
+    public void doBeam(boolean doBeam) {
+        setValue(17, doBeam ? 1 : 0);
+        sendData(17);
+    }
+
 }
