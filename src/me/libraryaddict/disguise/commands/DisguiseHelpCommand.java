@@ -115,7 +115,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
         }
         enumHelp.add(new EnumHelp("Direction", "Directions", ChatColor.RED + "/disguisehelp Directions " + ChatColor.GREEN
-                + "- View the four directions usable on player setsleeping disguise", Arrays.copyOf(BlockFace.values(), 4)));
+                + "- View the five directions usable on player setsleeping disguise", Arrays.copyOf(BlockFace.values(), 5)));
     }
 
     @Override
