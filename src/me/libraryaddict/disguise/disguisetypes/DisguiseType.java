@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.Method;
 
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -10,6 +12,8 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
 
 public enum DisguiseType {
+    ARMOR_STAND(FutureDisguiseType.ARMOR_STAND),
+
     ARROW(60),
 
     BAT,
@@ -32,6 +36,8 @@ public enum DisguiseType {
 
     EGG(62),
 
+    ELDER_GUARDIAN(FutureDisguiseType.ELDER_GUARDIAN),
+
     ENDER_CRYSTAL(51),
 
     ENDER_DRAGON,
@@ -41,6 +47,8 @@ public enum DisguiseType {
     ENDER_SIGNAL(72),
 
     ENDERMAN,
+
+    ENDERMITE(FutureDisguiseType.ENDERMITE),
 
     EXPERIENCE_ORB,
 
@@ -55,6 +63,8 @@ public enum DisguiseType {
     GHAST,
 
     GIANT,
+
+    GUARDIAN(FutureDisguiseType.GUARDIAN),
 
     HORSE,
 
@@ -95,6 +105,8 @@ public enum DisguiseType {
     PLAYER,
 
     PRIMED_TNT(50),
+
+    RABBIT(FutureDisguiseType.RABBIT),
 
     SHEEP,
 
@@ -232,9 +244,10 @@ public enum DisguiseType {
 
     private int defaultId, entityId;
     private EntityType entityType;
+    private FutureDisguiseType futureType;
     private Class<? extends FlagWatcher> watcherClass;
 
-    private DisguiseType(int... ints) {
+    private DisguiseType(FutureDisguiseType disguiseType, int... ints) {
         for (int i = 0; i < ints.length; i++) {
             int value = ints[i];
             switch (i) {
@@ -248,10 +261,27 @@ public enum DisguiseType {
                 break;
             }
         }
+        if (LibVersion.is1_8()) {
+            futureType = disguiseType;
+        }
+    }
+
+    private DisguiseType(int... ints) {
+        this(null, ints);
     }
 
     public int getDefaultId() {
         return defaultId;
+    }
+
+    public Class<? extends Entity> getEntityClass() {
+        if (futureType != null) {
+            return futureType.getEntityClass();
+        }
+        if (entityType != null) {
+            return getEntityType().getEntityClass();
+        }
+        return Entity.class;
     }
 
     public int getEntityId() {
@@ -262,16 +292,28 @@ public enum DisguiseType {
         return entityType;
     }
 
+    public FutureDisguiseType getFutureType() {
+        return futureType;
+    }
+
+    public int getTypeId() {
+        return is1_8() ? futureType.getEntityId() : (int) getEntityType().getTypeId();
+    }
+
     public Class getWatcherClass() {
         return watcherClass;
     }
 
+    public boolean is1_8() {
+        return futureType != null;
+    }
+
     public boolean isMisc() {
-        return !getEntityType().isAlive();
+        return is1_8() ? !futureType.isAlive() : getEntityType() != null && !getEntityType().isAlive();
     }
 
     public boolean isMob() {
-        return getEntityType().isAlive() && this != DisguiseType.PLAYER;
+        return is1_8() ? futureType.isAlive() : getEntityType() != null && getEntityType().isAlive() && !isPlayer();
     }
 
     public boolean isPlayer() {

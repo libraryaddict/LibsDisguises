@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,7 +64,7 @@ public abstract class Disguise {
     protected void createDisguise(DisguiseType newType) {
         if (getWatcher() != null)
             return;
-        if (newType.getEntityType() == null) {
+        if (!(LibVersion.is1_8() && newType.is1_8()) && newType.getEntityType() == null) {
             throw new RuntimeException(
                     "DisguiseType "
                             + newType
@@ -634,16 +635,19 @@ public abstract class Disguise {
             }
             Class nmsEntityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
             Class nmsDisguiseClass = DisguiseValues.getNmsEntityClass(getType());
-            // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
-            if (baseClass != null && baseClass.isAssignableFrom(nmsDisguiseClass) && baseClass.isAssignableFrom(nmsEntityClass))
-                continue;
+            if (nmsDisguiseClass != null) {
+                // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
+                if (baseClass != null && baseClass.isAssignableFrom(nmsDisguiseClass)
+                        && baseClass.isAssignableFrom(nmsEntityClass))
+                    continue;
 
-            // So they don't extend a basic class.
-            // Maybe if I check that they extend each other..
-            // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
-            // datawatchers.
-            if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass))
-                continue;
+                // So they don't extend a basic class.
+                // Maybe if I check that they extend each other..
+                // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
+                // datawatchers.
+                if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass))
+                    continue;
+            }
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
             getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));

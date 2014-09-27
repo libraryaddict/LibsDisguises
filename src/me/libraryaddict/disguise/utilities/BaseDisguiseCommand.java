@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +23,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -31,15 +31,15 @@ import org.bukkit.potion.PotionEffectType;
 public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     public class DisguiseParseException extends Exception {
-        public DisguiseParseException(String string) {
-            super(string);
-        }
+        private static final long serialVersionUID = 1276971370793124510L;
 
         public DisguiseParseException() {
             super();
         }
 
-        private static final long serialVersionUID = 1276971370793124510L;
+        public DisguiseParseException(String string) {
+            super(string);
+        }
 
     }
 
@@ -147,7 +147,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 } else {
                     for (DisguiseType type : DisguiseType.values()) {
                         HashMap<ArrayList<String>, Boolean> options = null;
-                        Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
+                        Class entityClass = type.getEntityClass();
                         if (disguiseType.equals("mob")) {
                             if (type.isMob()) {
                                 options = getOptions(perm);
@@ -203,7 +203,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 } else {
                     for (DisguiseType type : DisguiseType.values()) {
                         boolean foundHim = false;
-                        Class entityClass = type.getEntityType() == null ? Entity.class : type.getEntityType().getEntityClass();
+                        Class entityClass = type.getEntityClass();
                         if (disguiseType.equals("mob")) {
                             if (type.isMob()) {
                                 foundHim = true;
@@ -337,7 +337,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 throw new DisguiseParseException(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0]
                         + ChatColor.RED + " doesn't exist!");
             }
-            if (disguiseType.getEntityType() == null) {
+            if (!(LibVersion.is1_8() && disguiseType.is1_8()) && disguiseType.getEntityType() == null) {
                 throw new DisguiseParseException(ChatColor.RED + "Error! This version of minecraft does not have that disguise!");
             }
             if (!map.containsKey(disguiseType)) {

@@ -10,11 +10,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
+
 import me.libraryaddict.disguise.commands.*;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.FutureDisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
@@ -23,9 +26,11 @@ import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
@@ -149,7 +154,7 @@ public class LibsDisguises extends JavaPlugin {
      */
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
-            if (disguiseType.getEntityType() == null) {
+            if (disguiseType.getEntityType() == null && !(disguiseType.is1_8() && LibVersion.is1_8())) {
                 continue;
             }
             Class watcherClass = null;
@@ -176,6 +181,9 @@ public class LibsDisguises extends JavaPlugin {
                 case MAGMA_CUBE:
                     watcherClass = SlimeWatcher.class;
                     break;
+                case ELDER_GUARDIAN:
+                    watcherClass = GuardianWatcher.class;
+                    break;
                 default:
                     watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
                             + toReadable(disguiseType.name()) + "Watcher");
@@ -195,6 +203,28 @@ public class LibsDisguises extends JavaPlugin {
                 }
             }
             disguiseType.setWatcherClass(watcherClass);
+            if (DisguiseValues.getDisguiseValues(disguiseType) != null) {
+                continue;
+            }
+            if (disguiseType.is1_8()) {
+                int entitySize = 0;
+                FutureDisguiseType futureType = disguiseType.getFutureType();
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, entitySize, futureType.getMaxHealth());
+                Object[] objs = disguiseType.getFutureType().getDataWatcher();
+                for (int i = 0; i < objs.length; i += 2) {
+                    disguiseValues.setMetaValue((Integer) objs[i], objs[i + 1]);
+                }
+
+                // Get the bounding box
+                float[] box = futureType.getBoundingBox();
+                disguiseValues.setAdultBox(new FakeBoundingBox(box[0], box[1], box[2]));
+                /*     if (disguiseType == DisguiseType.RABBIT) {
+                         ((Ageable) bukkitEntity).setBaby();
+                         disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+                     }
+                     disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));*/
+                continue;
+            }
             String nmsEntityName = toReadable(disguiseType.name());
             switch (disguiseType) {
             case WITHER_SKELETON:
@@ -233,9 +263,6 @@ public class LibsDisguises extends JavaPlugin {
                 break;
             default:
                 break;
-            }
-            if (DisguiseValues.getDisguiseValues(disguiseType) != null) {
-                continue;
             }
             try {
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
@@ -292,7 +319,6 @@ public class LibsDisguises extends JavaPlugin {
                             .print("[LibsDisguises] Development builds are available at (ProtocolLib) "
                                     + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
                 }
-                System.out.print("[LibsDisguises] Note that these builds have not been reviewed by Bukkit for safety.");
 
                 ex.printStackTrace();
             }

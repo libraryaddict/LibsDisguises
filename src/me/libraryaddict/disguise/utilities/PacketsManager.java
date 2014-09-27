@@ -277,14 +277,14 @@ public class PacketsManager {
                 delayedPackets = new PacketContainer[] { delayedPacket };
             }
 
-        } else if (disguise.getType().isMob()) {
+        } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
 
             DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) disguise.getType().getEntityType().getTypeId());
+            mods.write(1, disguise.getType().getTypeId()); // TODO
             double d1 = 3.9D;
             double d2 = vec.getX();
             double d3 = vec.getY();
@@ -421,7 +421,7 @@ public class PacketsManager {
             value = (byte) -(value + 128);
             break;
         default:
-            if (disguiseType.isMisc()) {
+            if (disguiseType.isMisc() && disguiseType != DisguiseType.ARMOR_STAND) {
                 value -= 64;
             }
             break;
