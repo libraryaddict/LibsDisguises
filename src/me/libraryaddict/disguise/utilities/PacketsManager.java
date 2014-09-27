@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -252,6 +253,7 @@ public class PacketsManager {
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                spawnPackets = Arrays.copyOf(spawnPackets, spawnPackets.length + 1);
                 PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(player,
                         loc.clone().subtract(0, PacketsManager.getYModifier(disguisedEntity, disguise), 0), player.getLocation(),
                         ((PlayerDisguise) disguise));
@@ -338,10 +340,15 @@ public class PacketsManager {
                 }
             }
         }
-        if (spawnPackets[1] == null) {
+        if (spawnPackets[1] == null || disguise.isPlayerDisguise()) {
+            int entry = spawnPackets[1] == null ? 1 : 0;
+            if (entry == 0) {
+                entry = spawnPackets.length;
+                spawnPackets = Arrays.copyOf(spawnPackets, spawnPackets.length + 1);
+            }
             // Make a packet to turn his head!
-            spawnPackets[1] = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-            StructureModifier<Object> mods = spawnPackets[1].getModifier();
+            spawnPackets[entry] = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
+            StructureModifier<Object> mods = spawnPackets[entry].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, yaw);
         }
