@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -473,140 +474,149 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             Method methodToUse = null;
             Object value = null;
             DisguiseParseException storedEx = null;
-            for (Method method : methods) {
-                if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
-                        && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
-                    try {
-                        methodToUse = method;
-                        methodName = methodToUse.getName();
-                        Class<?>[] types = methodToUse.getParameterTypes();
-                        Class param = types[0];
-                        if (valueString != null) {
-                            if (int.class == param) {
-                                // Parse to integer
-                                if (isNumeric(valueString)) {
-                                    value = (int) Integer.parseInt(valueString);
-                                } else {
-                                    throw parseToException("number", valueString, methodName);
+            int c = 0;
+            while (c < methods.length) {
+                try {
+                    Entry<Method, Integer> entry = getMethod(methods, methodName, c);
+                    if (entry == null) {
+                        break;
+                    }
+                    methodToUse = entry.getKey();
+                    c = entry.getValue();
+                    methodName = methodToUse.getName();
+                    Class<?>[] types = methodToUse.getParameterTypes();
+                    Class param = types[0];
+                    if (valueString != null) {
+                        if (int.class == param) {
+                            // Parse to integer
+                            if (isNumeric(valueString)) {
+                                value = (int) Integer.parseInt(valueString);
+                            } else {
+                                throw parseToException("number", valueString, methodName);
+                            }
+                        } else if (float.class == param || double.class == param) {
+                            // Parse to number
+                            if (isDouble(valueString)) {
+                                float obj = Float.parseFloat(valueString);
+                                if (param == float.class) {
+                                    value = (float) obj;
+                                } else if (param == double.class) {
+                                    value = (double) obj;
                                 }
-                            } else if (float.class == param || double.class == param) {
-                                // Parse to number
-                                if (isDouble(valueString)) {
-                                    float obj = Float.parseFloat(valueString);
-                                    if (param == float.class) {
-                                        value = (float) obj;
-                                    } else if (param == double.class) {
-                                        value = (double) obj;
-                                    }
-                                } else {
-                                    throw parseToException("number.0", valueString, methodName);
-                                }
-                            } else if (param == String.class) {
-                                // Parse to string
-                                value = ChatColor.translateAlternateColorCodes('&', valueString);
-                            } else if (param == AnimalColor.class) {
-                                // Parse to animal color
-                                try {
-                                    value = AnimalColor.valueOf(valueString.toUpperCase());
-                                } catch (Exception ex) {
-                                    throw parseToException("animal color", valueString, methodName);
-                                }
-                            } else if (param == ItemStack.class) {
-                                // Parse to itemstack
-                                try {
-                                    value = parseToItemstack(valueString);
-                                } catch (Exception ex) {
-                                    throw new DisguiseParseException(String.format(ex.getMessage(), methodName));
-                                }
-                            } else if (param == ItemStack[].class) {
-                                // Parse to itemstack array
-                                ItemStack[] items = new ItemStack[4];
-                                String[] split = valueString.split(",");
-                                if (split.length == 4) {
-                                    for (int a = 0; a < 4; a++) {
-                                        try {
-                                            items[a] = parseToItemstack(split[a]);
-                                        } catch (Exception ex) {
-                                            throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
-                                                    + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
-                                        }
-                                    }
-                                } else {
-                                    throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
-                                            + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
-                                }
-                                value = items;
-                            } else if (param.getSimpleName().equals("Color")) {
-                                // Parse to horse color
-                                value = callValueOf(param, valueString, methodName, "a horse color");
-                            } else if (param.getSimpleName().equals("Style")) {
-                                // Parse to horse style
-                                value = callValueOf(param, valueString, methodName, "a horse style");
-                            } else if (param.getSimpleName().equals("Profession")) {
-                                // Parse to villager profession
-                                value = callValueOf(param, valueString, methodName, "a villager profession");
-                            } else if (param.getSimpleName().equals("Art")) {
-                                // Parse to art type
-                                value = callValueOf(param, valueString, methodName, "a painting art");
-                            } else if (param.getSimpleName().equals("Type")) {
-                                // Parse to ocelot type
-                                value = callValueOf(param, valueString, methodName, "a ocelot type");
-                            } else if (param == PotionEffectType.class) {
-                                // Parse to potion effect
-                                try {
-                                    PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
-                                    if (potionType == null && isNumeric(valueString)) {
-                                        potionType = PotionEffectType.getById(Integer.parseInt(valueString));
-                                    }
-                                    if (potionType == null)
-                                        throw new DisguiseParseException();
-                                    value = potionType;
-                                } catch (Exception ex) {
-                                    throw parseToException("a potioneffect type", valueString, methodName);
-                                }
-                            } else if (param == int[].class) {
-                                String[] split = valueString.split(",");
-                                int[] values = new int[split.length];
-                                for (int b = 0; b < values.length; b++) {
+                            } else {
+                                throw parseToException("number.0", valueString, methodName);
+                            }
+                        } else if (param == String.class) {
+                            // Parse to string
+                            value = ChatColor.translateAlternateColorCodes('&', valueString);
+                        } else if (param == AnimalColor.class) {
+                            // Parse to animal color
+                            try {
+                                value = AnimalColor.valueOf(valueString.toUpperCase());
+                            } catch (Exception ex) {
+                                throw parseToException("animal color", valueString, methodName);
+                            }
+                        } else if (param == ItemStack.class) {
+                            // Parse to itemstack
+                            try {
+                                value = parseToItemstack(valueString);
+                            } catch (Exception ex) {
+                                throw new DisguiseParseException(String.format(ex.getMessage(), methodName));
+                            }
+                        } else if (param == ItemStack[].class) {
+                            // Parse to itemstack array
+                            ItemStack[] items = new ItemStack[4];
+                            String[] split = valueString.split(",");
+                            if (split.length == 4) {
+                                for (int a = 0; a < 4; a++) {
                                     try {
-                                        values[b] = Integer.parseInt(split[b]);
-                                    } catch (NumberFormatException ex) {
-                                        throw parseToException("Number,Number,Number...", valueString, methodName);
+                                        items[a] = parseToItemstack(split[a]);
+                                    } catch (Exception ex) {
+                                        throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                                + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                                     }
                                 }
-                                value = values;
-                            } else if (param == BlockFace.class) {
+                            } else {
+                                throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
+                                        + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
+                            }
+                            value = items;
+                        } else if (param.getSimpleName().equals("Color")) {
+                            // Parse to horse color
+                            value = callValueOf(param, valueString, methodName, "a horse color");
+                        } else if (param.getSimpleName().equals("Style")) {
+                            // Parse to horse style
+                            value = callValueOf(param, valueString, methodName, "a horse style");
+                        } else if (param.getSimpleName().equals("Profession")) {
+                            // Parse to villager profession
+                            value = callValueOf(param, valueString, methodName, "a villager profession");
+                        } else if (param.getSimpleName().equals("Art")) {
+                            // Parse to art type
+                            value = callValueOf(param, valueString, methodName, "a painting art");
+                        } else if (param.getSimpleName().equals("Type")) {
+                            // Parse to ocelot type
+                            value = callValueOf(param, valueString, methodName, "a ocelot type");
+                        } else if (param == PotionEffectType.class) {
+                            // Parse to potion effect
+                            try {
+                                PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
+                                if (potionType == null && isNumeric(valueString)) {
+                                    potionType = PotionEffectType.getById(Integer.parseInt(valueString));
+                                }
+                                if (potionType == null)
+                                    throw new DisguiseParseException();
+                                value = potionType;
+                            } catch (Exception ex) {
+                                throw parseToException("a potioneffect type", valueString, methodName);
+                            }
+                        } else if (param == int[].class) {
+                            String[] split = valueString.split(",");
+                            int[] values = new int[split.length];
+                            for (int b = 0; b < values.length; b++) {
                                 try {
-                                    BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
-                                    if (face.ordinal() > 3)
-                                        throw new DisguiseParseException();
-                                    value = face;
-                                } catch (Exception ex) {
-                                    throw parseToException("a direction (north, east, south, west)", valueString, methodName);
+                                    values[b] = Integer.parseInt(split[b]);
+                                } catch (NumberFormatException ex) {
+                                    throw parseToException("Number,Number,Number...", valueString, methodName);
                                 }
                             }
+                            value = values;
+                        } else if (param == BlockFace.class) {
+                            try {
+                                BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
+                                if (face.ordinal() > 3)
+                                    throw new DisguiseParseException();
+                                value = face;
+                            } catch (Exception ex) {
+                                throw parseToException("a direction (north, east, south, west)", valueString, methodName);
+                            }
                         }
-                        if (value == null && boolean.class == param) {
-                            if (valueString == null) {
+                    }
+                    if (value == null && boolean.class == param) {
+                        if (valueString == null) {
+                            value = true;
+                            i--;
+                        } else if (valueString.equalsIgnoreCase("true")) {
+                            value = true;
+                        } else if (valueString.equalsIgnoreCase("false")) {
+                            value = false;
+                        } else {
+                            if (getMethod(methods, valueString, 0) == null) {
+                                throw parseToException("true/false", valueString, methodName);
+                            } else {
                                 value = true;
                                 i--;
-                            } else if (valueString.equalsIgnoreCase("true")) {
-                                value = true;
-                            } else if (valueString.equalsIgnoreCase("false")) {
-                                value = false;
-                            } else
-                                throw parseToException("true/false", valueString, methodName);
+                            }
                         }
-                        if (value != null) {
-                            break;
-                        }
-                    } catch (DisguiseParseException ex) {
-                        storedEx = ex;
-                        methodToUse = null;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        methodToUse = null;
                     }
+                    if (value != null) {
+                        break;
+                    }
+                } catch (DisguiseParseException ex) {
+                    storedEx = ex;
+                    methodToUse = null;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    methodToUse = null;
                 }
             }
             if (methodToUse == null) {
@@ -629,6 +639,17 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
         // Alright. We've constructed our disguise.
         return disguise;
+    }
+
+    private Entry<Method, Integer> getMethod(Method[] methods, String methodName, int toStart) {
+        for (int i = toStart; i < methods.length; i++) {
+            Method method = methods[i];
+            if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
+                    && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
+                return new HashMap.SimpleEntry(method, ++i);
+            }
+        }
+        return null;
     }
 
     private Object callValueOf(Class<?> param, String valueString, String methodName, String description)
