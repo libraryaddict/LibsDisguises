@@ -9,6 +9,7 @@ import java.util.HashMap;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 
@@ -116,6 +117,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         }
         enumHelp.add(new EnumHelp("Direction", "Directions", ChatColor.RED + "/disguisehelp Directions " + ChatColor.GREEN
                 + "- View the five directions usable on player setsleeping disguise", Arrays.copyOf(BlockFace.values(), 5)));
+        enumHelp.add(new EnumHelp("RabbitType", "RabbitType", ChatColor.RED + "/disguisehelp RabbitType " + ChatColor.GREEN
+                + "View the kinds of rabbits you can turn into", RabbitType.values()));
     }
 
     @Override

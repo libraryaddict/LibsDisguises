@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.ChatColor;
@@ -583,11 +584,26 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         } else if (param == BlockFace.class) {
                             try {
                                 BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
-                                if (face.ordinal() > 3)
+                                if (face.ordinal() > 4)
                                     throw new DisguiseParseException();
                                 value = face;
                             } catch (Exception ex) {
-                                throw parseToException("a direction (north, east, south, west)", valueString, methodName);
+                                throw parseToException("a direction (north, east, south, west, up)", valueString, methodName);
+                            }
+                        } else if (param == RabbitType.class) {
+                            try {
+                                for (RabbitType type : RabbitType.values()) {
+                                    if (type.name().replace("_", "")
+                                            .equalsIgnoreCase(valueString.replace("_", "").replace(" ", ""))) {
+                                        value = type;
+                                        break;
+                                    }
+                                }
+                                if (value == null) {
+                                    throw new Exception();
+                                }
+                            } catch (Exception ex) {
+                                throw parseToException("rabbit type (white, brown, salt and pepper...)", valueString, methodName);
                             }
                         }
                     }
