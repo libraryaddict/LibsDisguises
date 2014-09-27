@@ -184,6 +184,9 @@ public class LibsDisguises extends JavaPlugin {
                 case ELDER_GUARDIAN:
                     watcherClass = GuardianWatcher.class;
                     break;
+                case ENDERMITE:
+                    watcherClass = LivingWatcher.class;
+                    break;
                 default:
                     watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
                             + toReadable(disguiseType.name()) + "Watcher");
