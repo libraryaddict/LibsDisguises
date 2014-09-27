@@ -126,7 +126,7 @@ public enum FutureDisguiseType {
 
     9, (byte) 0,
 
-    12, (byte) 0,
+    12, 0,
 
     15, (byte) 0,
 
