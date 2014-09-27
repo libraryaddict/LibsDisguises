@@ -706,10 +706,17 @@ public abstract class Disguise {
                 task = Bukkit.getScheduler().runTaskTimer(plugin, velocityRunnable, 1, 1);
                 // Stick the disguise in the disguises bin
                 DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+                if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
+                    DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                }
                 // Resend the disguised entity's packet
                 DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 // If he is a player, then self disguise himself
-                DisguiseUtilities.setupFakeDisguise(this);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    public void run() {
+                        DisguiseUtilities.setupFakeDisguise(Disguise.this);
+                    }
+                }, 2);
                 return true;
             }
         }

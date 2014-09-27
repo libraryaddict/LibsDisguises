@@ -284,7 +284,7 @@ public class PacketsManager {
             spawnPackets[0] = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, disguise.getType().getTypeId()); // TODO
+            mods.write(1, disguise.getType().getTypeId());
             double d1 = 3.9D;
             double d2 = vec.getX();
             double d3 = vec.getY();
