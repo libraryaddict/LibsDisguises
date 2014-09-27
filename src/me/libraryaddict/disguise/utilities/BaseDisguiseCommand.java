@@ -603,7 +603,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     throw new Exception();
                                 }
                             } catch (Exception ex) {
-                                throw parseToException("rabbit type (white, brown, salt and pepper...)", valueString, methodName);
+                                throw parseToException("rabbit type (white, brown, patches...)", valueString, methodName);
                             }
                         }
                     }

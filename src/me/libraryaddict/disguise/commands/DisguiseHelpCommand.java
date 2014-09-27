@@ -215,6 +215,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                                     valueType = "number,number,number...";
                                 } else if (c == BlockFace.class) {
                                     valueType = "direction";
+                                } else if (c == RabbitType.class) {
+                                    valueType = "rabbit type";
                                 }
                                 if (valueType != null) {
                                     ChatColor methodColor = ChatColor.YELLOW;

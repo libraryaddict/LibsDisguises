@@ -1,15 +1,21 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.RabbitType;
 
 public class RabbitWatcher extends AgeableWatcher {
 
     public RabbitWatcher(Disguise disguise) {
         super(disguise);
+        setType(RabbitType.values()[RabbitType.values().length]);
     }
 
-    public void setRabbitType(int rabbitType) {
-        setValue(18, (byte) rabbitType);
+    public RabbitType getType() {
+        return RabbitType.getType((Integer) getValue(18, (int) 0));
+    }
+
+    public void setType(RabbitType type) {
+        setValue(18, (byte) type.getTypeId());
         sendData(18);
     }
 
