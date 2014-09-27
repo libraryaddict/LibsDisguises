@@ -31,16 +31,22 @@ public enum DisguiseSound {
             "mob.horse.leather", "mob.horse.donkey.angry", "mob.horse.wood", "mob.horse.armor", "mob.horse.soft",
             "mob.horse.land", "mob.horse.jump", "mob.horse.angry"),
 
+    ELDER_GUARDIAN("mob.guardian.elder.hit", null, "mob.guardian.elder.death", "mob.guardian.elder.death"),
+
     ENDER_DRAGON("mob.enderdragon.hit", null, "mob.enderdragon.end", "mob.enderdragon.growl", "damage.fallsmall",
             "mob.enderdragon.wings", "damage.fallbig"),
 
     ENDERMAN("mob.endermen.hit", "step.grass", "mob.endermen.death", "mob.endermen.idle", "mob.endermen.scream",
             "mob.endermen.portal", "mob.endermen.stare"),
 
+    ENDERMITE("mob.silverfish.hit", "mob.silverfish.step", "mob.silverfish.kill", "mob.silverfish.say"),
+
     GHAST("mob.ghast.scream", null, "mob.ghast.death", "mob.ghast.moan", "damage.fallsmall", "mob.ghast.fireball",
             "damage.fallbig", "mob.ghast.affectionate_scream", "mob.ghast.charge"),
 
     GIANT("damage.hit", "step.grass", null, null),
+
+    GUARDIAN("mob.guardian.hit", null, "mob.guardian.death", "mob.guardian.death"),
 
     HORSE("mob.horse.hit", "step.grass", "mob.horse.death", "mob.horse.idle", "mob.horse.gallop", "mob.horse.leather",
             "mob.horse.wood", "mob.horse.armor", "mob.horse.soft", "mob.horse.land", "mob.horse.jump", "mob.horse.angry",
@@ -62,6 +68,8 @@ public enum DisguiseSound {
 
     PLAYER(LibVersion.is1_7() ? "game.player.hurt" : "damage.hit", "step.grass", LibVersion.is1_7() ? "game.player.hurt"
             : "damage.hit", null),
+
+    RABBIT("mob.rabbit.hurt", "mob.rabbit.hop", "mob.rabbit.death", "mob.rabbit.idle"),
 
     SHEEP("mob.sheep.say", "mob.sheep.step", null, "mob.sheep.say", "mob.sheep.shear"),
 
