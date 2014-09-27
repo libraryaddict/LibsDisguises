@@ -38,6 +38,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
@@ -1176,6 +1177,7 @@ public class PacketsManager {
                 packetsToListen.add(PacketType.Play.Server.ENTITY_MOVE_LOOK);
                 packetsToListen.add(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
                 packetsToListen.add(PacketType.Play.Server.ENTITY_TELEPORT);
+                packetsToListen.add(PacketType.Play.Server.REL_ENTITY_MOVE);
             }
             // Add equipment packet
             if (DisguiseConfig.isEquipmentPacketsEnabled()) {
@@ -1360,11 +1362,30 @@ public class PacketsManager {
                 // Else if the disguise is moving.
                 else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
                         || sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
-                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
+                        || sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT
+                        || sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE) {
+                    if (disguise.getType() == DisguiseType.RABBIT
+                            && (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE || sentPacket.getType() == PacketType.Play.Server.ENTITY_MOVE_LOOK)) {
+                        if (entity.getMetadata("LibsRabbitHop").isEmpty()
+                                || System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() < 100
+                                || System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
+                            if (entity.getMetadata("LibsRabbitHop").isEmpty()
+                                    || System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
+                                entity.removeMetadata("LibsRabbitHop", libsDisguises);
+                                entity.setMetadata("LibsRabbitHop",
+                                        new FixedMetadataValue(libsDisguises, System.currentTimeMillis()));
+                            }
+                            packets = Arrays.copyOf(packets, packets.length + 1);
+                            packets[1] = new PacketContainer(PacketType.Play.Server.ENTITY_STATUS);
+                            packets[1].getIntegers().write(0, entity.getEntityId());
+                            packets[1].getBytes().write(0, (byte) 1);
+                        }
+                    }
+
                     if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
                             && disguise.getType() == DisguiseType.WITHER_SKULL) {
                         packets = new PacketContainer[0];
-                    } else {
+                    } else if (sentPacket.getType() != PacketType.Play.Server.REL_ENTITY_MOVE) {
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Byte> bytes = packets[0].getBytes();
                         boolean tele = sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT;
@@ -1471,6 +1492,7 @@ public class PacketsManager {
                 else {
                     packets = null;
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
