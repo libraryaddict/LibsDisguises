@@ -8,4 +8,9 @@ public class RabbitWatcher extends AgeableWatcher {
         super(disguise);
     }
 
+    public void setRabbitType(int rabbitType) {
+        setValue(18, (byte) rabbitType);
+        sendData(18);
+    }
+
 }
