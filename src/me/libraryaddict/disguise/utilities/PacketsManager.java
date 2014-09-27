@@ -772,10 +772,12 @@ public class PacketsManager {
                             packets = new PacketContainer[] { event.getPacket() };
                         }
                         for (PacketContainer packet : packets) {
-                            if (packet.equals(event.getPacket())) {
-                                packet = packet.deepClone();
+                            if (packet.getType() != PacketType.Play.Server.PLAYER_INFO) {
+                                if (packet.equals(event.getPacket())) {
+                                    packet = packet.shallowClone();
+                                }
+                                packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                             }
-                            packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                             } catch (InvocationTargetException e) {
@@ -793,7 +795,7 @@ public class PacketsManager {
                                         e.printStackTrace();
                                     }
                                 }
-                            });
+                            }, 2);
                         }
                         if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                             event.setPacket(event.getPacket().deepClone());
