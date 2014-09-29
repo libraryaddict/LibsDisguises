@@ -315,7 +315,7 @@ public class DisguiseUtilities {
                 continue;
             }
             try {
-                int chunkX = (int) Math.floor(loc.getBlockX() / 16D) + 20, chunkZ = (int) Math.floor(loc.getBlockZ() / 16D) + 20;
+                int chunkX = (int) Math.floor(loc.getBlockX() / 16D) + 17, chunkZ = (int) Math.floor(loc.getBlockZ() / 16D) + 17;
                 chunkX -= chunkX % 10;
                 chunkZ -= chunkZ % 10;
                 xChunk.set(bedChunk, chunkX);
@@ -323,6 +323,7 @@ public class DisguiseUtilities {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            // Make unload packets
             try {
                 packets[i++] = ProtocolLibrary.getProtocolManager()
                         .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0, 40)
@@ -332,6 +333,7 @@ public class DisguiseUtilities {
                         .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0)
                         .createPacket(bedChunk, true, 0);
             }
+            // Make load packets
             if (oldLoc == null || i > 1) {
                 try {
                     packets[i++] = ProtocolLibrary.getProtocolManager()
@@ -354,8 +356,8 @@ public class DisguiseUtilities {
         bedInts.write(0, entity.getEntityId());
         if (ReflectionManager.is1_8(player)) {
             PlayerWatcher watcher = disguise.getWatcher();
-            int chunkX = (int) Math.floor(playerLocation.getBlockX() / 16D) + 20, chunkZ = (int) Math.floor(playerLocation
-                    .getBlockZ() / 16D) + 20;
+            int chunkX = (int) Math.floor(playerLocation.getBlockX() / 16D) + 17, chunkZ = (int) Math.floor(playerLocation
+                    .getBlockZ() / 16D) + 17;
             chunkX -= chunkX % 10;
             chunkZ -= chunkZ % 10;
             bedInts.write(1, (chunkX * 16) + 1 + watcher.getSleepingDirection().getModX());
