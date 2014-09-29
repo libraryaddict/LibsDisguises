@@ -589,7 +589,7 @@ public class DisguiseUtilities {
      * This is called on a thread as it is thread blocking
      */
     public static WrappedGameProfile lookupGameProfile(String playerName) {
-        return ReflectionManager.grabProfileAddUUID(playerName);
+        return ReflectionManager.getSkullBlob(ReflectionManager.grabProfileAddUUID(playerName));
     }
 
     /**
