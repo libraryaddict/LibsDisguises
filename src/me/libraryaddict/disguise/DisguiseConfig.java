@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.utilities.PacketsManager;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -34,6 +35,10 @@ public class DisguiseConfig {
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
+    private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
+            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
+            + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
+    private static String updateNotificationPermission;
     private static boolean witherSkullEnabled;
 
     public static String getDisguiseBlownMessage() {
@@ -50,6 +55,14 @@ public class DisguiseConfig {
 
     public static int getMaxClonedDisguises() {
         return maxClonedDisguises;
+    }
+
+    public static String getUpdateMessage() {
+        return updateMessage;
+    }
+
+    public static String getUpdateNotificationPermission() {
+        return updateNotificationPermission;
     }
 
     public static void initConfig(ConfigurationSection config) {
@@ -85,6 +98,7 @@ public class DisguiseConfig {
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
+        setUpdateNotificationPermission(config.getString("Permission"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -378,6 +392,14 @@ public class DisguiseConfig {
 
     public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
         undisguiseSwitchWorlds = isUndisguise;
+    }
+
+    public static void setUpdateMessage(String newMessage) {
+        updateMessage = newMessage;
+    }
+
+    public static void setUpdateNotificationPermission(String newPermission) {
+        updateNotificationPermission = newPermission;
     }
 
     /**
