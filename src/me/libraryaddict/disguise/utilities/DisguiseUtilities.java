@@ -483,7 +483,7 @@ public class DisguiseUtilities {
                         && (!gameProfile.getName().equals(
                                 disguise.getSkin() != null && LibVersion.is1_7_6() ? disguise.getSkin() : disguise.getName()) || (LibVersion
                                 .is1_7_6() && !gameProfile.getProperties().isEmpty()))) {
-                    // TODO Resend for UUID? Might need to in the future.
+                    disguise.setGameProfile(gameProfile);
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
             }
@@ -589,9 +589,7 @@ public class DisguiseUtilities {
      * This is called on a thread as it is thread blocking
      */
     public static WrappedGameProfile lookupGameProfile(String playerName) {
-        WrappedGameProfile gameprofile = ReflectionManager.grabProfileAddUUID(playerName);
-        return ReflectionManager.getGameProfileWithThisSkin(null, gameprofile.getName(),
-                ReflectionManager.getSkullBlob(gameprofile));
+        return ReflectionManager.grabProfileAddUUID(playerName);
     }
 
     /**

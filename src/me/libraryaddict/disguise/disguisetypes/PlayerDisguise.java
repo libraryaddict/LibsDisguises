@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.util.UUID;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,10 +31,14 @@ public class PlayerDisguise extends TargetedDisguise {
         this.setReplaceSounds(replaceSounds);
     }
 
-    @Deprecated
     public PlayerDisguise(String name, String skinToUse) {
         this(name);
         setSkin(skinToUse);
+    }
+
+    public PlayerDisguise(WrappedGameProfile gameProfile) {
+        this(gameProfile.getName());
+        this.gameProfile = gameProfile;
     }
 
     public PlayerDisguise addPlayer(Player player) {
@@ -67,23 +69,26 @@ public class PlayerDisguise extends TargetedDisguise {
         return disguise;
     }
 
-    @Deprecated
+    public void setGameProfile(WrappedGameProfile gameProfile) {
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, gameProfile.getName(), gameProfile);
+    }
+
     public WrappedGameProfile getGameProfile() {
-        if (getSkin() != null) {
-            if (gameProfile != null) {
-                return gameProfile;
+        if (gameProfile == null) {
+            if (getSkin() != null) {
+                gameProfile = ReflectionManager.getGameProfile(null, getName());
+            } else {
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(),
+                        DisguiseUtilities.getProfileFromMojang(this));
             }
-            return ReflectionManager.getGameProfile(null, getName());
-        } else {
-            return DisguiseUtilities.getProfileFromMojang(this);
         }
+        return gameProfile;
     }
 
     public String getName() {
         return playerName;
     }
 
-    @Deprecated
     public String getSkin() {
         return skinToUse;
     }
@@ -147,7 +152,6 @@ public class PlayerDisguise extends TargetedDisguise {
         return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
-    @Deprecated
     public PlayerDisguise setSkin(String skinToUse) {
         if (LibVersion.is1_7_6()) {
             this.skinToUse = skinToUse;
@@ -167,6 +171,7 @@ public class PlayerDisguise extends TargetedDisguise {
                             if (!gameProfile.getProperties().isEmpty() && DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this)) {
                                 DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
                             }
+                            currentLookup = null;
                         }
                     }
                 };
@@ -186,7 +191,6 @@ public class PlayerDisguise extends TargetedDisguise {
      *            GameProfile
      * @return
      */
-    @Deprecated
     public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
         if (gameProfile == null) {
             this.gameProfile = null;
@@ -196,8 +200,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         Validate.notEmpty(gameProfile.getName(), "Name must be set");
         this.skinToUse = gameProfile.getName();
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(
-                gameProfile.getId() != null ? UUID.fromString(gameProfile.getId()) : null, getName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
         return this;
     }
 
