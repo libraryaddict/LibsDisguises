@@ -94,10 +94,8 @@ public class DisguiseListener implements Listener {
 
     private void chunkMove(Player player, Location newLoc, Location oldLoc) {
         try {
-            if (ReflectionManager.is1_8(player)) {
-                for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(player, newLoc, oldLoc)) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                }
+            for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(player, newLoc, oldLoc)) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
             }
             if (newLoc != null) {
                 for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
@@ -156,8 +154,8 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isBedPacketsEnabled()) {
             Location to = event.getTo();
             Location from = event.getFrom();
-            if (Math.floor(to.getBlockX() / 160D) != Math.floor(from.getBlockX() / 160D)
-                    || Math.floor(to.getBlockZ() / 160D) != Math.floor(from.getBlockZ() / 160D)) {
+            if (Math.floor(to.getX() / 160D) != Math.floor(from.getX() / 160D)
+                    || Math.floor(to.getZ() / 160D) != Math.floor(from.getZ() / 160D)) {
                 chunkMove(event.getPlayer(), to, from);
             }
         }
@@ -283,8 +281,8 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isBedPacketsEnabled()) {
             Location to = event.getTo();
             Location from = event.getFrom();
-            if (Math.floor(to.getBlockX() / 160D) != Math.floor(from.getBlockX() / 160D)
-                    || Math.floor(to.getBlockZ() / 160D) != Math.floor(from.getBlockZ() / 160D)) {
+            if (Math.floor(to.getX() / 160D) != Math.floor(from.getX() / 160D)
+                    || Math.floor(to.getZ() / 160D) != Math.floor(from.getZ() / 160D)) {
                 chunkMove(event.getPlayer(), null, from);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
