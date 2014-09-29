@@ -90,7 +90,7 @@ public class DisguiseUtilities {
             Object block;
             try {
                 block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
-                        .invoke(null, Material.BED_BLOCK.getId()); // TODO Method name exists in older versions?
+                        .invoke(null, Material.BED_BLOCK.getId());
             } catch (Exception ex) {
                 block = ((Object[]) ReflectionManager.getNmsField(ReflectionManager.getNmsClass("Block"), "byId").get(null))[Material.BED_BLOCK
                         .getId()];
@@ -315,9 +315,9 @@ public class DisguiseUtilities {
                 continue;
             }
             try {
-                int chunkX = (int) Math.floor(loc.getX() / 16D) - 20, chunkZ = (int) Math.floor(loc.getZ() / 16D) - 20;
-                chunkX -= chunkX % 10;
-                chunkZ -= chunkZ % 10;
+                int chunkX = (int) Math.floor(loc.getX() / 16D) - 17, chunkZ = (int) Math.floor(loc.getZ() / 16D) - 17;
+                chunkX -= chunkX % 8;
+                chunkZ -= chunkZ % 8;
                 xChunk.set(bedChunk, chunkX);
                 zChunk.set(bedChunk, chunkZ);
             } catch (Exception ex) {
@@ -325,25 +325,27 @@ public class DisguiseUtilities {
             }
             // Make unload packets
             try {
-                packets[i++] = ProtocolLibrary.getProtocolManager()
+                packets[i] = ProtocolLibrary.getProtocolManager()
                         .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0, 40)
                         .createPacket(bedChunk, true, 0, ReflectionManager.is1_8(player) ? 48 : 0);
             } catch (IllegalArgumentException ex) {
-                packets[i++] = ProtocolLibrary.getProtocolManager()
+                packets[i] = ProtocolLibrary.getProtocolManager()
                         .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, true, 0)
                         .createPacket(bedChunk, true, 0);
             }
+            i++;
             // Make load packets
             if (oldLoc == null || i > 1) {
                 try {
-                    packets[i++] = ProtocolLibrary.getProtocolManager()
+                    packets[i] = ProtocolLibrary.getProtocolManager()
                             .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk), 40)
                             .createPacket(Arrays.asList(bedChunk), ReflectionManager.is1_8(player) ? 48 : 0);
                 } catch (IllegalArgumentException ex) {
-                    packets[i++] = ProtocolLibrary.getProtocolManager()
+                    packets[i] = ProtocolLibrary.getProtocolManager()
                             .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk))
                             .createPacket(Arrays.asList(bedChunk));
                 }
+                i++;
             }
         }
         return packets;
@@ -356,10 +358,10 @@ public class DisguiseUtilities {
         bedInts.write(0, entity.getEntityId());
         if (ReflectionManager.is1_8(player)) {
             PlayerWatcher watcher = disguise.getWatcher();
-            int chunkX = (int) Math.floor(playerLocation.getX() / 16D) - 20, chunkZ = (int) Math
-                    .floor(playerLocation.getZ() / 16D) - 20;
-            chunkX -= chunkX % 10;
-            chunkZ -= chunkZ % 10;
+            int chunkX = (int) Math.floor(playerLocation.getX() / 16D) - 17, chunkZ = (int) Math
+                    .floor(playerLocation.getZ() / 16D) - 17;
+            chunkX -= chunkX % 8;
+            chunkZ -= chunkZ % 8;
             bedInts.write(1, (chunkX * 16) + 1 + watcher.getSleepingDirection().getModX());
             bedInts.write(3, (chunkZ * 16) + 1 + watcher.getSleepingDirection().getModZ());
         } else {

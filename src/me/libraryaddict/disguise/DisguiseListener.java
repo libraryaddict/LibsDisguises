@@ -154,8 +154,11 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isBedPacketsEnabled()) {
             Location to = event.getTo();
             Location from = event.getFrom();
-            if (Math.floor(to.getX() / 160D) != Math.floor(from.getX() / 160D)
-                    || Math.floor(to.getZ() / 160D) != Math.floor(from.getZ() / 160D)) {
+            int x1 = (int) Math.floor(to.getX() / 16D) - 17;
+            int x2 = (int) Math.floor(from.getX() / 16D) - 17;
+            int z1 = (int) Math.floor(to.getZ() / 16D) - 17;
+            int z2 = (int) Math.floor(from.getZ() / 16D) - 17;
+            if (x1 - (x1 % 8) != x2 - (x2 % 8) || z1 - (z1 % 8) != z2 - (z2 % 8)) {
                 chunkMove(event.getPlayer(), to, from);
             }
         }
@@ -281,8 +284,11 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isBedPacketsEnabled()) {
             Location to = event.getTo();
             Location from = event.getFrom();
-            if (Math.floor(to.getX() / 160D) != Math.floor(from.getX() / 160D)
-                    || Math.floor(to.getZ() / 160D) != Math.floor(from.getZ() / 160D)) {
+            int x1 = (int) Math.floor(to.getX() / 16D) - 17;
+            int x2 = (int) Math.floor(from.getX() / 16D) - 17;
+            int z1 = (int) Math.floor(to.getZ() / 16D) - 17;
+            int z2 = (int) Math.floor(from.getZ() / 16D) - 17;
+            if (x1 - (x1 % 8) != x2 - (x2 % 8) || z1 - (z1 % 8) != z2 - (z2 % 8)) {
                 chunkMove(event.getPlayer(), null, from);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                     public void run() {
