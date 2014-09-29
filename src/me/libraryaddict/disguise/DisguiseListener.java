@@ -102,7 +102,7 @@ public class DisguiseListener implements Listener {
             if (newLoc != null) {
                 for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
                     for (TargetedDisguise disguise : list) {
-                        if (disguise.getType() == DisguiseType.PLAYER && disguise.canSee(player)
+                        if (disguise.isPlayerDisguise() && disguise.canSee(player)
                                 && ((PlayerDisguise) disguise).getWatcher().isSleeping()
                                 && DisguiseUtilities.getPerverts(disguise).contains(player)) {
                             PacketContainer[] packets = DisguiseUtilities.getBedPackets(player,
@@ -367,5 +367,5 @@ public class DisguiseListener implements Listener {
         disguiseRunnable.put(player, runnable);
         disguiseEntity.put(player, disguise);
     }
-    
+
 }
