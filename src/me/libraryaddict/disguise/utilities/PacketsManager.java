@@ -254,7 +254,10 @@ public class PacketsManager {
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                spawnPackets = Arrays.copyOf(spawnPackets, spawnPackets.length + 1);
+                PacketContainer[] newPackets = new PacketContainer[spawnPackets.length + 1];
+                System.arraycopy(spawnPackets, 1, newPackets, 2, spawnPackets.length - 1);
+                newPackets[0] = spawnPackets[0];
+                spawnPackets = newPackets;
                 PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(player,
                         loc.clone().subtract(0, PacketsManager.getYModifier(disguisedEntity, disguise), 0), player.getLocation(),
                         ((PlayerDisguise) disguise));
@@ -267,7 +270,7 @@ public class PacketsManager {
                 ArrayList<PacketContainer> newPackets = new ArrayList<PacketContainer>();
                 newPackets.add(null);
                 for (int i = 0; i < spawnPackets.length; i++) {
-                    if (spawnPackets[i] != null) {
+                    if (spawnPackets[i] != null) { // Get rid of empty packet '1' if it exists.
                         newPackets.add(spawnPackets[i]);
                     }
                 }
