@@ -99,6 +99,10 @@ public abstract class Disguise {
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
             getWatcher().setValue(13, (byte) 1);
         }
+
+        else if (getType() == DisguiseType.ELDER_GUARDIAN) {
+            getWatcher().setValue(14, 0 | 4);
+        }
         // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
