@@ -277,9 +277,9 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
+        Location to = event.getTo();
+        Location from = event.getFrom();
         if (DisguiseConfig.isBedPacketsEnabled()) {
-            Location to = event.getTo();
-            Location from = event.getFrom();
             int x1 = (int) Math.floor(to.getX() / 16D) - 17;
             int x2 = (int) Math.floor(from.getX() / 16D) - 17;
             int z1 = (int) Math.floor(to.getZ() / 16D) - 17;
@@ -295,6 +295,12 @@ public class DisguiseListener implements Listener {
                         }
                     }
                 });
+            }
+        }
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null
+                && to.getWorld() != from.getWorld()) {
+            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
+                disguise.removeDisguise();
             }
         }
     }
