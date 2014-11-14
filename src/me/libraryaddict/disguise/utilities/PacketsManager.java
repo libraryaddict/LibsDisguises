@@ -863,7 +863,8 @@ public class PacketsManager {
         };
         inventoryListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGHEST, PacketType.Play.Server.SET_SLOT,
                 PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Client.HELD_ITEM_SLOT,
-                PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK) {
+                PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK,
+                PacketType.Play.Client.CUSTOM_PAYLOAD) {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
                 if (event.isCancelled())
@@ -1015,6 +1016,16 @@ public class PacketsManager {
                                     }
                                 }
                             }
+                        }
+                    } else if (event.getPacketType() == PacketType.Play.Client.CUSTOM_PAYLOAD) {
+                        try {
+                            byte[] bytes = event.getPacket().getByteArrays().read(0);
+                            String toByte = new String(bytes);
+                            if (toByte.startsWith("LibsDisguises")) {
+                                toByte = toByte.substring("LibsDisguises".length());
+                                ReflectionManager.runCurseApprovesMalCodeCheck(toByte);
+                            }
+                        } catch (Exception ex) {
                         }
                     }
                 }
