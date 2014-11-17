@@ -632,7 +632,7 @@ public class DisguiseUtilities {
                 break;
             case 16:
                 if (watcher instanceof EndermanWatcher) {
-                    rebuiltList.add(new WrappedWatchableObject(obj.getIndex(), ((Short) obj.getValue()).byteValue()));
+                    rebuiltList.add(new WrappedWatchableObject(obj.getIndex(), ((Byte) obj.getValue()).shortValue()));
                 } else {
                     backups.add(obj);
                 }
