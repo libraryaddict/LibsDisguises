@@ -36,19 +36,15 @@ public class ReflectionManager {
             if (mcVersion.startsWith("1.")) {
                 if (mcVersion.compareTo("1.7") < 0) {
                     currentVersion = LibVersion.V1_6;
-                } else {
+                } else if (mcVersion.startsWith("1.7")) {
                     if (mcVersion.equals("1.7.10")) {
                         currentVersion = LibVersion.V1_7_10;
                     } else {
                         currentVersion = mcVersion.compareTo("1.7.6") < 0 ? LibVersion.V1_7 : LibVersion.V1_7_6;
                     }
+                } else {
+                    currentVersion = V1_8;
                 }
-            }
-            try {
-                Class.forName("org.spigotmc.ProtocolData");
-                currentVersion = V1_8;
-            } catch (Exception ex) {
-                // Its not 1.8
             }
         }
 
@@ -249,6 +245,9 @@ public class ReflectionManager {
                             playerinteractmanager.getClass()).newInstance(minecraftServer, world, "LibsDisguises",
                             playerinteractmanager);
                 }
+            } else if (LibVersion.is1_8() && entityName.equals("EnderPearl")) {
+                entityObject = entityClass.getConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
+                        .newInstance(world, createEntityInstance("Sheep"));
             } else {
                 entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
             }
@@ -265,7 +264,12 @@ public class ReflectionManager {
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
         try {
-            Object boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
+            Object boundingBox;
+            if (LibVersion.is1_8()) {
+                boundingBox = getNmsMethod("Entity", "getBoundingBox").invoke(getNmsEntity(entity));
+            } else {
+                boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
+            }
             double x = 0, y = 0, z = 0;
             int stage = 0;
             for (Field field : boundingBox.getClass().getFields()) {
@@ -492,7 +496,12 @@ public class ReflectionManager {
         try {
             float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
             float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
-            float height = getNmsField("Entity", "height").getFloat(getNmsEntity(entity));
+            float height;
+            if (LibVersion.is1_8()) {
+                height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
+            } else {
+                height = getNmsField("Entity", "height").getFloat(getNmsEntity(entity));
+            }
             return new float[] { length, width, height };
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -611,7 +620,12 @@ public class ReflectionManager {
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
-            Object boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
+            Object boundingBox;
+            if (LibVersion.is1_8()) {
+                boundingBox = getNmsMethod("Entity", "getBoundingBox").invoke(getNmsEntity(entity));
+            } else {
+                boundingBox = getNmsField("Entity", "boundingBox").get(getNmsEntity(entity));
+            }
             int stage = 0;
             Location loc = entity.getLocation();
             for (Field field : boundingBox.getClass().getFields()) {

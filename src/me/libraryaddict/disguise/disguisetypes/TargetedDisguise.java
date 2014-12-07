@@ -34,8 +34,6 @@ public abstract class TargetedDisguise extends Disguise {
     }
 
     public boolean canSee(Player player) {
-        if (getType() != null && (getType().is1_8() && !ReflectionManager.is1_8(player)))
-            return false;
         return canSee(player.getName());
     }
 

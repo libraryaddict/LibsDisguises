@@ -266,7 +266,7 @@ public class PacketsManager {
                 }
             }
 
-            if (ReflectionManager.is1_8(player)) {
+            if (LibVersion.is1_8()) {
                 ArrayList<PacketContainer> newPackets = new ArrayList<PacketContainer>();
                 newPackets.add(null);
                 for (int i = 0; i < spawnPackets.length; i++) {
