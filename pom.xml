@@ -64,14 +64,9 @@
 			<url>http://repo.md-5.net/content/groups/public/</url>
 		</repository>
 		<repository>
-			<id>comphenix-rep</id>
-			<name>Comphenix Repository</name>
-			<url>http://repo.comphenix.net/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>comphenix-snapshot-rep</id>
-			<name>Comphenix Snapshot Repository</name>
-			<url>http://repo.comphenix.net/content/repositories/snapshots/</url>
+			<id>shadowvolt-repo</id>
+			<name>Shadowvolt Maven Repository</name>
+			<url>http://ci.shadowvolt.com/plugin/repository/everything/</url>
 		</repository>
 	</repositories>
 
@@ -79,7 +74,7 @@
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
 			<artifactId>ProtocolLib</artifactId>
-			<version>3.5.0-SNAPSHOT</version>
+			<version>3.6.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
