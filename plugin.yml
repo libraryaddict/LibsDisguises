@@ -38,9 +38,33 @@ commands:
       permission: libsdisguises.seecmd.disguiseclone
 
 permissions:
-   libsdisguises.seecmd:
-      description: See all commands in tab-completion
+   libsdisguises.kit.allusers:
+      description: Permissions that should not be revoked
       default: true
+      children:
+         libsdisguises.seecmd.libsdisguises: true
+
+   # Note that there are more permissions available than can be listed here.
+   # See the plugin documentation for details.
+
+   libsdisguises.kit.admin:
+      descrpition: Use all functionality in the plugin
+      default: op
+      children:
+         libsdisguises.kit.allusers: true
+         libsdisguises.seecmd.all: true
+         libsdisguises.disguise.*: true
+         libsdisguises.disguiseentity.*: true
+         libsdisguises.disguisehelp.*: true
+         libsdisguises.disguiseplayer.*: true
+         libsdisguises.disguiseradius.*: true
+         libsdisguises.undisguise: true
+         libsdisguises.undisguiseentity: true
+         libsdisguises.undisguiseplayer: true
+         libsdisguises.undisguiseradius: true
+
+   libsdisguises.seecmd.all:
+      description: See all commands in tab-completion
       children:
          libsdisguises.seecmd.libsdisguises: true
          libsdisguises.seecmd.disguise: true
