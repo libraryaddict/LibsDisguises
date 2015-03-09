@@ -1,4 +1,4 @@
 LibsDisguises
 =============
 
-Disguises which doesn't suck
+My updates to this obviously terrible plugin. ;)
