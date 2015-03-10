@@ -1,4 +1,4 @@
 LibsDisguises
 =============
 
-My updates to this obviously terrible plugin. ;)
+A disguise plugin made by libraryaddict which is pretty cool
