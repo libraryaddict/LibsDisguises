@@ -1,0 +1,124 @@
+# Shall I notify people of a LibsDisguises update?
+NotifyUpdate: true
+# Whats the permission to get the notification?
+Permission: 'libsdisguises.update'
+# Whats the max size allowed for command disguiseradius
+DisguiseRadiusMax: 50
+# Whats the max size allowed for command undisguiseradius
+UndisguiseRadiusMax: 50
+# Shall the players view their disguises?
+# Best used when viewing yourself in 3rd person
+ViewSelfDisguises: false
+# Shall I disguise the sounds?
+# This turns your damage sound into a MOOOO
+DisguiseSounds: true
+# Shall the disguised hear their disguise sounds or their damage sounds.
+# I disable this as it can be a little confusing when not used with self disguises
+HearSelfDisguise: false
+# Shall I send the velocity packets? I REALLY recommend you don't disable.
+# This is the only thing allowing the mobs to fly without glitching out.
+SendVelocity: true
+# For self disguises, they need to have the armor and the held item removed
+# Else they see floating armor, floating held items.
+# This turns the items invisible in the disguised players inventory. It does not actually remove them!
+RemoveArmor: true
+RemoveHeldItem: false
+# If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
+# Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
+# This is only valid if you set a animation on the disguise itself. Because the entitys animations are applied otherwise.
+AddEntityAnimations: true
+# When a sheep or wolf is right clicked with dye. The client automatically assumes it was successful and displays the sheeps wool or the wolfs collar as dyed.
+# This is a option that either prevents that happening, or it changes their color officially in the plugin so that everyone sees it changed.
+# Its currently set to false which means that the color is not changed and will refresh itself to the player.
+# Please note that this will not remove the dye from their hands. This also does not check if the disguised entity is actually a sheep/wolf and wants a say in its color.
+DyeableSheep: false
+DyeableWolf: false
+# This is only called into action when the disguise is constructed using the commands.
+# And when the disguise supports that. This will not be used at all for plugins constructing the disguises for instance.
+# Such as prophunt. Its also false because its kind of a retarded feature.
+# This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
+# This also overrides any custom name they have set in their disguise options.
+ShowNamesAboveDisguises:  false
+# This supports the above option.
+# If this is true, then the name shown above the head appears regardless of if you are looking at the disguise directly or not.
+NameAboveHeadAlwaysVisible: true
+# This modifys the bounding box, This is stuff like can a arrow hit them.
+# If you turn this to true, arrows will act like they hit the disguise in the right place!
+# So someone disguised as a enderdragon will easily get shot down by arrows!
+# This WILL conflict with NoCheatPlus. Other plugins may also get problems.
+# This shouldn't really be enabled for players as it also interferes with their movement because the server thinks the player is larger than he really is.
+# That makes the player unable to approach this building because the server thinks he is trying to glitch inside blocks.
+ModifyBoundingBox: false
+# This prevents disguised players from being targeted by monsters.
+# This doesn't prevent their targeting you if already targeting when disguised
+# They will just ignore you unless provoked.
+MonstersIgnoreDisguises: false
+# Sigh. People are going to want this.
+# So lets make your disguise blown if you are attacked..
+# Works only for disguised players when attacked by a entity (arrow, monster. etc)
+# This will blow all disguises he has on him
+BlowDisguises: false
+BlownDisguiseMessage: '&cYour disguise was blown!'
+
+# A option to choose how many seconds a DisguiseEntity command is valid for people to right click a entity to disguise it before expiring
+DisguiseEntityExpire: 10
+
+# Another option to choose the same thing for DisguiseClone command
+DisguiseCloneExpire: 10
+# Max disguises to store at a time with the DisguiseClone command
+DisguiseCloneSize: 3
+
+# This I don't really recommend turning on as it can make a memory leak..
+# These disguises, as normal will not persist after a server restart.
+# There is also no EntityDeath option as entities do not revive after death.
+KeepDisguises:
+  EntityDespawn: false
+  PlayerDeath: false
+  PlayerLogout: false
+  
+# This controls if a entitys max health is determined by the entity, or by the disguise.
+# Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
+# Else it will be 1/20 of the boss bar when he is full health.
+# Setting this in LivingWatcher overrides both values.
+MaxHealthDeterminedByEntity: true
+
+# This here is a option to turn off misc disguises.
+# This means you can not have a living entity disguise as a non-living entity.
+# This disables the Attributes packet, Non-living entities can still disguise as other non-living
+# This means that the above option will not work as it uses the attribute packet.
+MiscDisguisesForLiving: true
+
+# Turn this to true to have players undisguised when switching worlds
+UndisguiseOnWorldChange: false
+
+# This will help performance, especially with CPU
+# Due to safety reasons, self disguises can never have their packets disabled.
+PacketsEnabled:
+  # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
+  # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
+  Animation: true
+  # Disabling this means that you can't use the setSleeping option on a player disguise. Also you will crash anyone watching when you try to sleep in a bed if disguised as a non-player
+  # This also sends a chunk packet at key positions else it doesn't work for 1.8. Lazyness means it does it for older versions too currently.
+  Bed: true
+  # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
+  # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
+  Collect: true
+  # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
+  EntityStatus: true
+  # Entity equipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
+  # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
+  Equipment: true
+  # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.
+  # This means that entity metadata will not change, and will only be sent in the spawn packet.
+  # This is good if performance is extremely in need.
+  # This is bad to disable unless you are ONLY going to use the disguises for decorations.
+  # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
+  # Animations set by use of the api or through the disguise command are still in effect.
+  Metadata: true
+  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up.
+  # If you are using the Item_Frame disguise, when a packet is sent (Roughly every 2min) the disguise will bug up until they move.
+  Movement: true
+  # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
+  Riding: true
+  # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
+  WitherSkull: true

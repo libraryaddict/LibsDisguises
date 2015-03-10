@@ -1,0 +1,57 @@
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+ext.spigotVersion = '1.8.3-R0.1-SNAPSHOT'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    
+    mavenCentral()
+    
+    maven {
+        name 'Spigot'
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+    
+    maven {
+        name 'Vault-Repo'
+        url 'http://nexus.theyeticave.net/content/repositories/pub_releases'
+    }
+    
+    maven {
+        name 'shadowvolt-repo'
+        url 'http://ci.shadowvolt.com/plugin/repository/everything'
+    }
+}
+
+tasks.build.doLast {
+    File export = file('build/libs/LibsDisguises.jar')
+    File dest = file('dist')
+    dest.mkdir()
+    dest.listFiles().each {
+        it.delete()
+    }
+    export.renameTo(new File(dest, "LibsDisguises.jar"))
+    file('build').delete()
+    println "Copied LibsDisguises.jar into /dist"
+    println "LibsDisguises is finished compiling, have a nice day!"
+}
+
+file('libs').mkdirs()
+
+//Retrieves spigot-1.8.jar server file from link
+ant.get src: 'https://www.dropbox.com/s/k7simfgpdun3f8q/spigot-1.8.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
+
+jar {
+    baseName "LibsDisguises"
+}
+
+dependencies {
+    compile files(
+        'libs/spigot-1.8.jar'
+    )
+    compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
+    compile 'com.comphenix.protocol:ProtocolLib:3.6.3-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+}

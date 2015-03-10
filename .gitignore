@@ -16,6 +16,10 @@ local.properties
 .settings/
 .loadpath
 target/
+build
+lib
+dist
+
 
 # External tool builders
 .externalToolBuilders/
@@ -214,3 +218,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+/.nb-gradle/private/
