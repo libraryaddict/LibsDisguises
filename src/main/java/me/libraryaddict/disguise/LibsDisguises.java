@@ -40,6 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.libraryaddict.disguise.utilities.Metrics;
 
 public class LibsDisguises extends JavaPlugin {
 
@@ -102,6 +103,10 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand(listener));
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         registerValues();
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {}
     }
 
     private String read(Reader reader) {

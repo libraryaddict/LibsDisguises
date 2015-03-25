@@ -41,7 +41,7 @@ tasks.build.doLast {
 file('libs').mkdirs()
 
 //Retrieves spigot-1.8.jar server file from link
-ant.get src: 'https://www.dropbox.com/s/k7simfgpdun3f8q/spigot-1.8.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
+ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
 
 jar {
     baseName "LibsDisguises"
@@ -49,7 +49,7 @@ jar {
 
 dependencies {
     compile files(
-        'libs/spigot-1.8.jar'
+        'libs/spigot.jar'
     )
     compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
     compile 'com.comphenix.protocol:ProtocolLib:3.6.3-SNAPSHOT'
