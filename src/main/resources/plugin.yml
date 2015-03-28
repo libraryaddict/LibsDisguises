@@ -57,7 +57,6 @@ permissions:
          libsdisguises.seecmd.undisguiseplayer: true
          libsdisguises.seecmd.undisguiseradius: true
          libsdisguises.seecmd.disguiseclone: true
-
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguise:
