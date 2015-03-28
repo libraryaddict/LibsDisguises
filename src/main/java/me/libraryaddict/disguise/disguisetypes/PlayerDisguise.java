@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import me.libraryaddict.disguise.LibsDisguises;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -153,6 +154,9 @@ public class PlayerDisguise extends TargetedDisguise {
 
     public PlayerDisguise setSkin(String skinToUse) {
         this.skinToUse = skinToUse;
+        if (!LibsDisguises.instance.getConfig().getBoolean("ContactMojangServers")) {
+            return this;
+        }
         if (skinToUse == null) {
             this.currentLookup = null;
             this.gameProfile = null;
@@ -161,7 +165,6 @@ public class PlayerDisguise extends TargetedDisguise {
                 this.skinToUse = skinToUse.substring(0, 16);
             }
             currentLookup = new LibsProfileLookup() {
-
                 @Override
                 public void onLookup(WrappedGameProfile gameProfile) {
                     if (currentLookup == this && gameProfile != null) {

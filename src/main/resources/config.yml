@@ -91,6 +91,9 @@ MiscDisguisesForLiving: true
 # Turn this to true to have players undisguised when switching worlds
 UndisguiseOnWorldChange: false
 
+# Contact Mojang's servers? Disabling this option will disable player skin disguises!
+ContactMojangServers: true
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:

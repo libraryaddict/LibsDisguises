@@ -43,6 +43,8 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.utilities.Metrics;
 
 public class LibsDisguises extends JavaPlugin {
+    
+    public static LibsDisguises instance; //I'm sorry Sun MicroSystems and all mighty Java God
 
     @Override
     public void onEnable() {
@@ -103,6 +105,7 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand(listener));
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         registerValues();
+        instance = this;
         try {
             Metrics metrics = new Metrics(this);
             metrics.start();
