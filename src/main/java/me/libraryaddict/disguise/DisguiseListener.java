@@ -42,9 +42,9 @@ import com.comphenix.protocol.events.PacketContainer;
 public class DisguiseListener implements Listener {
 
     private String currentVersion;
-    private HashMap<String, Boolean[]> disguiseClone = new HashMap<String, Boolean[]>();
-    private HashMap<String, Disguise> disguiseEntity = new HashMap<String, Disguise>();
-    private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<String, BukkitRunnable>();
+    private HashMap<String, Boolean[]> disguiseClone = new HashMap<>();
+    private HashMap<String, Disguise> disguiseEntity = new HashMap<>();
+    private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private String latestVersion;
     private LibsDisguises plugin;
 

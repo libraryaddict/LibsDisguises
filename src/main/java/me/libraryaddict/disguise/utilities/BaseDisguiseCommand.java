@@ -16,7 +16,6 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

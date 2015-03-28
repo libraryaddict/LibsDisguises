@@ -54,6 +54,7 @@ import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import net.minecraft.server.v1_8_R2.DamageSource;
 
 public class PacketsManager {
     /**
@@ -583,7 +584,7 @@ public class PacketsManager {
                                                         "maxNoDamageTicks").getInt(nmsEntity);
                                             } else {
                                                 hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable")
-                                                        .invoke(nmsEntity);
+                                                        .invoke(nmsEntity, DamageSource.GENERIC);
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();

@@ -91,6 +91,12 @@ MiscDisguisesForLiving: true
 # Turn this to true to have players undisguised when switching worlds
 UndisguiseOnWorldChange: false
 
+# Should players with the proper permission be able to see through disguises?
+SeeThroughDisguises: true
+
+# Should the disguised entity's name go through disguises? (Not including players)
+EntityNameThroughDisguise: false
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:

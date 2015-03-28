@@ -12,10 +12,9 @@ public class LibsDisguisesCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "This server is running "
-                + "Lib's Disguises "
-                + (sender.getName().equals("libraryaddict") ? "v"
-                        + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion() + " " : "")
-                + "by libraryaddict");
+                + "Lib's Disguises v."
+                + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion()
+                + "by libraryaddict, maintained by NavidK0");
         return true;
     }
 }

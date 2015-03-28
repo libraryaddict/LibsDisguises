@@ -1,45 +1,48 @@
 name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
-version: 8.3
+version: 8.4
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 depend: [ProtocolLib]
 commands:
-   libsdisguises:
+    libsdisguises:
       permission: libsdisguises.seecmd.libsdisguises
-   disguise:
+    disguise:
       aliases: [d, dis]
       permission: libsdisguises.seecmd.disguise
-   disguiseentity:
+    disguiseentity:
       aliases: [dentity, disentity]
       permission: libsdisguises.seecmd.disguiseentity
-   disguisehelp:
+    disguisehelp:
       aliases: [dhelp, dishelp]
       permission: libsdisguises.seecmd.disguisehelp
-   disguiseplayer:
+    disguiseplayer:
       aliases: [dplayer, displayer]
       permission: libsdisguises.seecmd.disguiseplayer
-   disguiseradius:
+    disguiseradius:
       aliases: [disradius, dradius]
       permission: libsdisguises.seecmd.disguiseradius
-   undisguise:
+    undisguise:
       aliases: [u, und, undis]
       permission: libsdisguises.seecmd.undisguise
-   undisguiseentity:
+    undisguiseentity:
       aliases: [undisentity, undentity]
       permission: libsdisguises.seecmd.undisguiseentity
-   undisguiseplayer:
+    undisguiseplayer:
       aliases: [undisplayer, undplayer]
       permission: libsdisguises.seecmd.undisguiseplayer
-   undisguiseradius:
+    undisguiseradius:
       aliases: [undisradius, undradius]
       permission: libsdisguises.seecmd.undisguiseradius
-   disguiseclone:
+    disguiseclone:
       aliases: [disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis]
       permission: libsdisguises.seecmd.disguiseclone
 
 permissions:
-   libsdisguises.seecmd:
+    libsdisguises.seethrough:
+        description: Allows player to see through disguises.
+        default: false
+    libsdisguises.seecmd:
       description: See all commands in tab-completion
       default: true
       children:
@@ -55,25 +58,26 @@ permissions:
          libsdisguises.seecmd.undisguiseradius: true
          libsdisguises.seecmd.disguiseclone: true
 
-   libsdisguises.seecmd.libsdisguises:
+    libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
-   libsdisguises.seecmd.disguise:
+    libsdisguises.seecmd.disguise:
       description: See the /disguise command in tab-completion
-   libsdisguises.seecmd.disguiseentity:
+    libsdisguises.seecmd.disguiseentity:
       description: See the /disguiseentity command in tab-completion
-   libsdisguises.seecmd.disguisehelp:
+    libsdisguises.seecmd.disguisehelp:
       description: See the /disguisehelp command in tab-completion
-   libsdisguises.seecmd.disguiseplayer:
+    libsdisguises.seecmd.disguiseplayer:
       description: See the /disguiseplayer command in tab-completion
-   libsdisguises.seecmd.disguiseradius:
+    libsdisguises.seecmd.disguiseradius:
       description: See the /disguiseradius command in tab-completion
-   libsdisguises.seecmd.undisguise:
+    libsdisguises.seecmd.undisguise:
       description: See the /undisguise command in tab-completion
-   libsdisguises.seecmd.undisguiseentity:
+    libsdisguises.seecmd.undisguiseentity:
       description: See the /undisguiseentity command in tab-completion
-   libsdisguises.seecmd.undisguiseplayer:
+    libsdisguises.seecmd.undisguiseplayer:
       description: See the /undisguiseplayer command in tab-completion
-   libsdisguises.seecmd.undisguiseradius:
+    libsdisguises.seecmd.undisguiseradius:
       description: See the /undisguiseradius command in tab-completion
-   libsdisguises.seecmd.disguiseclone:
+    libsdisguises.seecmd.disguiseclone:
       description: See the /disguiseclone command in tab-completion
+   

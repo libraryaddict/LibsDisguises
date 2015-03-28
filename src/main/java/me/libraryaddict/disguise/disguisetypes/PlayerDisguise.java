@@ -10,7 +10,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 public class PlayerDisguise extends TargetedDisguise {
     private LibsProfileLookup currentLookup;
