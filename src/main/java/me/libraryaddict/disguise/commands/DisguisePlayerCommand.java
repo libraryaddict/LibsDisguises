@@ -49,7 +49,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
             }
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
             return true;
         }
         if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()) {

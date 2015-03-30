@@ -162,11 +162,11 @@ public class ReflectionManager {
                 System.out.println("[LibsDisguises] Loaded " + ForgeFieldMappings.size() + " Cauldron field mappings");
                 System.out.println("[LibsDisguises] Loaded " + ForgeMethodMappings.size() + " Cauldron method mappings");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.out);
                 System.err
                         .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.out);
                 System.err
                         .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
             }
@@ -187,7 +187,7 @@ public class ReflectionManager {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
         craftItemClass = getCraftClass("inventory.CraftItemStack");
@@ -221,7 +221,7 @@ public class ReflectionManager {
             }
             return entityObject;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -231,7 +231,7 @@ public class ReflectionManager {
             return getNmsClass("MobEffect").getConstructor(int.class, int.class, int.class, boolean.class, boolean.class)
                     .newInstance(id, duration, amplification, ambient, particles);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -279,7 +279,7 @@ public class ReflectionManager {
             return new FakeBoundingBox(x, y, z);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -288,7 +288,7 @@ public class ReflectionManager {
         try {
             return (Entity) getNmsMethod("Entity", "getBukkitEntity").invoke(nmsEntity);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -297,7 +297,7 @@ public class ReflectionManager {
         try {
             return (ItemStack) craftItemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -310,7 +310,7 @@ public class ReflectionManager {
         try {
             return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -319,7 +319,7 @@ public class ReflectionManager {
         try {
             return (String) getCraftClass("CraftSound").getMethod("getSound", Sound.class).invoke(null, sound);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -340,7 +340,7 @@ public class ReflectionManager {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -349,7 +349,7 @@ public class ReflectionManager {
         try {
             return getNmsClass("BlockPosition").getConstructor(int.class, int.class, int.class).newInstance(x, y, z);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -358,7 +358,7 @@ public class ReflectionManager {
         try {
             return (Enum) getNmsMethod("EnumDirection", "fromType2", int.class).invoke(null, direction);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -367,7 +367,7 @@ public class ReflectionManager {
         try {
             return (Enum) getNmsClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants()[action];
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -381,7 +381,7 @@ public class ReflectionManager {
                     .newInstance(playerInfoPacket, gameProfile.getHandle(), 0,
                             getNmsClass("WorldSettings$EnumGamemode").getEnumConstants()[1], playerListName);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -394,7 +394,7 @@ public class ReflectionManager {
         try {
             return new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -405,7 +405,7 @@ public class ReflectionManager {
             gameProfile.getProperties().putAll(profileWithSkin.getProperties());
             return gameProfile;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -426,7 +426,7 @@ public class ReflectionManager {
         try {
             return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -435,7 +435,7 @@ public class ReflectionManager {
         try {
             return clazz.getConstructor(parameters);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -448,7 +448,7 @@ public class ReflectionManager {
         try {
             return getCraftClass("entity.CraftEntity").getMethod("getHandle").invoke(entity);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -458,14 +458,14 @@ public class ReflectionManager {
             try {
                 return clazz.getField(ForgeFieldMappings.get(clazz.getName()).get(fieldName));
             } catch (NoSuchFieldException ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             } catch (NullPointerException ignored) {
             }
         }
         try {
             return clazz.getField(fieldName);
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -478,7 +478,7 @@ public class ReflectionManager {
         try {
             return craftItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -493,14 +493,14 @@ public class ReflectionManager {
                 }
                 return clazz.getMethod(innerMap.get(sb.toString()), parameters);
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                e.printStackTrace(System.out);
             } catch (NullPointerException ignored) {
             }
         }
         try {
             return clazz.getMethod(methodName, parameters);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -513,7 +513,7 @@ public class ReflectionManager {
         try {
             return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return 0D;
     }
@@ -525,7 +525,7 @@ public class ReflectionManager {
             float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
             return new float[] { length, width, height };
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -542,7 +542,7 @@ public class ReflectionManager {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -560,7 +560,7 @@ public class ReflectionManager {
         try {
             return getCraftClass("CraftWorld").getMethod("getHandle").invoke(world);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -585,7 +585,7 @@ public class ReflectionManager {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return null;
     }
@@ -615,7 +615,7 @@ public class ReflectionManager {
             Field check = getNmsField(connection.getClass(), "checkMovement");
             check.setBoolean(connection, true);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 
@@ -626,7 +626,7 @@ public class ReflectionManager {
                     loc.getZ() - newBox.getZ(), loc.getX() + newBox.getX(), loc.getY() + newBox.getY(), loc.getZ() + newBox.getZ());
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 

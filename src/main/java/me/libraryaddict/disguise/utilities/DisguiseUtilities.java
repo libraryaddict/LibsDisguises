@@ -113,7 +113,7 @@ public class DisguiseUtilities {
             zChunk = bedChunk.getClass().getField("locZ");
             zChunk.setAccessible(true);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 
@@ -266,7 +266,7 @@ public class DisguiseUtilities {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 
@@ -317,7 +317,7 @@ public class DisguiseUtilities {
                 xChunk.set(bedChunk, chunkX);
                 zChunk.set(bedChunk, chunkZ);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             // Make unload packets
             try {
@@ -448,7 +448,7 @@ public class DisguiseUtilities {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return players;
     }
@@ -628,7 +628,7 @@ public class DisguiseUtilities {
                             try {
                                 DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                ex.printStackTrace(System.out);
                             }
                         }
                     }, 2);
@@ -652,7 +652,7 @@ public class DisguiseUtilities {
                                         try {
                                             updatePlayer.invoke(entityTrackerEntry, p);
                                         } catch (Exception ex) {
-                                            ex.printStackTrace();
+                                            ex.printStackTrace(System.out);
                                         }
                                     }
                                 }, 2);
@@ -662,7 +662,7 @@ public class DisguiseUtilities {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
     }
@@ -693,7 +693,7 @@ public class DisguiseUtilities {
                                     try {
                                         updatePlayer.invoke(entityTrackerEntry, p);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        ex.printStackTrace(System.out);
                                     }
                                 }
                             }, 2);
@@ -701,7 +701,7 @@ public class DisguiseUtilities {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
     }
@@ -722,7 +722,7 @@ public class DisguiseUtilities {
                             try {
                                 DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                ex.printStackTrace(System.out);
                             }
                         }
                     }, 2);
@@ -746,7 +746,7 @@ public class DisguiseUtilities {
                                     try {
                                         updatePlayer.invoke(entityTrackerEntry, p);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        ex.printStackTrace(System.out);
                                     }
                                 }
                             }, 2);
@@ -754,7 +754,7 @@ public class DisguiseUtilities {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
     }
@@ -789,7 +789,7 @@ public class DisguiseUtilities {
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             // Remove the fake entity ID from the disguise bin
             selfDisguised.remove(player.getUniqueId());
@@ -803,7 +803,7 @@ public class DisguiseUtilities {
                     trackedPlayers.remove(ReflectionManager.getNmsEntity(player));
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             // Resend entity metadata else he will be invisible to himself until its resent
             try {
@@ -815,7 +815,7 @@ public class DisguiseUtilities {
                                         WrappedDataWatcher.getEntityWatcher(player), true)
                                 .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             player.updateInventory();
         }
@@ -864,7 +864,7 @@ public class DisguiseUtilities {
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             // Send the velocity packets
             if (isMoving) {
@@ -920,7 +920,7 @@ public class DisguiseUtilities {
                                 .createPacket(player.getEntityId(), mobEffect));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 
@@ -948,13 +948,13 @@ public class DisguiseUtilities {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                             }
                         } catch (InvocationTargetException e) {
-                            e.printStackTrace();
+                            e.printStackTrace(System.out);
                         }
                     }
                 });
             }
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 

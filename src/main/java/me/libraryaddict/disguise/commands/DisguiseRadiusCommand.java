@@ -105,7 +105,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             }
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
             return true;
         } // Time to use it!
         int disguisedEntitys = 0;

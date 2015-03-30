@@ -70,7 +70,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
             enumHelp.add(new EnumHelp("AnimalColor", "Animal colors", ChatColor.RED + "/disguisehelp AnimalColors "
                     + ChatColor.GREEN + "- View all the colors you can use for a animal color", AnimalColor.values()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         try {
             enumHelp.add(new EnumHelp("Art", "Arts", ChatColor.RED + "/disguisehelp Art " + ChatColor.GREEN
@@ -107,7 +107,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                     + ChatColor.GREEN + "- View all the potion effects you can set", enumReturns.toArray(new String[enumReturns
                     .size()])));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         try {
             enumHelp.add(new EnumHelp("Profession", "Villager professions", ChatColor.RED + "/disguisehelp Professions "
@@ -234,7 +234,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                             }
                         }
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        ex.printStackTrace(System.out);
                     }
                     Collections.sort(methods, String.CASE_INSENSITIVE_ORDER);
                     for (int i = 0; i < methods.size(); i++) {

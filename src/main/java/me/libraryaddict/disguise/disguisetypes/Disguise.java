@@ -35,9 +35,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import me.libraryaddict.disguise.LibsDisguises;
 
 public abstract class Disguise {
-    private static JavaPlugin plugin;
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
     private Entity entity;
@@ -54,7 +54,7 @@ public abstract class Disguise {
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
-
+    
     @Override
     public abstract Disguise clone();
 
@@ -81,7 +81,7 @@ public abstract class Disguise {
             // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         // Set the disguise if its a baby or not
         if (!isAdult) {
@@ -261,7 +261,7 @@ public abstract class Disguise {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                 selfLookPacket, false);
                                     } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.out);
                                     }
                                 }
                             }
@@ -287,7 +287,7 @@ public abstract class Disguise {
                                             false);
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                e.printStackTrace(System.out);
                             }
                         }
                         // If we need to send a packet to update the exp position as it likes to gravitate client sided to
@@ -307,12 +307,12 @@ public abstract class Disguise {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
                                                 false);
                                     } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.out);
                                     }
                                 }
                             }
                         } catch (InvocationTargetException e) {
-                            e.printStackTrace();
+                            e.printStackTrace(System.out);
                         }
                     }
                 }
@@ -707,7 +707,7 @@ public abstract class Disguise {
             // Just return.
             if (!event.isCancelled()) {
                 disguiseInUse = true;
-                task = Bukkit.getScheduler().runTaskTimer(plugin, velocityRunnable, 1, 1);
+                task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.instance, velocityRunnable, 1, 1);
                 // Stick the disguise in the disguises bin
                 DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
@@ -716,7 +716,7 @@ public abstract class Disguise {
                 // Resend the disguised entity's packet
                 DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 // If he is a player, then self disguise himself
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.instance, new Runnable() {
                     public void run() {
                         DisguiseUtilities.setupFakeDisguise(Disguise.this);
                     }

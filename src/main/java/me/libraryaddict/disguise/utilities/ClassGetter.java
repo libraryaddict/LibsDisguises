@@ -64,7 +64,7 @@ public class ClassGetter {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
 }

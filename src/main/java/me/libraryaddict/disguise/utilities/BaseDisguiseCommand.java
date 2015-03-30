@@ -95,7 +95,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             try {
                 methods[methods.length - i--] = Disguise.class.getMethod(methodName, boolean.class);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
         return methods;
@@ -630,7 +630,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     storedEx = ex;
                     methodToUse = null;
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    ex.printStackTrace(System.out);
                     methodToUse = null;
                 }
             }

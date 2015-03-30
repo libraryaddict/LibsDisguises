@@ -70,7 +70,7 @@ public class FlagWatcher {
         try {
             cloned = getClass().getConstructor(Disguise.class).newInstance(getDisguise());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
             cloned = new FlagWatcher(getDisguise());
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
@@ -267,7 +267,7 @@ public class FlagWatcher {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                 }
             }
         }
@@ -359,7 +359,7 @@ public class FlagWatcher {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                 }
             }
         }

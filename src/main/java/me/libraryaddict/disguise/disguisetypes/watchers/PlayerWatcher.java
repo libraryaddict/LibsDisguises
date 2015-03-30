@@ -117,7 +117,7 @@ public class PlayerWatcher extends LivingWatcher {
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    ex.printStackTrace(System.out);
                 }
             }
         }

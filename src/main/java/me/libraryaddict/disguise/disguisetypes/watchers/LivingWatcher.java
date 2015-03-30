@@ -41,7 +41,7 @@ public class LivingWatcher extends FlagWatcher {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
     }
     private double maxHealth;
@@ -101,7 +101,7 @@ public class LivingWatcher extends FlagWatcher {
                 f4 += 1.0F;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
 
         f1 = f1 / f4 * 255.0F;
@@ -160,7 +160,7 @@ public class LivingWatcher extends FlagWatcher {
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                 }
             }
         }

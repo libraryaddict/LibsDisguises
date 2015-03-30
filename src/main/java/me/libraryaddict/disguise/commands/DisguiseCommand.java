@@ -33,7 +33,7 @@ public class DisguiseCommand extends BaseDisguiseCommand {
             }
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
             return true;
         }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {

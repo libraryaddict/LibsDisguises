@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseListener;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
@@ -14,12 +15,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class DisguiseEntityCommand extends BaseDisguiseCommand {
-
-    private DisguiseListener listener;
-
-    public DisguiseEntityCommand(DisguiseListener listener) {
-        this.listener = listener;
-    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -36,10 +31,10 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             }
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
             return true;
         }
-        listener.setDisguiseEntity(sender.getName(), disguise);
+        LibsDisguises.instance.getListener().setDisguiseEntity(sender.getName(), disguise);
         sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseEntityExpire()
                 + " seconds to disguise it as a " + disguise.getType().toReadable() + "!");
         return true;

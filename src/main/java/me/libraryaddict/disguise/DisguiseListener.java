@@ -38,6 +38,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import org.bukkit.scheduler.BukkitTask;
 
 public class DisguiseListener implements Listener {
 
@@ -47,12 +48,13 @@ public class DisguiseListener implements Listener {
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private String latestVersion;
     private LibsDisguises plugin;
+    private BukkitTask updaterTask;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
-            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
+            updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
                 public void run() {
                     try {
                         UpdateChecker updateChecker = new UpdateChecker();
@@ -76,6 +78,17 @@ public class DisguiseListener implements Listener {
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
             // 20 ticks * 60 seconds * 60 minutes * 6 hours
         }
+    }
+    
+    public void cleanup() {
+        for (BukkitRunnable r : disguiseRunnable.values()) {
+            r.cancel();
+        }
+        for (Disguise d : disguiseEntity.values()) {
+            d.removeDisguise();
+        }
+        disguiseClone.clear();
+        updaterTask.cancel();
     }
 
     private void checkPlayerCanBlowDisguise(Player entity) {
@@ -115,7 +128,7 @@ public class DisguiseListener implements Listener {
                 }
             }
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 

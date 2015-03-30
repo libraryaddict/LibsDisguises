@@ -213,7 +213,7 @@ public enum DisguiseType {
                     disguiseType = DisguiseType.ZOMBIE_VILLAGER;
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             break;
         case HORSE:
@@ -221,7 +221,7 @@ public enum DisguiseType {
                 Object variant = getVariant.invoke(entity);
                 disguiseType = DisguiseType.valueOf(((Enum) variant).name());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             break;
         case SKELETON:
@@ -231,7 +231,7 @@ public enum DisguiseType {
                     disguiseType = DisguiseType.WITHER_SKELETON;
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             break;
         case GUARDIAN:
@@ -240,7 +240,7 @@ public enum DisguiseType {
                     disguiseType = DisguiseType.ELDER_GUARDIAN;
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
             break;
         default:

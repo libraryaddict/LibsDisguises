@@ -41,68 +41,34 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.utilities.Metrics;
+import org.bukkit.event.HandlerList;
 
 public class LibsDisguises extends JavaPlugin {
     
     public static LibsDisguises instance; //I'm sorry Sun MicroSystems and all mighty Java God
+    private DisguiseListener listener;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        File configFile = new File(getDataFolder(), "config.yml");
-        InputStream stream = null;
-        FileReader reader = null;
-        try {
-            stream = getClassLoader().getResource("config.yml").openStream();
-            String toWrite = read(new InputStreamReader(stream));
-            reader = new FileReader(configFile);
-            String toRead = read(reader);
-
-            if (!toRead.equals(toWrite)) {
-                try {
-                    FileWriter writer = new FileWriter(configFile);
-                    try {
-                        writer.write(toWrite);
-                    } finally {
-                        writer.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            tryClose(stream);
-            tryClose(reader);
-        }
 
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
         DisguiseConfig.initConfig(getConfig());
 
-        try {
-            // Here I use reflection to set the plugin for Disguise..
-            // Kind of stupid but I don't want open API calls for a commonly used class.
-            Field field = Disguise.class.getDeclaredField("plugin");
-            field.setAccessible(true);
-            field.set(null, this);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         PacketsManager.addPacketListeners();
-        DisguiseListener listener = new DisguiseListener(this);
+        listener = new DisguiseListener(this);
         Bukkit.getPluginManager().registerEvents(listener, this);
         getCommand("disguise").setExecutor(new DisguiseCommand());
         getCommand("undisguise").setExecutor(new UndisguiseCommand());
         getCommand("disguiseplayer").setExecutor(new DisguisePlayerCommand());
         getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
-        getCommand("undisguiseentity").setExecutor(new UndisguiseEntityCommand(listener));
-        getCommand("disguiseentity").setExecutor(new DisguiseEntityCommand(listener));
+        getCommand("undisguiseentity").setExecutor(new UndisguiseEntityCommand());
+        getCommand("disguiseentity").setExecutor(new DisguiseEntityCommand());
         getCommand("disguiseradius").setExecutor(new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
         getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
         getCommand("disguisehelp").setExecutor(new DisguiseHelpCommand());
-        getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand(listener));
+        getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand());
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         registerValues();
         instance = this;
@@ -111,46 +77,14 @@ public class LibsDisguises extends JavaPlugin {
             metrics.start();
         } catch (IOException e) {}
     }
-
-    private String read(Reader reader) {
-        String toWrite = "";
-        BufferedReader input = null;
-
-        try {
-            input = new BufferedReader(reader);
-            String currentPath = "";
-            String line;
-
-            while ((line = input.readLine()) != null) {
-                if (line.replace(" ", "").startsWith("#")) {
-                    toWrite += line;
-                } else if (line.contains(":")) {
-                    if (line.substring(line.indexOf(":") + 1).equals("")) {
-                        currentPath = line.substring(0, line.length() - 1) + ".";
-                        toWrite += line;
-                    } else {
-                        if (!line.startsWith("  ")) {
-                            currentPath = "";
-                        }
-                        String obj = line.substring(0, line.indexOf(":")).replace(" ", "");
-                        Object value = getConfig().get(currentPath + obj);
-                        if (value instanceof String) {
-                            value = "'" + value + "'";
-                        }
-                        toWrite += (currentPath.length() == 0 ? "" : "  ") + obj + ": " + value;
-                    }
-                }
-                if (input.ready()) {
-                    toWrite += "\n";
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            tryClose(input);
-            tryClose(reader);
-        }
-        return toWrite;
+    
+    /**
+     * Reloads the config with new config options.
+     */
+    public void reload() {
+        HandlerList.unregisterAll(listener);
+        reloadConfig();
+        DisguiseConfig.initConfig(getConfig());                
     }
 
     /**
@@ -312,7 +246,7 @@ public class LibsDisguises extends JavaPlugin {
                                     + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
                 }
 
-                ex.printStackTrace();
+                ex.printStackTrace(System.out);
             }
         }
     }
@@ -325,14 +259,7 @@ public class LibsDisguises extends JavaPlugin {
         return builder.toString();
     }
 
-    private void tryClose(Closeable input) {
-        if (input != null) {
-            try {
-                input.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    public DisguiseListener getListener() {
+        return listener;
     }
-
 }

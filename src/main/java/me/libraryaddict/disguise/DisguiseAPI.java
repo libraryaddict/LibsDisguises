@@ -128,7 +128,7 @@ public class DisguiseAPI {
                                         }
                                         watcherMethod.invoke(watcher, value);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
+                                        ex.printStackTrace(System.out);
                                     }
                                 }
                             }
@@ -203,7 +203,7 @@ public class DisguiseAPI {
             DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
             return id;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return -1;
     }

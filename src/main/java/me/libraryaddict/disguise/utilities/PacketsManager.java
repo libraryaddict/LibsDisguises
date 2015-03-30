@@ -106,7 +106,7 @@ public class PacketsManager {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                 }
             }
         };
@@ -114,7 +114,7 @@ public class PacketsManager {
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();
     }
-
+    
     /**
      * Construct the packets I need to spawn in the disguise
      */
@@ -372,7 +372,7 @@ public class PacketsManager {
                 newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.out);
         }
         return newWatcher;
     }
@@ -571,7 +571,7 @@ public class PacketsManager {
                                                 obj = null;
                                             }
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            e.printStackTrace(System.out);
                                         }
                                     }
                                     if (obj == null) {
@@ -587,7 +587,7 @@ public class PacketsManager {
                                                         .invoke(nmsEntity, DamageSource.GENERIC);
                                             }
                                         } catch (Exception ex) {
-                                            ex.printStackTrace();
+                                            ex.printStackTrace(System.out);
                                         }
                                         soundType = entitySound.getType(soundName, !hasInvun);
                                     }
@@ -624,7 +624,7 @@ public class PacketsManager {
                                                         .invoke(step));
                                             }
                                         } catch (Exception ex) {
-                                            ex.printStackTrace();
+                                            ex.printStackTrace(System.out);
                                         }
                                         // There is no else statement. Because seriously. This should never be null. Unless
                                         // someone is
@@ -704,7 +704,7 @@ public class PacketsManager {
                                         obj = null;
                                     }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    e.printStackTrace(System.out);
                                 }
                             }
                             if (obj == null) {
@@ -745,7 +745,7 @@ public class PacketsManager {
                                         try {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
                                         } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
+                                            e.printStackTrace(System.out);
                                         }
                                     }
                                 }
@@ -787,7 +787,7 @@ public class PacketsManager {
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                             } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                                e.printStackTrace(System.out);
                             }
                         }
                         if (delayedPackets != null && delayedPackets.length > 0) {
@@ -798,7 +798,7 @@ public class PacketsManager {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                                         }
                                     } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.out);
                                     }
                                 }
                             }, 2);
@@ -828,7 +828,7 @@ public class PacketsManager {
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
                             } catch (InvocationTargetException e) {
-                                e.printStackTrace();
+                                e.printStackTrace(System.out);
                             }
                         } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
                             if (event.getPacket().getIntegers().read(1) != 2) {
@@ -886,7 +886,7 @@ public class PacketsManager {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
                                         } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
+                                            e.printStackTrace(System.out);
                                         }
                                     }
                                 }
@@ -905,7 +905,7 @@ public class PacketsManager {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
                                             } catch (InvocationTargetException e) {
-                                                e.printStackTrace();
+                                                e.printStackTrace(System.out);
                                             }
                                         }
                                     }
@@ -930,7 +930,7 @@ public class PacketsManager {
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.out);
                                     }
                                 }
                                 org.bukkit.inventory.ItemStack newHeld = event.getPlayer().getInventory()
@@ -945,7 +945,7 @@ public class PacketsManager {
                                     try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                     } catch (InvocationTargetException e) {
-                                        e.printStackTrace();
+                                        e.printStackTrace(System.out);
                                     }
                                 }
                             }
@@ -986,7 +986,7 @@ public class PacketsManager {
                                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                     false);
                                         } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
+                                            e.printStackTrace(System.out);
                                         }
                                     }
                                     // Else if its a hotbar slot
@@ -1004,7 +1004,7 @@ public class PacketsManager {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
                                                         false);
                                             } catch (InvocationTargetException e) {
-                                                e.printStackTrace();
+                                                e.printStackTrace(System.out);
                                             }
                                         }
                                     }
@@ -1219,13 +1219,13 @@ public class PacketsManager {
                                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                                             }
                                         } catch (InvocationTargetException e) {
-                                            e.printStackTrace();
+                                            e.printStackTrace(System.out);
                                         }
                                     }
                                 }, 2);
                             }
                         } catch (InvocationTargetException ex) {
-                            ex.printStackTrace();
+                            ex.printStackTrace(System.out);
                         }
                     }
                 }
@@ -1493,7 +1493,7 @@ public class PacketsManager {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
         return packets == null ? null : new PacketContainer[][] { packets, delayedPackets };
     }
