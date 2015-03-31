@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -42,7 +41,10 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
 
     /**
      * Send the player the information
+     * @param sender
+     * @param map
      */
+    @Override
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise then right click a entity to disguise it!");

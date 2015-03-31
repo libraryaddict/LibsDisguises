@@ -19,7 +19,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -27,7 +26,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -54,6 +52,7 @@ public abstract class Disguise {
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
+    private boolean showName = false;
     
     @Override
     public abstract Disguise clone();
@@ -322,6 +321,7 @@ public abstract class Disguise {
 
     /**
      * Get the disguised entity
+     * @return 
      */
     public Entity getEntity() {
         return entity;
@@ -329,6 +329,7 @@ public abstract class Disguise {
 
     /**
      * Get the disguise type
+     * @return 
      */
     public DisguiseType getType() {
         return disguiseType;
@@ -336,6 +337,7 @@ public abstract class Disguise {
 
     /**
      * Get the flag watcher
+     * @return 
      */
     public FlagWatcher getWatcher() {
         return watcher;
@@ -344,6 +346,7 @@ public abstract class Disguise {
     /**
      * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise.
      * getEntity() can still return null if this disguise is active after despawn, logout, etc.
+     * @return 
      */
     public boolean isDisguiseInUse() {
         return disguiseInUse;
@@ -418,6 +421,14 @@ public abstract class Disguise {
     }
 
     /**
+     * Returns true if the entity's name is showing through the disguise
+     * @return 
+     */
+    public boolean isShowName() {
+        return showName;
+    }
+
+    /**
      * Removes the disguise and undisguises the entity if its using this disguise.
      * 
      * @return
@@ -482,6 +493,8 @@ public abstract class Disguise {
 
     /**
      * Set the entity of the disguise. Only used for internal things.
+     * @param entity
+     * @return 
      */
     public Disguise setEntity(Entity entity) {
         if (this.getEntity() != null) {
@@ -495,6 +508,11 @@ public abstract class Disguise {
         }
         this.entity = entity;
         setupWatcher();
+        return this;
+    }
+
+    public Disguise setShowName(boolean showName) {
+        this.showName = showName;
         return this;
     }
 

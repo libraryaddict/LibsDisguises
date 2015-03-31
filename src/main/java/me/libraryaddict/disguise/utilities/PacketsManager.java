@@ -583,7 +583,7 @@ public class PacketsManager {
                                                         nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
                                                         "maxNoDamageTicks").getInt(nmsEntity);
                                             } else {
-                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable")
+                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", DamageSource.class)
                                                         .invoke(nmsEntity, DamageSource.GENERIC);
                                             }
                                         } catch (Exception ex) {
@@ -819,7 +819,7 @@ public class PacketsManager {
                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, observer.getEntityId());
-                            List<WrappedWatchableObject> watchableList = new ArrayList<WrappedWatchableObject>();
+                            List<WrappedWatchableObject> watchableList = new ArrayList<>();
                             byte b = (byte) 1 << 5;
                             if (observer.isSprinting())
                                 b = (byte) (b | 1 << 3);
