@@ -19,7 +19,7 @@ target/
 build
 libs
 dist
-
+.gradle
 
 # External tool builders
 .externalToolBuilders/

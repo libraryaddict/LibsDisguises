@@ -1,5 +1,7 @@
 apply plugin: 'java'
 
+println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
+
 sourceCompatibility = '1.7'
 ext.spigotVersion = '1.8.3-R0.1-SNAPSHOT'
 
