@@ -26,6 +26,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import net.minecraft.server.v1_8_R2.EntityPlayer;
+import net.minecraft.server.v1_8_R2.PlayerConnection;
 import org.bukkit.potion.PotionEffect;
 
 public class ReflectionManager {
@@ -610,10 +612,11 @@ public class ReflectionManager {
 
     public static void setAllowSleep(Player player) {
         try {
+            /**
             Object nmsEntity = getNmsEntity(player);
             Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity);
             Field check = getNmsField(connection.getClass(), "checkMovement");
-            check.setBoolean(connection, true);
+            check.setBoolean(connection, true); **/
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
