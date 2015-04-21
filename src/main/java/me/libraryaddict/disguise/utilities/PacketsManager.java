@@ -323,7 +323,7 @@ public class PacketsManager {
             int id = disguise.getType().getEntityId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = (((MiscDisguise) disguise).getId() | data << 16);
+                data = ((MiscDisguise) disguise).getId() + (data << 12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();

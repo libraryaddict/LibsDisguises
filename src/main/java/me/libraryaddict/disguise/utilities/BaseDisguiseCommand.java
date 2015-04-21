@@ -346,7 +346,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             }
             optionPermissions = map.get(disguiseType);
             HashMap<String, Boolean> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
-            if (disguiseType.isPlayer()) {// If he is doing a player disguise
+            if (disguiseType.isPlayer()) {
+                // If he is doing a player disguise
                 if (args.length == 1) {
                     // He needs to give the player name
                     throw new DisguiseParseException(ChatColor.RED + "Error! You need to give a player name!");
