@@ -54,7 +54,7 @@ import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import net.minecraft.server.v1_8_R2.DamageSource;
+import net.minecraft.server.v1_8_R3.DamageSource;
 
 public class PacketsManager {
     /**
@@ -319,11 +319,11 @@ public class PacketsManager {
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
         } else if (disguise.getType().isMisc()) {
-
+            MiscDisguise msc = (MiscDisguise)disguise;
             int id = disguise.getType().getEntityId();
-            int data = ((MiscDisguise) disguise).getData();
+            int data = msc.getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = ((MiscDisguise) disguise).getId() + (data << 12);
+                data = msc.getId() + (data << 0x12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();

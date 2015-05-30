@@ -103,13 +103,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     /**
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
+     * @param sender
+     * @param permissionNode
+     * @return 
      */
-    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender,
-            String permissionNode) {
+    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender, String permissionNode) {
 
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> rangeDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
-        HashMap<String, Boolean> perms = new HashMap<String, Boolean>();
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> rangeDisguises = new HashMap<>();
+        HashMap<String, Boolean> perms = new HashMap<>();
 
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
             String perm = permission.getPermission().toLowerCase();
