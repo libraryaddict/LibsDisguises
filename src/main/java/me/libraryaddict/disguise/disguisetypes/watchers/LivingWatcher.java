@@ -46,7 +46,7 @@ public class LivingWatcher extends FlagWatcher {
     }
     private double maxHealth;
     private boolean maxHealthSet;
-    private HashSet<Integer> potionEffects = new HashSet<Integer>();
+    private HashSet<Integer> potionEffects = new HashSet<>();
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
@@ -146,7 +146,7 @@ public class LivingWatcher extends FlagWatcher {
         this.maxHealthSet = true;
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-            List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+            List<WrappedAttribute> attributes = new ArrayList<>();
             Builder builder;
             builder = WrappedAttribute.newBuilder();
             builder.attributeKey("generic.maxHealth");

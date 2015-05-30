@@ -79,6 +79,7 @@ public class DisguisePlayerCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
+    @Override
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");

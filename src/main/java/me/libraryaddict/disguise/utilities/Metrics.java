@@ -176,6 +176,7 @@ public class Metrics {
 			task = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 				private boolean firstPost = true;
 
+                                @Override
 				public void run() {
 					try {
 						// This has to be synchronized or it can collide with the disable method.
@@ -218,12 +219,7 @@ public class Metrics {
 			try {
 				// Reload the metrics file
 				configuration.load(getConfigFile());
-			} catch (IOException ex) {
-				if (debug) {
-					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
-				}
-				return true;
-			} catch (InvalidConfigurationException ex) {
+			} catch (IOException | InvalidConfigurationException ex) {
 				if (debug) {
 					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
@@ -389,12 +385,13 @@ public class Metrics {
 		OutputStream os = connection.getOutputStream();
 		os.write(compressed);
 		os.flush();
-		// Now read the response
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		String response = reader.readLine();
-		// close resources
+                String response;
+            try ( // Now read the response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                response = reader.readLine();
+                // close resources
 		os.close();
-		reader.close();
+            }
 		if (response == null || response.startsWith("ERR") || response.startsWith("7")) {
 			if (response == null) {
 				response = "null";
@@ -551,7 +548,7 @@ public class Metrics {
 		/**
 		 * The set of plotters that are contained within this graph
 		 */
-		private final Set<Plotter> plotters = new LinkedHashSet<Plotter>();
+		private final Set<Plotter> plotters = new LinkedHashSet<>();
 
 		private Graph(final String name) {
 			this.name = name;

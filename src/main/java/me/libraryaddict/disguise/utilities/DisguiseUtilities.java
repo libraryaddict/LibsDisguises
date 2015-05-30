@@ -55,25 +55,25 @@ public class DisguiseUtilities {
      * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of
      * the plugin to do that.
      */
-    private static HashSet<String> addedByPlugins = new HashSet<String>();
+    private static HashSet<String> addedByPlugins = new HashSet<>();
     private static Object bedChunk;
-    private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<String, Disguise>();
+    private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      **/
-    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<UUID, HashSet<TargetedDisguise>>();
+    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
      * a max of a second.
      */
-    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<Integer, HashSet<TargetedDisguise>>();
+    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     /**
      * A hashmap storing the uuid and skin of a playername
      */
-    private static HashMap<String, WrappedGameProfile> gameProfiles = new HashMap<String, WrappedGameProfile>();
+    private static HashMap<String, WrappedGameProfile> gameProfiles = new HashMap<>();
     private static LibsDisguises libsDisguises;
-    private static HashMap<String, ArrayList<Object>> runnables = new HashMap<String, ArrayList<Object>>();
-    private static HashSet<UUID> selfDisguised = new HashSet<UUID>();
+    private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
+    private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Field xChunk, zChunk;
 
     static {
@@ -149,6 +149,7 @@ public class DisguiseUtilities {
         }
         futureDisguises.get(entityId).add(disguise);
         final BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
             public void run() {
                 if (futureDisguises.containsKey(entityId) && futureDisguises.get(entityId).contains(disguise)) {
                     for (World world : Bukkit.getWorlds()) {
@@ -210,7 +211,7 @@ public class DisguiseUtilities {
                                     d.removePlayer(name);
                                 }
                             } else {
-                                for (String playername : new ArrayList<String>(d.getObservers())) {
+                                for (String playername : new ArrayList<>(d.getObservers())) {
                                     if (!disguise.getObservers().contains(playername)) {
                                         d.silentlyRemovePlayer(playername);
                                     }
@@ -434,7 +435,7 @@ public class DisguiseUtilities {
      * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
      */
     public static ArrayList<Player> getPerverts(Disguise disguise) {
-        ArrayList<Player> players = new ArrayList<Player>();
+        ArrayList<Player> players = new ArrayList<>();
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
@@ -501,10 +502,12 @@ public class DisguiseUtilities {
             // Add null so that if this is called again. I already know I'm doing something about it
             gameProfiles.put(playerName, null);
             Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable() {
+                @Override
                 public void run() {
                     try {
                         final WrappedGameProfile gameProfile = lookupGameProfile(origName);
                         Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
+                            @Override
                             public void run() {
                                 if (!gameProfile.getProperties().isEmpty()) {
                                     if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
@@ -537,7 +540,7 @@ public class DisguiseUtilities {
         }
         if (runnable != null) {
             if (!runnables.containsKey(playerName)) {
-                runnables.put(playerName, new ArrayList<Object>());
+                runnables.put(playerName, new ArrayList<>());
             }
             runnables.get(playerName).add(runnable);
         }
@@ -585,8 +588,8 @@ public class DisguiseUtilities {
             List<WrappedWatchableObject> list) {
         if (true) // Use for future protocol compatibility
             return list;
-        ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<WrappedWatchableObject>();
-        ArrayList<WrappedWatchableObject> backups = new ArrayList<WrappedWatchableObject>();
+        ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<>();
+        ArrayList<WrappedWatchableObject> backups = new ArrayList<>();
         for (WrappedWatchableObject obj : list) {
             if (obj.getValue().getClass().getName().startsWith("org.")) {
                 backups.add(obj);
@@ -624,6 +627,7 @@ public class DisguiseUtilities {
                         selfDisguised.add(disguise.getEntity().getUniqueId());
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
@@ -648,6 +652,7 @@ public class DisguiseUtilities {
                                 clear.invoke(entityTrackerEntry, p);
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    @Override
                                     public void run() {
                                         try {
                                             updatePlayer.invoke(entityTrackerEntry, p);
@@ -689,6 +694,7 @@ public class DisguiseUtilities {
                             clear.invoke(entityTrackerEntry, p);
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                @Override
                                 public void run() {
                                     try {
                                         updatePlayer.invoke(entityTrackerEntry, p);
@@ -718,6 +724,7 @@ public class DisguiseUtilities {
                     selfDisguised.add(disguise.getEntity().getUniqueId());
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
@@ -742,6 +749,7 @@ public class DisguiseUtilities {
                             clear.invoke(entityTrackerEntry, p);
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                @Override
                                 public void run() {
                                     try {
                                         updatePlayer.invoke(entityTrackerEntry, p);
@@ -837,6 +845,7 @@ public class DisguiseUtilities {
                 // Else its going to run in a infinite loop hue hue hue..
                 // At least until this disguise is discarded
                 Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
+                    @Override
                     public void run() {
                         if (DisguiseAPI.getDisguise(player, player) == disguise) {
                             sendSelfDisguise(player, disguise);
@@ -942,6 +951,7 @@ public class DisguiseUtilities {
             }
             if (delayed != null && delayed.length > 0) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             for (PacketContainer packet : delayed) {

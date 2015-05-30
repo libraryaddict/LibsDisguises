@@ -6,7 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
 public class DisguiseValues {
 
-    private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<DisguiseType, DisguiseValues>();
+    private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<>();
 
     public static DisguiseValues getDisguiseValues(DisguiseType type) {
         switch (type) {
@@ -49,7 +49,7 @@ public class DisguiseValues {
     private float[] entitySize;
     private int enumEntitySize;
     private double maxHealth;
-    private HashMap<Integer, Object> metaValues = new HashMap<Integer, Object>();
+    private HashMap<Integer, Object> metaValues = new HashMap<>();
     private Class nmsEntityClass;
 
     public DisguiseValues(DisguiseType type, Class classType, int entitySize, double maxHealth) {

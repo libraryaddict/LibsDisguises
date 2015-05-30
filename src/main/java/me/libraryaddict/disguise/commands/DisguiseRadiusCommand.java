@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 
 public class DisguiseRadiusCommand extends BaseDisguiseCommand {
     private int maxRadius = 30;
-    private ArrayList<Class> validClasses = new ArrayList<Class>();
+    private ArrayList<Class> validClasses = new ArrayList<>();
 
     public DisguiseRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
@@ -49,7 +49,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
             return true;
         }
         if (args[0].equalsIgnoreCase("entitytype") || args[0].equalsIgnoreCase("entitytypes")) {
-            ArrayList<String> classes = new ArrayList<String>();
+            ArrayList<String> classes = new ArrayList<>();
             for (Class c : validClasses) {
                 classes.add(c.getSimpleName());
             }
@@ -149,6 +149,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
+    @Override
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at 30 blocks!");

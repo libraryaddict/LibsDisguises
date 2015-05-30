@@ -88,9 +88,9 @@ public class ReflectionManager {
 
         if (isForge) {
             // Initialize the maps by reading the srg file
-            ForgeClassMappings = new HashMap<String, String>();
-            ForgeFieldMappings = new HashMap<String, Map<String, String>>();
-            ForgeMethodMappings = new HashMap<String, Map<String, Map<String, String>>>();
+            ForgeClassMappings = new HashMap<>();
+            ForgeFieldMappings = new HashMap<>();
+            ForgeMethodMappings = new HashMap<>();
             try {
                 InputStream stream = Class.forName("net.minecraftforge.common.MinecraftForge").getClassLoader()
                         .getResourceAsStream("mappings/" + getBukkitVersion() + "/cb2numpkg.srg");
@@ -131,7 +131,7 @@ public class ReflectionManager {
                         // by CB class name
                         Map<String, String> innerMap = ForgeFieldMappings.get(dir2fqn(fieldMatcher.group(3)));
                         if (innerMap == null) {
-                            innerMap = new HashMap<String, String>();
+                            innerMap = new HashMap<>();
                             ForgeFieldMappings.put(dir2fqn(fieldMatcher.group(3)), innerMap);
                         }
                         // by CB field name to Forge field name
@@ -143,13 +143,13 @@ public class ReflectionManager {
                         // get by CB class name
                         Map<String, Map<String, String>> middleMap = ForgeMethodMappings.get(dir2fqn(methodMatcher.group(5)));
                         if (middleMap == null) {
-                            middleMap = new HashMap<String, Map<String, String>>();
+                            middleMap = new HashMap<>();
                             ForgeMethodMappings.put(dir2fqn(methodMatcher.group(5)), middleMap);
                         }
                         // get by CB method name
                         Map<String, String> innerMap = middleMap.get(methodMatcher.group(2));
                         if (innerMap == null) {
-                            innerMap = new HashMap<String, String>();
+                            innerMap = new HashMap<>();
                             middleMap.put(methodMatcher.group(2), innerMap);
                         }
                         // store the parameter strings
@@ -161,11 +161,7 @@ public class ReflectionManager {
                 System.out.println("[LibsDisguises] Loaded " + ForgeClassMappings.size() + " Cauldron class mappings");
                 System.out.println("[LibsDisguises] Loaded " + ForgeFieldMappings.size() + " Cauldron field mappings");
                 System.out.println("[LibsDisguises] Loaded " + ForgeMethodMappings.size() + " Cauldron method mappings");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace(System.out);
-                System.err
-                        .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");
-            } catch (IOException e) {
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace(System.out);
                 System.err
                         .println("Warning: Running on Cauldron server, but couldn't load mappings file. LibsDisguises will likely crash!");

@@ -19,7 +19,7 @@ import java.util.jar.JarFile;
 public class ClassGetter {
 
     public static ArrayList<Class<?>> getClassesForPackage(String pkgname) {
-        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+        ArrayList<Class<?>> classes = new ArrayList<>();
         // String relPath = pkgname.replace('.', '/');
 
         // Get a File object for the package

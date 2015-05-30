@@ -55,6 +55,7 @@ public class DisguiseListener implements Listener {
         if (plugin.getConfig().getBoolean("NotifyUpdate")) {
             currentVersion = plugin.getDescription().getVersion();
             updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
+                @Override
                 public void run() {
                     try {
                         UpdateChecker updateChecker = new UpdateChecker();
@@ -63,6 +64,7 @@ public class DisguiseListener implements Listener {
                         if (latestVersion != null) {
                             latestVersion = "v" + latestVersion;
                             Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                                @Override
                                 public void run() {
                                     for (Player p : Bukkit.getOnlinePlayers())
                                         if (p.hasPermission(DisguiseConfig.getUpdateNotificationPermission()))
@@ -300,6 +302,7 @@ public class DisguiseListener implements Listener {
             if (x1 - (x1 % 8) != x2 - (x2 % 8) || z1 - (z1 % 8) != z2 - (z2 % 8)) {
                 chunkMove(event.getPlayer(), null, from);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    @Override
                     public void run() {
                         if (!event.isCancelled()) {
                             chunkMove(event.getPlayer(), event.getTo(), null);
@@ -332,6 +335,7 @@ public class DisguiseListener implements Listener {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
             if (disguise != null) {
                 Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                    @Override
                     public void run() {
                         DisguiseUtilities.setupFakeDisguise(disguise);
                         ((Player) disguise.getEntity()).updateInventory();
@@ -360,6 +364,7 @@ public class DisguiseListener implements Listener {
             run.run();
         }
         BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
             public void run() {
                 disguiseClone.remove(player);
                 disguiseRunnable.remove(player);
@@ -377,6 +382,7 @@ public class DisguiseListener implements Listener {
             run.run();
         }
         BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
             public void run() {
                 disguiseEntity.remove(player);
                 disguiseRunnable.remove(player);

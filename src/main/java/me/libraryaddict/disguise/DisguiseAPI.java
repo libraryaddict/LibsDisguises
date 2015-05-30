@@ -105,14 +105,14 @@ public class DisguiseAPI {
                                             if (!(toCast.isInstance(value))) {
                                                 if (toCast == float.class) {
                                                     if (value instanceof Float) {
-                                                        value = ((Float) value).floatValue();
+                                                        value = ((Float) value);
                                                     } else {
                                                         double d = (Double) value;
                                                         value = (float) d;
                                                     }
                                                 } else if (toCast == double.class) {
                                                     if (value instanceof Double) {
-                                                        value = ((Double) value).doubleValue();
+                                                        value = ((Double) value);
                                                     } else {
                                                         float d = (Float) value;
                                                         value = (double) d;

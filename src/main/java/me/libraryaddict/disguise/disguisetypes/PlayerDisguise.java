@@ -41,10 +41,12 @@ public class PlayerDisguise extends TargetedDisguise {
         this.gameProfile = gameProfile;
     }
 
+    @Override
     public PlayerDisguise addPlayer(Player player) {
         return (PlayerDisguise) super.addPlayer(player);
     }
 
+    @Override
     public PlayerDisguise addPlayer(String playername) {
         return (PlayerDisguise) super.addPlayer(playername);
     }
@@ -103,14 +105,17 @@ public class PlayerDisguise extends TargetedDisguise {
         return true;
     }
 
+    @Override
     public PlayerDisguise removePlayer(Player player) {
         return (PlayerDisguise) super.removePlayer(player);
     }
 
+    @Override
     public PlayerDisguise removePlayer(String playername) {
         return (PlayerDisguise) super.removePlayer(playername);
     }
 
+    @Override
     public PlayerDisguise setDisguiseTarget(TargetType newTargetType) {
         return (PlayerDisguise) super.setDisguiseTarget(newTargetType);
     }
@@ -120,34 +125,42 @@ public class PlayerDisguise extends TargetedDisguise {
         return (PlayerDisguise) super.setEntity(entity);
     }
 
+    @Override
     public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
         return (PlayerDisguise) super.setHearSelfDisguise(hearSelfDisguise);
     }
 
+    @Override
     public PlayerDisguise setHideArmorFromSelf(boolean hideArmor) {
         return (PlayerDisguise) super.setHideArmorFromSelf(hideArmor);
     }
 
+    @Override
     public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         return (PlayerDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
     }
 
+    @Override
     public PlayerDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
     }
 
+    @Override
     public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
     }
 
+    @Override
     public PlayerDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
+    @Override
     public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
+    @Override
     public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced) {
         return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
@@ -204,22 +217,27 @@ public class PlayerDisguise extends TargetedDisguise {
         return this;
     }
 
+    @Override
     public PlayerDisguise setVelocitySent(boolean sendVelocity) {
         return (PlayerDisguise) super.setVelocitySent(sendVelocity);
     }
 
+    @Override
     public PlayerDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (PlayerDisguise) super.setViewSelfDisguise(viewSelfDisguise);
     }
 
+    @Override
     public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
         return (PlayerDisguise) super.setWatcher(newWatcher);
     }
 
+    @Override
     public PlayerDisguise silentlyAddPlayer(String playername) {
         return (PlayerDisguise) super.silentlyAddPlayer(playername);
     }
 
+    @Override
     public PlayerDisguise silentlyRemovePlayer(String playername) {
         return (PlayerDisguise) super.silentlyRemovePlayer(playername);
     }

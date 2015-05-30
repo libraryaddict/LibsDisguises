@@ -123,9 +123,9 @@ public enum DisguiseSound {
         }
     }
 
-    private HashSet<String> cancelSounds = new HashSet<String>();
+    private HashSet<String> cancelSounds = new HashSet<>();
     private float damageSoundVolume = 1F;
-    private HashMap<SoundType, String> disguiseSounds = new HashMap<SoundType, String>();
+    private HashMap<SoundType, String> disguiseSounds = new HashMap<>();
 
     private DisguiseSound(Object... sounds) {
         for (int i = 0; i < sounds.length; i++) {

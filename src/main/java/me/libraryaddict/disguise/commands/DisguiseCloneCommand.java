@@ -55,6 +55,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
+    @Override
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");

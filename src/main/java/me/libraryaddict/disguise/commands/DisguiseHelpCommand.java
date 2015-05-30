@@ -63,7 +63,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         }
     }
 
-    private ArrayList<EnumHelp> enumHelp = new ArrayList<EnumHelp>();
+    private ArrayList<EnumHelp> enumHelp = new ArrayList<>();
 
     public DisguiseHelpCommand() {
         try {
@@ -97,7 +97,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         } catch (Exception ex) {
         }
         try {
-            ArrayList<String> enumReturns = new ArrayList<String>();
+            ArrayList<String> enumReturns = new ArrayList<>();
             for (PotionEffectType potionType : PotionEffectType.values()) {
                 if (potionType != null)
                     enumReturns.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN + potionType.getId()
@@ -159,8 +159,8 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
                         sender.sendMessage(ChatColor.RED + "You do not have permission for that disguise!");
                         return true;
                     }
-                    ArrayList<String> methods = new ArrayList<String>();
-                    HashMap<String, ChatColor> map = new HashMap<String, ChatColor>();
+                    ArrayList<String> methods = new ArrayList<>();
+                    HashMap<String, ChatColor> map = new HashMap<>();
                     Class watcher = type.getWatcherClass();
                     int ignored = 0;
                     try {
@@ -260,6 +260,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
     /**
      * Send the player the information
      */
+    @Override
     protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.RED
                 + "/disguisehelp <DisguiseType> "

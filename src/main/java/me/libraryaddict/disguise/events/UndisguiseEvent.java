@@ -31,6 +31,7 @@ public class UndisguiseEvent extends Event implements Cancellable {
         return disguised;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

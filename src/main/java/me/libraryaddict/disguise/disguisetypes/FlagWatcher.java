@@ -42,12 +42,12 @@ public class FlagWatcher {
     /**
      * This is the entity values I need to add else it could crash them..
      */
-    private HashMap<Integer, Object> backupEntityValues = new HashMap<Integer, Object>();
+    private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
     private TargetedDisguise disguise;
-    private HashMap<Integer, Object> entityValues = new HashMap<Integer, Object>();
+    private HashMap<Integer, Object> entityValues = new HashMap<>();
     private boolean hasDied;
     private ItemStack[] items = new ItemStack[5];
-    private HashSet<Integer> modifiedEntityAnimations = new HashSet<Integer>();
+    private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
@@ -81,8 +81,8 @@ public class FlagWatcher {
     }
 
     public List<WrappedWatchableObject> convert(List<WrappedWatchableObject> list) {
-        List<WrappedWatchableObject> newList = new ArrayList<WrappedWatchableObject>();
-        HashSet<Integer> sentValues = new HashSet<Integer>();
+        List<WrappedWatchableObject> newList = new ArrayList<>();
+        HashSet<Integer> sentValues = new HashSet<>();
         boolean sendAllCustom = false;
         for (WrappedWatchableObject watch : list) {
             int dataType = watch.getIndex();
@@ -231,7 +231,7 @@ public class FlagWatcher {
     }
 
     public void rebuildWatchableObjects() {
-        watchableObjects = new ArrayList<WrappedWatchableObject>();
+        watchableObjects = new ArrayList<>();
         for (int i = 0; i <= 31; i++) {
             WrappedWatchableObject watchable = null;
             if (this.entityValues.containsKey(i) && this.entityValues.get(i) != null) {
@@ -248,7 +248,7 @@ public class FlagWatcher {
     protected void sendData(int... dataValues) {
         if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this)
             return;
-        List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
+        List<WrappedWatchableObject> list = new ArrayList<>();
         for (int data : dataValues) {
             if (!entityValues.containsKey(data) || entityValues.get(data) == null)
                 continue;

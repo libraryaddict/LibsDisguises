@@ -122,7 +122,7 @@ public class PacketsManager {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
-        ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
+        ArrayList<PacketContainer> packets = new ArrayList<>();
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
@@ -154,7 +154,7 @@ public class PacketsManager {
         if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-                List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+                List<WrappedAttribute> attributes = new ArrayList<>();
                 Builder builder = WrappedAttribute.newBuilder().attributeKey("generic.maxHealth");
                 if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
                     builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
@@ -265,11 +265,12 @@ public class PacketsManager {
                 }
             }
 
-            ArrayList<PacketContainer> newPackets = new ArrayList<PacketContainer>();
+            ArrayList<PacketContainer> newPackets = new ArrayList<>();
             newPackets.add(null);
-            for (int i = 0; i < spawnPackets.length; i++) {
-                if (spawnPackets[i] != null) { // Get rid of empty packet '1' if it exists.
-                    newPackets.add(spawnPackets[i]);
+            for (PacketContainer spawnPacket : spawnPackets) {
+                if (spawnPacket != null) {
+                    // Get rid of empty packet '1' if it exists.
+                    newPackets.add(spawnPacket);
                 }
             }
             spawnPackets = newPackets.toArray(new PacketContainer[newPackets.size()]);
@@ -550,8 +551,7 @@ public class PacketsManager {
                     DisguiseSound entitySound = null;
                     Disguise disguise = null;
                     Entity[] entities = soundLoc.getChunk().getEntities();
-                    for (int i = 0; i < entities.length; i++) {
-                        Entity entity = entities[i];
+                    for (Entity entity : entities) {
                         Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
                         if (entityDisguise != null) {
                             Location loc = entity.getLocation();
@@ -581,7 +581,7 @@ public class PacketsManager {
                                             if (entity instanceof LivingEntity) {
                                                 hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
                                                         nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
-                                                        "maxNoDamageTicks").getInt(nmsEntity);
+                                                                "maxNoDamageTicks").getInt(nmsEntity);
                                             } else {
                                                 hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", DamageSource.class)
                                                         .invoke(nmsEntity, DamageSource.GENERIC);
@@ -792,6 +792,7 @@ public class PacketsManager {
                         }
                         if (delayedPackets != null && delayedPackets.length > 0) {
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                @Override
                                 public void run() {
                                     try {
                                         for (PacketContainer packet : delayedPackets) {
@@ -959,6 +960,7 @@ public class PacketsManager {
                                     // Rather than predict the clients actions
                                     // Lets just update the entire inventory..
                                     Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
+                                        @Override
                                         public void run() {
                                             event.getPlayer().updateInventory();
                                         }
@@ -1146,7 +1148,7 @@ public class PacketsManager {
             if (mainListener != null) {
                 ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
             }
-            List<PacketType> packetsToListen = new ArrayList<PacketType>();
+            List<PacketType> packetsToListen = new ArrayList<>();
             // Add spawn packets
             {
                 packetsToListen.add(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
@@ -1213,6 +1215,7 @@ public class PacketsManager {
                             final PacketContainer[] delayed = packets[1];
                             if (delayed.length > 0) {
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                    @Override
                                     public void run() {
                                         try {
                                             for (PacketContainer packet : delayed) {
@@ -1278,7 +1281,7 @@ public class PacketsManager {
                     if (disguise.isMiscDisguise()) {
                         packets = new PacketContainer[0];
                     } else {
-                        List<WrappedAttribute> attributes = new ArrayList<WrappedAttribute>();
+                        List<WrappedAttribute> attributes = new ArrayList<>();
                         for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
                             if (attribute.getAttributeKey().equals("generic.maxHealth")) {
                                 packets[0] = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
@@ -1426,7 +1429,7 @@ public class PacketsManager {
                         ItemStack heldItem = packets[0].getItemModifier().read(0);
                         if (heldItem != null && heldItem.getType() != Material.AIR) {
                             // Convert the datawatcher
-                            List<WrappedWatchableObject> list = new ArrayList<WrappedWatchableObject>();
+                            List<WrappedWatchableObject> list = new ArrayList<>();
                             if (DisguiseConfig.isMetadataPacketsEnabled()) {
                                 list.add(new WrappedWatchableObject(0, WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
                                 list = disguise.getWatcher().convert(list);

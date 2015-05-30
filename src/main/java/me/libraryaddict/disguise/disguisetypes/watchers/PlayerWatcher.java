@@ -23,6 +23,7 @@ public class PlayerWatcher extends LivingWatcher {
         super(disguise);
     }
 
+    @Override
     public PlayerWatcher clone(Disguise disguise) {
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);
         watcher.isInBed = isInBed;
@@ -126,9 +127,9 @@ public class PlayerWatcher extends LivingWatcher {
     private void setValue16(int i, boolean flag) {
         byte b0 = (Byte) getValue(16, (byte) 0);
         if (flag) {
-            setValue(16, Byte.valueOf((byte) (b0 | 1 << i)));
+            setValue(16, (byte) (b0 | 1 << i));
         } else {
-            setValue(16, Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))));
+            setValue(16, (byte) (b0 & (1 << i ^ 0xFFFFFFFF)));
         }
     }
 

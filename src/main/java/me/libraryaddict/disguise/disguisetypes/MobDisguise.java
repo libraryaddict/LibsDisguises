@@ -50,10 +50,12 @@ public class MobDisguise extends TargetedDisguise {
         this.setReplaceSounds(replaceSounds);
     }
 
+    @Override
     public MobDisguise addPlayer(Player player) {
         return (MobDisguise) super.addPlayer(player);
     }
 
+    @Override
     public MobDisguise addPlayer(String playername) {
         return (MobDisguise) super.addPlayer(playername);
     }
@@ -93,18 +95,22 @@ public class MobDisguise extends TargetedDisguise {
         return isAdult;
     }
 
+    @Override
     public boolean isMobDisguise() {
         return true;
     }
 
+    @Override
     public MobDisguise removePlayer(Player player) {
         return (MobDisguise) super.removePlayer(player);
     }
 
+    @Override
     public MobDisguise removePlayer(String playername) {
         return (MobDisguise) super.removePlayer(playername);
     }
 
+    @Override
     public MobDisguise setDisguiseTarget(TargetType newTargetType) {
         return (MobDisguise) super.setDisguiseTarget(newTargetType);
     }
@@ -114,54 +120,67 @@ public class MobDisguise extends TargetedDisguise {
         return (MobDisguise) super.setEntity(entity);
     }
 
+    @Override
     public MobDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
         return (MobDisguise) super.setHearSelfDisguise(hearSelfDisguise);
     }
 
+    @Override
     public MobDisguise setHideArmorFromSelf(boolean hideArmor) {
         return (MobDisguise) super.setHideArmorFromSelf(hideArmor);
     }
 
+    @Override
     public MobDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         return (MobDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
     }
 
+    @Override
     public MobDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
     }
 
+    @Override
     public MobDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
     }
 
+    @Override
     public MobDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
+    @Override
     public MobDisguise setModifyBoundingBox(boolean modifyBox) {
         return (MobDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
+    @Override
     public MobDisguise setReplaceSounds(boolean areSoundsReplaced) {
         return (MobDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
+    @Override
     public MobDisguise setVelocitySent(boolean sendVelocity) {
         return (MobDisguise) super.setVelocitySent(sendVelocity);
     }
 
+    @Override
     public MobDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (MobDisguise) super.setViewSelfDisguise(viewSelfDisguise);
     }
 
+    @Override
     public MobDisguise setWatcher(FlagWatcher newWatcher) {
         return (MobDisguise) super.setWatcher(newWatcher);
     }
 
+    @Override
     public MobDisguise silentlyAddPlayer(String playername) {
         return (MobDisguise) super.silentlyAddPlayer(playername);
     }
 
+    @Override
     public MobDisguise silentlyRemovePlayer(String playername) {
         return (MobDisguise) super.silentlyRemovePlayer(playername);
     }

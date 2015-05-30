@@ -105,10 +105,12 @@ public class MiscDisguise extends TargetedDisguise {
         this(DisguiseType.getType(disguiseType), id, data);
     }
 
+    @Override
     public MiscDisguise addPlayer(Player player) {
         return (MiscDisguise) super.addPlayer(player);
     }
 
+    @Override
     public MiscDisguise addPlayer(String playername) {
         return (MiscDisguise) super.addPlayer(playername);
     }
@@ -153,18 +155,22 @@ public class MiscDisguise extends TargetedDisguise {
         return id;
     }
 
+    @Override
     public boolean isMiscDisguise() {
         return true;
     }
 
+    @Override
     public MiscDisguise removePlayer(Player player) {
         return (MiscDisguise) super.removePlayer(player);
     }
 
+    @Override
     public MiscDisguise removePlayer(String playername) {
         return (MiscDisguise) super.removePlayer(playername);
     }
 
+    @Override
     public MiscDisguise setDisguiseTarget(TargetType newTargetType) {
         return (MiscDisguise) super.setDisguiseTarget(newTargetType);
     }
@@ -174,54 +180,67 @@ public class MiscDisguise extends TargetedDisguise {
         return (MiscDisguise) super.setEntity(entity);
     }
 
+    @Override
     public MiscDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
         return (MiscDisguise) super.setHearSelfDisguise(hearSelfDisguise);
     }
 
+    @Override
     public MiscDisguise setHideArmorFromSelf(boolean hideArmor) {
         return (MiscDisguise) super.setHideArmorFromSelf(hideArmor);
     }
 
+    @Override
     public MiscDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         return (MiscDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
     }
 
+    @Override
     public MiscDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         return (MiscDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
     }
 
+    @Override
     public MiscDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (MiscDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
     }
 
+    @Override
     public MiscDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (MiscDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
+    @Override
     public MiscDisguise setModifyBoundingBox(boolean modifyBox) {
         return (MiscDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
+    @Override
     public MiscDisguise setReplaceSounds(boolean areSoundsReplaced) {
         return (MiscDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
+    @Override
     public MiscDisguise setVelocitySent(boolean sendVelocity) {
         return (MiscDisguise) super.setVelocitySent(sendVelocity);
     }
 
+    @Override
     public MiscDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (MiscDisguise) super.setViewSelfDisguise(viewSelfDisguise);
     }
 
+    @Override
     public MiscDisguise setWatcher(FlagWatcher newWatcher) {
         return (MiscDisguise) super.setWatcher(newWatcher);
     }
 
+    @Override
     public MiscDisguise silentlyAddPlayer(String playername) {
         return (MiscDisguise) super.silentlyAddPlayer(playername);
     }
 
+    @Override
     public MiscDisguise silentlyRemovePlayer(String playername) {
         return (MiscDisguise) super.silentlyRemovePlayer(playername);
     }

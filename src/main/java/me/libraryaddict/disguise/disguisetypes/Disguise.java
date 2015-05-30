@@ -183,6 +183,7 @@ public abstract class Disguise {
             private int deadTicks = 0;
             private int refreshDisguise = 0;
 
+            @Override
             public void run() {
                 // If entity is no longer valid. Remove it.
                 if (!getEntity().isValid()) {
@@ -735,6 +736,7 @@ public abstract class Disguise {
                 DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 // If he is a player, then self disguise himself
                 Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.instance, new Runnable() {
+                    @Override
                     public void run() {
                         DisguiseUtilities.setupFakeDisguise(Disguise.this);
                     }

@@ -45,7 +45,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
-        ArrayList<String> allowedDisguises = new ArrayList<String>();
+        ArrayList<String> allowedDisguises = new ArrayList<>();
         for (DisguiseType type : hashMap.keySet()) {
             allowedDisguises.add(type.toReadable().replace(" ", "_"));
         }
@@ -65,7 +65,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         case SPLASH_POTION:
         case FISHING_HOOK:
         case DROPPED_ITEM:
-            HashMap<String, Boolean> returns = new HashMap<String, Boolean>();
+            HashMap<String, Boolean> returns = new HashMap<>();
             String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
             for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
                 String lowerPerm = permission.getPermission().toLowerCase();
@@ -82,7 +82,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             }
             return returns;
         default:
-            return new HashMap<String, Boolean>();
+            return new HashMap<>();
         }
     }
 
@@ -108,8 +108,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * @return 
      */
     protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender, String permissionNode) {
-
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<>();
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> rangeDisguises = new HashMap<>();
         HashMap<String, Boolean> perms = new HashMap<>();
 
@@ -142,7 +141,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     if (singleDisguises.containsKey(dType)) {
                         list = singleDisguises.get(dType);
                     } else {
-                        list = new HashMap<ArrayList<String>, Boolean>();
+                        list = new HashMap<>();
                         singleDisguises.put(dType, list);
                     }
                     HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
@@ -179,7 +178,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             if (rangeDisguises.containsKey(type)) {
                                 list = rangeDisguises.get(type);
                             } else {
-                                list = new HashMap<ArrayList<String>, Boolean>();
+                                list = new HashMap<>();
                                 rangeDisguises.put(type, list);
                             }
                             HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
@@ -237,9 +236,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 }
             }
         }
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = new HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>>();
+        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = new HashMap<>();
         for (DisguiseType type : DisguiseType.values()) {
-            HashMap<ArrayList<String>, Boolean> temp = new HashMap<ArrayList<String>, Boolean>();
+            HashMap<ArrayList<String>, Boolean> temp = new HashMap<>();
             if (singleDisguises.containsKey(type)) {
                 temp.putAll(singleDisguises.get(type));
             }
@@ -254,7 +253,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     private HashMap<ArrayList<String>, Boolean> getOptions(String perm) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         boolean isRemove = true;
         String[] split = perm.split("\\.");
         for (int i = 1; i < split.length; i++) {
@@ -268,7 +267,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 option = "setbaby";
             list.add(option);
         }
-        HashMap<ArrayList<String>, Boolean> options = new HashMap<ArrayList<String>, Boolean>();
+        HashMap<ArrayList<String>, Boolean> options = new HashMap<>();
         options.put(list, isRemove);
         return options;
     }
@@ -295,9 +294,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
      * disguise has been feed a proper disguisetype.
+     * @param sender
+     * @param args
+     * @param map
+     * @return 
+     * @throws me.libraryaddict.disguise.utilities.BaseDisguiseCommand.DisguiseParseException 
+     * @throws java.lang.IllegalAccessException 
+     * @throws java.lang.reflect.InvocationTargetException 
      */
-    protected Disguise parseDisguise(CommandSender sender, String[] args,
-            HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
+    protected Disguise parseDisguise(CommandSender sender, String[] args, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
             IllegalAccessException, InvocationTargetException {
         if (map.isEmpty()) {
             throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
@@ -310,7 +315,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         // Time to start constructing the disguise.
         // We will need to check between all 3 kinds of disguises
         int toSkip = 1;
-        ArrayList<String> usedOptions = new ArrayList<String>();
+        ArrayList<String> usedOptions = new ArrayList<>();
         Disguise disguise = null;
         HashMap<ArrayList<String>, Boolean> optionPermissions;
         if (args[0].startsWith("@")) {
