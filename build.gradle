@@ -5,7 +5,7 @@ plugins {
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 
 sourceCompatibility = '1.7'
-ext.spigotVersion = '1.8.6-R0.1-SNAPSHOT'
+ext.spigotVersion = '1.8.7-R0.1-SNAPSHOT'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
