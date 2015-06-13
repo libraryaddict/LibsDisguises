@@ -49,7 +49,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -1271,7 +1270,6 @@ public class PacketsManager {
     public static PacketContainer[][] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
         PacketContainer[] packets = null;
         PacketContainer[] delayedPackets = new PacketContainer[0];
-        MinecraftReflection.getAttributeSnapshotClass();
         try {
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
             // If disguised.
