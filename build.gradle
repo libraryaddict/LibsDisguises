@@ -13,6 +13,8 @@ println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 sourceCompatibility = '1.7'
 ext.spigotVersion = '1.8.7-R0.1-SNAPSHOT'
 
+ext.disguisesVersion = '8.5.1'
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
@@ -40,7 +42,7 @@ task sourceJar (type : Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-task javadocJar (type: Jar, dependsOn: javadoc) { // (1)
+task javadocJar (type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -60,12 +62,12 @@ publishing {
         mavenJava(MavenPublication) {
             groupId 'LibsDisguises'
             artifactId 'LibsDisguises'
-            version '8.5-SNAPSHOT'
+            version disguisesVersion + '-SNAPSHOT'
             from components.java
-            artifact (sourceJar) {
+            artifact sourceJar {
                 classifier = 'sources'
             }
-            artifact (javadocJar) {
+            artifact javadocJar {
                 classifier = 'javadoc'
             }
         }
@@ -84,7 +86,7 @@ artifactory {
       }
       defaults {
         publications('mavenJava')
-        }
+      }
     }
     resolve {  
       repoKey = 'repo'

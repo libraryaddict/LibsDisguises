@@ -320,13 +320,12 @@ public class PacketsManager {
             mods.write(9, pitch);
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
-
         } else if (disguise.getType().isMisc()) {
             MiscDisguise msc = (MiscDisguise)disguise;
             int id = disguise.getType().getEntityId();
             int data = msc.getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = msc.getData(); //No data values for now, switch to NBT only has been painful
+                data = msc.getId()  + (msc.getData() << 12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
