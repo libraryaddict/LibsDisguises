@@ -4,6 +4,7 @@ import java.nio.file.Path
 
 plugins {
   id 'java'
+  id "com.jfrog.artifactory" version "3.1.1"
 }
 
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
@@ -30,6 +31,24 @@ repositories {
     maven {
         name 'shadowvolt-repo'
         url 'http://ci.shadowvolt.com/plugin/repository/everything'
+    }
+}
+
+artifactory {
+    contextUrl = 'http://localhost:8081/artifactory'
+    publish {
+      repository {
+        repoKey = 'libs-release-local'
+        username = 'admin'
+        password = 'AP8CX2wEWG8bxfMkUxnycYxQF4s9rttomEXr62'
+      }
+    }
+    resolve {  
+      repository {
+        repoKey = 'repo'
+        username = 'admin'
+        password = 'AP8CX2wEWG8bxfMkUxnycYxQF4s9rttomEXr62'
+      }
     }
 }
 
