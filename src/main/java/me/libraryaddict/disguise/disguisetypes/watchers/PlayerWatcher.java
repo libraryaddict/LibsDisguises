@@ -82,6 +82,8 @@ public class PlayerWatcher extends LivingWatcher {
 
     /**
      * If no BlockFace is supplied. It grabs it from the entities facing direction if applicable.
+     * @param sleeping
+     * @param sleepingDirection
      */
     public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
         if (sleepingDirection != null) {

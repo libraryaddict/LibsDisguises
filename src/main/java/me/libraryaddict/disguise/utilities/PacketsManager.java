@@ -117,6 +117,10 @@ public class PacketsManager {
     
     /**
      * Construct the packets I need to spawn in the disguise
+     * @param player
+     * @param disguise
+     * @param disguisedEntity
+     * @return 
      */
     public static PacketContainer[][] constructSpawnPackets(final Player player, Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
@@ -213,7 +217,6 @@ public class PacketsManager {
             mods.write(5, pitch);
 
         } else if (disguise.getType().isPlayer()) {
-
             spawnPackets[0] = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
             StructureModifier<String> stringMods = spawnPackets[0].getStrings();
             WrappedGameProfile gameProfile;
@@ -285,7 +288,6 @@ public class PacketsManager {
             delayedPackets = new PacketContainer[] { delayedPacket };
 
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-
             DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
@@ -324,7 +326,7 @@ public class PacketsManager {
             int id = disguise.getType().getEntityId();
             int data = msc.getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = msc.getId() + (data << 0x12);
+                data = msc.getData(); //No data values for now
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
@@ -526,6 +528,7 @@ public class PacketsManager {
 
     /**
      * Creates the packet listeners
+     * @param plugin
      */
     public static void init(LibsDisguises plugin) {
         libsDisguises = plugin;

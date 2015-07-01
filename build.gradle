@@ -1,3 +1,7 @@
+
+import java.nio.file.*
+import java.nio.file.Path
+
 plugins {
   id 'java'
 }
@@ -27,19 +31,6 @@ repositories {
         name 'shadowvolt-repo'
         url 'http://ci.shadowvolt.com/plugin/repository/everything'
     }
-}
-
-tasks.build.doLast {
-    File export = file('build/libs/LibsDisguises.jar')
-    File dest = file('dist')
-    dest.mkdir()
-    dest.listFiles().each {
-        it.delete()
-    }
-    export.renameTo(new File(dest, "LibsDisguises.jar"))
-    file('build').delete()
-    println "Copied LibsDisguises.jar into /dist"
-    println "LibsDisguises is finished compiling, have a nice day!"
 }
 
 file('libs').mkdirs()
