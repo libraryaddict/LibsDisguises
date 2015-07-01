@@ -35,6 +35,26 @@ repositories {
     }
 }
 
+task sourceJar (type : Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) { // (1)
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+jar {
+    baseName "LibsDisguises"
+}
+
+artifacts {
+    archives sourceJar
+    archives javadocJar
+    archives jar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -42,6 +62,12 @@ publishing {
             artifactId 'LibsDisguises'
             version '8.5-SNAPSHOT'
             from components.java
+            artifact (sourceJar) {
+                classifier = 'sources'
+            }
+            artifact (javadocJar) {
+                classifier = 'javadoc'
+            }
         }
     }
 }
@@ -69,10 +95,6 @@ file('libs').mkdirs()
 
 //Retrieves spigot.jar server file from link
 ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
-
-jar {
-    baseName "LibsDisguises"
-}
 
 dependencies {
     compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
