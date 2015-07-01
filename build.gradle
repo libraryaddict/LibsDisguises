@@ -4,6 +4,7 @@ import java.nio.file.Path
 
 plugins {
   id 'java'
+  id 'maven-publish'
   id "com.jfrog.artifactory" version "3.1.1"
 }
 
@@ -34,6 +35,17 @@ repositories {
     }
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'LibsDisguises'
+            artifactId 'LibsDisguises'
+            version '8.5-SNAPSHOT'
+            from components.java
+        }
+    }
+}
+
 artifactoryPublish.skip = false
 
 artifactory {
@@ -44,6 +56,9 @@ artifactory {
         username = '${artifactory_user}'
         password = '${artifactory_password}'
       }
+      defaults {
+        publications('mavenJava')
+        }
     }
     resolve {  
       repoKey = 'repo'
