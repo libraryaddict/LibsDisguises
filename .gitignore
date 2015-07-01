@@ -20,6 +20,7 @@ build
 libs
 dist
 .gradle
+gradle.properties
 
 # External tool builders
 .externalToolBuilders/
