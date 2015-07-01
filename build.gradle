@@ -34,21 +34,19 @@ repositories {
     }
 }
 
+artifactoryPublish.skip = false
+
 artifactory {
     contextUrl = 'http://localhost:8081/artifactory'
     publish {
       repository {
-        repoKey = 'libs-release-local'
-        username = 'admin'
-        password = 'AP8CX2wEWG8bxfMkUxnycYxQF4s9rttomEXr62'
+        repoKey = 'libs-snapshot-local'
+        username = '${artifactory_user}'
+        password = '${artifactory_password}'
       }
     }
     resolve {  
-      repository {
-        repoKey = 'repo'
-        username = 'admin'
-        password = 'AP8CX2wEWG8bxfMkUxnycYxQF4s9rttomEXr62'
-      }
+      repoKey = 'repo'
     }
 }
 
