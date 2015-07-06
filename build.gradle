@@ -32,8 +32,8 @@ repositories {
     }
     
     maven {
-        name 'shadowvolt-repo'
-        url 'http://ci.shadowvolt.com/plugin/repository/everything'
+        name 'dmulloy2-repo'
+        url 'http://repo.dmulloy2.net/content/groups/public/'
     }
 }
 
@@ -100,7 +100,7 @@ ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: 
 
 dependencies {
     compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
-    compile 'com.comphenix.protocol:ProtocolLib:3.6.3-SNAPSHOT'
+    compile 'com.comphenix.protocol:ProtocolLib:3.6.4-SNAPSHOT'
     compile files(
         'libs/spigot.jar'
     )
