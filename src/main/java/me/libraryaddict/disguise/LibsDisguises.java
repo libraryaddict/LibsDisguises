@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import com.comphenix.protocol.reflect.FieldAccessException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -31,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.libraryaddict.disguise.utilities.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.Metrics;
 import org.bukkit.event.HandlerList;
 
@@ -87,7 +89,7 @@ public class LibsDisguises extends JavaPlugin {
             if (disguiseType.getEntityType() == null) {
                 continue;
             }
-            Class watcherClass = null;
+            Class watcherClass;
             try {
                 switch (disguiseType) {
                 case MINECART_CHEST:
@@ -125,14 +127,18 @@ public class LibsDisguises extends JavaPlugin {
             } catch (ClassNotFoundException ex) {
                 // There is no explicit watcher for this entity.
                 Class entityClass = disguiseType.getEntityType().getEntityClass();
-                if (Tameable.class.isAssignableFrom(entityClass)) {
-                    watcherClass = TameableWatcher.class;
-                } else if (Ageable.class.isAssignableFrom(entityClass)) {
-                    watcherClass = AgeableWatcher.class;
-                } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
-                    watcherClass = LivingWatcher.class;
+                if (entityClass != null) {
+                    if (Tameable.class.isAssignableFrom(entityClass)) {
+                        watcherClass = TameableWatcher.class;
+                    } else if (Ageable.class.isAssignableFrom(entityClass)) {
+                        watcherClass = AgeableWatcher.class;
+                    } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
+                        watcherClass = LivingWatcher.class;
+                    } else {
+                        watcherClass = FlagWatcher.class;
+                    }
                 } else {
-                    watcherClass = FlagWatcher.class;
+                    watcherClass = FlagWatcher.class; //Disguise is unknown type
                 }
             }
             disguiseType.setWatcherClass(watcherClass);
@@ -182,6 +188,15 @@ public class LibsDisguises extends JavaPlugin {
                 break;
             }
             try {
+                if (nmsEntityName.equalsIgnoreCase("Unknown")) {
+                    DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
+                    disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
+                    DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+                    if (sound != null) {
+                        sound.setDamageAndIdleSoundVolume(1f);
+                    }
+                    continue;
+                }
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
                 if (nmsEntity == null) {
                     continue;
@@ -201,14 +216,14 @@ public class LibsDisguises extends JavaPlugin {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..
 
-                    // System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
-                    // + (watch.getValue() == null ? "null" : watch.getValue().getClass()) + ", Value: " + watch.getValue());
+//                    System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
+//                     + (watch.getValue() == null ? "null" : watch.getValue().getClass()) + ", Value: " + watch.getValue());
                 }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
                     if (soundStrength != null) {
-                        sound.setDamageAndIdleSoundVolume((Float) soundStrength);
+                        sound.setDamageAndIdleSoundVolume(soundStrength);
                     }
                 }
 
@@ -222,7 +237,7 @@ public class LibsDisguises extends JavaPlugin {
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 }
                 disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
-            } catch (Exception ex) {
+            } catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
                 System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name()
                         + "!");
                 System.out.print("[LibsDisguises] Before reporting this error, "

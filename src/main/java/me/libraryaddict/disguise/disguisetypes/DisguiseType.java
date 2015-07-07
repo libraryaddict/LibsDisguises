@@ -147,8 +147,10 @@ public enum DisguiseType {
 
     ZOMBIE,
 
-    ZOMBIE_VILLAGER;
-
+    ZOMBIE_VILLAGER,
+    
+    UNKNOWN;
+    
     private static Method isVillager, getVariant, getSkeletonType, isElder;
 
     static {
@@ -253,7 +255,7 @@ public enum DisguiseType {
         try {
             return valueOf(entityType.name().toUpperCase());
         } catch (Throwable ex) {
-            return null;
+            return DisguiseType.UNKNOWN;
         }
     }
 
@@ -314,6 +316,10 @@ public enum DisguiseType {
 
     public boolean isPlayer() {
         return this == DisguiseType.PLAYER;
+    }
+    
+    public boolean isUnknown() {
+        return this == DisguiseType.UNKNOWN;
     }
 
     private void setEntityType(EntityType entityType) {

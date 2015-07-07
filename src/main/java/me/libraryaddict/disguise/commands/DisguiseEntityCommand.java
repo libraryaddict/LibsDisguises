@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +30,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
                 sender.sendMessage(ex.getMessage());
             }
             return true;
-        } catch (Exception ex) {
+        } catch (IllegalAccessException | InvocationTargetException ex) {
             ex.printStackTrace(System.out);
             return true;
         }

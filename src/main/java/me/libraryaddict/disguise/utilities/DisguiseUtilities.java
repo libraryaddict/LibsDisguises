@@ -970,6 +970,7 @@ public class DisguiseUtilities {
 
     /**
      * Setup it so he can see himself when disguised
+     * @param disguise
      */
     public static void setupFakeDisguise(final Disguise disguise) {
         Entity e = disguise.getEntity();

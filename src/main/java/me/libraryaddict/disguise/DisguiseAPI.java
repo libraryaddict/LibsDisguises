@@ -189,6 +189,8 @@ public class DisguiseAPI {
 
     /**
      * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
+     * @param disguise
+     * @return 
      */
     public static int disguiseNextEntity(Disguise disguise) {
         if (disguise == null)
@@ -202,7 +204,7 @@ public class DisguiseAPI {
             int id = field.getInt(null);
             DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
             return id;
-        } catch (Exception ex) {
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             ex.printStackTrace(System.out);
         }
         return -1;
@@ -210,6 +212,8 @@ public class DisguiseAPI {
 
     /**
      * Disguise this entity with this disguise
+     * @param entity
+     * @param disguise
      */
     public static void disguiseToAll(Entity entity, Disguise disguise) {
         if (disguise.getEntity() != null) {

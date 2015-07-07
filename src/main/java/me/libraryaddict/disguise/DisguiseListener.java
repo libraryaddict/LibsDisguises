@@ -197,7 +197,7 @@ public class DisguiseListener implements Listener {
             event.setCancelled(true);
             disguiseRunnable.remove(p.getName()).cancel();
             Entity entity = event.getRightClicked();
-            String entityName = "";
+            String entityName;
             if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
                 entityName = ((Player) entity).getName();
             } else {

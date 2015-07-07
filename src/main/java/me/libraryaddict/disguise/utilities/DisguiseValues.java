@@ -52,6 +52,7 @@ public class DisguiseValues {
     private HashMap<Integer, Object> metaValues = new HashMap<>();
     private Class nmsEntityClass;
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public DisguiseValues(DisguiseType type, Class classType, int entitySize, double maxHealth) {
         values.put(type, this);
         enumEntitySize = entitySize;
