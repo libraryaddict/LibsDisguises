@@ -7,36 +7,47 @@ depend: [ProtocolLib]
 commands:
     libsdisguises:
       permission: libsdisguises.seecmd.libsdisguises
+      description: Main command for libsdisguises.
     disguise:
       aliases: [d, dis]
       permission: libsdisguises.seecmd.disguise
+      description: Disguise yourself as an entity.
     disguiseentity:
       aliases: [dentity, disentity]
       permission: libsdisguises.seecmd.disguiseentity
+      description: Disguise an entity as another entity.
     disguisehelp:
       aliases: [dhelp, dishelp]
       permission: libsdisguises.seecmd.disguisehelp
+      description: Help command for LibsDisguises.
     disguiseplayer:
       aliases: [dplayer, displayer]
       permission: libsdisguises.seecmd.disguiseplayer
+      description: Disguise another player as an entity.
     disguiseradius:
       aliases: [disradius, dradius]
       permission: libsdisguises.seecmd.disguiseradius
+      description: Disguise all entities within a radius as an entity.
     undisguise:
       aliases: [u, und, undis]
       permission: libsdisguises.seecmd.undisguise
+      description: Undisguise yourself.
     undisguiseentity:
       aliases: [undisentity, undentity]
       permission: libsdisguises.seecmd.undisguiseentity
+      description: Undisguise an entity.
     undisguiseplayer:
       aliases: [undisplayer, undplayer]
       permission: libsdisguises.seecmd.undisguiseplayer
+      description: Undisguise a player.
     undisguiseradius:
       aliases: [undisradius, undradius]
       permission: libsdisguises.seecmd.undisguiseradius
+      description: Undisguise all entities within a radius.
     disguiseclone:
       aliases: [disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis]
       permission: libsdisguises.seecmd.disguiseclone
+      description: Copy a disguise (or entity) and use it later.
 
 permissions:
     libsdisguises.seethrough:
