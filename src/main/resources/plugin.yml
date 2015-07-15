@@ -1,6 +1,6 @@
 name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
-version: 8.5.2
+version: 8.6
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 depend: [ProtocolLib]
@@ -48,6 +48,10 @@ commands:
       aliases: [disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis]
       permission: libsdisguises.seecmd.disguiseclone
       description: Copy a disguise (or entity) and use it later.
+    disguiseviewself:
+      aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd]
+      permission: libsdisguises.seecmd.viewself
+      description: Toggle seeing your own disguise on or off.
 
 permissions:
     libsdisguises.seethrough:
@@ -68,8 +72,11 @@ permissions:
          libsdisguises.seecmd.undisguiseplayer: true
          libsdisguises.seecmd.undisguiseradius: true
          libsdisguises.seecmd.disguiseclone: true
+         libsdisguises.seecmd.disguiseviewself: true
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
+    libsdisguises.seecmd.disguiseviewself:
+      description: See the /disguiseviewself command in tab-completion
     libsdisguises.seecmd.disguise:
       description: See the /disguise command in tab-completion
     libsdisguises.seecmd.disguiseentity:

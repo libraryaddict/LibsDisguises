@@ -19,6 +19,7 @@ public class DisguiseConfig {
     private static boolean entityStatusEnabled;
     private static boolean equipmentEnabled;
     private static boolean hearSelfDisguise;
+    private static boolean viewSelfDisguise;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
     private static boolean keepDisguiseEntityDespawn;
@@ -68,7 +69,8 @@ public class DisguiseConfig {
     public static void initConfig(ConfigurationSection config) {
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setVelocitySent(config.getBoolean("SendVelocity"));
-        setViewDisguises(config.getBoolean("ViewSelfDisguises"));
+        setViewDisguises(config.getBoolean("ViewSelfDisguises")); //Since we can now toggle, the view disguises listener must always be on
+        PacketsManager.setViewDisguisesListener(true);
         setHearSelfDisguise(config.getBoolean("HearSelfDisguise"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
@@ -216,6 +218,7 @@ public class DisguiseConfig {
 
     /**
      * Is the velocity packets sent
+     * @return 
      */
     public static boolean isVelocitySent() {
         return sendVelocity;
@@ -223,9 +226,10 @@ public class DisguiseConfig {
 
     /**
      * The default value if a player views his own disguise
+     * @return 
      */
     public static boolean isViewDisguises() {
-        return PacketsManager.isViewDisguisesListenerEnabled();
+        return viewSelfDisguise;
     }
 
     public static boolean isWitherSkullPacketsEnabled() {
@@ -404,13 +408,14 @@ public class DisguiseConfig {
 
     /**
      * Disable velocity packets being sent for w/e reason. Maybe you want every ounce of performance you can get?
+     * @param sendVelocityPackets
      */
     public static void setVelocitySent(boolean sendVelocityPackets) {
         sendVelocity = sendVelocityPackets;
     }
 
     public static void setViewDisguises(boolean seeOwnDisguise) {
-        PacketsManager.setViewDisguisesListener(seeOwnDisguise);
+        viewSelfDisguise = seeOwnDisguise;
     }
 
     public static void setWitherSkullPacketsEnabled(boolean enabled) {

@@ -33,6 +33,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import me.libraryaddict.disguise.LibsDisguises;
 
 public abstract class Disguise {
@@ -54,11 +57,14 @@ public abstract class Disguise {
     private FlagWatcher watcher;
     private boolean showName = false;
     
+    private static List<UUID> viewSelf = new ArrayList<>();
+    
     @Override
     public abstract Disguise clone();
 
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
+     * @param newType
      */
     protected void createDisguise(DisguiseType newType) {
         if (getWatcher() != null)
@@ -408,6 +414,7 @@ public abstract class Disguise {
 
     /**
      * Can the disguised view himself as the disguise
+     * @return 
      */
     public boolean isSelfDisguiseVisible() {
         return viewSelfDisguise;
@@ -685,6 +692,7 @@ public abstract class Disguise {
     /**
      * Can the disguised view himself as the disguise
      * 
+     * @param viewSelfDisguise
      * @return
      */
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
@@ -749,5 +757,14 @@ public abstract class Disguise {
 
     public boolean stopDisguise() {
         return removeDisguise();
+    }
+
+    /**
+     * Returns the list of people who have /disguiseViewSelf
+     * toggled on
+     * @return 
+     */
+    public static List<UUID> getViewSelf() {
+        return viewSelf;
     }
 }

@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.UUID;
+import me.libraryaddict.disguise.DisguiseConfig;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -41,9 +44,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         public DisguiseParseException(String string) {
             super(string);
         }
-
     }
-
+    
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
         ArrayList<String> allowedDisguises = new ArrayList<>();
         for (DisguiseType type : hashMap.keySet()) {

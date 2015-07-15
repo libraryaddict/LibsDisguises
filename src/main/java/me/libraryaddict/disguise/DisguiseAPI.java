@@ -156,6 +156,9 @@ public class DisguiseAPI {
             // Set the disguise's entity
             disguise.setEntity(entity);
         }
+        if (Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId())) {
+            disguise.setViewSelfDisguise(true);
+        }
         disguise.startDisguise();
     }
 
@@ -265,6 +268,8 @@ public class DisguiseAPI {
 
     /**
      * Get the disguise of a entity
+     * @param disguised
+     * @return 
      */
     public static Disguise getDisguise(Entity disguised) {
         if (disguised == null)
@@ -274,6 +279,9 @@ public class DisguiseAPI {
 
     /**
      * Get the disguise of a entity
+     * @param observer
+     * @param disguised
+     * @return 
      */
     public static Disguise getDisguise(Player observer, Entity disguised) {
         if (disguised == null || observer == null)
@@ -283,6 +291,8 @@ public class DisguiseAPI {
 
     /**
      * Get the disguises of a entity
+     * @param disguised
+     * @return 
      */
     public static Disguise[] getDisguises(Entity disguised) {
         if (disguised == null)
@@ -292,6 +302,8 @@ public class DisguiseAPI {
 
     /**
      * Get the ID of a fake disguise for a entityplayer
+     * @param entityId
+     * @return 
      */
     @Deprecated
     public static int getFakeDisguise(UUID entityId) {
@@ -304,6 +316,8 @@ public class DisguiseAPI {
 
     /**
      * Is this entity disguised
+     * @param disguised
+     * @return 
      */
     public static boolean isDisguised(Entity disguised) {
         return getDisguise(disguised) != null;
@@ -311,6 +325,9 @@ public class DisguiseAPI {
 
     /**
      * Is this entity disguised
+     * @param observer
+     * @param disguised
+     * @return 
      */
     public static boolean isDisguised(Player observer, Entity disguised) {
         return getDisguise(observer, disguised) != null;
@@ -323,15 +340,45 @@ public class DisguiseAPI {
     public static boolean isSelfDisguised(Player player) {
         return DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId());
     }
+    
+    /**
+     * Returns true if the entitiy has /disguiseviewself toggled
+     * on.
+     * @param entity
+     * @return 
+     */
+    public static boolean isViewSelfToggled(Entity entity) {
+        return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() : Disguise.getViewSelf().contains(entity.getUniqueId());
+    }
 
     /**
      * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka removed from
      * the world.
+     * @param entity
      */
     public static void undisguiseToAll(Entity entity) {
         Disguise[] disguises = getDisguises(entity);
         for (Disguise disguise : disguises) {
             disguise.removeDisguise();
+        }
+    }
+    
+    /**
+     * Set whether this player can see his
+     * own disguise or not.
+     * @param entity
+     * @param toggled 
+     */
+    public static void setViewDisguiseToggled(Entity entity, boolean toggled) {
+        if (isDisguised(entity)) {
+            Disguise disguise = getDisguise(entity);
+            disguise.setViewSelfDisguise(toggled);
+        }
+        if (toggled) {
+            if (!Disguise.getViewSelf().contains(entity.getUniqueId()))
+                Disguise.getViewSelf().add(entity.getUniqueId());
+        } else {
+            Disguise.getViewSelf().remove(entity.getUniqueId());
         }
     }
 

@@ -433,6 +433,8 @@ public class DisguiseUtilities {
 
     /**
      * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
+     * @param disguise
+     * @return 
      */
     public static ArrayList<Player> getPerverts(Disguise disguise) {
         ArrayList<Player> players = new ArrayList<>();

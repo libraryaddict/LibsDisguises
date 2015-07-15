@@ -63,6 +63,7 @@ public class LibsDisguises extends JavaPlugin {
         getCommand("disguisehelp").setExecutor(new DisguiseHelpCommand());
         getCommand("disguiseclone").setExecutor(new DisguiseCloneCommand());
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
+        getCommand("disguiseviewself").setExecutor(new DisguiseViewSelf());
         registerValues();
         instance = this;
         try {
