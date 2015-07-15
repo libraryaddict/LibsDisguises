@@ -19,17 +19,13 @@ public class DisguiseViewSelf implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
-        if (sender.hasPermission("libsdisguises.viewself")) {
-            Player player = (Player) sender;
-            if (DisguiseAPI.isViewSelfToggled(player)) {
-                DisguiseAPI.setViewDisguiseToggled(player, false);
-                sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise off!");
-            } else {
-                DisguiseAPI.setViewDisguiseToggled(player, true);
-                sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise on!");
-            }
+        Player player = (Player) sender;
+        if (DisguiseAPI.isViewSelfToggled(player)) {
+            DisguiseAPI.setViewDisguiseToggled(player, false);
+            sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise off!");
         } else {
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+            DisguiseAPI.setViewDisguiseToggled(player, true);
+            sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise on!");
         }
         return true;
     }
