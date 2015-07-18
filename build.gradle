@@ -13,7 +13,7 @@ println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 sourceCompatibility = '1.7'
 ext.spigotVersion = '1.8.7-R0.1-SNAPSHOT'
 
-ext.disguisesVersion = '8.6.1'
+ext.disguisesVersion = '8.6.2'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

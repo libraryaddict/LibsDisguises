@@ -369,6 +369,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                     .get(args[1].toLowerCase()))) {
                         throw new DisguiseParseException(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
+                    args[1] = args[1].replace("\\_", " ");
                     // Construct the player disguise
                     disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
                     toSkip++;
