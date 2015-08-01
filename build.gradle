@@ -11,9 +11,9 @@ plugins {
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 
 sourceCompatibility = '1.7'
-ext.spigotVersion = '1.8.7-R0.1-SNAPSHOT'
+ext.spigotVersion = '1.8.8-R0.1-SNAPSHOT'
 
-ext.disguisesVersion = '8.6.2'
+ext.disguisesVersion = '8.6.3'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -100,7 +100,7 @@ ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: 
 
 dependencies {
     compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
-    compile 'com.comphenix.protocol:ProtocolLib:3.6.4-SNAPSHOT'
+    compile 'com.comphenix.protocol:ProtocolLib:3.6.5-SNAPSHOT'
     compile files(
         'libs/spigot.jar'
     )

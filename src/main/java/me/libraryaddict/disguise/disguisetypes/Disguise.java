@@ -397,8 +397,10 @@ public abstract class Disguise {
 
     /**
      * Internal use
+     * @return 
      */
     public boolean isRemoveDisguiseOnDeath() {
+        if (getEntity() == null) return true;
         return getEntity() instanceof Player ?
 
         (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
