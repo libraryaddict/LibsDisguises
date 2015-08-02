@@ -30,9 +30,9 @@ public class ArmorStandWatcher extends LivingWatcher {
 
     private void set10(int value, boolean isTrue) {
         byte b1 = (Byte) getValue(10, (byte) 0);
-        if (isTrue)
+        if (isTrue) {
             b1 = (byte) (b1 | value);
-        else {
+        } else {
             b1 = (byte) (b1 & value);
         }
         setValue(10, b1);

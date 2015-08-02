@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 public class UpdateChecker {
+
     private String latestVersion;
 
     private boolean checkHigher(String currentVersion, String newVersion) {
@@ -51,8 +52,9 @@ public class UpdateChecker {
     private String toReadable(String version) {
         String[] split = Pattern.compile(".", Pattern.LITERAL).split(version.replace("v", ""));
         version = "";
-        for (String s : split)
+        for (String s : split) {
             version += String.format("%4s", s);
+        }
         return version;
     }
 }

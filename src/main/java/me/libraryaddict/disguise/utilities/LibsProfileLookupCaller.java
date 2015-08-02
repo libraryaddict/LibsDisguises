@@ -6,6 +6,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 
 public class LibsProfileLookupCaller implements ProfileLookupCallback {
+
     private WrappedGameProfile gameProfile;
 
     public WrappedGameProfile getGameProfile() {

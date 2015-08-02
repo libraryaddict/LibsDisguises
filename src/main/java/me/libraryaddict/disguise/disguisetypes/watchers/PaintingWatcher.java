@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class PaintingWatcher extends FlagWatcher {
+
     private Art painting;
 
     public PaintingWatcher(Disguise disguise) {

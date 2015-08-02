@@ -43,7 +43,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
                     return true;
                 }
             }
-            LibsDisguises.instance.getListener().setDisguiseClone(sender.getName(), new Boolean[] { doEquipment, doSneak, doSprint });
+            LibsDisguises.instance.getListener().setDisguiseClone(sender.getName(), new Boolean[]{doEquipment, doSneak, doSprint});
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
                     + " seconds to grab the disguise reference!");
         } else {

@@ -21,6 +21,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class DisguiseRadiusCommand extends BaseDisguiseCommand {
+
     private int maxRadius = 30;
     private ArrayList<Class> validClasses = new ArrayList<>();
 
@@ -111,8 +112,9 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         int disguisedEntitys = 0;
         int miscDisguises = 0;
         for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
-            if (entity == sender)
+            if (entity == sender) {
                 continue;
+            }
             if (type != null ? entity.getType() == type : entityClass.isAssignableFrom(entity.getClass())) {
                 if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
                         && entity instanceof LivingEntity) {
@@ -165,7 +167,7 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
             sender.sendMessage((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional
                     + "> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" + optional + ">").replace("<",
-                    "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">"));
+                            "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">"));
         }
         sender.sendMessage(ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN
                 + "/disguiseradius EntityTypes");

@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class DisguiseConfig {
+
     private static boolean animationEnabled;
     private static boolean bedEnabled;
     private static boolean blowDisguisesOnAttack;
@@ -218,7 +219,8 @@ public class DisguiseConfig {
 
     /**
      * Is the velocity packets sent
-     * @return 
+     *
+     * @return
      */
     public static boolean isVelocitySent() {
         return sendVelocity;
@@ -226,7 +228,8 @@ public class DisguiseConfig {
 
     /**
      * The default value if a player views his own disguise
-     * @return 
+     *
+     * @return
      */
     public static boolean isViewDisguises() {
         return viewSelfDisguise;
@@ -408,6 +411,7 @@ public class DisguiseConfig {
 
     /**
      * Disable velocity packets being sent for w/e reason. Maybe you want every ounce of performance you can get?
+     *
      * @param sendVelocityPackets
      */
     public static void setVelocitySent(boolean sendVelocityPackets) {

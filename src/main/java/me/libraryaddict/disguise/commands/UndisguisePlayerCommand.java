@@ -20,14 +20,18 @@ public class UndisguisePlayerCommand implements CommandExecutor {
                     if (DisguiseAPI.isDisguised(p)) {
                         DisguiseAPI.undisguiseToAll(p);
                         sender.sendMessage(ChatColor.RED + "The player is no longer disguised");
-                    } else
+                    } else {
                         sender.sendMessage(ChatColor.RED + "The player is not disguised!");
-                } else
+                    }
+                } else {
                     sender.sendMessage(ChatColor.RED + "Player not found");
-            } else
+                }
+            } else {
                 sender.sendMessage(ChatColor.RED + "/undisguiseplayer <Name>");
-        } else
+            }
+        } else {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+        }
         return true;
     }
 }

@@ -10,7 +10,9 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.entity.Player;
 
 public abstract class TargetedDisguise extends Disguise {
+
     public enum TargetType {
+
         HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS, SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
     }
 

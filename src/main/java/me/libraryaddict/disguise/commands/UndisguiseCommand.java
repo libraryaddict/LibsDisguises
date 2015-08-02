@@ -21,10 +21,12 @@ public class UndisguiseCommand implements CommandExecutor {
             if (DisguiseAPI.isDisguised((Entity) sender)) {
                 DisguiseAPI.undisguiseToAll((Player) sender);
                 sender.sendMessage(ChatColor.RED + "You are no longer disguised");
-            } else
+            } else {
                 sender.sendMessage(ChatColor.RED + "You are not disguised!");
-        } else
+            }
+        } else {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+        }
         return true;
     }
 }

@@ -13,7 +13,6 @@ import java.util.jar.JarFile;
 /**
  * User: Austin Date: 4/22/13 Time: 11:47 PM (c) lazertester
  */
-
 // Code for this taken and slightly modified from
 // https://github.com/ddopson/java-class-enumerator
 public class ClassGetter {
@@ -59,8 +58,9 @@ public class ClassGetter {
                 }
                 if (className != null) {
                     Class<?> c = loadClass(className);
-                    if (c != null)
+                    if (c != null) {
                         classes.add(c);
+                    }
                 }
             }
         } catch (Exception ex) {

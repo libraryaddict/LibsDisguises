@@ -11,8 +11,9 @@ public class ItemFrameWatcher extends FlagWatcher {
     }
 
     public ItemStack getItem() {
-        if (getValue(2, null) == null)
+        if (getValue(2, null) == null) {
             return new ItemStack(0);
+        }
         return (ItemStack) getValue(8, null);
     }
 
@@ -21,8 +22,9 @@ public class ItemFrameWatcher extends FlagWatcher {
     }
 
     public void setItem(ItemStack newItem) {
-        if (newItem == null)
+        if (newItem == null) {
             newItem = new ItemStack(0);
+        }
         newItem = newItem.clone();
         newItem.setAmount(1);
         setValue(8, newItem);

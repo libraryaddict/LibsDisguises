@@ -62,10 +62,12 @@ public class DisguiseCommand extends BaseDisguiseCommand {
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise to become the disguise!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
                 + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
-        if (allowedDisguises.contains("player"))
+        if (allowedDisguises.contains("player")) {
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguise player <Name>");
+        }
         sender.sendMessage(ChatColor.DARK_GREEN + "/disguise <DisguiseType> <Baby>");
-        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block"))
+        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguiseplayer <Dropped_Item/Falling_Block> <Id> <Durability>");
+        }
     }
 }

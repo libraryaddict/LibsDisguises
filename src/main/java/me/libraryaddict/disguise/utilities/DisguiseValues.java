@@ -10,28 +10,28 @@ public class DisguiseValues {
 
     public static DisguiseValues getDisguiseValues(DisguiseType type) {
         switch (type) {
-        case DONKEY:
-        case MULE:
-        case UNDEAD_HORSE:
-        case SKELETON_HORSE:
-            type = DisguiseType.HORSE;
-            break;
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_TNT:
-        case MINECART_MOB_SPAWNER:
-            type = DisguiseType.MINECART;
-            break;
-        case WITHER_SKELETON:
-            type = DisguiseType.SKELETON;
-            break;
-        case ZOMBIE_VILLAGER:
-            type = DisguiseType.ZOMBIE;
-            break;
-        default:
-            break;
+            case DONKEY:
+            case MULE:
+            case UNDEAD_HORSE:
+            case SKELETON_HORSE:
+                type = DisguiseType.HORSE;
+                break;
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_TNT:
+            case MINECART_MOB_SPAWNER:
+                type = DisguiseType.MINECART;
+                break;
+            case WITHER_SKELETON:
+                type = DisguiseType.SKELETON;
+                break;
+            case ZOMBIE_VILLAGER:
+                type = DisguiseType.ZOMBIE;
+                break;
+            default:
+                break;
         }
         return values.get(type);
     }
@@ -76,38 +76,38 @@ public class DisguiseValues {
         double d = paramDouble - (((int) Math.floor(paramDouble)) + 0.5D);
 
         switch (enumEntitySize) {
-        case 1:
-            if (d < 0.0D ? d < -0.3125D : d < 0.3125D) {
+            case 1:
+                if (d < 0.0D ? d < -0.3125D : d < 0.3125D) {
+                    return (int) Math.ceil(paramDouble * 32.0D);
+                }
+
+                return (int) Math.floor(paramDouble * 32.0D);
+            case 2:
+                if (d < 0.0D ? d < -0.3125D : d < 0.3125D) {
+                    return (int) Math.floor(paramDouble * 32.0D);
+                }
+
                 return (int) Math.ceil(paramDouble * 32.0D);
-            }
+            case 3:
+                if (d > 0.0D) {
+                    return (int) Math.floor(paramDouble * 32.0D);
+                }
 
-            return (int) Math.floor(paramDouble * 32.0D);
-        case 2:
-            if (d < 0.0D ? d < -0.3125D : d < 0.3125D) {
-                return (int) Math.floor(paramDouble * 32.0D);
-            }
-
-            return (int) Math.ceil(paramDouble * 32.0D);
-        case 3:
-            if (d > 0.0D) {
-                return (int) Math.floor(paramDouble * 32.0D);
-            }
-
-            return (int) Math.ceil(paramDouble * 32.0D);
-        case 4:
-            if (d < 0.0D ? d < -0.1875D : d < 0.1875D) {
                 return (int) Math.ceil(paramDouble * 32.0D);
-            }
+            case 4:
+                if (d < 0.0D ? d < -0.1875D : d < 0.1875D) {
+                    return (int) Math.ceil(paramDouble * 32.0D);
+                }
 
-            return (int) Math.floor(paramDouble * 32.0D);
-        case 5:
-            if (d < 0.0D ? d < -0.1875D : d < 0.1875D) {
                 return (int) Math.floor(paramDouble * 32.0D);
-            }
+            case 5:
+                if (d < 0.0D ? d < -0.1875D : d < 0.1875D) {
+                    return (int) Math.floor(paramDouble * 32.0D);
+                }
 
-            return (int) Math.ceil(paramDouble * 32.0D);
-        default:
-            break;
+                return (int) Math.ceil(paramDouble * 32.0D);
+            default:
+                break;
         }
         if (d > 0.0D) {
             return (int) Math.ceil(paramDouble * 32.0D);

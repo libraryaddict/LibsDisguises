@@ -38,6 +38,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import org.bukkit.entity.Arrow;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DisguiseListener implements Listener {
@@ -66,10 +67,12 @@ public class DisguiseListener implements Listener {
                             Bukkit.getScheduler().runTask(plugin, new Runnable() {
                                 @Override
                                 public void run() {
-                                    for (Player p : Bukkit.getOnlinePlayers())
-                                        if (p.hasPermission(DisguiseConfig.getUpdateNotificationPermission()))
+                                    for (Player p : Bukkit.getOnlinePlayers()) {
+                                        if (p.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
                                             p.sendMessage(String.format(DisguiseConfig.getUpdateMessage(), currentVersion,
                                                     latestVersion));
+                                        }
+                                    }
                                 }
                             });
                         }
@@ -81,7 +84,7 @@ public class DisguiseListener implements Listener {
             // 20 ticks * 60 seconds * 60 minutes * 6 hours
         }
     }
-    
+
     public void cleanup() {
         for (BukkitRunnable r : disguiseRunnable.values()) {
             r.cancel();
@@ -159,6 +162,8 @@ public class DisguiseListener implements Listener {
 
     /**
      * Most likely faster if we don't bother doing checks if he sees a player disguise
+     *
+     * @param event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
@@ -266,8 +271,9 @@ public class DisguiseListener implements Listener {
                     if (DisguiseAPI.isDisguised(entity)) {
                         DisguiseAPI.undisguiseToAll(entity);
                         p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
-                    } else
+                    } else {
                         p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
+                    }
                 }
             }
         }
@@ -278,20 +284,23 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null && event.getTarget() instanceof Player
                 && DisguiseAPI.isDisguised(event.getTarget())) {
             switch (event.getReason()) {
-            case TARGET_ATTACKED_ENTITY:
-            case TARGET_ATTACKED_OWNER:
-            case OWNER_ATTACKED_TARGET:
-            case CUSTOM:
-                break;
-            default:
-                event.setCancelled(true);
-                break;
+                case TARGET_ATTACKED_ENTITY:
+                case TARGET_ATTACKED_OWNER:
+                case OWNER_ATTACKED_TARGET:
+                case CUSTOM:
+                    break;
+                default:
+                    event.setCancelled(true);
+                    break;
             }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTeleport(final PlayerTeleportEvent event) {
+        if (!DisguiseAPI.isDisguised(event.getPlayer())) {
+            return;
+        }
         Location to = event.getTo();
         Location from = event.getFrom();
         if (DisguiseConfig.isBedPacketsEnabled()) {
@@ -301,7 +310,7 @@ public class DisguiseListener implements Listener {
             int z2 = (int) Math.floor(from.getZ() / 16D) - 17;
             if (x1 - (x1 % 8) != x2 - (x2 % 8) || z1 - (z1 % 8) != z2 - (z2 % 8)) {
                 chunkMove(event.getPlayer(), null, from);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                Bukkit.getScheduler().runTask(plugin, new Runnable() {
                     @Override
                     public void run() {
                         if (!event.isCancelled()) {
@@ -318,6 +327,17 @@ public class DisguiseListener implements Listener {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
+        } else {
+            //Stupid hack to fix worldswitch invisibility bug
+            final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
+            final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+            disguise.setViewSelfDisguise(!viewSelfToggled);
+            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    disguise.setViewSelfDisguise(viewSelfToggled);
+                }
+            }, 20L); //I wish I could use lambdas here, so badly
         }
     }
 
@@ -347,6 +367,9 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldSwitch(final PlayerChangedWorldEvent event) {
+        if (!DisguiseAPI.isDisguised(event.getPlayer())) {
+            return;
+        }
         if (DisguiseConfig.isBedPacketsEnabled()) {
             chunkMove(event.getPlayer(), event.getPlayer().getLocation(), null);
         }

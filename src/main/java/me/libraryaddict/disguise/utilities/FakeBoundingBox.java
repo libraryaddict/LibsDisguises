@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 public class FakeBoundingBox {
+
     private double xMod;
     private double yMod;
     private double zMod;

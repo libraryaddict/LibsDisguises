@@ -1,6 +1,6 @@
 name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
-version: 8.6.3
+version: 8.6.4
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 depend: [ProtocolLib]
@@ -54,6 +54,9 @@ commands:
       description: Toggle seeing your own disguise on or off.
 
 permissions:
+    libsdisguises.reload:
+        description: Allows the user to reload LibsDisguises.
+        default: op
     libsdisguises.seethrough:
         description: Allows player to see through disguises.
         default: false
@@ -97,4 +100,3 @@ permissions:
       description: See the /undisguiseradius command in tab-completion
     libsdisguises.seecmd.disguiseclone:
       description: See the /disguiseclone command in tab-completion
-   

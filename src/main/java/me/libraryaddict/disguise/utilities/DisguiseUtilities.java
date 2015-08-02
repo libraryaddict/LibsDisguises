@@ -51,20 +51,20 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 public class DisguiseUtilities {
+
     /**
-     * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of
-     * the plugin to do that.
+     * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of the plugin to do that.
      */
     private static HashSet<String> addedByPlugins = new HashSet<>();
     private static Object bedChunk;
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
-     **/
+     *
+     */
     private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<>();
     /**
-     * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
-     * a max of a second.
+     * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for a max of a second.
      */
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     /**
@@ -99,7 +99,7 @@ public class DisguiseUtilities {
                     ReflectionManager.getNmsClass("IBlockData"));
             Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
             Method setEmitted = chunkSection.getClass().getMethod("b", int.class, int.class, int.class, int.class);
-            for (BlockFace face : new BlockFace[] { BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH }) {
+            for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
                 setType.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), fromLegacyData.invoke(block, face.ordinal()));
                 setSky.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
                 setEmitted.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
@@ -179,8 +179,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure that the
-     * observers in the disguise don't see any other disguise.
+     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure that the observers in the disguise don't see any other disguise.
      */
     public static void checkConflicts(TargetedDisguise disguise, String name) {
         // If the disguise is being used.. Else we may accidentally undisguise something else
@@ -237,7 +236,6 @@ public class DisguiseUtilities {
 
                             // System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
                             // + " on a entity. Removed the old disguise.");
-
                             disguiseItel.remove();
                             d.removeDisguise();
                         }
@@ -258,7 +256,7 @@ public class DisguiseUtilities {
                         entityTrackerEntry);
                 HashSet cloned = (HashSet) trackedPlayers.clone();
                 PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-                destroyPacket.getIntegerArrays().write(0, new int[] { disguise.getEntity().getEntityId() });
+                destroyPacket.getIntegerArrays().write(0, new int[]{disguise.getEntity().getEntityId()});
                 for (Object p : cloned) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
                     if (player == disguise.getEntity() || disguise.canSee(player)) {
@@ -281,7 +279,7 @@ public class DisguiseUtilities {
                 if (disguiseValues.getBabyBox() != null) {
                     if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher()).isBaby())
                             || (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise.getWatcher())
-                                    .isBaby())) {
+                            .isBaby())) {
                         disguiseBox = disguiseValues.getBabyBox();
                     }
                 }
@@ -307,7 +305,7 @@ public class DisguiseUtilities {
     public static PacketContainer[] getBedChunkPacket(Player player, Location newLoc, Location oldLoc) {
         int i = 0;
         PacketContainer[] packets = new PacketContainer[newLoc != null ? 2 + (oldLoc != null ? 1 : 0) : 1];
-        for (Location loc : new Location[] { oldLoc, newLoc }) {
+        for (Location loc : new Location[]{oldLoc, newLoc}) {
             if (loc == null) {
                 continue;
             }
@@ -360,7 +358,7 @@ public class DisguiseUtilities {
         ints.write(1, (int) Math.floor(loc.getX() * 32));
         ints.write(2, (int) Math.floor((PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY()) * 32));
         ints.write(3, (int) Math.floor(loc.getZ() * 32));
-        return new PacketContainer[] { setBed, teleport };
+        return new PacketContainer[]{setBed, teleport};
 
     }
 
@@ -433,8 +431,9 @@ public class DisguiseUtilities {
 
     /**
      * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
+     *
      * @param disguise
-     * @return 
+     * @return
      */
     public static ArrayList<Player> getPerverts(Disguise disguise) {
         ArrayList<Player> players = new ArrayList<>();
@@ -469,7 +468,7 @@ public class DisguiseUtilities {
                 if (DisguiseAPI.isDisguiseInUse(disguise)
                         && (!gameProfile.getName().equals(
                                 disguise.getSkin() != null ? disguise.getSkin() : disguise.getName())
-                                    || !gameProfile.getProperties().isEmpty())) {
+                        || !gameProfile.getProperties().isEmpty())) {
                     disguise.setGameProfile(gameProfile);
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
@@ -478,8 +477,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
-     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
@@ -550,8 +548,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
-     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
@@ -582,14 +579,14 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Please note that in the future when 'DualInt' and the like are removed. This should break.. However, that should be negated
-     * in the future as I'd be able to set the watcher index's as per the spigot version. Instead of checking on the player's
-     * version every single packet..
+     * Please note that in the future when 'DualInt' and the like are removed. This should break.. However, that should be negated in the future as I'd be able to set the watcher index's as per the spigot version. Instead of checking on the player's version every single packet..
      */
     public static List<WrappedWatchableObject> rebuildForVersion(Player player, FlagWatcher watcher,
             List<WrappedWatchableObject> list) {
         if (true) // Use for future protocol compatibility
+        {
             return list;
+        }
         ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<>();
         ArrayList<WrappedWatchableObject> backups = new ArrayList<>();
         for (WrappedWatchableObject obj : list) {
@@ -598,7 +595,7 @@ public class DisguiseUtilities {
                 continue;
             }
             switch (obj.getIndex()) {
-            // TODO: Future version support
+                // TODO: Future version support
             }
         }
         Iterator<WrappedWatchableObject> itel = backups.iterator();
@@ -625,8 +622,9 @@ public class DisguiseUtilities {
                 if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player
                         && ((Player) disguise.getEntity()).getName().equalsIgnoreCase(player)) {
                     removeSelfDisguise((Player) disguise.getEntity());
-                    if (disguise.isSelfDisguiseVisible())
+                    if (disguise.isSelfDisguiseVisible()) {
                         selfDisguised.add(disguise.getEntity().getUniqueId());
+                    }
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
                         @Override
@@ -820,10 +818,10 @@ public class DisguiseUtilities {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(
                         player,
                         ProtocolLibrary
-                                .getProtocolManager()
-                                .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
-                                        WrappedDataWatcher.getEntityWatcher(player), true)
-                                .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
+                        .getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, player.getEntityId(),
+                                WrappedDataWatcher.getEntityWatcher(player), true)
+                        .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
             }
@@ -891,11 +889,11 @@ public class DisguiseUtilities {
             if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player, player.getVehicle())
-                                .createPacket(0, player, player.getVehicle()));
+                        .createPacket(0, player, player.getVehicle()));
             } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
-                                .createPacket(0, player.getPassenger(), player));
+                        .createPacket(0, player.getPassenger(), player));
             }
 
             // Resend the armor
@@ -928,7 +926,7 @@ public class DisguiseUtilities {
                 Object mobEffect = ReflectionManager.createMobEffect(potionEffect);
                 sendSelfPacket(player,
                         manager.createPacketConstructor(PacketType.Play.Server.ENTITY_EFFECT, player.getEntityId(), mobEffect)
-                                .createPacket(player.getEntityId(), mobEffect));
+                        .createPacket(player.getEntityId(), mobEffect));
             }
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
@@ -944,7 +942,7 @@ public class DisguiseUtilities {
         final PacketContainer[] delayed = transformed == null ? null : transformed[1];
         try {
             if (packets == null) {
-                packets = new PacketContainer[] { packet };
+                packets = new PacketContainer[]{packet};
             }
             for (PacketContainer p : packets) {
                 p = p.deepClone();
@@ -972,6 +970,7 @@ public class DisguiseUtilities {
 
     /**
      * Setup it so he can see himself when disguised
+     *
      * @param disguise
      */
     public static void setupFakeDisguise(final Disguise disguise) {

@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class FallingBlockWatcher extends FlagWatcher {
+
     private ItemStack block;
 
     public FallingBlockWatcher(Disguise disguise) {

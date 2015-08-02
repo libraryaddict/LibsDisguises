@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class MiscDisguise extends TargetedDisguise {
+
     private int id = -1, data = 0;
 
     public MiscDisguise(DisguiseType disguiseType) {
@@ -52,31 +53,31 @@ public class MiscDisguise extends TargetedDisguise {
         this.id = getType().getEntityId();
         this.data = getType().getDefaultId();
         switch (disguiseType) {
-        // The only disguises which should use a custom data.
-        case PAINTING:
-            ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, firstParam) % Art.values().length]);
-            break;
-        case FALLING_BLOCK:
-            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, firstParam), 1, (short) Math.max(0,
-                    secondParam)));
-            break;
-        case SPLASH_POTION:
-            ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, firstParam));
-            break;
-        case DROPPED_ITEM:
-            if (firstParam > 0) {
-                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(firstParam, Math.max(0, secondParam)));
-            }
-            break;
-        case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
-        case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
-        case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
-        case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
-        case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
-            this.data = firstParam;
-            break;
-        default:
-            break;
+            // The only disguises which should use a custom data.
+            case PAINTING:
+                ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, firstParam) % Art.values().length]);
+                break;
+            case FALLING_BLOCK:
+                ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, firstParam), 1, (short) Math.max(0,
+                        secondParam)));
+                break;
+            case SPLASH_POTION:
+                ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, firstParam));
+                break;
+            case DROPPED_ITEM:
+                if (firstParam > 0) {
+                    ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(firstParam, Math.max(0, secondParam)));
+                }
+                break;
+            case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
+            case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+            case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+            case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+            case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
+                this.data = firstParam;
+                break;
+            default:
+                break;
         }
     }
 
@@ -134,14 +135,14 @@ public class MiscDisguise extends TargetedDisguise {
      */
     public int getData() {
         switch (getType()) {
-        case FALLING_BLOCK:
-            return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
-        case PAINTING:
-            return ((PaintingWatcher) getWatcher()).getArt().getId();
-        case SPLASH_POTION:
-            return ((SplashPotionWatcher) getWatcher()).getPotionId();
-        default:
-            return data;
+            case FALLING_BLOCK:
+                return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
+            case PAINTING:
+                return ((PaintingWatcher) getWatcher()).getArt().getId();
+            case SPLASH_POTION:
+                return ((SplashPotionWatcher) getWatcher()).getPotionId();
+            default:
+                return data;
         }
     }
 

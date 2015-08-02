@@ -22,7 +22,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 public class DisguiseHelpCommand extends BaseDisguiseCommand {
+
     private class EnumHelp {
+
         private String enumDescription;
         private String enumName;
         private String[] enums;
@@ -81,38 +83,39 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
         try {
             enumHelp.add(new EnumHelp("HorseColor", "Horse colors", ChatColor.RED + "/disguisehelp HorseColors "
                     + ChatColor.GREEN + "- View all the colors you can use for a horses color", (Enum[]) Class.forName(
-                    "org.bukkit.entity.Horse$Color").getEnumConstants()));
+                            "org.bukkit.entity.Horse$Color").getEnumConstants()));
         } catch (Exception ex) {
         }
         try {
             enumHelp.add(new EnumHelp("HorseStyle", "Horse styles", ChatColor.RED + "/disguisehelp HorseStyles "
                     + ChatColor.GREEN + "- View all the styles you can use for a horses style", (Enum[]) Class.forName(
-                    "org.bukkit.entity.Horse$Style").getEnumConstants()));
+                            "org.bukkit.entity.Horse$Style").getEnumConstants()));
         } catch (Exception ex) {
         }
         try {
             enumHelp.add(new EnumHelp("OcelotType", "Ocelot types", ChatColor.RED + "/disguisehelp OcelotTypes "
                     + ChatColor.GREEN + "- View all the ocelot types you can use for ocelots", (Enum[]) Class.forName(
-                    "org.bukkit.entity.Ocelot$Type").getEnumConstants()));
+                            "org.bukkit.entity.Ocelot$Type").getEnumConstants()));
         } catch (Exception ex) {
         }
         try {
             ArrayList<String> enumReturns = new ArrayList<>();
             for (PotionEffectType potionType : PotionEffectType.values()) {
-                if (potionType != null)
+                if (potionType != null) {
                     enumReturns.add(toReadable(potionType.getName()) + ChatColor.RED + "(" + ChatColor.GREEN + potionType.getId()
                             + ChatColor.RED + ")");
+                }
             }
             enumHelp.add(new EnumHelp("PotionEffect", "PotionEffect", ChatColor.RED + "/disguisehelp PotionEffect "
                     + ChatColor.GREEN + "- View all the potion effects you can set", enumReturns.toArray(new String[enumReturns
-                    .size()])));
+                            .size()])));
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
         try {
             enumHelp.add(new EnumHelp("Profession", "Villager professions", ChatColor.RED + "/disguisehelp Professions "
                     + ChatColor.GREEN + "- View all the professions you can set on a villager", (Enum[]) Class.forName(
-                    "org.bukkit.entity.Villager$Profession").getEnumConstants()));
+                            "org.bukkit.entity.Villager$Profession").getEnumConstants()));
         } catch (Exception ex) {
         }
         enumHelp.add(new EnumHelp("Direction", "Directions", ChatColor.RED + "/disguisehelp Directions " + ChatColor.GREEN
@@ -123,7 +126,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        for (String node : new String[] { "disguise", "disguiseradius", "disguiseentity", "disguiseplayer" }) {
+        for (String node : new String[]{"disguise", "disguiseradius", "disguiseentity", "disguiseplayer"}) {
             HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> permMap = getPermissions(sender, "libsdisguises." + node
                     + ".");
             if (!permMap.isEmpty()) {
@@ -273,8 +276,9 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
     public String toReadable(String string) {
         String[] split = string.split("_");
-        for (int i = 0; i < split.length; i++)
+        for (int i = 0; i < split.length; i++) {
             split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        }
         return StringUtils.join(split, "_");
     }
 }

@@ -23,8 +23,10 @@ import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 
 public class LivingWatcher extends FlagWatcher {
+
     static Object[] list;
     static Method potionNo;
+
     static {
         try {
             list = (Object[]) ReflectionManager.getNmsField("MobEffectList", "byId").get(null);

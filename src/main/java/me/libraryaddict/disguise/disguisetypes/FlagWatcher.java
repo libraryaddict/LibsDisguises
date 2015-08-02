@@ -24,7 +24,9 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class FlagWatcher {
+
     public enum SlotType {
+
         BOOTS(0), CHESTPLATE(2), HELD_ITEM(4), HELMET(3), LEGGINGS(1);
         // The ints is for bukkit. Not nms slots.
         private int slotNo = 0;
@@ -89,16 +91,19 @@ public class FlagWatcher {
             sentValues.add(dataType);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (dataType == 1)
+            if (dataType == 1) {
                 sendAllCustom = true;
+            }
             Object value = null;
             if (entityValues.containsKey(dataType)) {
-                if (entityValues.get(dataType) == null)
+                if (entityValues.get(dataType) == null) {
                     continue;
+                }
                 value = entityValues.get(dataType);
             } else if (backupEntityValues.containsKey(dataType)) {
-                if (backupEntityValues.get(dataType) == null)
+                if (backupEntityValues.get(dataType) == null) {
                     continue;
+                }
                 value = backupEntityValues.get(dataType);
             }
             if (value != null) {
@@ -107,24 +112,28 @@ public class FlagWatcher {
                 }
                 boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, value);
-                if (!isDirty)
+                if (!isDirty) {
                     watch.setDirtyState(false);
+                }
             } else {
                 boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, watch.getValue());
-                if (!isDirty)
+                if (!isDirty) {
                     watch.setDirtyState(false);
+                }
             }
             newList.add(watch);
         }
         if (sendAllCustom) {
             // Its sending the entire meta data. Better add the custom meta
             for (int value : entityValues.keySet()) {
-                if (sentValues.contains(value))
+                if (sentValues.contains(value)) {
                     continue;
+                }
                 Object obj = entityValues.get(value);
-                if (obj == null)
+                if (obj == null) {
                     continue;
+                }
                 WrappedWatchableObject watch = new WrappedWatchableObject(value, obj);
                 newList.add(watch);
             }
@@ -182,8 +191,9 @@ public class FlagWatcher {
     }
 
     protected Object getValue(int no, Object backup) {
-        if (entityValues.containsKey(no))
+        if (entityValues.containsKey(no)) {
             return entityValues.get(no);
+        }
         return backup;
     }
 
@@ -246,12 +256,14 @@ public class FlagWatcher {
     }
 
     protected void sendData(int... dataValues) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this)
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this) {
             return;
+        }
         List<WrappedWatchableObject> list = new ArrayList<>();
         for (int data : dataValues) {
-            if (!entityValues.containsKey(data) || entityValues.get(data) == null)
+            if (!entityValues.containsKey(data) || entityValues.get(data) == null) {
                 continue;
+            }
             Object value = entityValues.get(data);
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
                 value = addEntityAnimations((Byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
@@ -348,8 +360,9 @@ public class FlagWatcher {
         items[slot] = itemStack;
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             slot++;
-            if (slot > 4)
+            if (slot > 4) {
                 slot = 0;
+            }
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
             StructureModifier<Object> mods = packet.getModifier();
             mods.write(0, getDisguise().getEntity().getEntityId());

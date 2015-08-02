@@ -23,14 +23,14 @@ public class HorseWatcher extends AgeableWatcher {
     public ItemStack getHorseArmor() {
         int horseValue = getHorseArmorAsInt();
         switch (horseValue) {
-        case 1:
-            return new ItemStack(Material.getMaterial("IRON_BARDING"));
-        case 2:
-            return new ItemStack(Material.getMaterial("GOLD_BARDING"));
-        case 3:
-            return new ItemStack(Material.getMaterial("DIAMOND_BARDING"));
-        default:
-            break;
+            case 1:
+                return new ItemStack(Material.getMaterial("IRON_BARDING"));
+            case 2:
+                return new ItemStack(Material.getMaterial("GOLD_BARDING"));
+            case 3:
+                return new ItemStack(Material.getMaterial("DIAMOND_BARDING"));
+            default:
+                break;
         }
         return null;
     }

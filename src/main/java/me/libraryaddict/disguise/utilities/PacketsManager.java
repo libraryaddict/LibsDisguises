@@ -58,9 +58,9 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import net.minecraft.server.v1_8_R3.DamageSource;
 
 public class PacketsManager {
+
     /**
-     * This is a fix for the stupidity that is
-     * "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
+     * This is a fix for the stupidity that is "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
      */
     private static boolean cancelSound;
     private static PacketListener clientInteractEntityListener;
@@ -79,53 +79,56 @@ public class PacketsManager {
         // Because it kicks you for hacking.
         clientInteractEntityListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL,
                 PacketType.Play.Client.USE_ENTITY) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                if (event.isCancelled())
-                    return;
-                try {
-                    Player observer = event.getPlayer();
-                    StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                    Entity entity = entityModifer.read(0);
-                    if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow
+                    @Override
+                    public void onPacketReceiving(PacketEvent event) {
+                        if (event.isCancelled()) {
+                            return;
+                        }
+                        try {
+                            Player observer = event.getPlayer();
+                            StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
+                            Entity entity = entityModifer.read(0);
+                            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow
                             || entity == observer) {
-                        event.setCancelled(true);
-                    }
-                    ItemStack item = observer.getItemInHand();
-                    if (item != null && item.getType() == Material.INK_SACK) {
-                        Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-                        if (disguise != null
-                                && (disguise.getType() == DisguiseType.SHEEP || disguise.getType() == DisguiseType.WOLF)) {
-                            AnimalColor color = AnimalColor.getColor(item.getDurability());
-                            if (disguise.getType() == DisguiseType.SHEEP) {
-                                SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
-                                watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
-                            } else {
-                                WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
-                                watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
+                                event.setCancelled(true);
                             }
+                            ItemStack item = observer.getItemInHand();
+                            if (item != null && item.getType() == Material.INK_SACK) {
+                                Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+                                if (disguise != null
+                                && (disguise.getType() == DisguiseType.SHEEP || disguise.getType() == DisguiseType.WOLF)) {
+                                    AnimalColor color = AnimalColor.getColor(item.getDurability());
+                                    if (disguise.getType() == DisguiseType.SHEEP) {
+                                        SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
+                                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
+                                    } else {
+                                        WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
+                                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace(System.out);
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace(System.out);
-                }
-            }
-        };
+                };
         ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();
     }
-    
+
     /**
      * Construct the packets I need to spawn in the disguise
+     *
      * @param player
      * @param disguise
      * @param disguisedEntity
-     * @return 
+     * @return
      */
     public static PacketContainer[][] constructSpawnPackets(final Player player, Disguise disguise, Entity disguisedEntity) {
-        if (disguise.getEntity() == null)
+        if (disguise.getEntity() == null) {
             disguise.setEntity(disguisedEntity);
+        }
         Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
         ArrayList<PacketContainer> packets = new ArrayList<>();
         // This sends the armor packets so that the player isn't naked.
@@ -133,8 +136,9 @@ public class PacketsManager {
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
                 int armorSlot = nmsSlot - 1;
-                if (armorSlot < 0)
+                if (armorSlot < 0) {
                     armorSlot = 4;
+                }
                 ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
                 if (itemstack != null && itemstack.getTypeId() != 0) {
                     ItemStack item = null;
@@ -286,7 +290,7 @@ public class PacketsManager {
             spawnPackets[0].getModifier().write(1, playerList);
             PacketContainer delayedPacket = spawnPackets[0].shallowClone();
             delayedPacket.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
-            delayedPackets = new PacketContainer[] { delayedPacket };
+            delayedPackets = new PacketContainer[]{delayedPacket};
 
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
@@ -299,18 +303,24 @@ public class PacketsManager {
             double d2 = vec.getX();
             double d3 = vec.getY();
             double d4 = vec.getZ();
-            if (d2 < -d1)
+            if (d2 < -d1) {
                 d2 = -d1;
-            if (d3 < -d1)
+            }
+            if (d3 < -d1) {
                 d3 = -d1;
-            if (d4 < -d1)
+            }
+            if (d4 < -d1) {
                 d4 = -d1;
-            if (d2 > d1)
+            }
+            if (d2 > d1) {
                 d2 = d1;
-            if (d3 > d1)
+            }
+            if (d3 > d1) {
                 d3 = d1;
-            if (d4 > d1)
+            }
+            if (d4 > d1) {
                 d4 = d1;
+            }
             mods.write(2, values.getEntitySize(loc.getX()));
             mods.write(3, (int) Math.floor(loc.getY() * 32D));
             mods.write(4, values.getEntitySize(loc.getZ()));
@@ -322,11 +332,11 @@ public class PacketsManager {
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
         } else if (disguise.getType().isMisc()) {
-            MiscDisguise msc = (MiscDisguise)disguise;
+            MiscDisguise msc = (MiscDisguise) disguise;
             int id = disguise.getType().getEntityId();
             int data = msc.getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = msc.getId()  + (msc.getData() << 12);
+                data = msc.getId() + (msc.getData() << 12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
@@ -359,7 +369,7 @@ public class PacketsManager {
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, yaw);
         }
-        return new PacketContainer[][] { spawnPackets, delayedPackets };
+        return new PacketContainer[][]{spawnPackets, delayedPackets};
     }
 
     /**
@@ -382,29 +392,29 @@ public class PacketsManager {
 
     public static byte getPitch(DisguiseType disguiseType, DisguiseType entityType, byte value) {
         switch (disguiseType) {
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-            value = (byte) -value;
-            break;
-        default:
-            break;
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+                value = (byte) -value;
+                break;
+            default:
+                break;
         }
         switch (entityType) {
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-            value = (byte) -value;
-            break;
-        default:
-            break;
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+                value = (byte) -value;
+                break;
+            default:
+                break;
         }
         return value;
     }
@@ -414,57 +424,57 @@ public class PacketsManager {
      */
     public static byte getYaw(DisguiseType disguiseType, EntityType entityType, byte value) {
         switch (disguiseType) {
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-            value += 64;
-            break;
-        case ENDER_DRAGON:
-        case WITHER_SKULL:
-            value -= 128;
-            break;
-        case ARROW:
-            value = (byte) -value;
-            break;
-        case PAINTING:
-        case ITEM_FRAME:
-            value = (byte) -(value + 128);
-            break;
-        default:
-            if (disguiseType.isMisc() && disguiseType != DisguiseType.ARMOR_STAND) {
-                value -= 64;
-            }
-            break;
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+                value += 64;
+                break;
+            case ENDER_DRAGON:
+            case WITHER_SKULL:
+                value -= 128;
+                break;
+            case ARROW:
+                value = (byte) -value;
+                break;
+            case PAINTING:
+            case ITEM_FRAME:
+                value = (byte) -(value + 128);
+                break;
+            default:
+                if (disguiseType.isMisc() && disguiseType != DisguiseType.ARMOR_STAND) {
+                    value -= 64;
+                }
+                break;
         }
         switch (entityType) {
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-            value -= 64;
-            break;
-        case ENDER_DRAGON:
-        case WITHER_SKULL:
-            value += 128;
-            break;
-        case ARROW:
-            value = (byte) -value;
-            break;
-        case PAINTING:
-        case ITEM_FRAME:
-            value = (byte) -(value - 128);
-            break;
-        default:
-            if (!entityType.isAlive()) {
-                value += 64;
-            }
-            break;
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+                value -= 64;
+                break;
+            case ENDER_DRAGON:
+            case WITHER_SKULL:
+                value += 128;
+                break;
+            case ARROW:
+                value = (byte) -value;
+                break;
+            case PAINTING:
+            case ITEM_FRAME:
+                value = (byte) -(value - 128);
+                break;
+            default:
+                if (!entityType.isAlive()) {
+                    value += 64;
+                }
+                break;
         }
         return value;
     }
@@ -479,94 +489,235 @@ public class PacketsManager {
             yMod -= 0.13;
         }
         switch (disguise.getType()) {
-        case BAT:
-            if (entity instanceof LivingEntity)
-                return yMod + ((LivingEntity) entity).getEyeHeight();
-        case MINECART:
-        case MINECART_COMMAND:
-        case MINECART_CHEST:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-            switch (entity.getType()) {
+            case BAT:
+                if (entity instanceof LivingEntity) {
+                    return yMod + ((LivingEntity) entity).getEyeHeight();
+                }
             case MINECART:
+            case MINECART_COMMAND:
             case MINECART_CHEST:
             case MINECART_FURNACE:
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-                return yMod;
+                switch (entity.getType()) {
+                    case MINECART:
+                    case MINECART_CHEST:
+                    case MINECART_FURNACE:
+                    case MINECART_HOPPER:
+                    case MINECART_MOB_SPAWNER:
+                    case MINECART_TNT:
+                        return yMod;
+                    default:
+                        return yMod + 0.4;
+                }
+            case ARROW:
+            case BOAT:
+            case EGG:
+            case ENDER_PEARL:
+            case ENDER_SIGNAL:
+            case FIREWORK:
+            case PAINTING:
+            case SMALL_FIREBALL:
+            case SNOWBALL:
+            case SPLASH_POTION:
+            case THROWN_EXP_BOTTLE:
+            case WITHER_SKULL:
+                return yMod + 0.7;
+            case PLAYER:
+                if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                    return yMod + 0.35;
+                }
+                break;
+            case DROPPED_ITEM:
+                return yMod + 0.13;
             default:
-                return yMod + 0.4;
-            }
-        case ARROW:
-        case BOAT:
-        case EGG:
-        case ENDER_PEARL:
-        case ENDER_SIGNAL:
-        case FIREWORK:
-        case PAINTING:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-        case WITHER_SKULL:
-            return yMod + 0.7;
-        case PLAYER:
-            if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                return yMod + 0.35;
-            }
-            break;
-        case DROPPED_ITEM:
-            return yMod + 0.13;
-        default:
-            break;
+                break;
         }
         return yMod;
     }
 
     /**
      * Creates the packet listeners
+     *
      * @param plugin
      */
     public static void init(LibsDisguises plugin) {
         libsDisguises = plugin;
         soundsListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, PacketType.Play.Server.NAMED_SOUND_EFFECT,
                 PacketType.Play.Server.ENTITY_STATUS) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                if (event.isCancelled()) {
-                    return;
-                }
-                event.setPacket(event.getPacket().deepClone());
-                StructureModifier<Object> mods = event.getPacket().getModifier();
-                Player observer = event.getPlayer();
-                if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
-                    if (event.isAsync()) {
-                        return;
-                    }
-                    String soundName = (String) mods.read(0);
-                    SoundType soundType = null;
-                    Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(1)) / 8D,
-                            ((Integer) mods.read(2)) / 8D, ((Integer) mods.read(3)) / 8D);
-                    Entity disguisedEntity = null;
-                    DisguiseSound entitySound = null;
-                    Disguise disguise = null;
-                    Entity[] entities = soundLoc.getChunk().getEntities();
-                    for (Entity entity : entities) {
-                        Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
-                        if (entityDisguise != null) {
-                            Location loc = entity.getLocation();
-                            loc = new Location(observer.getWorld(), ((int) (loc.getX() * 8)) / 8D, ((int) (loc.getY() * 8)) / 8D,
-                                    ((int) (loc.getZ() * 8)) / 8D);
-                            if (loc.equals(soundLoc)) {
-                                entitySound = DisguiseSound.getType(entity.getType().name());
-                                if (entitySound != null) {
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        if (event.isCancelled()) {
+                            return;
+                        }
+                        event.setPacket(event.getPacket().deepClone());
+                        StructureModifier<Object> mods = event.getPacket().getModifier();
+                        Player observer = event.getPlayer();
+                        if (event.getPacketType() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+                            if (event.isAsync()) {
+                                return;
+                            }
+                            String soundName = (String) mods.read(0);
+                            SoundType soundType = null;
+                            Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(1)) / 8D,
+                                    ((Integer) mods.read(2)) / 8D, ((Integer) mods.read(3)) / 8D);
+                            Entity disguisedEntity = null;
+                            DisguiseSound entitySound = null;
+                            Disguise disguise = null;
+                            Entity[] entities = soundLoc.getChunk().getEntities();
+                            for (Entity entity : entities) {
+                                Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
+                                if (entityDisguise != null) {
+                                    Location loc = entity.getLocation();
+                                    loc = new Location(observer.getWorld(), ((int) (loc.getX() * 8)) / 8D, ((int) (loc.getY() * 8)) / 8D,
+                                            ((int) (loc.getZ() * 8)) / 8D);
+                                    if (loc.equals(soundLoc)) {
+                                        entitySound = DisguiseSound.getType(entity.getType().name());
+                                        if (entitySound != null) {
+                                            Object obj = null;
+                                            if (entity instanceof LivingEntity) {
+                                                try {
+                                                    // Use reflection so that this works for either int or double methods
+                                                    obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                                    if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
+                                                        soundType = SoundType.DEATH;
+                                                    } else {
+                                                        obj = null;
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace(System.out);
+                                                }
+                                            }
+                                            if (obj == null) {
+                                                boolean hasInvun = false;
+                                                Object nmsEntity = ReflectionManager.getNmsEntity(entity);
+                                                try {
+                                                    if (entity instanceof LivingEntity) {
+                                                        hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
+                                                                nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
+                                                                "maxNoDamageTicks").getInt(nmsEntity);
+                                                    } else {
+                                                        hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", DamageSource.class)
+                                                        .invoke(nmsEntity, DamageSource.GENERIC);
+                                                    }
+                                                } catch (Exception ex) {
+                                                    ex.printStackTrace(System.out);
+                                                }
+                                                soundType = entitySound.getType(soundName, !hasInvun);
+                                            }
+                                            if (soundType != null) {
+                                                disguise = entityDisguise;
+                                                disguisedEntity = entity;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (disguise != null) {
+                                if (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != event.getPlayer()) {
+                                    if (disguise.isSoundsReplaced()) {
+                                        String sound = null;
+                                        DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
+                                        if (dSound != null) {
+                                            sound = dSound.getSound(soundType);
+                                        }
+
+                                        if (sound == null) {
+                                            event.setCancelled(true);
+                                        } else {
+                                            if (sound.equals("step.grass")) {
+                                                try {
+                                                    int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
+                                                            soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
+                                                    Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
+                                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
+                                                            typeId);
+                                                    if (block != null) {
+                                                        Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
+                                                        mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound")
+                                                                .invoke(step));
+                                                    }
+                                                } catch (Exception ex) {
+                                                    ex.printStackTrace(System.out);
+                                                }
+                                                // There is no else statement. Because seriously. This should never be null. Unless
+                                                // someone is
+                                                // sending fake sounds. In which case. Why cancel it.
+                                            } else {
+                                                mods.write(0, sound);
+                                                // Time to change the pitch and volume
+                                                if (soundType == SoundType.HURT || soundType == SoundType.DEATH
+                                                || soundType == SoundType.IDLE) {
+                                                    // If the volume is the default
+                                                    if (mods.read(4).equals(entitySound.getDamageAndIdleSoundVolume())) {
+                                                        mods.write(4, dSound.getDamageAndIdleSoundVolume());
+                                                    }
+                                                    // Here I assume its the default pitch as I can't calculate if its real.
+                                                    if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
+                                                    && ((MobDisguise) disguise).doesDisguiseAge()) {
+                                                        boolean baby = false;
+                                                        if (disguisedEntity instanceof Zombie) {
+                                                            baby = ((Zombie) disguisedEntity).isBaby();
+                                                        } else if (disguisedEntity instanceof Ageable) {
+                                                            baby = !((Ageable) disguisedEntity).isAdult();
+                                                        }
+                                                        if (((MobDisguise) disguise).isAdult() == baby) {
+
+                                                            float pitch = (Integer) mods.read(5);
+                                                            if (baby) {
+                                                                // If the pitch is not the expected
+                                                                if (pitch > 97 || pitch < 111) {
+                                                                    return;
+                                                                }
+                                                                pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                                                // Min = 1.5
+                                                                // Cap = 97.5
+                                                                // Max = 1.7
+                                                                // Cap = 110.5
+                                                            } else {
+                                                                // If the pitch is not the expected
+                                                                if (pitch >= 63 || pitch <= 76) {
+                                                                    return;
+                                                                }
+                                                                pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                                                // Min = 1
+                                                                // Cap = 63
+                                                                // Max = 1.2
+                                                                // Cap = 75.6
+                                                            }
+                                                            pitch *= 63;
+                                                            if (pitch < 0) {
+                                                                pitch = 0;
+                                                            }
+                                                            if (pitch > 255) {
+                                                                pitch = 255;
+                                                            }
+                                                            mods.write(5, (int) pitch);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
+                            if ((Byte) mods.read(1) == 2) {
+                                // It made a damage animation
+                                Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
+                                Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+                                if (disguise != null && !disguise.getType().isPlayer()
+                                && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
+                                    DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
+                                    if (disSound == null) {
+                                        return;
+                                    }
+                                    SoundType soundType = null;
                                     Object obj = null;
                                     if (entity instanceof LivingEntity) {
                                         try {
-                                            // Use reflection so that this works for either int or double methods
                                             obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
                                             if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
                                                 soundType = SoundType.DEATH;
@@ -578,186 +729,58 @@ public class PacketsManager {
                                         }
                                     }
                                     if (obj == null) {
-                                        boolean hasInvun = false;
-                                        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
-                                        try {
-                                            if (entity instanceof LivingEntity) {
-                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
-                                                        nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
-                                                                "maxNoDamageTicks").getInt(nmsEntity);
-                                            } else {
-                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", DamageSource.class)
-                                                        .invoke(nmsEntity, DamageSource.GENERIC);
-                                            }
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace(System.out);
-                                        }
-                                        soundType = entitySound.getType(soundName, !hasInvun);
+                                        soundType = SoundType.HURT;
                                     }
-                                    if (soundType != null) {
-                                        disguise = entityDisguise;
-                                        disguisedEntity = entity;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (disguise != null) {
-                        if (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != event.getPlayer()) {
-                            if (disguise.isSoundsReplaced()) {
-                                String sound = null;
-                                DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-                                if (dSound != null)
-                                    sound = dSound.getSound(soundType);
-
-                                if (sound == null) {
-                                    event.setCancelled(true);
-                                } else {
-                                    if (sound.equals("step.grass")) {
-                                        try {
-                                            int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
-                                                    soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
-                                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
-                                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
-                                                            typeId);
-                                            if (block != null) {
-                                                Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
-                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound")
-                                                        .invoke(step));
-                                            }
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace(System.out);
-                                        }
-                                        // There is no else statement. Because seriously. This should never be null. Unless
-                                        // someone is
-                                        // sending fake sounds. In which case. Why cancel it.
-                                    } else {
-                                        mods.write(0, sound);
-                                        // Time to change the pitch and volume
-                                        if (soundType == SoundType.HURT || soundType == SoundType.DEATH
-                                                || soundType == SoundType.IDLE) {
-                                            // If the volume is the default
-                                            if (mods.read(4).equals(entitySound.getDamageAndIdleSoundVolume())) {
-                                                mods.write(4, dSound.getDamageAndIdleSoundVolume());
-                                            }
-                                            // Here I assume its the default pitch as I can't calculate if its real.
-                                            if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
-                                                    && ((MobDisguise) disguise).doesDisguiseAge()) {
-                                                boolean baby = false;
-                                                if (disguisedEntity instanceof Zombie) {
-                                                    baby = ((Zombie) disguisedEntity).isBaby();
-                                                } else if (disguisedEntity instanceof Ageable) {
-                                                    baby = !((Ageable) disguisedEntity).isAdult();
-                                                }
-                                                if (((MobDisguise) disguise).isAdult() == baby) {
-
-                                                    float pitch = (Integer) mods.read(5);
-                                                    if (baby) {
-                                                        // If the pitch is not the expected
-                                                        if (pitch > 97 || pitch < 111)
-                                                            return;
-                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-                                                        // Min = 1.5
-                                                        // Cap = 97.5
-                                                        // Max = 1.7
-                                                        // Cap = 110.5
-                                                    } else {
-                                                        // If the pitch is not the expected
-                                                        if (pitch >= 63 || pitch <= 76)
-                                                            return;
-                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-                                                        // Min = 1
-                                                        // Cap = 63
-                                                        // Max = 1.2
-                                                        // Cap = 75.6
-                                                    }
-                                                    pitch *= 63;
-                                                    if (pitch < 0)
-                                                        pitch = 0;
-                                                    if (pitch > 255)
-                                                        pitch = 255;
-                                                    mods.write(5, (int) pitch);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
-                    if ((Byte) mods.read(1) == 2) {
-                        // It made a damage animation
-                        Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
-                        Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-                        if (disguise != null && !disguise.getType().isPlayer()
-                                && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
-                            DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
-                            if (disSound == null)
-                                return;
-                            SoundType soundType = null;
-                            Object obj = null;
-                            if (entity instanceof LivingEntity) {
-                                try {
-                                    obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
-                                    if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-                                        soundType = SoundType.DEATH;
-                                    } else {
-                                        obj = null;
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace(System.out);
-                                }
-                            }
-                            if (obj == null) {
-                                soundType = SoundType.HURT;
-                            }
-                            if (disSound.getSound(soundType) == null
+                                    if (disSound.getSound(soundType) == null
                                     || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
-                                if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
-                                    cancelSound = !cancelSound;
-                                    if (cancelSound)
-                                        return;
-                                }
-                                disSound = DisguiseSound.getType(disguise.getType().name());
-                                if (disSound != null) {
-                                    String sound = disSound.getSound(soundType);
-                                    if (sound != null) {
-                                        Location loc = entity.getLocation();
-                                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.NAMED_SOUND_EFFECT);
-                                        mods = packet.getModifier();
-                                        mods.write(0, sound);
-                                        mods.write(1, (int) (loc.getX() * 8D));
-                                        mods.write(2, (int) (loc.getY() * 8D));
-                                        mods.write(3, (int) (loc.getZ() * 8D));
-                                        mods.write(4, disSound.getDamageAndIdleSoundVolume());
-                                        float pitch;
-                                        if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-                                        } else
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-                                        if (disguise.getType() == DisguiseType.BAT)
-                                            pitch *= 95F;
-                                        pitch *= 63;
-                                        if (pitch < 0)
-                                            pitch = 0;
-                                        if (pitch > 255)
-                                            pitch = 255;
-                                        mods.write(5, (int) pitch);
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace(System.out);
+                                        if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
+                                            cancelSound = !cancelSound;
+                                            if (cancelSound) {
+                                                return;
+                                            }
+                                        }
+                                        disSound = DisguiseSound.getType(disguise.getType().name());
+                                        if (disSound != null) {
+                                            String sound = disSound.getSound(soundType);
+                                            if (sound != null) {
+                                                Location loc = entity.getLocation();
+                                                PacketContainer packet = new PacketContainer(PacketType.Play.Server.NAMED_SOUND_EFFECT);
+                                                mods = packet.getModifier();
+                                                mods.write(0, sound);
+                                                mods.write(1, (int) (loc.getX() * 8D));
+                                                mods.write(2, (int) (loc.getY() * 8D));
+                                                mods.write(3, (int) (loc.getZ() * 8D));
+                                                mods.write(4, disSound.getDamageAndIdleSoundVolume());
+                                                float pitch;
+                                                if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
+                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                                } else {
+                                                    pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                                }
+                                                if (disguise.getType() == DisguiseType.BAT) {
+                                                    pitch *= 95F;
+                                                }
+                                                pitch *= 63;
+                                                if (pitch < 0) {
+                                                    pitch = 0;
+                                                }
+                                                if (pitch > 255) {
+                                                    pitch = 255;
+                                                }
+                                                mods.write(5, (int) pitch);
+                                                try {
+                                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace(System.out);
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-            }
-        };
+                };
         viewDisguisesListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH,
                 PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.ATTACH_ENTITY,
                 PacketType.Play.Server.REL_ENTITY_MOVE, PacketType.Play.Server.ENTITY_MOVE_LOOK,
@@ -766,79 +789,82 @@ public class PacketsManager {
                 PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.ANIMATION, PacketType.Play.Server.BED,
                 PacketType.Play.Server.ENTITY_EFFECT, PacketType.Play.Server.ENTITY_VELOCITY,
                 PacketType.Play.Server.UPDATE_ATTRIBUTES, PacketType.Play.Server.ENTITY_STATUS) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                if (event.isCancelled())
-                    return;
-                final Player observer = event.getPlayer();
-                if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
-                    if (DisguiseAPI.isSelfDisguised(observer)) {
-                        // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-                        PacketContainer[][] transformed = transformPacket(event.getPacket(), observer, observer);
-                        PacketContainer[] packets = transformed == null ? null : transformed[0];
-                        final PacketContainer[] delayedPackets = transformed == null ? null : transformed[1];
-                        if (packets == null) {
-                            packets = new PacketContainer[] { event.getPacket() };
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        if (event.isCancelled()) {
+                            return;
                         }
-                        for (PacketContainer packet : packets) {
-                            if (packet.getType() != PacketType.Play.Server.PLAYER_INFO) {
-                                if (packet.equals(event.getPacket())) {
-                                    packet = packet.shallowClone();
+                        final Player observer = event.getPlayer();
+                        if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
+                            if (DisguiseAPI.isSelfDisguised(observer)) {
+                                // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
+                                PacketContainer[][] transformed = transformPacket(event.getPacket(), observer, observer);
+                                PacketContainer[] packets = transformed == null ? null : transformed[0];
+                                final PacketContainer[] delayedPackets = transformed == null ? null : transformed[1];
+                                if (packets == null) {
+                                    packets = new PacketContainer[]{event.getPacket()};
                                 }
-                                packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                            }
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace(System.out);
-                            }
-                        }
-                        if (delayedPackets != null && delayedPackets.length > 0) {
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        for (PacketContainer packet : delayedPackets) {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                for (PacketContainer packet : packets) {
+                                    if (packet.getType() != PacketType.Play.Server.PLAYER_INFO) {
+                                        if (packet.equals(event.getPacket())) {
+                                            packet = packet.shallowClone();
                                         }
+                                        packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                                    }
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace(System.out);
                                     }
                                 }
-                            }, 2);
-                        }
-                        if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
-                            event.setPacket(event.getPacket().deepClone());
-                            for (WrappedWatchableObject watch : event.getPacket().getWatchableCollectionModifier().read(0)) {
-                                if (watch.getIndex() == 0) {
-                                    byte b = (Byte) watch.getValue();
-                                    byte a = (byte) (b | 1 << 5);
-                                    if ((b & 1 << 3) != 0)
-                                        a = (byte) (a | 1 << 3);
-                                    watch.setValue(a);
+                                if (delayedPackets != null && delayedPackets.length > 0) {
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                for (PacketContainer packet : delayedPackets) {
+                                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                                                }
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace(System.out);
+                                            }
+                                        }
+                                    }, 2);
                                 }
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
-                            event.setCancelled(true);
-                            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-                            StructureModifier<Object> mods = packet.getModifier();
-                            mods.write(0, observer.getEntityId());
-                            List<WrappedWatchableObject> watchableList = new ArrayList<>();
-                            byte b = (byte) 1 << 5;
-                            if (observer.isSprinting())
-                                b = (byte) (b | 1 << 3);
-                            watchableList.add(new WrappedWatchableObject(0, b));
-                            packet.getWatchableCollectionModifier().write(0, watchableList);
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace(System.out);
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
-                            if (event.getPacket().getIntegers().read(1) != 2) {
-                                event.setCancelled(true);
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
+                                if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
+                                    event.setPacket(event.getPacket().deepClone());
+                                    for (WrappedWatchableObject watch : event.getPacket().getWatchableCollectionModifier().read(0)) {
+                                        if (watch.getIndex() == 0) {
+                                            byte b = (Byte) watch.getValue();
+                                            byte a = (byte) (b | 1 << 5);
+                                            if ((b & 1 << 3) != 0) {
+                                                a = (byte) (a | 1 << 3);
+                                            }
+                                            watch.setValue(a);
+                                        }
+                                    }
+                                } else if (event.getPacketType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN) {
+                                    event.setCancelled(true);
+                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                                    StructureModifier<Object> mods = packet.getModifier();
+                                    mods.write(0, observer.getEntityId());
+                                    List<WrappedWatchableObject> watchableList = new ArrayList<>();
+                                    byte b = (byte) 1 << 5;
+                                    if (observer.isSprinting()) {
+                                        b = (byte) (b | 1 << 3);
+                                    }
+                                    watchableList.add(new WrappedWatchableObject(0, b));
+                                    packet.getWatchableCollectionModifier().write(0, watchableList);
+                                    try {
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
+                                    } catch (InvocationTargetException e) {
+                                        e.printStackTrace(System.out);
+                                    }
+                                } else if (event.getPacketType() == PacketType.Play.Server.ANIMATION) {
+                                    if (event.getPacket().getIntegers().read(1) != 2) {
+                                        event.setCancelled(true);
+                                    }
+                                } else if (event.getPacketType() == PacketType.Play.Server.ATTACH_ENTITY
                                 || event.getPacketType() == PacketType.Play.Server.REL_ENTITY_MOVE
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_LOOK
@@ -846,170 +872,172 @@ public class PacketsManager {
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT
                                 || event.getPacketType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
-                            event.setCancelled(true);
-                        } else if (event.getPacketType() == PacketType.Play.Server.BED) {
-                            ReflectionManager.setAllowSleep(observer);
-                        } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
-                            Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-                            if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
+                                    event.setCancelled(true);
+                                } else if (event.getPacketType() == PacketType.Play.Server.BED) {
+                                    ReflectionManager.setAllowSleep(observer);
+                                } else if (event.getPacketType() == PacketType.Play.Server.ENTITY_STATUS) {
+                                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+                                    if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
                                     && event.getPacket().getBytes().read(0) == 2) {
-                                event.setCancelled(true);
+                                        event.setCancelled(true);
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-        };
+                };
         inventoryListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGHEST, PacketType.Play.Server.SET_SLOT,
                 PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Client.HELD_ITEM_SLOT,
                 PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK) {
-            @Override
-            public void onPacketReceiving(final PacketEvent event) {
-                if (event.isCancelled())
-                    return;
-                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
+                    @Override
+                    public void onPacketReceiving(final PacketEvent event) {
+                        if (event.isCancelled()) {
+                            return;
+                        }
+                        if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
                         && event.getPlayer().getVehicle() == null) {
-                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-                    // If player is disguised, views self disguises and has a inventory modifier
-                    if (disguise != null && disguise.isSelfDisguiseVisible()
+                            Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+                            // If player is disguised, views self disguises and has a inventory modifier
+                            if (disguise != null && disguise.isSelfDisguiseVisible()
                             && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
-                        // If they are in creative and clicked on a slot
-                        if (event.getPacketType() == PacketType.Play.Client.SET_CREATIVE_SLOT) {
-                            int slot = event.getPacket().getIntegers().read(0);
-                            if (slot >= 5 && slot <= 8) {
-                                if (disguise.isHidingArmorFromSelf()) {
-                                    int armorSlot = Math.abs((slot - 5) - 3);
-                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
-                                    if (item != null && item.getType() != Material.AIR) {
-                                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                                        StructureModifier<Object> mods = packet.getModifier();
-                                        mods.write(0, 0);
-                                        mods.write(1, slot);
-                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
-                                                    false);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace(System.out);
+                                // If they are in creative and clicked on a slot
+                                if (event.getPacketType() == PacketType.Play.Client.SET_CREATIVE_SLOT) {
+                                    int slot = event.getPacket().getIntegers().read(0);
+                                    if (slot >= 5 && slot <= 8) {
+                                        if (disguise.isHidingArmorFromSelf()) {
+                                            int armorSlot = Math.abs((slot - 5) - 3);
+                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                            if (item != null && item.getType() != Material.AIR) {
+                                                PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+                                                StructureModifier<Object> mods = packet.getModifier();
+                                                mods.write(0, 0);
+                                                mods.write(1, slot);
+                                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                                try {
+                                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                            false);
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace(System.out);
+                                                }
+                                            }
+                                        }
+                                    } else if (slot >= 36 && slot <= 44) {
+                                        if (disguise.isHidingHeldItemFromSelf()) {
+                                            int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                            if (slot + 36 == currentSlot) {
+                                                org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                                if (item != null && item.getType() != Material.AIR) {
+                                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+                                                    StructureModifier<Object> mods = packet.getModifier();
+                                                    mods.write(0, 0);
+                                                    mods.write(1, slot);
+                                                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                                    try {
+                                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                                false);
+                                                    } catch (InvocationTargetException e) {
+                                                        e.printStackTrace(System.out);
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            } else if (slot >= 36 && slot <= 44) {
-                                if (disguise.isHidingHeldItemFromSelf()) {
-                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                    if (slot + 36 == currentSlot) {
-                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-                                        if (item != null && item.getType() != Material.AIR) {
+                                } // If the player switched item, aka he moved from slot 1 to slot 2
+                                else if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_SLOT) {
+                                    if (disguise.isHidingHeldItemFromSelf()) {
+                                        // From logging, it seems that both bukkit and nms uses the same thing for the slot switching.
+                                        // 0 1 2 3 - 8
+                                        // If the packet is coming, then I need to replace the item they are switching to
+                                        // As for the old item, I need to restore it.
+                                        org.bukkit.inventory.ItemStack currentlyHeld = event.getPlayer().getItemInHand();
+                                        // If his old weapon isn't air
+                                        if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
                                             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
                                             StructureModifier<Object> mods = packet.getModifier();
                                             mods.write(0, 0);
-                                            mods.write(1, slot);
+                                            mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
+                                            mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
+                                            try {
+                                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                            } catch (InvocationTargetException e) {
+                                                e.printStackTrace(System.out);
+                                            }
+                                        }
+                                        org.bukkit.inventory.ItemStack newHeld = event.getPlayer().getInventory()
+                                        .getItem(event.getPacket().getIntegers().read(0));
+                                        // If his new weapon isn't air either!
+                                        if (newHeld != null && newHeld.getType() != Material.AIR) {
+                                            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+                                            StructureModifier<Object> mods = packet.getModifier();
+                                            mods.write(0, 0);
+                                            mods.write(1, event.getPacket().getIntegers().read(0) + 36);
                                             mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
                                             try {
-                                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
-                                                        false);
+                                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
                                             } catch (InvocationTargetException e) {
                                                 e.printStackTrace(System.out);
                                             }
                                         }
                                     }
-                                }
-                            }
-                        }
-                        // If the player switched item, aka he moved from slot 1 to slot 2
-                        else if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_SLOT) {
-                            if (disguise.isHidingHeldItemFromSelf()) {
-                                // From logging, it seems that both bukkit and nms uses the same thing for the slot switching.
-                                // 0 1 2 3 - 8
-                                // If the packet is coming, then I need to replace the item they are switching to
-                                // As for the old item, I need to restore it.
-                                org.bukkit.inventory.ItemStack currentlyHeld = event.getPlayer().getItemInHand();
-                                // If his old weapon isn't air
-                                if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
-                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                                    StructureModifier<Object> mods = packet.getModifier();
-                                    mods.write(0, 0);
-                                    mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
-                                    mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace(System.out);
-                                    }
-                                }
-                                org.bukkit.inventory.ItemStack newHeld = event.getPlayer().getInventory()
-                                        .getItem(event.getPacket().getIntegers().read(0));
-                                // If his new weapon isn't air either!
-                                if (newHeld != null && newHeld.getType() != Material.AIR) {
-                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                                    StructureModifier<Object> mods = packet.getModifier();
-                                    mods.write(0, 0);
-                                    mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                    try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
-                                    } catch (InvocationTargetException e) {
-                                        e.printStackTrace(System.out);
-                                    }
-                                }
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
-                            int slot = event.getPacket().getIntegers().read(1);
-                            org.bukkit.inventory.ItemStack clickedItem;
-                            if (event.getPacket().getIntegers().read(3) == 1) {
-                                // Its a shift click
-                                clickedItem = event.getPacket().getItemModifier().read(0);
-                                if (clickedItem != null && clickedItem.getType() != Material.AIR) {
-                                    // Rather than predict the clients actions
-                                    // Lets just update the entire inventory..
-                                    Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            event.getPlayer().updateInventory();
+                                } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
+                                    int slot = event.getPacket().getIntegers().read(1);
+                                    org.bukkit.inventory.ItemStack clickedItem;
+                                    if (event.getPacket().getIntegers().read(3) == 1) {
+                                        // Its a shift click
+                                        clickedItem = event.getPacket().getItemModifier().read(0);
+                                        if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+                                            // Rather than predict the clients actions
+                                            // Lets just update the entire inventory..
+                                            Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    event.getPlayer().updateInventory();
+                                                }
+                                            });
                                         }
-                                    });
-                                }
-                                return;
-                            } else {
-                                // If its not a player inventory click
-                                // Shift clicking is exempted for the item in hand..
-                                if (event.getPacket().getIntegers().read(0) != 0) {
-                                    return;
-                                }
-                                clickedItem = event.getPlayer().getItemOnCursor();
-                            }
-                            if (clickedItem != null && clickedItem.getType() != Material.AIR) {
-                                // If the slot is a armor slot
-                                if (slot >= 5 && slot <= 8) {
-                                    if (disguise.isHidingArmorFromSelf()) {
-                                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                                        StructureModifier<Object> mods = packet.getModifier();
-                                        mods.write(0, 0);
-                                        mods.write(1, slot);
-                                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                        try {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
-                                                    false);
-                                        } catch (InvocationTargetException e) {
-                                            e.printStackTrace(System.out);
+                                        return;
+                                    } else {
+                                        // If its not a player inventory click
+                                        // Shift clicking is exempted for the item in hand..
+                                        if (event.getPacket().getIntegers().read(0) != 0) {
+                                            return;
                                         }
+                                        clickedItem = event.getPlayer().getItemOnCursor();
                                     }
-                                    // Else if its a hotbar slot
-                                } else if (slot >= 36 && slot <= 44) {
-                                    if (disguise.isHidingHeldItemFromSelf()) {
-                                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                        // Check if the player is on the same slot as the slot that its setting
-                                        if (slot == currentSlot + 36) {
-                                            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
-                                            StructureModifier<Object> mods = packet.getModifier();
-                                            mods.write(0, 0);
-                                            mods.write(1, slot);
-                                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                            try {
-                                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
-                                                        false);
-                                            } catch (InvocationTargetException e) {
-                                                e.printStackTrace(System.out);
+                                    if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+                                        // If the slot is a armor slot
+                                        if (slot >= 5 && slot <= 8) {
+                                            if (disguise.isHidingArmorFromSelf()) {
+                                                PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+                                                StructureModifier<Object> mods = packet.getModifier();
+                                                mods.write(0, 0);
+                                                mods.write(1, slot);
+                                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                                try {
+                                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                            false);
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace(System.out);
+                                                }
+                                            }
+                                            // Else if its a hotbar slot
+                                        } else if (slot >= 36 && slot <= 44) {
+                                            if (disguise.isHidingHeldItemFromSelf()) {
+                                                int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                                // Check if the player is on the same slot as the slot that its setting
+                                                if (slot == currentSlot + 36) {
+                                                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+                                                    StructureModifier<Object> mods = packet.getModifier();
+                                                    mods.write(0, 0);
+                                                    mods.write(1, slot);
+                                                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                                    try {
+                                                        ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet,
+                                                                false);
+                                                    } catch (InvocationTargetException e) {
+                                                        e.printStackTrace(System.out);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -1017,90 +1045,88 @@ public class PacketsManager {
                             }
                         }
                     }
-                }
-            }
 
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                // If the inventory is the players inventory
-                if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        // If the inventory is the players inventory
+                        if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
                         && event.getPlayer().getVehicle() == null && event.getPacket().getIntegers().read(0) == 0) {
-                    Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-                    // If the player is disguised, views self disguises and is hiding a item.
-                    if (disguise != null && disguise.isSelfDisguiseVisible()
+                            Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+                            // If the player is disguised, views self disguises and is hiding a item.
+                            if (disguise != null && disguise.isSelfDisguiseVisible()
                             && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
-                        // If the server is setting the slot
-                        // Need to set it to air if its in a place it shouldn't be.
-                        // Things such as picking up a item, spawned in item. Plugin sets the item. etc. Will fire this
-                        /**
-                         * Done
-                         */
-                        if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
-                            // The raw slot
-                            // nms code has the start of the hotbar being 36.
-                            int slot = event.getPacket().getIntegers().read(1);
-                            // If the slot is a armor slot
-                            if (slot >= 5 && slot <= 8) {
-                                if (disguise.isHidingArmorFromSelf()) {
-                                    // Get the bukkit armor slot!
-                                    int armorSlot = Math.abs((slot - 5) - 3);
-                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
-                                    if (item != null && item.getType() != Material.AIR) {
-                                        event.setPacket(event.getPacket().shallowClone());
-                                        event.getPacket().getModifier()
+                                // If the server is setting the slot
+                                // Need to set it to air if its in a place it shouldn't be.
+                                // Things such as picking up a item, spawned in item. Plugin sets the item. etc. Will fire this
+                                /**
+                                 * Done
+                                 */
+                                if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+                                    // The raw slot
+                                    // nms code has the start of the hotbar being 36.
+                                    int slot = event.getPacket().getIntegers().read(1);
+                                    // If the slot is a armor slot
+                                    if (slot >= 5 && slot <= 8) {
+                                        if (disguise.isHidingArmorFromSelf()) {
+                                            // Get the bukkit armor slot!
+                                            int armorSlot = Math.abs((slot - 5) - 3);
+                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                            if (item != null && item.getType() != Material.AIR) {
+                                                event.setPacket(event.getPacket().shallowClone());
+                                                event.getPacket().getModifier()
                                                 .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                    }
-                                }
-                                // Else if its a hotbar slot
-                            } else if (slot >= 36 && slot <= 44) {
-                                if (disguise.isHidingHeldItemFromSelf()) {
-                                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                    // Check if the player is on the same slot as the slot that its setting
-                                    if (slot == currentSlot + 36) {
-                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-                                        if (item != null && item.getType() != Material.AIR) {
-                                            event.setPacket(event.getPacket().shallowClone());
-                                            event.getPacket()
+                                            }
+                                        }
+                                        // Else if its a hotbar slot
+                                    } else if (slot >= 36 && slot <= 44) {
+                                        if (disguise.isHidingHeldItemFromSelf()) {
+                                            int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                            // Check if the player is on the same slot as the slot that its setting
+                                            if (slot == currentSlot + 36) {
+                                                org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                                if (item != null && item.getType() != Material.AIR) {
+                                                    event.setPacket(event.getPacket().shallowClone());
+                                                    event.getPacket()
                                                     .getModifier()
                                                     .write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
-                            event.setPacket(event.getPacket().deepClone());
-                            StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
-                            ItemStack[] items = mods.read(0);
-                            for (int slot = 0; slot < items.length; slot++) {
-                                if (slot >= 5 && slot <= 8) {
-                                    if (disguise.isHidingArmorFromSelf()) {
-                                        // Get the bukkit armor slot!
-                                        int armorSlot = Math.abs((slot - 5) - 3);
-                                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
-                                        if (item != null && item.getType() != Material.AIR) {
-                                            items[slot] = new org.bukkit.inventory.ItemStack(0);
-                                        }
-                                    }
-                                    // Else if its a hotbar slot
-                                } else if (slot >= 36 && slot <= 44) {
-                                    if (disguise.isHidingHeldItemFromSelf()) {
-                                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
-                                        // Check if the player is on the same slot as the slot that its setting
-                                        if (slot == currentSlot + 36) {
-                                            org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
-                                            if (item != null && item.getType() != Material.AIR) {
-                                                items[slot] = new org.bukkit.inventory.ItemStack(0);
+                                                }
                                             }
                                         }
                                     }
+                                } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
+                                    event.setPacket(event.getPacket().deepClone());
+                                    StructureModifier<ItemStack[]> mods = event.getPacket().getItemArrayModifier();
+                                    ItemStack[] items = mods.read(0);
+                                    for (int slot = 0; slot < items.length; slot++) {
+                                        if (slot >= 5 && slot <= 8) {
+                                            if (disguise.isHidingArmorFromSelf()) {
+                                                // Get the bukkit armor slot!
+                                                int armorSlot = Math.abs((slot - 5) - 3);
+                                                org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                                                if (item != null && item.getType() != Material.AIR) {
+                                                    items[slot] = new org.bukkit.inventory.ItemStack(0);
+                                                }
+                                            }
+                                            // Else if its a hotbar slot
+                                        } else if (slot >= 36 && slot <= 44) {
+                                            if (disguise.isHidingHeldItemFromSelf()) {
+                                                int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                                                // Check if the player is on the same slot as the slot that its setting
+                                                if (slot == currentSlot + 36) {
+                                                    org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                                                    if (item != null && item.getType() != Material.AIR) {
+                                                        items[slot] = new org.bukkit.inventory.ItemStack(0);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    mods.write(0, items);
                                 }
                             }
-                            mods.write(0, items);
                         }
                     }
-                }
-            }
-        };
+                };
     }
 
     public static boolean isHearDisguisesEnabled() {
@@ -1197,8 +1223,9 @@ public class PacketsManager {
             mainListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH, packetsToListen) {
                 @Override
                 public void onPacketSending(PacketEvent event) {
-                    if (event.isCancelled())
+                    if (event.isCancelled()) {
                         return;
+                    }
                     final Player observer = event.getPlayer();
                     // First get the entity, the one sending this packet
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
@@ -1206,8 +1233,9 @@ public class PacketsManager {
                             .read((PacketType.Play.Server.COLLECT == event.getPacketType() ? 1 : 0));
                     // If the entity is the same as the sender. Don't disguise!
                     // Prevents problems and there is no advantage to be gained.
-                    if (entity == observer)
+                    if (entity == observer) {
                         return;
+                    }
                     PacketContainer[][] packets = transformPacket(event.getPacket(), event.getPlayer(), entity);
                     if (packets != null) {
                         event.setCancelled(true);
@@ -1267,8 +1295,12 @@ public class PacketsManager {
     }
 
     /**
-     * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if its not
-     * transformed
+     * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if its not transformed
+     *
+     * @param sentPacket
+     * @param observer
+     * @param entity
+     * @return
      */
     public static PacketContainer[][] transformPacket(PacketContainer sentPacket, Player observer, Entity entity) {
         PacketContainer[] packets = null;
@@ -1277,7 +1309,7 @@ public class PacketsManager {
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
             // If disguised.
             if (disguise != null) {
-                packets = new PacketContainer[] { sentPacket };
+                packets = new PacketContainer[]{sentPacket};
 
                 // This packet sends attributes
                 if (sentPacket.getType() == PacketType.Play.Server.UPDATE_ATTRIBUTES) {
@@ -1312,9 +1344,7 @@ public class PacketsManager {
                             packets = new PacketContainer[0];
                         }
                     }
-                }
-
-                // Else if the packet is sending entity metadata
+                } // Else if the packet is sending entity metadata
                 else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_METADATA) {
                     if (DisguiseConfig.isMetadataPacketsEnabled()) {
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
@@ -1327,9 +1357,7 @@ public class PacketsManager {
                     } else {
                         packets = new PacketContainer[0];
                     }
-                }
-
-                // Else if the packet is spawning..
+                } // Else if the packet is spawning..
                 else if (sentPacket.getType() == PacketType.Play.Server.NAMED_ENTITY_SPAWN
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_LIVING
                         || sentPacket.getType() == PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB
@@ -1338,19 +1366,15 @@ public class PacketsManager {
                     PacketContainer[][] spawnPackets = constructSpawnPackets(observer, disguise, entity);
                     packets = spawnPackets[0];
                     delayedPackets = spawnPackets[1];
-                }
-
-                // Else if the disguise is attempting to send players a forbidden packet
+                } // Else if the disguise is attempting to send players a forbidden packet
                 else if (sentPacket.getType() == PacketType.Play.Server.ANIMATION) {
                     if (disguise.getType().isMisc()
                             || (packets[0].getIntegers().read(1) == 2 && (!disguise.getType()
-                                    .isPlayer() || (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise
-                                    .getWatcher()).isSleeping())))) {
+                            .isPlayer() || (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise
+                            .getWatcher()).isSleeping())))) {
                         packets = new PacketContainer[0];
                     }
-                }
-
-                else if (sentPacket.getType() == PacketType.Play.Server.COLLECT) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.COLLECT) {
                     if (disguise.getType().isMisc()) {
                         packets = new PacketContainer[0];
                     } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType().isPlayer()
@@ -1359,11 +1383,9 @@ public class PacketsManager {
                         StructureModifier<Integer> mods = newPacket.getIntegers();
                         mods.write(0, disguise.getEntity().getEntityId());
                         mods.write(1, 3);
-                        packets = new PacketContainer[] { newPacket, sentPacket };
+                        packets = new PacketContainer[]{newPacket, sentPacket};
                     }
-                }
-
-                // Else if the disguise is moving.
+                } // Else if the disguise is moving.
                 else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_MOVE_LOOK
                         || sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK
                         || sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT
@@ -1393,9 +1415,9 @@ public class PacketsManager {
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Byte> bytes = packets[0].getBytes();
                         boolean tele = sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT;
-                        byte yawValue = (Byte) bytes.read(tele ? 0 : 3);
+                        byte yawValue = bytes.read(tele ? 0 : 3);
                         bytes.write(tele ? 0 : 3, getYaw(disguise.getType(), entity.getType(), yawValue));
-                        byte pitchValue = (Byte) bytes.read(tele ? 1 : 4);
+                        byte pitchValue = bytes.read(tele ? 1 : 4);
                         bytes.write(tele ? 1 : 4,
                                 getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (tele && disguise.getType() == DisguiseType.ITEM_FRAME) {
@@ -1412,16 +1434,15 @@ public class PacketsManager {
                             double y = getYModifier(entity, disguise);
                             if (y != 0) {
                                 y *= 32;
-                                ints.write(2, (Integer) ints.read(2) + (int) Math.floor(y));
+                                ints.write(2, ints.read(2) + (int) Math.floor(y));
                             }
                         }
                     }
-                }
-
-                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT) {
                     int slot = (Integer) packets[0].getModifier().read(1) - 1;
-                    if (slot < 0)
+                    if (slot < 0) {
                         slot = 4;
+                    }
                     org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
                     if (itemstack != null) {
                         packets[0] = packets[0].shallowClone();
@@ -1456,26 +1477,20 @@ public class PacketsManager {
                             }
                             // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why? Scheduler
                             // delay.
-                            packets = new PacketContainer[] { packetUnblock, packets[0], packetBlock };
+                            packets = new PacketContainer[]{packetUnblock, packets[0], packetBlock};
                             // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset
                             // it.
                         }
                     }
-                }
-
-                else if (sentPacket.getType() == PacketType.Play.Server.BED) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.BED) {
                     if (!disguise.getType().isPlayer()) {
                         packets = new PacketContainer[0];
                     }
-                }
-
-                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_STATUS) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_STATUS) {
                     if (packets[0].getBytes().read(0) == (byte) 3) {
                         packets = new PacketContainer[0];
                     }
-                }
-
-                else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_HEAD_ROTATION) {
                     if (disguise.getType().isPlayer() && entity.getType() != EntityType.PLAYER) {
                         Location loc = entity.getLocation();
                         byte pitch = getPitch(disguise.getType(), DisguiseType.getType(entity.getType()),
@@ -1489,11 +1504,9 @@ public class PacketsManager {
                         look.getIntegers().write(0, entity.getEntityId());
                         look.getBytes().write(3, yaw);
                         look.getBytes().write(4, pitch);
-                        packets = new PacketContainer[] { look, rotation };
+                        packets = new PacketContainer[]{look, rotation};
                     }
-                }
-
-                else {
+                } else {
                     packets = null;
                 }
 
@@ -1501,6 +1514,6 @@ public class PacketsManager {
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
-        return packets == null ? null : new PacketContainer[][] { packets, delayedPackets };
+        return packets == null ? null : new PacketContainer[][]{packets, delayedPackets};
     }
 }

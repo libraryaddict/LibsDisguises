@@ -39,6 +39,7 @@ import java.util.Map;
 import me.libraryaddict.disguise.LibsDisguises;
 
 public abstract class Disguise {
+
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
     private Entity entity;
@@ -56,24 +57,26 @@ public abstract class Disguise {
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
     private boolean showName = false;
-    
+
     private static List<UUID> viewSelf = new ArrayList<>();
-    
+
     @Override
     public abstract Disguise clone();
 
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
+     *
      * @param newType
      */
     protected void createDisguise(DisguiseType newType) {
-        if (getWatcher() != null)
+        if (getWatcher() != null) {
             return;
+        }
         if (newType.getEntityType() == null) {
             throw new RuntimeException(
                     "DisguiseType "
-                            + newType
-                            + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
+                    + newType
+                    + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
         }
         // Set the disguise type
         disguiseType = newType;
@@ -99,16 +102,12 @@ public abstract class Disguise {
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
         if (getType() == DisguiseType.WITHER_SKELETON) {
             getWatcher().setValue(13, (byte) 1);
-        }
-        // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
+        } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
             getWatcher().setValue(13, (byte) 1);
-        }
-
-        else if (getType() == DisguiseType.ELDER_GUARDIAN) {
+        } else if (getType() == DisguiseType.ELDER_GUARDIAN) {
             getWatcher().setValue(16, 0 | 4);
-        }
-        // Else if its a horse. Set the horse watcher type
+        } // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
                 // Don't mess with this because Varient is something like ZombieHorse and so on.
@@ -121,65 +120,65 @@ public abstract class Disguise {
         }
         final boolean alwaysSendVelocity;
         switch (getType()) {
-        case EGG:
-        case ENDER_PEARL:
-        case BAT:
-        case EXPERIENCE_ORB:
-        case FIREBALL:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-        case WITHER_SKULL:
-        case FIREWORK:
-            alwaysSendVelocity = true;
-            break;
-        default:
-            alwaysSendVelocity = false;
-            break;
+            case EGG:
+            case ENDER_PEARL:
+            case BAT:
+            case EXPERIENCE_ORB:
+            case FIREBALL:
+            case SMALL_FIREBALL:
+            case SNOWBALL:
+            case SPLASH_POTION:
+            case THROWN_EXP_BOTTLE:
+            case WITHER_SKULL:
+            case FIREWORK:
+                alwaysSendVelocity = true;
+                break;
+            default:
+                alwaysSendVelocity = false;
+                break;
         }
         double velocitySpeed = 0.0005;
         switch (getType()) {
-        case FIREWORK:
-            velocitySpeed = -0.040;
-            break;
-        case WITHER_SKULL:
-            velocitySpeed = 0.000001D;
-            break;
-        case ARROW:
-        case BOAT:
-        case ENDER_CRYSTAL:
-        case ENDER_DRAGON:
-        case GHAST:
-        case ITEM_FRAME:
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-        case PAINTING:
-        case PLAYER:
-        case SQUID:
-            velocitySpeed = 0;
-            break;
-        case DROPPED_ITEM:
-        case PRIMED_TNT:
-        case WITHER:
-        case FALLING_BLOCK:
-            velocitySpeed = 0.04;
-            break;
-        case EXPERIENCE_ORB:
-            velocitySpeed = 0.0221;
-            break;
-        case SPIDER:
-        case BAT:
-        case CAVE_SPIDER:
-            velocitySpeed = 0.004;
-            break;
-        default:
-            break;
+            case FIREWORK:
+                velocitySpeed = -0.040;
+                break;
+            case WITHER_SKULL:
+                velocitySpeed = 0.000001D;
+                break;
+            case ARROW:
+            case BOAT:
+            case ENDER_CRYSTAL:
+            case ENDER_DRAGON:
+            case GHAST:
+            case ITEM_FRAME:
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+            case PAINTING:
+            case PLAYER:
+            case SQUID:
+                velocitySpeed = 0;
+                break;
+            case DROPPED_ITEM:
+            case PRIMED_TNT:
+            case WITHER:
+            case FALLING_BLOCK:
+                velocitySpeed = 0.04;
+                break;
+            case EXPERIENCE_ORB:
+                velocitySpeed = 0.0221;
+                break;
+            case SPIDER:
+            case BAT:
+            case CAVE_SPIDER:
+                velocitySpeed = 0.004;
+                break;
+            default:
+                break;
         }
         final double vectorY = velocitySpeed;
         final TargetedDisguise disguise = (TargetedDisguise) this;
@@ -328,7 +327,8 @@ public abstract class Disguise {
 
     /**
      * Get the disguised entity
-     * @return 
+     *
+     * @return
      */
     public Entity getEntity() {
         return entity;
@@ -336,7 +336,8 @@ public abstract class Disguise {
 
     /**
      * Get the disguise type
-     * @return 
+     *
+     * @return
      */
     public DisguiseType getType() {
         return disguiseType;
@@ -344,16 +345,17 @@ public abstract class Disguise {
 
     /**
      * Get the flag watcher
-     * @return 
+     *
+     * @return
      */
     public FlagWatcher getWatcher() {
         return watcher;
     }
 
     /**
-     * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise.
-     * getEntity() can still return null if this disguise is active after despawn, logout, etc.
-     * @return 
+     * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise. getEntity() can still return null if this disguise is active after despawn, logout, etc.
+     *
+     * @return
      */
     public boolean isDisguiseInUse() {
         return disguiseInUse;
@@ -397,17 +399,16 @@ public abstract class Disguise {
 
     /**
      * Internal use
-     * @return 
+     *
+     * @return
      */
     public boolean isRemoveDisguiseOnDeath() {
-        if (getEntity() == null) return true;
-        return getEntity() instanceof Player ?
-
-        (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
-
-        :
-
-        (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead());
+        if (getEntity() == null) {
+            return true;
+        }
+        return getEntity() instanceof Player
+                ? (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
+                : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead());
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -416,7 +417,8 @@ public abstract class Disguise {
 
     /**
      * Can the disguised view himself as the disguise
-     * @return 
+     *
+     * @return
      */
     public boolean isSelfDisguiseVisible() {
         return viewSelfDisguise;
@@ -432,7 +434,8 @@ public abstract class Disguise {
 
     /**
      * Returns true if the entity's name is showing through the disguise
-     * @return 
+     *
+     * @return
      */
     public boolean isShowName() {
         return showName;
@@ -440,7 +443,7 @@ public abstract class Disguise {
 
     /**
      * Removes the disguise and undisguises the entity if its using this disguise.
-     * 
+     *
      * @return
      */
     public boolean removeDisguise() {
@@ -503,13 +506,15 @@ public abstract class Disguise {
 
     /**
      * Set the entity of the disguise. Only used for internal things.
+     *
      * @param entity
-     * @return 
+     * @return
      */
     public Disguise setEntity(Entity entity) {
         if (this.getEntity() != null) {
-            if (getEntity() == entity)
+            if (getEntity() == entity) {
                 return this;
+            }
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         }
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
@@ -582,8 +587,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
-     * datawatcher.
+     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the datawatcher.
      */
     private void setupWatcher() {
         HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
@@ -611,8 +615,9 @@ public abstract class Disguise {
             }
             // STEP 2. As the watcher has not set data on it, check if I need to set the default data.
             // If neither of them touch it
-            if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
+            if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo)) {
                 continue;
+            }
             // If the disguise has this, but not the entity. Then better set it!
             if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo)) {
                 getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));
@@ -626,9 +631,9 @@ public abstract class Disguise {
             Object eObj = entityValues.get(dataNo);
             Object dObj = disguiseValues.get(dataNo);
             if (eObj == null || dObj == null) {
-                if (eObj == null && dObj == null)
+                if (eObj == null && dObj == null) {
                     continue;
-                else {
+                } else {
                     getWatcher().setBackupValue(dataNo, dObj);
                     continue;
                 }
@@ -645,40 +650,41 @@ public abstract class Disguise {
             // EntityInsentient is 10 & 11
             // EntityZombie is 12 & 13 & 14 - But it overrides other values and another check already does this.
             // EntityLiving is 6 & 7 & 8 & 9
-
             // Lets use switch
             Class baseClass = null;
             switch (dataNo) {
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                baseClass = ReflectionManager.getNmsClass("EntityLiving");
-                break;
-            case 10:
-            case 11:
-                baseClass = ReflectionManager.getNmsClass("EntityInsentient");
-                break;
-            case 16:
-                baseClass = ReflectionManager.getNmsClass("EntityAgeable");
-                break;
-            default:
-                break;
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    baseClass = ReflectionManager.getNmsClass("EntityLiving");
+                    break;
+                case 10:
+                case 11:
+                    baseClass = ReflectionManager.getNmsClass("EntityInsentient");
+                    break;
+                case 16:
+                    baseClass = ReflectionManager.getNmsClass("EntityAgeable");
+                    break;
+                default:
+                    break;
             }
             Class nmsEntityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
             Class nmsDisguiseClass = DisguiseValues.getNmsEntityClass(getType());
             if (nmsDisguiseClass != null) {
                 // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
                 if (baseClass != null && baseClass.isAssignableFrom(nmsDisguiseClass)
-                        && baseClass.isAssignableFrom(nmsEntityClass))
+                        && baseClass.isAssignableFrom(nmsEntityClass)) {
                     continue;
+                }
 
                 // So they don't extend a basic class.
                 // Maybe if I check that they extend each other..
                 // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
                 // datawatchers.
-                if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass))
+                if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass)) {
                     continue;
+                }
             }
             // Well I can't find a reason I should leave it alone. They will probably conflict.
             // Time to set the value to the disguises value so no conflicts!
@@ -693,7 +699,7 @@ public abstract class Disguise {
 
     /**
      * Can the disguised view himself as the disguise
-     * 
+     *
      * @param viewSelfDisguise
      * @return
      */
@@ -704,8 +710,9 @@ public abstract class Disguise {
                 if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
                     if (isSelfDisguiseVisible()) {
                         DisguiseUtilities.setupFakeDisguise(this);
-                    } else
+                    } else {
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                    }
                 }
             }
         }
@@ -762,9 +769,9 @@ public abstract class Disguise {
     }
 
     /**
-     * Returns the list of people who have /disguiseViewSelf
-     * toggled on
-     * @return 
+     * Returns the list of people who have /disguiseViewSelf toggled on
+     *
+     * @return
      */
     public static List<UUID> getViewSelf() {
         return viewSelf;

@@ -31,8 +31,10 @@ import org.bukkit.potion.PotionEffect;
 public class ReflectionManager {
 
     public enum LibVersion {
+
         V1_8;
         private static LibVersion currentVersion;
+
         static {
             //String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
             currentVersion = V1_8;
@@ -59,8 +61,7 @@ public class ReflectionManager {
     private static Map<String, Map<String, String>> ForgeFieldMappings;
 
     /**
-     * Map of Forge fully qualified class names to a map from mc-dev method names to a map from method signatures to Forge method
-     * names.
+     * Map of Forge fully qualified class names to a map from mc-dev method names to a map from method signatures to Forge method names.
      */
     private static Map<String, Map<String, Map<String, String>>> ForgeMethodMappings;
     private static final Method ihmGet;
@@ -82,7 +83,7 @@ public class ReflectionManager {
         final String nameseg_class = "a-zA-Z0-9$_";
         final String fqn_class = nameseg_class + "/";
 
-        primitiveTypes = ImmutableMap.<Class<?>, String> builder().put(boolean.class, "Z").put(byte.class, "B")
+        primitiveTypes = ImmutableMap.<Class<?>, String>builder().put(boolean.class, "Z").put(byte.class, "B")
                 .put(char.class, "C").put(short.class, "S").put(int.class, "I").put(long.class, "J").put(float.class, "F")
                 .put(double.class, "D").put(void.class, "V").build();
 
@@ -191,7 +192,7 @@ public class ReflectionManager {
         trackerField = getNmsField("WorldServer", "tracker");
         entitiesField = getNmsField("EntityTracker", "trackedEntities");
         ihmGet = getNmsMethod("IntHashMap", "get", int.class);
-        boundingBoxConstructor = getNmsConstructor("AxisAlignedBB",double.class, double.class,  double.class,
+        boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class,
                 double.class, double.class, double.class);
         setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
     }
@@ -208,7 +209,7 @@ public class ReflectionManager {
                 WrappedGameProfile gameProfile = getGameProfile(null, "LibsDisguises");
                 entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
                         gameProfile.getHandleType(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
-                        gameProfile.getHandle(), playerinteractmanager);
+                                gameProfile.getHandle(), playerinteractmanager);
             } else if (entityName.equals("EnderPearl")) {
                 entityObject = entityClass.getConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
                         .newInstance(world, createEntityInstance("Cow"));
@@ -249,26 +250,26 @@ public class ReflectionManager {
                 if (field.getType().getSimpleName().equals("double")) {
                     stage++;
                     switch (stage) {
-                    case 1:
-                        x -= field.getDouble(boundingBox);
-                        break;
-                    case 2:
-                        y -= field.getDouble(boundingBox);
-                        break;
-                    case 3:
-                        z -= field.getDouble(boundingBox);
-                        break;
-                    case 4:
-                        x += field.getDouble(boundingBox);
-                        break;
-                    case 5:
-                        y += field.getDouble(boundingBox);
-                        break;
-                    case 6:
-                        z += field.getDouble(boundingBox);
-                        break;
-                    default:
-                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
+                        case 1:
+                            x -= field.getDouble(boundingBox);
+                            break;
+                        case 2:
+                            y -= field.getDouble(boundingBox);
+                            break;
+                        case 3:
+                            z -= field.getDouble(boundingBox);
+                            break;
+                        case 4:
+                            x += field.getDouble(boundingBox);
+                            break;
+                        case 5:
+                            y += field.getDouble(boundingBox);
+                            break;
+                        case 6:
+                            z += field.getDouble(boundingBox);
+                            break;
+                        default:
+                            throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
             }
@@ -382,7 +383,7 @@ public class ReflectionManager {
         return null;
     }
 
-    public static WrappedGameProfile getGameProfile(Player player)   {
+    public static WrappedGameProfile getGameProfile(Player player) {
         return WrappedGameProfile.fromPlayer(player);
     }
 
@@ -519,7 +520,7 @@ public class ReflectionManager {
             float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
             float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
             float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
-            return new float[] { length, width, height };
+            return new float[]{length, width, height};
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
@@ -573,7 +574,7 @@ public class ReflectionManager {
                             .getClass()
                             .getMethod("findProfilesByNames", String[].class, agent.getClass(),
                                     Class.forName("com.mojang.authlib.ProfileLookupCallback"))
-                            .invoke(profileRepo, new String[] { playername }, agent, callback);
+                            .invoke(profileRepo, new String[]{playername}, agent, callback);
                     if (callback.getGameProfile() != null) {
                         return callback.getGameProfile();
                     }
@@ -607,10 +608,8 @@ public class ReflectionManager {
     public static void setAllowSleep(Player player) {
         try {
             /**
-            Object nmsEntity = getNmsEntity(player);
-            Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity);
-            Field check = getNmsField(connection.getClass(), "checkMovement");
-            check.setBoolean(connection, true); **/
+             * Object nmsEntity = getNmsEntity(player); Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity); Field check = getNmsField(connection.getClass(), "checkMovement"); check.setBoolean(connection, true); *
+             */
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }

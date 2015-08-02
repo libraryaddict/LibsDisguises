@@ -35,6 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     public class DisguiseParseException extends Exception {
+
         private static final long serialVersionUID = 1276971370793124510L;
 
         public DisguiseParseException() {
@@ -45,7 +46,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             super(string);
         }
     }
-    
+
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
         ArrayList<String> allowedDisguises = new ArrayList<>();
         for (DisguiseType type : hashMap.keySet()) {
@@ -61,30 +62,30 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     protected HashMap<String, Boolean> getDisguisePermission(CommandSender sender, DisguiseType type) {
         switch (type) {
-        case PLAYER:
-        case FALLING_BLOCK:
-        case PAINTING:
-        case SPLASH_POTION:
-        case FISHING_HOOK:
-        case DROPPED_ITEM:
-            HashMap<String, Boolean> returns = new HashMap<>();
-            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
-            for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-                String lowerPerm = permission.getPermission().toLowerCase();
-                if (lowerPerm.startsWith(beginning)) {
-                    String[] split = lowerPerm.substring(beginning.length()).split("\\.");
-                    if (split.length > 1) {
-                        if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
-                            for (int i = 1; i < split.length; i++) {
-                                returns.put(split[i], permission.getValue());
+            case PLAYER:
+            case FALLING_BLOCK:
+            case PAINTING:
+            case SPLASH_POTION:
+            case FISHING_HOOK:
+            case DROPPED_ITEM:
+                HashMap<String, Boolean> returns = new HashMap<>();
+                String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
+                for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+                    String lowerPerm = permission.getPermission().toLowerCase();
+                    if (lowerPerm.startsWith(beginning)) {
+                        String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+                        if (split.length > 1) {
+                            if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
+                                for (int i = 1; i < split.length; i++) {
+                                    returns.put(split[i], permission.getValue());
+                                }
                             }
                         }
                     }
                 }
-            }
-            return returns;
-        default:
-            return new HashMap<>();
+                return returns;
+            default:
+                return new HashMap<>();
         }
     }
 
@@ -92,8 +93,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         Method[] methods = watcherClass.getMethods();
         methods = Arrays.copyOf(methods, methods.length + 4);
         int i = 4;
-        for (String methodName : new String[] { "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
-                "setHearSelfDisguise" }) {
+        for (String methodName : new String[]{"setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
+            "setHearSelfDisguise"}) {
             try {
                 methods[methods.length - i--] = Disguise.class.getMethod(methodName, boolean.class);
             } catch (Exception ex) {
@@ -105,9 +106,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     /**
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
+     *
      * @param sender
      * @param permissionNode
-     * @return 
+     * @return
      */
     protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender, String permissionNode) {
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> singleDisguises = new HashMap<>();
@@ -265,8 +267,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 option = option.substring(1);
                 isRemove = false;
             }
-            if (option.equals("baby"))
+            if (option.equals("baby")) {
                 option = "setbaby";
+            }
             list.add(option);
         }
         HashMap<ArrayList<String>, Boolean> options = new HashMap<>();
@@ -293,16 +296,15 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     /**
-     * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
-     * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
-     * disguise has been feed a proper disguisetype.
+     * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the disguise has been feed a proper disguisetype.
+     *
      * @param sender
      * @param args
      * @param map
-     * @return 
-     * @throws me.libraryaddict.disguise.utilities.BaseDisguiseCommand.DisguiseParseException 
-     * @throws java.lang.IllegalAccessException 
-     * @throws java.lang.reflect.InvocationTargetException 
+     * @return
+     * @throws me.libraryaddict.disguise.utilities.BaseDisguiseCommand.DisguiseParseException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     protected Disguise parseDisguise(CommandSender sender, String[] args, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) throws DisguiseParseException,
             IllegalAccessException, InvocationTargetException {
@@ -366,7 +368,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 } else {
                     if (!disguiseOptions.isEmpty()
                             && (!disguiseOptions.containsKey(args[1].toLowerCase()) || !disguiseOptions
-                                    .get(args[1].toLowerCase()))) {
+                            .get(args[1].toLowerCase()))) {
                         throw new DisguiseParseException(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
                     args[1] = args[1].replace("\\_", " ");
@@ -415,19 +417,19 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         }
                         if (miscId != -1) {
                             switch (disguiseType) {
-                            case PAINTING:
-                            case FALLING_BLOCK:
-                            case SPLASH_POTION:
-                            case DROPPED_ITEM:
-                            case FISHING_HOOK:
-                            case ARROW:
-                            case SMALL_FIREBALL:
-                            case FIREBALL:
-                            case WITHER_SKULL:
-                                break;
-                            default:
-                                throw new DisguiseParseException(ChatColor.RED + "Error! " + disguiseType.toReadable()
-                                        + " doesn't know what to do with " + args[1] + "!");
+                                case PAINTING:
+                                case FALLING_BLOCK:
+                                case SPLASH_POTION:
+                                case DROPPED_ITEM:
+                                case FISHING_HOOK:
+                                case ARROW:
+                                case SMALL_FIREBALL:
+                                case FIREBALL:
+                                case WITHER_SKULL:
+                                    break;
+                                default:
+                                    throw new DisguiseParseException(ChatColor.RED + "Error! " + disguiseType.toReadable()
+                                            + " doesn't know what to do with " + args[1] + "!");
                             }
                             toSkip++;
                             // If they also defined a data value
@@ -577,8 +579,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 if (potionType == null && isNumeric(valueString)) {
                                     potionType = PotionEffectType.getById(Integer.parseInt(valueString));
                                 }
-                                if (potionType == null)
+                                if (potionType == null) {
                                     throw new DisguiseParseException();
+                                }
                                 value = potionType;
                             } catch (Exception ex) {
                                 throw parseToException("a potioneffect type", valueString, methodName);
@@ -597,8 +600,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         } else if (param == BlockFace.class) {
                             try {
                                 BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
-                                if (face.ordinal() > 4)
+                                if (face.ordinal() > 4) {
                                     throw new DisguiseParseException();
+                                }
                                 value = face;
                             } catch (Exception ex) {
                                 throw parseToException("a direction (north, east, south, west, up)", valueString, methodName);
@@ -661,10 +665,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 usedOptions.add(methodName.toLowerCase());
             }
             doCheck(optionPermissions, usedOptions);
-            if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass()))
+            if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass())) {
                 methodToUse.invoke(disguise.getWatcher(), value);
-            else
+            } else {
                 methodToUse.invoke(disguise, value);
+            }
         }
         // Alright. We've constructed our disguise.
         return disguise;

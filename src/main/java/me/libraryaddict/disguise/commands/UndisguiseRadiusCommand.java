@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class UndisguiseRadiusCommand implements CommandExecutor {
+
     private int maxRadius = 30;
 
     public UndisguiseRadiusCommand(int maxRadius) {
@@ -48,16 +49,18 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             }
             int disguisedEntitys = 0;
             for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
-                if (entity == sender)
+                if (entity == sender) {
                     continue;
+                }
                 if (DisguiseAPI.isDisguised(entity)) {
                     DisguiseAPI.undisguiseToAll(entity);
                     disguisedEntitys++;
                 }
             }
             sender.sendMessage(ChatColor.RED + "Successfully undisguised " + disguisedEntitys + " entities!");
-        } else
+        } else {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+        }
         return true;
     }
 }

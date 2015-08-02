@@ -21,7 +21,7 @@ public class WitherWatcher extends LivingWatcher {
     }
 
     public int[] getTargets() {
-        return new int[] { (Integer) getValue(17, 0), (Integer) getValue(18, 0), (Integer) getValue(19, 0) };
+        return new int[]{(Integer) getValue(17, 0), (Integer) getValue(18, 0), (Integer) getValue(19, 0)};
     }
 
     public void setInvul(int invulnerability) {

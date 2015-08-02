@@ -37,7 +37,7 @@ import me.libraryaddict.disguise.utilities.Metrics;
 import org.bukkit.event.HandlerList;
 
 public class LibsDisguises extends JavaPlugin {
-    
+
     public static LibsDisguises instance; //I'm sorry Sun MicroSystems and all mighty Java God
     private DisguiseListener listener;
 
@@ -69,21 +69,21 @@ public class LibsDisguises extends JavaPlugin {
         try {
             Metrics metrics = new Metrics(this);
             metrics.start();
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
-    
+
     /**
      * Reloads the config with new config options.
      */
     public void reload() {
         HandlerList.unregisterAll(listener);
         reloadConfig();
-        DisguiseConfig.initConfig(getConfig());                
+        DisguiseConfig.initConfig(getConfig());
     }
 
     /**
-     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume
-     * for mob noises. As well as setting their watcher class and entity size.
+     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume for mob noises. As well as setting their watcher class and entity size.
      */
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
@@ -93,37 +93,37 @@ public class LibsDisguises extends JavaPlugin {
             Class watcherClass;
             try {
                 switch (disguiseType) {
-                case MINECART_CHEST:
-                case MINECART_COMMAND:
-                case MINECART_FURNACE:
-                case MINECART_HOPPER:
-                case MINECART_MOB_SPAWNER:
-                case MINECART_TNT:
-                    watcherClass = MinecartWatcher.class;
-                    break;
-                case DONKEY:
-                case MULE:
-                case UNDEAD_HORSE:
-                case SKELETON_HORSE:
-                    watcherClass = HorseWatcher.class;
-                    break;
-                case ZOMBIE_VILLAGER:
-                case PIG_ZOMBIE:
-                    watcherClass = ZombieWatcher.class;
-                    break;
-                case MAGMA_CUBE:
-                    watcherClass = SlimeWatcher.class;
-                    break;
-                case ELDER_GUARDIAN:
-                    watcherClass = GuardianWatcher.class;
-                    break;
-                case ENDERMITE:
-                    watcherClass = LivingWatcher.class;
-                    break;
-                default:
-                    watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
-                            + toReadable(disguiseType.name()) + "Watcher");
-                    break;
+                    case MINECART_CHEST:
+                    case MINECART_COMMAND:
+                    case MINECART_FURNACE:
+                    case MINECART_HOPPER:
+                    case MINECART_MOB_SPAWNER:
+                    case MINECART_TNT:
+                        watcherClass = MinecartWatcher.class;
+                        break;
+                    case DONKEY:
+                    case MULE:
+                    case UNDEAD_HORSE:
+                    case SKELETON_HORSE:
+                        watcherClass = HorseWatcher.class;
+                        break;
+                    case ZOMBIE_VILLAGER:
+                    case PIG_ZOMBIE:
+                        watcherClass = ZombieWatcher.class;
+                        break;
+                    case MAGMA_CUBE:
+                        watcherClass = SlimeWatcher.class;
+                        break;
+                    case ELDER_GUARDIAN:
+                        watcherClass = GuardianWatcher.class;
+                        break;
+                    case ENDERMITE:
+                        watcherClass = LivingWatcher.class;
+                        break;
+                    default:
+                        watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
+                                + toReadable(disguiseType.name()) + "Watcher");
+                        break;
                 }
             } catch (ClassNotFoundException ex) {
                 // There is no explicit watcher for this entity.
@@ -148,45 +148,45 @@ public class LibsDisguises extends JavaPlugin {
             }
             String nmsEntityName = toReadable(disguiseType.name());
             switch (disguiseType) {
-            case WITHER_SKELETON:
-            case ZOMBIE_VILLAGER:
-            case DONKEY:
-            case MULE:
-            case UNDEAD_HORSE:
-            case SKELETON_HORSE:
-                continue;
-            case PRIMED_TNT:
-                nmsEntityName = "TNTPrimed";
-                break;
-            case MINECART_TNT:
-                nmsEntityName = "MinecartTNT";
-                break;
-            case MINECART:
-                nmsEntityName = "MinecartRideable";
-                break;
-            case FIREWORK:
-                nmsEntityName = "Fireworks";
-                break;
-            case SPLASH_POTION:
-                nmsEntityName = "Potion";
-                break;
-            case GIANT:
-                nmsEntityName = "GiantZombie";
-                break;
-            case DROPPED_ITEM:
-                nmsEntityName = "Item";
-                break;
-            case FIREBALL:
-                nmsEntityName = "LargeFireball";
-                break;
-            case LEASH_HITCH:
-                nmsEntityName = "Leash";
-                break;
-            case ELDER_GUARDIAN:
-                nmsEntityName = "Guardian";
-                break;
-            default:
-                break;
+                case WITHER_SKELETON:
+                case ZOMBIE_VILLAGER:
+                case DONKEY:
+                case MULE:
+                case UNDEAD_HORSE:
+                case SKELETON_HORSE:
+                    continue;
+                case PRIMED_TNT:
+                    nmsEntityName = "TNTPrimed";
+                    break;
+                case MINECART_TNT:
+                    nmsEntityName = "MinecartTNT";
+                    break;
+                case MINECART:
+                    nmsEntityName = "MinecartRideable";
+                    break;
+                case FIREWORK:
+                    nmsEntityName = "Fireworks";
+                    break;
+                case SPLASH_POTION:
+                    nmsEntityName = "Potion";
+                    break;
+                case GIANT:
+                    nmsEntityName = "GiantZombie";
+                    break;
+                case DROPPED_ITEM:
+                    nmsEntityName = "Item";
+                    break;
+                case FIREBALL:
+                    nmsEntityName = "LargeFireball";
+                    break;
+                case LEASH_HITCH:
+                    nmsEntityName = "Leash";
+                    break;
+                case ELDER_GUARDIAN:
+                    nmsEntityName = "Guardian";
+                    break;
+                default:
+                    break;
             }
             try {
                 if (nmsEntityName.equalsIgnoreCase("Unknown")) {

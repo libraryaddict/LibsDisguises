@@ -72,9 +72,9 @@ DisguiseCloneSize: 3
 # These disguises, as normal will not persist after a server restart.
 # There is also no EntityDeath option as entities do not revive after death.
 KeepDisguises:
-  EntityDespawn: false
-  PlayerDeath: false
-  PlayerLogout: false
+    EntityDespawn: false
+    PlayerDeath: false
+    PlayerLogout: false
   
 # This controls if a entitys max health is determined by the entity, or by the disguise.
 # Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
@@ -97,31 +97,31 @@ ContactMojangServers: true
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:
-  # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
-  # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
-  Animation: true
-  # Disabling this means that you can't use the setSleeping option on a player disguise. Also you will crash anyone watching when you try to sleep in a bed if disguised as a non-player
-  # This also sends a chunk packet at key positions else it doesn't work for 1.8. Lazyness means it does it for older versions too currently.
-  Bed: true
-  # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
-  # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
-  Collect: true
-  # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
-  EntityStatus: true
-  # Entity equipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
-  # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
-  Equipment: true
-  # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.
-  # This means that entity metadata will not change, and will only be sent in the spawn packet.
-  # This is good if performance is extremely in need.
-  # This is bad to disable unless you are ONLY going to use the disguises for decorations.
-  # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
-  # Animations set by use of the api or through the disguise command are still in effect.
-  Metadata: true
-  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up.
-  # If you are using the Item_Frame disguise, when a packet is sent (Roughly every 2min) the disguise will bug up until they move.
-  Movement: true
-  # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
-  Riding: true
-  # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
-  WitherSkull: true
+    # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
+    # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
+    Animation: true
+    # Disabling this means that you can't use the setSleeping option on a player disguise. Also you will crash anyone watching when you try to sleep in a bed if disguised as a non-player
+    # This also sends a chunk packet at key positions else it doesn't work for 1.8. Lazyness means it does it for older versions too currently.
+    Bed: true
+    # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
+    # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
+    Collect: true
+    # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
+    EntityStatus: true
+    # Entity equipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
+    # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
+    Equipment: true
+    # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.
+    # This means that entity metadata will not change, and will only be sent in the spawn packet.
+    # This is good if performance is extremely in need.
+    # This is bad to disable unless you are ONLY going to use the disguises for decorations.
+    # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
+    # Animations set by use of the api or through the disguise command are still in effect.
+    Metadata: true
+    # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up.
+    # If you are using the Item_Frame disguise, when a packet is sent (Roughly every 2min) the disguise will bug up until they move.
+    Movement: true
+    # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
+    Riding: true
+    # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
+    WitherSkull: true

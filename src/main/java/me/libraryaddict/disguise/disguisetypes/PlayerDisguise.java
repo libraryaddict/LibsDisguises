@@ -13,14 +13,16 @@ import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class PlayerDisguise extends TargetedDisguise {
+
     private LibsProfileLookup currentLookup;
     private WrappedGameProfile gameProfile;
     private String playerName;
     private String skinToUse;
 
     public PlayerDisguise(String name) {
-        if (name.length() > 16)
+        if (name.length() > 16) {
             name = name.substring(0, 16);
+        }
         playerName = name;
         createDisguise(DisguiseType.PLAYER);
     }
@@ -198,9 +200,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
     /**
      * Set the GameProfile, without tampering.
-     * 
-     * @param gameProfile
-     *            GameProfile
+     *
+     * @param gameProfile GameProfile
      * @return
      */
     public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {

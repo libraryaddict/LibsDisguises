@@ -90,7 +90,7 @@ public class DisguiseAPI {
                             int firstCapitalWatcher = firstCapital(watcherMethod.getName());
                             if (firstCapitalWatcher > 0
                                     && method.getName().substring(firstCapitalMethod)
-                                            .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
+                                    .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
                                 Class methodParam = watcherMethod.getParameterTypes()[0];
                                 if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
                                     methodParam = double.class;
@@ -143,8 +143,9 @@ public class DisguiseAPI {
     public static void disguiseEntity(Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
-        if (entity == null || disguise == null)
+        if (entity == null || disguise == null) {
             return;
+        }
         // The event wasn't cancelled.
         // If the disguise entity isn't the same as the one we are disguising
         if (disguise.getEntity() != entity) {
@@ -192,12 +193,14 @@ public class DisguiseAPI {
 
     /**
      * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
+     *
      * @param disguise
-     * @return 
+     * @return
      */
     public static int disguiseNextEntity(Disguise disguise) {
-        if (disguise == null)
+        if (disguise == null) {
             return -1;
+        }
         if (disguise.getEntity() != null || DisguiseUtilities.getDisguises().containsValue(disguise)) {
             disguise = disguise.clone();
         }
@@ -215,6 +218,7 @@ public class DisguiseAPI {
 
     /**
      * Disguise this entity with this disguise
+     *
      * @param entity
      * @param disguise
      */
@@ -224,8 +228,9 @@ public class DisguiseAPI {
         }
         // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
-        for (String observer : ((TargetedDisguise) disguise).getObservers())
+        for (String observer : ((TargetedDisguise) disguise).getObservers()) {
             ((TargetedDisguise) disguise).removePlayer(observer);
+        }
         disguiseEntity(entity, disguise);
     }
 
@@ -268,42 +273,49 @@ public class DisguiseAPI {
 
     /**
      * Get the disguise of a entity
+     *
      * @param disguised
-     * @return 
+     * @return
      */
     public static Disguise getDisguise(Entity disguised) {
-        if (disguised == null)
+        if (disguised == null) {
             return null;
+        }
         return DisguiseUtilities.getMainDisguise(disguised.getUniqueId());
     }
 
     /**
      * Get the disguise of a entity
+     *
      * @param observer
      * @param disguised
-     * @return 
+     * @return
      */
     public static Disguise getDisguise(Player observer, Entity disguised) {
-        if (disguised == null || observer == null)
+        if (disguised == null || observer == null) {
             return null;
+        }
         return DisguiseUtilities.getDisguise(observer, disguised);
     }
 
     /**
      * Get the disguises of a entity
+     *
      * @param disguised
-     * @return 
+     * @return
      */
     public static Disguise[] getDisguises(Entity disguised) {
-        if (disguised == null)
+        if (disguised == null) {
             return null;
+        }
         return DisguiseUtilities.getDisguises(disguised.getUniqueId());
     }
 
     /**
      * Get the ID of a fake disguise for a entityplayer
+     *
      * @param entityId
-     * @return 
+     * @return
      */
     @Deprecated
     public static int getFakeDisguise(UUID entityId) {
@@ -316,8 +328,9 @@ public class DisguiseAPI {
 
     /**
      * Is this entity disguised
+     *
      * @param disguised
-     * @return 
+     * @return
      */
     public static boolean isDisguised(Entity disguised) {
         return getDisguise(disguised) != null;
@@ -325,9 +338,10 @@ public class DisguiseAPI {
 
     /**
      * Is this entity disguised
+     *
      * @param observer
      * @param disguised
-     * @return 
+     * @return
      */
     public static boolean isDisguised(Player observer, Entity disguised) {
         return getDisguise(observer, disguised) != null;
@@ -340,20 +354,20 @@ public class DisguiseAPI {
     public static boolean isSelfDisguised(Player player) {
         return DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId());
     }
-    
+
     /**
-     * Returns true if the entitiy has /disguiseviewself toggled
-     * on.
+     * Returns true if the entitiy has /disguiseviewself toggled on.
+     *
      * @param entity
-     * @return 
+     * @return
      */
     public static boolean isViewSelfToggled(Entity entity) {
         return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() : Disguise.getViewSelf().contains(entity.getUniqueId());
     }
 
     /**
-     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka removed from
-     * the world.
+     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka removed from the world.
+     *
      * @param entity
      */
     public static void undisguiseToAll(Entity entity) {
@@ -362,12 +376,12 @@ public class DisguiseAPI {
             disguise.removeDisguise();
         }
     }
-    
+
     /**
-     * Set whether this player can see his
-     * own disguise or not.
+     * Set whether this player can see his own disguise or not.
+     *
      * @param entity
-     * @param toggled 
+     * @param toggled
      */
     public static void setViewDisguiseToggled(Entity entity, boolean toggled) {
         if (isDisguised(entity)) {
@@ -375,8 +389,9 @@ public class DisguiseAPI {
             disguise.setViewSelfDisguise(toggled);
         }
         if (toggled) {
-            if (!Disguise.getViewSelf().contains(entity.getUniqueId()))
+            if (!Disguise.getViewSelf().contains(entity.getUniqueId())) {
                 Disguise.getViewSelf().add(entity.getUniqueId());
+            }
         } else {
             Disguise.getViewSelf().remove(entity.getUniqueId());
         }
