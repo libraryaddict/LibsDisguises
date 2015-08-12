@@ -38,7 +38,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import org.bukkit.entity.Arrow;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DisguiseListener implements Listener {
@@ -163,7 +162,6 @@ public class DisguiseListener implements Listener {
     /**
      * Most likely faster if we don't bother doing checks if he sees a player disguise
      *
-     * @param event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
@@ -204,7 +202,7 @@ public class DisguiseListener implements Listener {
             Entity entity = event.getRightClicked();
             String entityName;
             if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
-                entityName = ((Player) entity).getName();
+                entityName = entity.getName();
             } else {
                 entityName = DisguiseType.getType(entity).toReadable();
             }
@@ -246,9 +244,9 @@ public class DisguiseListener implements Listener {
                     } else {
                         if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                             if (disguise.getWatcher() instanceof LivingWatcher) {
-                                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                                disguise.getWatcher().setCustomName(((Player) entity).getDisplayName());
                                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                                    ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                                    disguise.getWatcher().setCustomNameVisible(true);
                                 }
                             }
                         }
@@ -327,17 +325,6 @@ public class DisguiseListener implements Listener {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
-        } else {
-            //Stupid hack to fix worldswitch invisibility bug
-            final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
-            final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
-            disguise.setViewSelfDisguise(!viewSelfToggled);
-            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    disguise.setViewSelfDisguise(viewSelfToggled);
-                }
-            }, 20L); //I wish I could use lambdas here, so badly
         }
     }
 
@@ -377,6 +364,17 @@ public class DisguiseListener implements Listener {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
+        } else {
+            //Stupid hack to fix worldswitch invisibility bug
+            final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
+            final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+            disguise.setViewSelfDisguise(!viewSelfToggled);
+            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    disguise.setViewSelfDisguise(viewSelfToggled);
+                }
+            }, 4L); //I wish I could use lambdas here, so badly
         }
     }
 
