@@ -1,11 +1,7 @@
-
-import java.nio.file.*
-import java.nio.file.Path
-
 plugins {
-  id 'java'
-  id 'maven-publish'
-  id "com.jfrog.artifactory" version "3.1.1"
+    id 'java'
+    id 'maven-publish'
+    id "com.jfrog.artifactory" version "3.1.1"
 }
 
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
@@ -13,36 +9,36 @@ println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 sourceCompatibility = '1.7'
 ext.spigotVersion = '1.8.8-R0.1-SNAPSHOT'
 
-ext.disguisesVersion = '8.6.4'
+ext.disguisesVersion = '8.6.5'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
-    
+
     mavenCentral()
-    
+
     maven {
         name 'Spigot'
         url 'https://hub.spigotmc.org/nexus/content/groups/public/'
     }
-    
+
     maven {
         name 'Vault-Repo'
         url 'http://nexus.theyeticave.net/content/repositories/pub_releases'
     }
-    
+
     maven {
         name 'dmulloy2-repo'
         url 'http://repo.dmulloy2.net/content/groups/public/'
     }
 }
 
-task sourceJar (type : Jar, dependsOn: classes) {
+task sourceJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
-task javadocJar (type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -79,17 +75,17 @@ artifactoryPublish.skip = false
 artifactory {
     contextUrl = 'http://localhost:8081/artifactory'
     publish {
-      repository {
-        repoKey = 'libs-snapshot-local'
-        username = '${artifactory_user}'
-        password = '${artifactory_password}'
-      }
-      defaults {
-        publications('mavenJava')
-      }
+        repository {
+            repoKey = 'libs-snapshot-local'
+            username = '${artifactory_user}'
+            password = '${artifactory_password}'
+        }
+        defaults {
+            publications('mavenJava')
+        }
     }
-    resolve {  
-      repoKey = 'repo'
+    resolve {
+        repoKey = 'repo'
     }
 }
 
@@ -102,7 +98,7 @@ dependencies {
     compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
     compile 'com.comphenix.protocol:ProtocolLib:3.6.5-SNAPSHOT'
     compile files(
-        'libs/spigot.jar'
+            'libs/spigot.jar'
     )
     testCompile group: 'junit', name: 'junit', version: '4.10'
 }

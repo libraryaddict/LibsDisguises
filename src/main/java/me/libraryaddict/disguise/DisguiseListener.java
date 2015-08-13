@@ -367,14 +367,16 @@ public class DisguiseListener implements Listener {
         } else {
             //Stupid hack to fix worldswitch invisibility bug
             final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
-            final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
-            disguise.setViewSelfDisguise(!viewSelfToggled);
-            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    disguise.setViewSelfDisguise(viewSelfToggled);
-                }
-            }, 4L); //I wish I could use lambdas here, so badly
+            if (viewSelfToggled) {
+                final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+                disguise.setViewSelfDisguise(false);
+                Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        disguise.setViewSelfDisguise(true);
+                    }
+                }, 20L); //I wish I could use lambdas here, so badly
+            }
         }
     }
 
