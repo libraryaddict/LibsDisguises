@@ -255,9 +255,7 @@ public class DisguiseUtilities {
                         entityTrackerEntry);
                 Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
                 // If the tracker exists. Remove himself from his tracker
-                if (isHashSet(trackedPlayersObj)) {
-                    trackedPlayers = (Set) ((HashSet<Object>)trackedPlayers).clone();
-                }
+                trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                 PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
                 destroyPacket.getIntegerArrays().write(0, new int[]{disguise.getEntity().getEntityId()});
                 for (Object p : trackedPlayers) {
@@ -443,8 +441,8 @@ public class DisguiseUtilities {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
-                        entityTrackerEntry);
+                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
+                trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                 for (Object p : trackedPlayers) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
                     if (((TargetedDisguise) disguise).canSee(player)) {
@@ -477,6 +475,19 @@ public class DisguiseUtilities {
                 }
             }
         });
+    }
+
+    /**
+     * Pass in a set, check if it's a hashset.
+     * If it's not, return false.
+     * If you pass in something else, you failed.
+     * @param obj
+     * @return
+     */
+    private static boolean isHashSet(Object obj) {
+        if (obj instanceof HashSet) return true; //It's Spigot/Bukkit
+        if (obj instanceof Set) return false; //It's PaperSpigot/SportsBukkit
+        throw new IllegalArgumentException("Object passed was not either a hashset or set!");
     }
 
     /**
@@ -648,9 +659,7 @@ public class DisguiseUtilities {
                                 ReflectionManager.getNmsClass("EntityPlayer"));
                         final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                                 ReflectionManager.getNmsClass("EntityPlayer"));
-                        if (isHashSet(trackedPlayers)) {
-                            trackedPlayers = (Set) ((HashSet<Object>)trackedPlayers).clone();
-                        }
+                        trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                         for (final Object p : trackedPlayers) {
                             Player pl = (Player) ReflectionManager.getBukkitEntity(p);
                             if (player.equalsIgnoreCase((pl).getName())) {
@@ -692,9 +701,7 @@ public class DisguiseUtilities {
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    if (isHashSet(trackedPlayers)) {
-                        trackedPlayers = (Set) ((HashSet<Object>)trackedPlayers).clone();
-                    }
+                    trackedPlayers = new HashSet(trackedPlayers); //Copy before iterating to prevent ConcurrentModificationException
                     for (final Object p : trackedPlayers) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (player != entity) {
@@ -748,9 +755,7 @@ public class DisguiseUtilities {
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    if (isHashSet(trackedPlayers)) {
-                        trackedPlayers = (Set) ((HashSet<Object>)trackedPlayers).clone();
-                    }
+                    trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                     for (final Object p : trackedPlayers) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (disguise.getEntity() != player && disguise.canSee(player)) {
@@ -773,19 +778,6 @@ public class DisguiseUtilities {
                 ex.printStackTrace(System.out);
             }
         }
-    }
-
-    /**
-     * Pass in a set, check if it's a hashset.
-     * If it's not, return false.
-     * If you pass in something else, you failed.
-     * @param obj
-     * @return
-     */
-    private static boolean isHashSet(Object obj) {
-        if (obj instanceof HashSet) return true; //It's Spigot/Bukkit
-        if (obj instanceof Set) return false; //It's PaperSpigot/SportsBukkit
-        throw new IllegalArgumentException("Object passed was not either a hashset or set!");
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
