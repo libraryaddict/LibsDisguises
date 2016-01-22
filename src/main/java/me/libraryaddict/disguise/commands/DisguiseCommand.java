@@ -1,20 +1,19 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DisguiseCommand extends BaseDisguiseCommand {
 
@@ -38,9 +37,9 @@ public class DisguiseCommand extends BaseDisguiseCommand {
         }
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) sender).getDisplayName());
+                disguise.getWatcher().setCustomName(((Player) sender).getDisplayName());
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                    ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                    disguise.getWatcher().setCustomNameVisible(true);
                 }
             }
         }

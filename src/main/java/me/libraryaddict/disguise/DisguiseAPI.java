@@ -1,12 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -20,7 +13,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -32,6 +24,13 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class DisguiseAPI {
 
@@ -47,7 +46,7 @@ public class DisguiseAPI {
         } else if (disguiseType.isMob()) {
             disguise = new MobDisguise(disguiseType);
         } else {
-            disguise = new PlayerDisguise(((Player) entity).getName());
+            disguise = new PlayerDisguise(entity.getName());
         }
         FlagWatcher watcher = disguise.getWatcher();
         if (entity instanceof LivingEntity) {
@@ -105,14 +104,14 @@ public class DisguiseAPI {
                                             if (!(toCast.isInstance(value))) {
                                                 if (toCast == float.class) {
                                                     if (value instanceof Float) {
-                                                        value = ((Float) value);
+                                                        value = value;
                                                     } else {
                                                         double d = (Double) value;
                                                         value = (float) d;
                                                     }
                                                 } else if (toCast == double.class) {
                                                     if (value instanceof Double) {
-                                                        value = ((Double) value);
+                                                        value = value;
                                                     } else {
                                                         float d = (Float) value;
                                                         value = (double) d;

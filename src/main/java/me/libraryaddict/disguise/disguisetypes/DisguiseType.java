@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.Method;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -9,6 +7,8 @@ import org.bukkit.entity.Guardian;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Zombie;
+
+import java.lang.reflect.Method;
 
 public enum DisguiseType {
 
@@ -195,7 +195,7 @@ public enum DisguiseType {
     private EntityType entityType;
     private Class<? extends FlagWatcher> watcherClass;
 
-    private DisguiseType(int... ints) {
+    DisguiseType(int... ints) {
         for (int i = 0; i < ints.length; i++) {
             int value = ints[i];
             switch (i) {

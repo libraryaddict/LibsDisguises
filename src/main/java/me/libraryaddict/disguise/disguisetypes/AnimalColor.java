@@ -16,7 +16,7 @@ public enum AnimalColor {
 
     private int value;
 
-    private AnimalColor(int newValue) {
+    AnimalColor(int newValue) {
         value = newValue;
     }
 

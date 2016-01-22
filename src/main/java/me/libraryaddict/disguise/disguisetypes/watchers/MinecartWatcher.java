@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import org.bukkit.inventory.ItemStack;
 
 public class MinecartWatcher extends FlagWatcher {
 
@@ -37,7 +36,7 @@ public class MinecartWatcher extends FlagWatcher {
     public void setBlockInCart(ItemStack item) {
         int id = item.getTypeId();
         int data = item.getDurability();
-        setValue(20, (int) (id & 0xffff | data << 16));
+        setValue(20, id & 0xffff | data << 16);
         setValue(22, (byte) 1);
         sendData(20, 22);
     }

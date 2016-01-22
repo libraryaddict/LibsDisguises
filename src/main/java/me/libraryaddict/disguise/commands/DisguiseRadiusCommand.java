@@ -1,9 +1,5 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -19,6 +15,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class DisguiseRadiusCommand extends BaseDisguiseCommand {
 
@@ -124,9 +124,9 @@ public class DisguiseRadiusCommand extends BaseDisguiseCommand {
                 disguise = disguise.clone();
                 if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
-                        ((LivingWatcher) disguise.getWatcher()).setCustomName(((Player) entity).getDisplayName());
+                        disguise.getWatcher().setCustomName(((Player) entity).getDisplayName());
                         if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                            ((LivingWatcher) disguise.getWatcher()).setCustomNameVisible(true);
+                            disguise.getWatcher().setCustomNameVisible(true);
                         }
                     }
                 }

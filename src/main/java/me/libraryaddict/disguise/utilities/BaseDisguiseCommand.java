@@ -1,16 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import me.libraryaddict.disguise.DisguiseConfig;
-
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -19,7 +8,6 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -31,6 +19,14 @@ import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public abstract class BaseDisguiseCommand implements CommandExecutor {
 
@@ -506,7 +502,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                         if (int.class == param) {
                             // Parse to integer
                             if (isNumeric(valueString)) {
-                                value = (int) Integer.parseInt(valueString);
+                                value = Integer.parseInt(valueString);
                             } else {
                                 throw parseToException("number", valueString, methodName);
                             }
@@ -515,7 +511,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             if (isDouble(valueString)) {
                                 float obj = Float.parseFloat(valueString);
                                 if (param == float.class) {
-                                    value = (float) obj;
+                                    value = obj;
                                 } else if (param == double.class) {
                                     value = (double) obj;
                                 }

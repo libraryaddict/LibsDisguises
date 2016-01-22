@@ -1,11 +1,9 @@
 package me.libraryaddict.disguise.utilities;
 
+import org.bukkit.Sound;
+
 import java.util.HashMap;
 import java.util.HashSet;
-
-import me.libraryaddict.disguise.utilities.ReflectionManager.LibVersion;
-
-import org.bukkit.Sound;
 
 /**
  * Only living disguises go in here!
@@ -74,7 +72,7 @@ public enum DisguiseSound {
 
     public enum SoundType {
 
-        CANCEL, DEATH, HURT, IDLE, STEP;
+        CANCEL, DEATH, HURT, IDLE, STEP
     }
 
     public static DisguiseSound getType(String name) {
@@ -89,7 +87,7 @@ public enum DisguiseSound {
     private float damageSoundVolume = 1F;
     private HashMap<SoundType, String> disguiseSounds = new HashMap<>();
 
-    private DisguiseSound(Object... sounds) {
+    DisguiseSound(Object... sounds) {
         for (int i = 0; i < sounds.length; i++) {
             Object obj = sounds[i];
             String s;

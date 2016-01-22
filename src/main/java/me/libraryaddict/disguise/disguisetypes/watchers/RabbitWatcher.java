@@ -1,9 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Random;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
+
+import java.util.Random;
 
 public class RabbitWatcher extends AgeableWatcher {
 
@@ -13,7 +13,7 @@ public class RabbitWatcher extends AgeableWatcher {
     }
 
     public RabbitType getType() {
-        return RabbitType.getType((Integer) getValue(18, (int) 0));
+        return RabbitType.getType((Integer) getValue(18, 0));
     }
 
     public void setType(RabbitType type) {

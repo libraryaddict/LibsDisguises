@@ -1,5 +1,17 @@
 package me.libraryaddict.disguise.utilities;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.google.common.collect.ImmutableMap;
+import org.bukkit.Art;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,20 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.ImmutableMap;
-
-import org.bukkit.Art;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import org.bukkit.potion.PotionEffect;
 
 public class ReflectionManager {
 
@@ -202,19 +200,23 @@ public class ReflectionManager {
             Class<?> entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
             Object world = getWorld(Bukkit.getWorlds().get(0));
-            if (entityName.equals("Player")) {
-                Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
-                Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
-                        .newInstance(world);
-                WrappedGameProfile gameProfile = getGameProfile(null, "LibsDisguises");
-                entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                        gameProfile.getHandleType(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
-                                gameProfile.getHandle(), playerinteractmanager);
-            } else if (entityName.equals("EnderPearl")) {
-                entityObject = entityClass.getConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
-                        .newInstance(world, createEntityInstance("Cow"));
-            } else {
-                entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
+            switch (entityName) {
+                case "Player":
+                    Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
+                    Object playerinteractmanager = getNmsClass("PlayerInteractManager").getConstructor(getNmsClass("World"))
+                            .newInstance(world);
+                    WrappedGameProfile gameProfile = getGameProfile(null, "LibsDisguises");
+                    entityObject = entityClass.getConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                            gameProfile.getHandleType(), playerinteractmanager.getClass()).newInstance(minecraftServer, world,
+                            gameProfile.getHandle(), playerinteractmanager);
+                    break;
+                case "EnderPearl":
+                    entityObject = entityClass.getConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
+                            .newInstance(world, createEntityInstance("Cow"));
+                    break;
+                default:
+                    entityObject = entityClass.getConstructor(getNmsClass("World")).newInstance(world);
+                    break;
             }
             return entityObject;
         } catch (Exception e) {
@@ -397,6 +399,7 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
+
         try {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
             gameProfile.getProperties().putAll(profileWithSkin.getProperties());
