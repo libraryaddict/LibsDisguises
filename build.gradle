@@ -14,7 +14,6 @@ ext.disguisesVersion = '8.6.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
-
     mavenCentral()
 
     maven {
@@ -94,7 +93,6 @@ artifactory {
 
 file('libs').mkdirs()
 
-//Retrieves spigot.jar server file from link
 ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
 
 dependencies {
