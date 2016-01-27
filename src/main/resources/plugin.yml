@@ -3,7 +3,7 @@ main: me.libraryaddict.disguise.LibsDisguises
 version: 8.6.8
 author: libraryaddict
 authors: [Byteflux, Navid K.]
-depend: [ProtocolLib]
+softdepend: [ProtocolLib]
 commands:
     libsdisguises:
       permission: libsdisguises.seecmd.libsdisguises

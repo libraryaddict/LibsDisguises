@@ -23,13 +23,16 @@ repositories {
     }
 
     maven {
-        name 'Vault-Repo'
-        url 'http://nexus.theyeticave.net/content/repositories/pub_releases'
+        url 'https://oss.sonatype.org/content/groups/public/'
     }
 
     maven {
         name 'dmulloy2-repo'
         url 'http://repo.dmulloy2.net/content/groups/public/'
+    }
+
+    flatDir {
+        dir 'libs'
     }
 }
 
@@ -95,10 +98,8 @@ file('libs').mkdirs()
 ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
 
 dependencies {
-    compile 'org.bukkit:bukkit:' + project.ext.spigotVersion
+    compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
     compile 'com.comphenix.protocol:ProtocolLib:3.6.5-SNAPSHOT'
-    compile files(
-            'libs/spigot.jar'
-    )
+    compile name: 'spigot'
     testCompile group: 'junit', name: 'junit', version: '4.10'
 }
