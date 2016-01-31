@@ -97,7 +97,7 @@ ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: 
 
 dependencies {
     compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
-    compile 'com.comphenix.protocol:ProtocolLib:3.6.5-SNAPSHOT'
+    compile 'com.comphenix.protocol:ProtocolLib:3.6.5'
     compile name: 'spigot'
     testCompile group: 'junit', name: 'junit', version: '4.10'
 }
