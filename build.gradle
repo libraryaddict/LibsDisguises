@@ -93,7 +93,7 @@ artifactory {
 
 file('libs').mkdirs()
 
-ant.get src: 'https://www.dropbox.com/s/1ofgubrldjwamnk/spigot.jar?dl=1', dest: file('libs'), verbose: false, skipexisting: true
+ant.get src: 'http://server.o2gaming.com/downloads/spigot.jar', dest: file('libs'), verbose: false, skipexisting: true
 
 dependencies {
     compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
