@@ -90,8 +90,7 @@ public class DisguiseUtilities {
                 block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
                         .invoke(null, Material.BED_BLOCK.getId());
             } catch (Exception ex) {
-                block = ((Object[]) ReflectionManager.getNmsField(ReflectionManager.getNmsClass("Block"), "byId").get(null))[Material.BED_BLOCK
-                        .getId()];
+                block = ((Object[]) ReflectionManager.getNmsField(ReflectionManager.getNmsClass("Block"), "byId").get(null))[Material.BED_BLOCK.getId()];
             }
             Method fromLegacyData = block.getClass().getMethod("fromLegacyData", int.class);
             Method setType = chunkSection.getClass().getMethod("setType", int.class, int.class, int.class,
@@ -251,9 +250,7 @@ public class DisguiseUtilities {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(
-                        entityTrackerEntry);
-                Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
+                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
                 // If the tracker exists. Remove himself from his tracker
                 trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                 PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
@@ -481,6 +478,7 @@ public class DisguiseUtilities {
      * Pass in a set, check if it's a hashset.
      * If it's not, return false.
      * If you pass in something else, you failed.
+     *
      * @param obj
      * @return
      */
@@ -792,11 +790,6 @@ public class DisguiseUtilities {
             return true;
         }
         return false;
-    }
-
-    @Deprecated
-    public static void removeGameprofile(String string) {
-        removeGameProfile(string);
     }
 
     public static void removeGameProfile(String string) {

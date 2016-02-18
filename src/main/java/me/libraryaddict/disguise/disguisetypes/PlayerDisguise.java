@@ -1,16 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import org.apache.commons.lang.Validate;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.LibsDisguises;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 public class PlayerDisguise extends TargetedDisguise {
 
