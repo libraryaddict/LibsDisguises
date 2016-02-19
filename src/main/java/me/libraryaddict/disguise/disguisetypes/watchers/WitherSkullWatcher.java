@@ -10,7 +10,7 @@ public class WitherSkullWatcher extends FlagWatcher {
     }
 
     public boolean isBlue() {
-        return (Byte) getValue(10, (byte) 0) == 1;
+        return (byte) getValue(10, (byte) 0) == 1;
     }
 
     public void setBlue(boolean blue) {

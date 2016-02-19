@@ -10,7 +10,7 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     public AnimalColor getCollarColor() {
-        return AnimalColor.getColor((Byte) getValue(20, (byte) 14));
+        return AnimalColor.getColor((byte) getValue(20, (byte) 14));
     }
 
     public boolean isAngry() {

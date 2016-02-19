@@ -75,7 +75,7 @@ public class FlagWatcher {
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.items = items.clone();
-        cloned.modifiedEntityAnimations = (HashSet) modifiedEntityAnimations.clone();
+        cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
         cloned.addEntityAnimations = addEntityAnimations;
         return cloned;
     }
@@ -106,7 +106,7 @@ public class FlagWatcher {
             }
             if (value != null) {
                 if (isEntityAnimationsAdded() && dataType == 0) {
-                    value = this.addEntityAnimations((Byte) value, (Byte) watch.getValue());
+                    value = this.addEntityAnimations((byte) value, (byte) watch.getValue());
                 }
                 boolean isDirty = watch.getDirtyState();
                 watch = new WrappedWatchableObject(dataType, value);
@@ -173,7 +173,7 @@ public class FlagWatcher {
     }
 
     private boolean getFlag(int byteValue) {
-        return ((Byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
+        return ((byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
     }
 
     public ItemStack getItemInHand() {
@@ -264,7 +264,7 @@ public class FlagWatcher {
             }
             Object value = entityValues.get(data);
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
-                value = addEntityAnimations((Byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+                value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
             list.add(new WrappedWatchableObject(data, value));
         }
@@ -317,7 +317,7 @@ public class FlagWatcher {
 
     private void setFlag(int byteValue, boolean flag) {
         modifiedEntityAnimations.add(byteValue);
-        byte b0 = (Byte) getValue(0, (byte) 0);
+        byte b0 = (byte) getValue(0, (byte) 0);
         if (flag) {
             setValue(0, (byte) (b0 | 1 << byteValue));
         } else {

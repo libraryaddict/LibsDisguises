@@ -28,21 +28,6 @@ import java.util.regex.Pattern;
 
 public class ReflectionManager {
 
-    public enum LibVersion {
-
-        V1_8;
-        private static LibVersion currentVersion;
-
-        static {
-            //String mcVersion = Bukkit.getVersion().split("MC: ")[1].replace(")", "");
-            currentVersion = V1_8;
-        }
-
-        public static LibVersion getGameVersion() {
-            return currentVersion;
-        }
-    }
-
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static final Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
@@ -551,7 +536,7 @@ public class ReflectionManager {
         try {
             damageAndIdleSoundMethod.setAccessible(true);
             return (Float) damageAndIdleSoundMethod.invoke(entity);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -610,6 +595,7 @@ public class ReflectionManager {
 
     public static void setAllowSleep(Player player) {
         try {
+            //TODO: Fix this!
             /**
              * Object nmsEntity = getNmsEntity(player); Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity); Field check = getNmsField(connection.getClass(), "checkMovement"); check.setBoolean(connection, true); *
              */

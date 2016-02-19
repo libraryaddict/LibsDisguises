@@ -13,15 +13,15 @@ public class ZombieWatcher extends LivingWatcher {
     }
 
     public boolean isBaby() {
-        return (Byte) getValue(12, (byte) 0) == 1;
+        return (byte) getValue(12, (byte) 0) == 1;
     }
 
     public boolean isShaking() {
-        return (Byte) getValue(14, (byte) 0) == 1;
+        return (byte) getValue(14, (byte) 0) == 1;
     }
 
     public boolean isVillager() {
-        return (Byte) getValue(13, (byte) 0) == 1;
+        return (byte) getValue(13, (byte) 0) == 1;
     }
 
     public void setAdult() {

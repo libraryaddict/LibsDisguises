@@ -9,7 +9,7 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     private boolean get10(int value) {
-        return ((Byte) getValue(10, 0) & value) != 0;
+        return ((byte) getValue(10, 0) & value) != 0;
     }
 
     public boolean isNoBasePlate() {
@@ -29,7 +29,7 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     private void set10(int value, boolean isTrue) {
-        byte b1 = (Byte) getValue(10, (byte) 0);
+        byte b1 = (byte) getValue(10, (byte) 0);
         if (isTrue) {
             b1 = (byte) (b1 | value);
         } else {

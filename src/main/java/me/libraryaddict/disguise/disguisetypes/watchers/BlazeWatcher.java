@@ -9,7 +9,7 @@ public class BlazeWatcher extends LivingWatcher {
     }
 
     public boolean isBlazing() {
-        return (Byte) getValue(16, (byte) 0) == 1;
+        return (byte) getValue(16, (byte) 0) == 1;
     }
 
     public void setBlazing(boolean isBlazing) {

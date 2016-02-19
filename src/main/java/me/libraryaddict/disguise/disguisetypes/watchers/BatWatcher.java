@@ -10,7 +10,7 @@ public class BatWatcher extends LivingWatcher {
     }
 
     public boolean isFlying() {
-        return (Byte) getValue(16, (byte) 1) == 0;
+        return (byte) getValue(16, (byte) 1) == 0;
     }
 
     public void setFlying(boolean flying) {

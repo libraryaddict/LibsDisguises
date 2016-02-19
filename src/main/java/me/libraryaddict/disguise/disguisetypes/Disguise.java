@@ -63,7 +63,7 @@ public abstract class Disguise {
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
      *
-     * @param newType
+     * @param newType The disguise
      */
     protected void createDisguise(DisguiseType newType) {
         if (getWatcher() != null) {
@@ -73,7 +73,7 @@ public abstract class Disguise {
             throw new RuntimeException(
                     "DisguiseType "
                     + newType
-                    + " was used in a futile attempt to construct a disguise, but this version of craftbukkit does not have that entity");
+                    + " was used in a futile attempt to construct a disguise, but this version of Spigot does not have that entity");
         }
         // Set the disguise type
         disguiseType = newType;
@@ -103,7 +103,7 @@ public abstract class Disguise {
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
             getWatcher().setValue(13, (byte) 1);
         } else if (getType() == DisguiseType.ELDER_GUARDIAN) {
-            getWatcher().setValue(16, 0 | 4);
+            getWatcher().setValue(16, 4);
         } // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
@@ -325,7 +325,7 @@ public abstract class Disguise {
     /**
      * Get the disguised entity
      *
-     * @return
+     * @return entity
      */
     public Entity getEntity() {
         return entity;
@@ -334,7 +334,7 @@ public abstract class Disguise {
     /**
      * Get the disguise type
      *
-     * @return
+     * @return disguiseType
      */
     public DisguiseType getType() {
         return disguiseType;
@@ -343,7 +343,7 @@ public abstract class Disguise {
     /**
      * Get the flag watcher
      *
-     * @return
+     * @return flagWatcher
      */
     public FlagWatcher getWatcher() {
         return watcher;
@@ -352,7 +352,7 @@ public abstract class Disguise {
     /**
      * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise. getEntity() can still return null if this disguise is active after despawn, logout, etc.
      *
-     * @return
+     * @return isDisguiseInUse
      */
     public boolean isDisguiseInUse() {
         return disguiseInUse;
@@ -396,16 +396,9 @@ public abstract class Disguise {
 
     /**
      * Internal use
-     *
-     * @return
      */
     public boolean isRemoveDisguiseOnDeath() {
-        if (getEntity() == null) {
-            return true;
-        }
-        return getEntity() instanceof Player
-                ? (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
-                : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead());
+        return getEntity() == null || (getEntity() instanceof Player ? (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath()) : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead()));
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -415,7 +408,7 @@ public abstract class Disguise {
     /**
      * Can the disguised view himself as the disguise
      *
-     * @return
+     * @return viewSelfDisguise
      */
     public boolean isSelfDisguiseVisible() {
         return viewSelfDisguise;
@@ -441,7 +434,7 @@ public abstract class Disguise {
     /**
      * Removes the disguise and undisguises the entity if its using this disguise.
      *
-     * @return
+     * @return removeDiguise
      */
     public boolean removeDisguise() {
         if (disguiseInUse) {
@@ -505,7 +498,7 @@ public abstract class Disguise {
      * Set the entity of the disguise. Only used for internal things.
      *
      * @param entity
-     * @return
+     * @return disguise
      */
     public Disguise setEntity(Entity entity) {
         if (this.getEntity() != null) {

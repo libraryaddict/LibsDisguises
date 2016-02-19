@@ -26,11 +26,11 @@ public class TameableWatcher extends AgeableWatcher {
     }
 
     protected boolean isTrue(int no) {
-        return ((Byte) getValue(16, (byte) 0) & no) != 0;
+        return ((byte) getValue(16, (byte) 0) & no) != 0;
     }
 
     protected void setFlag(int no, boolean flag) {
-        byte b0 = (Byte) getValue(16, (byte) 0);
+        byte b0 = (byte) getValue(16, (byte) 0);
         if (flag) {
             setValue(16, (byte) (b0 | no));
         } else {

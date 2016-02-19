@@ -1,26 +1,24 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class LivingWatcher extends FlagWatcher {
 
@@ -80,7 +78,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public boolean getPotionParticlesRemoved() {
-        return (Byte) getValue(8, (byte) 0) == 1;
+        return (byte) getValue(8, (byte) 0) == 1;
     }
 
     private int getPotions() {
@@ -99,7 +97,7 @@ public class LivingWatcher extends FlagWatcher {
                 int n = (Integer) potionNo.invoke(list[localMobEffect]);
                 f1 += (n >> 16 & 0xFF) / 255.0F;
                 f2 += (n >> 8 & 0xFF) / 255.0F;
-                f3 += (n >> 0 & 0xFF) / 255.0F;
+                f3 += (n & 0xFF) / 255.0F;
                 f4 += 1.0F;
             }
         } catch (Exception ex) {

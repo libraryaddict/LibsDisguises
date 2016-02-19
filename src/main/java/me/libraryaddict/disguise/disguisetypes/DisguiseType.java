@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 
 public enum DisguiseType {
 
+    AREA_EFFECT_CLOUD, //Disguising as this would be something else.
     ARMOR_STAND(78),
     ARROW(60),
     BAT,
@@ -22,8 +23,9 @@ public enum DisguiseType {
     COW,
     CREEPER,
     DONKEY,
-    DROPPED_ITEM(2, 1),
-    EGG(62),
+    DRAGON_FIREBALL(26),
+    DROPPED_ITEM(-1, 1),
+    EGG,
     ELDER_GUARDIAN,
     ENDER_CRYSTAL(51),
     ENDER_DRAGON,
@@ -35,7 +37,7 @@ public enum DisguiseType {
     FALLING_BLOCK(70, 1),
     FIREBALL(63, 0),
     FIREWORK(76),
-    FISHING_HOOK(90),
+    FISHING_HOOK,
     GHAST,
     GIANT,
     GUARDIAN,
@@ -43,6 +45,7 @@ public enum DisguiseType {
     IRON_GOLEM,
     ITEM_FRAME(71),
     LEASH_HITCH(77),
+    LIGHTING,
     MAGMA_CUBE,
     MINECART(10, 0),
     MINECART_CHEST(10, 1),
@@ -61,6 +64,8 @@ public enum DisguiseType {
     PRIMED_TNT(50),
     RABBIT,
     SHEEP,
+    SHULKER,
+    SHULKER_BULLET(25),
     SILVERFISH,
     SKELETON,
     SKELETON_HORSE,
@@ -68,12 +73,15 @@ public enum DisguiseType {
     SMALL_FIREBALL(64, 0),
     SNOWBALL(61),
     SNOWMAN,
+    SPECTRAL_ARROW(24),
     SPIDER,
-    SPLASH_POTION(73),
+    SPLASH_POTION(-1),
     SQUID,
+    TIPPED_ARROW(23),
     THROWN_EXP_BOTTLE(75),
     UNDEAD_HORSE,
     VILLAGER,
+    WEATHER,
     WITCH,
     WITHER,
     WITHER_SKELETON,
@@ -116,7 +124,7 @@ public enum DisguiseType {
                 }
                 type.setEntityType(EntityType.valueOf(toUse.name()));
             } catch (Throwable ex) {
-                // This version of craftbukkit doesn't have the disguise.
+                // This version of Spigot doesn't have the disguise.
             }
         }
         try {

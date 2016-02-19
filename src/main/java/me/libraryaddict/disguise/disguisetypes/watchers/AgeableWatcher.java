@@ -17,7 +17,7 @@ public class AgeableWatcher extends LivingWatcher {
     }
 
     public boolean isBaby() {
-        return ((Byte) getValue(12, (byte) 0)).intValue() < 0;
+        return ((byte) getValue(12, (byte) 0)) < 0;
     }
 
     public void setAdult() {

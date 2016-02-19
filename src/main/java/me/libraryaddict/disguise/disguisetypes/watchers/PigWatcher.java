@@ -9,7 +9,7 @@ public class PigWatcher extends AgeableWatcher {
     }
 
     public boolean isSaddled() {
-        return (Byte) getValue(16, (byte) 0) == 1;
+        return (byte) getValue(16, (byte) 0) == 1;
     }
 
     public void setSaddled(boolean isSaddled) {

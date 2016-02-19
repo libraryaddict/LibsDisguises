@@ -1,8 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.inventory.ItemStack;
 
 public class EndermanWatcher extends LivingWatcher {
 
@@ -12,11 +11,11 @@ public class EndermanWatcher extends LivingWatcher {
 
     @Override
     public ItemStack getItemInHand() {
-        return new ItemStack((Byte) getValue(16, (byte) 0), 1, ((Byte) getValue(17, (byte) 0)));
+        return new ItemStack((byte) getValue(16, (byte) 0), 1, ((byte) getValue(17, (byte) 0)));
     }
 
     public boolean isAggressive() {
-        return (Byte) getValue(18, (byte) 0) == 1;
+        return (byte) getValue(18, (byte) 0) == 1;
     }
 
     @Deprecated

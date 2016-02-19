@@ -30,7 +30,7 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public boolean getViewBlockInCart() {
-        return ((Byte) getValue(22, (byte) 0)) == (byte) 1;
+        return ((byte) getValue(22, (byte) 0)) == (byte) 1;
     }
 
     public void setBlockInCart(ItemStack item) {

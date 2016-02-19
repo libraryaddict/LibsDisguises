@@ -9,7 +9,7 @@ public class GhastWatcher extends LivingWatcher {
     }
 
     public boolean isAggressive() {
-        return (Byte) getValue(16, (byte) 0) == 1;
+        return (byte) getValue(16, (byte) 0) == 1;
     }
 
     public void setAggressive(boolean isAggressive) {

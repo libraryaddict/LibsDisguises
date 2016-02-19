@@ -1,8 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Random;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+
+import java.util.Random;
 
 public class SlimeWatcher extends LivingWatcher {
 
@@ -12,7 +12,7 @@ public class SlimeWatcher extends LivingWatcher {
     }
 
     public int getSize() {
-        return (Byte) getValue(16, (byte) 1);
+        return (byte) getValue(16, (byte) 1);
     }
 
     public void setSize(int size) {
