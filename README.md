@@ -3,6 +3,8 @@ LibsDisguises (1.9+)
 
 A disguise plugin made by libraryaddict which is pretty cool.<br>
 
+NOTE: These versions will NOT work with Spigot 1.8.8 and before.
+
 When posting an issue:<br>
 Please make sure you<br>
 1) Post a stack trace error, if no stack trace, then post the odd behavior<br>
