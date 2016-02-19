@@ -1,13 +1,12 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.UUID;
-
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
@@ -16,27 +15,25 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-import me.libraryaddict.disguise.utilities.DisguiseValues;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import me.libraryaddict.disguise.LibsDisguises;
+import java.util.UUID;
 
 public abstract class Disguise {
 
@@ -743,7 +740,7 @@ public abstract class Disguise {
             // Just return.
             if (!event.isCancelled()) {
                 disguiseInUse = true;
-                task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.instance, velocityRunnable, 1, 1);
+                task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
                 // Stick the disguise in the disguises bin
                 DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
@@ -752,7 +749,7 @@ public abstract class Disguise {
                 // Resend the disguised entity's packet
                 DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 // If he is a player, then self disguise himself
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.instance, new Runnable() {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
                     @Override
                     public void run() {
                         DisguiseUtilities.setupFakeDisguise(Disguise.this);

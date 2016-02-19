@@ -174,7 +174,7 @@ public class PlayerDisguise extends TargetedDisguise {
             if (skinToUse.length() > 16) {
                 this.skinToUse = skinToUse.substring(0, 16);
             }
-            if (LibsDisguises.instance.getConfig().getBoolean("ContactMojangServers", true)) {
+            if (LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true)) {
                 currentLookup = new LibsProfileLookup() {
                     @Override
                     public void onLookup(WrappedGameProfile gameProfile) {
@@ -208,7 +208,7 @@ public class PlayerDisguise extends TargetedDisguise {
             this.skinToUse = null;
             return this;
         }
-        if (LibsDisguises.instance.getConfig().getBoolean("ContactMojangServers", true)) {
+        if (LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true)) {
             Validate.notEmpty(gameProfile.getName(), "Name must be set");
             this.skinToUse = gameProfile.getName();
             this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);

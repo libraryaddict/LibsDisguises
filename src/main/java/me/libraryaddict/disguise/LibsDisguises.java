@@ -1,10 +1,20 @@
 package me.libraryaddict.disguise;
 
 import com.comphenix.protocol.reflect.FieldAccessException;
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import me.libraryaddict.disguise.commands.*;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.libraryaddict.disguise.commands.DisguiseCloneCommand;
+import me.libraryaddict.disguise.commands.DisguiseCommand;
+import me.libraryaddict.disguise.commands.DisguiseEntityCommand;
+import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
+import me.libraryaddict.disguise.commands.DisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.DisguiseViewSelf;
+import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
+import me.libraryaddict.disguise.commands.UndisguiseCommand;
+import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
+import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
@@ -17,10 +27,11 @@ import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.FakeBoundingBox;
+import me.libraryaddict.disguise.utilities.Metrics;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-import me.libraryaddict.disguise.utilities.DisguiseValues;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Damageable;
@@ -28,17 +39,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import me.libraryaddict.disguise.utilities.FakeBoundingBox;
-import me.libraryaddict.disguise.utilities.Metrics;
-import org.bukkit.event.HandlerList;
+import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class LibsDisguises extends JavaPlugin {
 
-    public static LibsDisguises instance; //I'm sorry Sun MicroSystems and all mighty Java God
+    private static LibsDisguises instance;
     private DisguiseListener listener;
 
     @Override
@@ -268,5 +277,14 @@ public class LibsDisguises extends JavaPlugin {
 
     public DisguiseListener getListener() {
         return listener;
+    }
+
+    /**
+     * External APIs shouldn't actually need this instance.
+     * DisguiseAPI should be enough to handle most cases.
+     * @return The instance of this plugin
+     */
+    public static LibsDisguises getInstance() {
+        return instance;
     }
 }

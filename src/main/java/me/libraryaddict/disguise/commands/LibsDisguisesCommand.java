@@ -21,7 +21,7 @@ public class LibsDisguisesCommand implements CommandExecutor {
         } else if (args.length > 0) {
             if (sender.hasPermission("libsdisguises.reload")) {
                 if (args[0].equalsIgnoreCase("reload")) {
-                    LibsDisguises.instance.reload();
+                    LibsDisguises.getInstance().reload();
                     sender.sendMessage(ChatColor.GREEN + "[LibsDisguises] Reloaded config.");
                     return true;
                 } else {

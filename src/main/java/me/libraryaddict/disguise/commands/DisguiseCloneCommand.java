@@ -1,18 +1,16 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.DisguiseListener;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DisguiseCloneCommand extends BaseDisguiseCommand {
 
@@ -43,7 +41,7 @@ public class DisguiseCloneCommand extends BaseDisguiseCommand {
                     return true;
                 }
             }
-            LibsDisguises.instance.getListener().setDisguiseClone(sender.getName(), new Boolean[]{doEquipment, doSneak, doSprint});
+            LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), new Boolean[]{doEquipment, doSneak, doSprint});
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
                     + " seconds to grab the disguise reference!");
         } else {

@@ -1,9 +1,5 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -13,6 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DisguiseEntityCommand extends BaseDisguiseCommand {
 
@@ -34,7 +34,7 @@ public class DisguiseEntityCommand extends BaseDisguiseCommand {
             ex.printStackTrace(System.out);
             return true;
         }
-        LibsDisguises.instance.getListener().setDisguiseEntity(sender.getName(), disguise);
+        LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguise);
         sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseEntityExpire()
                 + " seconds to disguise it as a " + disguise.getType().toReadable() + "!");
         return true;
