@@ -109,15 +109,13 @@ public class FlagWatcher {
                     value = this.addEntityAnimations((byte) value, (byte) watch.getValue());
                 }
                 boolean isDirty = watch.getDirtyState();
-                watch = new WrappedWatchableObject(id);
-                watch.setValue(value);
+                watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(id, value));
                 if (!isDirty) {
                     watch.setDirtyState(false);
                 }
             } else {
                 boolean isDirty = watch.getDirtyState();
-                watch = new WrappedWatchableObject(id);
-                watch.setValue(watch.getValue());
+                watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(id, watch.getValue()));
                 if (!isDirty) {
                     watch.setDirtyState(false);
                 }
@@ -126,16 +124,15 @@ public class FlagWatcher {
         }
         if (sendAllCustom) {
             // Its sending the entire meta data. Better add the custom meta
-            for (int value : entityValues.keySet()) {
-                if (sentValues.contains(value)) {
+            for (int id : entityValues.keySet()) {
+                if (sentValues.contains(id)) {
                     continue;
                 }
-                Object obj = entityValues.get(value);
-                if (obj == null) {
+                Object value = entityValues.get(id);
+                if (value == null) {
                     continue;
                 }
-                WrappedWatchableObject watch = new WrappedWatchableObject(value);
-                watch.setValue(obj);
+                WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(id, value));
                 newList.add(watch);
             }
         }
@@ -246,11 +243,9 @@ public class FlagWatcher {
         for (int i = 0; i <= 31; i++) {
             WrappedWatchableObject watchable = null;
             if (this.entityValues.containsKey(i) && this.entityValues.get(i) != null) {
-                watchable = new WrappedWatchableObject(i);
-                watchable.setValue(entityValues.get(i));
+                watchable = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(i, entityValues.get(i)));
             } else if (this.backupEntityValues.containsKey(i) && this.backupEntityValues.get(i) != null) {
-                watchable = new WrappedWatchableObject(i);
-                watchable.setValue(backupEntityValues.get(i));
+                watchable = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(i, entityValues.get(i)));
             }
             if (watchable != null) {
                 watchableObjects.add(watchable);
@@ -271,8 +266,7 @@ public class FlagWatcher {
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
                 value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
-            WrappedWatchableObject watch = new WrappedWatchableObject(data);
-            watch.setValue(value);
+            WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(data, value));
             list.add(watch);
         }
         if (!list.isEmpty()) {

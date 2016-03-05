@@ -7,13 +7,11 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
@@ -591,40 +589,6 @@ public class DisguiseUtilities {
      */
     public static WrappedGameProfile lookupGameProfile(String playerName) {
         return ReflectionManager.getSkullBlob(ReflectionManager.grabProfileAddUUID(playerName));
-    }
-
-    /**
-     * Please note that in the future when 'DualInt' and the like are removed. This should break.. However, that should be negated in the future as I'd be able to set the watcher index's as per the spigot version. Instead of checking on the player's version every single packet..
-     */
-    public static List<WrappedWatchableObject> rebuildForVersion(Player player, FlagWatcher watcher,
-                                                                 List<WrappedWatchableObject> list) {
-        if (true) // Use for future protocol compatibility
-        {
-            return list;
-        }
-        ArrayList<WrappedWatchableObject> rebuiltList = new ArrayList<>();
-        ArrayList<WrappedWatchableObject> backups = new ArrayList<>();
-        for (WrappedWatchableObject obj : list) {
-            if (obj.getValue().getClass().getName().startsWith("org.")) {
-                backups.add(obj);
-                continue;
-            }
-            switch (obj.getIndex()) {
-                // TODO: Future version support
-            }
-        }
-        Iterator<WrappedWatchableObject> itel = backups.iterator();
-        while (itel.hasNext()) {
-            int index = itel.next().getIndex();
-            for (WrappedWatchableObject obj2 : rebuiltList) {
-                if (index == obj2.getIndex()) {
-                    itel.remove();
-                    break;
-                }
-            }
-        }
-        rebuiltList.addAll(backups);
-        return rebuiltList;
     }
 
     /**

@@ -364,7 +364,6 @@ public class PacketsManager {
         try {
             List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ? flagWatcher.convert(watcher
                     .getWatchableObjects()) : flagWatcher.getWatchableObjects();
-            list = DisguiseUtilities.rebuildForVersion(player, flagWatcher, list);
             for (WrappedWatchableObject watchableObject : list) {
                 newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
             }
@@ -818,11 +817,10 @@ public class PacketsManager {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, observer.getEntityId());
                             List<WrappedWatchableObject> watchableList = new ArrayList<>();
-                            byte b = (byte) 1 << 5;
+                            Byte b = 1 << 5;
                             if (observer.isSprinting())
                                 b = (byte) (b | 1 << 3);
-                            WrappedWatchableObject watch = new WrappedWatchableObject(0);
-                            watch.setValue(b);
+                            WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(0, b));
                             watchableList.add(watch);
                             packet.getWatchableCollectionModifier().write(0, watchableList);
                             try {
@@ -1313,7 +1311,6 @@ public class PacketsManager {
                     if (DisguiseConfig.isMetadataPacketsEnabled()) {
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
                                 packets[0].getWatchableCollectionModifier().read(0));
-                        watchableObjects = DisguiseUtilities.rebuildForVersion(observer, disguise.getWatcher(), watchableObjects);
                         packets[0] = new PacketContainer(sentPacket.getType());
                         StructureModifier<Object> newMods = packets[0].getModifier();
                         newMods.write(0, entity.getEntityId());
@@ -1422,8 +1419,8 @@ public class PacketsManager {
                             // Convert the datawatcher
                             List<WrappedWatchableObject> list = new ArrayList<>();
                             if (DisguiseConfig.isMetadataPacketsEnabled()) {
-                                WrappedWatchableObject watch = new WrappedWatchableObject(0);
-                                watch.setValue(WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
+                                WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(0,
+                                        WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
                                 list.add(watch);
                                 list = disguise.getWatcher().convert(list);
                             } else {
@@ -1434,7 +1431,6 @@ public class PacketsManager {
                                     }
                                 }
                             }
-                            list = DisguiseUtilities.rebuildForVersion(observer, disguise.getWatcher(), list);
                             // Construct the packets to return
                             PacketContainer packetBlock = new PacketContainer(Server.ENTITY_METADATA);
                             packetBlock.getModifier().write(0, entity.getEntityId());

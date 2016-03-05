@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.Art;
@@ -14,6 +17,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -457,8 +461,9 @@ public class ReflectionManager {
     }
 
     public static void removePlayer(Player player) {
-
+        //Some future remove code if needed
     }
+
 
     public static void setAllowSleep(Player player) {
         try {
@@ -469,6 +474,25 @@ public class ReflectionManager {
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
+    }
+
+    /**
+     * This creates a DataWatcherItem usable with WrappedWatchableObject
+     * @param id
+     * @param value
+     * @return
+     */
+    public static Object createDataWatcherItem(int id, Object value) {
+        if (value == null) return null;
+        Serializer serializer = Registry.get(value.getClass());
+        WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
+        Constructor construct = ReflectionManager.getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
+        try {
+            return construct.newInstance(watcherObject.getHandle(), value);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {

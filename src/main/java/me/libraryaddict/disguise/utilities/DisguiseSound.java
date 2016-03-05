@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import org.bukkit.Sound;
 
 import java.lang.reflect.Field;
@@ -132,10 +133,8 @@ public enum DisguiseSound {
         try {
             Field f_getMinecraftKey = ReflectionManager.getNmsField("SoundEffect", "b");
             f_getMinecraftKey.setAccessible(true);
-            Object minecraftKey = f_getMinecraftKey.get(soundEffect);
-            Field f_getValue = ReflectionManager.getNmsField("MinecraftKey", "a");
-            String sound = (String) f_getValue.get(soundEffect); //Our prize!
-            return sound;
+            MinecraftKey key = MinecraftKey.fromHandle(f_getMinecraftKey.get(soundEffect));
+            return key.getKey();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
