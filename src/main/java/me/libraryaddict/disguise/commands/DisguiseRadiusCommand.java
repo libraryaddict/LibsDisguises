@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.BaseDisguiseCommand;
 import me.libraryaddict.disguise.utilities.ClassGetter;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;

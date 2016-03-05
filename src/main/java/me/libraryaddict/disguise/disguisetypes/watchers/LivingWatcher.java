@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
@@ -17,28 +17,23 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class LivingWatcher extends FlagWatcher {
 
-    static Object[] list;
-    static Method potionNo;
+    static Map<Integer, Object> list = new HashMap<>();
+    static Method getId;
 
     static {
         try {
-            list = (Object[]) ReflectionManager.getNmsField("MobEffectList", "byId").get(null);
-            for (Object obj : list) {
-                if (obj != null) {
-                    for (Method field : obj.getClass().getMethods()) {
-                        if (field.getReturnType() == int.class) {
-                            if ((Integer) field.invoke(obj) > 10000) {
-                                potionNo = field;
-                                break;
-                            }
-                        }
-                    }
-                }
+            getId = ReflectionManager.getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
+            Object REGISTRY = ReflectionManager.getNmsField("MobEffectList", "REGISTRY").get(null);
+            for (Object next: ((Iterable)REGISTRY)) {
+                int id = (int) getId.invoke(null, next);
+                list.put(id, next);
             }
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
@@ -94,7 +89,7 @@ public class LivingWatcher extends FlagWatcher {
         float f4 = 0.0F;
         try {
             for (int localMobEffect : potionEffects) {
-                int n = (Integer) potionNo.invoke(list[localMobEffect]);
+                int n = (Integer) getId.invoke(list.get(localMobEffect));
                 f1 += (n >> 16 & 0xFF) / 255.0F;
                 f2 += (n >> 8 & 0xFF) / 255.0F;
                 f3 += (n & 0xFF) / 255.0F;
@@ -145,7 +140,7 @@ public class LivingWatcher extends FlagWatcher {
         this.maxHealth = newHealth;
         this.maxHealthSet = true;
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+            PacketContainer packet = new PacketContainer(Server.UPDATE_ATTRIBUTES);
             List<WrappedAttribute> attributes = new ArrayList<>();
             Builder builder;
             builder = WrappedAttribute.newBuilder();

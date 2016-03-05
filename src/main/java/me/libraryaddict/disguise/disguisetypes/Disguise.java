@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -142,7 +142,8 @@ public abstract class Disguise {
             case WITHER_SKULL:
                 velocitySpeed = 0.000001D;
                 break;
-            case ARROW:
+            case TIPPED_ARROW:
+            case SPECTRAL_ARROW:
             case BOAT:
             case ENDER_CRYSTAL:
             case ENDER_DRAGON:
@@ -246,16 +247,12 @@ public abstract class Disguise {
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
                             if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
-                                lookPacket = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+                                lookPacket = new PacketContainer(Server.ENTITY_LOOK);
                                 StructureModifier<Object> mods = lookPacket.getModifier();
                                 lookPacket.getIntegers().write(0, getEntity().getEntityId());
                                 Location loc = getEntity().getLocation();
-                                mods.write(
-                                        4,
-                                        PacketsManager.getYaw(getType(), getEntity().getType(),
-                                                (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                                mods.write(5, PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()),
-                                        (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
+                                mods.write(4, PacketsManager.getYaw(getType(), getEntity().getType(), (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                                mods.write(5, PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()), (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
                                     selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
@@ -268,7 +265,7 @@ public abstract class Disguise {
                                 }
                             }
                             try {
-                                PacketContainer velocityPacket = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
+                                PacketContainer velocityPacket = new PacketContainer(Server.ENTITY_VELOCITY);
                                 StructureModifier<Integer> mods = velocityPacket.getIntegers();
                                 mods.write(1, (int) (vector.getX() * 8000));
                                 mods.write(3, (int) (vector.getZ() * 8000));
@@ -296,7 +293,7 @@ public abstract class Disguise {
                         // players.
                     }
                     if (getType() == DisguiseType.EXPERIENCE_ORB) {
-                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+                        PacketContainer packet = new PacketContainer(Server.REL_ENTITY_MOVE);
                         packet.getIntegers().write(0, getEntity().getEntityId());
                         try {
                             for (Player player : DisguiseUtilities.getPerverts(disguise)) {

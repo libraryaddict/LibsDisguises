@@ -1,8 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+
+import java.util.HashMap;
 
 public class DisguiseValues {
 
@@ -140,7 +140,7 @@ public class DisguiseValues {
         this.entitySize = size;
     }
 
-    public void setMetaValue(int no, Object value) {
-        metaValues.put(no, value);
+    public void setMetaValue(int id, Object value) {
+        metaValues.put(id, value);
     }
 }

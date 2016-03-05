@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -109,7 +109,7 @@ public class PlayerWatcher extends LivingWatcher {
                             }
                         }
                     } else {
-                        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ANIMATION);
+                        PacketContainer packet = new PacketContainer(Server.ANIMATION);
                         StructureModifier<Integer> mods = packet.getIntegers();
                         mods.write(0, getDisguise().getEntity().getEntityId());
                         mods.write(1, 3);

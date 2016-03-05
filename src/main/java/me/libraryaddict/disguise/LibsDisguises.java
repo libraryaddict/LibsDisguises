@@ -52,6 +52,7 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getLogger().info("Discovered MC version: " + ReflectionManager.getBukkitVersion());
         saveDefaultConfig();
 
         PacketsManager.init(this);
@@ -209,6 +210,7 @@ public class LibsDisguises extends JavaPlugin {
                 }
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
                 if (nmsEntity == null) {
+                    getLogger().warning("Entity not found! (" + nmsEntityName + ")");
                     continue;
                 }
                 Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
@@ -222,10 +224,10 @@ public class LibsDisguises extends JavaPlugin {
                 }
                 DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize,
                         bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
-                for (WrappedWatchableObject watch : WrappedDataWatcher.getEntityWatcher(bukkitEntity).getWatchableObjects()) {
+                WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
+                for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..
-
 //                    System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
 //                     + (watch.getValue() == null ? "null" : watch.getValue().getClass()) + ", Value: " + watch.getValue());
                 }
@@ -252,15 +254,9 @@ public class LibsDisguises extends JavaPlugin {
                         + "!");
                 System.out.print("[LibsDisguises] Before reporting this error, "
                         + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
-                if (ReflectionManager.isForge()) {
-                    System.out
-                            .print("[LibsDisguises] Development builds are available at (ProtocolLib) "
-                                    + "http://assets.comphenix.net/job/ProtocolLib%20-%20Cauldron/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
-                } else {
-                    System.out
-                            .print("[LibsDisguises] Development builds are available at (ProtocolLib) "
-                                    + "http://assets.comphenix.net/job/ProtocolLib/ and (LibsDisguises) http://ci.md-5.net/job/LibsDisguises/");
-                }
+                System.out
+                        .print("[LibsDisguises] Development builds are available at (ProtocolLib) "
+                                + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming.com:8080/job/LibsDisguises%201.9+/");
 
                 ex.printStackTrace(System.out);
             }
@@ -282,6 +278,7 @@ public class LibsDisguises extends JavaPlugin {
     /**
      * External APIs shouldn't actually need this instance.
      * DisguiseAPI should be enough to handle most cases.
+     *
      * @return The instance of this plugin
      */
     public static LibsDisguises getInstance() {

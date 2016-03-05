@@ -105,7 +105,7 @@ public class DisguiseListener implements Listener {
 
     private void chunkMove(Player player, Location newLoc, Location oldLoc) {
         try {
-            for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(player, newLoc, oldLoc)) {
+            for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(newLoc, oldLoc)) {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
             }
             if (newLoc != null) {

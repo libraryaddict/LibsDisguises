@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -85,37 +85,39 @@ public class FlagWatcher {
         HashSet<Integer> sentValues = new HashSet<>();
         boolean sendAllCustom = false;
         for (WrappedWatchableObject watch : list) {
-            int dataType = watch.getIndex();
-            sentValues.add(dataType);
+            int id = watch.getIndex();
+            sentValues.add(id);
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (dataType == 1) {
+            if (id == 1) {
                 sendAllCustom = true;
             }
             Object value = null;
-            if (entityValues.containsKey(dataType)) {
-                if (entityValues.get(dataType) == null) {
+            if (entityValues.containsKey(id)) {
+                if (entityValues.get(id) == null) {
                     continue;
                 }
-                value = entityValues.get(dataType);
-            } else if (backupEntityValues.containsKey(dataType)) {
-                if (backupEntityValues.get(dataType) == null) {
+                value = entityValues.get(id);
+            } else if (backupEntityValues.containsKey(id)) {
+                if (backupEntityValues.get(id) == null) {
                     continue;
                 }
-                value = backupEntityValues.get(dataType);
+                value = backupEntityValues.get(id);
             }
             if (value != null) {
-                if (isEntityAnimationsAdded() && dataType == 0) {
+                if (isEntityAnimationsAdded() && id == 0) {
                     value = this.addEntityAnimations((byte) value, (byte) watch.getValue());
                 }
                 boolean isDirty = watch.getDirtyState();
-                watch = new WrappedWatchableObject(dataType, value);
+                watch = new WrappedWatchableObject(id);
+                watch.setValue(value);
                 if (!isDirty) {
                     watch.setDirtyState(false);
                 }
             } else {
                 boolean isDirty = watch.getDirtyState();
-                watch = new WrappedWatchableObject(dataType, watch.getValue());
+                watch = new WrappedWatchableObject(id);
+                watch.setValue(watch.getValue());
                 if (!isDirty) {
                     watch.setDirtyState(false);
                 }
@@ -132,7 +134,8 @@ public class FlagWatcher {
                 if (obj == null) {
                     continue;
                 }
-                WrappedWatchableObject watch = new WrappedWatchableObject(value, obj);
+                WrappedWatchableObject watch = new WrappedWatchableObject(value);
+                watch.setValue(obj);
                 newList.add(watch);
             }
         }
@@ -243,9 +246,11 @@ public class FlagWatcher {
         for (int i = 0; i <= 31; i++) {
             WrappedWatchableObject watchable = null;
             if (this.entityValues.containsKey(i) && this.entityValues.get(i) != null) {
-                watchable = new WrappedWatchableObject(i, entityValues.get(i));
+                watchable = new WrappedWatchableObject(i);
+                watchable.setValue(entityValues.get(i));
             } else if (this.backupEntityValues.containsKey(i) && this.backupEntityValues.get(i) != null) {
-                watchable = new WrappedWatchableObject(i, backupEntityValues.get(i));
+                watchable = new WrappedWatchableObject(i);
+                watchable.setValue(backupEntityValues.get(i));
             }
             if (watchable != null) {
                 watchableObjects.add(watchable);
@@ -266,10 +271,12 @@ public class FlagWatcher {
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
                 value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
-            list.add(new WrappedWatchableObject(data, value));
+            WrappedWatchableObject watch = new WrappedWatchableObject(data);
+            watch.setValue(value);
+            list.add(watch);
         }
         if (!list.isEmpty()) {
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+            PacketContainer packet = new PacketContainer(Server.ENTITY_METADATA);
             StructureModifier<Object> mods = packet.getModifier();
             mods.write(0, getDisguise().getEntity().getEntityId());
             packet.getWatchableCollectionModifier().write(0, list);
@@ -361,7 +368,7 @@ public class FlagWatcher {
             if (slot > 4) {
                 slot = 0;
             }
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+            PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
             StructureModifier<Object> mods = packet.getModifier();
             mods.write(0, getDisguise().getEntity().getEntityId());
             mods.write(1, slot);
@@ -395,8 +402,8 @@ public class FlagWatcher {
         sendData(0);
     }
 
-    protected void setValue(int no, Object value) {
-        entityValues.put(no, value);
+    protected void setValue(int id, Object value) {
+        entityValues.put(id, value);
         if (!DisguiseConfig.isMetadataPacketsEnabled()) {
             this.rebuildWatchableObjects();
         }

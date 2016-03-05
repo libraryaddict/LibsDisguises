@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import org.bukkit.Sound;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -45,6 +46,9 @@ public enum DisguiseSound {
     PLAYER("game.player.hurt", "step.grass", "game.player.hurt", null),
     RABBIT("mob.rabbit.hurt", "mob.rabbit.hop", "mob.rabbit.death", "mob.rabbit.idle"),
     SHEEP("mob.sheep.say", "mob.sheep.step", null, "mob.sheep.say", "mob.sheep.shear"),
+    SHULKER("entity.shulker.hurt", null, "entity.shulker.death", "entity.shulker.ambient", "entity.shulker.open",
+            "entity.shulker.hurt_closed", "entity.shulker.close", "entity.shulker.teleport", "entity.shulker_bullet.hit",
+            "entity.shulker_bullet.hurt"),
     SILVERFISH("mob.silverfish.hit", "mob.silverfish.step", "mob.silverfish.kill", "mob.silverfish.say"),
     SKELETON("mob.skeleton.hurt", "mob.skeleton.step", "mob.skeleton.death", "mob.skeleton.say"),
     SKELETON_HORSE("mob.horse.skeleton.hit", "step.grass", "mob.horse.skeleton.death", "mob.horse.skeleton.idle",
@@ -71,7 +75,6 @@ public enum DisguiseSound {
             "mob.zombie.woodbreak", "mob.zombie.metal", "mob.zombie.wood");
 
     public enum SoundType {
-
         CANCEL, DEATH, HURT, IDLE, STEP
     }
 
@@ -121,6 +124,24 @@ public enum DisguiseSound {
         }
     }
 
+    /**
+     * Necessary for 1.9
+     * @return
+     */
+    public static String convertSoundEffectToString(Object soundEffect) {
+        try {
+            Field f_getMinecraftKey = ReflectionManager.getNmsField("SoundEffect", "b");
+            f_getMinecraftKey.setAccessible(true);
+            Object minecraftKey = f_getMinecraftKey.get(soundEffect);
+            Field f_getValue = ReflectionManager.getNmsField("MinecraftKey", "a");
+            String sound = (String) f_getValue.get(soundEffect); //Our prize!
+            return sound;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public float getDamageAndIdleSoundVolume() {
         return damageSoundVolume;
     }
@@ -140,6 +161,7 @@ public enum DisguiseSound {
      * Used to check if this sound name is owned by this disguise sound.
      */
     public SoundType getType(String sound, boolean ignoreDamage) {
+        if (sound == null) return SoundType.CANCEL;
         if (isCancelSound(sound)) {
             return SoundType.CANCEL;
         }

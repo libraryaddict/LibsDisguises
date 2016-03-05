@@ -1,17 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
-
 import org.bukkit.Art;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.security.InvalidParameterException;
 
 public class MiscDisguise extends TargetedDisguise {
 
@@ -70,7 +69,8 @@ public class MiscDisguise extends TargetedDisguise {
                 }
                 break;
             case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
-            case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+            case TIPPED_ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+            case SPECTRAL_ARROW:
             case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
             case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
             case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
