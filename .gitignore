@@ -1,4 +1,7 @@
-*
-!src
-!build.gradle
-!settings.gradle
+.gradle
+.idea
+build
+libs
+*.iml
+*.ipr
+*.iws

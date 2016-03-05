@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class DisguiseRadiusCommand extends BaseDisguiseCommand {
+public class RadiusDisguiseCommand extends BaseDisguiseCommand {
 
     private int maxRadius = 30;
     private ArrayList<Class> validClasses = new ArrayList<>();
 
-    public DisguiseRadiusCommand(int maxRadius) {
+    public RadiusDisguiseCommand(int maxRadius) {
         this.maxRadius = maxRadius;
         for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
             if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {

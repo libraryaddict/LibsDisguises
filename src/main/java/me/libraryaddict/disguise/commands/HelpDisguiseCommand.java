@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class DisguiseHelpCommand extends BaseDisguiseCommand {
+public class HelpDisguiseCommand extends BaseDisguiseCommand {
 
     private class EnumHelp {
 
@@ -65,7 +65,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand {
 
     private ArrayList<EnumHelp> enumHelp = new ArrayList<>();
 
-    public DisguiseHelpCommand() {
+    public HelpDisguiseCommand() {
         try {
             enumHelp.add(new EnumHelp("AnimalColor", "Animal colors", ChatColor.RED + "/disguisehelp AnimalColors "
                     + ChatColor.GREEN + "- View all the colors you can use for a animal color", AnimalColor.values()));
