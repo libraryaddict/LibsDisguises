@@ -38,7 +38,7 @@ DyeableWolf: false
 # Such as prophunt. Its also false because its kind of a retarded feature.
 # This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
 # This also overrides any custom name they have set in their disguise options.
-ShowNamesAboveDisguises:  false
+ShowNamesAboveDisguises: false
 # This supports the above option.
 # If this is true, then the name shown above the head appears regardless of if you are looking at the disguise directly or not.
 NameAboveHeadAlwaysVisible: true

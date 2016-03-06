@@ -6,9 +6,6 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -28,7 +25,6 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
@@ -42,7 +38,6 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -898,22 +893,55 @@ public class DisguiseUtilities {
                                 .createPacket(0, player.getPassenger(), player));
             }
 
-            // Resend the armor
-            for (int i = 0; i < 5; i++) {
-                ItemStack item;
-                if (i == 0) {
-                    item = player.getItemInHand();
-                } else {
-                    item = player.getInventory().getArmorContents()[i - 1];
-                }
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                                    ReflectionManager.getNmsItem(player.getInventory().getHelmet())));
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.CHEST),
+                                    ReflectionManager.getNmsItem(player.getInventory().getChestplate())));
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.LEGS),
+                                    ReflectionManager.getNmsItem(player.getInventory().getLeggings())));
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.FEET),
+                                    ReflectionManager.getNmsItem(player.getInventory().getBoots())));
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.HAND),
+                                    ReflectionManager.getNmsItem(player.getInventory().getItemInMainHand())));
+            sendSelfPacket(player,
+                    manager.createPacketConstructor(
+                            Server.ENTITY_EQUIPMENT,
+                            0,
+                            ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
+                            ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.OFF_HAND),
+                                    ReflectionManager.getNmsItem(player.getInventory().getItemInOffHand())));
 
-                if (item != null && item.getType() != Material.AIR) {
-                    sendSelfPacket(
-                            player,
-                            manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, player.getEntityId(), i,
-                                    item).createPacket(player.getEntityId(), i, item));
-                }
-            }
             Location loc = player.getLocation();
             // If the disguised is sleeping for w/e reason
             if (player.isSleeping()) {

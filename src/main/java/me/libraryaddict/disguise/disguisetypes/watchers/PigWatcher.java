@@ -9,11 +9,11 @@ public class PigWatcher extends AgeableWatcher {
     }
 
     public boolean isSaddled() {
-        return (byte) getValue(16, (byte) 0) == 1;
+        return (boolean) getValue(12, false);
     }
 
     public void setSaddled(boolean isSaddled) {
-        setValue(16, (byte) (isSaddled ? 1 : 0));
-        sendData(16);
+        setValue(12, isSaddled);
+        sendData(12);
     }
 }

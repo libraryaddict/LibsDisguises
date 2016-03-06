@@ -46,7 +46,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -176,15 +175,13 @@ public class PacketsManager {
         }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
-
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32));
-            mods.write(2, (int) Math.floor(loc.getY() * 32) + 2);
-            mods.write(3, (int) Math.floor(loc.getZ() * 32));
+            mods.write(1, Math.floor(loc.getX() * 32));
+            mods.write(2, Math.floor(loc.getY() * 32) + 2);
+            mods.write(3, Math.floor(loc.getZ() * 32));
             mods.write(4, 1);
-
         } else if (disguise.getType() == DisguiseType.PAINTING) {
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_PAINTING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
@@ -198,52 +195,44 @@ public class PacketsManager {
             spawnPackets[1] = new PacketContainer(Server.ENTITY_TELEPORT);
             mods = spawnPackets[1].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, (int) Math.floor(loc.getX() * 32D));
-            mods.write(2, (int) Math.floor(loc.getY() * 32D));
-            mods.write(3, (int) Math.floor(loc.getZ() * 32D));
+            mods.write(1, Math.floor(loc.getX() * 32D));
+            mods.write(2, Math.floor(loc.getY() * 32D));
+            mods.write(3, Math.floor(loc.getZ() * 32D));
             mods.write(4, yaw);
             mods.write(5, pitch);
-
         } else if (disguise.getType().isPlayer()) {
-
+            //TODO: Make player disguises visible again
             spawnPackets[0] = new PacketContainer(Server.NAMED_ENTITY_SPAWN);
-            StructureModifier<String> stringMods = spawnPackets[0].getStrings();
-            WrappedGameProfile gameProfile;
-            if (stringMods.size() > 0) {
-                for (int i = 0; i < stringMods.size(); i++) {
-                    stringMods.write(i, ((PlayerDisguise) disguise).getName());
-                }
-            } else {
-                PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
-                String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
-                boolean removeName = false;
-                if (!DisguiseUtilities.hasGameProfile(name)) {
-                    removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
-                }
-                gameProfile = playerDisguise.getGameProfile();
-                if (removeName) {
-                    DisguiseUtilities.getAddedByPlugins().remove(name);
-                }
-                spawnPackets[0].getSpecificModifier(UUID.class).write(0, gameProfile.getUUID());
+            PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
+            String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
+            boolean removeName = false;
+            if (!DisguiseUtilities.hasGameProfile(name)) {
+                removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
             }
-            StructureModifier<Integer> intMods = spawnPackets[0].getIntegers();
-            intMods.write(0, disguisedEntity.getEntityId());
+            WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
+            if (removeName) {
+                DisguiseUtilities.getAddedByPlugins().remove(name);
+            }
+
+            //Write spawn packet in order
+            //Id
+            //UUID
+            //x
+            //y
+            //z
+            //pitch
+            //yaw
+            spawnPackets[0].getIntegers().write(0, disguisedEntity.getEntityId());
+            spawnPackets[0].getSpecificModifier(UUID.class).write(0, gameProfile.getUUID());
             StructureModifier<Double> doubleMods = spawnPackets[0].getDoubles();
             doubleMods.write(0, Math.floor(loc.getX() * 32));
             doubleMods.write(1, Math.floor(loc.getY() * 32));
             doubleMods.write(2, Math.floor(loc.getZ() * 32));
-            ItemStack item = null;
-            if (disguisedEntity instanceof Player && ((Player) disguisedEntity).getInventory().getItemInMainHand() != null) {
-                item = ((Player) disguisedEntity).getInventory().getItemInMainHand();
-            } else if (disguisedEntity instanceof LivingEntity) {
-                item = ((LivingEntity) disguisedEntity).getEquipment().getItemInMainHand();
-            }
-            intMods.write(4, (item == null || item.getType() == Material.AIR ? 0 : item.getTypeId()));
             StructureModifier<Byte> byteMods = spawnPackets[0].getBytes();
-            byteMods.write(1, yaw);
             byteMods.write(0, pitch);
-            spawnPackets[0].getDataWatcherModifier().write(0,
-                    createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+            byteMods.write(1, yaw);
+
+            spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
 
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                 PacketContainer[] newPackets = new PacketContainer[spawnPackets.length + 1];
@@ -263,53 +252,36 @@ public class PacketsManager {
                     newPackets.add(spawnPacket);
                 }
             }
+
+            //Send player info along with the disguise
             spawnPackets = newPackets.toArray(new PacketContainer[newPackets.size()]);
             spawnPackets[0] = new PacketContainer(Server.PLAYER_INFO);
+
+            //Add player to the list, necessary to spawn them
             spawnPackets[0].getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
             List playerList = new ArrayList();
-            PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
             playerList.add(ReflectionManager.getPlayerInfoData(spawnPackets[0].getHandle(), playerDisguise.getGameProfile()));
             spawnPackets[0].getModifier().write(1, playerList);
+
+            //Remove player from the list
             PacketContainer delayedPacket = spawnPackets[0].shallowClone();
             delayedPacket.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
             delayedPackets = new PacketContainer[]{delayedPacket};
 
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-            DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
-            Vector vec = disguisedEntity.getVelocity();
-            spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_LIVING);
-            StructureModifier<Object> mods = spawnPackets[0].getModifier();
-            mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, disguise.getType().getTypeId());
-            double d1 = 3.9D;
-            double d2 = vec.getX();
-            double d3 = vec.getY();
-            double d4 = vec.getZ();
-            if (d2 < -d1)
-                d2 = -d1;
-            if (d3 < -d1)
-                d3 = -d1;
-            if (d4 < -d1)
-                d4 = -d1;
-            if (d2 > d1)
-                d2 = d1;
-            if (d3 > d1)
-                d3 = d1;
-            if (d4 > d1)
-                d4 = d1;
-            mods.write(2, values.getEntitySize(loc.getX()));
-            mods.write(3, (int) Math.floor(loc.getY() * 32D));
-            mods.write(4, values.getEntitySize(loc.getZ()));
-            mods.write(5, (int) (d2 * 8000.0D));
-            mods.write(6, (int) (d3 * 8000.0D));
-            mods.write(7, (int) (d4 * 8000.0D));
-            mods.write(8, yaw);
-            mods.write(9, pitch);
+            Class<? extends Entity> entityClass = disguise.getType().getEntityClass();
+            Entity entity = Bukkit.getWorlds().get(0).spawn(disguise.getEntity().getLocation(), entityClass);
+            entity.setVelocity(disguisedEntity.getVelocity());
+            Object nms = ReflectionManager.getNmsEntity(entity);
+            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms)
+                    .createPacket(nms);
+            spawnPackets[0] = packet;
             spawnPackets[0].getDataWatcherModifier().write(0,
-                    createDataWatcher(player, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
-
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+            entity.remove();
+            //You know, as cheap as this may seem, this is pretty damn effective
         } else if (disguise.getType().isMisc()) {
-
+            //TODO: Fix miscs
             int id = disguise.getType().getEntityId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
@@ -352,13 +324,13 @@ public class PacketsManager {
     /**
      * Create a new datawatcher but with the 'correct' values
      */
-    private static WrappedDataWatcher createDataWatcher(Player player, WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
+    private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ? flagWatcher.convert(watcher
-                    .getWatchableObjects()) : flagWatcher.getWatchableObjects();
+            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ?
+                    flagWatcher.convert(watcher.getWatchableObjects()) : flagWatcher.getWatchableObjects();
             for (WrappedWatchableObject watchableObject : list) {
-                newWatcher.setObject(watchableObject.getIndex(), watchableObject.getValue());
+                newWatcher.setObject(watchableObject.getWatcherObject(), watchableObject.getValue());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
