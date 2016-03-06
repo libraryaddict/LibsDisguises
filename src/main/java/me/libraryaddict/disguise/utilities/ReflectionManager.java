@@ -11,7 +11,10 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
@@ -476,25 +479,6 @@ public class ReflectionManager {
         }
     }
 
-    /**
-     * This creates a DataWatcherItem usable with WrappedWatchableObject
-     * @param id
-     * @param value
-     * @return
-     */
-    public static Object createDataWatcherItem(int id, Object value) {
-        if (value == null) return null;
-        Serializer serializer = Registry.get(value.getClass());
-        WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
-        Constructor construct = ReflectionManager.getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
-        try {
-            return construct.newInstance(watcherObject.getHandle(), value);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
             Location loc = entity.getLocation();
@@ -506,4 +490,112 @@ public class ReflectionManager {
         }
     }
 
+    /**
+     * Creates the NMS object EnumItemSlot from an EquipmentSlot.
+     * @param slot
+     * @return null if the equipment slot is null
+     */
+    public static Enum createEnumItemSlot(EquipmentSlot slot) {
+        Class<?> clazz = getNmsClass("EnumItemSlot");
+        Object[] enums = clazz != null ? clazz.getEnumConstants() : null;
+        if (enums == null) return null;
+        switch (slot) {
+            case HAND:
+                return (Enum) enums[0];
+            case OFF_HAND:
+                return (Enum) enums[1];
+            case FEET:
+                return (Enum) enums[2];
+            case LEGS:
+                return (Enum) enums[3];
+            case CHEST:
+                return (Enum) enums[4];
+            case HEAD:
+                return (Enum) enums[5];
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Creates the Bukkit object EquipmentSlot from an EnumItemSlot object.
+     * @return null if the object isn't an nms EnumItemSlot
+     */
+    public static EquipmentSlot createEquipmentSlot(Object enumItemSlot) {
+        try {
+            Enum nmsSlot = (Enum) enumItemSlot;
+            switch (nmsSlot.name()) {
+                case "MAINHAND":
+                    return EquipmentSlot.HAND;
+                case "OFFHAND":
+                    return EquipmentSlot.OFF_HAND;
+                case "FEET":
+                    return EquipmentSlot.FEET;
+                case "LEGS":
+                    return EquipmentSlot.LEGS;
+                case "CHEST":
+                    return EquipmentSlot.CHEST;
+                case "HEAD":
+                    return EquipmentSlot.HAND;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     *  Gets equipment from this entity based on the slot given.
+     * @param slot
+     * @return null if the disguisedEntity is not an instance of a living entity
+     */
+    public static ItemStack getEquipment(EquipmentSlot slot, Entity disguisedEntity) {
+        if (!(disguisedEntity instanceof LivingEntity)) return null;
+        switch (slot) {
+            case HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInMainHand();
+            case OFF_HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInOffHand();
+            case FEET:
+                return ((LivingEntity) disguisedEntity).getEquipment().getBoots();
+            case LEGS:
+                return ((LivingEntity) disguisedEntity).getEquipment().getLeggings();
+            case CHEST:
+                return ((LivingEntity) disguisedEntity).getEquipment().getChestplate();
+            case HEAD:
+                return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * This creates a DataWatcherItem usable with WrappedWatchableObject
+     * @param id
+     * @param value
+     * @return
+     */
+    public static Object createDataWatcherItem(int id, Object value) {
+        if (value == null) return null;
+        Serializer serializer = Registry.get(value.getClass());
+        WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
+        Constructor construct = getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
+        try {
+            return construct.newInstance(watcherObject.getHandle(), value);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static EntityEquipment createEntityEquipment(Entity entity) {
+        if (!(entity instanceof LivingEntity)) return null;
+        Constructor construct = getNmsConstructor("CraftEntityEquipment", getNmsClass("CraftLivingEntity"));
+        try {
+            return (EntityEquipment) construct.newInstance((LivingEntity) entity);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassCastException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

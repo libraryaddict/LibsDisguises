@@ -228,8 +228,16 @@ public class LibsDisguises extends JavaPlugin {
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..
-//                    System.out.print("Disguise: " + disguiseType + ", ID: " + watch.getIndex() + ", Class: "
-//                     + (watch.getValue() == null ? "null" : watch.getValue().getClass()) + ", Value: " + watch.getValue());
+                    //TODO: Recomment this section when finished
+                    int id = watch.getIndex();
+                    Object val = watch.getValue();
+                    Class<?> valClazz = val != null ? watch.getValue().getClass() : null;
+                    try {
+                        val = val.toString();
+                    } catch (Exception e) {
+                        val = val != null ? val.getClass() : "null";
+                    }
+                    System.out.println("Disguise: " + disguiseType + ", ID: " + id + ", Class: " + (val == null ? "null" : valClazz) + ", Value: " + val);
                 }
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
                 if (sound != null) {

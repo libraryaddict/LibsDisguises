@@ -43,6 +43,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
@@ -124,25 +125,18 @@ public class PacketsManager {
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
         if (DisguiseConfig.isEquipmentPacketsEnabled()) {
-            for (int nmsSlot = 0; nmsSlot < 5; nmsSlot++) {
-                int armorSlot = nmsSlot - 1;
-                if (armorSlot < 0)
-                    armorSlot = 4;
-                ItemStack itemstack = disguise.getWatcher().getItemStack(armorSlot);
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
                 if (itemstack != null && itemstack.getTypeId() != 0) {
                     ItemStack item = null;
                     if (disguisedEntity instanceof LivingEntity) {
-                        if (nmsSlot == 0) {
-                            item = ((LivingEntity) disguisedEntity).getEquipment().getItemInHand();
-                        } else {
-                            item = ((LivingEntity) disguisedEntity).getEquipment().getArmorContents()[armorSlot];
-                        }
+                        item = ReflectionManager.getEquipment(slot, disguisedEntity);
                     }
                     if (item == null || item.getType() == Material.AIR) {
                         PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
                         StructureModifier<Object> mods = packet.getModifier();
                         mods.write(0, disguisedEntity.getEntityId());
-                        mods.write(1, nmsSlot);
+                        mods.write(1, ReflectionManager.createEnumItemSlot(slot));
                         mods.write(2, ReflectionManager.getNmsItem(itemstack));
                         packets.add(packet);
                     }
@@ -281,7 +275,6 @@ public class PacketsManager {
             delayedPackets = new PacketContainer[]{delayedPacket};
 
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-
             DisguiseValues values = DisguiseValues.getDisguiseValues(disguise.getType());
             Vector vec = disguisedEntity.getVelocity();
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_LIVING);
@@ -1404,16 +1397,14 @@ public class PacketsManager {
                         }
                     }
                 } else if (sentPacket.getType() == Server.ENTITY_EQUIPMENT) {
-                    int slot = (Integer) packets[0].getModifier().read(1) - 1;
-                    if (slot < 0)
-                        slot = 4;
-                    org.bukkit.inventory.ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
-                    if (itemstack != null) {
+                    EquipmentSlot slot = ReflectionManager.createEquipmentSlot(packets[0].getModifier().read(1));
+                    org.bukkit.inventory.ItemStack itemStack = disguise.getWatcher().getItemStack(slot);
+                    if (itemStack != null) {
                         packets[0] = packets[0].shallowClone();
-                        packets[0].getModifier().write(2,
-                                (itemstack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemstack)));
+                        packets[0].getModifier().write(2, (itemStack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemStack)));
                     }
-                    if (disguise.getWatcher().isRightClicking() && slot == 4) {
+                    //TODO: Add left hand here
+                    if (disguise.getWatcher().isRightClicking() && slot == EquipmentSlot.HAND) {
                         ItemStack heldItem = packets[0].getItemModifier().read(0);
                         if (heldItem != null && heldItem.getType() != Material.AIR) {
                             // Convert the datawatcher

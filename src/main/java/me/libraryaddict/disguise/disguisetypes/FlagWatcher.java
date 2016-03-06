@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,35 +24,21 @@ import java.util.List;
 
 public class FlagWatcher {
 
-    public enum SlotType {
-
-        BOOTS(0), CHESTPLATE(2), HELD_ITEM(4), HELMET(3), LEGGINGS(1);
-        // The ints is for bukkit. Not nms slots.
-        private int slotNo = 0;
-
-        SlotType(int no) {
-            slotNo = no;
-        }
-
-        public int getSlot() {
-            return slotNo;
-        }
-    }
-
     private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
     /**
-     * This is the entity values I need to add else it could crash them..
+     * These are the entity values I need to add else it could crash them..
      */
     private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
     private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private boolean hasDied;
-    private ItemStack[] items = new ItemStack[5];
+    public EntityEquipment equipment;
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
+        equipment = ReflectionManager.createEntityEquipment(disguise.getEntity());
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
@@ -74,7 +61,7 @@ public class FlagWatcher {
             cloned = new FlagWatcher(getDisguise());
         }
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
-        cloned.items = items.clone();
+        cloned.equipment = ReflectionManager.createEntityEquipment(cloned.getDisguise().getEntity());
         cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
         cloned.addEntityAnimations = addEntityAnimations;
         return cloned;
@@ -160,7 +147,7 @@ public class FlagWatcher {
 
     public ItemStack[] getArmor() {
         ItemStack[] armor = new ItemStack[4];
-        System.arraycopy(items, 0, armor, 0, 4);
+        System.arraycopy(armor, 0, armor, 0, 4);
         return armor;
     }
 
@@ -176,16 +163,18 @@ public class FlagWatcher {
         return ((byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
     }
 
-    public ItemStack getItemInHand() {
-        return getItemStack(SlotType.HELD_ITEM);
+    public ItemStack getItemInMainHand() {
+        if (equipment == null) return null;
+        return equipment.getItemInMainHand();
     }
 
-    public ItemStack getItemStack(int slot) {
-        return items[slot];
+    public ItemStack getItemInOffHand() {
+        if (equipment == null) return null;
+        return equipment.getItemInOffHand();
     }
 
-    public ItemStack getItemStack(SlotType slot) {
-        return getItemStack(slot.getSlot());
+    public EntityEquipment getEquipment() {
+        return equipment;
     }
 
     protected Object getValue(int no, Object backup) {
@@ -289,9 +278,10 @@ public class FlagWatcher {
     }
 
     public void setArmor(ItemStack[] itemstack) {
-        for (int i = 0; i < itemstack.length; i++) {
-            setItemStack(i, itemstack[i]);
-        }
+        setItemStack(EquipmentSlot.HEAD, itemstack[0]);
+        setItemStack(EquipmentSlot.CHEST, itemstack[1]);
+        setItemStack(EquipmentSlot.LEGS, itemstack[2]);
+        setItemStack(EquipmentSlot.FEET, itemstack[3]);
     }
 
     protected void setBackupValue(int no, Object value) {
@@ -331,41 +321,43 @@ public class FlagWatcher {
         sendData(0);
     }
 
+    /**
+     * Don't use this, use setItemInMainHand instead
+     * @param itemstack
+     */
+    @Deprecated
     public void setItemInHand(ItemStack itemstack) {
-        setItemStack(SlotType.HELD_ITEM, itemstack);
+        setItemInMainHand(itemstack);
     }
 
-    public void setItemStack(int slot, ItemStack itemStack) {
+    public void setItemInMainHand(ItemStack itemstack) {
+        setItemStack(EquipmentSlot.HAND, itemstack);
+    }
+
+    public void setItemInOffHand(ItemStack itemstack) {
+        setItemStack(EquipmentSlot.OFF_HAND, itemstack);
+    }
+
+    public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
+        if (equipment == null) return;
         // Itemstack which is null means that its not replacing the disguises itemstack.
         if (itemStack == null) {
             // Find the item to replace it with
             if (getDisguise().getEntity() instanceof LivingEntity) {
                 EntityEquipment equipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
-                if (slot == 4) {
-                    itemStack = equipment.getItemInHand();
-                } else {
-                    itemStack = equipment.getArmorContents()[slot];
-                }
-                if (itemStack != null && itemStack.getTypeId() == 0) {
-                    itemStack = null;
-                }
+                setItemStack(equipment, slot, itemStack);
             }
         }
-
         Object itemToSend = null;
         if (itemStack != null && itemStack.getTypeId() != 0) {
             itemToSend = ReflectionManager.getNmsItem(itemStack);
         }
-        items[slot] = itemStack;
+        setItemStack(equipment, slot, itemStack);
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
-            slot++;
-            if (slot > 4) {
-                slot = 0;
-            }
             PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
             StructureModifier<Object> mods = packet.getModifier();
             mods.write(0, getDisguise().getEntity().getEntityId());
-            mods.write(1, slot);
+            mods.write(1, ReflectionManager.createEnumItemSlot(slot));
             mods.write(2, itemToSend);
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
                 try {
@@ -377,8 +369,47 @@ public class FlagWatcher {
         }
     }
 
-    public void setItemStack(SlotType slot, ItemStack itemStack) {
-        setItemStack(slot.getSlot(), itemStack);
+    private void setItemStack(EntityEquipment equipment, EquipmentSlot slot, ItemStack itemStack) {
+        if (equipment == null) return;
+        switch (slot) {
+            case CHEST:
+                equipment.setChestplate(itemStack);
+                break;
+            case FEET:
+                equipment.setBoots(itemStack);
+                break;
+            case HAND:
+                equipment.setItemInMainHand(itemStack);
+                break;
+            case HEAD:
+                equipment.setHelmet(itemStack);
+                break;
+            case LEGS:
+                equipment.setLeggings(itemStack);
+                break;
+            case OFF_HAND:
+                equipment.setItemInOffHand(itemStack);
+                break;
+        }
+    }
+
+    public ItemStack getItemStack(EquipmentSlot slot) {
+        if (equipment == null) return null;
+        switch (slot) {
+            case CHEST:
+                return equipment.getChestplate();
+            case FEET:
+                return equipment.getBoots();
+            case HAND:
+                return equipment.getItemInMainHand();
+            case HEAD:
+                return equipment.getHelmet();
+            case LEGS:
+                return equipment.getLeggings();
+            case OFF_HAND:
+                return equipment.getItemInOffHand();
+        }
+        return null;
     }
 
     public void setRightClicking(boolean setRightClicking) {

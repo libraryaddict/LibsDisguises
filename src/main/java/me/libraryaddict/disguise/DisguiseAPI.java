@@ -63,7 +63,7 @@ public class DisguiseAPI {
         if (doEquipment && entity instanceof LivingEntity) {
             EntityEquipment equip = ((LivingEntity) entity).getEquipment();
             watcher.setArmor(equip.getArmorContents());
-            watcher.setItemInHand(equip.getItemInHand());
+            watcher.setItemInMainHand(equip.getItemInMainHand());
             if (disguiseType.getEntityType() == EntityType.HORSE) {
                 Horse horse = (Horse) entity;
                 HorseInventory horseInventory = horse.getInventory();

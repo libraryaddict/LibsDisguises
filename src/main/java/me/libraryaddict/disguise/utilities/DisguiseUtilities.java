@@ -6,6 +6,9 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -25,14 +28,21 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.Team.Option;
+import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -265,7 +275,7 @@ public class DisguiseUtilities {
     }
 
     public static void doBoundingBox(TargetedDisguise disguise) {
-        // TODO Slimes
+        //TODO: Slimes
         Entity entity = disguise.getEntity();
         if (entity != null) {
             if (isDisguiseInUse(disguise)) {
@@ -772,6 +782,16 @@ public class DisguiseUtilities {
             } catch (Exception ex) {
                 ex.printStackTrace(System.out);
             }
+            //Code to stop player pushing in 1.9
+            //TODO: Check validity
+            Scoreboard scoreboard = player.getScoreboard();
+            Team t;
+            if ((t = scoreboard.getTeam("LDPushing")) != null) {
+                t.setOption(Option.COLLISION_RULE, OptionStatus.ALWAYS);
+                t.removeEntry(player.getName());
+                t.unregister();
+            }
+            //Finish up
             // Remove the fake entity ID from the disguise bin
             selfDisguised.remove(player.getUniqueId());
             // Get the entity tracker
@@ -973,6 +993,18 @@ public class DisguiseUtilities {
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
             return;
         }
+        //Code to stop player pushing in 1.9
+        //TODO: Check validity
+        Scoreboard scoreboard = player.getScoreboard();
+        Team t;
+        if ((t = scoreboard.getTeam("LDPushing")) != null) {
+            t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+        } else {
+            t = scoreboard.registerNewTeam("LDPushing");
+            t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            t.addEntry(player.getName());
+        }
+        //Finish up
         selfDisguised.add(player.getUniqueId());
         sendSelfDisguise(player, (TargetedDisguise) disguise);
         if (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf()) {
@@ -981,4 +1013,5 @@ public class DisguiseUtilities {
             }
         }
     }
+
 }
