@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -567,6 +568,32 @@ public class ReflectionManager {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Necessary for 1.9
+     * @return
+     */
+    public static String convertSoundEffectToString(Object soundEffect) {
+        try {
+            Field f_getMinecraftKey = getNmsField("SoundEffect", "b");
+            f_getMinecraftKey.setAccessible(true);
+            MinecraftKey key = MinecraftKey.fromHandle(f_getMinecraftKey.get(soundEffect));
+            return key.getKey();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getCraftSoundEffect(String sound) {
+        Method nmsMethod = getNmsMethod("CraftSound", "getSoundEffect");
+        try {
+            return nmsMethod.invoke(null, sound);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
