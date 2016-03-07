@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-
 import org.bukkit.inventory.ItemStack;
 
 public class DroppedItemWatcher extends FlagWatcher {
@@ -12,12 +11,12 @@ public class DroppedItemWatcher extends FlagWatcher {
     }
 
     public ItemStack getItemStack() {
-        return (ItemStack) getValue(10, new ItemStack(1));
+        return (ItemStack) getValue(5, new ItemStack(1));
     }
 
     public void setItemStack(ItemStack item) {
-        setValue(10, item);
-        sendData(10);
+        setValue(5, item);
+        sendData(5);
     }
 
 }

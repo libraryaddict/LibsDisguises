@@ -11,11 +11,11 @@ public class OcelotWatcher extends TameableWatcher {
     }
 
     public Type getType() {
-        return Ocelot.Type.getType((byte) getValue(18, (byte) 0));
+        return Ocelot.Type.getType((int) getValue(14, 0));
     }
 
     public void setType(Type newType) {
-        setValue(18, (byte) newType.getId());
-        sendData(18);
+        setValue(14, newType.getId());
+        sendData(14);
     }
 }

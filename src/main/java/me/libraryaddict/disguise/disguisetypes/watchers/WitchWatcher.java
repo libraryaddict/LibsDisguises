@@ -2,18 +2,22 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 
-public class GhastWatcher extends LivingWatcher {
+/**
+ * @author Navid
+ */
+public class WitchWatcher extends LivingWatcher {
 
-    public GhastWatcher(Disguise disguise) {
+    public WitchWatcher(Disguise disguise) {
         super(disguise);
     }
+
 
     public boolean isAggressive() {
         return (boolean) getValue(11, false);
     }
 
-    public void setAggressive(boolean isAggressive) {
-        setValue(11, isAggressive);
+    public void setAggressive(boolean aggressive) {
+        setValue(11, aggressive);
         sendData(11);
     }
 

@@ -1,17 +1,17 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class FallingBlockWatcher extends FlagWatcher {
 
     private ItemStack block;
 
+    //TODO: Check this watcher and make sure it works
     public FallingBlockWatcher(Disguise disguise) {
         super(disguise);
     }

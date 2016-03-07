@@ -12,6 +12,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -26,6 +28,7 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
@@ -39,6 +42,7 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -114,7 +118,6 @@ public class PacketsManager {
     public static PacketContainer[][] constructSpawnPackets(final Player player, Disguise disguise, Entity disguisedEntity) {
         if (disguise.getEntity() == null)
             disguise.setEntity(disguisedEntity);
-        Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
         ArrayList<PacketContainer> packets = new ArrayList<>();
         // This sends the armor packets so that the player isn't naked.
         // Please note it only sends the packets that wouldn't be sent normally
@@ -170,6 +173,7 @@ public class PacketsManager {
         }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
+            //TODO: Fix experience orb
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
@@ -178,13 +182,15 @@ public class PacketsManager {
             mods.write(3, Math.floor(loc.getZ() * 32));
             mods.write(4, 1);
         } else if (disguise.getType() == DisguiseType.PAINTING) {
+            //TODO: Fix painting
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_PAINTING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, ReflectionManager.getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-            mods.write(2, ReflectionManager.getEnumDirection(((int) loc.getYaw()) % 4));
+            mods.write(1, disguisedEntity.getUniqueId());
+            mods.write(2, ReflectionManager.getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+            mods.write(3, ReflectionManager.getEnumDirection(((int) loc.getYaw()) % 4));
             int id = ((MiscDisguise) disguise).getData();
-            mods.write(3, ReflectionManager.getEnumArt(Art.values()[id]));
+            mods.write(4, ReflectionManager.getEnumArt(Art.values()[id]));
 
             // Make the teleport packet to make it visible..
             spawnPackets[1] = new PacketContainer(Server.ENTITY_TELEPORT);
@@ -265,19 +271,26 @@ public class PacketsManager {
 
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Class<? extends Entity> entityClass = disguise.getType().getEntityClass();
+            int entityId = disguise.getType().getEntityId();
             Entity entity = Bukkit.getWorlds().get(0).spawn(disguise.getEntity().getLocation(), entityClass);
             entity.setVelocity(disguisedEntity.getVelocity());
+            if (disguise.getType() == DisguiseType.SLIME || disguise.getType() == DisguiseType.MAGMA_CUBE) {
+                ((Slime)entity).setSize(((SlimeWatcher)disguise.getWatcher()).getSize());
+            }
             Object nms = ReflectionManager.getNmsEntity(entity);
-            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms)
-                    .createPacket(nms);
+            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms).createPacket(nms);
             spawnPackets[0] = packet;
-            spawnPackets[0].getDataWatcherModifier().write(0,
-                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+            spawnPackets[0].getIntegers().write(0, entityId);
+            spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
             entity.remove();
             //You know, as cheap as this may seem, this is pretty damn effective
         } else if (disguise.getType().isMisc()) {
             //TODO: Fix miscs
-            int id = disguise.getType().getEntityId();
+            Class<? extends Entity> entityClass = disguise.getType().getEntityClass();
+            Entity entity = Bukkit.getWorlds().get(0).spawn(disguise.getEntity().getLocation().add(0, 0.5, 0), entityClass);
+            entity.setVelocity(disguisedEntity.getVelocity());
+            int entityId = disguise.getType().getEntityId();
+            int typeId = disguise.getType().getTypeId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 data = (((MiscDisguise) disguise).getId() | data << 16);
@@ -287,12 +300,10 @@ public class PacketsManager {
             } else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
             }
-            spawnPackets[0] = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(Server.SPAWN_ENTITY, nmsEntity, id, data)
-                    .createPacket(nmsEntity, id, data);
-            spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
-            spawnPackets[0].getModifier().write(7, pitch);
-            spawnPackets[0].getModifier().write(8, yaw);
+            Object nms = ReflectionManager.getNmsEntity(entity);
+            spawnPackets[0] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY, nms, typeId, data)
+                    .createPacket(nms, typeId, data);
+            spawnPackets[0].getIntegers().write(0, entityId);
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
                     spawnPackets[0].getModifier().write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
@@ -300,6 +311,7 @@ public class PacketsManager {
                     spawnPackets[0].getModifier().write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
                 }
             }
+            entity.remove();
         }
         if (spawnPackets[1] == null || disguise.isPlayerDisguise()) {
             int entry = spawnPackets[1] == null ? 1 : 0;
@@ -320,13 +332,15 @@ public class PacketsManager {
      * Create a new datawatcher but with the 'correct' values
      */
     private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
-        //TODO: Specify a serializer...
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
             List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ?
                     flagWatcher.convert(watcher.getWatchableObjects()) : flagWatcher.getWatchableObjects();
             for (WrappedWatchableObject watchableObject : list) {
-                newWatcher.setObject(watchableObject.getWatcherObject(), watchableObject.getValue());
+                if (watchableObject.getValue() == null) continue;
+                if (Registry.get(watchableObject.getValue().getClass()) == null) continue;
+                WrappedDataWatcherObject obj = new WrappedDataWatcherObject(watchableObject.getIndex(), Registry.get(watchableObject.getValue().getClass()));
+                newWatcher.setObject(obj, watchableObject.getValue());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -912,7 +926,7 @@ public class PacketsManager {
                         } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
                             int slot = event.getPacket().getIntegers().read(1);
                             org.bukkit.inventory.ItemStack clickedItem;
-                            if (event.getPacket().getIntegers().read(3) == 1) {
+                            if (event.getPacket().getShorts().read(3) == 1) {
                                 // Its a shift click
                                 clickedItem = event.getPacket().getItemModifier().read(0);
                                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {

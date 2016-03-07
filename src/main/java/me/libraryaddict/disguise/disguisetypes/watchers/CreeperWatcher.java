@@ -9,21 +9,21 @@ public class CreeperWatcher extends LivingWatcher {
     }
 
     public boolean isIgnited() {
-        return (byte) getValue(18, (byte) 0) == 1;
+        return (boolean) getValue(13, false);
     }
 
     public boolean isPowered() {
-        return (byte) getValue(17, (byte) 0) == 1;
+        return (boolean) getValue(12, false);
     }
 
     public void setIgnited(boolean ignited) {
-        setValue(18, (byte) (ignited ? 1 : 0));
-        sendData(18);
+        setValue(13, ignited);
+        sendData(13);
     }
 
     public void setPowered(boolean powered) {
-        setValue(17, (byte) (powered ? 1 : 0));
-        sendData(17);
+        setValue(12, powered);
+        sendData(12);
     }
 
 }

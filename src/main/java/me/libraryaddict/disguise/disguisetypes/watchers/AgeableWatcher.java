@@ -1,15 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.entity.Entity;
 
 public class AgeableWatcher extends LivingWatcher {
 
     public AgeableWatcher(Disguise disguise) {
         super(disguise);
-    }
+        Entity e;
 
-    public int getAge() {
-        return (Integer) getValue(12, 0);
     }
 
     public boolean isAdult() {
@@ -17,16 +16,11 @@ public class AgeableWatcher extends LivingWatcher {
     }
 
     public boolean isBaby() {
-        return ((byte) getValue(12, (byte) 0)) < 0;
+        return (boolean) getValue(11, false);
     }
 
     public void setAdult() {
         setBaby(false);
-    }
-
-    public void setAge(int newAge) {
-        setValue(12, (byte) newAge);
-        sendData(12);
     }
 
     public void setBaby() {
@@ -34,8 +28,8 @@ public class AgeableWatcher extends LivingWatcher {
     }
 
     public void setBaby(boolean isBaby) {
-        setValue(12, (byte) (isBaby ? -1 : 0));
-        sendData(12);
+        setValue(11, isBaby);
+        sendData(11);
     }
 
 }

@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.security.InvalidParameterException;
-
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.ChatColor;
 
-import me.libraryaddict.disguise.disguisetypes.Disguise;
+import java.security.InvalidParameterException;
 
 public class WitherWatcher extends LivingWatcher {
 
@@ -12,25 +11,24 @@ public class WitherWatcher extends LivingWatcher {
         super(disguise);
     }
 
-    public int getInvul() {
-        return getInvulnerability();
-    }
-
+    /**
+     * Returns the amount of time this Wither is invulnerable for
+     * @return
+     */
     public int getInvulnerability() {
-        return (Integer) getValue(20, 0);
+        return (int) getValue(14, 0);
     }
 
     public int[] getTargets() {
-        return new int[]{(Integer) getValue(17, 0), (Integer) getValue(18, 0), (Integer) getValue(19, 0)};
+        return new int[]{(Integer) getValue(11, 0), (Integer) getValue(12, 0), (Integer) getValue(13, 0)};
     }
 
-    public void setInvul(int invulnerability) {
-        setInvulnerability(invulnerability);
-    }
-
+    /**
+     * Sets the amount of time this Wither is invulnerable for
+     */
     public void setInvulnerability(int invulnerability) {
-        setValue(20, invulnerability);
-        sendData(20);
+        setValue(14, invulnerability);
+        sendData(14);
     }
 
     public void setTargets(int... targets) {
@@ -38,10 +36,10 @@ public class WitherWatcher extends LivingWatcher {
             throw new InvalidParameterException(ChatColor.RED + "Expected 3 numbers for wither setTargets. Received "
                     + targets.length);
         }
-        setValue(17, targets[0]);
-        setValue(18, targets[1]);
-        setValue(19, targets[2]);
-        sendData(17, 18, 19);
+        setValue(11, targets[0]);
+        setValue(12, targets[1]);
+        setValue(13, targets[2]);
+        sendData(11, 12, 13);
     }
 
 }

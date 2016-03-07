@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -28,10 +29,6 @@ public class PlayerWatcher extends LivingWatcher {
         return watcher;
     }
 
-    public int getArrowsSticking() {
-        return (byte) getValue(9, (byte) 0);
-    }
-
     public BlockFace getSleepingDirection() {
         if (sleepingDirection == null) {
             if (this.getDisguise().getEntity() != null && isSleeping()) {
@@ -44,30 +41,93 @@ public class PlayerWatcher extends LivingWatcher {
         return sleepingDirection;
     }
 
-    private boolean getValue16(int i) {
-        return ((byte) getValue(16, (byte) 0) & 1 << i) != 0;
+
+//     Bit 0 (0x01): Cape enabled
+//     Bit 1 (0x02): Jacket enabled
+//     Bit 2 (0x04): Left Sleeve enabled
+//     Bit 3 (0x08): Right Sleeve enabled
+//     Bit 4 (0x10): Left Pants Leg enabled
+//     Bit 5 (0x20): Right Pants Leg enabled
+//     Bit 6 (0x40): Hat enabled
+
+    private boolean isSkinFlag(int i) {
+        return ((byte) getValue(12, (byte) 0) & 1 << i) != 0;
     }
 
-    public boolean isHideCape() {
-        return getValue16(1);
+    public boolean isCapeEnabled() {
+        return isSkinFlag(1);
     }
+
+    public boolean isJackedEnabled() {
+        return isSkinFlag(2);
+    }
+
+    public boolean isLeftSleeveEnabled() {
+        return isSkinFlag(3);
+    }
+
+    public boolean isRightSleeveEnabled() {
+        return isSkinFlag(4);
+    }
+
+    public boolean isLeftPantsEnabled() {
+        return isSkinFlag(5);
+    }
+
+    public boolean isRightPantsEnabled() {
+        return isSkinFlag(6);
+    }
+
+    public boolean isHatEnabled() {
+        return isSkinFlag(7);
+    }
+
+    public void setCapeEnabled(boolean enabled) {
+        setSkinFlags(1, enabled);
+        sendData(12);
+    }
+
+    public void setJackedEnabled(boolean enabled) {
+        setSkinFlags(2, enabled);
+        sendData(12);
+    }
+
+    public void setLeftSleeveEnabled(boolean enabled) {
+        setSkinFlags(3, enabled);
+        sendData(12);
+    }
+
+    public void setRightSleeveEnabled(boolean enabled) {
+        setSkinFlags(4, enabled);
+        sendData(12);
+    }
+
+    public void setLeftPantsEnabled(boolean enabled) {
+        setSkinFlags(5, enabled);
+        sendData(12);
+    }
+
+    public void setRightPantsEnabled(boolean enabled) {
+        setSkinFlags(6, enabled);
+        sendData(12);
+    }
+
+    public void setHatEnabled(boolean enabled) {
+        setSkinFlags(7, enabled);
+        sendData(12);
+    }
+
 
     public boolean isSleeping() {
         return isInBed;
     }
 
-    public void setArrowsSticking(int arrowsNo) {
-        setValue(9, (byte) arrowsNo);
-        sendData(9);
-    }
-
-    public void setHideCape(boolean hideCape) {
-        setValue16(1, hideCape);
-        sendData(16);
-    }
-
     public void setSkin(String playerName) {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
+    }
+
+    public void setSkin(WrappedGameProfile profile) {
+        ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
 
     public void setSleeping(BlockFace sleepingDirection) {
@@ -125,12 +185,12 @@ public class PlayerWatcher extends LivingWatcher {
         }
     }
 
-    private void setValue16(int i, boolean flag) {
-        byte b0 = (byte) getValue(16, (byte) 0);
+    private void setSkinFlags(int i, boolean flag) {
+        byte b0 = (byte) getValue(12, (byte) 0);
         if (flag) {
-            setValue(16, (byte) (b0 | 1 << i));
+            setValue(12, (byte) (b0 | 1 << i));
         } else {
-            setValue(16, (byte) (b0 & (~1 << i)));
+            setValue(12, (byte) (b0 & (~1 << i)));
         }
     }
 

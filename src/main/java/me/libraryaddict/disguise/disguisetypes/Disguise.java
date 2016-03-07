@@ -10,7 +10,9 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
@@ -24,6 +26,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -33,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public abstract class Disguise {
@@ -98,19 +103,17 @@ public abstract class Disguise {
         }
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
         if (getType() == DisguiseType.WITHER_SKELETON) {
-            getWatcher().setValue(13, (byte) 1);
+            ((SkeletonWatcher)getWatcher()).setType(SkeletonType.WITHER);
         } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
-            getWatcher().setValue(13, (byte) 1);
+            ((ZombieWatcher)getWatcher()).setProfession(Profession.values()[new Random().nextInt(Profession.values().length)]);
         } else if (getType() == DisguiseType.ELDER_GUARDIAN) {
-            getWatcher().setValue(16, 4);
+            ((GuardianWatcher)getWatcher()).setElder(true);
         } // Else if its a horse. Set the horse watcher type
         else if (getWatcher() instanceof HorseWatcher) {
             try {
-                // Don't mess with this because Varient is something like ZombieHorse and so on.
-                // Not something that a watcher needs to access.
                 Variant horseType = Variant.valueOf(getType().name());
-                getWatcher().setValue(19, (byte) horseType.ordinal());
+                ((HorseWatcher)getWatcher()).setVariant(horseType);
             } catch (Exception ex) {
                 // Ok.. So it aint a horse
             }

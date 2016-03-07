@@ -8,27 +8,31 @@ public class ArmorStandWatcher extends LivingWatcher {
         super(disguise);
     }
 
-    private boolean get10(int value) {
+    private boolean getArmorStandFlag(int value) {
         return ((byte) getValue(10, 0) & value) != 0;
     }
 
     public boolean isNoBasePlate() {
-        return get10(8);
+        return getArmorStandFlag(8);
     }
 
     public boolean isNoGravity() {
-        return get10(2);
+        return getArmorStandFlag(2);
     }
 
     public boolean isShowArms() {
-        return get10(4);
+        return getArmorStandFlag(4);
     }
 
     public boolean isSmall() {
-        return get10(1);
+        return getArmorStandFlag(1);
     }
 
-    private void set10(int value, boolean isTrue) {
+    public boolean isMarker() {
+        return getArmorStandFlag(10);
+    }
+
+    private void setArmorStandFlag(int value, boolean isTrue) {
         byte b1 = (byte) getValue(10, (byte) 0);
         if (isTrue) {
             b1 = (byte) (b1 | value);
@@ -40,22 +44,27 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     public void setNoBasePlate(boolean noBasePlate) {
-        set10(8, noBasePlate);
+        setArmorStandFlag(8, noBasePlate);
         sendData(10);
     }
 
     public void setNoGravity(boolean noGravity) {
-        set10(2, noGravity);
+        setArmorStandFlag(2, noGravity);
         sendData(10);
     }
 
     public void setShowArms(boolean showArms) {
-        set10(4, showArms);
+        setArmorStandFlag(4, showArms);
         sendData(10);
     }
 
     public void setSmall(boolean isSmall) {
-        set10(1, isSmall);
+        setArmorStandFlag(1, isSmall);
+        sendData(10);
+    }
+
+    public void setMarker(boolean isMarker) {
+        setArmorStandFlag(10, isMarker);
         sendData(10);
     }
 

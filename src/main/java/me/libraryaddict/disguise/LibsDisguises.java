@@ -22,6 +22,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
@@ -129,6 +130,9 @@ public class LibsDisguises extends JavaPlugin {
                         break;
                     case ENDERMITE:
                         watcherClass = LivingWatcher.class;
+                        break;
+                    case WITHER_SKELETON:
+                        watcherClass = SkeletonWatcher.class;
                         break;
                     default:
                         watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."

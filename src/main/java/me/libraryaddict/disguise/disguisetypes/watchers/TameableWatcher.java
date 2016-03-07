@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+
+import java.util.UUID;
 
 public class TameableWatcher extends AgeableWatcher {
 
@@ -8,55 +11,43 @@ public class TameableWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    @Override
-    public float getHealth() {
-        return (Float) getValue(18, 8F);
-    }
-
-    public String getOwner() {
-        return (String) getValue(17, null);
+    public Optional<UUID> getOwner() {
+        return (Optional<UUID>) getValue(13, Optional.absent());
     }
 
     public boolean isSitting() {
-        return isTrue(1);
+        return isTameableFlag(1);
     }
 
     public boolean isTamed() {
-        return isTrue(4);
+        return isTameableFlag(4);
     }
 
-    protected boolean isTrue(int no) {
-        return ((byte) getValue(16, (byte) 0) & no) != 0;
+    protected boolean isTameableFlag(int no) {
+        return ((byte) getValue(12, (byte) 0) & no) != 0;
     }
 
-    protected void setFlag(int no, boolean flag) {
-        byte b0 = (byte) getValue(16, (byte) 0);
+    protected void setTameableFlag(int no, boolean flag) {
+        byte b0 = (byte) getValue(12, (byte) 0);
         if (flag) {
-            setValue(16, (byte) (b0 | no));
+            setValue(12, (byte) (b0 | no));
         } else {
-            setValue(16, (byte) (b0 & -(no + 1)));
+            setValue(12, (byte) (b0 & -(no + 1)));
         }
-        sendData(16);
+        sendData(12);
     }
 
-    @Override
-    public void setHealth(float newHealth) {
-        setValue(18, newHealth);
-        setValue(6, newHealth);
-        sendData(6, 18);
-    }
-
-    public void setOwner(String owner) {
-        setValue(17, owner);
-        sendData(17);
+    public void setOwner(Optional<UUID> owner) {
+        setValue(13, owner);
+        sendData(13);
     }
 
     public void setSitting(boolean sitting) {
-        setFlag(1, sitting);
+        setTameableFlag(1, sitting);
     }
 
     public void setTamed(boolean tamed) {
-        setFlag(4, tamed);
+        setTameableFlag(4, tamed);
     }
 
 }

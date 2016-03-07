@@ -12,15 +12,15 @@ public class SlimeWatcher extends LivingWatcher {
     }
 
     public int getSize() {
-        return (byte) getValue(16, (byte) 1);
+        return (int) getValue(11, 1);
     }
 
     public void setSize(int size) {
         if (size <= 0 || size >= 128) {
             size = 1;
         }
-        setValue(16, (byte) size);
-        sendData(16);
+        setValue(11, size);
+        sendData(11);
     }
 
 }

@@ -5,26 +5,20 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 public class BoatWatcher extends FlagWatcher {
 
+    //TODO: Add stuff for new boat values
+
     public BoatWatcher(Disguise disguise) {
         super(disguise);
     }
 
     public int getDamage() {
-        return (Integer) getValue(19, 40F);
-    }
-
-    public int getHealth() {
-        return (Integer) getValue(17, 10);
+        return (int) getValue(7, 40F);
     }
 
     public void setDamage(float dmg) {
-        setValue(19, dmg);
-        sendData(19);
+        setValue(7, dmg);
+        sendData(7);
     }
 
-    public void setHealth(int health) {
-        setValue(17, health);
-        sendData(17);
-    }
 
 }

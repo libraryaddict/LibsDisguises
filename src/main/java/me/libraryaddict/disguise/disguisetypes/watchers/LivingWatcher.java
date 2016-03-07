@@ -65,15 +65,15 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public float getHealth() {
-        return (Float) getValue(6, 0F);
+        return (float) getValue(6, 0F);
     }
 
     public double getMaxHealth() {
         return maxHealth;
     }
 
-    public boolean getPotionParticlesRemoved() {
-        return (byte) getValue(8, (byte) 0) == 1;
+    public boolean isPotionParticlesAmbient() {
+        return (boolean) getValue(8, false);
     }
 
     private int getPotions() {
@@ -121,8 +121,8 @@ public class LivingWatcher extends FlagWatcher {
         }
     }
 
-    public void removePotionParticles(boolean particles) {
-        setValue(8, (byte) (particles ? 1 : 0));
+    public void setPotionParticlesAmbient(boolean particles) {
+        setValue(8, particles);
         sendData(8);
     }
 
@@ -134,6 +134,15 @@ public class LivingWatcher extends FlagWatcher {
     public void setHealth(float health) {
         setValue(6, health);
         sendData(6);
+    }
+
+    public int getArrowsSticking() {
+        return (int) getValue(9, 0);
+    }
+
+    public void setArrowsSticking(int arrowsNo) {
+        setValue(9, arrowsNo);
+        sendData(9);
     }
 
     public void setMaxHealth(double newHealth) {

@@ -159,7 +159,7 @@ public class FlagWatcher {
         return disguise;
     }
 
-    private boolean getFlag(int byteValue) {
+    private boolean getEntityFlag(int byteValue) {
         return ((byte) getValue(0, (byte) 0) & 1 << byteValue) != 0;
     }
 
@@ -199,10 +199,6 @@ public class FlagWatcher {
         return entityValues.containsKey(no);
     }
 
-    public boolean isBurning() {
-        return getFlag(0);
-    }
-
     public boolean isCustomNameVisible() {
         return (byte) getValue(3, (byte) 0) == 1;
     }
@@ -211,20 +207,32 @@ public class FlagWatcher {
         return addEntityAnimations;
     }
 
-    public boolean isInvisible() {
-        return getFlag(5);
-    }
-
-    public boolean isRightClicking() {
-        return getFlag(4);
+    public boolean isBurning() {
+        return getEntityFlag(0);
     }
 
     public boolean isSneaking() {
-        return getFlag(1);
+        return getEntityFlag(1);
     }
 
     public boolean isSprinting() {
-        return getFlag(3);
+        return getEntityFlag(3);
+    }
+
+    public boolean isRightClicking() {
+        return getEntityFlag(4);
+    }
+
+    public boolean isInvisible() {
+        return getEntityFlag(5);
+    }
+
+    public boolean isFlyingWithElytra() {
+        return getEntityFlag(6);
+    }
+
+    public boolean isGlowing() {
+        return getEntityFlag(7);
     }
 
     public void rebuildWatchableObjects() {
@@ -289,7 +297,7 @@ public class FlagWatcher {
     }
 
     public void setBurning(boolean setBurning) {
-        setFlag(0, setBurning);
+        setEntityFlag(0, setBurning);
         sendData(0);
     }
 
@@ -306,7 +314,7 @@ public class FlagWatcher {
         sendData(3);
     }
 
-    private void setFlag(int byteValue, boolean flag) {
+    private void setEntityFlag(int byteValue, boolean flag) {
         modifiedEntityAnimations.add(byteValue);
         byte b0 = (byte) getValue(0, (byte) 0);
         if (flag) {
@@ -317,7 +325,17 @@ public class FlagWatcher {
     }
 
     public void setInvisible(boolean setInvis) {
-        setFlag(5, setInvis);
+        setEntityFlag(5, setInvis);
+        sendData(0);
+    }
+
+    public void setGlowing(boolean glowing) {
+        setEntityFlag(6, glowing);
+        sendData(0);
+    }
+
+    public void setFlyingWithElytra(boolean flying) {
+        setEntityFlag(7, flying);
         sendData(0);
     }
 
@@ -413,17 +431,17 @@ public class FlagWatcher {
     }
 
     public void setRightClicking(boolean setRightClicking) {
-        setFlag(4, setRightClicking);
+        setEntityFlag(4, setRightClicking);
         sendData(0);
     }
 
     public void setSneaking(boolean setSneaking) {
-        setFlag(1, setSneaking);
+        setEntityFlag(1, setSneaking);
         sendData(0);
     }
 
     public void setSprinting(boolean setSprinting) {
-        setFlag(3, setSprinting);
+        setEntityFlag(3, setSprinting);
         sendData(0);
     }
 

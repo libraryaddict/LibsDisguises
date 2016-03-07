@@ -1,13 +1,15 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Random;
-
+import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Horse.Variant;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Random;
+import java.util.UUID;
 
 public class HorseWatcher extends AgeableWatcher {
 
@@ -16,8 +18,18 @@ public class HorseWatcher extends AgeableWatcher {
         setColor(Color.values()[new Random().nextInt(Color.values().length)]);
     }
 
+    //TODO: Check and make sure Variants work
+    public Variant getVariant() {
+        return Variant.values()[(int) getValue(14, 0)];
+    }
+
+    public void setVariant(Variant variant) {
+        setValue(14, variant.ordinal());
+        sendData(14);
+    }
+
     public Color getColor() {
-        return Color.values()[((Integer) getValue(20, 0) & 0xFF)];
+        return Color.values()[((Integer) getValue(13, 0) & 0xFF)];
     }
 
     public ItemStack getHorseArmor() {
@@ -35,93 +47,91 @@ public class HorseWatcher extends AgeableWatcher {
         return null;
     }
 
-    @Deprecated
-    public int getHorseArmorAsInt() {
-        return (Integer) getValue(22, 0);
+    protected int getHorseArmorAsInt() {
+        return (int) getValue(16, 0);
     }
 
-    public String getOwnerName() {
-        return (String) getValue(21, null);
+    public Optional<UUID> getOwner() {
+        return (Optional<UUID>) getValue(15, Optional.absent());
     }
 
     public Style getStyle() {
-        return Style.values()[((Integer) getValue(20, 0) >>> 8)];
+        return Style.values()[((int) getValue(13, 0) >>> 8)];
     }
 
     public boolean hasChest() {
-        return isTrue(8);
+        return isHorseFlag(8);
     }
 
     public boolean isBreedable() {
-        return isTrue(16);
+        return isHorseFlag(16);
     }
 
     public boolean isGrazing() {
-        return isTrue(32);
+        return isHorseFlag(32);
     }
 
     public boolean isMouthOpen() {
-        return isTrue(128);
+        return isHorseFlag(128);
     }
 
     public boolean isRearing() {
-        return isTrue(64);
+        return isHorseFlag(64);
     }
 
     public boolean isSaddled() {
-        return isTrue(4);
+        return isHorseFlag(4);
     }
 
     public boolean isTamed() {
-        return isTrue(2);
+        return isHorseFlag(2);
     }
 
-    private boolean isTrue(int i) {
-        return ((Integer) getValue(16, (byte) 0) & i) != 0;
+    private boolean isHorseFlag(int i) {
+        return ((Integer) getValue(12, (byte) 0) & i) != 0;
     }
 
     public void setCanBreed(boolean breed) {
-        setFlag(16, breed);
+        setHorseFlag(16, breed);
     }
 
     public void setCarryingChest(boolean chest) {
-        setFlag(8, chest);
+        setHorseFlag(8, chest);
     }
 
     public void setColor(Color color) {
-        setValue(20, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
-        sendData(20);
+        setValue(13, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        sendData(13);
     }
 
-    private void setFlag(int i, boolean flag) {
-        int j = (Integer) getValue(16, 0);
+    private void setHorseFlag(int i, boolean flag) {
+        int j = (int) getValue(12, 0);
         if (flag) {
-            setValue(16, j | i);
+            setValue(12, j | i);
         } else {
-            setValue(16, j & ~i);
+            setValue(12, j & ~i);
         }
-        sendData(16);
+        sendData(12);
     }
 
     public void setGrazing(boolean grazing) {
-        setFlag(32, grazing);
+        setHorseFlag(32, grazing);
     }
 
-    @Deprecated
-    public void setHorseArmor(int armor) {
-        setValue(22, armor % 4);
-        sendData(22);
+    protected void setHorseArmor(int armor) {
+        setValue(16, armor);
+        sendData(16);
     }
 
     public void setHorseArmor(ItemStack item) {
         int value = 0;
         if (item != null) {
             Material mat = item.getType();
-            if (mat.name().equals("IRON_BARDING")) {
+            if (mat == Material.IRON_BARDING) {
                 value = 1;
-            } else if (mat.name().equals("GOLD_BARDING")) {
+            } else if (mat == Material.GOLD_BARDING) {
                 value = 2;
-            } else if (mat.name().equals("DIAMOND_BARDING")) {
+            } else if (mat == Material.DIAMOND_BARDING) {
                 value = 3;
             }
         }
@@ -129,29 +139,29 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setMouthOpen(boolean mouthOpen) {
-        setFlag(128, mouthOpen);
+        setHorseFlag(128, mouthOpen);
     }
 
-    public void setOwnerName(String name) {
-        setValue(21, name);
-        sendData(21);
+    public void setOwner(Optional<UUID> uuid) {
+        setValue(15, uuid);
+        sendData(15);
     }
 
     public void setRearing(boolean rear) {
-        setFlag(64, rear);
+        setHorseFlag(64, rear);
     }
 
     public void setSaddled(boolean saddled) {
-        setFlag(4, saddled);
+        setHorseFlag(4, saddled);
     }
 
     public void setStyle(Style style) {
-        setValue(20, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(20);
+        setValue(13, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(13);
     }
 
     public void setTamed(boolean tamed) {
-        setFlag(2, tamed);
+        setHorseFlag(2, tamed);
     }
 
 }

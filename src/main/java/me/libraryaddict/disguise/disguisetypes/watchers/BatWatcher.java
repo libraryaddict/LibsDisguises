@@ -10,11 +10,11 @@ public class BatWatcher extends LivingWatcher {
     }
 
     public boolean isFlying() {
-        return (byte) getValue(16, (byte) 1) == 0;
+        return (boolean) getValue(11, true);
     }
 
     public void setFlying(boolean flying) {
-        setValue(16, (byte) (flying ? 0 : 1));
-        sendData(16);
+        setValue(11, flying);
+        sendData(11);
     }
 }

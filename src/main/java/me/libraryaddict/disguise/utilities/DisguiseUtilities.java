@@ -699,6 +699,7 @@ public class DisguiseUtilities {
     /**
      * Resends the entity to all the watching players, which is where the magic begins
      */
+    //TODO: Check this method, something's not right here
     public static void refreshTrackers(final TargetedDisguise disguise) {
         if (disguise.getEntity().isValid()) {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());

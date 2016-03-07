@@ -11,22 +11,21 @@ public class EndermanWatcher extends LivingWatcher {
 
     @Override
     public ItemStack getItemInMainHand() {
-        return new ItemStack((byte) getValue(16, (byte) 0), 1, ((byte) getValue(17, (byte) 0)));
-    }
-
-    public boolean isAggressive() {
-        return (byte) getValue(18, (byte) 0) == 1;
-    }
-
-    public void setAggressive(boolean isAggressive) {
-        setValue(18, (byte) (isAggressive ? 1 : 0));
-        sendData(18);
+        return new ItemStack((int) getValue(11, 1), 1, (short) 0);
     }
 
     @Override
     public void setItemInMainHand(ItemStack itemstack) {
-        setValue(16, (short) (itemstack.getTypeId() & 255));
-        setValue(17, (byte) (itemstack.getDurability() & 255));
+        setValue(11, itemstack.getTypeId());
+    }
+
+    public boolean isAggressive() {
+        return (boolean) getValue(12, false);
+    }
+
+    public void setAggressive(boolean isAggressive) {
+        setValue(12, isAggressive);
+        sendData(12);
     }
 
 }
