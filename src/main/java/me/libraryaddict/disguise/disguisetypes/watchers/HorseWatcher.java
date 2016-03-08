@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -15,8 +16,11 @@ public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(Disguise disguise) {
         super(disguise);
-        setColor(Color.values()[new Random().nextInt(Color.values().length)]);
+        Variant variant = getVariant();
+        if (variant == Variant.DONKEY || variant == Variant.MULE || variant == Variant.HORSE)
+            setColor(Color.values()[new Random().nextInt(Color.values().length)]);
     }
+
 
     //TODO: Check and make sure Variants work
     public Variant getVariant() {
@@ -24,7 +28,13 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setVariant(Variant variant) {
-        setValue(14, variant.ordinal());
+        Bukkit.broadcastMessage("Variant set to: " + variant);
+        Bukkit.broadcastMessage("Ordinal: " + variant.ordinal());
+        setVariant(variant.ordinal());
+    }
+
+    public void setVariant(int variant) {
+        setValue(14, variant);
         sendData(14);
     }
 
