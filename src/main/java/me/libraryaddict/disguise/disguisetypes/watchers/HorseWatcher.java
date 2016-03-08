@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Horse.Color;
 import org.bukkit.entity.Horse.Style;
@@ -16,30 +15,28 @@ public class HorseWatcher extends AgeableWatcher {
 
     public HorseWatcher(Disguise disguise) {
         super(disguise);
-        Variant variant = getVariant();
-        if (variant == Variant.DONKEY || variant == Variant.MULE || variant == Variant.HORSE)
-            setColor(Color.values()[new Random().nextInt(Color.values().length)]);
+        setStyle(Style.values()[new Random().nextInt(Style.values().length)]);
+        setColor(Color.values()[new Random().nextInt(Color.values().length)]);
     }
 
-
-    //TODO: Check and make sure Variants work
     public Variant getVariant() {
-        return Variant.values()[(int) getValue(14, 0)];
+        return Variant.values()[(int) getValue(13, 0)];
     }
 
     public void setVariant(Variant variant) {
-        Bukkit.broadcastMessage("Variant set to: " + variant);
-        Bukkit.broadcastMessage("Ordinal: " + variant.ordinal());
         setVariant(variant.ordinal());
     }
 
     public void setVariant(int variant) {
-        setValue(14, variant);
-        sendData(14);
+        if (variant < 0 || variant > 4) {
+            variant = 0; //Crashing people is mean
+        }
+        setValue(13, variant);
+        sendData(13);
     }
 
     public Color getColor() {
-        return Color.values()[((Integer) getValue(13, 0) & 0xFF)];
+        return Color.values()[((Integer) getValue(14, 0) & 0xFF)];
     }
 
     public ItemStack getHorseArmor() {
@@ -66,7 +63,7 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public Style getStyle() {
-        return Style.values()[((int) getValue(13, 0) >>> 8)];
+        return Style.values()[((int) getValue(14, 0) >>> 8)];
     }
 
     public boolean hasChest() {
@@ -98,7 +95,11 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     private boolean isHorseFlag(int i) {
-        return ((Integer) getValue(12, (byte) 0) & i) != 0;
+        return (getHorseFlag() & i) != 0;
+    }
+
+    private byte getHorseFlag() {
+        return (byte) getValue(12, (byte) 0);
     }
 
     public void setCanBreed(boolean breed) {
@@ -110,12 +111,12 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setColor(Color color) {
-        setValue(13, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
-        sendData(13);
+        setValue(14, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        sendData(14);
     }
 
     private void setHorseFlag(int i, boolean flag) {
-        int j = (int) getValue(12, 0);
+        byte j = (byte) getValue(12, (byte) 0);
         if (flag) {
             setValue(12, j | i);
         } else {
@@ -166,8 +167,8 @@ public class HorseWatcher extends AgeableWatcher {
     }
 
     public void setStyle(Style style) {
-        setValue(13, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(13);
+        setValue(14, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(14);
     }
 
     public void setTamed(boolean tamed) {
