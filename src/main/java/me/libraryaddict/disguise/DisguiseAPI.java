@@ -24,6 +24,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -52,8 +53,10 @@ public class DisguiseAPI {
         if (entity instanceof LivingEntity) {
             for (PotionEffect effect : ((LivingEntity) entity).getActivePotionEffects()) {
                 ((LivingWatcher) watcher).addPotionEffect(effect.getType());
-                if (effect.getType().getName().equals("INVISIBILITY")) {
+                if (effect.getType() == PotionEffectType.INVISIBILITY) {
                     watcher.setInvisible(true);
+                } else if (effect.getType() == PotionEffectType.GLOWING) {
+                    watcher.setGlowing(true);
                 }
             }
         }
@@ -110,9 +113,7 @@ public class DisguiseAPI {
                                                         value = (float) d;
                                                     }
                                                 } else if (toCast == double.class) {
-                                                    if (value instanceof Double) {
-                                                        value = value;
-                                                    } else {
+                                                    if (!(value instanceof Double)) {
                                                         float d = (Float) value;
                                                         value = (double) d;
                                                     }

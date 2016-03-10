@@ -270,7 +270,6 @@ public class DisguiseUtilities {
     }
 
     public static void doBoundingBox(TargetedDisguise disguise) {
-        //TODO: Slimes
         Entity entity = disguise.getEntity();
         if (entity != null) {
             if (isDisguiseInUse(disguise)) {
@@ -722,10 +721,8 @@ public class DisguiseUtilities {
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
                 if (entityTrackerEntry != null) {
                     Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-                    Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
-                            ReflectionManager.getNmsClass("EntityPlayer"));
-                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    final Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer", ReflectionManager.getNmsClass("EntityPlayer"));
                     trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
                     for (final Object p : trackedPlayers) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
@@ -779,7 +776,6 @@ public class DisguiseUtilities {
                 ex.printStackTrace(System.out);
             }
             //Code to stop player pushing in 1.9
-            //TODO: Check validity
             Scoreboard scoreboard = player.getScoreboard();
             Team t;
             if ((t = scoreboard.getTeam("LDPushing")) != null) {
@@ -1023,7 +1019,6 @@ public class DisguiseUtilities {
             return;
         }
         //Code to stop player pushing in 1.9
-        //TODO: Check validity
         Scoreboard scoreboard = player.getScoreboard();
         Team t;
         if ((t = scoreboard.getTeam("LDPushing")) != null) {
@@ -1042,5 +1037,4 @@ public class DisguiseUtilities {
             }
         }
     }
-
 }

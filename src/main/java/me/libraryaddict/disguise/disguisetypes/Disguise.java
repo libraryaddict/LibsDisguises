@@ -233,7 +233,7 @@ public abstract class Disguise {
                     if (isModifyBoundingBox()) {
                         DisguiseUtilities.doBoundingBox(disguise);
                     }
-                    if (getType() == DisguiseType.BAT && !((BatWatcher) getWatcher()).isFlying()) {
+                    if (getType() == DisguiseType.BAT && !((BatWatcher) getWatcher()).isHanging()) {
                         return;
                     }
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
@@ -306,8 +306,7 @@ public abstract class Disguise {
                                     PacketContainer selfPacket = packet.shallowClone();
                                     selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
-                                                false);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket, false);
                                     } catch (InvocationTargetException e) {
                                         e.printStackTrace(System.out);
                                     }
@@ -636,13 +635,13 @@ public abstract class Disguise {
             // Since they both share it. With the same classes. Time to check if its from something they extend.
             // Better make this clear before I compare the values because some default values are different!
             // Entity is 0 & 1 - But we aint gonna be checking that
-            // EntityAgeable is 16
-            // EntityInsentient is 10 & 11
-            // EntityZombie is 12 & 13 & 14 - But it overrides other values and another check already does this.
-            // EntityLiving is 6 & 7 & 8 & 9
+            // EntityAgeable is 11
+            // EntityInsentient is 10
+            // EntityLiving is 5 & 6 & 7 & 8 & 9
             // Lets use switch
             Class baseClass = null;
             switch (dataNo) {
+                case 5:
                 case 6:
                 case 7:
                 case 8:
@@ -650,10 +649,9 @@ public abstract class Disguise {
                     baseClass = ReflectionManager.getNmsClass("EntityLiving");
                     break;
                 case 10:
-                case 11:
                     baseClass = ReflectionManager.getNmsClass("EntityInsentient");
                     break;
-                case 16:
+                case 11:
                     baseClass = ReflectionManager.getNmsClass("EntityAgeable");
                     break;
                 default:

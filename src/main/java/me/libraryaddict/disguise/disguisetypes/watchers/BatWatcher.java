@@ -6,15 +6,15 @@ public class BatWatcher extends LivingWatcher {
 
     public BatWatcher(Disguise disguise) {
         super(disguise);
-        setFlying(true);
+        setHanging(false);
     }
 
-    public boolean isFlying() {
-        return (boolean) getValue(11, true);
+    public boolean isHanging() {
+        return ((byte)getValue(11, (byte) 1)) == 1;
     }
 
-    public void setFlying(boolean flying) {
-        setValue(11, flying);
+    public void setHanging(boolean hanging) {
+        setValue(11, hanging ? (byte) 1 : (byte) 0);
         sendData(11);
     }
 }

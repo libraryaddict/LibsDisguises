@@ -25,6 +25,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TippedArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -101,9 +102,11 @@ public class LibsDisguises extends JavaPlugin {
             if (disguiseType.getEntityType() == null) {
                 continue;
             }
-            Class watcherClass;
+            Class watcherClass = null;
             try {
                 switch (disguiseType) {
+                    case ITEM_FRAME: //Not really supported...
+                        break;
                     case MINECART_CHEST:
                     case MINECART_COMMAND:
                     case MINECART_FURNACE:
@@ -133,6 +136,9 @@ public class LibsDisguises extends JavaPlugin {
                         break;
                     case WITHER_SKELETON:
                         watcherClass = SkeletonWatcher.class;
+                        break;
+                    case ARROW:
+                        watcherClass = TippedArrowWatcher.class;
                         break;
                     default:
                         watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
@@ -199,6 +205,8 @@ public class LibsDisguises extends JavaPlugin {
                 case ELDER_GUARDIAN:
                     nmsEntityName = "Guardian";
                     break;
+                case ARROW:
+                    nmsEntityName = "TippedArrow";
                 default:
                     break;
             }

@@ -24,16 +24,19 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -43,14 +46,18 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class PacketsManager {
@@ -173,7 +180,6 @@ public class PacketsManager {
         }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
-            //TODO: Fix experience orb
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
@@ -182,7 +188,6 @@ public class PacketsManager {
             mods.write(3, Math.floor(loc.getZ() * 32));
             mods.write(4, 1);
         } else if (disguise.getType() == DisguiseType.PAINTING) {
-            //TODO: Fix painting
             spawnPackets[0] = new PacketContainer(Server.SPAWN_ENTITY_PAINTING);
             StructureModifier<Object> mods = spawnPackets[0].getModifier();
             mods.write(0, disguisedEntity.getEntityId());
@@ -206,34 +211,27 @@ public class PacketsManager {
             spawnPackets[0] = new PacketContainer(Server.NAMED_ENTITY_SPAWN);
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
             String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
+            int entityId = disguisedEntity.getEntityId();
             boolean removeName = false;
             if (!DisguiseUtilities.hasGameProfile(name)) {
                 removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
             }
+
             WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
             if (removeName) {
                 DisguiseUtilities.getAddedByPlugins().remove(name);
             }
-
             //Write spawn packet in order
-            //Id
-            //UUID
-            //x
-            //y
-            //z
-            //pitch
-            //yaw
-            spawnPackets[0].getIntegers().write(0, disguisedEntity.getEntityId());
-            spawnPackets[0].getSpecificModifier(UUID.class).write(0, gameProfile.getUUID());
+            spawnPackets[0].getIntegers().write(0, entityId);  //Id
+            spawnPackets[0].getSpecificModifier(UUID.class).write(0, gameProfile.getUUID());  //UUID
             StructureModifier<Double> doubleMods = spawnPackets[0].getDoubles();
-            doubleMods.write(0, Math.floor(loc.getX() * 32));
-            doubleMods.write(1, Math.floor(loc.getY() * 32));
-            doubleMods.write(2, Math.floor(loc.getZ() * 32));
+            doubleMods.write(0, Math.floor(loc.getX() * 32)); //x
+            doubleMods.write(1, Math.floor(loc.getY() * 32)); //y
+            doubleMods.write(2, Math.floor(loc.getZ() * 32)); //z
             StructureModifier<Byte> byteMods = spawnPackets[0].getBytes();
-            byteMods.write(0, pitch);
-            byteMods.write(1, yaw);
-
-            spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+            byteMods.write(0, yaw); //yaw
+            byteMods.write(1, pitch); //pitch
+            spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher())); //watcher, duh
 
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                 PacketContainer[] newPackets = new PacketContainer[spawnPackets.length + 1];
@@ -268,42 +266,40 @@ public class PacketsManager {
             PacketContainer delayedPacket = spawnPackets[0].shallowClone();
             delayedPacket.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
             delayedPackets = new PacketContainer[]{delayedPacket};
-
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-            Class<? extends Entity> entityClass = disguise.getType().getEntityClass();
-            int entityId = disguise.getType().getEntityId();
-            Entity entity = Bukkit.getWorlds().get(0).spawn(disguise.getEntity().getLocation(), entityClass);
+            int entityId = disguisedEntity.getEntityId();
+            LivingEntity entity = (LivingEntity) disguisedEntity.getWorld().spawnEntity(loc, disguise.getType().getEntityType());
             entity.setVelocity(disguisedEntity.getVelocity());
             if (disguise.getType() == DisguiseType.SLIME || disguise.getType() == DisguiseType.MAGMA_CUBE) {
-                ((Slime)entity).setSize(((SlimeWatcher)disguise.getWatcher()).getSize());
+                ((Slime) entity).setSize(((SlimeWatcher) disguise.getWatcher()).getSize());
             }
             Object nms = ReflectionManager.getNmsEntity(entity);
-            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms).createPacket(nms);
+            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms).createPacket(nms).deepClone();
             spawnPackets[0] = packet;
             spawnPackets[0].getIntegers().write(0, entityId);
             spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1, Integer.MAX_VALUE, true, false));
             entity.remove();
             //You know, as cheap as this may seem, this is pretty damn effective
         } else if (disguise.getType().isMisc()) {
             //TODO: Fix miscs
-            Class<? extends Entity> entityClass = disguise.getType().getEntityClass();
-            Entity entity = Bukkit.getWorlds().get(0).spawn(disguise.getEntity().getLocation().add(0, 0.5, 0), entityClass);
-            entity.setVelocity(disguisedEntity.getVelocity());
-            int entityId = disguise.getType().getEntityId();
-            int typeId = disguise.getType().getTypeId();
+            int id = disguise.getType().getTypeId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = (((MiscDisguise) disguise).getId() | data << 16);
+                data = (((MiscDisguise) disguise).getId() + data << 12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
             } else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
             }
-            Object nms = ReflectionManager.getNmsEntity(entity);
-            spawnPackets[0] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY, nms, typeId, data)
-                    .createPacket(nms, typeId, data);
-            spawnPackets[0].getIntegers().write(0, entityId);
+            Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
+            spawnPackets[0] = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, id, data)
+                    .createPacket(nmsEntity, id, data);
+            spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
+            spawnPackets[0].getModifier().write(7, pitch);
+            spawnPackets[0].getModifier().write(8, yaw);
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
                     spawnPackets[0].getModifier().write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
@@ -311,7 +307,6 @@ public class PacketsManager {
                     spawnPackets[0].getModifier().write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
                 }
             }
-            entity.remove();
         }
         if (spawnPackets[1] == null || disguise.isPlayerDisguise()) {
             int entry = spawnPackets[1] == null ? 1 : 0;
@@ -501,233 +496,234 @@ public class PacketsManager {
      */
     public static void init(LibsDisguises plugin) {
         libsDisguises = plugin;
-        soundsListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT,
-                Server.ENTITY_STATUS) {
+        soundsListener = new PacketAdapter(libsDisguises, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT, Server.ENTITY_STATUS) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                //TODO: Fix this later once ProtocolLib's deepClone for NamedSoundEffect and EntityStatus is fixed
-//                if (event.isCancelled()) {
-//                    return;
-//                }
-//                event.setPacket(event.getPacket().deepClone());
-//                StructureModifier<Object> mods = event.getPacket().getModifier();
-//                Player observer = event.getPlayer();
-//                if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
-////                    if (event.isAsync()) {
-////                        return;
-////                    }
-////                    Object soundEffect = mods.read(0);
-////                    SoundType soundType = null;
-////                    Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(2)) / 8D,
-////                            ((Integer) mods.read(3)) / 8D, ((Integer) mods.read(4)) / 8D);
-////                    Entity disguisedEntity = null;
-////                    DisguiseSound entitySound = null;
-////                    Disguise disguise = null;
-////                    Entity[] entities = soundLoc.getChunk().getEntities();
-////                    for (Entity entity : entities) {
-////                        Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
-////                        if (entityDisguise != null) {
-////                            Location loc = entity.getLocation();
-////                            loc = new Location(observer.getWorld(), ((int) (loc.getX() * 8)) / 8D, ((int) (loc.getY() * 8)) / 8D,
-////                                    ((int) (loc.getZ() * 8)) / 8D);
-////                            if (loc.equals(soundLoc)) {
-////                                entitySound = DisguiseSound.getType(entity.getType().name());
-////                                if (entitySound != null) {
-////                                    Object obj = null;
-////                                    if (entity instanceof LivingEntity) {
-////                                        try {
-////                                            // Use reflection so that this works for either int or double methods
-////                                            obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
-////                                            if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-////                                                soundType = SoundType.DEATH;
-////                                            } else {
-////                                                obj = null;
-////                                            }
-////                                        } catch (Exception e) {
-////                                            e.printStackTrace();
-////                                        }
-////                                    }
-////                                    if (obj == null) {
-////                                        boolean hasInvun = false;
-////                                        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
-////                                        try {
-////                                            if (entity instanceof LivingEntity) {
-////                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
-////                                                        nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
-////                                                        "maxNoDamageTicks").getInt(nmsEntity);
-////                                            } else {
-////                                                Class clazz = ReflectionManager.getNmsClass("DamageSource");
-////                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", clazz)
-////                                                        .invoke(nmsEntity, ReflectionManager.getNmsField(clazz, "GENERIC"));
-////                                            }
-////                                        } catch (Exception ex) {
-////                                            ex.printStackTrace();
-////                                        }
-////                                        soundType = entitySound.getType(ReflectionManager.convertSoundEffectToString(soundEffect), !hasInvun);
-////                                    }
-////                                    if (soundType != null) {
-////                                        disguise = entityDisguise;
-////                                        disguisedEntity = entity;
-////                                        break;
-////                                    }
-////                                }
-////                            }
-////                        }
-////                    }
-////                    if (disguise != null) {
-////                        if (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != event.getPlayer()) {
-////                            if (disguise.isSoundsReplaced()) {
-////                                String sound = null;
-////                                DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
-////                                if (dSound != null)
-////                                    sound = dSound.getSound(soundType);
-////
-////                                if (sound == null) {
-////                                    event.setCancelled(true);
-////                                } else {
-////                                    if (sound.equals("step.grass")) {
-////                                        try {
-////                                            int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
-////                                                    soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
-////                                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
-////                                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
-////                                                            typeId);
-////                                            if (block != null) {
-////                                                Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
-////                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
-////                                            }
-////                                        } catch (Exception ex) {
-////                                            ex.printStackTrace();
-////                                        }
-////                                        // There is no else statement. Because seriously. This should never be null. Unless
-////                                        // someone is
-////                                        // sending fake sounds. In which case. Why cancel it.
-////                                    } else {
-////                                        mods.write(0, ReflectionManager.getCraftSoundEffect(sound));
-////                                        // Time to change the pitch and volume
-////                                        if (soundType == SoundType.HURT || soundType == SoundType.DEATH
-////                                                || soundType == SoundType.IDLE) {
-////                                            // If the volume is the default
-////                                            if (mods.read(5).equals(entitySound.getDamageAndIdleSoundVolume())) {
-////                                                mods.write(5, dSound.getDamageAndIdleSoundVolume());
-////                                            }
-////                                            // Here I assume its the default pitch as I can't calculate if its real.
-////                                            if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
-////                                                    && ((MobDisguise) disguise).doesDisguiseAge()) {
-////                                                boolean baby = false;
-////                                                if (disguisedEntity instanceof Zombie) {
-////                                                    baby = ((Zombie) disguisedEntity).isBaby();
-////                                                } else if (disguisedEntity instanceof Ageable) {
-////                                                    baby = !((Ageable) disguisedEntity).isAdult();
-////                                                }
-////                                                if (((MobDisguise) disguise).isAdult() == baby) {
-////
-////                                                    float pitch = (Integer) mods.read(5);
-////                                                    if (baby) {
-////                                                        // If the pitch is not the expected
-////                                                        if (pitch > 97 || pitch < 111)
-////                                                            return;
-////                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-////                                                        // Min = 1.5
-////                                                        // Cap = 97.5
-////                                                        // Max = 1.7
-////                                                        // Cap = 110.5
-////                                                    } else {
-////                                                        // If the pitch is not the expected
-////                                                        if (pitch >= 63 || pitch <= 76)
-////                                                            return;
-////                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-////                                                        // Min = 1
-////                                                        // Cap = 63
-////                                                        // Max = 1.2
-////                                                        // Cap = 75.6
-////                                                    }
-////                                                    pitch *= 63;
-////                                                    if (pitch < 0)
-////                                                        pitch = 0;
-////                                                    if (pitch > 255)
-////                                                        pitch = 255;
-////                                                    mods.write(6, (int) pitch);
-////                                                }
-////                                            }
-////                                        }
-////                                    }
-////                                }
-////                            }
-////                        }
-////                    }
-//                } else if (event.getPacketType() == Server.ENTITY_STATUS) {
-//                    if ((byte) mods.read(1) == 2) {
-//                        // It made a damage animation
-//                        Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
-//                        Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-//                        if (disguise != null && !disguise.getType().isPlayer()
-//                                && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
-//                            DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
-//                            if (disSound == null)
-//                                return;
-//                            SoundType soundType = null;
-//                            Object obj = null;
-//                            if (entity instanceof LivingEntity) {
-//                                try {
-//                                    obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
-//                                    if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-//                                        soundType = SoundType.DEATH;
-//                                    } else {
-//                                        obj = null;
-//                                    }
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                            if (obj == null) {
-//                                soundType = SoundType.HURT;
-//                            }
-//                            if (disSound.getSound(soundType) == null
-//                                    || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
-//                                if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
-//                                    cancelSound = !cancelSound;
-//                                    if (cancelSound)
-//                                        return;
-//                                }
-//                                disSound = DisguiseSound.getType(disguise.getType().name());
-//                                if (disSound != null) {
-//                                    String sound = disSound.getSound(soundType);
-//                                    if (sound != null) {
-//                                        Location loc = entity.getLocation();
-//                                        PacketContainer packet = new PacketContainer(Server.NAMED_SOUND_EFFECT);
-//                                        mods = packet.getModifier();
-//                                        mods.write(0, sound);
-//                                        mods.write(1, (int) (loc.getX() * 8D));
-//                                        mods.write(2, (int) (loc.getY() * 8D));
-//                                        mods.write(3, (int) (loc.getZ() * 8D));
-//                                        mods.write(4, disSound.getDamageAndIdleSoundVolume());
-//                                        float pitch;
-//                                        if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-//                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
-//                                        } else
-//                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
-//                                        if (disguise.getType() == DisguiseType.BAT)
-//                                            pitch *= 95F;
-//                                        pitch *= 63;
-//                                        if (pitch < 0)
-//                                            pitch = 0;
-//                                        if (pitch > 255)
-//                                            pitch = 255;
-//                                        mods.write(5, (int) pitch);
-//                                        try {
-//                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
-//                                        } catch (InvocationTargetException e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
+                if (event.isCancelled()) {
+                    return;
+                }
+                event.setPacket(event.getPacket().deepClone());
+                StructureModifier<Object> mods = event.getPacket().getModifier();
+                Player observer = event.getPlayer();
+                if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
+                    if (event.isAsync()) {
+                        return;
+                    }
+                    Object soundEffect = mods.read(0);
+                    SoundType soundType = null;
+                    Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(2)) / 8D,
+                            ((Integer) mods.read(3)) / 8D, ((Integer) mods.read(4)) / 8D);
+                    Entity disguisedEntity = null;
+                    DisguiseSound entitySound = null;
+                    Disguise disguise = null;
+                    Entity[] entities = soundLoc.getChunk().getEntities();
+                    for (Entity entity : entities) {
+                        Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
+                        if (entityDisguise != null) {
+                            Location loc = entity.getLocation();
+                            loc = new Location(observer.getWorld(), ((int) (loc.getX() * 8)) / 8D, ((int) (loc.getY() * 8)) / 8D,
+                                    ((int) (loc.getZ() * 8)) / 8D);
+                            if (loc.equals(soundLoc)) {
+                                entitySound = DisguiseSound.getType(entity.getType().name());
+                                if (entitySound != null) {
+                                    Object obj = null;
+                                    if (entity instanceof LivingEntity) {
+                                        try {
+                                            // Use reflection so that this works for either int or double methods
+                                            obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                            if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
+                                                soundType = SoundType.DEATH;
+                                            } else {
+                                                obj = null;
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    if (obj == null) {
+                                        boolean hasInvun = false;
+                                        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
+                                        try {
+                                            if (entity instanceof LivingEntity) {
+                                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
+                                                        nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
+                                                        "maxNoDamageTicks").getInt(nmsEntity);
+                                            } else {
+                                                Class clazz = ReflectionManager.getNmsClass("DamageSource");
+                                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", clazz)
+                                                        .invoke(nmsEntity, ReflectionManager.getNmsField(clazz, "GENERIC"));
+                                            }
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                        soundType = entitySound.getType(ReflectionManager.convertSoundEffectToString(soundEffect), !hasInvun);
+                                    }
+                                    if (soundType != null) {
+                                        disguise = entityDisguise;
+                                        disguisedEntity = entity;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (disguise != null) {
+                        if (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != event.getPlayer()) {
+                            if (disguise.isSoundsReplaced()) {
+                                String sound = null;
+                                DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
+                                if (dSound != null)
+                                    sound = dSound.getSound(soundType);
+
+                                if (sound == null) {
+                                    event.setCancelled(true);
+                                } else {
+                                    if (sound.equals("step.grass")) {
+                                        try {
+                                            int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
+                                                    soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
+                                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
+                                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
+                                                            typeId);
+                                            if (block != null) {
+                                                Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
+                                                mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
+                                            }
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                        // There is no else statement. Because seriously. This should never be null. Unless
+                                        // someone is
+                                        // sending fake sounds. In which case. Why cancel it.
+                                    } else {
+                                        mods.write(0, ReflectionManager.getCraftSoundEffect(sound));
+                                        // Time to change the pitch and volume
+                                        if (soundType == SoundType.HURT || soundType == SoundType.DEATH
+                                                || soundType == SoundType.IDLE) {
+                                            // If the volume is the default
+                                            if (mods.read(5).equals(entitySound.getDamageAndIdleSoundVolume())) {
+                                                mods.write(5, dSound.getDamageAndIdleSoundVolume());
+                                            }
+                                            // Here I assume its the default pitch as I can't calculate if its real.
+                                            if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity
+                                                    && ((MobDisguise) disguise).doesDisguiseAge()) {
+                                                boolean baby = false;
+                                                if (disguisedEntity instanceof Zombie) {
+                                                    baby = ((Zombie) disguisedEntity).isBaby();
+                                                } else if (disguisedEntity instanceof Ageable) {
+                                                    baby = !((Ageable) disguisedEntity).isAdult();
+                                                }
+                                                if (((MobDisguise) disguise).isAdult() == baby) {
+
+                                                    float pitch = (Integer) mods.read(5);
+                                                    if (baby) {
+                                                        // If the pitch is not the expected
+                                                        if (pitch > 97 || pitch < 111)
+                                                            return;
+                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                                        // Min = 1.5
+                                                        // Cap = 97.5
+                                                        // Max = 1.7
+                                                        // Cap = 110.5
+                                                    } else {
+                                                        // If the pitch is not the expected
+                                                        if (pitch >= 63 || pitch <= 76)
+                                                            return;
+                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                                        // Min = 1
+                                                        // Cap = 63
+                                                        // Max = 1.2
+                                                        // Cap = 75.6
+                                                    }
+                                                    pitch *= 63;
+                                                    if (pitch < 0)
+                                                        pitch = 0;
+                                                    if (pitch > 255)
+                                                        pitch = 255;
+                                                    mods.write(6, (int) pitch);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (event.getPacketType() == Server.ENTITY_STATUS) {
+                    if ((byte) mods.read(1) == 2) {
+                        // It made a damage animation
+                        Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
+                        Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+                        if (disguise != null && !disguise.getType().isPlayer()
+                                && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
+                            DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
+                            if (disSound == null)
+                                return;
+                            SoundType soundType = null;
+                            Object obj = null;
+                            if (entity instanceof LivingEntity) {
+                                try {
+                                    obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                                    if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
+                                        soundType = SoundType.DEATH;
+                                    } else {
+                                        obj = null;
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (obj == null) {
+                                soundType = SoundType.HURT;
+                            }
+                            if (disSound.getSound(soundType) == null
+                                    || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
+                                if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
+                                    cancelSound = !cancelSound;
+                                    if (cancelSound)
+                                        return;
+                                }
+                                disSound = DisguiseSound.getType(disguise.getType().name());
+                                if (disSound != null) {
+                                    String sound = disSound.getSound(soundType);
+                                    if (sound != null) {
+                                        Location loc = entity.getLocation();
+                                        PacketContainer packet = new PacketContainer(Server.NAMED_SOUND_EFFECT);
+                                        mods = packet.getModifier();
+                                        Object craftSoundEffect = ReflectionManager.getCraftSoundEffect(sound);
+                                        mods.write(0, craftSoundEffect);
+                                        mods.write(1, ReflectionManager.getSoundCategory("master")); //Meh
+                                        mods.write(2, (int) (loc.getX() * 8D));
+                                        mods.write(3, (int) (loc.getY() * 8D));
+                                        mods.write(4, (int) (loc.getZ() * 8D));
+                                        mods.write(5, disSound.getDamageAndIdleSoundVolume());
+                                        float pitch;
+                                        if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
+                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                        } else
+                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                        if (disguise.getType() == DisguiseType.BAT)
+                                            pitch *= 95F;
+                                        pitch *= 63;
+                                        if (pitch < 0)
+                                            pitch = 0;
+                                        if (pitch > 255)
+                                            pitch = 255;
+                                        mods.write(6, (int) pitch);
+                                        try {
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
+                                        } catch (InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         };
+        //Self disguise (/vsd) listener
         viewDisguisesListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH,
                 Server.NAMED_ENTITY_SPAWN, Server.ATTACH_ENTITY,
                 Server.REL_ENTITY_MOVE, Server.ENTITY_MOVE_LOOK,
@@ -841,8 +837,7 @@ public class PacketsManager {
                         && event.getPlayer().getVehicle() == null) {
                     Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                     // If player is disguised, views self disguises and has a inventory modifier
-                    if (disguise != null && disguise.isSelfDisguiseVisible()
-                            && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                    if (disguise != null && disguise.isSelfDisguiseVisible() && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         // If they are in creative and clicked on a slot
                         if (event.getPacketType() == PacketType.Play.Client.SET_CREATIVE_SLOT) {
                             int slot = event.getPacket().getIntegers().read(0);
@@ -926,7 +921,8 @@ public class PacketsManager {
                         } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
                             int slot = event.getPacket().getIntegers().read(1);
                             org.bukkit.inventory.ItemStack clickedItem;
-                            if (event.getPacket().getShorts().read(3) == 1) {
+                            //TODO: Check this to make sure it is accurate
+                            if (event.getPacket().getShorts().read(0) == 1) {
                                 // Its a shift click
                                 clickedItem = event.getPacket().getItemModifier().read(0);
                                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {
@@ -1163,6 +1159,7 @@ public class PacketsManager {
             if (DisguiseConfig.isEntityStatusPacketsEnabled()) {
                 packetsToListen.add(Server.ENTITY_STATUS);
             }
+
             mainListener = new PacketAdapter(libsDisguises, ListenerPriority.HIGH, packetsToListen) {
                 @Override
                 public void onPacketSending(PacketEvent event) {
@@ -1171,8 +1168,7 @@ public class PacketsManager {
                     final Player observer = event.getPlayer();
                     // First get the entity, the one sending this packet
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
-                    org.bukkit.entity.Entity entity = entityModifer
-                            .read((Server.COLLECT == event.getPacketType() ? 1 : 0));
+                    org.bukkit.entity.Entity entity = entityModifer.read((Server.COLLECT == event.getPacketType() ? 1 : 0));
                     // If the entity is the same as the sender. Don't disguise!
                     // Prevents problems and there is no advantage to be gained.
                     if (entity == observer)
@@ -1315,7 +1311,10 @@ public class PacketsManager {
                             .getWatcher()).isSleeping())))) {
                         packets = new PacketContainer[0];
                     }
-                } else if (sentPacket.getType() == Server.COLLECT) {
+                }
+
+                //Else if the disguise is collecting stuff
+                else if (sentPacket.getType() == Server.COLLECT) {
                     if (disguise.getType().isMisc()) {
                         packets = new PacketContainer[0];
                     } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType().isPlayer()
@@ -1334,6 +1333,7 @@ public class PacketsManager {
                         || sentPacket.getType() == Server.ENTITY_TELEPORT
                         || sentPacket.getType() == Server.REL_ENTITY_MOVE) {
                     if (disguise.getType() == DisguiseType.RABBIT && (sentPacket.getType() == Server.REL_ENTITY_MOVE || sentPacket.getType() == Server.ENTITY_MOVE_LOOK)) {
+                        //Rabbit robbing...
                         if (entity.getMetadata("LibsRabbitHop").isEmpty()
                                 || System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() < 100
                                 || System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
@@ -1349,17 +1349,16 @@ public class PacketsManager {
                         }
                     }
 
+                    //Stop wither skulls from looking
                     if (sentPacket.getType() == Server.ENTITY_LOOK && disguise.getType() == DisguiseType.WITHER_SKULL) {
                         packets = new PacketContainer[0];
                     } else if (sentPacket.getType() != Server.REL_ENTITY_MOVE) {
-
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Byte> bytes = packets[0].getBytes();
                         byte yawValue = bytes.read(1);
                         bytes.write(1, getYaw(disguise.getType(), entity.getType(), yawValue));
                         byte pitchValue = bytes.read(0);
                         bytes.write(0, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
-
                         if (sentPacket.getType() == Server.ENTITY_TELEPORT && disguise.getType() == DisguiseType.ITEM_FRAME) {
                             StructureModifier<Double> doubles = packets[0].getDoubles();
                             Location loc = entity.getLocation();
@@ -1378,7 +1377,10 @@ public class PacketsManager {
                             }
                         }
                     }
-                } else if (sentPacket.getType() == Server.ENTITY_EQUIPMENT) {
+                }
+
+                //Else if the disguise is updating equipment
+                else if (sentPacket.getType() == Server.ENTITY_EQUIPMENT) {
                     EquipmentSlot slot = ReflectionManager.createEquipmentSlot(packets[0].getModifier().read(1));
                     org.bukkit.inventory.ItemStack itemStack = disguise.getWatcher().getItemStack(slot);
                     if (itemStack != null) {
@@ -1420,15 +1422,24 @@ public class PacketsManager {
                             // it.
                         }
                     }
-                } else if (sentPacket.getType() == Server.BED) {
+                }
+
+                //If the entity is going into a bed, stop everything but players from doing this
+                else if (sentPacket.getType() == Server.BED) {
                     if (!disguise.getType().isPlayer()) {
                         packets = new PacketContainer[0];
                     }
-                } else if (sentPacket.getType() == Server.ENTITY_STATUS) {
+                }
+
+                //If the entity is updating their Facebook status, stop them from showing death
+                else if (sentPacket.getType() == Server.ENTITY_STATUS) {
                     if (packets[0].getBytes().read(0) == (byte) 3) {
                         packets = new PacketContainer[0];
                     }
-                } else if (sentPacket.getType() == Server.ENTITY_HEAD_ROTATION) {
+                }
+
+                //If the entity is rotating his head
+                else if (sentPacket.getType() == Server.ENTITY_HEAD_ROTATION) {
                     if (disguise.getType().isPlayer() && entity.getType() != EntityType.PLAYER) {
                         Location loc = entity.getLocation();
                         byte pitch = getPitch(disguise.getType(), DisguiseType.getType(entity.getType()),
@@ -1444,7 +1455,10 @@ public class PacketsManager {
                         look.getBytes().write(4, pitch);
                         packets = new PacketContainer[]{look, rotation};
                     }
-                } else {
+                }
+
+                //Whatever
+                else {
                     packets = null;
                 }
 

@@ -39,6 +39,7 @@ public class ReflectionManager {
     private static final Field pingField;
     private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
+    public static final Field entityCountField;
 
     /*
      * This portion of code is originally Copyright (C) 2014-2014 Kane York.
@@ -79,6 +80,8 @@ public class ReflectionManager {
         boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class,
                 double.class, double.class, double.class);
         setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
+        entityCountField = getNmsField("Entity", "entityCount");
+        entityCountField.setAccessible(true);
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -109,18 +112,28 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
+    public static Object getMobEffectList(int id) {
+        Method nmsMethod = getNmsMethod("MobEffectList", "fromId", Integer.class);
         try {
-            return getNmsClass("MobEffect").getDeclaredConstructor(int.class, int.class, int.class, boolean.class, boolean.class)
-                    .newInstance(id, duration, amplification, ambient, particles);
-        } catch (Exception e) {
-            e.printStackTrace(System.out);
+            return nmsMethod.invoke(null, id);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public static Object createMobEffect(PotionEffect effect) {
         return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+    }
+
+    public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
+        try {
+            return getNmsClass("MobEffect").getDeclaredConstructor(getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE)
+                    .newInstance(getMobEffectList(id), duration, amplification, ambient, particles);
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+        return null;
     }
 
     private static String dir2fqn(String s) {
@@ -283,7 +296,6 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
-
         try {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
             gameProfile.getProperties().putAll(profileWithSkin.getProperties());
@@ -491,6 +503,24 @@ public class ReflectionManager {
         }
     }
 
+    public static Enum getSoundCategory(String category) {
+        Method method = getNmsMethod("SoundCategory", "a", String.class);
+        try {
+            Enum invoke = (Enum) method.invoke(null, category.toLowerCase());
+            if (invoke == null) {
+                Class<?> clazz = getNmsClass("SoundCategory");
+                Enum[] enums = clazz != null ? (Enum[]) clazz.getEnumConstants() : null;
+                for (Enum anEnum : enums != null ? enums : new Enum[0]) {
+                    if (anEnum.name().equals("MASTER")) return anEnum;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Creates the NMS object EnumItemSlot from an EquipmentSlot.
      * @param slot
@@ -587,9 +617,8 @@ public class ReflectionManager {
     }
 
     public static Object getCraftSoundEffect(String sound) {
-        Method nmsMethod = getNmsMethod("CraftSound", "getSoundEffect");
         try {
-            return nmsMethod.invoke(null, sound);
+            return getCraftMethod("CraftSound", "getSoundEffect", String.class).invoke(null, sound);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -625,4 +654,5 @@ public class ReflectionManager {
         }
         return null;
     }
+
 }

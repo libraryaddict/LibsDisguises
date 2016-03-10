@@ -9,7 +9,6 @@ public class PaintingWatcher extends FlagWatcher {
 
     private Art painting;
 
-    //TODO: Check this
     public PaintingWatcher(Disguise disguise) {
         super(disguise);
     }

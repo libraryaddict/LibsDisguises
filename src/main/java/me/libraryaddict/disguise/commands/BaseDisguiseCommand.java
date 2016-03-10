@@ -404,7 +404,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     int miscData = -1;
                     String secondArg = null;
                     if (args.length > 1) {
-                        // They have defined more arguements!
+                        // They have defined more arguments!
                         // If the first arg is a number
                         if (args[1].contains(":")) {
                             String[] split = args[1].split(":");
@@ -432,6 +432,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                 case SPLASH_POTION:
                                 case DROPPED_ITEM:
                                 case FISHING_HOOK:
+                                case ARROW:
                                 case TIPPED_ARROW:
                                 case SPECTRAL_ARROW:
                                 case SMALL_FIREBALL:

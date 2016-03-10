@@ -80,8 +80,7 @@ public class PlayerDisguise extends TargetedDisguise {
             if (getSkin() != null) {
                 gameProfile = ReflectionManager.getGameProfile(null, getName());
             } else {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(),
-                        DisguiseUtilities.getProfileFromMojang(this));
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), DisguiseUtilities.getProfileFromMojang(this));
             }
         }
         return gameProfile;

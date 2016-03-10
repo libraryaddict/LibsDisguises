@@ -14,6 +14,7 @@ public enum DisguiseType {
 
     AREA_EFFECT_CLOUD,
     ARMOR_STAND,
+    ARROW,
     BAT,
     BLAZE,
     BOAT,
@@ -23,35 +24,35 @@ public enum DisguiseType {
     CREEPER,
     DONKEY,
     DRAGON_FIREBALL,
-    DROPPED_ITEM(-1, 1),
+    DROPPED_ITEM(1),
     EGG,
     ELDER_GUARDIAN,
     ENDER_CRYSTAL,
     ENDER_DRAGON,
     ENDER_PEARL,
-    ENDER_SIGNAL(15),
+    ENDER_SIGNAL,
     ENDERMAN,
     ENDERMITE,
     EXPERIENCE_ORB,
-    FALLING_BLOCK(12, 1),
-    FIREBALL(26, 0),
-    FIREWORK(22),
+    FALLING_BLOCK(1),
+    FIREBALL(0),
+    FIREWORK,
     FISHING_HOOK,
     GHAST,
     GIANT,
     GUARDIAN,
     HORSE,
     IRON_GOLEM,
-    ITEM_FRAME(18),
-    LEASH_HITCH(8),
+    ITEM_FRAME,
+    LEASH_HITCH,
     MAGMA_CUBE,
     MINECART,
-    MINECART_CHEST,
-    MINECART_COMMAND,
-    MINECART_FURNACE,
-    MINECART_HOPPER,
-    MINECART_MOB_SPAWNER,
-    MINECART_TNT,
+    MINECART_CHEST(1),
+    MINECART_COMMAND(6),
+    MINECART_FURNACE(2),
+    MINECART_HOPPER(5),
+    MINECART_MOB_SPAWNER(4),
+    MINECART_TNT(5),
     MULE,
     MUSHROOM_COW,
     OCELOT,
@@ -59,30 +60,30 @@ public enum DisguiseType {
     PIG,
     PIG_ZOMBIE,
     PLAYER,
-    PRIMED_TNT(20),
+    PRIMED_TNT,
     RABBIT,
     SHEEP,
     SHULKER,
-    SHULKER_BULLET(25),
+    SHULKER_BULLET,
     SILVERFISH,
     SKELETON,
     SKELETON_HORSE,
     SLIME,
-    SMALL_FIREBALL(13, 0),
-    SNOWBALL(11),
+    SMALL_FIREBALL(0),
+    SNOWBALL,
     SNOWMAN,
-    SPECTRAL_ARROW(24),
+    SPECTRAL_ARROW,
     SPIDER,
     SPLASH_POTION,
     SQUID,
-    TIPPED_ARROW(23),
-    THROWN_EXP_BOTTLE(17),
+    TIPPED_ARROW,
+    THROWN_EXP_BOTTLE,
     UNDEAD_HORSE,
     VILLAGER,
     WITCH,
     WITHER,
     WITHER_SKELETON,
-    WITHER_SKULL(19),
+    WITHER_SKULL,
     WOLF,
     ZOMBIE,
     ZOMBIE_VILLAGER,
@@ -116,6 +117,8 @@ public enum DisguiseType {
                     case ELDER_GUARDIAN:
                         toUse = DisguiseType.GUARDIAN;
                         break;
+                    case ARROW:
+                        toUse = DisguiseType.TIPPED_ARROW;
                     default:
                         break;
                 }
@@ -196,7 +199,7 @@ public enum DisguiseType {
         }
     }
 
-    private int defaultId, entityId;
+    private int defaultData = -1;
     private EntityType entityType;
     private Class<? extends FlagWatcher> watcherClass;
 
@@ -205,10 +208,7 @@ public enum DisguiseType {
             int value = ints[i];
             switch (i) {
                 case 0:
-                    entityId = value;
-                    break;
-                case 1:
-                    defaultId = value;
+                    defaultData = value;
                     break;
                 default:
                     break;
@@ -216,8 +216,8 @@ public enum DisguiseType {
         }
     }
 
-    public int getDefaultId() {
-        return defaultId;
+    public int getDefaultData() {
+        return defaultData;
     }
 
     public Class<? extends Entity> getEntityClass() {
@@ -225,10 +225,6 @@ public enum DisguiseType {
             return getEntityType().getEntityClass();
         }
         return Entity.class;
-    }
-
-    public int getEntityId() {
-        return entityId;
     }
 
     public EntityType getEntityType() {

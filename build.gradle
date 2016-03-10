@@ -98,7 +98,7 @@ ant.get src: 'http://server.o2gaming.com/downloads/spigot-1.9.jar', dest: file('
 
 dependencies {
     compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
-    compile 'com.comphenix.protocol:ProtocolLib:3.7.0-BETA'
+    compile 'com.comphenix.protocol:ProtocolLib:3.7.0-SNAPSHOT'
     compile name: 'spigot-1.9'
     testCompile group: 'junit', name: 'junit', version: '4.10'
 }
