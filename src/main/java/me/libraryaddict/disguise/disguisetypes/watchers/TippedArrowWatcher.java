@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Color;
 
 /**
@@ -10,6 +11,10 @@ public class TippedArrowWatcher extends ArrowWatcher {
 
     public TippedArrowWatcher(Disguise disguise) {
         super(disguise);
+        int r = DisguiseUtilities.random.nextInt(256);
+        int g = DisguiseUtilities.random.nextInt(256);
+        int b = DisguiseUtilities.random.nextInt(256);
+        setColor(Color.fromRGB(r, g, b));
     }
 
     public Color getColor() {

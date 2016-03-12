@@ -36,7 +36,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Random;
 
 public class DisguiseListener implements Listener {
 
@@ -218,7 +217,7 @@ public class DisguiseListener implements Listener {
                 while (reference == null && attempts++ < 1000) {
                     reference = "@";
                     for (int i = 0; i < referenceLength; i++) {
-                        reference += alphabet[new Random().nextInt(alphabet.length)];
+                        reference += alphabet[DisguiseUtilities.random.nextInt(alphabet.length)];
                     }
                     if (DisguiseUtilities.getClonedDisguise(reference) != null) {
                         reference = null;

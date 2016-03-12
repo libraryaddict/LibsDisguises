@@ -30,8 +30,6 @@ public class DisguiseValues {
             case ZOMBIE_VILLAGER:
                 type = DisguiseType.ZOMBIE;
                 break;
-            case ARROW:
-                type = DisguiseType.TIPPED_ARROW;
             default:
                 break;
         }

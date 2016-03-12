@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public abstract class Disguise {
@@ -106,7 +105,7 @@ public abstract class Disguise {
             ((SkeletonWatcher)getWatcher()).setType(SkeletonType.WITHER);
         } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
-            ((ZombieWatcher)getWatcher()).setProfession(Profession.values()[new Random().nextInt(Profession.values().length)]);
+            ((ZombieWatcher)getWatcher()).setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
         } else if (getType() == DisguiseType.ELDER_GUARDIAN) {
             ((GuardianWatcher)getWatcher()).setElder(true);
         } // Else if its a horse. Set the horse watcher type
@@ -145,6 +144,7 @@ public abstract class Disguise {
             case WITHER_SKULL:
                 velocitySpeed = 0.000001D;
                 break;
+            case ARROW:
             case TIPPED_ARROW:
             case SPECTRAL_ARROW:
             case BOAT:

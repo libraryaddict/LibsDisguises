@@ -26,7 +26,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -205,13 +204,11 @@ public class DisguiseAPI {
             disguise = disguise.clone();
         }
         try {
-            Field field = ReflectionManager.getNmsClass("Entity").getDeclaredField("entityCount");
-            field.setAccessible(true);
-            int id = field.getInt(null);
+            int id = ReflectionManager.getNmsField("Entity", "entityCount").getInt(null);
             DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
             return id;
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            ex.printStackTrace(System.out);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
         return -1;
     }

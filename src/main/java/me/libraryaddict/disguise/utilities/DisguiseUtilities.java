@@ -48,12 +48,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
 
+    public static final Random random = new Random();
     /**
      * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of the plugin to do that.
      */

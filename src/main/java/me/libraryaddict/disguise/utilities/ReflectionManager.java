@@ -317,7 +317,9 @@ public class ReflectionManager {
 
     public static Constructor getNmsConstructor(Class clazz, Class<?>... parameters) {
         try {
-            return clazz.getDeclaredConstructor(parameters);
+            Constructor declaredConstructor = clazz.getDeclaredConstructor(parameters);
+            declaredConstructor.setAccessible(true);
+            return declaredConstructor;
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         }
@@ -339,7 +341,9 @@ public class ReflectionManager {
 
     public static Field getNmsField(Class clazz, String fieldName) {
         try {
-            return clazz.getDeclaredField(fieldName);
+            Field declaredField = clazz.getDeclaredField(fieldName);
+            declaredField.setAccessible(true);
+            return declaredField;
         } catch (NoSuchFieldException e) {
             e.printStackTrace(System.out);
         }
@@ -365,7 +369,9 @@ public class ReflectionManager {
 
     public static Method getCraftMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         try {
-            return clazz.getDeclaredMethod(methodName, parameters);
+            Method declaredMethod = clazz.getDeclaredMethod(methodName, parameters);
+            declaredMethod.setAccessible(true);
+            return declaredMethod;
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         }
@@ -374,7 +380,9 @@ public class ReflectionManager {
 
     public static Method getNmsMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         try {
-            return clazz.getDeclaredMethod(methodName, parameters);
+            Method declaredMethod = clazz.getDeclaredMethod(methodName, parameters);
+            declaredMethod.setAccessible(true);
+            return declaredMethod;
         } catch (NoSuchMethodException e) {
             e.printStackTrace(System.out);
         }
@@ -523,6 +531,7 @@ public class ReflectionManager {
 
     /**
      * Creates the NMS object EnumItemSlot from an EquipmentSlot.
+     *
      * @param slot
      * @return null if the equipment slot is null
      */
@@ -550,6 +559,7 @@ public class ReflectionManager {
 
     /**
      * Creates the Bukkit object EquipmentSlot from an EnumItemSlot object.
+     *
      * @return null if the object isn't an nms EnumItemSlot
      */
     public static EquipmentSlot createEquipmentSlot(Object enumItemSlot) {
@@ -576,7 +586,8 @@ public class ReflectionManager {
     }
 
     /**
-     *  Gets equipment from this entity based on the slot given.
+     * Gets equipment from this entity based on the slot given.
+     *
      * @param slot
      * @return null if the disguisedEntity is not an instance of a living entity
      */
@@ -602,6 +613,7 @@ public class ReflectionManager {
 
     /**
      * Necessary for 1.9
+     *
      * @return
      */
     public static String convertSoundEffectToString(Object soundEffect) {
@@ -627,6 +639,7 @@ public class ReflectionManager {
 
     /**
      * This creates a DataWatcherItem usable with WrappedWatchableObject
+     *
      * @param id
      * @param value
      * @return
@@ -654,5 +667,4 @@ public class ReflectionManager {
         }
         return null;
     }
-
 }

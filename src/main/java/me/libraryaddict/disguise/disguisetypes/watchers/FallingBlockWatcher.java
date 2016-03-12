@@ -11,7 +11,6 @@ public class FallingBlockWatcher extends FlagWatcher {
 
     private ItemStack block;
 
-    //TODO: Check this watcher and make sure it works
     public FallingBlockWatcher(Disguise disguise) {
         super(disguise);
     }

@@ -57,7 +57,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class PacketsManager {
@@ -280,13 +279,12 @@ public class PacketsManager {
             spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
             entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1, Integer.MAX_VALUE, true, false));
             entity.remove();
-            //You know, as cheap as this may seem, this is pretty damn effective
         } else if (disguise.getType().isMisc()) {
-            //TODO: Fix miscs
-            int id = disguise.getType().getTypeId();
+            //TODO: Fix falling blocks, BlockPosition Serializer in ProtocolLib
+            int objectId = disguise.getType().getObjectId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = (((MiscDisguise) disguise).getId() + data << 12);
+                data = ((MiscDisguise) disguise).getId() + (data << 12);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
@@ -295,16 +293,15 @@ public class PacketsManager {
             }
             Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
             spawnPackets[0] = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, id, data)
-                    .createPacket(nmsEntity, id, data);
-            spawnPackets[0].getModifier().write(2, (int) Math.floor(loc.getY() * 32D));
-            spawnPackets[0].getModifier().write(7, pitch);
-            spawnPackets[0].getModifier().write(8, yaw);
+                    .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, objectId, data)
+                    .createPacket(nmsEntity, objectId, data);
+            spawnPackets[0].getModifier().write(8, pitch);
+            spawnPackets[0].getModifier().write(9, yaw);
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
-                    spawnPackets[0].getModifier().write(3, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
+                    spawnPackets[0].getModifier().write(4, (int) Math.floor((loc.getZ() + (data == 0 ? -1 : 1)) * 32D));
                 } else {
-                    spawnPackets[0].getModifier().write(1, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
+                    spawnPackets[0].getModifier().write(2, (int) Math.floor((loc.getX() + (data == 3 ? -1 : 1)) * 32D));
                 }
             }
         }
@@ -387,9 +384,13 @@ public class PacketsManager {
                 value += 64;
                 break;
             case ENDER_DRAGON:
+                //TODO: Enderdragon direction is... weird, consistently backwards
+//                value = (byte) (~value & 0xff);
+                break;
             case WITHER_SKULL:
                 value -= 128;
                 break;
+            case ARROW:
             case TIPPED_ARROW:
             case SPECTRAL_ARROW:
                 value = (byte) -value;
@@ -620,7 +621,7 @@ public class PacketsManager {
                                                         // If the pitch is not the expected
                                                         if (pitch > 97 || pitch < 111)
                                                             return;
-                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
                                                         // Min = 1.5
                                                         // Cap = 97.5
                                                         // Max = 1.7
@@ -629,7 +630,7 @@ public class PacketsManager {
                                                         // If the pitch is not the expected
                                                         if (pitch >= 63 || pitch <= 76)
                                                             return;
-                                                        pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                                                         // Min = 1
                                                         // Cap = 63
                                                         // Max = 1.2
@@ -699,9 +700,9 @@ public class PacketsManager {
                                         mods.write(5, disSound.getDamageAndIdleSoundVolume());
                                         float pitch;
                                         if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.5F;
+                                            pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
                                         } else
-                                            pitch = (new Random().nextFloat() - new Random().nextFloat()) * 0.2F + 1.0F;
+                                            pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                                         if (disguise.getType() == DisguiseType.BAT)
                                             pitch *= 95F;
                                         pitch *= 63;
@@ -1355,10 +1356,10 @@ public class PacketsManager {
                     } else if (sentPacket.getType() != Server.REL_ENTITY_MOVE) {
                         packets[0] = sentPacket.shallowClone();
                         StructureModifier<Byte> bytes = packets[0].getBytes();
-                        byte yawValue = bytes.read(1);
-                        bytes.write(1, getYaw(disguise.getType(), entity.getType(), yawValue));
-                        byte pitchValue = bytes.read(0);
-                        bytes.write(0, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
+                        byte yawValue = bytes.read(0);
+                        bytes.write(0, getYaw(disguise.getType(), entity.getType(), yawValue));
+                        byte pitchValue = bytes.read(1);
+                        bytes.write(1, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
                         if (sentPacket.getType() == Server.ENTITY_TELEPORT && disguise.getType() == DisguiseType.ITEM_FRAME) {
                             StructureModifier<Double> doubles = packets[0].getDoubles();
                             Location loc = entity.getLocation();

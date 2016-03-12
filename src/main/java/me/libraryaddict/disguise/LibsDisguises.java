@@ -25,7 +25,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.TippedArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -137,9 +136,6 @@ public class LibsDisguises extends JavaPlugin {
                     case WITHER_SKELETON:
                         watcherClass = SkeletonWatcher.class;
                         break;
-                    case ARROW:
-                        watcherClass = TippedArrowWatcher.class;
-                        break;
                     default:
                         watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers."
                                 + toReadable(disguiseType.name()) + "Watcher");
@@ -240,7 +236,6 @@ public class LibsDisguises extends JavaPlugin {
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
                     // Uncomment when I need to find the new datawatcher values for a class..
-                    //TODO: Recomment this section when finished
                     int id = watch.getIndex();
                     Object val = watch.getValue();
                     Class<?> valClazz = val != null ? watch.getValue().getClass() : null;

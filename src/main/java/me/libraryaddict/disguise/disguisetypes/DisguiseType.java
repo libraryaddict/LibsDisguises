@@ -12,47 +12,47 @@ import java.lang.reflect.Method;
 
 public enum DisguiseType {
 
-    AREA_EFFECT_CLOUD,
-    ARMOR_STAND,
-    ARROW,
+    AREA_EFFECT_CLOUD(3, 0),
+    ARMOR_STAND(78),
+    ARROW(60, 0),
     BAT,
     BLAZE,
-    BOAT,
+    BOAT(1),
     CAVE_SPIDER,
     CHICKEN,
     COW,
     CREEPER,
     DONKEY,
-    DRAGON_FIREBALL,
-    DROPPED_ITEM(1),
-    EGG,
+    DRAGON_FIREBALL(93),
+    DROPPED_ITEM(1, 1),
+    EGG(62),
     ELDER_GUARDIAN,
-    ENDER_CRYSTAL,
+    ENDER_CRYSTAL(51),
     ENDER_DRAGON,
-    ENDER_PEARL,
-    ENDER_SIGNAL,
+    ENDER_PEARL(65),
+    ENDER_SIGNAL(72),
     ENDERMAN,
     ENDERMITE,
     EXPERIENCE_ORB,
-    FALLING_BLOCK(1),
-    FIREBALL(0),
-    FIREWORK,
-    FISHING_HOOK,
+    FALLING_BLOCK(70, 1),
+    FIREBALL(63),
+    FIREWORK(76),
+    FISHING_HOOK(90),
     GHAST,
     GIANT,
     GUARDIAN,
     HORSE,
     IRON_GOLEM,
-    ITEM_FRAME,
-    LEASH_HITCH,
+    ITEM_FRAME(71),
+    LEASH_HITCH(77),
     MAGMA_CUBE,
-    MINECART,
-    MINECART_CHEST(1),
-    MINECART_COMMAND(6),
-    MINECART_FURNACE(2),
-    MINECART_HOPPER(5),
-    MINECART_MOB_SPAWNER(4),
-    MINECART_TNT(5),
+    MINECART(10),
+    MINECART_CHEST(10, 1),
+    MINECART_COMMAND(10, 6),
+    MINECART_FURNACE(10, 2),
+    MINECART_HOPPER(10, 5),
+    MINECART_MOB_SPAWNER(10, 4),
+    MINECART_TNT(10, 3),
     MULE,
     MUSHROOM_COW,
     OCELOT,
@@ -60,30 +60,30 @@ public enum DisguiseType {
     PIG,
     PIG_ZOMBIE,
     PLAYER,
-    PRIMED_TNT,
+    PRIMED_TNT(50),
     RABBIT,
     SHEEP,
     SHULKER,
-    SHULKER_BULLET,
+    SHULKER_BULLET(67),
     SILVERFISH,
     SKELETON,
     SKELETON_HORSE,
     SLIME,
-    SMALL_FIREBALL(0),
-    SNOWBALL,
+    SMALL_FIREBALL(63),
+    SNOWBALL(61),
     SNOWMAN,
-    SPECTRAL_ARROW,
+    SPECTRAL_ARROW(91),
     SPIDER,
-    SPLASH_POTION,
+    SPLASH_POTION(73, 0),
     SQUID,
-    TIPPED_ARROW,
-    THROWN_EXP_BOTTLE,
+    TIPPED_ARROW(92),
+    THROWN_EXP_BOTTLE(75),
     UNDEAD_HORSE,
     VILLAGER,
     WITCH,
     WITHER,
     WITHER_SKELETON,
-    WITHER_SKULL,
+    WITHER_SKULL(66),
     WOLF,
     ZOMBIE,
     ZOMBIE_VILLAGER,
@@ -97,6 +97,7 @@ public enum DisguiseType {
         for (DisguiseType type : values()) {
             try {
                 DisguiseType toUse = type;
+                String name;
                 switch (type) {
                     // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                     // Usable.
@@ -117,12 +118,11 @@ public enum DisguiseType {
                     case ELDER_GUARDIAN:
                         toUse = DisguiseType.GUARDIAN;
                         break;
-                    case ARROW:
-                        toUse = DisguiseType.TIPPED_ARROW;
                     default:
                         break;
                 }
-                type.setEntityType(EntityType.valueOf(toUse.name()));
+                name = toUse.name();
+                type.setEntityType(EntityType.valueOf(name));
             } catch (Throwable ex) {
                 // This version of Spigot doesn't have the disguise.
             }
@@ -199,7 +199,7 @@ public enum DisguiseType {
         }
     }
 
-    private int defaultData = -1;
+    private int objectId = -1, defaultData = 0;
     private EntityType entityType;
     private Class<? extends FlagWatcher> watcherClass;
 
@@ -208,6 +208,9 @@ public enum DisguiseType {
             int value = ints[i];
             switch (i) {
                 case 0:
+                    objectId = value;
+                    break;
+                case 1:
                     defaultData = value;
                     break;
                 default:
@@ -231,8 +234,22 @@ public enum DisguiseType {
         return entityType;
     }
 
+    /**
+     * The TYPE id of this entity. Different from the Object Id
+     * send in spawn packets when spawning miscs.
+     * @return
+     */
     public int getTypeId() {
         return (int) getEntityType().getTypeId();
+    }
+
+    /**
+     * The object type send in packets when spawning a misc entity.
+     * Otherwise, -1.
+     * @return
+     */
+    public int getObjectId() {
+        return objectId;
     }
 
     public Class getWatcherClass() {
