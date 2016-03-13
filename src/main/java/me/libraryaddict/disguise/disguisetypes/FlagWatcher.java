@@ -200,7 +200,7 @@ public class FlagWatcher {
     }
 
     public boolean isCustomNameVisible() {
-        return (byte) getValue(3, (byte) 0) == 1;
+        return (boolean) getValue(3, false);
     }
 
     public boolean isEntityAnimationsAdded() {
@@ -310,7 +310,7 @@ public class FlagWatcher {
     }
 
     public void setCustomNameVisible(boolean display) {
-        setValue(3, (byte) (display ? 1 : 0));
+        setValue(3, display);
         sendData(3);
     }
 
