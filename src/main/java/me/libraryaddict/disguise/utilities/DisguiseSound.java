@@ -10,6 +10,7 @@ import java.util.HashSet;
  */
 public enum DisguiseSound {
 
+    //TODO: Sounds need to be updated to reflect new 1.9 sounds... oh god...
     ARROW(null, null, null, null, "random.bowhit"),
     BAT("entity.bat.hurt", null, "entity.bat.death", "entity.bat.idle", "damage.fallsmall", "entity.bat.loop", "damage.fallbig",
             "entity.bat.takeoff"),
@@ -25,9 +26,8 @@ public enum DisguiseSound {
     ELDER_GUARDIAN("entity.guardian.elder.hit", null, "entity.guardian.elder.death", "entity.guardian.elder.death"),
     ENDER_DRAGON("entity.enderdragon.hit", null, "entity.enderdragon.end", "entity.enderdragon.growl", "damage.fallsmall",
             "entity.enderdragon.wings", "damage.fallbig"),
-    //TODO: Fix enderman sounds
-//    ENDERMAN("entity.endermen.hit", "step.grass", "entity.endermen.death", "entity.endermen.idle", "entity.endermen.scream",
-//            "entity.endermen.portal", "entity.endermen.stare"),
+    ENDERMAN("entity.endermen.hit", "step.grass", "entity.endermen.death", "entity.endermen.idle", "entity.endermen.scream",
+            "entity.endermen.portal", "entity.endermen.stare"),
     ENDERMITE("entity.silverfish.hit", "entity.silverfish.step", "entity.silverfish.kill", "entity.silverfish.ambient"),
     GHAST("entity.ghast.scream", null, "entity.ghast.death", "entity.ghast.moan", "damage.fallsmall", "entity.ghast.fireball",
             "damage.fallbig", "entity.ghast.affectionate_scream", "entity.ghast.charge"),
@@ -43,7 +43,7 @@ public enum DisguiseSound {
     OCELOT("entity.cat.hitt", "step.grass", "entity.cat.hitt", "entity.cat.meow", "entity.cat.purreow", "entity.cat.purr"),
     PIG("entity.pig.ambient", "entity.pig.step", "entity.pig.death", "entity.pig.ambient"),
     PIG_ZOMBIE("entity.zombiepig.zpighurt", null, "entity.zombiepig.zpigdeath", "entity.zombiepig.zpig", "entity.zombiepig.zpigangry"),
-    PLAYER("game.player.hurt", "step.grass", "game.player.hurt", null),
+    PLAYER("entity.player.hurt", "step.grass", "entity.player.hurt", null),
     RABBIT("entity.rabbit.hurt", "entity.rabbit.hop", "entity.rabbit.death", "entity.rabbit.idle"),
     SHEEP("entity.sheep.ambient", "entity.sheep.step", null, "entity.sheep.ambient", "entity.sheep.shear"),
     SHULKER("entity.shulker.hurt", null, "entity.shulker.death", "entity.shulker.ambient", "entity.shulker.open",

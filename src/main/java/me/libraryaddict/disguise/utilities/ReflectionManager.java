@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.authlib.GameProfile;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Art;
@@ -90,7 +91,7 @@ public class ReflectionManager {
         try {
             Class<?> entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
-            Object world = getWorld(Bukkit.getWorlds().get(0));
+            Object world = getWorldServer(Bukkit.getWorlds().get(0));
             switch (entityName) {
                 case "Player":
                     Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
@@ -223,10 +224,19 @@ public class ReflectionManager {
     }
 
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
-        Object world = getWorld(target.getWorld());
+        Object world = getWorldServer(target.getWorld());
         Object tracker = trackerField.get(world);
         Object trackedEntities = entitiesField.get(tracker);
         return ihmGet.invoke(trackedEntities, target.getEntityId());
+    }
+
+    public static Object getMinecraftServer() {
+        try {
+            return getCraftMethod("CraftServer", "getServer").invoke(Bukkit.getServer());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static String getEnumArt(Art art) {
@@ -438,15 +448,6 @@ public class ReflectionManager {
             damageAndIdleSoundMethod.setAccessible(true);
             return (Float) damageAndIdleSoundMethod.invoke(entity);
         } catch (Exception ignored) {
-        }
-        return null;
-    }
-
-    public static Object getWorld(World world) {
-        try {
-            return getCraftClass("CraftWorld").getDeclaredMethod("getHandle").invoke(world);
-        } catch (Exception e) {
-            e.printStackTrace(System.out);
         }
         return null;
     }
@@ -679,4 +680,40 @@ public class ReflectionManager {
         int k = combinedId >> 12 & 15;
         return new ImmutablePair<>(j, k);
     }
+
+    public static Object getWorldServer(World w) {
+        try {
+            return getCraftMethod("CraftWorld", "getHandle").invoke(w);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object getPlayerInteractManager(World w) {
+        Object worldServer = getWorldServer(w);
+        try {
+            return getNmsConstructor("PlayerInteractManager", getNmsClass("World")).newInstance(worldServer);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object createEntityPlayer(World w, WrappedGameProfile profile) {
+        Object entityPlayer = null;
+        try {
+            entityPlayer = getNmsConstructor("EntityPlayer",
+                    getNmsClass("MinecraftServer"),
+                            getNmsClass("WorldServer"),
+                            GameProfile.class,
+                            getNmsClass("PlayerInteractManager"))
+                    .newInstance(getMinecraftServer(), getWorldServer(w), profile.getHandle(), getPlayerInteractManager(w));
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return entityPlayer;
+    }
+
+
 }

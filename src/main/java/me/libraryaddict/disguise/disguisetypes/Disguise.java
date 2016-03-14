@@ -508,7 +508,7 @@ public abstract class Disguise {
         }
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             throw new RuntimeException(
-                    "Cannot disguise a living entity with a misc disguise. Renable MiscDisguisesForLiving in the config to do this");
+                    "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the config to do this");
         }
         this.entity = entity;
         setupWatcher();

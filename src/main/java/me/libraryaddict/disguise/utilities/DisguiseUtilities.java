@@ -256,7 +256,7 @@ public class DisguiseUtilities {
             if (entityTrackerEntry != null) {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
                 // If the tracker exists. Remove himself from his tracker
-                trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
+                trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); //Copy before iterating to prevent ConcurrentModificationException
                 PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
                 destroyPacket.getIntegerArrays().write(0, new int[]{disguise.getEntity().getEntityId()});
                 for (Object p : trackedPlayers) {
@@ -435,18 +435,18 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targetted disguise.
+     * Get all EntityPlayers who have this entity in their Entity Tracker And they are in the targeted disguise.
      *
      * @param disguise
      * @return
      */
-    public static ArrayList<Player> getPerverts(Disguise disguise) {
-        ArrayList<Player> players = new ArrayList<>();
+    public static List<Player> getPerverts(Disguise disguise) {
+        List<Player> players = new ArrayList<>();
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
             if (entityTrackerEntry != null) {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-                trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
+                trackedPlayers = (Set) new HashSet(trackedPlayers).clone();  //Copy before iterating to prevent ConcurrentModificationException
                 for (Object p : trackedPlayers) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
                     if (((TargetedDisguise) disguise).canSee(player)) {
@@ -630,7 +630,7 @@ public class DisguiseUtilities {
                                 ReflectionManager.getNmsClass("EntityPlayer"));
                         final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                                 ReflectionManager.getNmsClass("EntityPlayer"));
-                        trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
+                        trackedPlayers = (Set) new HashSet(trackedPlayers).clone();  //Copy before iterating to prevent ConcurrentModificationException
                         for (final Object p : trackedPlayers) {
                             Player pl = (Player) ReflectionManager.getBukkitEntity(p);
                             if (player.equalsIgnoreCase((pl).getName())) {
@@ -672,7 +672,7 @@ public class DisguiseUtilities {
                             ReflectionManager.getNmsClass("EntityPlayer"));
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
-                    trackedPlayers = new HashSet(trackedPlayers); //Copy before iterating to prevent ConcurrentModificationException
+                    trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); //Copy before iterating to prevent ConcurrentModificationException
                     for (final Object p : trackedPlayers) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (player != entity) {
@@ -725,7 +725,7 @@ public class DisguiseUtilities {
                     Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
                     final Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear", ReflectionManager.getNmsClass("EntityPlayer"));
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer", ReflectionManager.getNmsClass("EntityPlayer"));
-                    trackedPlayers = new HashSet(trackedPlayers);  //Copy before iterating to prevent ConcurrentModificationException
+                    trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
                     for (final Object p : trackedPlayers) {
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
                         if (disguise.getEntity() != player && disguise.canSee(player)) {
@@ -785,6 +785,7 @@ public class DisguiseUtilities {
                 t.removeEntry(player.getName());
                 t.unregister();
             }
+//            player.spigot().setCollidesWithEntities(true);
             //Finish up
             // Remove the fake entity ID from the disguise bin
             selfDisguised.remove(player.getUniqueId());
@@ -1030,6 +1031,7 @@ public class DisguiseUtilities {
             t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
             t.addEntry(player.getName());
         }
+//        player.spigot().setCollidesWithEntities(false);
         //Finish up
         selfDisguised.add(player.getUniqueId());
         sendSelfDisguise(player, (TargetedDisguise) disguise);

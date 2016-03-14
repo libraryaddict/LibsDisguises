@@ -11,7 +11,6 @@ import java.util.List;
 public abstract class TargetedDisguise extends Disguise {
 
     public enum TargetType {
-
         HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS, SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
     }
 

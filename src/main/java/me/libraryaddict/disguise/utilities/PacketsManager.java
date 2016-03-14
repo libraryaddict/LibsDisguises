@@ -29,7 +29,6 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import org.bukkit.Art;
@@ -45,13 +44,11 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -207,7 +204,6 @@ public class PacketsManager {
             mods.write(5, pitch);
         } else if (disguise.getType().isPlayer()) {
             //TODO: Make player disguises visible again
-            spawnPackets[0] = new PacketContainer(Server.NAMED_ENTITY_SPAWN);
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
             String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
             int entityId = disguisedEntity.getEntityId();
@@ -215,22 +211,24 @@ public class PacketsManager {
             if (!DisguiseUtilities.hasGameProfile(name)) {
                 removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
             }
-
             WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
             if (removeName) {
                 DisguiseUtilities.getAddedByPlugins().remove(name);
             }
+            Object entityPlayer = ReflectionManager.createEntityPlayer(player.getWorld(), gameProfile);
+            spawnPackets[0] = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(Server.NAMED_ENTITY_SPAWN, entityPlayer)
+                    .createPacket(entityPlayer);
+
             //Write spawn packet in order
             spawnPackets[0].getIntegers().write(0, entityId);  //Id
-            spawnPackets[0].getSpecificModifier(UUID.class).write(0, gameProfile.getUUID());  //UUID
-            StructureModifier<Double> doubleMods = spawnPackets[0].getDoubles();
-            doubleMods.write(0, Math.floor(loc.getX() * 32)); //x
-            doubleMods.write(1, Math.floor(loc.getY() * 32)); //y
-            doubleMods.write(2, Math.floor(loc.getZ() * 32)); //z
-            StructureModifier<Byte> byteMods = spawnPackets[0].getBytes();
-            byteMods.write(0, yaw); //yaw
-            byteMods.write(1, pitch); //pitch
+            spawnPackets[0].getDoubles().write(0, loc.getX());
+            spawnPackets[0].getDoubles().write(1, loc.getY());
+            spawnPackets[0].getDoubles().write(2, loc.getZ());
+
             spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher())); //watcher, duh
+
+
 
             if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                 PacketContainer[] newPackets = new PacketContainer[spawnPackets.length + 1];
@@ -266,21 +264,41 @@ public class PacketsManager {
             delayedPacket.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
             delayedPackets = new PacketContainer[]{delayedPacket};
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
-            int entityId = disguisedEntity.getEntityId();
-            LivingEntity entity = (LivingEntity) disguisedEntity.getWorld().spawnEntity(loc, disguise.getType().getEntityType());
-            entity.setVelocity(disguisedEntity.getVelocity());
-            if (disguise.getType() == DisguiseType.SLIME || disguise.getType() == DisguiseType.MAGMA_CUBE) {
-                ((Slime) entity).setSize(((SlimeWatcher) disguise.getWatcher()).getSize());
-            }
-            Object nms = ReflectionManager.getNmsEntity(entity);
-            PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, nms).createPacket(nms).deepClone();
-            spawnPackets[0] = packet;
-            spawnPackets[0].getIntegers().write(0, entityId);
-            spawnPackets[0].getDataWatcherModifier().write(0, createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
-            entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1, Integer.MAX_VALUE, true, false));
-            entity.remove();
+            Vector vec = disguisedEntity.getVelocity();
+            spawnPackets[0] = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+            StructureModifier<Object> mods = spawnPackets[0].getModifier();
+            mods.write(0, disguisedEntity.getEntityId());
+            mods.write(1, UUID.randomUUID());
+            mods.write(2, disguise.getType().getTypeId());
+            //region Vector calculations
+            double d1 = 3.9D;
+            double d2 = vec.getX();
+            double d3 = vec.getY();
+            double d4 = vec.getZ();
+            if (d2 < -d1)
+                d2 = -d1;
+            if (d3 < -d1)
+                d3 = -d1;
+            if (d4 < -d1)
+                d4 = -d1;
+            if (d2 > d1)
+                d2 = d1;
+            if (d3 > d1)
+                d3 = d1;
+            if (d4 > d1)
+                d4 = d1;
+            //endregion
+            mods.write(3, loc.getX());
+            mods.write(4, loc.getY());
+            mods.write(5, loc.getZ());
+            mods.write(6, (int) (d2 * 8000.0D));
+            mods.write(7, (int) (d3 * 8000.0D));
+            mods.write(8, (int) (d4 * 8000.0D));
+            mods.write(9, yaw);
+            mods.write(10, pitch);
+            spawnPackets[0].getDataWatcherModifier().write(0,
+                    createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
         } else if (disguise.getType().isMisc()) {
-            //TODO: Fix falling blocks, BlockPosition Serializer in ProtocolLib
             int objectId = disguise.getType().getObjectId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
@@ -922,7 +940,6 @@ public class PacketsManager {
                         } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
                             int slot = event.getPacket().getIntegers().read(1);
                             org.bukkit.inventory.ItemStack clickedItem;
-                            //TODO: Check this to make sure it is accurate
                             if (event.getPacket().getShorts().read(0) == 1) {
                                 // Its a shift click
                                 clickedItem = event.getPacket().getItemModifier().read(0);
@@ -1390,7 +1407,6 @@ public class PacketsManager {
                         packets[0] = packets[0].shallowClone();
                         packets[0].getModifier().write(2, (itemStack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemStack)));
                     }
-                    //TODO: Add left hand here
                     if (disguise.getWatcher().isRightClicking() && slot == EquipmentSlot.HAND) {
                         ItemStack heldItem = packets[0].getItemModifier().read(0);
                         if (heldItem != null && heldItem.getType() != Material.AIR) {
@@ -1456,8 +1472,8 @@ public class PacketsManager {
                         mods.write(1, yaw);
                         PacketContainer look = new PacketContainer(Server.ENTITY_LOOK);
                         look.getIntegers().write(0, entity.getEntityId());
-                        look.getBytes().write(3, yaw);
-                        look.getBytes().write(4, pitch);
+                        look.getBytes().write(0, yaw);
+                        look.getBytes().write(1, pitch);
                         packets = new PacketContainer[]{look, rotation};
                     }
                 }
