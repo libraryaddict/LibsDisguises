@@ -116,7 +116,7 @@ public class ReflectionManager {
     }
 
     public static Object getMobEffectList(int id) {
-        Method nmsMethod = getNmsMethod("MobEffectList", "fromId", Integer.class);
+        Method nmsMethod = getNmsMethod("MobEffectList", "fromId", Integer.TYPE);
         try {
             return nmsMethod.invoke(null, id);
         } catch (IllegalAccessException | InvocationTargetException e) {
