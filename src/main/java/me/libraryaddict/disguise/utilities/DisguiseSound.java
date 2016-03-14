@@ -10,69 +10,68 @@ import java.util.HashSet;
  */
 public enum DisguiseSound {
 
-    //TODO: Sounds need to be updated to reflect new 1.9 sounds... oh god...
-    ARROW(null, null, null, null, "random.bowhit"),
-    BAT("entity.bat.hurt", null, "entity.bat.death", "entity.bat.idle", "damage.fallsmall", "entity.bat.loop", "damage.fallbig",
-            "entity.bat.takeoff"),
-    BLAZE("entity.blaze.hit", null, "entity.blaze.death", "entity.blaze.breathe", "damage.fallsmall", "damage.fallbig"),
-    CAVE_SPIDER("entity.spider.ambient", "entity.spider.step", "entity.spider.death", "entity.spider.ambient"),
-    CHICKEN("entity.chicken.hurt", "entity.chicken.step", "entity.chicken.hurt", "entity.chicken.ambient", "damage.fallsmall",
-            "entity.chicken.plop", "damage.fallbig"),
-    COW("entity.cow.hurt", "entity.cow.step", "entity.cow.hurt", "entity.cow.ambient"),
-    CREEPER("entity.creeper.ambient", "step.grass", "entity.creeper.death", null),
-    DONKEY("entity.horse.donkey.hit", "step.grass", "entity.horse.donkey.death", "entity.horse.donkey.idle", "entity.horse.gallop",
-            "entity.horse.leather", "entity.horse.donkey.angry", "entity.horse.wood", "entity.horse.armor", "entity.horse.soft",
-            "entity.horse.land", "entity.horse.jump", "entity.horse.angry"),
-    ELDER_GUARDIAN("entity.guardian.elder.hit", null, "entity.guardian.elder.death", "entity.guardian.elder.death"),
-    ENDER_DRAGON("entity.enderdragon.hit", null, "entity.enderdragon.end", "entity.enderdragon.growl", "damage.fallsmall",
-            "entity.enderdragon.wings", "damage.fallbig"),
-    ENDERMAN("entity.endermen.hit", "step.grass", "entity.endermen.death", "entity.endermen.idle", "entity.endermen.scream",
-            "entity.endermen.portal", "entity.endermen.stare"),
-    ENDERMITE("entity.silverfish.hit", "entity.silverfish.step", "entity.silverfish.kill", "entity.silverfish.ambient"),
-    GHAST("entity.ghast.scream", null, "entity.ghast.death", "entity.ghast.moan", "damage.fallsmall", "entity.ghast.fireball",
-            "damage.fallbig", "entity.ghast.affectionate_scream", "entity.ghast.charge"),
-    GIANT("damage.hit", "step.grass", null, null),
-    GUARDIAN("entity.guardian.hit", null, "entity.guardian.death", "entity.guardian.death"),
-    HORSE("entity.horse.hit", "step.grass", "entity.horse.death", "entity.horse.idle", "entity.horse.gallop", "entity.horse.leather",
-            "entity.horse.wood", "entity.horse.armor", "entity.horse.soft", "entity.horse.land", "entity.horse.jump", "entity.horse.angry",
-            "entity.horse.leather"),
-    IRON_GOLEM("entity.irongolem.hit", "entity.irongolem.walk", "entity.irongolem.death", "entity.irongolem.throw"),
-    MAGMA_CUBE("entity.slime.attack", "entity.slime.big", null, null, "entity.slime.small"),
-    MULE("entity.horse.donkey.hit", "step.grass", "entity.horse.donkey.death", "entity.horse.donkey.idle"),
-    MUSHROOM_COW("entity.cow.hurt", "entity.cow.step", "entity.cow.hurt", "entity.cow.ambient"),
-    OCELOT("entity.cat.hitt", "step.grass", "entity.cat.hitt", "entity.cat.meow", "entity.cat.purreow", "entity.cat.purr"),
-    PIG("entity.pig.ambient", "entity.pig.step", "entity.pig.death", "entity.pig.ambient"),
-    PIG_ZOMBIE("entity.zombiepig.zpighurt", null, "entity.zombiepig.zpigdeath", "entity.zombiepig.zpig", "entity.zombiepig.zpigangry"),
-    PLAYER("entity.player.hurt", "step.grass", "entity.player.hurt", null),
-    RABBIT("entity.rabbit.hurt", "entity.rabbit.hop", "entity.rabbit.death", "entity.rabbit.idle"),
-    SHEEP("entity.sheep.ambient", "entity.sheep.step", null, "entity.sheep.ambient", "entity.sheep.shear"),
-    SHULKER("entity.shulker.hurt", null, "entity.shulker.death", "entity.shulker.ambient", "entity.shulker.open",
-            "entity.shulker.hurt_closed", "entity.shulker.close", "entity.shulker.teleport", "entity.shulker_bullet.hit",
-            "entity.shulker_bullet.hurt"),
-    SILVERFISH("entity.silverfish.hit", "entity.silverfish.step", "entity.silverfish.kill", "entity.silverfish.ambient"),
-    SKELETON("entity.skeleton.hurt", "entity.skeleton.step", "entity.skeleton.death", "entity.skeleton.ambient"),
-    SKELETON_HORSE("entity.horse.skeleton.hit", "step.grass", "entity.horse.skeleton.death", "entity.horse.skeleton.idle",
-            "entity.horse.gallop", "entity.horse.leather", "entity.horse.wood", "entity.horse.armor", "entity.horse.soft", "entity.horse.land",
-            "entity.horse.jump", "entity.horse.angry"),
-    SLIME("entity.slime.attack", "entity.slime.big", null, null, "entity.slime.small"),
-    SNOWMAN(),
-    SPIDER("entity.spider.ambient", "entity.spider.step", "entity.spider.death", "entity.spider.ambient"),
-    SQUID(),
-    UNDEAD_HORSE("entity.horse.zombie.hit", "step.grass", "entity.horse.zombie.death", "entity.horse.zombie.idle", "entity.horse.gallop",
-            "entity.horse.leather", "entity.horse.wood", "entity.horse.armor", "entity.horse.soft", "entity.horse.land", "entity.horse.jump",
-            "entity.horse.angry"),
-    VILLAGER("entity.villager.hit", null, "entity.villager.death", "entity.villager.idle", "entity.villager.haggle", "entity.villager.no",
-            "entity.villager.yes"),
-    WITCH("entity.witch.hurt", null, "entity.witch.death", "entity.witch.idle"),
-    WITHER("entity.wither.hurt", null, "entity.wither.death", "entity.wither.idle", "damage.fallsmall", "entity.wither.spawn",
-            "damage.fallbig", "entity.wither.shoot"),
-    WITHER_SKELETON("entity.skeleton.hurt", "entity.skeleton.step", "entity.skeleton.death", "entity.skeleton.ambient"),
-    WOLF("entity.wolf.hurt", "entity.wolf.step", "entity.wolf.death", "entity.wolf.bark", "entity.wolf.panting", "entity.wolf.whine",
-            "entity.wolf.howl", "entity.wolf.growl", "entity.wolf.shake"),
-    ZOMBIE("entity.zombie.hurt", "entity.zombie.step", "entity.zombie.death", "entity.zombie.ambient", "entity.zombie.infect",
-            "entity.zombie.break_wood_door", "entity.zombie.attack_wood_door", "entity.zombie.break_wood_door"),
-    ZOMBIE_VILLAGER("entity.zombie.hurt", "entity.zombie.step", "entity.zombie.death", "entity.zombie.ambient", "entity.zombie.infect",
-            "entity.zombie.break_wood_door", "entity.zombie.attack_wood_door", "entity.zombie.break_wood_door");
+    ARROW(null, null, null, null, Sound.ENTITY_ARROW_HIT, Sound.ENTITY_ARROW_SHOOT),
+    BAT(Sound.ENTITY_BAT_HURT, null, Sound.ENTITY_BAT_DEATH, Sound.ENTITY_BAT_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL, Sound.ENTITY_BAT_LOOP, Sound.ENTITY_PLAYER_BIG_FALL,
+            Sound.ENTITY_BAT_TAKEOFF),
+    BLAZE(Sound.ENTITY_BLAZE_HURT, null, Sound.ENTITY_BLAZE_DEATH, Sound.ENTITY_BLAZE_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL, Sound.ENTITY_PLAYER_BIG_FALL),
+    CAVE_SPIDER(Sound.ENTITY_SPIDER_AMBIENT, Sound.ENTITY_SPIDER_STEP, Sound.ENTITY_SPIDER_DEATH, Sound.ENTITY_SPIDER_AMBIENT),
+    CHICKEN(Sound.ENTITY_CHICKEN_HURT, Sound.ENTITY_CHICKEN_STEP, Sound.ENTITY_CHICKEN_HURT, Sound.ENTITY_CHICKEN_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL,
+            Sound.ENTITY_CHICKEN_EGG, Sound.ENTITY_PLAYER_BIG_FALL),
+    COW(Sound.ENTITY_COW_HURT, Sound.ENTITY_COW_STEP, Sound.ENTITY_COW_DEATH, Sound.ENTITY_COW_AMBIENT),
+    CREEPER(Sound.ENTITY_CREEPER_HURT, "step.grass", Sound.ENTITY_CREEPER_DEATH, null),
+    DONKEY(Sound.ENTITY_DONKEY_HURT, "step.grass", Sound.ENTITY_DONKEY_DEATH, Sound.ENTITY_DONKEY_AMBIENT, Sound.ENTITY_HORSE_GALLOP,
+            Sound.ENTITY_HORSE_SADDLE, Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_STEP_WOOD, Sound.ENTITY_HORSE_ARMOR,
+            Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP, Sound.ENTITY_HORSE_ANGRY),
+    ELDER_GUARDIAN(Sound.ENTITY_ELDER_GUARDIAN_HURT, null, Sound.ENTITY_ELDER_GUARDIAN_DEATH, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT),
+    ENDER_DRAGON(Sound.ENTITY_ENDERDRAGON_HURT, null, Sound.ENTITY_ENDERDRAGON_DEATH, Sound.ENTITY_ENDERDRAGON_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL,
+            Sound.ENTITY_ENDERDRAGON_FLAP, Sound.ENTITY_PLAYER_BIG_FALL),
+    ENDERMAN(Sound.ENTITY_ENDERMEN_HURT, "step.grass", Sound.ENTITY_ENDERMEN_DEATH, Sound.ENTITY_ENDERMEN_AMBIENT, Sound.ENTITY_ENDERMEN_SCREAM,
+            Sound.ENTITY_ENDERMEN_TELEPORT, Sound.ENTITY_ENDERMEN_STARE),
+    ENDERMITE(Sound.ENTITY_SILVERFISH_HURT, Sound.ENTITY_ENDERMITE_STEP, Sound.ENTITY_ENDERMITE_DEATH, Sound.ENTITY_ENDERMITE_AMBIENT),
+    GHAST(Sound.ENTITY_GHAST_HURT, null, Sound.ENTITY_GHAST_DEATH, Sound.ENTITY_GHAST_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL, Sound.ENTITY_GHAST_SHOOT,
+            Sound.ENTITY_PLAYER_BIG_FALL, Sound.ENTITY_GHAST_SCREAM, Sound.ENTITY_GHAST_WARN),
+    GIANT(Sound.ENTITY_PLAYER_HURT, "step.grass", null, null),
+    GUARDIAN(Sound.ENTITY_GUARDIAN_HURT, null, Sound.ENTITY_GUARDIAN_DEATH, Sound.ENTITY_ELDER_GUARDIAN_AMBIENT),
+    HORSE(Sound.ENTITY_HORSE_HURT, "step.grass", Sound.ENTITY_HORSE_DEATH, Sound.ENTITY_HORSE_AMBIENT, Sound.ENTITY_HORSE_GALLOP,
+            Sound.ENTITY_HORSE_SADDLE, Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_STEP_WOOD, Sound.ENTITY_HORSE_ARMOR,
+            Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP, Sound.ENTITY_HORSE_ANGRY),
+    IRON_GOLEM(Sound.ENTITY_IRONGOLEM_HURT, Sound.ENTITY_IRONGOLEM_STEP, Sound.ENTITY_IRONGOLEM_DEATH, Sound.ENTITY_IRONGOLEM_ATTACK),
+    MAGMA_CUBE(Sound.ENTITY_MAGMACUBE_HURT, Sound.ENTITY_MAGMACUBE_JUMP, null, null),
+    MULE(Sound.ENTITY_MULE_HURT, "step.grass", Sound.ENTITY_MULE_DEATH, Sound.ENTITY_MULE_AMBIENT),
+    MUSHROOM_COW(Sound.ENTITY_COW_HURT, Sound.ENTITY_COW_STEP, Sound.ENTITY_COW_HURT, Sound.ENTITY_COW_AMBIENT),
+    OCELOT(Sound.ENTITY_CAT_HURT, "step.grass", Sound.ENTITY_CAT_HURT, Sound.ENTITY_CAT_AMBIENT, Sound.ENTITY_CAT_PURR, Sound.ENTITY_CAT_PURREOW),
+    PIG(Sound.ENTITY_PIG_HURT, Sound.ENTITY_PIG_STEP, Sound.ENTITY_PIG_DEATH, Sound.ENTITY_PIG_AMBIENT),
+    PIG_ZOMBIE(Sound.ENTITY_ZOMBIE_PIG_HURT, null, Sound.ENTITY_ZOMBIE_PIG_DEATH, Sound.ENTITY_ZOMBIE_PIG_AMBIENT, Sound.ENTITY_ZOMBIE_PIG_ANGRY),
+    PLAYER(Sound.ENTITY_PLAYER_HURT, "step.grass", Sound.ENTITY_PLAYER_DEATH, null),
+    RABBIT(Sound.ENTITY_RABBIT_HURT, Sound.ENTITY_RABBIT_JUMP, Sound.ENTITY_RABBIT_DEATH, Sound.ENTITY_RABBIT_AMBIENT),
+    SHEEP(Sound.ENTITY_SHEEP_HURT, Sound.ENTITY_SHEEP_STEP, null, Sound.ENTITY_SHEEP_AMBIENT, Sound.ENTITY_SHEEP_SHEAR),
+    SHULKER(Sound.ENTITY_SHULKER_HURT, null, Sound.ENTITY_SHULKER_DEATH, Sound.ENTITY_SHULKER_AMBIENT, Sound.ENTITY_SHULKER_OPEN,
+            Sound.ENTITY_SHULKER_CLOSE, Sound.ENTITY_SHULKER_HURT_CLOSED, Sound.ENTITY_SHULKER_TELEPORT),
+    SILVERFISH(Sound.ENTITY_SILVERFISH_HURT, Sound.ENTITY_SILVERFISH_STEP, Sound.ENTITY_SILVERFISH_DEATH, Sound.ENTITY_SILVERFISH_AMBIENT),
+    SKELETON(Sound.ENTITY_SKELETON_HURT, Sound.ENTITY_SKELETON_STEP, Sound.ENTITY_SKELETON_DEATH, Sound.ENTITY_SKELETON_AMBIENT),
+    SKELETON_HORSE(Sound.ENTITY_SKELETON_HORSE_HURT, "step.grass", Sound.ENTITY_SKELETON_HORSE_DEATH, Sound.ENTITY_SKELETON_HORSE_AMBIENT,
+            Sound.ENTITY_HORSE_GALLOP,
+            Sound.ENTITY_HORSE_SADDLE, Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_STEP_WOOD, Sound.ENTITY_HORSE_ARMOR,
+            Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP, Sound.ENTITY_HORSE_ANGRY),
+    SLIME(Sound.ENTITY_SLIME_HURT, Sound.ENTITY_SLIME_JUMP, Sound.ENTITY_SLIME_DEATH, null),
+    SNOWMAN(Sound.ENTITY_SNOWMAN_HURT, null, Sound.ENTITY_SNOWMAN_DEATH, Sound.ENTITY_SNOWMAN_AMBIENT, Sound.ENTITY_SNOWMAN_SHOOT),
+    SPIDER(Sound.ENTITY_SPIDER_AMBIENT, Sound.ENTITY_SPIDER_STEP, Sound.ENTITY_SPIDER_DEATH, Sound.ENTITY_SPIDER_AMBIENT),
+    SQUID(Sound.ENTITY_SQUID_HURT, null, Sound.ENTITY_SQUID_DEATH, Sound.ENTITY_SQUID_AMBIENT),
+    UNDEAD_HORSE(Sound.ENTITY_ZOMBIE_HORSE_HURT, "step.grass", Sound.ENTITY_ZOMBIE_HORSE_DEATH, Sound.ENTITY_ZOMBIE_HORSE_AMBIENT, Sound.ENTITY_HORSE_GALLOP,
+            Sound.ENTITY_HORSE_SADDLE, Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_STEP_WOOD, Sound.ENTITY_HORSE_ARMOR,
+            Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP, Sound.ENTITY_HORSE_ANGRY),
+    VILLAGER(Sound.ENTITY_VILLAGER_HURT, null, Sound.ENTITY_VILLAGER_DEATH, Sound.ENTITY_VILLAGER_AMBIENT, Sound.ENTITY_VILLAGER_TRADING, Sound.ENTITY_VILLAGER_NO,
+            Sound.ENTITY_VILLAGER_YES),
+    WITCH(Sound.ENTITY_WITCH_HURT, null, Sound.ENTITY_WITCH_DEATH, Sound.ENTITY_WITCH_AMBIENT),
+    WITHER(Sound.ENTITY_WITHER_HURT, null, Sound.ENTITY_WITHER_DEATH, Sound.ENTITY_WITHER_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL, Sound.ENTITY_WITHER_SPAWN,
+            Sound.ENTITY_PLAYER_BIG_FALL, Sound.ENTITY_WITHER_SHOOT),
+    WITHER_SKELETON(Sound.ENTITY_SKELETON_HURT, Sound.ENTITY_SKELETON_STEP, Sound.ENTITY_SKELETON_DEATH, Sound.ENTITY_SKELETON_AMBIENT),
+    WOLF(Sound.ENTITY_WOLF_HURT, Sound.ENTITY_WOLF_STEP, Sound.ENTITY_WOLF_DEATH, Sound.ENTITY_WOLF_AMBIENT, Sound.ENTITY_WOLF_GROWL, Sound.ENTITY_WOLF_PANT,
+            Sound.ENTITY_WOLF_HOWL, Sound.ENTITY_WOLF_SHAKE, Sound.ENTITY_WOLF_WHINE),
+    ZOMBIE(Sound.ENTITY_ZOMBIE_HURT, Sound.ENTITY_ZOMBIE_STEP, Sound.ENTITY_ZOMBIE_DEATH, Sound.ENTITY_ZOMBIE_AMBIENT,
+            Sound.ENTITY_ZOMBIE_INFECT, Sound.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, Sound.ENTITY_ZOMBIE_ATTACK_DOOR_WOOD, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR),
+    ZOMBIE_VILLAGER(Sound.ENTITY_ZOMBIE_VILLAGER_HURT, Sound.ENTITY_ZOMBIE_VILLAGER_STEP, Sound.ENTITY_ZOMBIE_VILLAGER_DEATH, Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT,
+            Sound.ENTITY_ZOMBIE_INFECT, Sound.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, Sound.ENTITY_ZOMBIE_ATTACK_DOOR_WOOD, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR);
 
     public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP
@@ -90,37 +89,50 @@ public enum DisguiseSound {
     private float damageSoundVolume = 1F;
     private HashMap<SoundType, String> disguiseSounds = new HashMap<>();
 
-    DisguiseSound(Object... sounds) {
-        for (int i = 0; i < sounds.length; i++) {
-            Object obj = sounds[i];
-            String s;
-            if (obj == null) {
-                continue;
-            } else if (obj instanceof String) {
-                s = (String) obj;
-            } else if (obj instanceof Sound) {
-                s = ReflectionManager.getCraftSound((Sound) obj);
-                System.out.print("Warning! The sound " + obj + " needs to be converted to a string");
-            } else {
-                throw new RuntimeException("Was given a unknown object " + obj);
+    DisguiseSound(Object hurt, Object step, Object death, Object idle, Object... sounds) {
+        addSound(hurt, SoundType.HURT);
+        addSound(step, SoundType.STEP);
+        addSound(death, SoundType.DEATH);
+        addSound(idle, SoundType.IDLE);
+        for (Object obj : sounds) {
+            addSound(obj, SoundType.CANCEL);
+        }
+
+        //TODO: Remove this temporary fix later
+        for (Sound sound : Sound.values()) {
+            String string = ReflectionManager.getCraftSound(sound);
+            if (!disguiseSounds.containsValue(string) && !cancelSounds.contains(string)) {
+                cancelSounds.add(string);
             }
-            switch (i) {
-                case 0:
-                    disguiseSounds.put(SoundType.HURT, s);
-                    break;
-                case 1:
-                    disguiseSounds.put(SoundType.STEP, s);
-                    break;
-                case 2:
-                    disguiseSounds.put(SoundType.DEATH, s);
-                    break;
-                case 3:
-                    disguiseSounds.put(SoundType.IDLE, s);
-                    break;
-                default:
-                    cancelSounds.add(s);
-                    break;
-            }
+        }
+    }
+
+    private void addSound(Object sound, SoundType type) {
+        String s;
+        if (sound == null) {
+            return;
+        } else if (sound instanceof String) {
+            s = (String) sound;
+        } else if (sound instanceof Sound) {
+            s = ReflectionManager.getCraftSound((Sound) sound);
+        } else {
+            throw new RuntimeException("Was given a unknown object " + sound);
+        }
+        switch (type) {
+            case HURT:
+                disguiseSounds.put(SoundType.HURT, s);
+                break;
+            case STEP:
+                disguiseSounds.put(SoundType.STEP, s);
+                break;
+            case DEATH:
+                disguiseSounds.put(SoundType.DEATH, s);
+                break;
+            case IDLE:
+                disguiseSounds.put(SoundType.IDLE, s);
+                break;
+            case CANCEL:
+                cancelSounds.add(s);
         }
     }
 
