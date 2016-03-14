@@ -78,11 +78,13 @@ public enum DisguiseSound {
     }
 
     public static DisguiseSound getType(String name) {
-        try {
-            return valueOf(name);
-        } catch (Exception ex) {
-            return null;
-        }
+        //TODO: FIX the disguise sounds
+        return null;
+//        try {
+//            return valueOf(name);
+//        } catch (Exception ex) {
+//            return null;
+//        }
     }
 
     private HashSet<String> cancelSounds = new HashSet<>();
@@ -98,13 +100,6 @@ public enum DisguiseSound {
             addSound(obj, SoundType.CANCEL);
         }
 
-        //TODO: Remove this temporary fix later
-        for (Sound sound : Sound.values()) {
-            String string = ReflectionManager.getCraftSound(sound);
-            if (!disguiseSounds.containsValue(string) && !cancelSounds.contains(string)) {
-                cancelSounds.add(string);
-            }
-        }
     }
 
     private void addSound(Object sound, SoundType type) {
