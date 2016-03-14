@@ -79,12 +79,11 @@ public enum DisguiseSound {
 
     public static DisguiseSound getType(String name) {
         //TODO: FIX the disguise sounds
-        return null;
-//        try {
-//            return valueOf(name);
-//        } catch (Exception ex) {
-//            return null;
-//        }
+        try {
+            return valueOf(name);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     private HashSet<String> cancelSounds = new HashSet<>();

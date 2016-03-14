@@ -1099,14 +1099,15 @@ public class PacketsManager {
     }
 
     public static void setHearDisguisesListener(boolean enabled) {
-        if (soundsListenerEnabled != enabled) {
-            soundsListenerEnabled = enabled;
-            if (soundsListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
-            }
-        }
+        //TODO: FIX SOUNDS
+//        if (soundsListenerEnabled != enabled) {
+//            soundsListenerEnabled = enabled;
+//            if (soundsListenerEnabled) {
+//                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
+//            } else {
+//                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
+//            }
+//        }
     }
 
     public static void setInventoryListenerEnabled(boolean enabled) {
