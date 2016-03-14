@@ -25,8 +25,9 @@ public enum DisguiseSound {
     ELDER_GUARDIAN("entity.guardian.elder.hit", null, "entity.guardian.elder.death", "entity.guardian.elder.death"),
     ENDER_DRAGON("entity.enderdragon.hit", null, "entity.enderdragon.end", "entity.enderdragon.growl", "damage.fallsmall",
             "entity.enderdragon.wings", "damage.fallbig"),
-    ENDERMAN("entity.endermen.hit", "step.grass", "entity.endermen.death", "entity.endermen.idle", "entity.endermen.scream",
-            "entity.endermen.portal", "entity.endermen.stare"),
+    //TODO: Fix enderman sounds
+//    ENDERMAN("entity.endermen.hit", "step.grass", "entity.endermen.death", "entity.endermen.idle", "entity.endermen.scream",
+//            "entity.endermen.portal", "entity.endermen.stare"),
     ENDERMITE("entity.silverfish.hit", "entity.silverfish.step", "entity.silverfish.kill", "entity.silverfish.ambient"),
     GHAST("entity.ghast.scream", null, "entity.ghast.death", "entity.ghast.moan", "damage.fallsmall", "entity.ghast.fireball",
             "damage.fallbig", "entity.ghast.affectionate_scream", "entity.ghast.charge"),

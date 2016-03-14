@@ -6,6 +6,8 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -666,5 +668,15 @@ public class ReflectionManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static int getCombinedId(int id, int data) {
+        return id + (data << 12);
+    }
+
+    public static Pair<Integer, Integer> getFromCombinedId(int combinedId) {
+        int j = combinedId & 4095;
+        int k = combinedId >> 12 & 15;
+        return new ImmutablePair<>(j, k);
     }
 }

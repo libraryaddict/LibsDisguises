@@ -124,8 +124,7 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null
-                && getDisguise().getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -261,6 +260,9 @@ public class FlagWatcher {
             }
             Object value = entityValues.get(data);
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
+                if (disguise.getType() != DisguiseType.WOLF &&
+                        disguise.getType() != DisguiseType.OCELOT &&
+                        disguise.getType() != DisguiseType.ENDERMAN)
                 value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
             WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(data, value));
@@ -341,6 +343,7 @@ public class FlagWatcher {
 
     /**
      * Don't use this, use setItemInMainHand instead
+     *
      * @param itemstack
      */
     @Deprecated

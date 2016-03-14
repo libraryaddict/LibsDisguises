@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.inventory.ItemStack;
 
 public class EndermanWatcher extends LivingWatcher {
@@ -11,12 +14,29 @@ public class EndermanWatcher extends LivingWatcher {
 
     @Override
     public ItemStack getItemInMainHand() {
-        return new ItemStack((int) getValue(11, 1), 1, (short) 0);
+        Optional<Integer> value = (Optional<Integer>) getValue(11, Optional.of(1));
+        if (value.isPresent()) {
+            Pair<Integer, Integer> pair = ReflectionManager.getFromCombinedId(value.get());
+            int id = pair.getLeft();
+            int data = pair.getRight();
+            return new ItemStack(id, 1, (short) data);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void setItemInMainHand(ItemStack itemstack) {
-        setValue(11, itemstack.getTypeId());
+        setItemInMainHand(itemstack.getTypeId(), itemstack.getDurability());
+    }
+
+    public void setItemInMainHand(int typeId) {
+        setItemInMainHand(typeId, 0);
+    }
+
+    public void setItemInMainHand(int typeId, int data) {
+        int combined = ReflectionManager.getCombinedId(typeId, data);
+        setValue(11, Optional.of(combined));
     }
 
     public boolean isAggressive() {

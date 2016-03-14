@@ -284,7 +284,7 @@ public class PacketsManager {
             int objectId = disguise.getType().getObjectId();
             int data = ((MiscDisguise) disguise).getData();
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = ((MiscDisguise) disguise).getId() + (data << 12);
+                data = ReflectionManager.getCombinedId(((MiscDisguise) disguise).getId(), data);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
                 data = disguisedEntity.getEntityId();
@@ -326,9 +326,9 @@ public class PacketsManager {
     private static WrappedDataWatcher createDataWatcher(WrappedDataWatcher watcher, FlagWatcher flagWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
         try {
-            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ?
-                    flagWatcher.convert(watcher.getWatchableObjects()) : flagWatcher.getWatchableObjects();
+            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ? flagWatcher.convert(watcher.getWatchableObjects()) : flagWatcher.getWatchableObjects();
             for (WrappedWatchableObject watchableObject : list) {
+                if (watchableObject == null) continue;
                 if (watchableObject.getValue() == null) continue;
                 if (Registry.get(watchableObject.getValue().getClass()) == null) continue;
                 WrappedDataWatcherObject obj = new WrappedDataWatcherObject(watchableObject.getIndex(), Registry.get(watchableObject.getValue().getClass()));
@@ -1281,7 +1281,9 @@ public class PacketsManager {
 
                 // Else if the packet is sending entity metadata
                 else if (sentPacket.getType() == Server.ENTITY_METADATA) {
-                    if (DisguiseConfig.isMetadataPacketsEnabled()) {
+                    if (DisguiseConfig.isMetadataPacketsEnabled() && (disguise.getType() != DisguiseType.WOLF &&
+                            disguise.getType() != DisguiseType.OCELOT &&
+                            disguise.getType() != DisguiseType.ENDERMAN)) {
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
                                 packets[0].getWatchableCollectionModifier().read(0));
                         packets[0] = new PacketContainer(sentPacket.getType());
@@ -1394,7 +1396,9 @@ public class PacketsManager {
                         if (heldItem != null && heldItem.getType() != Material.AIR) {
                             // Convert the datawatcher
                             List<WrappedWatchableObject> list = new ArrayList<>();
-                            if (DisguiseConfig.isMetadataPacketsEnabled()) {
+                            if (DisguiseConfig.isMetadataPacketsEnabled() && (disguise.getType() != DisguiseType.WOLF &&
+                                    disguise.getType() != DisguiseType.OCELOT &&
+                                    disguise.getType() != DisguiseType.ENDERMAN)) {
                                 WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(0,
                                         WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
                                 list.add(watch);
