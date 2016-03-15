@@ -262,7 +262,8 @@ public class FlagWatcher {
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
                 if (disguise.getType() != DisguiseType.WOLF &&
                         disguise.getType() != DisguiseType.OCELOT &&
-                        disguise.getType() != DisguiseType.ENDERMAN)
+                        disguise.getType() != DisguiseType.ENDERMAN &&
+                        disguise.getType() != DisguiseType.SHULKER)
                 value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
             WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(data, value));

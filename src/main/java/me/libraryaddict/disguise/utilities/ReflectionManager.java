@@ -496,18 +496,6 @@ public class ReflectionManager {
         //Some future remove code if needed
     }
 
-
-    public static void setAllowSleep(Player player) {
-        try {
-            //TODO: Fix this!
-            /**
-             * Object nmsEntity = getNmsEntity(player); Object connection = getNmsField(nmsEntity.getClass(), "playerConnection").get(nmsEntity); Field check = getNmsField(connection.getClass(), "checkMovement"); check.setBoolean(connection, true); *
-             */
-        } catch (Exception ex) {
-            ex.printStackTrace(System.out);
-        }
-    }
-
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
             Location loc = entity.getLocation();

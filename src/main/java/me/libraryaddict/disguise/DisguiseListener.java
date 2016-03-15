@@ -172,6 +172,19 @@ public class DisguiseListener implements Listener {
                 chunkMove(event.getPlayer(), to, from);
             }
         }
+
+        if (DisguiseConfig.isStopShulkerDisguisesFromMoving()) {
+            Disguise disguise;
+            if ((disguise = DisguiseAPI.getDisguise(event.getPlayer())) != null) {
+                if (disguise.getType() == DisguiseType.SHULKER) { //Stop Shulker disguises from moving their coordinates
+                    Location from = event.getFrom();
+                    Location to = event.getTo();
+                    to.setX(from.getX());
+                    to.setZ(from.getZ());
+                    event.setTo(to);
+                }
+            }
+        }
     }
 
     @EventHandler

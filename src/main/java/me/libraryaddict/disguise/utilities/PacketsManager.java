@@ -401,8 +401,7 @@ public class PacketsManager {
                 value += 64;
                 break;
             case ENDER_DRAGON:
-                //TODO: Enderdragon direction is... weird, consistently backwards
-//                value = (byte) (~value & 0xff);
+                value -= 128;
                 break;
             case WITHER_SKULL:
                 value -= 128;
@@ -831,8 +830,6 @@ public class PacketsManager {
                                 || event.getPacketType() == Server.ENTITY_EFFECT
                                 || event.getPacketType() == Server.ENTITY_EQUIPMENT) {
                             event.setCancelled(true);
-                        } else if (event.getPacketType() == Server.BED) {
-                            ReflectionManager.setAllowSleep(observer);
                         } else if (event.getPacketType() == Server.ENTITY_STATUS) {
                             Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
                             if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
@@ -1300,7 +1297,8 @@ public class PacketsManager {
                 else if (sentPacket.getType() == Server.ENTITY_METADATA) {
                     if (DisguiseConfig.isMetadataPacketsEnabled() && (disguise.getType() != DisguiseType.WOLF &&
                             disguise.getType() != DisguiseType.OCELOT &&
-                            disguise.getType() != DisguiseType.ENDERMAN)) {
+                            disguise.getType() != DisguiseType.ENDERMAN &&
+                            disguise.getType() != DisguiseType.SHULKER)) {
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(
                                 packets[0].getWatchableCollectionModifier().read(0));
                         packets[0] = new PacketContainer(sentPacket.getType());
@@ -1414,7 +1412,8 @@ public class PacketsManager {
                             List<WrappedWatchableObject> list = new ArrayList<>();
                             if (DisguiseConfig.isMetadataPacketsEnabled() && (disguise.getType() != DisguiseType.WOLF &&
                                     disguise.getType() != DisguiseType.OCELOT &&
-                                    disguise.getType() != DisguiseType.ENDERMAN)) {
+                                    disguise.getType() != DisguiseType.ENDERMAN &&
+                                    disguise.getType() != DisguiseType.SHULKER)) {
                                 WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(0,
                                         WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
                                 list.add(watch);

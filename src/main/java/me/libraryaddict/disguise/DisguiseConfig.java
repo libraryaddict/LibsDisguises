@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.utilities.PacketsManager;
-
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -37,6 +36,7 @@ public class DisguiseConfig {
     private static boolean showNameAboveHeadAlwaysVisible;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
+    private static boolean stopShulkerDisguisesFromMoving;
     private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
@@ -102,6 +102,7 @@ public class DisguiseConfig {
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateNotificationPermission(config.getString("Permission"));
+        setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -407,6 +408,14 @@ public class DisguiseConfig {
 
     public static void setUpdateNotificationPermission(String newPermission) {
         updateNotificationPermission = newPermission;
+    }
+
+    public static void setStopShulkerDisguisesFromMoving(boolean stopShulkerDisguisesFromMoving) {
+        DisguiseConfig.stopShulkerDisguisesFromMoving = stopShulkerDisguisesFromMoving;
+    }
+
+    public static boolean isStopShulkerDisguisesFromMoving() {
+        return stopShulkerDisguisesFromMoving;
     }
 
     /**

@@ -700,7 +700,6 @@ public class DisguiseUtilities {
     /**
      * Resends the entity to all the watching players, which is where the magic begins
      */
-    //TODO: Check this method, something's not right here
     public static void refreshTrackers(final TargetedDisguise disguise) {
         if (disguise.getEntity().isValid()) {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
@@ -947,8 +946,8 @@ public class DisguiseUtilities {
             if (player.isSleeping()) {
                 sendSelfPacket(
                         player,
-                        manager.createPacketConstructor(Server.BED, player, loc.getBlockX(), loc.getBlockY(),
-                                loc.getBlockZ()).createPacket(player, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                        manager.createPacketConstructor(Server.BED, player, ReflectionManager.getBlockPosition(0, 0, 0))
+                                .createPacket(player, ReflectionManager.getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())));
             }
 
             // Resend any active potion effects
