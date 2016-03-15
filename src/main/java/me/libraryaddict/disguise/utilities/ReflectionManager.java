@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -104,6 +105,10 @@ public class ReflectionManager {
                 case "EnderPearl":
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving")).newInstance(world, createEntityInstance("Cow"));
                     break;
+                case "Potion":
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE, getNmsClass("ItemStack"))
+                            .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                break;
                 default:
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
                     break;

@@ -203,7 +203,6 @@ public class PacketsManager {
             mods.write(4, yaw);
             mods.write(5, pitch);
         } else if (disguise.getType().isPlayer()) {
-            //TODO: Make player disguises visible again
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
             String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
             int entityId = disguisedEntity.getEntityId();
@@ -521,13 +520,13 @@ public class PacketsManager {
                 if (event.isCancelled()) {
                     return;
                 }
+                if (event.isAsync()) {
+                    return;
+                }
                 event.setPacket(event.getPacket().deepClone());
                 StructureModifier<Object> mods = event.getPacket().getModifier();
                 Player observer = event.getPlayer();
                 if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
-                    if (event.isAsync()) {
-                        return;
-                    }
                     Object soundEffect = mods.read(0);
                     SoundType soundType = null;
                     Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(2)) / 8D,
