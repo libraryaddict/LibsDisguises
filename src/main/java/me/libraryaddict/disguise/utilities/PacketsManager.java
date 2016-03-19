@@ -83,6 +83,8 @@ public class PacketsManager {
                 if (event.isCancelled())
                     return;
                 try {
+                    if (event.getPlayer().getName().contains("UNKNOWN[")) //If the player is temporary
+                        return;
                     Player observer = event.getPlayer();
                     StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
                     Entity entity = entityModifer.read(0);
@@ -522,6 +524,8 @@ public class PacketsManager {
                 if (event.isAsync()) {
                     return;
                 }
+                if (event.getPlayer().getName().contains("UNKNOWN[")) //If the player is temporary
+                    return;
                 event.setPacket(event.getPacket().deepClone());
                 StructureModifier<Object> mods = event.getPacket().getModifier();
                 Player observer = event.getPlayer();
@@ -753,6 +757,8 @@ public class PacketsManager {
             public void onPacketSending(PacketEvent event) {
                 if (event.isCancelled())
                     return;
+                if (event.getPlayer().getName().contains("UNKNOWN[")) //If the player is temporary
+                    return;
                 final Player observer = event.getPlayer();
                 if (event.getPacket().getIntegers().read(0) == observer.getEntityId()) {
                     if (DisguiseAPI.isSelfDisguised(observer)) {
@@ -847,6 +853,8 @@ public class PacketsManager {
             @Override
             public void onPacketReceiving(final PacketEvent event) {
                 if (event.isCancelled())
+                    return;
+                if (event.getPlayer().getName().contains("UNKNOWN[")) //If the player is temporary
                     return;
                 if (!(event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory)
                         && event.getPlayer().getVehicle() == null) {
@@ -1179,6 +1187,8 @@ public class PacketsManager {
                 @Override
                 public void onPacketSending(PacketEvent event) {
                     if (event.isCancelled())
+                        return;
+                    if (event.getPlayer().getName().contains("UNKNOWN[")) //If the player is temporary
                         return;
                     final Player observer = event.getPlayer();
                     // First get the entity, the one sending this packet
