@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.block.BlockFace;
-
-import java.util.Optional;
 
 /**
  * @author Navid
@@ -25,7 +24,7 @@ public class ShulkerWatcher extends LivingWatcher {
     }
 
     public Optional<BlockPosition> getAttachmentPosition() {
-        return Optional.empty();
+        return Optional.absent();
     }
 
     public void setAttachmentPosition(BlockPosition pos) {
