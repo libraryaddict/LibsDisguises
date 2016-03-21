@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.DyeColor;
 
 public class WolfWatcher extends TameableWatcher {
 
@@ -47,13 +48,17 @@ public class WolfWatcher extends TameableWatcher {
         setTameableFlag(2, angry);
     }
 
-    public void setCollarColor(AnimalColor newColor) {
+    public void setCollarColor(AnimalColor color) {
+        setCollarColor(DyeColor.getByWoolData((byte) color.getId()));
+    }
+
+    public void setCollarColor(DyeColor newColor) {
         if (!isTamed()) {
             setTamed(true);
         }
-        if (newColor != getCollarColor()) {
-            setValue(14, (byte) newColor.getId());
-            sendData(14);
+        if (newColor.getWoolData() != getCollarColor().getId()) {
+            setValue(16, (int) newColor.getDyeData());
+            sendData(16);
         }
     }
 

@@ -24,7 +24,7 @@ public enum DisguiseType {
     CREEPER,
     DONKEY,
     DRAGON_FIREBALL(93),
-    DROPPED_ITEM(1, 1),
+    DROPPED_ITEM(2, 1),
     EGG(62),
     ELDER_GUARDIAN,
     ENDER_CRYSTAL(51),

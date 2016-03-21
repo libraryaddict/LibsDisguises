@@ -11,12 +11,11 @@ public class DroppedItemWatcher extends FlagWatcher {
     }
 
     public ItemStack getItemStack() {
-        return (ItemStack) getValue(5, new ItemStack(1));
+        return (ItemStack) getValue(10, new ItemStack(1));
     }
 
     public void setItemStack(ItemStack item) {
-        setValue(5, item);
-        sendData(5);
+        setValue(10, item);
+        sendData(10);
     }
-
 }

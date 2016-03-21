@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -226,11 +227,11 @@ public class FlagWatcher {
         return getEntityFlag(5);
     }
 
-    public boolean isFlyingWithElytra() {
+    public boolean isGlowing() {
         return getEntityFlag(6);
     }
 
-    public boolean isGlowing() {
+    public boolean isFlyingWithElytra() {
         return getEntityFlag(7);
     }
 
@@ -260,11 +261,8 @@ public class FlagWatcher {
             }
             Object value = entityValues.get(data);
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == 0) {
-                if (disguise.getType() != DisguiseType.WOLF &&
-                        disguise.getType() != DisguiseType.OCELOT &&
-                        disguise.getType() != DisguiseType.ENDERMAN &&
-                        disguise.getType() != DisguiseType.SHULKER)
-                value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+                if (!PacketsManager.isStaticMetadataDisguiseType(disguise))
+                    value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
             WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(data, value));
             list.add(watch);
