@@ -1,7 +1,7 @@
 name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
 description: A disguise plugin with various disguises.
-version: 9.0.1
+version: 9.0.2
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 softdepend: [ProtocolLib]

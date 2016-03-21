@@ -118,9 +118,9 @@ public class HorseWatcher extends AgeableWatcher {
     private void setHorseFlag(int i, boolean flag) {
         byte j = (byte) getValue(12, (byte) 0);
         if (flag) {
-            setValue(12, j | i);
+            setValue(12, (byte) (j | i));
         } else {
-            setValue(12, j & ~i);
+            setValue(12, (byte) (j & ~i));
         }
         sendData(12);
     }
