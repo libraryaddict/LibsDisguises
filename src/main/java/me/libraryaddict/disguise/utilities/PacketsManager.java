@@ -1505,6 +1505,8 @@ public class PacketsManager {
                 disguise.getType() == DisguiseType.SHULKER ||
                 disguise.getType() == DisguiseType.SPLASH_POTION ||
                 disguise.getType() == DisguiseType.FIREWORK ||
-                disguise.getType() == DisguiseType.DROPPED_ITEM);
+                disguise.getType() == DisguiseType.DROPPED_ITEM ||
+                disguise.getType() == DisguiseType.ENDER_CRYSTAL
+        );
     }
 }
