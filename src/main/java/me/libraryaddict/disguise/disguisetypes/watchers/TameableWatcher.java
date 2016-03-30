@@ -37,8 +37,8 @@ public class TameableWatcher extends AgeableWatcher {
         sendData(12);
     }
 
-    public void setOwner(Optional<UUID> owner) {
-        setValue(13, owner);
+    public void setOwner(UUID owner) {
+        setValue(13, Optional.of(owner));
         sendData(13);
     }
 

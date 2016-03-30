@@ -153,8 +153,8 @@ public class HorseWatcher extends AgeableWatcher {
         setHorseFlag(128, mouthOpen);
     }
 
-    public void setOwner(Optional<UUID> uuid) {
-        setValue(15, uuid);
+    public void setOwner(UUID uuid) {
+        setValue(15, Optional.of(uuid));
         sendData(15);
     }
 

@@ -219,6 +219,21 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Constructor getCraftConstructor(Class clazz, Class<?>... parameters) {
+        try {
+            Constructor declaredConstructor = clazz.getDeclaredConstructor(parameters);
+            declaredConstructor.setAccessible(true);
+            return declaredConstructor;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace(System.out);
+        }
+        return null;
+    }
+
+    public static Constructor getCraftConstructor(String className, Class<?>... parameters) {
+        return getCraftConstructor(getCraftClass(className), parameters);
+    }
+
     public static String getCraftSound(Sound sound) {
         try {
             return (String) getCraftClass("CraftSound").getMethod("getSound", Sound.class).invoke(null, sound);
@@ -655,7 +670,7 @@ public class ReflectionManager {
 
     public static EntityEquipment createEntityEquipment(Entity entity) {
         if (!(entity instanceof LivingEntity)) return null;
-        Constructor construct = getNmsConstructor("CraftEntityEquipment", getNmsClass("CraftLivingEntity"));
+        Constructor construct = getCraftConstructor("CraftEntityEquipment", getCraftClass("CraftLivingEntity"));
         try {
             return (EntityEquipment) construct.newInstance((LivingEntity) entity);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassCastException e) {
