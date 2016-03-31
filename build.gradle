@@ -1,7 +1,6 @@
 plugins {
     id 'java'
-    id 'maven-publish'
-    id "com.jfrog.artifactory" version "3.1.1"
+    id "maven"
 }
 
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
@@ -59,40 +58,20 @@ artifacts {
     archives jar
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId 'LibsDisguises'
-            artifactId 'LibsDisguises'
-            version disguisesVersion + '-SNAPSHOT'
-            from components.java
-            artifact sourceJar {
-                classifier = 'sources'
-            }
-            artifact javadocJar {
-                classifier = 'javadoc'
-            }
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://repo.md-5.net/content/groups/public/")
+            pom.groupId = 'LibsDisguises'
+            pom.version = disguisesVersion
+            pom.artifactId = 'LibsDisguises'
         }
-    }
-}
-
-
-artifactoryPublish.skip = false
-
-artifactory {
-    contextUrl = 'http://localhost:8081/artifactory'
-    publish {
-        repository {
-            repoKey = 'libs-snapshot-local'
-            username = '${artifactory_user}'
-            password = '${artifactory_password}'
+        mavenDeployer {
+            repository(url: "http://repo.md-5.net/content/repositories/snapshots/")
+            pom.groupId = 'LibsDisguises'
+            pom.version = disguisesVersion + "-SNAPSHOT"
+            pom.artifactId = 'LibsDisguises'
         }
-        defaults {
-            publications('mavenJava')
-        }
-    }
-    resolve {
-        repoKey = 'repo'
     }
 }
 
