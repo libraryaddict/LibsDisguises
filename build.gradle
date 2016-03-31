@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "maven"
+    id 'maven-publish'
 }
 
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
@@ -58,19 +58,27 @@ artifacts {
     archives jar
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "http://repo.md-5.net/content/groups/public/")
-            pom.groupId = 'LibsDisguises'
-            pom.version = disguisesVersion
-            pom.artifactId = 'LibsDisguises'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'LibsDisguises'
+            artifactId 'LibsDisguises'
+            version disguisesVersion + '-SNAPSHOT'
+            from components.java
+            artifact sourceJar {
+                classifier = 'sources'
+            }
+            artifact javadocJar {
+                classifier = 'javadoc'
+            }
         }
-        mavenDeployer {
-            repository(url: "http://repo.md-5.net/content/repositories/snapshots/")
-            pom.groupId = 'LibsDisguises'
-            pom.version = disguisesVersion + "-SNAPSHOT"
-            pom.artifactId = 'LibsDisguises'
+    }
+    repositories {
+        maven {
+            url "http://repo.md-5.net/content/repositories/releases/"
+        }
+        maven {
+            url "http://repo.md-5.net/content/repositories/snapshots/"
         }
     }
 }
