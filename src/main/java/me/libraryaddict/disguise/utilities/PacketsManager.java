@@ -609,6 +609,7 @@ public class PacketsManager {
                                             if (block != null) {
                                                 Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
                                                 mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
+                                                mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
                                             }
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
@@ -618,6 +619,7 @@ public class PacketsManager {
                                         // sending fake sounds. In which case. Why cancel it.
                                     } else {
                                         mods.write(0, ReflectionManager.getCraftSoundEffect(sound));
+                                        mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
                                         // Time to change the pitch and volume
                                         if (soundType == SoundType.HURT || soundType == SoundType.DEATH
                                                 || soundType == SoundType.IDLE) {
@@ -713,7 +715,7 @@ public class PacketsManager {
                                         mods = packet.getModifier();
                                         Object craftSoundEffect = ReflectionManager.getCraftSoundEffect(sound);
                                         mods.write(0, craftSoundEffect);
-                                        mods.write(1, ReflectionManager.getSoundCategory("master")); //Meh
+                                        mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
                                         mods.write(2, (int) (loc.getX() * 8D));
                                         mods.write(3, (int) (loc.getY() * 8D));
                                         mods.write(4, (int) (loc.getZ() * 8D));
@@ -1103,15 +1105,14 @@ public class PacketsManager {
     }
 
     public static void setHearDisguisesListener(boolean enabled) {
-        //TODO: FIX SOUNDS
-//        if (soundsListenerEnabled != enabled) {
-//            soundsListenerEnabled = enabled;
-//            if (soundsListenerEnabled) {
-//                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
-//            } else {
-//                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
-//            }
-//        }
+        if (soundsListenerEnabled != enabled) {
+            soundsListenerEnabled = enabled;
+            if (soundsListenerEnabled) {
+                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
+            } else {
+                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
+            }
+        }
     }
 
     public static void setInventoryListenerEnabled(boolean enabled) {

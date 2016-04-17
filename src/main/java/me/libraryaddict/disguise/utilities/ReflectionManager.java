@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Art;
@@ -15,9 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -530,14 +529,22 @@ public class ReflectionManager {
                 Class<?> clazz = getNmsClass("SoundCategory");
                 Enum[] enums = clazz != null ? (Enum[]) clazz.getEnumConstants() : null;
                 for (Enum anEnum : enums != null ? enums : new Enum[0]) {
-                    if (anEnum.name().equals("MASTER")) return anEnum;
+                    if (anEnum.name().equals(category.toUpperCase())) return anEnum;
                 }
             }
-            return null;
+            return invoke;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Enum getSoundCategory(DisguiseType disguiseType) {
+        if (disguiseType == DisguiseType.PLAYER) return getSoundCategory("player");
+        Class<? extends Entity> entityClass = disguiseType.getEntityType().getEntityClass();
+        if (Monster.class.isAssignableFrom(entityClass)) return getSoundCategory("hostile");
+        if (Ambient.class.isAssignableFrom(entityClass)) return getSoundCategory("ambient");
+        return getSoundCategory("neutral");
     }
 
     /**

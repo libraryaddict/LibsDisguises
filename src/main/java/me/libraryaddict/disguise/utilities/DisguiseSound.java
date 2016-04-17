@@ -78,7 +78,6 @@ public enum DisguiseSound {
     }
 
     public static DisguiseSound getType(String name) {
-        //TODO: FIX the disguise sounds
         try {
             return valueOf(name);
         } catch (Exception ex) {
