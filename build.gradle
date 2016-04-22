@@ -6,7 +6,7 @@ plugins {
 println 'Compiling LibsDisguises via Gradle ver. ' + gradle.gradleVersion
 
 sourceCompatibility = '1.7'
-ext.spigotVersion = '1.9-R0.1-SNAPSHOT'
+ext.spigotVersion = '1.9.2-R0.1-SNAPSHOT'
 
 ext.disguisesVersion = '9.0.3'
 
@@ -85,11 +85,11 @@ publishing {
 
 file('libs').mkdirs()
 
-ant.get src: 'http://server.o2gaming.com/downloads/spigot-1.9.jar', dest: file('libs'), verbose: false, skipexisting: true
+ant.get src: 'http://ci.terrocidepvp.net/job/Spigot%20Latest/lastSuccessfulBuild/artifact/spigot-1.9.2.jar', dest: file('libs'), verbose: false, skipexisting: true
 
 dependencies {
     compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
     compile 'com.comphenix.protocol:ProtocolLib:3.7.0-SNAPSHOT'
-    compile group: "spigot", name: 'spigot-1.9', version: "1.9"
+    compile group: "spigot", name: 'spigot-1.9.2', version: "1.9.2"
     testCompile group: 'junit', name: 'junit', version: '4.10'
 }
