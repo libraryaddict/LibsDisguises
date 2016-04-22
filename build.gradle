@@ -85,7 +85,7 @@ publishing {
 
 file('libs').mkdirs()
 
-ant.get src: 'http://ci.terrocidepvp.net/job/Spigot%20Latest/lastSuccessfulBuild/artifact/spigot-1.9.2.jar', dest: file('libs'), verbose: true, skipexisting: true
+ant.get src: 'http://ci.terrocidepvp.net/job/Spigot%20Latest/lastSuccessfulBuild/artifact/spigot-1.9.2.jar', dest: file('libs'), verbose: false, skipexisting: true
 
 dependencies {
     compile "org.spigotmc:spigot-api:$project.ext.spigotVersion"
