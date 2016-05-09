@@ -1,0 +1,103 @@
+name: LibsDisguises
+main: me.libraryaddict.disguise.LibsDisguises
+description: A disguise plugin with various disguises.
+version: 0.0.1-SNAPSHOT
+author: libraryaddict
+authors: [Byteflux, Navid K.]
+softdepend: [ProtocolLib]
+commands:
+    libsdisguises:
+      permission: libsdisguises.seecmd.libsdisguises
+      description: Main command for libsdisguises.
+    disguise:
+      aliases: [d, dis]
+      permission: libsdisguises.seecmd.disguise
+      description: Disguise yourself as an entity.
+    disguiseentity:
+      aliases: [dentity, disentity]
+      permission: libsdisguises.seecmd.disguiseentity
+      description: Disguise an entity as another entity.
+    disguisehelp:
+      aliases: [dhelp, dishelp]
+      permission: libsdisguises.seecmd.disguisehelp
+      description: Help command for LibsDisguises.
+    disguiseplayer:
+      aliases: [dplayer, displayer]
+      permission: libsdisguises.seecmd.disguiseplayer
+      description: Disguise another player as an entity.
+    disguiseradius:
+      aliases: [disradius, dradius]
+      permission: libsdisguises.seecmd.disguiseradius
+      description: Disguise all entities within a radius as an entity.
+    undisguise:
+      aliases: [u, und, undis]
+      permission: libsdisguises.seecmd.undisguise
+      description: Undisguise yourself.
+    undisguiseentity:
+      aliases: [undisentity, undentity]
+      permission: libsdisguises.seecmd.undisguiseentity
+      description: Undisguise an entity.
+    undisguiseplayer:
+      aliases: [undisplayer, undplayer]
+      permission: libsdisguises.seecmd.undisguiseplayer
+      description: Undisguise a player.
+    undisguiseradius:
+      aliases: [undisradius, undradius]
+      permission: libsdisguises.seecmd.undisguiseradius
+      description: Undisguise all entities within a radius.
+    disguiseclone:
+      aliases: [disguisec, disc, disclone, dclone, clonedisguise, clonedis, cdisguise, cdis]
+      permission: libsdisguises.seecmd.disguiseclone
+      description: Copy a disguise (or entity) and use it later.
+    disguiseviewself:
+      aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd]
+      permission: libsdisguises.seecmd.viewself
+      description: Toggle seeing your own disguise on or off.
+
+permissions:
+    libsdisguises.reload:
+        description: Allows the user to reload LibsDisguises.
+        default: op
+    libsdisguises.seethrough:
+        description: Allows player to see through disguises.
+        default: false
+    libsdisguises.seecmd:
+      description: See all commands in tab-completion
+      default: true
+      children:
+         libsdisguises.seecmd.libsdisguises: true
+         libsdisguises.seecmd.disguise: true
+         libsdisguises.seecmd.disguiseentity: true
+         libsdisguises.seecmd.disguisehelp: true
+         libsdisguises.seecmd.disguiseplayer: true
+         libsdisguises.seecmd.disguiseradius: true
+         libsdisguises.seecmd.undisguise: true
+         libsdisguises.seecmd.undisguiseentity: true
+         libsdisguises.seecmd.undisguiseplayer: true
+         libsdisguises.seecmd.undisguiseradius: true
+         libsdisguises.seecmd.disguiseclone: true
+         libsdisguises.seecmd.disguiseviewself: true
+    libsdisguises.seecmd.libsdisguises:
+      description: See the /libsdisguises command in tab-completion
+    libsdisguises.seecmd.disguiseviewself:
+      description: See the /disguiseviewself command in tab-completion
+    libsdisguises.seecmd.disguise:
+      description: See the /disguise command in tab-completion
+    libsdisguises.seecmd.disguiseentity:
+      description: See the /disguiseentity command in tab-completion
+    libsdisguises.seecmd.disguisehelp:
+      description: See the /disguisehelp command in tab-completion
+    libsdisguises.seecmd.disguiseplayer:
+      description: See the /disguiseplayer command in tab-completion
+    libsdisguises.seecmd.disguiseradius:
+      description: See the /disguiseradius command in tab-completion
+    libsdisguises.seecmd.undisguise:
+      description: See the /undisguise command in tab-completion
+    libsdisguises.seecmd.undisguiseentity:
+      description: See the /undisguiseentity command in tab-completion
+    libsdisguises.seecmd.undisguiseplayer:
+      description: See the /undisguiseplayer command in tab-completion
+    libsdisguises.seecmd.undisguiseradius:
+      description: See the /undisguiseradius command in tab-completion
+    libsdisguises.seecmd.disguiseclone:
+      description: See the /disguiseclone command in tab-completion
