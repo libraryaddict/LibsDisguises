@@ -31,6 +31,8 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import org.bukkit.entity.*;
 
 public class ReflectionManager
 {
@@ -770,10 +772,12 @@ public class ReflectionManager
 
                 for (Enum anEnum : enums != null ? enums : new Enum[0])
                 {
-                    if (anEnum.name().equals("MASTER"))
+                    if (anEnum.name().equals(category.toUpperCase()))
                         return anEnum;
                 }
             }
+
+            return invoke;
         }
         catch (Exception e)
         {
@@ -781,6 +785,22 @@ public class ReflectionManager
         }
 
         return null;
+    }
+
+    public static Enum getSoundCategory(DisguiseType disguiseType)
+    {
+        if (disguiseType == DisguiseType.PLAYER)
+            return getSoundCategory("player");
+        
+        Class<? extends Entity> entityClass = disguiseType.getEntityType().getEntityClass();
+        
+        if (Monster.class.isAssignableFrom(entityClass))
+            return getSoundCategory("hostile");
+        
+        if (Ambient.class.isAssignableFrom(entityClass))
+            return getSoundCategory("ambient");
+        
+        return getSoundCategory("neutral");
     }
 
     /**
