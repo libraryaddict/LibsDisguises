@@ -7,7 +7,6 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<defaultGoal>clean install</defaultGoal>
 		<directory>target</directory>
 		<finalName>LibsDisguises</finalName>
 
