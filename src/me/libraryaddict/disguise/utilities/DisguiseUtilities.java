@@ -124,19 +124,26 @@ public class DisguiseUtilities
                         BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH
                 })
             {
-                setType.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(),
-                        fromLegacyData.invoke(block, face.ordinal()));
-                setSky.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
-                setEmitted.invoke(chunkSection, 1 + face.getModX(), 0, 1 + face.getModZ(), 0);
+                int x = 1 + face.getModX();
+
+                int z = 1 + face.getModZ();
+
+                setType.invoke(chunkSection, x, 0, z, fromLegacyData.invoke(block, face.ordinal()));
+
+                setSky.invoke(chunkSection, x, 0, z, 0);
+
+                setEmitted.invoke(chunkSection, x, 0, z, 0);
             }
 
             Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
+
             array[0] = chunkSection;
 
             cSection.set(bedChunk, array);
 
             xChunk = bedChunk.getClass().getField("locX");
             xChunk.setAccessible(true);
+
             zChunk = bedChunk.getClass().getField("locZ");
             zChunk.setAccessible(true);
         }
@@ -445,6 +452,7 @@ public class DisguiseUtilities
 
                 chunkX -= chunkX % 8;
                 chunkZ -= chunkZ % 8;
+
                 xChunk.set(bedChunk, chunkX);
                 zChunk.set(bedChunk, chunkZ);
             }
@@ -452,16 +460,25 @@ public class DisguiseUtilities
             {
                 ex.printStackTrace(System.out);
             }
+
             // Make unload packets
             try
             {
-                packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0, 40)
-                        .createPacket(bedChunk, true, 0, 48);
+                packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, 0)
+                        .createPacket(bedChunk, 0);
             }
             catch (IllegalArgumentException ex)
             {
-                packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
-                        .createPacket(bedChunk, true, 0);
+                try
+                {
+                    packets[i] = ProtocolLibrary.getProtocolManager()
+                            .createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0, 40).createPacket(bedChunk, true, 0, 48);
+                }
+                catch (IllegalArgumentException ex1)
+                {
+                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
+                            .createPacket(bedChunk, true, 0);
+                }
             }
 
             i++;
