@@ -1040,7 +1040,7 @@ public class PacketsManager
 
                                         try
                                         {
-                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet);
+                                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                                         }
                                         catch (InvocationTargetException e)
                                         {
