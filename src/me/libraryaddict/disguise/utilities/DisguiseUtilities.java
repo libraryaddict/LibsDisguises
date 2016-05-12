@@ -521,9 +521,12 @@ public class DisguiseUtilities
 
         StructureModifier<Integer> ints = teleport.getIntegers();
         ints.write(0, entity.getEntityId());
-        ints.write(1, (int) Math.floor(loc.getX() * 32));
-        ints.write(2, (int) Math.floor((PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY()) * 32));
-        ints.write(3, (int) Math.floor(loc.getZ() * 32));
+
+        StructureModifier<Double> doubles = teleport.getDoubles();
+
+        doubles.write(0, loc.getX());
+        doubles.write(1, PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY());
+        doubles.write(2, loc.getZ());
 
         return new PacketContainer[]
             {

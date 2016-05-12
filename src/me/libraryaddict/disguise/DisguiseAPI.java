@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -151,11 +150,7 @@ public class DisguiseAPI
                                             {
                                                 if (toCast == float.class)
                                                 {
-                                                    if (value instanceof Float)
-                                                    {
-                                                        value = value;
-                                                    }
-                                                    else
+                                                    if (!(value instanceof Float))
                                                     {
                                                         double d = (Double) value;
                                                         value = (float) d;
@@ -267,7 +262,7 @@ public class DisguiseAPI
     }
 
     /**
-     * Disguise the next entity to spawn with this disguise. This may not work however if the entity doesn't actually spawn.
+     * Disguise the next entity to spawn, this means you need to spawn an entity immediately after calling this.
      *
      * @param disguise
      * @return
@@ -288,6 +283,7 @@ public class DisguiseAPI
         {
             int id = ReflectionManager.getNmsField("Entity", "entityCount").getInt(null);
             DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
+
             return id;
         }
         catch (IllegalAccessException e)
@@ -421,18 +417,6 @@ public class DisguiseAPI
         }
 
         return DisguiseUtilities.getDisguises(disguised.getUniqueId());
-    }
-
-    /**
-     * Get the ID of a fake disguise for a entityplayer
-     *
-     * @param entityId
-     * @return
-     */
-    @Deprecated
-    public static int getFakeDisguise(UUID entityId)
-    {
-        return -10;
     }
 
     public static int getSelfDisguiseId()

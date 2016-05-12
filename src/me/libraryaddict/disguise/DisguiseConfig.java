@@ -136,15 +136,6 @@ public class DisguiseConfig
         return blowDisguisesOnAttack;
     }
 
-    /**
-     * @deprecated Spelling mistake.
-     */
-    @Deprecated
-    public static boolean isEnquipmentPacketsEnabled()
-    {
-        return equipmentEnabled;
-    }
-
     public static boolean isEntityAnimationsAdded()
     {
         return entityAnimationsAdded;
@@ -337,12 +328,6 @@ public class DisguiseConfig
     public static void setDisguiseEntityExpire(int newExpires)
     {
         disguiseEntityExpire = newExpires;
-    }
-
-    @Deprecated
-    public static void setEnquipmentPacketsEnabled(boolean enabled)
-    {
-        setEquipmentPacketsEnabled(enabled);
     }
 
     public static void setEntityStatusPacketsEnabled(boolean enabled)

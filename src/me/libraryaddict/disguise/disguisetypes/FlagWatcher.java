@@ -36,7 +36,7 @@ public class FlagWatcher
     private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private boolean hasDied;
-    public EntityEquipment equipment;
+    private EntityEquipment equipment;
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
     private List<WrappedWatchableObject> watchableObjects;
 

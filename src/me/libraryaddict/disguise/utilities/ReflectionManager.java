@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -16,8 +15,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -29,10 +30,9 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.google.common.collect.ImmutableMap;
 import com.mojang.authlib.GameProfile;
+
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import org.bukkit.entity.*;
 
 public class ReflectionManager
 {
@@ -45,24 +45,8 @@ public class ReflectionManager
     private static final Method setBoundingBoxMethod;
     private static final Method ihmGet;
     private static final Field pingField;
-    private static Map<Class<?>, String> primitiveTypes;
     private static final Field trackerField;
     public static final Field entityCountField;
-
-    /*
-     * This portion of code is originally Copyright (C) 2014-2014 Kane York.
-     *
-     * In addition to the implicit license granted to libraryaddict to redistribuite the code, the
-     * code is also licensed to the public under the BSD 2-clause license.
-     *
-     * The publicly licensed version may be viewed here: https://gist.github.com/riking/2f330f831c30e2276df7
-     */
-    static
-    {
-        primitiveTypes = ImmutableMap.<Class<?>, String> builder().put(boolean.class, "Z").put(byte.class, "B")
-                .put(char.class, "C").put(short.class, "S").put(int.class, "I").put(long.class, "J").put(float.class, "F")
-                .put(double.class, "D").put(void.class, "V").build();
-    }
 
     static
     {
@@ -195,11 +179,6 @@ public class ReflectionManager
         }
 
         return null;
-    }
-
-    private static String dir2fqn(String s)
-    {
-        return s.replaceAll("/", ".");
     }
 
     public static FakeBoundingBox getBoundingBox(Entity entity)
@@ -718,22 +697,6 @@ public class ReflectionManager
         return null;
     }
 
-    private static String methodSignaturePart(Class<?> param)
-    {
-        if (param.isArray())
-        {
-            return "[" + methodSignaturePart(param.getComponentType());
-        }
-        else if (param.isPrimitive())
-        {
-            return primitiveTypes.get(param);
-        }
-        else
-        {
-            return "L" + param.getName().replaceAll("\\.", "/") + ";";
-        }
-    }
-
     public static void removePlayer(Player player)
     {
         // Some future remove code if needed
@@ -791,15 +754,15 @@ public class ReflectionManager
     {
         if (disguiseType == DisguiseType.PLAYER)
             return getSoundCategory("player");
-        
+
         Class<? extends Entity> entityClass = disguiseType.getEntityType().getEntityClass();
-        
+
         if (Monster.class.isAssignableFrom(entityClass))
             return getSoundCategory("hostile");
-        
+
         if (Ambient.class.isAssignableFrom(entityClass))
             return getSoundCategory("ambient");
-        
+
         return getSoundCategory("neutral");
     }
 

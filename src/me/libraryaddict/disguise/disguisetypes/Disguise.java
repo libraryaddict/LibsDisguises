@@ -82,7 +82,7 @@ public abstract class Disguise
         if (newType.getEntityType() == null)
         {
             throw new RuntimeException("DisguiseType " + newType
-                    + " was used in a futile attempt to construct a disguise, but this version of Spigot does not have that entity");
+                    + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
         }
 
         // Set the disguise type

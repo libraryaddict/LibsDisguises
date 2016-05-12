@@ -59,8 +59,11 @@ public class ClassGetter
             String relPath = pkgname.replace('.', '/');
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
             String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+
             JarFile jarFile = new JarFile(jarPath);
+
             Enumeration<JarEntry> entries = jarFile.entries();
+
             while (entries.hasMoreElements())
             {
                 JarEntry entry = entries.nextElement();
@@ -74,12 +77,15 @@ public class ClassGetter
                 if (className != null)
                 {
                     Class<?> c = loadClass(className);
+
                     if (c != null)
                     {
                         classes.add(c);
                     }
                 }
             }
+
+            jarFile.close();
         }
         catch (Exception ex)
         {
