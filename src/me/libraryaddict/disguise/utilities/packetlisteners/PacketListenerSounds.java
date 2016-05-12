@@ -286,116 +286,118 @@ public class PacketListenerSounds extends PacketAdapter
         }
         else if (event.getPacketType() == Server.ENTITY_STATUS)
         {
-            if ((byte) mods.read(1) == 2)
+            if ((byte) mods.read(1) != 2)
             {
-                // It made a damage animation
-                Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
+                return;
+            }
 
-                Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+            // It made a damage animation
+            Entity entity = event.getPacket().getEntityModifier(observer.getWorld()).read(0);
 
-                if (disguise != null && !disguise.getType().isPlayer()
-                        && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer()))
+            Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+
+            if (disguise != null && !disguise.getType().isPlayer()
+                    && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer()))
+            {
+                DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
+
+                if (disSound == null)
+                    return;
+
+                SoundType soundType = null;
+                Object obj = null;
+
+                if (entity instanceof LivingEntity)
                 {
-                    DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
-
-                    if (disSound == null)
-                        return;
-
-                    SoundType soundType = null;
-                    Object obj = null;
-
-                    if (entity instanceof LivingEntity)
+                    try
                     {
-                        try
-                        {
-                            obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
+                        obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
 
-                            if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0)
+                        if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0)
+                        {
+                            soundType = SoundType.DEATH;
+                        }
+                        else
+                        {
+                            obj = null;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (obj == null)
+                {
+                    soundType = SoundType.HURT;
+                }
+
+                if (disSound.getSound(soundType) == null
+                        || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()))
+                {
+                    if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())
+                    {
+                        cancelSound = !cancelSound;
+
+                        if (cancelSound)
+                            return;
+                    }
+
+                    disSound = DisguiseSound.getType(disguise.getType().name());
+
+                    if (disSound != null)
+                    {
+                        String sound = disSound.getSound(soundType);
+
+                        if (sound != null)
+                        {
+                            Location loc = entity.getLocation();
+
+                            PacketContainer packet = new PacketContainer(Server.NAMED_SOUND_EFFECT);
+
+                            mods = packet.getModifier();
+
+                            Object craftSoundEffect = ReflectionManager.getCraftSoundEffect(sound);
+
+                            mods.write(0, craftSoundEffect);
+                            mods.write(1, ReflectionManager.getSoundCategory(disguise.getType())); // Meh
+                            mods.write(2, (int) (loc.getX() * 8D));
+                            mods.write(3, (int) (loc.getY() * 8D));
+                            mods.write(4, (int) (loc.getZ() * 8D));
+                            mods.write(5, disSound.getDamageAndIdleSoundVolume());
+
+                            float pitch;
+
+                            if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult())
                             {
-                                soundType = SoundType.DEATH;
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F
+                                        + 1.5F;
                             }
                             else
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F
+                                        + 1.0F;
+
+                            if (disguise.getType() == DisguiseType.BAT)
+                                pitch *= 95F;
+
+                            pitch *= 63;
+
+                            if (pitch < 0)
+                                pitch = 0;
+
+                            if (pitch > 255)
+                                pitch = 255;
+
+                            mods.write(6, (int) pitch);
+
+                            try
                             {
-                                obj = null;
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (obj == null)
-                    {
-                        soundType = SoundType.HURT;
-                    }
-
-                    if (disSound.getSound(soundType) == null
-                            || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()))
-                    {
-                        if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())
-                        {
-                            cancelSound = !cancelSound;
-
-                            if (cancelSound)
-                                return;
-                        }
-
-                        disSound = DisguiseSound.getType(disguise.getType().name());
-
-                        if (disSound != null)
-                        {
-                            String sound = disSound.getSound(soundType);
-
-                            if (sound != null)
+                            catch (InvocationTargetException e)
                             {
-                                Location loc = entity.getLocation();
-
-                                PacketContainer packet = new PacketContainer(Server.NAMED_SOUND_EFFECT);
-
-                                mods = packet.getModifier();
-
-                                Object craftSoundEffect = ReflectionManager.getCraftSoundEffect(sound);
-
-                                mods.write(0, craftSoundEffect);
-                                mods.write(1, ReflectionManager.getSoundCategory(disguise.getType())); // Meh
-                                mods.write(2, (int) (loc.getX() * 8D));
-                                mods.write(3, (int) (loc.getY() * 8D));
-                                mods.write(4, (int) (loc.getZ() * 8D));
-                                mods.write(5, disSound.getDamageAndIdleSoundVolume());
-
-                                float pitch;
-
-                                if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult())
-                                {
-                                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F
-                                            + 1.5F;
-                                }
-                                else
-                                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F
-                                            + 1.0F;
-
-                                if (disguise.getType() == DisguiseType.BAT)
-                                    pitch *= 95F;
-
-                                pitch *= 63;
-
-                                if (pitch < 0)
-                                    pitch = 0;
-
-                                if (pitch > 255)
-                                    pitch = 255;
-
-                                mods.write(6, (int) pitch);
-
-                                try
-                                {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                }
-                                catch (InvocationTargetException e)
-                                {
-                                    e.printStackTrace();
-                                }
+                                e.printStackTrace();
                             }
                         }
                     }

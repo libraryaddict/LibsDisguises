@@ -53,45 +53,50 @@ public class PacketListenerMain extends PacketAdapter
 
         PacketContainer[][] packets = PacketsManager.transformPacket(event.getPacket(), event.getPlayer(), entity);
 
-        if (packets != null)
+        if (packets == null)
         {
-            event.setCancelled(true);
-
-            try
-            {
-                for (PacketContainer packet : packets[0])
-                {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                }
-
-                final PacketContainer[] delayed = packets[1];
-
-                if (delayed.length > 0)
-                {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
-                    {
-                        public void run()
-                        {
-                            try
-                            {
-                                for (PacketContainer packet : delayed)
-                                {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                                }
-                            }
-                            catch (InvocationTargetException e)
-                            {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, 2);
-                }
-            }
-            catch (InvocationTargetException ex)
-            {
-                ex.printStackTrace();
-            }
+            return;
         }
+
+        event.setCancelled(true);
+
+        try
+        {
+            for (PacketContainer packet : packets[0])
+            {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+            }
+
+            final PacketContainer[] delayed = packets[1];
+
+            if (delayed.length == 0)
+            {
+                return;
+            }
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        for (PacketContainer packet : delayed)
+                        {
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                        }
+                    }
+                    catch (InvocationTargetException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }, 2);
+        }
+        catch (InvocationTargetException ex)
+        {
+            ex.printStackTrace();
+        }
+
     }
 
 }

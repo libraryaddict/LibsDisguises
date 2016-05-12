@@ -446,51 +446,48 @@ public class DisguiseUtilities
             {
                 continue;
             }
-            try
-            {
-                int chunkX = (int) Math.floor(loc.getX() / 16D) - 17, chunkZ = (int) Math.floor(loc.getZ() / 16D) - 17;
 
-                chunkX -= chunkX % 8;
-                chunkZ -= chunkZ % 8;
+            int chunkX = (int) Math.floor(loc.getX() / 16D) - 17, chunkZ = (int) Math.floor(loc.getZ() / 16D) - 17;
 
-                xChunk.set(bedChunk, chunkX);
-                zChunk.set(bedChunk, chunkZ);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace(System.out);
-            }
+            chunkX -= chunkX % 8;
+            chunkZ -= chunkZ % 8;
 
             // Make unload packets
-            try
-            {
-                packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, 0)
-                        .createPacket(bedChunk, 0);
-            }
-            catch (IllegalArgumentException ex)
-            {
-                try
-                {
-                    packets[i] = ProtocolLibrary.getProtocolManager()
-                            .createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0, 40).createPacket(bedChunk, true, 0, 48);
-                }
-                catch (IllegalArgumentException ex1)
-                {
-                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
-                            .createPacket(bedChunk, true, 0);
-                }
-            }
+
+            packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.UNLOAD_CHUNK, chunkX, chunkZ)
+                    .createPacket(bedChunk, 0);
 
             i++;
+
             // Make load packets
             if (oldLoc == null || i > 1)
             {
+                try
+                {
+                    xChunk.set(bedChunk, chunkX);
+                    zChunk.set(bedChunk, chunkZ);
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace(System.out);
+                }
+
                 // MAP_CHUNK_BULK was replaced in 1.9 with several seperated chunk packets
                 // packets[i] = ProtocolLibrary.getProtocolManager()
                 // .createPacketConstructor(Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk))
                 // .createPacket(Arrays.asList(bedChunk));
-                packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
-                        .createPacket(bedChunk, true, 0);
+                // Make unload packets
+                try
+                {
+                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, 0)
+                            .createPacket(bedChunk, 0);
+                }
+                catch (IllegalArgumentException ex)
+                {
+                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
+                            .createPacket(bedChunk, true, 0);
+                }
+
                 i++;
             }
         }

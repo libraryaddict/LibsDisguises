@@ -53,28 +53,32 @@ public class PacketListenerClientInteract extends PacketAdapter
                 event.setCancelled(true);
             }
 
-            ItemStack item = observer.getItemInHand();
-
-            if (item != null && item.getType() == Material.INK_SACK)
+            for (ItemStack item : new ItemStack[]
+                {
+                        observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()
+                })
             {
+                if (item == null || item.getType() != Material.INK_SACK)
+                    continue;
+
                 Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
 
-                if (disguise != null && (disguise.getType() == DisguiseType.SHEEP || disguise.getType() == DisguiseType.WOLF))
+                if (disguise == null || (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF))
+                    continue;
+
+                AnimalColor color = AnimalColor.getColor(item.getDurability());
+
+                if (disguise.getType() == DisguiseType.SHEEP)
                 {
-                    AnimalColor color = AnimalColor.getColor(item.getDurability());
+                    SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
 
-                    if (disguise.getType() == DisguiseType.SHEEP)
-                    {
-                        SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
+                    watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
+                }
+                else
+                {
+                    WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
 
-                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
-                    }
-                    else
-                    {
-                        WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
-
-                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
-                    }
+                    watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
                 }
             }
         }
