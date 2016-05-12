@@ -455,7 +455,7 @@ public class DisguiseUtilities
             // Make unload packets
 
             packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.UNLOAD_CHUNK, chunkX, chunkZ)
-                    .createPacket(bedChunk, chunkX, chunkZ);
+                    .createPacket(chunkX, chunkZ);
 
             i++;
 
