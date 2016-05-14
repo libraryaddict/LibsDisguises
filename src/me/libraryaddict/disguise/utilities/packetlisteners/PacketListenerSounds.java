@@ -70,6 +70,8 @@ public class PacketListenerSounds extends PacketAdapter
             Location soundLoc = new Location(observer.getWorld(), ((Integer) mods.read(2)) / 8D, ((Integer) mods.read(3)) / 8D,
                     ((Integer) mods.read(4)) / 8D);
 
+            if (!soundLoc.getWorld().isChunkLoaded(soundLoc.getBlockX() / 16, soundLoc.getBlockZ() / 16)) return;
+
             Entity disguisedEntity = null;
             DisguiseSound entitySound = null;
 
