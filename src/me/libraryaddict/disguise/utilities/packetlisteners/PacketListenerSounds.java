@@ -186,7 +186,7 @@ public class PacketListenerSounds extends PacketAdapter
                                     int typeId = soundLoc.getWorld().getBlockTypeIdAt(soundLoc.getBlockX(),
                                             soundLoc.getBlockY() - 1, soundLoc.getBlockZ());
 
-                                    Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "a", int.class)
+                                    Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "getId", int.class)
                                             .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null), typeId);
 
                                     if (block != null)
@@ -194,7 +194,7 @@ public class PacketListenerSounds extends PacketAdapter
                                         Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
 
                                         mods.write(0,
-                                                ReflectionManager.getNmsMethod(step.getClass(), "getStepSound").invoke(step));
+                                                ReflectionManager.getNmsMethod(step.getClass(), "d").invoke(step));
                                         mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
                                     }
                                 }
@@ -237,7 +237,7 @@ public class PacketListenerSounds extends PacketAdapter
 
                                         if (((MobDisguise) disguise).isAdult() == baby)
                                         {
-                                            float pitch = (Integer) mods.read(5);
+                                            float pitch = (Integer) mods.read(6);
 
                                             if (baby)
                                             {
