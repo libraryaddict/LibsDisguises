@@ -7,7 +7,7 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<defaultGoal>clean package</defaultGoal>
+		<defaultGoal>clean install</defaultGoal>
 		<directory>target</directory>
 		<finalName>LibsDisguises</finalName>
 
@@ -32,16 +32,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>dmulloy2-repo</id>
-			<url>http://repo.dmulloy2.net/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -52,19 +42,30 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.9.2-R0.1-SNAPSHOT</version>
+			<version>1.9.4-R0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
-			<version>1.9.2-R0.1-SNAPSHOT</version>
+			<version>1.9.4-R0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>dmulloy2-repo</id>
+			<url>http://repo.dmulloy2.net/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>md_5-releases</id>
+			<url>http://repo.md-5.net/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 
 	<distributionManagement>
 		<repository>
 			<id>md_5-releases</id>
-			<url>http://repo.md-5.net/content/repositories/public/</url>
+			<url>http://repo.md-5.net/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>md_5-snapshots</id>
