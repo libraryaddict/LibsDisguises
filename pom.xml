@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>LibsDisguises</groupId>
 	<artifactId>LibsDisguises</artifactId>
-	<version>9.0.6</version>
+	<version>9.0.6-SNAPSHOT</version>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<defaultGoal>clean install</defaultGoal>
+		<defaultGoal>clean package</defaultGoal>
 		<directory>target</directory>
 		<finalName>LibsDisguises</finalName>
 
