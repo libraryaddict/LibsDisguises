@@ -64,7 +64,7 @@
 	<distributionManagement>
 		<repository>
 			<id>md_5-releases</id>
-			<url>http://repo.md-5.net/content/repositories/releases/</url>
+			<url>http://repo.md-5.net/content/repositories/public/</url>
 		</repository>
 		<snapshotRepository>
 			<id>md_5-snapshots</id>
