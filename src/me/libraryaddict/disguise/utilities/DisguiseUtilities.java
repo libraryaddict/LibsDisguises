@@ -83,6 +83,7 @@ public class DisguiseUtilities
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Field xChunk, zChunk;
+    private static Thread mainThread;
 
     static
     {
@@ -146,6 +147,11 @@ public class DisguiseUtilities
 
             zChunk = bedChunk.getClass().getField("locZ");
             zChunk.setAccessible(true);
+
+            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
+            threadField.setAccessible(true);
+
+            mainThread = (Thread) threadField.get(ReflectionManager.getMinecraftServer());
         }
         catch (Exception ex)
         {
@@ -346,6 +352,9 @@ public class DisguiseUtilities
      */
     public static void destroyEntity(TargetedDisguise disguise)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         try
         {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
@@ -637,6 +646,9 @@ public class DisguiseUtilities
      */
     public static List<Player> getPerverts(Disguise disguise)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         List<Player> players = new ArrayList<>();
 
         try
@@ -865,6 +877,9 @@ public class DisguiseUtilities
      */
     public static void refreshTracker(final TargetedDisguise disguise, String player)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         if (disguise.getEntity() != null && disguise.getEntity().isValid())
         {
             try
@@ -959,6 +974,9 @@ public class DisguiseUtilities
      */
     public static void refreshTrackers(Entity entity)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         if (entity.isValid())
         {
             try
@@ -1021,6 +1039,9 @@ public class DisguiseUtilities
      */
     public static void refreshTrackers(final TargetedDisguise disguise)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         if (disguise.getEntity().isValid())
         {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
@@ -1131,6 +1152,9 @@ public class DisguiseUtilities
 
     public static void removeSelfDisguise(Player player)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         if (selfDisguised.contains(player.getUniqueId()))
         {
             // Send a packet to destroy the fake entity
@@ -1212,6 +1236,9 @@ public class DisguiseUtilities
      */
     public static void sendSelfDisguise(final Player player, final TargetedDisguise disguise)
     {
+        if (mainThread != Thread.currentThread())
+            throw new IllegalStateException("Cannot modify disguises on an async thread");
+
         try
         {
             if (!disguise.isDisguiseInUse() || !player.isValid() || !player.isOnline() || !disguise.isSelfDisguiseVisible()

@@ -15,128 +15,153 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
-public class PlayerWatcher extends LivingWatcher {
-
+public class PlayerWatcher extends LivingWatcher
+{
     private boolean isInBed;
     private BlockFace sleepingDirection;
 
-    public PlayerWatcher(Disguise disguise) {
+    public PlayerWatcher(Disguise disguise)
+    {
         super(disguise);
     }
 
     @Override
-    public PlayerWatcher clone(Disguise disguise) {
+    public PlayerWatcher clone(Disguise disguise)
+    {
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);
         watcher.isInBed = isInBed;
         return watcher;
     }
 
-    public BlockFace getSleepingDirection() {
-        if (sleepingDirection == null) {
-            if (this.getDisguise().getEntity() != null && isSleeping()) {
-                this.sleepingDirection = BlockFace.values()[Math
-                        .round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
-            } else {
+    public BlockFace getSleepingDirection()
+    {
+        if (sleepingDirection == null)
+        {
+            if (this.getDisguise().getEntity() != null && isSleeping())
+            {
+                this.sleepingDirection = BlockFace
+                        .values()[Math.round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
+            }
+            else
+            {
                 return BlockFace.EAST;
             }
         }
         return sleepingDirection;
     }
 
+    // Bit 0 (0x01): Cape enabled
+    // Bit 1 (0x02): Jacket enabled
+    // Bit 2 (0x04): Left Sleeve enabled
+    // Bit 3 (0x08): Right Sleeve enabled
+    // Bit 4 (0x10): Left Pants Leg enabled
+    // Bit 5 (0x20): Right Pants Leg enabled
+    // Bit 6 (0x40): Hat enabled
 
-//     Bit 0 (0x01): Cape enabled
-//     Bit 1 (0x02): Jacket enabled
-//     Bit 2 (0x04): Left Sleeve enabled
-//     Bit 3 (0x08): Right Sleeve enabled
-//     Bit 4 (0x10): Left Pants Leg enabled
-//     Bit 5 (0x20): Right Pants Leg enabled
-//     Bit 6 (0x40): Hat enabled
-
-    private boolean isSkinFlag(int i) {
+    private boolean isSkinFlag(int i)
+    {
         return ((byte) getValue(12, (byte) 0) & 1 << i) != 0;
     }
 
-    public boolean isCapeEnabled() {
+    public boolean isCapeEnabled()
+    {
         return isSkinFlag(1);
     }
 
-    public boolean isJackedEnabled() {
+    public boolean isJackedEnabled()
+    {
         return isSkinFlag(2);
     }
 
-    public boolean isLeftSleeveEnabled() {
+    public boolean isLeftSleeveEnabled()
+    {
         return isSkinFlag(3);
     }
 
-    public boolean isRightSleeveEnabled() {
+    public boolean isRightSleeveEnabled()
+    {
         return isSkinFlag(4);
     }
 
-    public boolean isLeftPantsEnabled() {
+    public boolean isLeftPantsEnabled()
+    {
         return isSkinFlag(5);
     }
 
-    public boolean isRightPantsEnabled() {
+    public boolean isRightPantsEnabled()
+    {
         return isSkinFlag(6);
     }
 
-    public boolean isHatEnabled() {
+    public boolean isHatEnabled()
+    {
         return isSkinFlag(7);
     }
 
-    public void setCapeEnabled(boolean enabled) {
+    public void setCapeEnabled(boolean enabled)
+    {
         setSkinFlags(1, enabled);
         sendData(12);
     }
 
-    public void setJackedEnabled(boolean enabled) {
+    public void setJackedEnabled(boolean enabled)
+    {
         setSkinFlags(2, enabled);
         sendData(12);
     }
 
-    public void setLeftSleeveEnabled(boolean enabled) {
+    public void setLeftSleeveEnabled(boolean enabled)
+    {
         setSkinFlags(3, enabled);
         sendData(12);
     }
 
-    public void setRightSleeveEnabled(boolean enabled) {
+    public void setRightSleeveEnabled(boolean enabled)
+    {
         setSkinFlags(4, enabled);
         sendData(12);
     }
 
-    public void setLeftPantsEnabled(boolean enabled) {
+    public void setLeftPantsEnabled(boolean enabled)
+    {
         setSkinFlags(5, enabled);
         sendData(12);
     }
 
-    public void setRightPantsEnabled(boolean enabled) {
+    public void setRightPantsEnabled(boolean enabled)
+    {
         setSkinFlags(6, enabled);
         sendData(12);
     }
 
-    public void setHatEnabled(boolean enabled) {
+    public void setHatEnabled(boolean enabled)
+    {
         setSkinFlags(7, enabled);
         sendData(12);
     }
 
-
-    public boolean isSleeping() {
+    public boolean isSleeping()
+    {
         return isInBed;
     }
 
-    public void setSkin(String playerName) {
+    public void setSkin(String playerName)
+    {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
-    public void setSkin(WrappedGameProfile profile) {
+    public void setSkin(WrappedGameProfile profile)
+    {
         ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
 
-    public void setSleeping(BlockFace sleepingDirection) {
+    public void setSleeping(BlockFace sleepingDirection)
+    {
         setSleeping(true, sleepingDirection);
     }
 
-    public void setSleeping(boolean sleep) {
+    public void setSleeping(boolean sleep)
+    {
         setSleeping(sleep, null);
     }
 
@@ -146,52 +171,74 @@ public class PlayerWatcher extends LivingWatcher {
      * @param sleeping
      * @param sleepingDirection
      */
-    public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
-        if (sleepingDirection != null) {
+    public void setSleeping(boolean sleeping, BlockFace sleepingDirection)
+    {
+        if (sleepingDirection != null)
+        {
             this.sleepingDirection = BlockFace.values()[sleepingDirection.ordinal() % 4];
         }
-        if (sleeping != isSleeping()) {
+        if (sleeping != isSleeping())
+        {
             isInBed = sleeping;
-            if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise())) {
-                try {
-                    if (isSleeping()) {
-                        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                            PacketContainer[] packets = DisguiseUtilities.getBedPackets(player, this.getDisguise().getEntity()
-                                    .getLocation(), player.getLocation(), (PlayerDisguise) this.getDisguise());
-                            if (getDisguise().getEntity() == player) {
-                                for (PacketContainer packet : packets) {
+            if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise()))
+            {
+                try
+                {
+                    if (isSleeping())
+                    {
+                        for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
+                        {
+                            PacketContainer[] packets = DisguiseUtilities.getBedPackets(player,
+                                    this.getDisguise().getEntity().getLocation(), player.getLocation(),
+                                    (PlayerDisguise) this.getDisguise());
+                            if (getDisguise().getEntity() == player)
+                            {
+                                for (PacketContainer packet : packets)
+                                {
                                     packet = packet.shallowClone();
                                     packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                                 }
-                            } else {
-                                for (PacketContainer packet : packets) {
+                            }
+                            else
+                            {
+                                for (PacketContainer packet : packets)
+                                {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                                 }
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         PacketContainer packet = new PacketContainer(Server.ANIMATION);
                         StructureModifier<Integer> mods = packet.getIntegers();
                         mods.write(0, getDisguise().getEntity().getEntityId());
                         mods.write(1, 3);
-                        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                        for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
+                        {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
 
                         }
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     ex.printStackTrace(System.out);
                 }
             }
         }
     }
 
-    private void setSkinFlags(int i, boolean flag) {
+    private void setSkinFlags(int i, boolean flag)
+    {
         byte b0 = (byte) getValue(12, (byte) 0);
-        if (flag) {
+        if (flag)
+        {
             setValue(12, (byte) (b0 | 1 << i));
-        } else {
+        }
+        else
+        {
             setValue(12, (byte) (b0 & (~1 << i)));
         }
     }

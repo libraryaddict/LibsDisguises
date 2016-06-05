@@ -34,6 +34,7 @@ public class PlayerDisguise extends TargetedDisguise
     public PlayerDisguise(String name, String skinToUse)
     {
         this(name);
+
         setSkin(skinToUse);
     }
 
@@ -42,11 +43,23 @@ public class PlayerDisguise extends TargetedDisguise
         this(ReflectionManager.getGameProfile(player));
     }
 
+    public PlayerDisguise(Player player, Player skinToUse)
+    {
+        this(ReflectionManager.getGameProfile(player), ReflectionManager.getGameProfile(skinToUse));
+    }
+
     public PlayerDisguise(WrappedGameProfile gameProfile)
     {
         this(gameProfile.getName());
 
         this.gameProfile = gameProfile;
+    }
+
+    public PlayerDisguise(WrappedGameProfile gameProfile, WrappedGameProfile skinToUse)
+    {
+        this(gameProfile);
+
+        setSkin(skinToUse);
     }
 
     @Override

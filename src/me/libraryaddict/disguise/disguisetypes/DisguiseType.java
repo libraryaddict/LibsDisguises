@@ -11,7 +11,6 @@ import org.bukkit.entity.Zombie;
 
 public enum DisguiseType
 {
-
     AREA_EFFECT_CLOUD(3, 0),
 
     ARMOR_STAND(78),
