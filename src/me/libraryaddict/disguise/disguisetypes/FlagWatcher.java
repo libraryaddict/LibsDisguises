@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -195,7 +196,22 @@ public class FlagWatcher
                         if (newHealth > 0 && hasDied)
                         {
                             hasDied = false;
-                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), disguise);
+
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(), new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    try
+                                    {
+                                        DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), disguise);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ex.printStackTrace(System.out);
+                                    }
+                                }
+                            }, 2);
                         }
                         else if (newHealth <= 0 && !hasDied)
                         {

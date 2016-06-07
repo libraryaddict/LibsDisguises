@@ -880,92 +880,96 @@ public class DisguiseUtilities
         if (mainThread != Thread.currentThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
-        if (disguise.getEntity() != null && disguise.getEntity().isValid())
+        if (disguise.getEntity() == null || !disguise.getEntity().isValid())
+            return;
+
+        try
         {
-            try
+            PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
+
+            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player
+                    && disguise.getEntity().getName().equalsIgnoreCase(player))
             {
-                PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
+                removeSelfDisguise((Player) disguise.getEntity());
 
-                if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player
-                        && disguise.getEntity().getName().equalsIgnoreCase(player))
+                if (disguise.isSelfDisguiseVisible())
                 {
-                    removeSelfDisguise((Player) disguise.getEntity());
-
-                    if (disguise.isSelfDisguiseVisible())
-                    {
-                        selfDisguised.add(disguise.getEntity().getUniqueId());
-                    }
-
-                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
-
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                            }
-                            catch (Exception ex)
-                            {
-                                ex.printStackTrace(System.out);
-                            }
-                        }
-                    }, 2);
+                    selfDisguised.add(disguise.getEntity().getUniqueId());
                 }
-                else
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
                 {
-                    final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
-
-                    if (entityTrackerEntry != null)
+                    @Override
+                    public void run()
                     {
-                        Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                                .get(entityTrackerEntry);
-
-                        Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
-                                ReflectionManager.getNmsClass("EntityPlayer"));
-
-                        final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                                ReflectionManager.getNmsClass("EntityPlayer"));
-
-                        trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                                                                                    // ConcurrentModificationException
-                        for (final Object p : trackedPlayers)
+                        try
                         {
-                            Player pl = (Player) ReflectionManager.getBukkitEntity(p);
+                            DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace(System.out);
+                        }
+                    }
+                }, 2);
+            }
+            else
+            {
+                final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
-                            if (player.equalsIgnoreCase((pl).getName()))
+                if (entityTrackerEntry != null)
+                {
+                    Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                            .get(entityTrackerEntry);
+
+                    Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
+                            ReflectionManager.getNmsClass("EntityPlayer"));
+
+                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
+                            ReflectionManager.getNmsClass("EntityPlayer"));
+
+                    trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
+                                                                                // ConcurrentModificationException
+                    for (final Object p : trackedPlayers)
+                    {
+                        Player pl = (Player) ReflectionManager.getBukkitEntity(p);
+
+                        if (player.equalsIgnoreCase((pl).getName()))
+                        {
+                            clear.invoke(entityTrackerEntry, p);
+
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
+
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
                             {
-                                clear.invoke(entityTrackerEntry, p);
 
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
-
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
+                                @Override
+                                public void run()
                                 {
-                                    @Override
-                                    public void run()
+                                    try
                                     {
-                                        try
-                                        {
-                                            updatePlayer.invoke(entityTrackerEntry, p);
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            ex.printStackTrace(System.out);
-                                        }
+                                        updatePlayer.invoke(entityTrackerEntry, p);
                                     }
-                                }, 2);
-                                break;
-                            }
+                                    catch (Exception ex)
+                                    {
+                                        ex.printStackTrace(System.out);
+                                    }
+                                }
+                            }, 2);
+                            break;
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                ex.printStackTrace(System.out);
-            }
+        }
+        catch (
+
+        Exception ex)
+
+        {
+            ex.printStackTrace(System.out);
         }
     }
 
@@ -1099,6 +1103,7 @@ public class DisguiseUtilities
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
                             {
+
                                 @Override
                                 public void run()
                                 {
@@ -1116,9 +1121,12 @@ public class DisguiseUtilities
                     }
                 }
             }
-            catch (Exception ex)
+            catch (
+
+            Exception ex)
             {
                 ex.printStackTrace(System.out);
+
             }
         }
     }
@@ -1155,80 +1163,82 @@ public class DisguiseUtilities
         if (mainThread != Thread.currentThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
-        if (selfDisguised.contains(player.getUniqueId()))
+        if (!selfDisguised.contains(player.getUniqueId()))
         {
-            // Send a packet to destroy the fake entity
-            PacketContainer packet = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
+            return;
+        }
 
-            try
+        // Send a packet to destroy the fake entity
+        PacketContainer packet = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
+
+        try
+        {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace(System.out);
+        }
+
+        // Code to stop player pushing in 1.9
+        Scoreboard scoreboard = player.getScoreboard();
+        Team t;
+
+        if ((t = scoreboard.getTeam("LDPushing")) != null)
+        {
+            t.setOption(Option.COLLISION_RULE, OptionStatus.ALWAYS);
+            t.removeEntry(player.getName());
+            t.unregister();
+        }
+
+        // player.spigot().setCollidesWithEntities(true);
+        // Finish up
+        // Remove the fake entity ID from the disguise bin
+        selfDisguised.remove(player.getUniqueId());
+        // Get the entity tracker
+
+        try
+        {
+            Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
+
+            if (entityTrackerEntry != null)
             {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace(System.out);
-            }
+                Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                        .get(entityTrackerEntry);
 
-            // Code to stop player pushing in 1.9
-            Scoreboard scoreboard = player.getScoreboard();
-            Team t;
-
-            if ((t = scoreboard.getTeam("LDPushing")) != null)
-            {
-                t.setOption(Option.COLLISION_RULE, OptionStatus.ALWAYS);
-                t.removeEntry(player.getName());
-                t.unregister();
-            }
-
-            // player.spigot().setCollidesWithEntities(true);
-            // Finish up
-            // Remove the fake entity ID from the disguise bin
-            selfDisguised.remove(player.getUniqueId());
-            // Get the entity tracker
-
-            try
-            {
-                Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
-
-                if (entityTrackerEntry != null)
+                // If the tracker exists. Remove himself from his tracker
+                if (isHashSet(trackedPlayersObj))
                 {
-                    Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry);
-
-                    // If the tracker exists. Remove himself from his tracker
-                    if (isHashSet(trackedPlayersObj))
-                    {
-                        ((Set<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                                .get(entityTrackerEntry)).remove(ReflectionManager.getNmsEntity(player));
-                    }
-                    else
-                    {
-                        ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
-                                .get(entityTrackerEntry)).remove(ReflectionManager.getNmsEntity(player));
-                    }
+                    ((Set<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry))
+                            .remove(ReflectionManager.getNmsEntity(player));
+                }
+                else
+                {
+                    ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
+                            .get(entityTrackerEntry)).remove(ReflectionManager.getNmsEntity(player));
                 }
             }
-            catch (Exception ex)
-            {
-                ex.printStackTrace(System.out);
-            }
-
-            // Resend entity metadata else he will be invisible to himself until its resent
-            try
-            {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player,
-                        ProtocolLibrary.getProtocolManager()
-                                .createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(),
-                                        WrappedDataWatcher.getEntityWatcher(player), true)
-                                .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
-            }
-            catch (Exception ex)
-            {
-                ex.printStackTrace(System.out);
-            }
-
-            player.updateInventory();
         }
+        catch (Exception ex)
+        {
+            ex.printStackTrace(System.out);
+        }
+
+        // Resend entity metadata else he will be invisible to himself until its resent
+        try
+        {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player,
+                    ProtocolLibrary.getProtocolManager()
+                            .createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(),
+                                    WrappedDataWatcher.getEntityWatcher(player), true)
+                            .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace(System.out);
+        }
+
+        player.updateInventory();
     }
 
     /**
@@ -1392,6 +1402,11 @@ public class DisguiseUtilities
         {
             ex.printStackTrace(System.out);
         }
+    }
+
+    public static LibsDisguises getPlugin()
+    {
+        return libsDisguises;
     }
 
     /**
