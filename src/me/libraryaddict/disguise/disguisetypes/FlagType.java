@@ -15,48 +15,7 @@ import org.bukkit.util.Vector;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.google.common.base.Optional;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PigWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.RabbitWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ShulkerWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SnowmanWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.VillagerWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.WitchWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.WitherSkullWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.WitherWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
 
 public class FlagType<Y>
 {
@@ -208,6 +167,8 @@ public class FlagType<Y>
     public static FlagType<Integer> PLAYER_SCORE = new FlagType<Integer>(PlayerWatcher.class, 1, 0);
 
     public static FlagType<Byte> PLAYER_SKIN = new FlagType<Byte>(PlayerWatcher.class, 2, (byte) 0);
+
+    public static FlagType<Boolean> POLAR_BEAR_STANDING = new FlagType<Boolean>(PolarBearWatcher.class, 0, false);
 
     public static FlagType<Integer> RABBIT_TYPE = new FlagType<Integer>(RabbitWatcher.class, 0, 0);
 

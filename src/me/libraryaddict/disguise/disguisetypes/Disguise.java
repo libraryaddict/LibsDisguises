@@ -122,11 +122,23 @@ public abstract class Disguise
         if (getType() == DisguiseType.WITHER_SKELETON)
         {
             ((SkeletonWatcher) getWatcher()).setType(SkeletonType.WITHER);
+        }
+        else if (getType() == DisguiseType.STRAY)
+        {
+            ((SkeletonWatcher) getWatcher()).setType(SkeletonType.STRAY);
         } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
         else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
         {
-            ((ZombieWatcher) getWatcher())
-                    .setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
+            Profession profession = null;
+
+            while (profession == null || profession == Profession.NORMAL || profession == Profession.HUSK)
+                profession = Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)];
+
+            ((ZombieWatcher) getWatcher()).setProfession(profession);
+        }
+        else if (getType() == DisguiseType.HUSK)
+        {
+            ((ZombieWatcher) getWatcher()).setProfession(Profession.HUSK);
         }
         else if (getType() == DisguiseType.ELDER_GUARDIAN)
         {

@@ -71,6 +71,8 @@ public enum DisguiseType
 
     HORSE,
 
+    HUSK,
+
     IRON_GOLEM,
 
     ITEM_FRAME(71),
@@ -107,6 +109,8 @@ public enum DisguiseType
 
     PLAYER,
 
+    POLAR_BEAR,
+
     PRIMED_TNT(50),
 
     RABBIT,
@@ -139,11 +143,15 @@ public enum DisguiseType
 
     SQUID,
 
-    TIPPED_ARROW(92),
+    STRAY,
 
     THROWN_EXP_BOTTLE(75),
 
+    TIPPED_ARROW(92),
+
     UNDEAD_HORSE,
+
+    UNKNOWN,
 
     VILLAGER,
 
@@ -159,9 +167,7 @@ public enum DisguiseType
 
     ZOMBIE,
 
-    ZOMBIE_VILLAGER,
-
-    UNKNOWN;
+    ZOMBIE_VILLAGER;
 
     static
     {
@@ -269,9 +275,9 @@ public enum DisguiseType
         }
     }
 
-    private int objectId = -1, defaultData = 0;
-
     private EntityType entityType;
+
+    private int objectId = -1, defaultData = 0;
 
     private Class<? extends FlagWatcher> watcherClass;
 
@@ -318,16 +324,6 @@ public enum DisguiseType
     }
 
     /**
-     * The TYPE id of this entity. Different from the Object Id send in spawn packets when spawning miscs.
-     * 
-     * @return
-     */
-    public int getTypeId()
-    {
-        return (int) getEntityType().getTypeId();
-    }
-
-    /**
      * The object type send in packets when spawning a misc entity. Otherwise, -1.
      * 
      * @return
@@ -335,6 +331,16 @@ public enum DisguiseType
     public int getObjectId()
     {
         return objectId;
+    }
+
+    /**
+     * The TYPE id of this entity. Different from the Object Id send in spawn packets when spawning miscs.
+     * 
+     * @return
+     */
+    public int getTypeId()
+    {
+        return (int) getEntityType().getTypeId();
     }
 
     public Class<? extends FlagWatcher> getWatcherClass()
