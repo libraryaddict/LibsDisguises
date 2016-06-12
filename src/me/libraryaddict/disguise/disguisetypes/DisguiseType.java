@@ -195,9 +195,11 @@ public enum DisguiseType
                     toUse = DisguiseType.HORSE;
                     break;
                 case ZOMBIE_VILLAGER:
+                case HUSK:
                     toUse = DisguiseType.ZOMBIE;
                     break;
                 case WITHER_SKELETON:
+                case STRAY:
                     toUse = DisguiseType.SKELETON;
                     break;
                 case ELDER_GUARDIAN:

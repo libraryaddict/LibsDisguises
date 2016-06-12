@@ -1186,8 +1186,6 @@ public class DisguiseUtilities
 
         if ((t = scoreboard.getTeam("LDPushing")) != null)
         {
-            t.setOption(Option.COLLISION_RULE, OptionStatus.ALWAYS);
-            t.removeEntry(player.getName());
             t.unregister();
         }
 
@@ -1279,6 +1277,19 @@ public class DisguiseUtilities
 
                 return;
             }
+
+            // Code to stop player pushing in 1.9
+            Scoreboard scoreboard = player.getScoreboard();
+            Team t;
+
+            if ((t = scoreboard.getTeam("LDPushing")) == null)
+            {
+                t = scoreboard.registerNewTeam("LDPushing");
+
+                t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            }
+
+            t.addEntry(player.getName());
 
             // Add himself to his own entity tracker
             Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
@@ -1496,22 +1507,6 @@ public class DisguiseUtilities
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null)
         {
             return;
-        }
-
-        // Code to stop player pushing in 1.9
-        Scoreboard scoreboard = player.getScoreboard();
-        Team t;
-
-        if ((t = scoreboard.getTeam("LDPushing")) != null)
-        {
-            t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-        }
-        else
-        {
-            t = scoreboard.registerNewTeam("LDPushing");
-
-            t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-            t.addEntry(player.getName());
         }
 
         // player.spigot().setCollidesWithEntities(false);

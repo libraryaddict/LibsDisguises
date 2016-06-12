@@ -160,6 +160,7 @@ public class LibsDisguises extends JavaPlugin
                     break;
                 case ZOMBIE_VILLAGER:
                 case PIG_ZOMBIE:
+                case HUSK:
                     watcherClass = ZombieWatcher.class;
                     break;
                 case MAGMA_CUBE:
@@ -169,6 +170,7 @@ public class LibsDisguises extends JavaPlugin
                     watcherClass = GuardianWatcher.class;
                     break;
                 case WITHER_SKELETON:
+                case STRAY:
                     watcherClass = SkeletonWatcher.class;
                     break;
                 default:
@@ -234,6 +236,8 @@ public class LibsDisguises extends JavaPlugin
             case MULE:
             case UNDEAD_HORSE:
             case SKELETON_HORSE:
+            case STRAY:
+            case HUSK:
                 continue;
             case PRIMED_TNT:
                 nmsEntityName = "TNTPrimed";

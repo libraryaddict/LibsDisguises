@@ -408,9 +408,9 @@ public class ReflectionManager
 
             return getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData")
                     .getDeclaredConstructor(getNmsClass("PacketPlayOutPlayerInfo"), gameProfile.getHandleType(), int.class,
-                            getNmsClass("WorldSettings$EnumGamemode"), getNmsClass("IChatBaseComponent"))
-                    .newInstance(playerInfoPacket, gameProfile.getHandle(), 0,
-                            getNmsClass("WorldSettings$EnumGamemode").getEnumConstants()[1], playerListName);
+                            getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"))
+                    .newInstance(playerInfoPacket, gameProfile.getHandle(), 0, getNmsClass("EnumGamemode").getEnumConstants()[1],
+                            playerListName);
         }
         catch (Exception ex)
         {
