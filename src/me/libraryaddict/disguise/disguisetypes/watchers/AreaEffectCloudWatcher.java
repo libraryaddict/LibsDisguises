@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.awt.Color;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;

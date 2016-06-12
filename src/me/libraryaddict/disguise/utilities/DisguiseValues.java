@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities;
 import java.util.HashMap;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 public class DisguiseValues
 {
@@ -40,11 +39,6 @@ public class DisguiseValues
         return values.get(type);
     }
 
-    public static HashMap<FlagType, Object> getMetaValues(DisguiseType type)
-    {
-        return getDisguiseValues(type).getMetaValues();
-    }
-
     public static Class getNmsEntityClass(DisguiseType type)
     {
         return getDisguiseValues(type).getNmsEntityClass();
@@ -54,7 +48,6 @@ public class DisguiseValues
     private FakeBoundingBox babyBox;
     private float[] entitySize;
     private double maxHealth;
-    private HashMap<FlagType, Object> metaValues = new HashMap<>();
     private Class nmsEntityClass;
 
     public DisguiseValues(DisguiseType type, Class classType, int entitySize, double maxHealth)
@@ -84,11 +77,6 @@ public class DisguiseValues
         return maxHealth;
     }
 
-    public HashMap<FlagType, Object> getMetaValues()
-    {
-        return metaValues;
-    }
-
     public Class getNmsEntityClass()
     {
         return nmsEntityClass;
@@ -107,10 +95,5 @@ public class DisguiseValues
     public void setEntitySize(float[] size)
     {
         this.entitySize = size;
-    }
-
-    public void setMetaValue(FlagType id, Object value)
-    {
-        metaValues.put(id, value);
     }
 }

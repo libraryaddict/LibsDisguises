@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class GuardianWatcher extends LivingWatcher
+public class GuardianWatcher extends InsentientWatcher
 {
 
     public GuardianWatcher(Disguise disguise)

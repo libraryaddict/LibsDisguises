@@ -1,64 +1,137 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.google.common.base.Optional;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PigWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.RabbitWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ShulkerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SnowmanWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.VillagerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WitchWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WitherSkullWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WitherWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 public class FlagType<Y>
 {
     private static FlagType[] _values = new FlagType[0];
 
-    public static FlagType<Boolean> AGEABLE_BABY = new FlagType<Boolean>(AgeableWatcher.class, 11, false);
+    public static FlagType<Boolean> AGEABLE_BABY = new FlagType<Boolean>(AgeableWatcher.class, 0, false);
 
-    public static FlagType<Integer> AREA_EFFECT_COLOR = new FlagType<Integer>(AreaEffectCloudWatcher.class, 6,
+    public static FlagType<Integer> AREA_EFFECT_COLOR = new FlagType<Integer>(AreaEffectCloudWatcher.class, 1,
             Color.BLACK.asRGB());
 
-    public static FlagType<Boolean> AREA_EFFECT_IGNORE_RADIUS = new FlagType<Boolean>(AreaEffectCloudWatcher.class, 7, false);
+    public static FlagType<Boolean> AREA_EFFECT_IGNORE_RADIUS = new FlagType<Boolean>(AreaEffectCloudWatcher.class, 2, false);
 
-    public static FlagType<Integer> AREA_EFFECT_PARTICLE = new FlagType<Integer>(AreaEffectCloudWatcher.class, 8, 0);
+    public static FlagType<Integer> AREA_EFFECT_PARTICLE = new FlagType<Integer>(AreaEffectCloudWatcher.class, 3, 0);
 
-    public static FlagType<Float> AREA_EFFECT_RADIUS = new FlagType<Float>(AreaEffectCloudWatcher.class, 6, 0F);
+    public static FlagType<Integer> AREA_EFFECT_PARTICLE_PARAM_1 = new FlagType<Integer>(AreaEffectCloudWatcher.class, 4, 0);
 
-    public static FlagType<Byte> ARMORSTAND_META = new FlagType<Byte>(ArmorStandWatcher.class, 10, (byte) 0);
+    public static FlagType<Integer> AREA_EFFECT_PARTICLE_PARAM_2 = new FlagType<Integer>(AreaEffectCloudWatcher.class, 5, 0);
 
-    public static FlagType<Byte> ARROW_CRITICAL = new FlagType<Byte>(ArrowWatcher.class, 6, (byte) 0);
+    public static FlagType<Float> AREA_EFFECT_RADIUS = new FlagType<Float>(AreaEffectCloudWatcher.class, 0, 0F);
 
-    public static FlagType<Byte> BAT_HANGING = new FlagType<Byte>(BatWatcher.class, 11, (byte) 1);
+    public static FlagType<Vector> ARMORSTAND_BODY = new FlagType<Vector>(ArmorStandWatcher.class, 2, new Vector());
 
-    public static FlagType<Boolean> BLAZE_BLAZING = new FlagType<Boolean>(BlazeWatcher.class, 11, false);
+    public static FlagType<Vector> ARMORSTAND_HEAD = new FlagType<Vector>(ArmorStandWatcher.class, 1, new Vector());
 
-    public static FlagType<Float> BOAT_DAMAGE = new FlagType<Float>(BoatWatcher.class, 7, 40F);
+    public static FlagType<Vector> ARMORSTAND_LEFT_ARM = new FlagType<Vector>(ArmorStandWatcher.class, 3, new Vector());
 
-    public static FlagType<Boolean> CREEPER_IGNITED = new FlagType<Boolean>(CreeperWatcher.class, 13, false);
+    public static FlagType<Vector> ARMORSTAND_LEFT_LEG = new FlagType<Vector>(ArmorStandWatcher.class, 5, new Vector());
 
-    public static FlagType<Boolean> CREEPER_POWERED = new FlagType<Boolean>(CreeperWatcher.class, 12, false);
+    public static FlagType<Byte> ARMORSTAND_META = new FlagType<Byte>(ArmorStandWatcher.class, 0, (byte) 0);
 
-    public static FlagType<ItemStack> DROPPED_ITEM = new FlagType<ItemStack>(DroppedItemWatcher.class, 6,
+    public static FlagType<Vector> ARMORSTAND_RIGHT_ARM = new FlagType<Vector>(ArmorStandWatcher.class, 4, new Vector());
+
+    public static FlagType<Vector> ARMORSTAND_RIGHT_LEG = new FlagType<Vector>(ArmorStandWatcher.class, 6, new Vector());
+
+    public static FlagType<Byte> ARROW_CRITICAL = new FlagType<Byte>(ArrowWatcher.class, 0, (byte) 0);
+
+    public static FlagType<Byte> BAT_HANGING = new FlagType<Byte>(BatWatcher.class, 0, (byte) 1);
+
+    public static FlagType<Boolean> BLAZE_BLAZING = new FlagType<Boolean>(BlazeWatcher.class, 0, false);
+
+    public static FlagType<Float> BOAT_DAMAGE = new FlagType<Float>(BoatWatcher.class, 2, 40F);
+
+    public static FlagType<Integer> BOAT_DIRECTION = new FlagType<Integer>(BoatWatcher.class, 1, 0);
+
+    public static FlagType<Integer> BOAT_LAST_HIT = new FlagType<Integer>(BoatWatcher.class, 0, 0);
+
+    public static FlagType<Boolean> BOAT_LEFT_PADDLING = new FlagType<Boolean>(BoatWatcher.class, 5, false);
+
+    public static FlagType<Boolean> BOAT_RIGHT_PADDLING = new FlagType<Boolean>(BoatWatcher.class, 4, false);
+
+    public static FlagType<Integer> BOAT_TYPE = new FlagType<Integer>(BoatWatcher.class, 3, 0);
+
+    public static FlagType<Boolean> CREEPER_IGNITED = new FlagType<Boolean>(CreeperWatcher.class, 2, false);
+
+    public static FlagType<Boolean> CREEPER_POWERED = new FlagType<Boolean>(CreeperWatcher.class, 1, false);
+
+    public static FlagType<Integer> CREEPER_STATE = new FlagType<Integer>(CreeperWatcher.class, 0, -1);
+
+    public static FlagType<ItemStack> DROPPED_ITEM = new FlagType<ItemStack>(DroppedItemWatcher.class, 0,
             new ItemStack(Material.AIR));
 
-    public static FlagType<Optional> ENDER_CRYSTAL_BEAM = new FlagType<Optional>(EnderCrystalWatcher.class, 6, Optional.absent());
+    public static FlagType<Optional> ENDER_CRYSTAL_BEAM = new FlagType<Optional>(EnderCrystalWatcher.class, 0, Optional.absent());
 
-    public static FlagType<Boolean> ENDER_CRYSTAL_PLATE = new FlagType<Boolean>(EnderCrystalWatcher.class, 6, false);
+    public static FlagType<Boolean> ENDER_CRYSTAL_PLATE = new FlagType<Boolean>(EnderCrystalWatcher.class, 1, false);
 
-    public static FlagType<Integer> ENDERDRAGON_PHASE = new FlagType<Integer>(EnderDragonWatcher.class, 6, 0);
+    public static FlagType<Integer> ENDERDRAGON_PHASE = new FlagType<Integer>(EnderDragonWatcher.class, 0, 0);
 
-    public static FlagType<Boolean> ENDERMAN_AGRESSIVE = new FlagType<Boolean>(EndermanWatcher.class, 12, false);
+    public static FlagType<Boolean> ENDERMAN_AGRESSIVE = new FlagType<Boolean>(EndermanWatcher.class, 1, false);
 
-    public static FlagType<Optional<Integer>> ENDERMAN_ITEM = new FlagType<Optional<Integer>>(EndermanWatcher.class, 11,
+    public static FlagType<Optional<Integer>> ENDERMAN_ITEM = new FlagType<Optional<Integer>>(EndermanWatcher.class, 0,
             Optional.of(1));
 
     public static FlagType<Integer> ENTITY_AIR_TICKS = new FlagType<Integer>(FlagWatcher.class, 1, 0);
 
-    public static FlagType<String> ENTITY_CUSTOM_NAME = new FlagType<String>(FlagWatcher.class, 2, null);
+    public static FlagType<String> ENTITY_CUSTOM_NAME = new FlagType<String>(FlagWatcher.class, 2, "");
 
     public static FlagType<Boolean> ENTITY_CUSTOM_NAME_VISIBLE = new FlagType<Boolean>(FlagWatcher.class, 3, false);
 
@@ -66,98 +139,154 @@ public class FlagType<Y>
 
     public static FlagType<Boolean> ENTITY_NO_GRAVITY = new FlagType<Boolean>(FlagWatcher.class, 5, false);
 
-    public static FlagType<Integer> ENTITY_SILENT = new FlagType<Integer>(FlagWatcher.class, 4, 0);
+    public static FlagType<Boolean> ENTITY_SILENT = new FlagType<Boolean>(FlagWatcher.class, 4, false);
 
-    public static FlagType<Boolean> GHAST_AGRESSIVE = new FlagType<Boolean>(GhastWatcher.class, 11, false);
+    public static FlagType<BlockPosition> FALLING_BLOCK_POSITION = new FlagType<BlockPosition>(FallingBlockWatcher.class, 0,
+            BlockPosition.ORIGIN);
 
-    public static FlagType<Byte> GUARDIAN_FLAG = new FlagType<Byte>(GuardianWatcher.class, 11, (byte) 0);
+    public static FlagType<Optional<ItemStack>> FIREWORK_ITEM = new FlagType<Optional<ItemStack>>(FireworkWatcher.class, 0,
+            Optional.<ItemStack> absent());
 
-    public static FlagType<Integer> GUARDIAN_TARGET = new FlagType<Integer>(GuardianWatcher.class, 12, 0);
+    public static FlagType<Integer> FISHING_HOOK = new FlagType<Integer>(FishingHookWatcher.class, 0, 0);
 
-    public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 16, 0);
+    public static FlagType<Boolean> GHAST_AGRESSIVE = new FlagType<Boolean>(GhastWatcher.class, 0, false);
 
-    public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 14, 0);
+    public static FlagType<Byte> GUARDIAN_FLAG = new FlagType<Byte>(GuardianWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseWatcher.class, 12, (byte) 0);
+    public static FlagType<Integer> GUARDIAN_TARGET = new FlagType<Integer>(GuardianWatcher.class, 1, 0);
 
-    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseWatcher.class, 15,
+    public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 4, 0);
+
+    public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 2, 0);
+
+    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseWatcher.class, 0, (byte) 0);
+
+    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseWatcher.class, 3,
             Optional.<UUID> absent());
 
-    public static FlagType<Integer> HORSE_STYLE = new FlagType<Integer>(HorseWatcher.class, 14, 0);
+    public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 1, 0);
 
-    public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 13, 0);
+    public static FlagType<Byte> INSENTIENT_META = new FlagType<Byte>(InsentientWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Byte> INSENTIENT_META = new FlagType<Byte>(LivingWatcher.class, 10, (byte) 0);
+    public static FlagType<Byte> IRON_GOLEM_PLAYER_CREATED = new FlagType<Byte>(IronGolemWatcher.class, 0, (byte) 0);
 
-    public static FlagType<ItemStack> ITEMFRAME_ITEM = new FlagType<ItemStack>(ItemFrameWatcher.class, 6, null);
+    public static FlagType<Optional<ItemStack>> ITEMFRAME_ITEM = new FlagType<Optional<ItemStack>>(ItemFrameWatcher.class, 0,
+            Optional.<ItemStack> absent());
 
-    public static FlagType<Byte> ITEMFRAME_ROTATION = new FlagType<Byte>(ItemFrameWatcher.class, 6, (byte) 0);
+    public static FlagType<Integer> ITEMFRAME_ROTATION = new FlagType<Integer>(ItemFrameWatcher.class, 1, 0);
 
-    public static FlagType<Integer> LIVING_ARROWS = new FlagType<Integer>(LivingWatcher.class, 9, 0);
+    public static FlagType<Integer> LIVING_ARROWS = new FlagType<Integer>(LivingWatcher.class, 4, 0);
 
-    public static FlagType<Float> LIVING_HEALTH = new FlagType<Float>(LivingWatcher.class, 6, 0F);
+    public static FlagType<Byte> LIVING_HAND = new FlagType<Byte>(LivingWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Boolean> LIVING_POTION_AMBIENT = new FlagType<Boolean>(LivingWatcher.class, 8, false);
+    public static FlagType<Float> LIVING_HEALTH = new FlagType<Float>(LivingWatcher.class, 1, 0F);
 
-    public static FlagType<Integer> LIVING_POTIONS = new FlagType<Integer>(LivingWatcher.class, 7, 0);
+    public static FlagType<Boolean> LIVING_POTION_AMBIENT = new FlagType<Boolean>(LivingWatcher.class, 3, false);
 
-    public static FlagType<Integer> MINECART_BLOCK = new FlagType<Integer>(MinecartWatcher.class, 8, 0);
+    public static FlagType<Integer> LIVING_POTIONS = new FlagType<Integer>(LivingWatcher.class, 2, 0);
 
-    public static FlagType<Boolean> MINECART_BLOCK_VISIBLE = new FlagType<Boolean>(MinecartWatcher.class, 10, false);
+    public static FlagType<Integer> MINECART_BLOCK = new FlagType<Integer>(MinecartWatcher.class, 3, 0);
 
-    public static FlagType<Integer> MINECART_BLOCK_Y = new FlagType<Integer>(MinecartWatcher.class, 9, 0);
+    public static FlagType<Boolean> MINECART_BLOCK_VISIBLE = new FlagType<Boolean>(MinecartWatcher.class, 5, false);
 
-    public static FlagType<Integer> OCELOT_TYPE = new FlagType<Integer>(OcelotWatcher.class, 14, 0);
+    public static FlagType<Integer> MINECART_BLOCK_Y = new FlagType<Integer>(MinecartWatcher.class, 4, 0);
 
-    public static FlagType<Boolean> PIG_SADDLED = new FlagType<Boolean>(PigWatcher.class, 12, false);
+    public static FlagType<Integer> MINECART_SHAKING_DIRECTION = new FlagType<Integer>(MinecartWatcher.class, 1, 1);
 
-    public static FlagType<Byte> PLAYER_SKIN = new FlagType<Byte>(PlayerWatcher.class, 12, (byte) 0);
+    public static FlagType<Float> MINECART_SHAKING_MULITPLIER = new FlagType<Float>(MinecartWatcher.class, 2, 0F);
 
-    public static FlagType<Integer> RABBIT_TYPE = new FlagType<Integer>(RabbitWatcher.class, 12, 0);
+    public static FlagType<Integer> MINECART_SHAKING_POWER = new FlagType<Integer>(MinecartWatcher.class, 0, 0);
 
-    public static FlagType<Byte> SHEEP_WOOL = new FlagType<Byte>(SheepWatcher.class, 12, (byte) 0);
+    public static FlagType<Integer> OCELOT_TYPE = new FlagType<Integer>(OcelotWatcher.class, 0, 0);
 
-    public static FlagType<Integer> SKELETON_TYPE = new FlagType<Integer>(SkeletonWatcher.class, 11, 0);
+    public static FlagType<Boolean> PIG_SADDLED = new FlagType<Boolean>(PigWatcher.class, 0, false);
 
-    public static FlagType<Integer> SLIME_SIZE = new FlagType<Integer>(SlimeWatcher.class, 11, 0);
+    public static FlagType<Float> PLAYER_ABSORPTION = new FlagType<Float>(PlayerWatcher.class, 0, 0F);
 
-    public static FlagType<Byte> TAMEABLE_META = new FlagType<Byte>(TameableWatcher.class, 12, (byte) 0);
+    public static FlagType<Byte> PLAYER_HAND = new FlagType<Byte>(PlayerWatcher.class, 3, (byte) 0);
 
-    public static FlagType<Optional<UUID>> TAMEABLE_OWNER = new FlagType<Optional<UUID>>(TameableWatcher.class, 13,
+    public static FlagType<Integer> PLAYER_SCORE = new FlagType<Integer>(PlayerWatcher.class, 1, 0);
+
+    public static FlagType<Byte> PLAYER_SKIN = new FlagType<Byte>(PlayerWatcher.class, 2, (byte) 0);
+
+    public static FlagType<Integer> RABBIT_TYPE = new FlagType<Integer>(RabbitWatcher.class, 0, 0);
+
+    public static FlagType<Byte> SHEEP_WOOL = new FlagType<Byte>(SheepWatcher.class, 0, (byte) 0);
+
+    public static FlagType<Optional<BlockPosition>> SHULKER_ATTACHED = new FlagType<Optional<BlockPosition>>(ShulkerWatcher.class,
+            1, Optional.<BlockPosition> absent());
+
+    public static FlagType<BlockFace> SHULKER_FACING = new FlagType<BlockFace>(ShulkerWatcher.class, 0, BlockFace.DOWN);
+
+    public static FlagType<Byte> SHULKER_PEEKING = new FlagType<Byte>(ShulkerWatcher.class, 2, (byte) 0);
+
+    public static FlagType<Boolean> SKELETON_SWING_ARMS = new FlagType<Boolean>(SkeletonWatcher.class, 1, false);
+
+    public static FlagType<Integer> SKELETON_TYPE = new FlagType<Integer>(SkeletonWatcher.class, 0, 0);
+
+    public static FlagType<Integer> SLIME_SIZE = new FlagType<Integer>(SlimeWatcher.class, 0, 0);
+
+    public static FlagType<Byte> SNOWMAN_HAT = new FlagType<Byte>(SnowmanWatcher.class, 0, (byte) 1);
+
+    public static FlagType<Byte> SPIDER_CLIMB = new FlagType<Byte>(SpiderWatcher.class, 0, (byte) 0);
+
+    public static FlagType<Optional<ItemStack>> SPLASH_POTION_ITEM = new FlagType<Optional<ItemStack>>(SplashPotionWatcher.class,
+            1, Optional.of(new ItemStack(Material.SPLASH_POTION))); // Yeah, the '1' isn't a bug. No idea why but MC thinks
+                                                                    // there's a '0' already.
+
+    public static FlagType<Optional<ItemStack>> SPLASH_POTION_ITEM_BAD = new FlagType<Optional<ItemStack>>(
+            SplashPotionWatcher.class, 0, Optional.of(new ItemStack(Material.SPLASH_POTION))); // Yeah, the '1' isn't a bug. No
+                                                                                               // idea why but MC thinks there's a
+                                                                                               // '0' already.
+
+    public static FlagType<Byte> TAMEABLE_META = new FlagType<Byte>(TameableWatcher.class, 0, (byte) 0);
+
+    public static FlagType<Optional<UUID>> TAMEABLE_OWNER = new FlagType<Optional<UUID>>(TameableWatcher.class, 1,
             Optional.<UUID> absent());
 
-    public static FlagType<Integer> TIPPED_ARROW_COLOR = new FlagType<Integer>(TippedArrowWatcher.class, 6, Color.WHITE.asRGB());
+    public static FlagType<Integer> TIPPED_ARROW_COLOR = new FlagType<Integer>(ArrowWatcher.class, 1, Color.WHITE.asRGB());
 
-    public static FlagType<Integer> VILLAGER_PROFESSION = new FlagType<Integer>(VillagerWatcher.class, 12, 0);
+    public static FlagType<Integer> TNT_FUSE_TICKS = new FlagType<Integer>(TNTWatcher.class, 0, Integer.MAX_VALUE);
 
-    public static FlagType<Boolean> WITCH_AGGRESSIVE = new FlagType<Boolean>(WitchWatcher.class, 11, false);
+    public static FlagType<Integer> VILLAGER_PROFESSION = new FlagType<Integer>(VillagerWatcher.class, 0, 0);
 
-    public static FlagType<Integer> WITHER_INVUL = new FlagType<Integer>(WitchWatcher.class, 14, 0);
+    public static FlagType<Boolean> WITCH_AGGRESSIVE = new FlagType<Boolean>(WitchWatcher.class, 0, false);
 
-    public static FlagType<Integer> WITHER_TARGET_1 = new FlagType<Integer>(WitherWatcher.class, 11, 0);
+    public static FlagType<Integer> WITHER_INVUL = new FlagType<Integer>(WitherWatcher.class, 3, 0);
 
-    public static FlagType<Integer> WITHER_TARGET_2 = new FlagType<Integer>(WitherWatcher.class, 12, 0);
+    public static FlagType<Integer> WITHER_TARGET_1 = new FlagType<Integer>(WitherWatcher.class, 0, 0);
 
-    public static FlagType<Integer> WITHER_TARGET_3 = new FlagType<Integer>(WitherWatcher.class, 13, 0);
+    public static FlagType<Integer> WITHER_TARGET_2 = new FlagType<Integer>(WitherWatcher.class, 1, 0);
 
-    public static FlagType<Boolean> WITHERSKULL_BLUE = new FlagType<Boolean>(WitherSkullWatcher.class, 6, false);
+    public static FlagType<Integer> WITHER_TARGET_3 = new FlagType<Integer>(WitherWatcher.class, 2, 0);
 
-    public static FlagType<Boolean> WOLF_BEGGING = new FlagType<Boolean>(WolfWatcher.class, 15, false);
+    public static FlagType<Boolean> WITHERSKULL_BLUE = new FlagType<Boolean>(WitherSkullWatcher.class, 0, false);
 
-    public static FlagType<Integer> WOLF_COLLAR = new FlagType<Integer>(WolfWatcher.class, 16, 14);
+    public static FlagType<Boolean> WOLF_BEGGING = new FlagType<Boolean>(WolfWatcher.class, 1, false);
 
-    public static FlagType<Float> WOLF_DAMAGE = new FlagType<Float>(WolfWatcher.class, 14, 0F);
+    public static FlagType<Integer> WOLF_COLLAR = new FlagType<Integer>(WolfWatcher.class, 2, 14);
 
-    public static FlagType<Boolean> ZOMBIE_AGGRESSIVE = new FlagType<Boolean>(ZombieWatcher.class, 14, false);
+    public static FlagType<Float> WOLF_DAMAGE = new FlagType<Float>(WolfWatcher.class, 0, 0F);
 
-    public static FlagType<Boolean> ZOMBIE_BABY = new FlagType<Boolean>(ZombieWatcher.class, 11, false);
+    public static FlagType<Boolean> ZOMBIE_AGGRESSIVE = new FlagType<Boolean>(ZombieWatcher.class, 3, false);
 
-    public static FlagType<Integer> ZOMBIE_PROFESSION = new FlagType<Integer>(ZombieWatcher.class, 12, 0);
+    public static FlagType<Boolean> ZOMBIE_BABY = new FlagType<Boolean>(ZombieWatcher.class, 0, false);
 
-    public static FlagType<Boolean> ZOMBIE_SHAKING = new FlagType<Boolean>(ZombieWatcher.class, 13, false);
+    public static FlagType<Integer> ZOMBIE_PROFESSION = new FlagType<Integer>(ZombieWatcher.class, 1, 0);
+
+    public static FlagType<Boolean> ZOMBIE_SHAKING = new FlagType<Boolean>(ZombieWatcher.class, 2, false);
 
     static
     {
+        for (FlagType flagType : values())
+        {
+            if (flagType.getFlagWatcher() == FlagWatcher.class)
+                continue;
+
+            flagType._index += getNoIndexes(flagType.getFlagWatcher().getSuperclass());
+
+        }
+
         // Simple verification for the dev that he's setting up the FlagType's properly.
         // All flag types should be from 0 to <Max Number> with no empty numbers.
         // All flag types should never occur twice.
@@ -223,21 +352,55 @@ public class FlagType<Y>
         return null;
     }
 
+    public static ArrayList<FlagType> getFlags(Class<? extends FlagWatcher> watcherClass)
+    {
+        ArrayList<FlagType> list = new ArrayList<FlagType>();
+
+        for (FlagType type : values())
+        {
+            if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
+                continue;
+
+            list.add(type);
+        }
+
+        return list;
+    }
+
+    private static int getNoIndexes(Class c)
+    {
+        int found = 0;
+
+        for (FlagType type : values())
+        {
+            if (type.getFlagWatcher() != c)
+                continue;
+
+            found++;
+        }
+
+        if (c != FlagWatcher.class)
+        {
+            found += getNoIndexes(c.getSuperclass());
+        }
+
+        return found;
+    }
+
     public static FlagType[] values()
     {
         return _values;
     }
 
     private Y _defaultValue;
-
     private int _index;
-
     private Class<? extends FlagWatcher> _watcher;
 
     private FlagType(Class<? extends FlagWatcher> watcher, int index, Y defaultValue)
     {
         _index = index;
         _watcher = watcher;
+        _defaultValue = defaultValue;
 
         _values = Arrays.copyOf(_values, _values.length + 1);
         _values[_values.length - 1] = this;

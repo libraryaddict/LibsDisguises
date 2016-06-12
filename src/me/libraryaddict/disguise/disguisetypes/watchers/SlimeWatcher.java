@@ -4,7 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
-public class SlimeWatcher extends LivingWatcher
+public class SlimeWatcher extends InsentientWatcher
 {
 
     public SlimeWatcher(Disguise disguise)

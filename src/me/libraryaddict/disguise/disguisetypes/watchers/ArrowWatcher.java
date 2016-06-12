@@ -6,7 +6,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 public class ArrowWatcher extends FlagWatcher
 {
-
     public ArrowWatcher(Disguise disguise)
     {
         super(disguise);
@@ -22,5 +21,4 @@ public class ArrowWatcher extends FlagWatcher
         setValue(FlagType.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
         sendData(FlagType.ARROW_CRITICAL);
     }
-
 }

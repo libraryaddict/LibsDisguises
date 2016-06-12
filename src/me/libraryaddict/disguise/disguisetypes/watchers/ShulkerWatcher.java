@@ -6,12 +6,12 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 /**
  * @author Navid
  */
-// TODO: Add the appropriate data values to this class
-public class ShulkerWatcher extends LivingWatcher
+public class ShulkerWatcher extends InsentientWatcher
 {
 
     public ShulkerWatcher(Disguise disguise)
@@ -21,32 +21,41 @@ public class ShulkerWatcher extends LivingWatcher
 
     public BlockFace getFacingDirection()
     {
-        return BlockFace.UP;
+        return getValue(FlagType.SHULKER_FACING);
     }
 
-    public void setFacingDirection()
+    public void setFacingDirection(BlockFace face)
     {
-
+        setValue(FlagType.SHULKER_FACING, face);
+        sendData(FlagType.SHULKER_FACING);
     }
 
-    public Optional<BlockPosition> getAttachmentPosition()
+    public BlockPosition getAttachmentPosition()
     {
-        return Optional.absent();
+        return getValue(FlagType.SHULKER_ATTACHED).get();
     }
 
     public void setAttachmentPosition(BlockPosition pos)
     {
-
+        setValue(FlagType.SHULKER_ATTACHED, Optional.of(pos));
+        sendData(FlagType.SHULKER_ATTACHED);
     }
 
-    public byte getShieldHeight()
+    public int getShieldHeight()
     {
-        return 0x00;
+        return getValue(FlagType.SHULKER_PEEKING);
     }
 
-    public void setShieldHeight()
+    public void setShieldHeight(int newHeight)
     {
+        if (newHeight < 0)
+            newHeight = 0;
 
+        if (newHeight > 127)
+            newHeight = 127;
+
+        setValue(FlagType.SHULKER_PEEKING, (byte) newHeight);
+        sendData(FlagType.SHULKER_PEEKING);
     }
 
 }

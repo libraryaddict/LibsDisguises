@@ -6,7 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagType;
 /**
  * @author Navid
  */
-public class EnderDragonWatcher extends LivingWatcher
+public class EnderDragonWatcher extends InsentientWatcher
 {
 
     public EnderDragonWatcher(Disguise disguise)

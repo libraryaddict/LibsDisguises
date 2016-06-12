@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class WitherWatcher extends LivingWatcher
+public class WitherWatcher extends InsentientWatcher
 {
 
     public WitherWatcher(Disguise disguise)

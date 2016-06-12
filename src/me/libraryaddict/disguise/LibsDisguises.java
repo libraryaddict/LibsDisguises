@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -33,12 +34,16 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
@@ -129,7 +134,11 @@ public class LibsDisguises extends JavaPlugin
             {
                 switch (disguiseType)
                 {
-                case ITEM_FRAME: // Not really supported...
+                case SPECTRAL_ARROW:
+                    watcherClass = ArrowWatcher.class;
+                    break;
+                case PRIMED_TNT:
+                    watcherClass = TNTWatcher.class;
                     break;
                 case MINECART_CHEST:
                 case MINECART_COMMAND:
@@ -138,6 +147,10 @@ public class LibsDisguises extends JavaPlugin
                 case MINECART_MOB_SPAWNER:
                 case MINECART_TNT:
                     watcherClass = MinecartWatcher.class;
+                    break;
+                case SPIDER:
+                case CAVE_SPIDER:
+                    watcherClass = SpiderWatcher.class;
                     break;
                 case DONKEY:
                 case MULE:
@@ -154,9 +167,6 @@ public class LibsDisguises extends JavaPlugin
                     break;
                 case ELDER_GUARDIAN:
                     watcherClass = GuardianWatcher.class;
-                    break;
-                case ENDERMITE:
-                    watcherClass = LivingWatcher.class;
                     break;
                 case WITHER_SKELETON:
                     watcherClass = SkeletonWatcher.class;
@@ -182,6 +192,10 @@ public class LibsDisguises extends JavaPlugin
                     {
                         watcherClass = AgeableWatcher.class;
                     }
+                    else if (Creature.class.isAssignableFrom(entityClass))
+                    {
+                        watcherClass = InsentientWatcher.class;
+                    }
                     else if (LivingEntity.class.isAssignableFrom(entityClass))
                     {
                         watcherClass = LivingWatcher.class;
@@ -195,6 +209,12 @@ public class LibsDisguises extends JavaPlugin
                 {
                     watcherClass = FlagWatcher.class; // Disguise is unknown type
                 }
+            }
+
+            if (watcherClass == null)
+            {
+                System.err.println("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
+                continue;
             }
 
             disguiseType.setWatcherClass(watcherClass);
@@ -246,6 +266,7 @@ public class LibsDisguises extends JavaPlugin
                 nmsEntityName = "Guardian";
                 break;
             case ARROW:
+            case SPECTRAL_ARROW:
                 nmsEntityName = "TippedArrow";
             default:
                 break;
@@ -304,25 +325,13 @@ public class LibsDisguises extends JavaPlugin
 
                     if (flagType == null)
                     {
-                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! " + watch.getIndex()
-                                + " cannot be found!");
+                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " + watch.getIndex()
+                                + " can't be found!");
+                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
+                                + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                         continue;
                     }
-
-                    disguiseValues.setMetaValue(flagType, watch.getValue());
-
-                    // Uncomment when I need to find the new datawatcher values for a class..
-                    // int id = watch.getIndex();
-                    // Object val = watch.getValue();
-                    // Class<?> valClazz = val != null ? watch.getValue().getClass() : null;
-                    // try {
-                    // val = val.toString();
-                    // } catch (Exception e) {
-                    // val = val != null ? val.getClass() : "null";
-                    // }
-                    // System.out.println("Disguise: " + disguiseType + ", ID: " + id + ", Class: " + (val == null ? "null" :
-                    // valClazz) + ", Value: " + val);
                 }
 
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());

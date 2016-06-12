@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import org.bukkit.inventory.MainHand;
+
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
@@ -10,25 +12,15 @@ public class InsentientWatcher extends LivingWatcher
         super(disguise);
     }
 
-    public void setLeftHanded(boolean leftHanded)
+    public void setMainHand(MainHand mainHand)
     {
-        setRightHanded(!leftHanded);
-    }
-
-    public void setRightHanded(boolean rightHanded)
-    {
-        setInsentientFlag(2, rightHanded);
+        setInsentientFlag(2, mainHand == MainHand.RIGHT);
         sendData(FlagType.INSENTIENT_META);
     }
 
-    public boolean isRightHanded()
+    public MainHand getMainHand()
     {
-        return getInsentientFlag(2);
-    }
-
-    public boolean isLeftHanded()
-    {
-        return !isRightHanded();
+        return getInsentientFlag(2) ? MainHand.RIGHT : MainHand.LEFT;
     }
 
     public boolean isAI()

@@ -5,7 +5,7 @@ import org.bukkit.entity.Villager.Profession;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class ZombieWatcher extends LivingWatcher
+public class ZombieWatcher extends InsentientWatcher
 {
 
     public ZombieWatcher(Disguise disguise)

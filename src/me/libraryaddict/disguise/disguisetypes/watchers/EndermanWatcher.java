@@ -9,7 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-public class EndermanWatcher extends LivingWatcher
+public class EndermanWatcher extends InsentientWatcher
 {
 
     public EndermanWatcher(Disguise disguise)

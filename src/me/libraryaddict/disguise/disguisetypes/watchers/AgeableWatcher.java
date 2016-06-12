@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class AgeableWatcher extends LivingWatcher
+public class AgeableWatcher extends InsentientWatcher
 {
 
     public AgeableWatcher(Disguise disguise)

@@ -32,9 +32,9 @@ public class FlagWatcher
     /**
      * These are the entity values I need to add else it could crash them..
      */
-    private HashMap<FlagType, Object> backupEntityValues = new HashMap<>();
+    private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
     private TargetedDisguise disguise;
-    private HashMap<FlagType, Object> entityValues = new HashMap<>();
+    private HashMap<Integer, Object> entityValues = new HashMap<>();
     private EntityEquipment equipment;
     private boolean hasDied;
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
@@ -77,7 +77,7 @@ public class FlagWatcher
             cloned = new FlagWatcher(getDisguise());
         }
 
-        cloned.entityValues = (HashMap<FlagType, Object>) entityValues.clone();
+        cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.equipment = ReflectionManager.createEntityEquipment(cloned.getDisguise().getEntity());
         cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
         cloned.addEntityAnimations = addEntityAnimations;
@@ -158,7 +158,7 @@ public class FlagWatcher
         if (sendAllCustom)
         {
             // Its sending the entire meta data. Better add the custom meta
-            for (FlagType id : entityValues.keySet())
+            for (Integer id : entityValues.keySet())
             {
                 if (sentValues.contains(id))
                 {
@@ -172,8 +172,7 @@ public class FlagWatcher
                     continue;
                 }
 
-                WrappedWatchableObject watch = new WrappedWatchableObject(
-                        ReflectionManager.createDataWatcherItem(id.getIndex(), value));
+                WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(id, value));
 
                 newList.add(watch);
             }
@@ -245,7 +244,7 @@ public class FlagWatcher
 
     private boolean getEntityFlag(int byteValue)
     {
-        return ((byte) getValue(FlagType.ENTITY_META) & 1 << byteValue) != 0;
+        return (getValue(FlagType.ENTITY_META) & 1 << byteValue) != 0;
     }
 
     public EntityEquipment getEquipment()
@@ -293,14 +292,14 @@ public class FlagWatcher
         return null;
     }
 
-    protected <Y> Y getValue(FlagType<Y> no)
+    protected <Y> Y getValue(FlagType<Y> flagType)
     {
-        if (entityValues.containsKey(no))
+        if (entityValues.containsKey(flagType.getIndex()))
         {
-            return (Y) entityValues.get(no);
+            return (Y) entityValues.get(flagType.getIndex());
         }
 
-        return no.getDefault();
+        return flagType.getDefault();
     }
 
     public List<WrappedWatchableObject> getWatchableObjects()
@@ -318,9 +317,9 @@ public class FlagWatcher
         return getCustomName() != null;
     }
 
-    protected boolean hasValue(int no)
+    protected boolean hasValue(FlagType no)
     {
-        return entityValues.containsKey(no);
+        return entityValues.containsKey(no.getIndex());
     }
 
     public boolean isBurning()
@@ -377,7 +376,7 @@ public class FlagWatcher
     {
         watchableObjects = new ArrayList<>();
 
-        for (int i = 0; i <= 31; i++)
+        for (int i = 0; i <= 31; i++)// TODO
         {
             WrappedWatchableObject watchable = null;
 
@@ -468,7 +467,7 @@ public class FlagWatcher
 
     protected void setBackupValue(FlagType no, Object value)
     {
-        backupEntityValues.put(no, value);
+        backupEntityValues.put(no.getIndex(), value);
     }
 
     public void setBurning(boolean setBurning)
@@ -653,7 +652,7 @@ public class FlagWatcher
 
     protected <Y> void setValue(FlagType<Y> id, Y value)
     {
-        entityValues.put(id, value);
+        entityValues.put(id.getIndex(), value);
 
         if (!DisguiseConfig.isMetadataPacketsEnabled())
         {

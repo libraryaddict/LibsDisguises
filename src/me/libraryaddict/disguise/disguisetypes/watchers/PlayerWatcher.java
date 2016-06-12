@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.MainHand;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -32,6 +33,17 @@ public class PlayerWatcher extends LivingWatcher
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);
         watcher.isInBed = isInBed;
         return watcher;
+    }
+
+    public void setMainHand(MainHand mainHand)
+    {
+        setValue(FlagType.PLAYER_HAND, (byte) mainHand.ordinal());
+        sendData(FlagType.PLAYER_HAND);
+    }
+
+    public MainHand getMainHand()
+    {
+        return MainHand.values()[getValue(FlagType.PLAYER_HAND)];
     }
 
     public BlockFace getSleepingDirection()

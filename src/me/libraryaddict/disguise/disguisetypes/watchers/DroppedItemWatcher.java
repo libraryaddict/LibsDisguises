@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;

@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class BatWatcher extends LivingWatcher
+public class BatWatcher extends InsentientWatcher
 {
 
     public BatWatcher(Disguise disguise)

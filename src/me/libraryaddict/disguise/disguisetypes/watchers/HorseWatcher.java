@@ -16,7 +16,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class HorseWatcher extends AgeableWatcher
 {
-
     public HorseWatcher(Disguise disguise)
     {
         super(disguise);
@@ -82,7 +81,7 @@ public class HorseWatcher extends AgeableWatcher
 
     public Style getStyle()
     {
-        return Style.values()[(getValue(FlagType.HORSE_STYLE) >>> 8)];
+        return Style.values()[(getValue(FlagType.HORSE_COLOR) >>> 8)];
     }
 
     public boolean hasChest()
@@ -221,8 +220,8 @@ public class HorseWatcher extends AgeableWatcher
 
     public void setStyle(Style style)
     {
-        setValue(FlagType.HORSE_STYLE, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(FlagType.HORSE_STYLE);
+        setValue(FlagType.HORSE_COLOR, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(FlagType.HORSE_COLOR);
     }
 
     public void setTamed(boolean tamed)

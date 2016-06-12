@@ -6,7 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagType;
 /**
  * @author Navid
  */
-public class WitchWatcher extends LivingWatcher
+public class WitchWatcher extends InsentientWatcher
 {
 
     public WitchWatcher(Disguise disguise)

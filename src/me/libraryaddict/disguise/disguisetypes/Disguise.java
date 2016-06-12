@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -38,7 +37,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
@@ -260,7 +258,7 @@ public abstract class Disguise
                     deadTicks = 0;
 
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-                    if (getType() == DisguiseType.PRIMED_TNT || getType() == DisguiseType.FIREWORK)
+                    if (getType() == DisguiseType.FIREWORK)
                     {
                         refreshDisguise++;
 
@@ -783,15 +781,23 @@ public abstract class Disguise
      */
     private void setupWatcher()
     {
-        HashMap<FlagType, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
-        HashMap<FlagType, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
+        ArrayList<FlagType> disguiseFlags = FlagType.getFlags(getType().getWatcherClass());
+        ArrayList<FlagType> entityFlags = FlagType.getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
-        for (Entry<FlagType, Object> entry : entityValues.entrySet())
+        for (FlagType flag : entityFlags)
         {
-            if (disguiseValues.containsKey(entry.getKey()))
+            if (disguiseFlags.contains(flag))
                 continue;
 
-            getWatcher().setBackupValue(entry.getKey(), entry.getValue());
+            FlagType backup = null;
+
+            for (FlagType flagType : disguiseFlags)
+            {
+                if (flagType.getIndex() == flag.getIndex())
+                    backup = flagType;
+            }
+
+            getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
         }
     }
 
