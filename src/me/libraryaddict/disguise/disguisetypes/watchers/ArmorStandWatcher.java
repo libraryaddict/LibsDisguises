@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 public class ArmorStandWatcher extends LivingWatcher
 {
@@ -12,7 +13,7 @@ public class ArmorStandWatcher extends LivingWatcher
 
     private boolean getArmorStandFlag(int value)
     {
-        return (getValue(10, 0) & value) != 0;
+        return (getValue(FlagType.ARMORSTAND_META) & value) != 0;
     }
 
     public boolean isNoBasePlate()
@@ -42,7 +43,8 @@ public class ArmorStandWatcher extends LivingWatcher
 
     private void setArmorStandFlag(int value, boolean isTrue)
     {
-        byte b1 = (byte) getValue(10, (byte) 0);
+        byte b1 = (byte) getValue(FlagType.ARMORSTAND_META);
+
         if (isTrue)
         {
             b1 = (byte) (b1 | value);
@@ -51,38 +53,39 @@ public class ArmorStandWatcher extends LivingWatcher
         {
             b1 = (byte) (b1 & value);
         }
-        setValue(10, b1);
-        sendData(10);
+
+        setValue(FlagType.ARMORSTAND_META, b1);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
     public void setNoBasePlate(boolean noBasePlate)
     {
         setArmorStandFlag(8, noBasePlate);
-        sendData(10);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
     public void setNoGravity(boolean noGravity)
     {
         setArmorStandFlag(2, noGravity);
-        sendData(10);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
     public void setShowArms(boolean showArms)
     {
         setArmorStandFlag(4, showArms);
-        sendData(10);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
     public void setSmall(boolean isSmall)
     {
         setArmorStandFlag(1, isSmall);
-        sendData(10);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
     public void setMarker(boolean isMarker)
     {
         setArmorStandFlag(10, isMarker);
-        sendData(10);
+        sendData(FlagType.ARMORSTAND_META);
     }
 
 }

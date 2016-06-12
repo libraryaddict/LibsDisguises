@@ -30,6 +30,7 @@ import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
@@ -299,7 +300,18 @@ public class LibsDisguises extends JavaPlugin
 
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects())
                 {
-                    disguiseValues.setMetaValue(watch.getIndex(), watch.getValue());
+                    FlagType flagType = FlagType.getFlag(watcherClass, watch.getIndex());
+
+                    if (flagType == null)
+                    {
+                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! " + watch.getIndex()
+                                + " cannot be found!");
+                        System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
+                        continue;
+                    }
+
+                    disguiseValues.setMetaValue(flagType, watch.getValue());
+
                     // Uncomment when I need to find the new datawatcher values for a class..
                     // int id = watch.getIndex();
                     // Object val = watch.getValue();

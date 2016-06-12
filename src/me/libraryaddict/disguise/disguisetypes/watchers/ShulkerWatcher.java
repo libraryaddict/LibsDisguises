@@ -10,34 +10,42 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 /**
  * @author Navid
  */
-//TODO: Add the appropriate data values to this class
-public class ShulkerWatcher extends LivingWatcher {
+// TODO: Add the appropriate data values to this class
+public class ShulkerWatcher extends LivingWatcher
+{
 
-    public ShulkerWatcher(Disguise disguise) {
+    public ShulkerWatcher(Disguise disguise)
+    {
         super(disguise);
     }
 
-    public BlockFace getFacingDirection() {
+    public BlockFace getFacingDirection()
+    {
         return BlockFace.UP;
     }
 
-    public void setFacingDirection() {
+    public void setFacingDirection()
+    {
 
     }
 
-    public Optional<BlockPosition> getAttachmentPosition() {
+    public Optional<BlockPosition> getAttachmentPosition()
+    {
         return Optional.absent();
     }
 
-    public void setAttachmentPosition(BlockPosition pos) {
+    public void setAttachmentPosition(BlockPosition pos)
+    {
 
     }
 
-    public byte getShieldHeight() {
+    public byte getShieldHeight()
+    {
         return 0x00;
     }
 
-    public void setShieldHeight() {
+    public void setShieldHeight()
+    {
 
     }
 

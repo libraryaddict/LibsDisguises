@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 public class BlazeWatcher extends LivingWatcher
 {
@@ -11,13 +12,13 @@ public class BlazeWatcher extends LivingWatcher
 
     public boolean isBlazing()
     {
-        return (boolean) getValue(11, false);
+        return getValue(FlagType.BLAZE_BLAZING);
     }
 
     public void setBlazing(boolean isBlazing)
     {
-        setValue(11, isBlazing);
-        sendData(11);
+        setValue(FlagType.BLAZE_BLAZING, isBlazing);
+        sendData(FlagType.BLAZE_BLAZING);
     }
 
 }

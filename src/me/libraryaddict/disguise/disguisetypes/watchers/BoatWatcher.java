@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 public class BoatWatcher extends FlagWatcher
@@ -15,13 +16,13 @@ public class BoatWatcher extends FlagWatcher
 
     public float getDamage()
     {
-        return getValue(7, 40F);
+        return getValue(FlagType.BOAT_DAMAGE);
     }
 
     public void setDamage(float dmg)
     {
-        setValue(7, dmg);
-        sendData(7);
+        setValue(FlagType.BOAT_DAMAGE, dmg);
+        sendData(FlagType.BOAT_DAMAGE);
     }
 
 }

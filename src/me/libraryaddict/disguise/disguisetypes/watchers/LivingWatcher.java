@@ -20,13 +20,13 @@ import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class LivingWatcher extends FlagWatcher
 {
-
     static Map<Integer, Object> list = new HashMap<>();
     static Method getId;
 
@@ -36,6 +36,7 @@ public class LivingWatcher extends FlagWatcher
         {
             getId = ReflectionManager.getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
             Object REGISTRY = ReflectionManager.getNmsField("MobEffectList", "REGISTRY").get(null);
+
             for (Object next : ((Iterable) REGISTRY))
             {
                 int id = (int) getId.invoke(null, next);
@@ -81,7 +82,7 @@ public class LivingWatcher extends FlagWatcher
 
     public float getHealth()
     {
-        return (float) getValue(6, 0F);
+        return (float) getValue(FlagType.LIVING_HEALTH);
     }
 
     public double getMaxHealth()
@@ -91,7 +92,7 @@ public class LivingWatcher extends FlagWatcher
 
     public boolean isPotionParticlesAmbient()
     {
-        return (boolean) getValue(8, false);
+        return (boolean) getValue(FlagType.LIVING_POTION_AMBIENT);
     }
 
     private int getPotions()
@@ -151,31 +152,31 @@ public class LivingWatcher extends FlagWatcher
 
     public void setPotionParticlesAmbient(boolean particles)
     {
-        setValue(8, particles);
-        sendData(8);
+        setValue(FlagType.LIVING_POTION_AMBIENT, particles);
+        sendData(FlagType.LIVING_POTION_AMBIENT);
     }
 
     private void sendPotionEffects()
     {
-        setValue(7, getPotions());
-        sendData(7);
+        setValue(FlagType.LIVING_POTIONS, getPotions());
+        sendData(FlagType.LIVING_POTIONS);
     }
 
     public void setHealth(float health)
     {
-        setValue(6, health);
-        sendData(6);
+        setValue(FlagType.LIVING_HEALTH, health);
+        sendData(FlagType.LIVING_HEALTH);
     }
 
     public int getArrowsSticking()
     {
-        return (int) getValue(9, 0);
+        return (int) getValue(FlagType.LIVING_ARROWS);
     }
 
     public void setArrowsSticking(int arrowsNo)
     {
-        setValue(9, arrowsNo);
-        sendData(9);
+        setValue(FlagType.LIVING_ARROWS, arrowsNo);
+        sendData(FlagType.LIVING_ARROWS);
     }
 
     public void setMaxHealth(double newHealth)

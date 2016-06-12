@@ -1,29 +1,36 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class CreeperWatcher extends LivingWatcher {
+public class CreeperWatcher extends LivingWatcher
+{
 
-    public CreeperWatcher(Disguise disguise) {
+    public CreeperWatcher(Disguise disguise)
+    {
         super(disguise);
     }
 
-    public boolean isIgnited() {
-        return (boolean) getValue(13, false);
+    public boolean isIgnited()
+    {
+        return (boolean) getValue(FlagType.CREEPER_IGNITED);
     }
 
-    public boolean isPowered() {
-        return (boolean) getValue(12, false);
+    public boolean isPowered()
+    {
+        return (boolean) getValue(FlagType.CREEPER_POWERED);
     }
 
-    public void setIgnited(boolean ignited) {
-        setValue(13, ignited);
-        sendData(13);
+    public void setIgnited(boolean ignited)
+    {
+        setValue(FlagType.CREEPER_IGNITED, ignited);
+        sendData(FlagType.CREEPER_IGNITED);
     }
 
-    public void setPowered(boolean powered) {
-        setValue(12, powered);
-        sendData(12);
+    public void setPowered(boolean powered)
+    {
+        setValue(FlagType.CREEPER_POWERED, powered);
+        sendData(FlagType.CREEPER_POWERED);
     }
 
 }

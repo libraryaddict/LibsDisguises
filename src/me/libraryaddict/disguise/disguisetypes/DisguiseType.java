@@ -337,7 +337,7 @@ public enum DisguiseType
         return objectId;
     }
 
-    public Class getWatcherClass()
+    public Class<? extends FlagWatcher> getWatcherClass()
     {
         return watcherClass;
     }

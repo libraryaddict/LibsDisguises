@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class HorseWatcher extends AgeableWatcher
@@ -19,13 +20,14 @@ public class HorseWatcher extends AgeableWatcher
     public HorseWatcher(Disguise disguise)
     {
         super(disguise);
+
         setStyle(Style.values()[DisguiseUtilities.random.nextInt(Style.values().length)]);
         setColor(Color.values()[DisguiseUtilities.random.nextInt(Color.values().length)]);
     }
 
     public Variant getVariant()
     {
-        return Variant.values()[(int) getValue(13, 0)];
+        return Variant.values()[getValue(FlagType.HORSE_VARIANT)];
     }
 
     public void setVariant(Variant variant)
@@ -39,45 +41,48 @@ public class HorseWatcher extends AgeableWatcher
         {
             variant = 0; // Crashing people is mean
         }
-        setValue(13, variant);
-        sendData(13);
+
+        setValue(FlagType.HORSE_VARIANT, variant);
+        sendData(FlagType.HORSE_VARIANT);
     }
 
     public Color getColor()
     {
-        return Color.values()[((Integer) getValue(14, 0) & 0xFF)];
+        return Color.values()[((Integer) getValue(FlagType.HORSE_COLOR) & 0xFF)];
     }
 
     public ItemStack getHorseArmor()
     {
         int horseValue = getHorseArmorAsInt();
+
         switch (horseValue)
         {
         case 1:
-            return new ItemStack(Material.getMaterial("IRON_BARDING"));
+            return new ItemStack(Material.IRON_BARDING);
         case 2:
-            return new ItemStack(Material.getMaterial("GOLD_BARDING"));
+            return new ItemStack(Material.GOLD_BARDING);
         case 3:
-            return new ItemStack(Material.getMaterial("DIAMOND_BARDING"));
+            return new ItemStack(Material.DIAMOND_BARDING);
         default:
             break;
         }
+
         return null;
     }
 
     protected int getHorseArmorAsInt()
     {
-        return (int) getValue(16, 0);
+        return getValue(FlagType.HORSE_ARMOR);
     }
 
     public Optional<UUID> getOwner()
     {
-        return getValue(15, Optional.<UUID> absent());
+        return getValue(FlagType.HORSE_OWNER);
     }
 
     public Style getStyle()
     {
-        return Style.values()[((int) getValue(14, 0) >>> 8)];
+        return Style.values()[(getValue(FlagType.HORSE_STYLE) >>> 8)];
     }
 
     public boolean hasChest()
@@ -122,7 +127,7 @@ public class HorseWatcher extends AgeableWatcher
 
     private byte getHorseFlag()
     {
-        return (byte) getValue(12, (byte) 0);
+        return getValue(FlagType.HORSE_META);
     }
 
     public void setCanBreed(boolean breed)
@@ -137,22 +142,24 @@ public class HorseWatcher extends AgeableWatcher
 
     public void setColor(Color color)
     {
-        setValue(14, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
-        sendData(14);
+        setValue(FlagType.HORSE_COLOR, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        sendData(FlagType.HORSE_COLOR);
     }
 
     private void setHorseFlag(int i, boolean flag)
     {
-        byte j = (byte) getValue(12, (byte) 0);
+        byte j = getValue(FlagType.HORSE_META);
+
         if (flag)
         {
-            setValue(12, (byte) (j | i));
+            setValue(FlagType.HORSE_META, (byte) (j | i));
         }
         else
         {
-            setValue(12, (byte) (j & ~i));
+            setValue(FlagType.HORSE_META, (byte) (j & ~i));
         }
-        sendData(12);
+
+        sendData(FlagType.HORSE_META);
     }
 
     public void setGrazing(boolean grazing)
@@ -162,16 +169,18 @@ public class HorseWatcher extends AgeableWatcher
 
     protected void setHorseArmor(int armor)
     {
-        setValue(16, armor);
-        sendData(16);
+        setValue(FlagType.HORSE_ARMOR, armor);
+        sendData(FlagType.HORSE_ARMOR);
     }
 
     public void setHorseArmor(ItemStack item)
     {
         int value = 0;
+
         if (item != null)
         {
             Material mat = item.getType();
+
             if (mat == Material.IRON_BARDING)
             {
                 value = 1;
@@ -185,6 +194,7 @@ public class HorseWatcher extends AgeableWatcher
                 value = 3;
             }
         }
+
         setHorseArmor(value);
     }
 
@@ -195,8 +205,8 @@ public class HorseWatcher extends AgeableWatcher
 
     public void setOwner(UUID uuid)
     {
-        setValue(15, Optional.of(uuid));
-        sendData(15);
+        setValue(FlagType.HORSE_OWNER, Optional.of(uuid));
+        sendData(FlagType.HORSE_OWNER);
     }
 
     public void setRearing(boolean rear)
@@ -211,8 +221,8 @@ public class HorseWatcher extends AgeableWatcher
 
     public void setStyle(Style style)
     {
-        setValue(14, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(14);
+        setValue(FlagType.HORSE_STYLE, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(FlagType.HORSE_STYLE);
     }
 
     public void setTamed(boolean tamed)

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -782,134 +783,15 @@ public abstract class Disguise
      */
     private void setupWatcher()
     {
-        HashMap<Integer, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
-        HashMap<Integer, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
+        HashMap<FlagType, Object> disguiseValues = DisguiseValues.getMetaValues(getType());
+        HashMap<FlagType, Object> entityValues = DisguiseValues.getMetaValues(DisguiseType.getType(getEntity().getType()));
 
-        // Start from 2 as they ALL share 0 and 1
-        for (int dataNo = 0; dataNo <= 31; dataNo++)
+        for (Entry<FlagType, Object> entry : entityValues.entrySet())
         {
-            // STEP 1. Find out if the watcher has set data on it.
-            // If the watcher already set a metadata on this
-            if (getWatcher().hasValue(dataNo))
-            {
-                // Better check that the value is stable.
-                // To check this, I'm going to check if there exists a default value
-                // Then I'm going to check if the watcher value is the same as the default value.
-                if (disguiseValues.containsKey(dataNo))
-                {
-                    // Now check if they are the same class, or both null.
-                    if (disguiseValues.get(dataNo) == null || getWatcher().getValue(dataNo, null) == null)
-                    {
-                        if (disguiseValues.get(dataNo) == null && getWatcher().getValue(dataNo, null) == null)
-                        {
-                            // They are both null. Idk what this means really.
-                            continue;
-                        }
-                    }
-                    else if (getWatcher().getValue(dataNo, null).getClass() == disguiseValues.get(dataNo).getClass())
-                    {
-                        // The classes are the same. The client "shouldn't" crash.
-                        continue;
-                    }
-                }
-            }
-
-            // STEP 2. As the watcher has not set data on it, check if I need to set the default data.
-            // If neither of them touch it
-            if (!entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
-            {
+            if (disguiseValues.containsKey(entry.getKey()))
                 continue;
-            }
 
-            // If the disguise has this, but not the entity. Then better set it!
-            if (!entityValues.containsKey(dataNo) && disguiseValues.containsKey(dataNo))
-            {
-                getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));
-                continue;
-            }
-
-            // Else if the disguise doesn't have it. But the entity does. Better remove it!
-            if (entityValues.containsKey(dataNo) && !disguiseValues.containsKey(dataNo))
-            {
-                getWatcher().setBackupValue(dataNo, null);
-                continue;
-            }
-
-            Object eObj = entityValues.get(dataNo);
-            Object dObj = disguiseValues.get(dataNo);
-
-            if (eObj == null || dObj == null)
-            {
-                if (eObj == null && dObj == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    getWatcher().setBackupValue(dataNo, dObj);
-                    continue;
-                }
-            }
-
-            if (eObj.getClass() != dObj.getClass())
-            {
-                getWatcher().setBackupValue(dataNo, dObj);
-                continue;
-            }
-
-            // Since they both share it. With the same classes. Time to check if its from something they extend.
-            // Better make this clear before I compare the values because some default values are different!
-            // Entity is 0 & 1 - But we aint gonna be checking that
-            // EntityAgeable is 11
-            // EntityInsentient is 10
-            // EntityLiving is 5 & 6 & 7 & 8 & 9
-            // Lets use switch
-            Class baseClass = null;
-
-            switch (dataNo)
-            {
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-                baseClass = ReflectionManager.getNmsClass("EntityLiving");
-                break;
-            case 10:
-                baseClass = ReflectionManager.getNmsClass("EntityInsentient");
-                break;
-            case 11:
-                baseClass = ReflectionManager.getNmsClass("EntityAgeable");
-                break;
-            default:
-                break;
-            }
-
-            Class nmsEntityClass = ReflectionManager.getNmsEntity(getEntity()).getClass();
-            Class nmsDisguiseClass = DisguiseValues.getNmsEntityClass(getType());
-
-            if (nmsDisguiseClass != null)
-            {
-                // If they both extend the same base class. They OBVIOUSLY share the same datavalue. Right..?
-                if (baseClass != null && baseClass.isAssignableFrom(nmsDisguiseClass)
-                        && baseClass.isAssignableFrom(nmsEntityClass))
-                {
-                    continue;
-                }
-
-                // So they don't extend a basic class.
-                // Maybe if I check that they extend each other..
-                // Seeing as I only store the finished forms of entitys. This should raise no problems and allow for more shared
-                // datawatchers.
-                if (nmsEntityClass.isAssignableFrom(nmsDisguiseClass) || nmsDisguiseClass.isAssignableFrom(nmsEntityClass))
-                {
-                    continue;
-                }
-            }
-
-            // Well I can't find a reason I should leave it alone. They will probably conflict.
-            // Time to set the value to the disguises value so no conflicts!
-            getWatcher().setBackupValue(dataNo, disguiseValues.get(dataNo));
+            getWatcher().setBackupValue(entry.getKey(), entry.getValue());
         }
     }
 

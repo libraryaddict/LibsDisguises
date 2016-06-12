@@ -1,40 +1,53 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
-public class ItemFrameWatcher extends FlagWatcher {
+public class ItemFrameWatcher extends FlagWatcher
+{
 
-    public ItemFrameWatcher(Disguise disguise) {
+    public ItemFrameWatcher(Disguise disguise)
+    {
         super(disguise);
     }
 
-    public ItemStack getItem() {
-        if (getValue(5, null) == null) {
-            return new ItemStack(0);
+    public ItemStack getItem()
+    {
+        if (getValue(FlagType.ITEMFRAME_ITEM) == null)
+        {
+            return new ItemStack(Material.AIR);
         }
-        return (ItemStack) getValue(5, null);
+
+        return (ItemStack) getValue(FlagType.ITEMFRAME_ITEM);
     }
 
-    public int getRotation() {
-        return (int) getValue(6, 0);
+    public int getRotation()
+    {
+        return getValue(FlagType.ITEMFRAME_ROTATION);
     }
 
-    public void setItem(ItemStack newItem) {
-        if (newItem == null) {
-            newItem = new ItemStack(0);
+    public void setItem(ItemStack newItem)
+    {
+        if (newItem == null)
+        {
+            newItem = new ItemStack(Material.AIR);
         }
+
         newItem = newItem.clone();
         newItem.setAmount(1);
-        setValue(5, newItem);
-        sendData(5);
+
+        setValue(FlagType.ITEMFRAME_ITEM, newItem);
+        sendData(FlagType.ITEMFRAME_ITEM);
     }
 
-    public void setRotation(int rotation) {
-        setValue(6, (byte) (rotation % 4));
-        sendData(6);
+    public void setRotation(int rotation)
+    {
+        setValue(FlagType.ITEMFRAME_ROTATION, (byte) (rotation % 4));
+        sendData(FlagType.ITEMFRAME_ROTATION);
     }
 
 }

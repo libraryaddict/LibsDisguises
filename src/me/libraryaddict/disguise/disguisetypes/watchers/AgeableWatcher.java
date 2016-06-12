@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 public class AgeableWatcher extends LivingWatcher
 {
@@ -17,7 +18,7 @@ public class AgeableWatcher extends LivingWatcher
 
     public boolean isBaby()
     {
-        return (boolean) getValue(11, false);
+        return getValue(FlagType.AGEABLE_BABY);
     }
 
     public void setAdult()
@@ -32,8 +33,8 @@ public class AgeableWatcher extends LivingWatcher
 
     public void setBaby(boolean isBaby)
     {
-        setValue(11, isBaby);
-        sendData(11);
+        setValue(FlagType.AGEABLE_BABY, isBaby);
+        sendData(FlagType.AGEABLE_BABY);
     }
 
 }

@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 /**
@@ -18,24 +19,24 @@ public class EnderCrystalWatcher extends FlagWatcher
 
     public void setBeamTarget(BlockPosition position)
     {
-        setValue(5, Optional.of(position));
-        sendData(5);
+        setValue(FlagType.ENDER_CRYSTAL_BEAM, Optional.of(position));
+        sendData(FlagType.ENDER_CRYSTAL_BEAM);
     }
 
     public Optional<BlockPosition> getBeamTarget()
     {
-        return (Optional) getValue(5, Optional.absent());
+        return getValue(FlagType.ENDER_CRYSTAL_BEAM);
     }
 
     public void setShowBottom(boolean bool)
     {
-        setValue(6, bool);
-        sendData(6);
+        setValue(FlagType.ENDER_CRYSTAL_PLATE, bool);
+        sendData(FlagType.ENDER_CRYSTAL_PLATE);
     }
 
     public boolean isShowBottom()
     {
-        return (boolean) getValue(6, false);
+        return getValue(FlagType.ENDER_CRYSTAL_PLATE);
     }
 
 }

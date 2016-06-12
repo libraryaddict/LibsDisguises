@@ -57,7 +57,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
 public class DisguiseUtilities
 {
-
     public static final Random random = new Random();
     /**
      * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of
@@ -359,30 +358,30 @@ public class DisguiseUtilities
         {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
-            if (entityTrackerEntry != null)
-            {
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry);
+            if (entityTrackerEntry == null)
+                return;
 
-                // If the tracker exists. Remove himself from his tracker
-                trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                                                                            // ConcurrentModificationException
+            Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                    .get(entityTrackerEntry);
 
-                PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
+            // If the tracker exists. Remove himself from his tracker
+            trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
+                                                                        // ConcurrentModificationException
 
-                destroyPacket.getIntegerArrays().write(0, new int[]
-                    {
-                            disguise.getEntity().getEntityId()
-                    });
+            PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
 
-                for (Object p : trackedPlayers)
+            destroyPacket.getIntegerArrays().write(0, new int[]
                 {
-                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                        disguise.getEntity().getEntityId()
+                });
 
-                    if (player == disguise.getEntity() || disguise.canSee(player))
-                    {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
-                    }
+            for (Object p : trackedPlayers)
+            {
+                Player player = (Player) ReflectionManager.getBukkitEntity(p);
+
+                if (player == disguise.getEntity() || disguise.canSee(player))
+                {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
                 }
             }
         }
@@ -664,6 +663,7 @@ public class DisguiseUtilities
                 for (Object p : trackedPlayers)
                 {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
+
                     if (((TargetedDisguise) disguise).canSee(player))
                     {
                         players.add(player);
@@ -919,48 +919,48 @@ public class DisguiseUtilities
             {
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
-                if (entityTrackerEntry != null)
+                if (entityTrackerEntry == null)
+                    return;
+
+                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                        .get(entityTrackerEntry);
+
+                Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
+
+                final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
+
+                trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
+                                                                            // ConcurrentModificationException
+                for (final Object p : trackedPlayers)
                 {
-                    Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry);
+                    Player pl = (Player) ReflectionManager.getBukkitEntity(p);
 
-                    Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "clear",
-                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    if (!player.equalsIgnoreCase((pl).getName()))
+                        continue;
 
-                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    clear.invoke(entityTrackerEntry, p);
 
-                    trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                                                                                // ConcurrentModificationException
-                    for (final Object p : trackedPlayers)
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
+
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
                     {
-                        Player pl = (Player) ReflectionManager.getBukkitEntity(p);
 
-                        if (player.equalsIgnoreCase((pl).getName()))
+                        @Override
+                        public void run()
                         {
-                            clear.invoke(entityTrackerEntry, p);
-
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
-
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
+                            try
                             {
-
-                                @Override
-                                public void run()
-                                {
-                                    try
-                                    {
-                                        updatePlayer.invoke(entityTrackerEntry, p);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        ex.printStackTrace(System.out);
-                                    }
-                                }
-                            }, 2);
-                            break;
+                                updatePlayer.invoke(entityTrackerEntry, p);
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.printStackTrace(System.out);
+                            }
                         }
-                    }
+                    }, 2);
+                    break;
                 }
             }
         }

@@ -12,6 +12,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
@@ -60,7 +61,7 @@ public class PlayerWatcher extends LivingWatcher
 
     private boolean isSkinFlag(int i)
     {
-        return ((byte) getValue(12, (byte) 0) & 1 << i) != 0;
+        return ((byte) getValue(FlagType.PLAYER_SKIN) & 1 << i) != 0;
     }
 
     public boolean isCapeEnabled()
@@ -101,43 +102,50 @@ public class PlayerWatcher extends LivingWatcher
     public void setCapeEnabled(boolean enabled)
     {
         setSkinFlags(1, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setJackedEnabled(boolean enabled)
     {
         setSkinFlags(2, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setLeftSleeveEnabled(boolean enabled)
     {
         setSkinFlags(3, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setRightSleeveEnabled(boolean enabled)
     {
         setSkinFlags(4, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setLeftPantsEnabled(boolean enabled)
     {
         setSkinFlags(5, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setRightPantsEnabled(boolean enabled)
     {
         setSkinFlags(6, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public void setHatEnabled(boolean enabled)
     {
         setSkinFlags(7, enabled);
-        sendData(12);
+
+        sendData(FlagType.PLAYER_SKIN);
     }
 
     public boolean isSleeping()
@@ -232,14 +240,15 @@ public class PlayerWatcher extends LivingWatcher
 
     private void setSkinFlags(int i, boolean flag)
     {
-        byte b0 = (byte) getValue(12, (byte) 0);
+        byte b0 = (byte) getValue(FlagType.PLAYER_SKIN);
+
         if (flag)
         {
-            setValue(12, (byte) (b0 | 1 << i));
+            setValue(FlagType.PLAYER_SKIN, (byte) (b0 | 1 << i));
         }
         else
         {
-            setValue(12, (byte) (b0 & (~1 << i)));
+            setValue(FlagType.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
         }
     }
 
