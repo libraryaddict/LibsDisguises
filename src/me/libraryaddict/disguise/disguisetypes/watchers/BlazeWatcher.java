@@ -12,12 +12,12 @@ public class BlazeWatcher extends InsentientWatcher
 
     public boolean isBlazing()
     {
-        return getValue(FlagType.BLAZE_BLAZING);
+        return getValue(FlagType.BLAZE_BLAZING) == 1;
     }
 
     public void setBlazing(boolean isBlazing)
     {
-        setValue(FlagType.BLAZE_BLAZING, isBlazing);
+        setValue(FlagType.BLAZE_BLAZING, (byte) (isBlazing ? 1 : 0));
         sendData(FlagType.BLAZE_BLAZING);
     }
 

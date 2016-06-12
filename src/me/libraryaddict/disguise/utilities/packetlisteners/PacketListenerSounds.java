@@ -248,7 +248,7 @@ public class PacketListenerSounds extends PacketAdapter
 
                                 if (((MobDisguise) disguise).isAdult() == baby)
                                 {
-                                    float pitch = (Integer) mods.read(6);
+                                    float pitch = (Float) mods.read(6);
 
                                     if (baby)
                                     {
@@ -285,7 +285,7 @@ public class PacketListenerSounds extends PacketAdapter
                                     if (pitch > 255)
                                         pitch = 255;
 
-                                    mods.write(6, (int) pitch);
+                                    mods.write(6, pitch);
                                 }
                             }
                         }

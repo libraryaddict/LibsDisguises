@@ -12,12 +12,12 @@ public class SnowmanWatcher extends InsentientWatcher
 
     public void setHat(boolean hat)
     {
-        setValue(FlagType.SNOWMAN_HAT, (byte) (hat ? 1 : 0));
+        setValue(FlagType.SNOWMAN_HAT, (byte) (hat ? 0 : 16));
         sendData(FlagType.SNOWMAN_HAT);
     }
 
     public boolean isHat()
     {
-        return getValue(FlagType.SNOWMAN_HAT) == 1;
+        return getValue(FlagType.SNOWMAN_HAT) == 0;
     }
 }

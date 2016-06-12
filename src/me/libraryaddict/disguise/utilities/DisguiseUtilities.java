@@ -1186,7 +1186,7 @@ public class DisguiseUtilities
 
         if ((t = scoreboard.getTeam("LDPushing")) != null)
         {
-            t.unregister();
+            t.removeEntry(player.getName());
         }
 
         // player.spigot().setCollidesWithEntities(true);
