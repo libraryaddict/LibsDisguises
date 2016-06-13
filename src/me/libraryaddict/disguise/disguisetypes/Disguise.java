@@ -811,6 +811,8 @@ public abstract class Disguise
 
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
         }
+
+        getWatcher().setNoGravity(true);
     }
 
     public Disguise setVelocitySent(boolean sendVelocity)
