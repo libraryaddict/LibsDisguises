@@ -260,7 +260,7 @@ public class PacketsManager
                 newPackets[0] = spawnPackets[0];
                 spawnPackets = newPackets;
 
-                PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(observer,
+                PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(
                         loc.clone().subtract(0, PacketsManager.getYModifier(disguisedEntity, disguise), 0),
                         observer.getLocation(), ((PlayerDisguise) disguise));
 

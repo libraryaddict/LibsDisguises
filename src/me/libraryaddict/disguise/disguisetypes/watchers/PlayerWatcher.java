@@ -197,55 +197,58 @@ public class PlayerWatcher extends LivingWatcher
         {
             this.sleepingDirection = BlockFace.values()[sleepingDirection.ordinal() % 4];
         }
-        if (sleeping != isSleeping())
-        {
-            isInBed = sleeping;
-            if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise()))
-            {
-                try
-                {
-                    if (isSleeping())
-                    {
-                        for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
-                        {
-                            PacketContainer[] packets = DisguiseUtilities.getBedPackets(player,
-                                    this.getDisguise().getEntity().getLocation(), player.getLocation(),
-                                    (PlayerDisguise) this.getDisguise());
-                            if (getDisguise().getEntity() == player)
-                            {
-                                for (PacketContainer packet : packets)
-                                {
-                                    packet = packet.shallowClone();
-                                    packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                                }
-                            }
-                            else
-                            {
-                                for (PacketContainer packet : packets)
-                                {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        PacketContainer packet = new PacketContainer(Server.ANIMATION);
-                        StructureModifier<Integer> mods = packet.getIntegers();
-                        mods.write(0, getDisguise().getEntity().getEntityId());
-                        mods.write(1, 3);
-                        for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
-                        {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
 
+        isInBed = sleeping;
+
+        if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise()))
+        {
+            try
+            {
+                if (isSleeping())
+                {
+                    for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
+                    {
+                        PacketContainer[] packets = DisguiseUtilities.getBedPackets(getDisguise().getEntity().getLocation(),
+                                player.getLocation(), (PlayerDisguise) getDisguise());
+
+                        if (getDisguise().getEntity() == player)
+                        {
+                            for (PacketContainer packet : packets)
+                            {
+                                packet = packet.shallowClone();
+
+                                packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                            }
+                        }
+                        else
+                        {
+                            for (PacketContainer packet : packets)
+                            {
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                            }
                         }
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    ex.printStackTrace(System.out);
+                    PacketContainer packet = new PacketContainer(Server.ANIMATION);
+
+                    StructureModifier<Integer> mods = packet.getIntegers();
+
+                    mods.write(0, getDisguise().getEntity().getEntityId());
+                    mods.write(1, 3);
+
+                    for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
+                    {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace(System.out);
             }
         }
     }

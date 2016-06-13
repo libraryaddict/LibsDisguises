@@ -36,10 +36,12 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType.Play.Server;
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
@@ -63,7 +65,6 @@ public class DisguiseUtilities
      * the plugin to do that.
      */
     private static HashSet<String> addedByPlugins = new HashSet<>();
-    private static Object bedChunk;
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
@@ -81,8 +82,8 @@ public class DisguiseUtilities
     private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
-    private static Field xChunk, zChunk;
     private static Thread mainThread;
+    private static PacketContainer spawnChunk;
 
     static
     {
@@ -91,7 +92,7 @@ public class DisguiseUtilities
             Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
             Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
 
-            bedChunk = ReflectionManager.getNmsClass("Chunk")
+            Object bedChunk = ReflectionManager.getNmsClass("Chunk")
                     .getConstructor(ReflectionManager.getNmsClass("World"), int.class, int.class).newInstance(world, 0, 0);
 
             Field cSection = bedChunk.getClass().getDeclaredField("sections");
@@ -100,18 +101,8 @@ public class DisguiseUtilities
             Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class, boolean.class)
                     .newInstance(0, true);
 
-            Object block;
-
-            try
-            {
-                block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class).invoke(null,
-                        Material.BED_BLOCK.getId());
-            }
-            catch (Exception ex)
-            {
-                block = ((Object[]) ReflectionManager.getNmsField(ReflectionManager.getNmsClass("Block"), "byId")
-                        .get(null))[Material.BED_BLOCK.getId()];
-            }
+            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class).invoke(null,
+                    Material.BED_BLOCK.getId());
 
             Method fromLegacyData = block.getClass().getMethod("fromLegacyData", int.class);
             Method setType = chunkSection.getClass().getMethod("setType", int.class, int.class, int.class,
@@ -141,11 +132,8 @@ public class DisguiseUtilities
 
             cSection.set(bedChunk, array);
 
-            xChunk = bedChunk.getClass().getField("locX");
-            xChunk.setAccessible(true);
-
-            zChunk = bedChunk.getClass().getField("locZ");
-            zChunk.setAccessible(true);
+            spawnChunk = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, 65535).createPacket(bedChunk, 65535);
 
             Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
             threadField.setAccessible(true);
@@ -439,105 +427,75 @@ public class DisguiseUtilities
         return addedByPlugins;
     }
 
+    public static int getChunkCord(int blockCord)
+    {
+        int cord = (int) Math.floor(blockCord / 16D) - 17;
+
+        cord -= (cord % 8);
+
+        return cord;
+    }
+
     public static PacketContainer[] getBedChunkPacket(Location newLoc, Location oldLoc)
     {
         int i = 0;
 
-        PacketContainer[] packets = new PacketContainer[newLoc != null ? 2 + (oldLoc != null ? 1 : 0) : 1];
+        PacketContainer[] packets = new PacketContainer[(newLoc != null ? 1 : 0) + (oldLoc != null ? 1 : 0)];
 
-        for (Location loc : new Location[]
-            {
-                    oldLoc, newLoc
-            })
+        if (oldLoc != null)
         {
-            if (loc == null)
-            {
-                continue;
-            }
+            PacketContainer despawn = new PacketContainer(Server.UNLOAD_CHUNK);
 
-            int chunkX = (int) Math.floor(loc.getX() / 16D) - 17, chunkZ = (int) Math.floor(loc.getZ() / 16D) - 17;
+            StructureModifier<Object> modifier = despawn.getModifier();
 
-            chunkX -= chunkX % 8;
-            chunkZ -= chunkZ % 8;
+            modifier.write(0, getChunkCord(oldLoc.getBlockX()));
+            modifier.write(1, getChunkCord(oldLoc.getBlockZ()));
 
-            // Make unload packets
+            packets[i++] = despawn;
+        }
 
-            packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.UNLOAD_CHUNK, chunkX, chunkZ)
-                    .createPacket(chunkX, chunkZ);
+        if (newLoc != null)
+        {
+            PacketContainer spawn = spawnChunk.shallowClone();
 
-            i++;
+            StructureModifier<Object> modifier = spawn.getModifier();
 
-            // Make load packets
-            if (oldLoc == null || i > 1)
-            {
-                try
-                {
-                    xChunk.set(bedChunk, chunkX);
-                    zChunk.set(bedChunk, chunkZ);
-                }
-                catch (Exception ex)
-                {
-                    ex.printStackTrace(System.out);
-                }
+            modifier.write(0, getChunkCord(newLoc.getBlockX()));
+            modifier.write(1, getChunkCord(newLoc.getBlockZ()));
 
-                // MAP_CHUNK_BULK was replaced in 1.9 with several seperated chunk packets
-                // packets[i] = ProtocolLibrary.getProtocolManager()
-                // .createPacketConstructor(Server.MAP_CHUNK_BULK, Arrays.asList(bedChunk))
-                // .createPacket(Arrays.asList(bedChunk));
-                // Make unload packets
-                try
-                {
-                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, 0)
-                            .createPacket(bedChunk, 0);
-                }
-                catch (IllegalArgumentException ex)
-                {
-                    packets[i] = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.MAP_CHUNK, bedChunk, true, 0)
-                            .createPacket(bedChunk, true, 0);
-                }
-
-                i++;
-            }
+            packets[i++] = spawn;
         }
 
         return packets;
     }
 
-    public static PacketContainer[] getBedPackets(Player player, Location loc, Location playerLocation, PlayerDisguise disguise)
+    public static PacketContainer[] getBedPackets(Location sleepingLocation, Location playerLocation, PlayerDisguise disguise)
     {
-        Entity entity = disguise.getEntity();
+        int entity = disguise.getEntity().getEntityId();
+        PlayerWatcher watcher = disguise.getWatcher();
 
         PacketContainer setBed = new PacketContainer(Server.BED);
 
-        int chunkX = (int) Math.floor(playerLocation.getX() / 16D) - 17,
-                chunkZ = (int) Math.floor(playerLocation.getZ() / 16D) - 17;
-        chunkX -= chunkX % 8;
-        chunkZ -= chunkZ % 8;
+        int bX = (getChunkCord(playerLocation.getBlockX()) * 16) + 1 + watcher.getSleepingDirection().getModX();
+        int bZ = (getChunkCord(playerLocation.getBlockZ()) * 16) + 1 + watcher.getSleepingDirection().getModZ();
 
-        PlayerWatcher watcher = disguise.getWatcher();
-
-        StructureModifier<Integer> bedInts = setBed.getIntegers();
-        bedInts.write(0, entity.getEntityId());
-
-        bedInts.write(1, (chunkX * 16) + 1 + watcher.getSleepingDirection().getModX());
-        bedInts.write(3, (chunkZ * 16) + 1 + watcher.getSleepingDirection().getModZ());
+        setBed.getIntegers().write(0, entity);
+        setBed.getBlockPositionModifier().write(0, new BlockPosition(bX, 0, bZ));
 
         PacketContainer teleport = new PacketContainer(Server.ENTITY_TELEPORT);
 
-        StructureModifier<Integer> ints = teleport.getIntegers();
-        ints.write(0, entity.getEntityId());
-
         StructureModifier<Double> doubles = teleport.getDoubles();
 
-        doubles.write(0, loc.getX());
-        doubles.write(1, PacketsManager.getYModifier(disguise.getEntity(), disguise) + loc.getY());
-        doubles.write(2, loc.getZ());
+        teleport.getIntegers().write(0, entity);
+
+        doubles.write(0, sleepingLocation.getX());
+        doubles.write(1, PacketsManager.getYModifier(disguise.getEntity(), disguise) + sleepingLocation.getY());
+        doubles.write(2, sleepingLocation.getZ());
 
         return new PacketContainer[]
             {
                     setBed, teleport
             };
-
     }
 
     public static Disguise getClonedDisguise(String key)
