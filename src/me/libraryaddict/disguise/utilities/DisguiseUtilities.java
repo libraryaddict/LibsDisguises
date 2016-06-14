@@ -640,6 +640,7 @@ public class DisguiseUtilities
     public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise)
     {
         final String nameToFetch = disguise.getSkin() != null ? disguise.getSkin() : disguise.getName();
+
         final boolean remove = getAddedByPlugins().contains(nameToFetch.toLowerCase());
 
         return getProfileFromMojang(nameToFetch, new LibsProfileLookup()
@@ -662,7 +663,7 @@ public class DisguiseUtilities
                     DisguiseUtilities.refreshTrackers(disguise);
                 }
             }
-        });
+        }, LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
     }
 
     /**
@@ -688,10 +689,20 @@ public class DisguiseUtilities
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn)
     {
-        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, true);
     }
 
-    private static WrappedGameProfile getProfileFromMojang(final String origName, final Object runnable)
+    /**
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
+     */
+    public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn,
+            boolean contactMojang)
+    {
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, contactMojang);
+    }
+
+    private static WrappedGameProfile getProfileFromMojang(final String origName, final Object runnable, boolean contactMojang)
     {
         final String playerName = origName.toLowerCase();
 
@@ -715,6 +726,7 @@ public class DisguiseUtilities
                 if (!gameProfile.getProperties().isEmpty())
                 {
                     gameProfiles.put(playerName, gameProfile);
+
                     return gameProfile;
                 }
             }
@@ -736,25 +748,27 @@ public class DisguiseUtilities
                             @Override
                             public void run()
                             {
-                                if (!gameProfile.getProperties().isEmpty())
+                                if (gameProfile.getProperties().isEmpty())
                                 {
-                                    if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
-                                    {
-                                        gameProfiles.put(playerName, gameProfile);
-                                    }
+                                    return;
+                                }
 
-                                    if (runnables.containsKey(playerName))
+                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
+                                {
+                                    gameProfiles.put(playerName, gameProfile);
+                                }
+
+                                if (runnables.containsKey(playerName))
+                                {
+                                    for (Object obj : runnables.remove(playerName))
                                     {
-                                        for (Object obj : runnables.remove(playerName))
+                                        if (obj instanceof Runnable)
                                         {
-                                            if (obj instanceof Runnable)
-                                            {
-                                                ((Runnable) obj).run();
-                                            }
-                                            else if (obj instanceof LibsProfileLookup)
-                                            {
-                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
-                                            }
+                                            ((Runnable) obj).run();
+                                        }
+                                        else if (obj instanceof LibsProfileLookup)
+                                        {
+                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
                                         }
                                     }
                                 }
@@ -786,6 +800,7 @@ public class DisguiseUtilities
             {
                 runnables.put(playerName, new ArrayList<>());
             }
+
             runnables.get(playerName).add(runnable);
         }
 
@@ -798,7 +813,16 @@ public class DisguiseUtilities
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn)
     {
-        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn);
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, true);
+    }
+
+    /**
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
+     */
+    public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn, boolean contactMojang)
+    {
+        return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, contactMojang);
     }
 
     public static HashSet<UUID> getSelfDisguised()

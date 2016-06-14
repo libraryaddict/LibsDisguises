@@ -438,12 +438,19 @@ public class ReflectionManager
         return null;
     }
 
+    public static WrappedGameProfile getClonedProfile(WrappedGameProfile gameProfile)
+    {
+        return getGameProfileWithThisSkin(null, gameProfile.getName(), gameProfile);
+    }
+
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin)
     {
         try
         {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
+
             gameProfile.getProperties().putAll(profileWithSkin.getProperties());
+
             return gameProfile;
         }
         catch (Exception ex)

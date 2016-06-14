@@ -221,7 +221,7 @@ public class PacketsManager
         {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
 
-            String name = playerDisguise.getSkin() != null ? playerDisguise.getSkin() : playerDisguise.getName();
+            String name = playerDisguise.getName();
             int entityId = disguisedEntity.getEntityId();
             boolean removeName = false;
 

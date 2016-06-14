@@ -14,28 +14,14 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class PlayerDisguise extends TargetedDisguise
 {
-
     private LibsProfileLookup currentLookup;
     private WrappedGameProfile gameProfile;
     private String playerName;
     private String skinToUse;
 
-    public PlayerDisguise(String name)
+    private PlayerDisguise()
     {
-        if (name.length() > 16)
-        {
-            name = name.substring(0, 16);
-        }
-
-        playerName = name;
-        createDisguise(DisguiseType.PLAYER);
-    }
-
-    public PlayerDisguise(String name, String skinToUse)
-    {
-        this(name);
-
-        setSkin(skinToUse);
+        // Internal usage only
     }
 
     public PlayerDisguise(Player player)
@@ -48,18 +34,40 @@ public class PlayerDisguise extends TargetedDisguise
         this(ReflectionManager.getGameProfile(player), ReflectionManager.getGameProfile(skinToUse));
     }
 
+    public PlayerDisguise(String name)
+    {
+        setName(name);
+        setSkin(name);
+
+        createDisguise(DisguiseType.PLAYER);
+    }
+
+    public PlayerDisguise(String name, String skinToUse)
+    {
+        setName(name);
+        setSkin(skinToUse);
+
+        createDisguise(DisguiseType.PLAYER);
+    }
+
     public PlayerDisguise(WrappedGameProfile gameProfile)
     {
-        this(gameProfile.getName());
+        setName(gameProfile.getName());
 
         this.gameProfile = gameProfile;
+
+        createDisguise(DisguiseType.PLAYER);
     }
 
     public PlayerDisguise(WrappedGameProfile gameProfile, WrappedGameProfile skinToUse)
     {
-        this(gameProfile);
+        setName(gameProfile.getName());
+
+        this.gameProfile = gameProfile;
 
         setSkin(skinToUse);
+
+        createDisguise(DisguiseType.PLAYER);
     }
 
     @Override
@@ -77,12 +85,14 @@ public class PlayerDisguise extends TargetedDisguise
     @Override
     public PlayerDisguise clone()
     {
-        PlayerDisguise disguise = new PlayerDisguise(getName());
+        PlayerDisguise disguise = new PlayerDisguise();
+
+        disguise.playerName = getName();
 
         if (disguise.currentLookup == null && disguise.gameProfile != null)
         {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = gameProfile;
+            disguise.gameProfile = ReflectionManager.getClonedProfile(getGameProfile());
         }
         else
         {
@@ -98,12 +108,9 @@ public class PlayerDisguise extends TargetedDisguise
         disguise.setModifyBoundingBox(isModifyBoundingBox());
         disguise.setWatcher(getWatcher().clone(disguise));
 
-        return disguise;
-    }
+        disguise.createDisguise(DisguiseType.PLAYER);
 
-    public void setGameProfile(WrappedGameProfile gameProfile)
-    {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, gameProfile.getName(), gameProfile);
+        return disguise;
     }
 
     public WrappedGameProfile getGameProfile()
@@ -170,6 +177,11 @@ public class PlayerDisguise extends TargetedDisguise
         return (PlayerDisguise) super.setEntity(entity);
     }
 
+    public void setGameProfile(WrappedGameProfile gameProfile)
+    {
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, gameProfile.getName(), gameProfile);
+    }
+
     @Override
     public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise)
     {
@@ -212,55 +224,63 @@ public class PlayerDisguise extends TargetedDisguise
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
+    private void setName(String name)
+    {
+        if (name.length() > 16)
+        {
+            name = name.substring(0, 16);
+        }
+
+        playerName = name;
+    }
+
     @Override
     public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced)
     {
         return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
-    public PlayerDisguise setSkin(String skinToUse)
+    public PlayerDisguise setSkin(String newSkin)
     {
-        this.skinToUse = skinToUse;
+        skinToUse = newSkin;
 
-        if (skinToUse == null)
+        if (newSkin == null)
         {
-            this.currentLookup = null;
-            this.gameProfile = null;
+            currentLookup = null;
+            gameProfile = null;
         }
         else
         {
-            if (skinToUse.length() > 16)
+            if (newSkin.length() > 16)
             {
-                this.skinToUse = skinToUse.substring(0, 16);
+                skinToUse = newSkin.substring(0, 16);
             }
 
-            if (LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true))
+            currentLookup = new LibsProfileLookup()
             {
-                currentLookup = new LibsProfileLookup()
+                @Override
+                public void onLookup(WrappedGameProfile gameProfile)
                 {
-                    @Override
-                    public void onLookup(WrappedGameProfile gameProfile)
-                    {
-                        if (currentLookup == this && gameProfile != null)
-                        {
-                            setSkin(gameProfile);
+                    if (currentLookup != this || gameProfile == null)
+                        return;
 
-                            if (!gameProfile.getProperties().isEmpty() && DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this))
-                            {
-                                DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
-                            }
-
-                            currentLookup = null;
-                        }
-                    }
-                };
-
-                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup);
-
-                if (gameProfile != null)
-                {
                     setSkin(gameProfile);
+
+                    if (!gameProfile.getProperties().isEmpty() && DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this))
+                    {
+                        DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
+                    }
+
+                    currentLookup = null;
                 }
+            };
+
+            WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
+                    LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+
+            if (gameProfile != null)
+            {
+                setSkin(gameProfile);
             }
         }
 
@@ -286,6 +306,7 @@ public class PlayerDisguise extends TargetedDisguise
         if (LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true))
         {
             Validate.notEmpty(gameProfile.getName(), "Name must be set");
+
             this.skinToUse = gameProfile.getName();
             this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
         }
