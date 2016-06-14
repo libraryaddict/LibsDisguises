@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,6 +22,10 @@ import org.bukkit.entity.Monster;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.google.gson.Gson;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -35,10 +42,8 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
  */
 public abstract class BaseDisguiseCommand implements CommandExecutor
 {
-
     public class DisguiseParseException extends Exception
     {
-
         private static final long serialVersionUID = 1276971370793124510L;
 
         public DisguiseParseException()
@@ -55,11 +60,14 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap)
     {
         ArrayList<String> allowedDisguises = new ArrayList<>();
+
         for (DisguiseType type : hashMap.keySet())
         {
             allowedDisguises.add(type.toReadable().replace(" ", "_"));
         }
+
         Collections.sort(allowedDisguises, String.CASE_INSENSITIVE_ORDER);
+
         return allowedDisguises;
     }
 
@@ -79,13 +87,17 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         case FISHING_HOOK:
         case DROPPED_ITEM:
             HashMap<String, Boolean> returns = new HashMap<>();
+
             String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
+
             for (PermissionAttachmentInfo permission : sender.getEffectivePermissions())
             {
                 String lowerPerm = permission.getPermission().toLowerCase();
+
                 if (lowerPerm.startsWith(beginning))
                 {
                     String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+
                     if (split.length > 1)
                     {
                         if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", "")))
@@ -98,6 +110,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     }
                 }
             }
+
             return returns;
         default:
             return new HashMap<>();
@@ -107,8 +120,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
     protected Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass)
     {
         Method[] methods = watcherClass.getMethods();
+
         methods = Arrays.copyOf(methods, methods.length + 4);
         int i = 4;
+
         for (String methodName : new String[]
             {
                     "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise"
@@ -123,6 +138,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 ex.printStackTrace(System.out);
             }
         }
+
         return methods;
     }
 
@@ -148,10 +164,12 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 perms.put(perm, permission.getValue());
             }
         }
+
         if (!perms.containsKey(permissionNode + "*") && sender.hasPermission(permissionNode + "*"))
         {
             perms.put(permissionNode + "*", true);
         }
+
         if (!perms.containsKey(permissionNode + "*.*") && sender.hasPermission(permissionNode + "*.*"))
         {
             perms.put(permissionNode + "*.*", true);
@@ -162,8 +180,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
             if (perms.get(perm))
             {
                 perm = perm.substring(permissionNode.length());
+
                 String disguiseType = perm.split("\\.")[0];
                 DisguiseType dType = null;
+
                 for (DisguiseType t : DisguiseType.values())
                 {
                     if (t.name().replace("_", "").equalsIgnoreCase(disguiseType.replace("_", "")))
@@ -175,6 +195,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 if (dType != null)
                 {
                     HashMap<ArrayList<String>, Boolean> list;
+
                     if (singleDisguises.containsKey(dType))
                     {
                         list = singleDisguises.get(dType);
@@ -184,6 +205,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         list = new HashMap<>();
                         singleDisguises.put(dType, list);
                     }
+
                     HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
                     list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
                 }
@@ -193,6 +215,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     {
                         HashMap<ArrayList<String>, Boolean> options = null;
                         Class entityClass = type.getEntityClass();
+
                         if (disguiseType.equals("mob"))
                         {
                             if (type.isMob())
@@ -447,6 +470,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         else
         {
             DisguiseType disguiseType = null;
+
             if (args[0].equalsIgnoreCase("p"))
             {
                 disguiseType = DisguiseType.PLAYER;
@@ -467,20 +491,26 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 throw new DisguiseParseException(
                         ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED + " doesn't exist!");
             }
+
             if (disguiseType.isUnknown())
             {
                 throw new DisguiseParseException(ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!");
             }
+
             if (disguiseType.getEntityType() == null)
             {
                 throw new DisguiseParseException(ChatColor.RED + "Error! This version of minecraft does not have that disguise!");
             }
+
             if (!map.containsKey(disguiseType))
             {
                 throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this disguise.");
             }
+
             optionPermissions = map.get(disguiseType);
+
             HashMap<String, Boolean> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
+
             if (disguiseType.isPlayer())
             {
                 // If he is doing a player disguise
@@ -496,7 +526,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     {
                         throw new DisguiseParseException(ChatColor.RED + "Error! You don't have permission to use that name!");
                     }
+
                     args[1] = args[1].replace("\\_", " ");
+
                     // Construct the player disguise
                     disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
                     toSkip++;
@@ -643,7 +675,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
         args = newArgs;
+
         Method[] methods = this.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
+
         for (int i = 0; i < args.length; i += 2)
         {
             String methodName = args[i];
@@ -652,20 +686,24 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
             Object value = null;
             DisguiseParseException storedEx = null;
             int c = 0;
+
             while (c < methods.length)
             {
                 try
                 {
                     Entry<Method, Integer> entry = getMethod(methods, methodName, c);
+
                     if (entry == null)
                     {
                         break;
                     }
+
                     methodToUse = entry.getKey();
                     c = entry.getValue();
                     methodName = methodToUse.getName();
                     Class<?>[] types = methodToUse.getParameterTypes();
                     Class param = types[0];
+
                     if (valueString != null)
                     {
                         if (int.class == param)
@@ -678,6 +716,55 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             else
                             {
                                 throw parseToException("number", valueString, methodName);
+                            }
+                        }
+                        else if (WrappedGameProfile.class == param && valueString.length() > 20)
+                        {
+                            try
+                            {
+                                Map<String, Object> response = new Gson().fromJson(valueString, Map.class);
+
+                                String id = (String) response.get("id");
+
+                                if (!id.contains("-"))
+                                {
+                                    id = Pattern
+                                            .compile(
+                                                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)")
+                                            .matcher(id).replaceFirst("$1-$2-$3-$4-$5");
+                                }
+
+                                WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.fromString(id),
+                                        (String) response.get("name"));
+
+                                if (response.containsKey("properties"))
+                                {
+                                    ArrayList<Map<String, String>> properties = (ArrayList) response.get("properties");
+
+                                    for (Map<String, String> s : properties)
+                                    {
+                                        String gName = null;
+                                        String gValue = null;
+                                        String gSigned = null;
+
+                                        if (s.containsKey("name"))
+                                            gName = s.get("name");
+
+                                        if (s.containsKey("value"))
+                                            gValue = s.get("value");
+
+                                        if (s.containsKey("signature"))
+                                            gSigned = s.get("signature");
+
+                                        gameProfile.getProperties().put(gName, new WrappedSignedProperty(gName, gValue, gSigned));
+                                    }
+                                }
+
+                                value = gameProfile;
+                            }
+                            catch (Exception ex)
+                            {
+                                throw parseToException("gameprofile", valueString, methodName);
                             }
                         }
                         else if (float.class == param || double.class == param)
@@ -702,6 +789,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         }
                         else if (param == String.class)
                         {
+                            if (methodName.equalsIgnoreCase("setskin") && valueString.length() > 20)
+                                continue;
+
                             // Parse to string
                             value = ChatColor.translateAlternateColorCodes('&', valueString);
                         }
@@ -733,7 +823,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         {
                             // Parse to itemstack array
                             ItemStack[] items = new ItemStack[4];
+
                             String[] split = valueString.split(",");
+
                             if (split.length == 4)
                             {
                                 for (int a = 0; a < 4; a++)
@@ -754,6 +846,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                                 throw parseToException("item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN
                                         + "ID:Data,ID:Data,ID:Data,ID:Data combo", valueString, methodName);
                             }
+
                             value = items;
                         }
                         else if (param.getSimpleName().equals("Color"))
@@ -805,7 +898,9 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         else if (param == int[].class)
                         {
                             String[] split = valueString.split(",");
+
                             int[] values = new int[split.length];
+
                             for (int b = 0; b < values.length; b++)
                             {
                                 try
@@ -817,6 +912,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                                     throw parseToException("Number,Number,Number...", valueString, methodName);
                                 }
                             }
+
                             value = values;
                         }
                         else if (param == BlockFace.class)
@@ -824,10 +920,12 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             try
                             {
                                 BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
+
                                 if (face.ordinal() > 4)
                                 {
                                     throw new DisguiseParseException();
                                 }
+
                                 value = face;
                             }
                             catch (Exception ex)
@@ -845,6 +943,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                                             .equalsIgnoreCase(valueString.replace("_", "").replace(" ", "")))
                                     {
                                         value = type;
+
                                         break;
                                     }
                                 }
@@ -859,6 +958,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             }
                         }
                     }
+
                     if (value == null && boolean.class == param)
                     {
                         if (valueString == null)
@@ -887,6 +987,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             }
                         }
                     }
+
                     if (value != null)
                     {
                         break;

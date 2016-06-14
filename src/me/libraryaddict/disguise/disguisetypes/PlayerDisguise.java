@@ -266,11 +266,6 @@ public class PlayerDisguise extends TargetedDisguise
 
                     setSkin(gameProfile);
 
-                    if (!gameProfile.getProperties().isEmpty() && DisguiseUtilities.isDisguiseInUse(PlayerDisguise.this))
-                    {
-                        DisguiseUtilities.refreshTrackers(PlayerDisguise.this);
-                    }
-
                     currentLookup = null;
                 }
             };
@@ -303,12 +298,16 @@ public class PlayerDisguise extends TargetedDisguise
             return this;
         }
 
-        if (LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true))
-        {
-            Validate.notEmpty(gameProfile.getName(), "Name must be set");
+        Validate.notEmpty(gameProfile.getName(), "Name must be set");
 
-            this.skinToUse = gameProfile.getName();
-            this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
+        currentLookup = null;
+
+        this.skinToUse = gameProfile.getName();
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
+
+        if (DisguiseUtilities.isDisguiseInUse(this))
+        {
+            DisguiseUtilities.refreshTrackers(this);
         }
 
         return this;

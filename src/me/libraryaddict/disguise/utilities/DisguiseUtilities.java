@@ -35,8 +35,8 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
@@ -731,63 +731,66 @@ public class DisguiseUtilities
                 }
             }
 
-            // Add null so that if this is called again. I already know I'm doing something about it
-            gameProfiles.put(playerName, null);
-
-            Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable()
+            if (contactMojang)
             {
-                @Override
-                public void run()
+                // Add null so that if this is called again. I already know I'm doing something about it
+                gameProfiles.put(playerName, null);
+
+                Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable()
                 {
-                    try
+                    @Override
+                    public void run()
                     {
-                        final WrappedGameProfile gameProfile = lookupGameProfile(origName);
-
-                        Bukkit.getScheduler().runTask(libsDisguises, new Runnable()
+                        try
                         {
-                            @Override
-                            public void run()
+                            final WrappedGameProfile gameProfile = lookupGameProfile(origName);
+
+                            Bukkit.getScheduler().runTask(libsDisguises, new Runnable()
                             {
-                                if (gameProfile.getProperties().isEmpty())
+                                @Override
+                                public void run()
                                 {
-                                    return;
-                                }
-
-                                if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
-                                {
-                                    gameProfiles.put(playerName, gameProfile);
-                                }
-
-                                if (runnables.containsKey(playerName))
-                                {
-                                    for (Object obj : runnables.remove(playerName))
+                                    if (gameProfile.getProperties().isEmpty())
                                     {
-                                        if (obj instanceof Runnable)
+                                        return;
+                                    }
+
+                                    if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
+                                    {
+                                        gameProfiles.put(playerName, gameProfile);
+                                    }
+
+                                    if (runnables.containsKey(playerName))
+                                    {
+                                        for (Object obj : runnables.remove(playerName))
                                         {
-                                            ((Runnable) obj).run();
-                                        }
-                                        else if (obj instanceof LibsProfileLookup)
-                                        {
-                                            ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                            if (obj instanceof Runnable)
+                                            {
+                                                ((Runnable) obj).run();
+                                            }
+                                            else if (obj instanceof LibsProfileLookup)
+                                            {
+                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
-                        {
-                            gameProfiles.remove(playerName);
-                            getAddedByPlugins().remove(playerName);
+                            });
                         }
+                        catch (Exception e)
+                        {
+                            if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null)
+                            {
+                                gameProfiles.remove(playerName);
+                                getAddedByPlugins().remove(playerName);
+                            }
 
-                        System.out.print(
-                                "[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
+                            System.out.print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: "
+                                    + e.getMessage());
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         else
         {
