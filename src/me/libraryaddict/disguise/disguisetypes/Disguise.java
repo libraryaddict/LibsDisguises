@@ -102,7 +102,7 @@ public abstract class Disguise
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         // Set the disguise if its a baby or not
@@ -355,7 +355,7 @@ public abstract class Disguise
                                     }
                                     catch (InvocationTargetException e)
                                     {
-                                        e.printStackTrace(System.out);
+                                        e.printStackTrace();
                                     }
                                 }
                             }
@@ -398,7 +398,7 @@ public abstract class Disguise
                             }
                             catch (Exception e)
                             {
-                                e.printStackTrace(System.out);
+                                e.printStackTrace();
                             }
                         }
                         // If we need to send a packet to update the exp position as it likes to gravitate client sided to
@@ -430,14 +430,14 @@ public abstract class Disguise
                                     }
                                     catch (InvocationTargetException e)
                                     {
-                                        e.printStackTrace(System.out);
+                                        e.printStackTrace();
                                     }
                                 }
                             }
                         }
                         catch (InvocationTargetException e)
                         {
-                            e.printStackTrace(System.out);
+                            e.printStackTrace();
                         }
                     }
                 }

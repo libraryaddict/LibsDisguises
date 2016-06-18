@@ -150,7 +150,7 @@ public class PacketListenerViewDisguises extends PacketAdapter
             if (observer.isSprinting())
                 b = (byte) (b | 1 << 3);
 
-            WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager.createDataWatcherItem(0, b));
+            WrappedWatchableObject watch = ReflectionManager.createWatchable(0, b);
 
             watchableList.add(watch);
             packet.getWatchableCollectionModifier().write(0, watchableList);

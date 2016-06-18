@@ -9,22 +9,27 @@ import org.bukkit.entity.Player;
 import me.libraryaddict.disguise.DisguiseAPI;
 
 /**
- *
  * @author Navid
  */
-public class DisguiseViewSelf implements CommandExecutor {
+public class DisguiseViewSelf implements CommandExecutor
+{
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender.getName().equals("CONSOLE")) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
+        if (sender.getName().equals("CONSOLE"))
+        {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
         Player player = (Player) sender;
-        if (DisguiseAPI.isViewSelfToggled(player)) {
+        if (DisguiseAPI.isViewSelfToggled(player))
+        {
             DisguiseAPI.setViewDisguiseToggled(player, false);
             sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise off!");
-        } else {
+        }
+        else
+        {
             DisguiseAPI.setViewDisguiseToggled(player, true);
             sender.sendMessage(ChatColor.GREEN + "Toggled viewing own disguise on!");
         }

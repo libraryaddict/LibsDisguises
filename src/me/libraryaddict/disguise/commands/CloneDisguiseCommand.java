@@ -12,39 +12,58 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
-public class CloneDisguiseCommand extends BaseDisguiseCommand {
+public class CloneDisguiseCommand extends BaseDisguiseCommand
+{
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.getName().equals("CONSOLE")) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    {
+        if (sender.getName().equals("CONSOLE"))
+        {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }
-        if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
+        if (sender.hasPermission("libsdisguises.disguise.disguiseclone"))
+        {
             boolean doEquipment = true;
             boolean doSneak = false;
             boolean doSprint = false;
-            for (String option : args) {
+            for (String option : args)
+            {
                 if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip")
-                        || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
+                        || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip"))
+                {
                     doEquipment = false;
-                } else if (option.equalsIgnoreCase("doSneakSprint")) {
+                }
+                else if (option.equalsIgnoreCase("doSneakSprint"))
+                {
                     doSneak = true;
                     doSprint = true;
-                } else if (option.equalsIgnoreCase("doSneak")) {
+                }
+                else if (option.equalsIgnoreCase("doSneak"))
+                {
                     doSneak = true;
-                } else if (option.equalsIgnoreCase("doSprint")) {
+                }
+                else if (option.equalsIgnoreCase("doSprint"))
+                {
                     doSprint = true;
-                } else {
+                }
+                else
+                {
                     sender.sendMessage(ChatColor.DARK_RED + "Unknown option '" + option
                             + "' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' 'DoSneak' 'DoSprint'");
                     return true;
                 }
             }
-            LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), new Boolean[]{doEquipment, doSneak, doSprint});
+            LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), new Boolean[]
+                {
+                        doEquipment, doSneak, doSprint
+                });
             sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
                     + " seconds to grab the disguise reference!");
-        } else {
+        }
+        else
+        {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         }
         return true;
@@ -54,7 +73,8 @@ public class CloneDisguiseCommand extends BaseDisguiseCommand {
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map)
+    {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
         sender.sendMessage(ChatColor.DARK_GREEN

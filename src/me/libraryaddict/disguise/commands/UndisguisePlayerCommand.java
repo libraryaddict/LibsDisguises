@@ -9,27 +9,41 @@ import org.bukkit.entity.Player;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 
-public class UndisguisePlayerCommand implements CommandExecutor {
+public class UndisguisePlayerCommand implements CommandExecutor
+{
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.hasPermission("libsdisguises.undisguiseplayer")) {
-            if (args.length > 0) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+    {
+        if (sender.hasPermission("libsdisguises.undisguiseplayer"))
+        {
+            if (args.length > 0)
+            {
                 Player p = Bukkit.getPlayer(args[0]);
-                if (p != null) {
-                    if (DisguiseAPI.isDisguised(p)) {
+                if (p != null)
+                {
+                    if (DisguiseAPI.isDisguised(p))
+                    {
                         DisguiseAPI.undisguiseToAll(p);
                         sender.sendMessage(ChatColor.RED + "The player is no longer disguised");
-                    } else {
+                    }
+                    else
+                    {
                         sender.sendMessage(ChatColor.RED + "The player is not disguised!");
                     }
-                } else {
+                }
+                else
+                {
                     sender.sendMessage(ChatColor.RED + "Player not found");
                 }
-            } else {
+            }
+            else
+            {
                 sender.sendMessage(ChatColor.RED + "/undisguiseplayer <Name>");
             }
-        } else {
+        }
+        else
+        {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         }
         return true;

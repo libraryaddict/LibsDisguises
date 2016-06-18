@@ -25,11 +25,14 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.google.common.base.Optional;
 import com.mojang.authlib.GameProfile;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -71,7 +74,7 @@ public class ReflectionManager
             }
             catch (Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
         }
 
@@ -137,7 +140,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -175,7 +178,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -226,7 +229,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -240,7 +243,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -254,7 +257,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -273,7 +276,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -289,7 +292,7 @@ public class ReflectionManager
         }
         catch (NoSuchMethodException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -308,7 +311,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -351,7 +354,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -365,7 +368,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -379,7 +382,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -393,7 +396,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -414,7 +417,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -433,7 +436,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
         return null;
     }
@@ -455,7 +458,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -469,7 +472,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -485,7 +488,7 @@ public class ReflectionManager
         }
         catch (NoSuchMethodException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -504,7 +507,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -521,7 +524,7 @@ public class ReflectionManager
         }
         catch (NoSuchFieldException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -540,7 +543,7 @@ public class ReflectionManager
         }
         catch (Exception e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -562,7 +565,7 @@ public class ReflectionManager
         }
         catch (NoSuchMethodException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -579,7 +582,7 @@ public class ReflectionManager
         }
         catch (NoSuchMethodException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
 
         return null;
@@ -598,7 +601,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return 0;
@@ -619,7 +622,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -645,7 +648,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -698,7 +701,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return null;
@@ -723,7 +726,7 @@ public class ReflectionManager
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -915,12 +918,21 @@ public class ReflectionManager
      * @param value
      * @return
      */
-    public static Object createDataWatcherItem(int id, Object value)
+    private static Object createDataWatcherItem(int id, Object value)
     {
         if (value == null)
             return null;
 
-        Serializer serializer = Registry.get(value.getClass());
+        Serializer serializer;
+
+        if (value instanceof Optional)
+        {
+            serializer = Registry.get(((Optional) value).get().getClass(), true);
+        }
+        else
+        {
+            serializer = Registry.get(value.getClass());
+        }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
 
@@ -936,6 +948,35 @@ public class ReflectionManager
         }
 
         return null;
+    }
+
+    public static WrappedWatchableObject createWatchable(int index, Object obj)
+    {
+        if (obj instanceof Optional)
+        {
+            Object value = ((Optional) obj).get();
+
+            if (value instanceof BlockPosition)
+            {
+                value = BlockPosition.getConverter().getSpecific(value);
+
+                if (value == null)
+                    return null;
+
+                obj = Optional.of(value);
+            }
+            else if (value instanceof ItemStack)
+            {
+                value = ReflectionManager.getNmsItem((ItemStack) value);
+
+                if (value == null)
+                    return null;
+
+                obj = Optional.of(value);
+            }
+        }
+
+        return new WrappedWatchableObject(createDataWatcherItem(index, obj));
     }
 
     public static EntityEquipment createEntityEquipment(Entity entity)

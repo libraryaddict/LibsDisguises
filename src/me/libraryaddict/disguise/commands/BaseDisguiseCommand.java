@@ -76,7 +76,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
     }
 
-    protected HashMap<String, Boolean> getDisguisePermission(CommandSender sender, DisguiseType type)
+    protected HashMap<String, Boolean> getDisguiseOptions(CommandSender sender, DisguiseType type)
     {
         switch (type)
         {
@@ -135,7 +135,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
             }
             catch (Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
         }
 
@@ -159,6 +159,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions())
         {
             String perm = permission.getPermission().toLowerCase();
+
             if (perm.startsWith(permissionNode) && (!perms.containsKey(perm) || !permission.getValue()))
             {
                 perms.put(perm, permission.getValue());
@@ -192,6 +193,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         break;
                     }
                 }
+
                 if (dType != null)
                 {
                     HashMap<ArrayList<String>, Boolean> list;
@@ -255,9 +257,11 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         {
                             options = getOptions(perm);
                         }
+
                         if (options != null)
                         {
                             HashMap<ArrayList<String>, Boolean> list;
+
                             if (rangeDisguises.containsKey(type))
                             {
                                 list = rangeDisguises.get(type);
@@ -267,13 +271,16 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                                 list = new HashMap<>();
                                 rangeDisguises.put(type, list);
                             }
+
                             HashMap<ArrayList<String>, Boolean> map1 = getOptions(perm);
+
                             list.put(map1.keySet().iterator().next(), map1.values().iterator().next());
                         }
                     }
                 }
             }
         }
+
         for (String perm : perms.keySet())
         {
             if (!perms.get(perm))
@@ -281,6 +288,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 perm = perm.substring(permissionNode.length());
                 String disguiseType = perm.split("\\.")[0];
                 DisguiseType dType = null;
+
                 for (DisguiseType t : DisguiseType.values())
                 {
                     if (t.name().replace("_", "").equalsIgnoreCase(disguiseType.replace("_", "")))
@@ -289,6 +297,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         break;
                     }
                 }
+
                 if (dType != null)
                 {
                     singleDisguises.remove(dType);
@@ -300,6 +309,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     {
                         boolean foundHim = false;
                         Class entityClass = type.getEntityClass();
+
                         switch (disguiseType)
                         {
                         case "mob":
@@ -307,6 +317,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             {
                                 foundHim = true;
                             }
+
                             break;
                         case "animal":
                         case "animals":
@@ -314,6 +325,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             {
                                 foundHim = true;
                             }
+
                             break;
                         case "monster":
                         case "monsters":
@@ -321,23 +333,27 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             {
                                 foundHim = true;
                             }
+
                             break;
                         case "misc":
                             if (type.isMisc())
                             {
                                 foundHim = true;
                             }
+
                             break;
                         case "ageable":
                             if (Ageable.class.isAssignableFrom(entityClass))
                             {
                                 foundHim = true;
                             }
+
                             break;
                         case "*":
                             foundHim = true;
                             break;
                         }
+
                         if (foundHim)
                         {
                             rangeDisguises.remove(type);
@@ -346,23 +362,29 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 }
             }
         }
+
         HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = new HashMap<>();
+
         for (DisguiseType type : DisguiseType.values())
         {
             HashMap<ArrayList<String>, Boolean> temp = new HashMap<>();
+
             if (singleDisguises.containsKey(type))
             {
                 temp.putAll(singleDisguises.get(type));
             }
+
             if (rangeDisguises.containsKey(type))
             {
                 temp.putAll(rangeDisguises.get(type));
             }
+
             if (!temp.isEmpty())
             {
                 map.put(type, temp);
             }
         }
+
         return map;
     }
 
@@ -386,8 +408,10 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
             }
             list.add(option);
         }
+
         HashMap<ArrayList<String>, Boolean> options = new HashMap<>();
         options.put(list, isRemove);
+
         return options;
     }
 
@@ -443,6 +467,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
             sendCommandUsage(sender, map);
             throw new DisguiseParseException();
         }
+
         // How many args to skip due to the disugise being constructed
         // Time to start constructing the disguise.
         // We will need to check between all 3 kinds of disguises
@@ -450,6 +475,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
         ArrayList<String> usedOptions = new ArrayList<>();
         Disguise disguise = null;
         HashMap<ArrayList<String>, Boolean> optionPermissions;
+
         if (args[0].startsWith("@"))
         {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone"))
@@ -486,6 +512,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     }
                 }
             }
+
             if (disguiseType == null)
             {
                 throw new DisguiseParseException(
@@ -509,7 +536,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
 
             optionPermissions = map.get(disguiseType);
 
-            HashMap<String, Boolean> disguiseOptions = this.getDisguisePermission(sender, disguiseType);
+            HashMap<String, Boolean> disguiseOptions = this.getDisguiseOptions(sender, disguiseType);
 
             if (disguiseType.isPlayer())
             {
@@ -539,6 +566,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 if (disguiseType.isMob())
                 { // Its a mob, use the mob constructor
                     boolean adult = true;
+
                     if (args.length > 1)
                     {
                         if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult"))
@@ -549,6 +577,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             toSkip++;
                         }
                     }
+
                     disguise = new MobDisguise(disguiseType, adult);
                 }
                 else if (disguiseType.isMisc())
@@ -630,6 +659,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                     if (!disguiseOptions.isEmpty() && miscId != -1)
                     {
                         String toCheck = "" + miscId;
+
                         if (miscData == 0 || miscData == -1)
                         {
                             if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck))
@@ -641,6 +671,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                         {
                             toCheck += ":" + miscData;
                         }
+
                         if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck))
                         {
                             throw new DisguiseParseException(
@@ -1000,7 +1031,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 }
                 catch (Exception ex)
                 {
-                    ex.printStackTrace(System.out);
+                    ex.printStackTrace();
                     methodToUse = null;
                 }
             }
@@ -1010,17 +1041,21 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                 {
                     throw storedEx;
                 }
+
                 throw new DisguiseParseException(ChatColor.RED + "Cannot find the option " + methodName);
             }
             if (value == null)
             {
                 throw new DisguiseParseException(ChatColor.RED + "No value was given for the option " + methodName);
             }
+
             if (!usedOptions.contains(methodName.toLowerCase()))
             {
                 usedOptions.add(methodName.toLowerCase());
             }
+
             doCheck(optionPermissions, usedOptions);
+
             if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass()))
             {
                 methodToUse.invoke(disguise.getWatcher(), value);

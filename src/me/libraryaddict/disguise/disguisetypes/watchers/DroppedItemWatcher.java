@@ -2,14 +2,14 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import org.bukkit.inventory.ItemStack;
 
+import com.google.common.base.Optional;
+
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
-//TODO: Add support for custom items instead of just stone
 public class DroppedItemWatcher extends FlagWatcher
 {
-
     public DroppedItemWatcher(Disguise disguise)
     {
         super(disguise);
@@ -17,12 +17,12 @@ public class DroppedItemWatcher extends FlagWatcher
 
     public ItemStack getItemStack()
     {
-        return getValue(FlagType.DROPPED_ITEM);
+        return getValue(FlagType.DROPPED_ITEM).get();
     }
 
     public void setItemStack(ItemStack item)
     {
-        setValue(FlagType.DROPPED_ITEM, item);
+        setValue(FlagType.DROPPED_ITEM, Optional.<ItemStack> of(item));
         sendData(FlagType.DROPPED_ITEM);
     }
 }

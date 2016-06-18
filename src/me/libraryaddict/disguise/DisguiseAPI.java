@@ -179,7 +179,7 @@ public class DisguiseAPI
                                     }
                                     catch (Exception ex)
                                     {
-                                        ex.printStackTrace(System.out);
+                                        ex.printStackTrace();
                                     }
                                 }
                             }

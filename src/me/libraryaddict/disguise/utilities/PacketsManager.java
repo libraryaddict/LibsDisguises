@@ -1053,8 +1053,8 @@ public class PacketsManager
 
                             if (DisguiseConfig.isMetadataPacketsEnabled() && !isStaticMetadataDisguiseType(disguise))
                             {
-                                WrappedWatchableObject watch = new WrappedWatchableObject(ReflectionManager
-                                        .createDataWatcherItem(0, WrappedDataWatcher.getEntityWatcher(entity).getByte(0)));
+                                WrappedWatchableObject watch = ReflectionManager.createWatchable(0,
+                                        WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 
                                 list.add(watch);
 
@@ -1172,9 +1172,10 @@ public class PacketsManager
      */
     public static boolean isStaticMetadataDisguiseType(Disguise disguise)
     {
-        return (disguise.getType() == DisguiseType.WOLF || disguise.getType() == DisguiseType.OCELOT
+        return false;
+        /*        return (disguise.getType() == DisguiseType.WOLF || disguise.getType() == DisguiseType.OCELOT
                 || disguise.getType() == DisguiseType.ENDERMAN || disguise.getType() == DisguiseType.SHULKER
                 || disguise.getType() == DisguiseType.SPLASH_POTION || disguise.getType() == DisguiseType.FIREWORK
-                || disguise.getType() == DisguiseType.DROPPED_ITEM || disguise.getType() == DisguiseType.ENDER_CRYSTAL);
+                || disguise.getType() == DisguiseType.DROPPED_ITEM || disguise.getType() == DisguiseType.ENDER_CRYSTAL);*/
     }
 }

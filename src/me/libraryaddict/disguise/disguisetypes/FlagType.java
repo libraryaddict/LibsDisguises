@@ -116,10 +116,11 @@ public class FlagType<Y>
 
     public static FlagType<Integer> CREEPER_STATE = new FlagType<Integer>(CreeperWatcher.class, 0, -1);
 
-    public static FlagType<ItemStack> DROPPED_ITEM = new FlagType<ItemStack>(DroppedItemWatcher.class, 0,
-            new ItemStack(Material.AIR));
+    public static FlagType<Optional<ItemStack>> DROPPED_ITEM = new FlagType<Optional<ItemStack>>(DroppedItemWatcher.class, 0,
+            Optional.<ItemStack> of(new ItemStack(Material.STONE)));
 
-    public static FlagType<Optional> ENDER_CRYSTAL_BEAM = new FlagType<Optional>(EnderCrystalWatcher.class, 0, Optional.absent());
+    public static FlagType<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new FlagType<Optional<BlockPosition>>(EnderCrystalWatcher.class, 0,
+            Optional.<BlockPosition> absent());
 
     public static FlagType<Boolean> ENDER_CRYSTAL_PLATE = new FlagType<Boolean>(EnderCrystalWatcher.class, 1, false);
 
@@ -180,7 +181,7 @@ public class FlagType<Y>
 
     public static FlagType<Byte> LIVING_HAND = new FlagType<Byte>(LivingWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Float> LIVING_HEALTH = new FlagType<Float>(LivingWatcher.class, 1, 0F);
+    public static FlagType<Float> LIVING_HEALTH = new FlagType<Float>(LivingWatcher.class, 1, 1F);
 
     public static FlagType<Boolean> LIVING_POTION_AMBIENT = new FlagType<Boolean>(LivingWatcher.class, 3, false);
 
@@ -208,7 +209,7 @@ public class FlagType<Y>
 
     public static FlagType<Integer> PLAYER_SCORE = new FlagType<Integer>(PlayerWatcher.class, 1, 0);
 
-    public static FlagType<Byte> PLAYER_SKIN = new FlagType<Byte>(PlayerWatcher.class, 2, (byte) 0);
+    public static FlagType<Byte> PLAYER_SKIN = new FlagType<Byte>(PlayerWatcher.class, 2, (byte) 127);
 
     public static FlagType<Boolean> POLAR_BEAR_STANDING = new FlagType<Boolean>(PolarBearWatcher.class, 0, false);
 

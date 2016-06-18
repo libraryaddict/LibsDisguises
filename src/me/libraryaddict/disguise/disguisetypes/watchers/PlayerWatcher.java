@@ -25,6 +25,8 @@ public class PlayerWatcher extends LivingWatcher
     public PlayerWatcher(Disguise disguise)
     {
         super(disguise);
+
+        setValue(FlagType.PLAYER_SKIN, FlagType.PLAYER_SKIN.getDefault());
     }
 
     @Override
@@ -248,7 +250,7 @@ public class PlayerWatcher extends LivingWatcher
             }
             catch (Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
         }
     }

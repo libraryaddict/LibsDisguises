@@ -491,7 +491,7 @@ public class Metrics
         }
         catch (IOException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
         finally
         {

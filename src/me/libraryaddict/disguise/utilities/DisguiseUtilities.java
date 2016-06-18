@@ -142,7 +142,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -375,7 +375,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -631,7 +631,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         return players;
@@ -807,7 +807,7 @@ public class DisguiseUtilities
             runnables.get(playerName).add(runnable);
         }
 
-        return ReflectionManager.getGameProfile(null, origName);
+        return null;
     }
 
     /**
@@ -895,7 +895,7 @@ public class DisguiseUtilities
                         }
                         catch (Exception ex)
                         {
-                            ex.printStackTrace(System.out);
+                            ex.printStackTrace();
                         }
                     }
                 }, 2);
@@ -941,7 +941,7 @@ public class DisguiseUtilities
                             }
                             catch (Exception ex)
                             {
-                                ex.printStackTrace(System.out);
+                                ex.printStackTrace();
                             }
                         }
                     }, 2);
@@ -954,7 +954,7 @@ public class DisguiseUtilities
         Exception ex)
 
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -1008,7 +1008,7 @@ public class DisguiseUtilities
                                     }
                                     catch (Exception ex)
                                     {
-                                        ex.printStackTrace(System.out);
+                                        ex.printStackTrace();
                                     }
                                 }
                             }, 2);
@@ -1018,7 +1018,7 @@ public class DisguiseUtilities
             }
             catch (Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
         }
     }
@@ -1055,7 +1055,7 @@ public class DisguiseUtilities
                             }
                             catch (Exception ex)
                             {
-                                ex.printStackTrace(System.out);
+                                ex.printStackTrace();
                             }
                         }
                     }, 2);
@@ -1098,7 +1098,7 @@ public class DisguiseUtilities
                                     }
                                     catch (Exception ex)
                                     {
-                                        ex.printStackTrace(System.out);
+                                        ex.printStackTrace();
                                     }
                                 }
                             }, 2);
@@ -1110,7 +1110,7 @@ public class DisguiseUtilities
 
             Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
 
             }
         }
@@ -1162,7 +1162,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         // Code to stop player pushing in 1.9
@@ -1204,7 +1204,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         // Resend entity metadata else he will be invisible to himself until its resent
@@ -1218,7 +1218,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         player.updateInventory();
@@ -1313,7 +1313,7 @@ public class DisguiseUtilities
             }
             catch (Exception ex)
             {
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
 
             // Send the velocity packets
@@ -1396,7 +1396,7 @@ public class DisguiseUtilities
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -1449,7 +1449,7 @@ public class DisguiseUtilities
                         }
                         catch (InvocationTargetException e)
                         {
-                            e.printStackTrace(System.out);
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -1457,7 +1457,7 @@ public class DisguiseUtilities
         }
         catch (InvocationTargetException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
     }
 

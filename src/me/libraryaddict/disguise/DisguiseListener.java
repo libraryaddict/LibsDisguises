@@ -186,7 +186,7 @@ public class DisguiseListener implements Listener
         }
         catch (InvocationTargetException e)
         {
-            e.printStackTrace(System.out);
+            e.printStackTrace();
         }
     }
 

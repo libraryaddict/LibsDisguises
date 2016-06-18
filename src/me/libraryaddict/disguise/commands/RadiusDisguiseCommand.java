@@ -22,7 +22,6 @@ import me.libraryaddict.disguise.utilities.ClassGetter;
 
 public class RadiusDisguiseCommand extends BaseDisguiseCommand
 {
-
     private int maxRadius = 30;
     private ArrayList<Class> validClasses = new ArrayList<>();
 
@@ -152,7 +151,7 @@ public class RadiusDisguiseCommand extends BaseDisguiseCommand
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
             return true;
         }
 

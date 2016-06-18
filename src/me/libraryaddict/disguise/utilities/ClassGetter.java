@@ -89,7 +89,7 @@ public class ClassGetter
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 }

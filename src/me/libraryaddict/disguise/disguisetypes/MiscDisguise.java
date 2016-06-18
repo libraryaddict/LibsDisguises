@@ -14,7 +14,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 
 public class MiscDisguise extends TargetedDisguise
 {
-
     private int id = -1, data = 0;
 
     public MiscDisguise(DisguiseType disguiseType)
@@ -51,9 +50,10 @@ public class MiscDisguise extends TargetedDisguise
             ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, id));
             break;
         case DROPPED_ITEM:
+
             if (id > 0)
             {
-                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, Math.max(0, data)));
+                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, Math.max(1, data)));
             }
             break;
         case FISHING_HOOK: // Entity ID of whoever is holding fishing rod

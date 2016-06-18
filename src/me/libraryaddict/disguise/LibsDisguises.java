@@ -377,7 +377,7 @@ public class LibsDisguises extends JavaPlugin
                 System.out.print("[LibsDisguises] Development builds are available at (ProtocolLib) "
                         + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming.com:8080/job/LibsDisguises%201.9+/");
 
-                ex.printStackTrace(System.out);
+                ex.printStackTrace();
             }
         }
     }

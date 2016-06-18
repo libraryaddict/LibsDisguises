@@ -45,7 +45,7 @@ public class LivingWatcher extends FlagWatcher
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
     }
 
@@ -121,7 +121,7 @@ public class LivingWatcher extends FlagWatcher
         }
         catch (Exception ex)
         {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
         }
 
         f1 = f1 / f4 * 255.0F;
@@ -211,7 +211,7 @@ public class LivingWatcher extends FlagWatcher
                 }
                 catch (InvocationTargetException e)
                 {
-                    e.printStackTrace(System.out);
+                    e.printStackTrace();
                 }
             }
         }
