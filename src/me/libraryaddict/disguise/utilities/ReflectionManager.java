@@ -25,7 +25,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
@@ -927,7 +926,9 @@ public class ReflectionManager
 
         if (value instanceof Optional)
         {
-            serializer = Registry.get(((Optional) value).get().getClass(), true);
+            Optional opt = (Optional) value;
+
+            serializer = Registry.get((opt.isPresent() ? opt.get().getClass() : UUID.class), true);
         }
         else
         {
@@ -952,30 +953,6 @@ public class ReflectionManager
 
     public static WrappedWatchableObject createWatchable(int index, Object obj)
     {
-        if (obj instanceof Optional)
-        {
-            Object value = ((Optional) obj).get();
-
-            if (value instanceof BlockPosition)
-            {
-                value = BlockPosition.getConverter().getSpecific(value);
-
-                if (value == null)
-                    return null;
-
-                obj = Optional.of(value);
-            }
-            else if (value instanceof ItemStack)
-            {
-                value = ReflectionManager.getNmsItem((ItemStack) value);
-
-                if (value == null)
-                    return null;
-
-                obj = Optional.of(value);
-            }
-        }
-
         return new WrappedWatchableObject(createDataWatcherItem(index, obj));
     }
 

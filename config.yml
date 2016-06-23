@@ -74,6 +74,7 @@ DisguiseCloneSize: 3
 # This I don't really recommend turning on as it can make a memory leak..
 # These disguises, as normal will not persist after a server restart.
 # There is also no EntityDeath option as entities do not revive after death.
+# The EntityDespawn option is when you leave the chunk the entity is and the chunk is unloaded
 KeepDisguises:
     EntityDespawn: false
     PlayerDeath: false
