@@ -420,12 +420,12 @@ public class FlagWatcher
 
         for (FlagType data : dataValues)
         {
-            if (!_entityValues.containsKey(data) || _entityValues.get(data) == null)
+            if (!_entityValues.containsKey(data.getIndex()) || _entityValues.get(data.getIndex()) == null)
             {
                 continue;
             }
 
-            Object value = _entityValues.get(data);
+            Object value = _entityValues.get(data.getIndex());
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == FlagType.ENTITY_META)
             {
