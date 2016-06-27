@@ -32,13 +32,11 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Optional;
-import com.mojang.authlib.GameProfile;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
 public class ReflectionManager
 {
-
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static final Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
@@ -1016,24 +1014,6 @@ public class ReflectionManager
         }
 
         return null;
-    }
-
-    public static Object createEntityPlayer(World w, WrappedGameProfile profile)
-    {
-        Object entityPlayer = null;
-
-        try
-        {
-            entityPlayer = getNmsConstructor("EntityPlayer", getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                    GameProfile.class, getNmsClass("PlayerInteractManager")).newInstance(getMinecraftServer(), getWorldServer(w),
-                            profile.getHandle(), getPlayerInteractManager(w));
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-
-        return entityPlayer;
     }
 
 }

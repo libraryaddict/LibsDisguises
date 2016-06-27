@@ -237,15 +237,17 @@ public class PacketsManager
                 DisguiseUtilities.getAddedByPlugins().remove(name);
             }
 
-            Object entityPlayer = ReflectionManager.createEntityPlayer(observer.getWorld(), gameProfile);
-            spawnPackets[0] = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(Server.NAMED_ENTITY_SPAWN, entityPlayer).createPacket(entityPlayer);
+            spawnPackets[0] = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
 
-            // Write spawn packet in order
             spawnPackets[0].getIntegers().write(0, entityId); // Id
+            spawnPackets[0].getModifier().write(1, gameProfile.getUUID());
+
             spawnPackets[0].getDoubles().write(0, loc.getX());
             spawnPackets[0].getDoubles().write(1, loc.getY());
             spawnPackets[0].getDoubles().write(2, loc.getZ());
+
+            spawnPackets[0].getBytes().write(0, ((byte) (int) (loc.getYaw() * 256.0F / 360.0F)));
+            spawnPackets[0].getBytes().write(1, ((byte) (int) (loc.getPitch() * 256.0F / 360.0F)));
 
             spawnPackets[0].getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher())); // watcher,
