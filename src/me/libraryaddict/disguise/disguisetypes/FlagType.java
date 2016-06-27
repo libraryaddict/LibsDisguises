@@ -119,8 +119,8 @@ public class FlagType<Y>
     public static FlagType<Optional<ItemStack>> DROPPED_ITEM = new FlagType<Optional<ItemStack>>(DroppedItemWatcher.class, 0,
             Optional.<ItemStack> of(new ItemStack(Material.STONE)));
 
-    public static FlagType<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new FlagType<Optional<BlockPosition>>(EnderCrystalWatcher.class, 0,
-            Optional.<BlockPosition> absent());
+    public static FlagType<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new FlagType<Optional<BlockPosition>>(
+            EnderCrystalWatcher.class, 0, Optional.<BlockPosition> absent());
 
     public static FlagType<Boolean> ENDER_CRYSTAL_PLATE = new FlagType<Boolean>(EnderCrystalWatcher.class, 1, false);
 
