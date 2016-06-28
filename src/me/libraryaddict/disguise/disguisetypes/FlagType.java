@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
@@ -128,8 +129,8 @@ public class FlagType<Y>
 
     public static FlagType<Boolean> ENDERMAN_AGRESSIVE = new FlagType<Boolean>(EndermanWatcher.class, 1, false);
 
-    public static FlagType<Optional<Integer>> ENDERMAN_ITEM = new FlagType<Optional<Integer>>(EndermanWatcher.class, 0,
-            Optional.of(1));
+    public static FlagType<Optional<WrappedBlockData>> ENDERMAN_ITEM = new FlagType<Optional<WrappedBlockData>>(
+            EndermanWatcher.class, 0, Optional.<WrappedBlockData> absent());
 
     public static FlagType<Integer> ENTITY_AIR_TICKS = new FlagType<Integer>(FlagWatcher.class, 1, 0);
 

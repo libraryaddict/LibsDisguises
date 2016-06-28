@@ -1,13 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class EndermanWatcher extends InsentientWatcher
 {
@@ -20,13 +20,13 @@ public class EndermanWatcher extends InsentientWatcher
     @Override
     public ItemStack getItemInMainHand()
     {
-        Optional<Integer> value = getValue(FlagType.ENDERMAN_ITEM);
+        Optional<WrappedBlockData> value = getValue(FlagType.ENDERMAN_ITEM);
 
         if (value.isPresent())
         {
-            Pair<Integer, Integer> pair = ReflectionManager.getFromCombinedId(value.get());
-            int id = pair.getLeft();
-            int data = pair.getRight();
+            WrappedBlockData pair = value.get();
+            Material id = pair.getType();
+            int data = pair.getData();
 
             return new ItemStack(id, 1, (short) data);
         }
@@ -42,16 +42,33 @@ public class EndermanWatcher extends InsentientWatcher
         setItemInMainHand(itemstack.getTypeId(), itemstack.getDurability());
     }
 
+    @Deprecated
     public void setItemInMainHand(int typeId)
     {
         setItemInMainHand(typeId, 0);
     }
 
+    public void setItemInMainHand(Material type)
+    {
+        setItemInMainHand(type, 0);
+    }
+
+    public void setItemInMainHand(Material type, int data)
+    {
+        Optional<WrappedBlockData> optional;
+
+        if (type == null)
+            optional = Optional.<WrappedBlockData> absent();
+        else
+            optional = Optional.<WrappedBlockData> of(WrappedBlockData.createData(type, data));
+
+        setValue(FlagType.ENDERMAN_ITEM, optional);
+    }
+
+    @Deprecated
     public void setItemInMainHand(int typeId, int data)
     {
-        int combined = ReflectionManager.getCombinedId(typeId, data);
-
-        setValue(FlagType.ENDERMAN_ITEM, Optional.of(combined));
+        setItemInMainHand(Material.getMaterial(typeId), data);
     }
 
     public boolean isAggressive()
