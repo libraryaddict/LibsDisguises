@@ -53,7 +53,7 @@ public abstract class Disguise
     private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
-    private BukkitTask task = null;
+    private BukkitTask task;
     private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();

@@ -831,7 +831,7 @@ public class ReflectionManager
             case "CHEST":
                 return EquipmentSlot.CHEST;
             case "HEAD":
-                return EquipmentSlot.HAND;
+                return EquipmentSlot.HEAD;
             }
         }
         catch (Exception e)

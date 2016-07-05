@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.util.Vector;
-
+import org.bukkit.util.EulerAngle;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
@@ -17,40 +16,40 @@ public class ArmorStandWatcher extends LivingWatcher
         return (getValue(FlagType.ARMORSTAND_META) & value) != 0;
     }
 
-    public Vector getBody()
+    public EulerAngle getBody()
     {
         return getPose(FlagType.ARMORSTAND_BODY);
     }
 
-    public Vector getHead()
+    public EulerAngle getHead()
     {
         return getPose(FlagType.ARMORSTAND_HEAD);
     }
 
-    public Vector getLeftArm()
+    public EulerAngle getLeftArm()
     {
         return getPose(FlagType.ARMORSTAND_LEFT_ARM);
     }
 
-    public Vector getLeftLeg()
+    public EulerAngle getLeftLeg()
     {
         return getPose(FlagType.ARMORSTAND_LEFT_LEG);
     }
 
-    private Vector getPose(FlagType<Vector> type)
+    private EulerAngle getPose(FlagType<EulerAngle> type)
     {
         if (!hasValue(type))
-            setValue(type, new Vector());
+            setValue(type, new EulerAngle(0, 0, 0));
 
         return getValue(type);
     }
 
-    public Vector getRightArm()
+    public EulerAngle getRightArm()
     {
         return getPose(FlagType.ARMORSTAND_RIGHT_ARM);
     }
 
-    public Vector getRightLeg()
+    public EulerAngle getRightLeg()
     {
         return getPose(FlagType.ARMORSTAND_RIGHT_LEG);
     }
@@ -97,22 +96,22 @@ public class ArmorStandWatcher extends LivingWatcher
         sendData(FlagType.ARMORSTAND_META);
     }
 
-    public void setBody(Vector vector)
+    public void setBody(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_BODY, vector);
     }
 
-    public void setHead(Vector vector)
+    public void setHead(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_HEAD, vector);
     }
 
-    public void setLeftArm(Vector vector)
+    public void setLeftArm(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_LEFT_ARM, vector);
     }
 
-    public void setLeftLeg(Vector vector)
+    public void setLeftLeg(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_LEFT_LEG, vector);
     }
@@ -135,18 +134,18 @@ public class ArmorStandWatcher extends LivingWatcher
         sendData(FlagType.ARMORSTAND_META);
     }
 
-    private void setPose(FlagType type, Vector vector)
+    private void setPose(FlagType type, EulerAngle vector)
     {
         setValue(type, vector);
         sendData(type);
     }
 
-    public void setRightArm(Vector vector)
+    public void setRightArm(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_RIGHT_ARM, vector);
     }
 
-    public void setRightLeg(Vector vector)
+    public void setRightLeg(EulerAngle vector)
     {
         setPose(FlagType.ARMORSTAND_RIGHT_LEG, vector);
     }

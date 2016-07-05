@@ -606,6 +606,9 @@ public class DisguiseUtilities
         if (mainThread != Thread.currentThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
+        if (disguise.getEntity() == null)
+            throw new IllegalStateException("The entity for the disguisetype " + disguise.getType().name() + " is null!");
+
         List<Player> players = new ArrayList<>();
 
         try

@@ -152,6 +152,9 @@ public class DisguiseListener implements Listener
                 {
                     for (TargetedDisguise disguise : list)
                     {
+                        if (disguise.getEntity() == null)
+                            continue;
+
                         if (!disguise.isPlayerDisguise())
                             continue;
 
