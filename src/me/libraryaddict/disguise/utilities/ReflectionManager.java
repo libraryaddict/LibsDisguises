@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -24,7 +25,9 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
@@ -908,6 +911,58 @@ public class ReflectionManager
         return null;
     }
 
+    private static Object convertInvalidItem(Object value)
+    {
+        if (value instanceof Optional)
+        {
+            Optional opt = (Optional) value;
+
+            if (!opt.isPresent())
+                return value;
+
+            Object val = opt.get();
+
+            if (val instanceof ItemStack)
+            {
+                return Optional.of(getNmsItem((ItemStack) val));
+            }
+            else if (val instanceof BlockPosition)
+            {
+                BlockPosition pos = (BlockPosition) val;
+
+                try
+                {
+                    return Optional.of(getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
+                            pos.getY(), pos.getZ()));
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        else if (value instanceof EulerAngle)
+        {
+            EulerAngle angle = (EulerAngle) value;
+
+            try
+            {
+                return getNmsConstructor("Vector3f", float.class, float.class, float.class).newInstance((float) angle.getX(),
+                        (float) angle.getY(), (float) angle.getZ());
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        else if (value instanceof BlockFace)
+        {
+            return getEnumDirection(((BlockFace) value).ordinal());
+        }
+
+        return value;
+    }
+
     /**
      * This creates a DataWatcherItem usable with WrappedWatchableObject
      *
@@ -920,6 +975,8 @@ public class ReflectionManager
         if (value == null)
             return null;
 
+        value = convertInvalidItem(value);
+
         Serializer serializer;
 
         if (value instanceof Optional)
@@ -931,6 +988,12 @@ public class ReflectionManager
         else
         {
             serializer = Registry.get(value.getClass());
+        }
+
+        if (serializer == null)
+        {
+            throw new IllegalArgumentException(
+                    "Unable to find Serializer for " + value + "! Are you running the latest version of ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);

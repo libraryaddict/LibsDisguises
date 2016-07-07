@@ -51,7 +51,18 @@ public class PacketListenerMain extends PacketAdapter
         if (entity == observer)
             return;
 
-        PacketContainer[][] packets = PacketsManager.transformPacket(event.getPacket(), event.getPlayer(), entity);
+        PacketContainer[][] packets;
+
+        try
+        {
+            packets = PacketsManager.transformPacket(event.getPacket(), event.getPlayer(), entity);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            event.setCancelled(true);
+            return;
+        }
 
         if (packets == null)
         {
