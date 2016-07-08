@@ -964,6 +964,19 @@ public class ReflectionManager
             {
                 ex.printStackTrace();
             }
+        } else if (value instanceof BlockPosition)
+        {
+            BlockPosition pos = (BlockPosition) value;
+
+            try
+            {
+                return getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
+                        pos.getY(), pos.getZ());
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
         }
 
         return value;
