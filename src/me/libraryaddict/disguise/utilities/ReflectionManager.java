@@ -15,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,10 +24,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.EulerAngle;
-
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.MinecraftKey;
+import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -941,23 +940,30 @@ public class ReflectionManager
                 }
             }
         }
-        else if (value instanceof EulerAngle)
+        else if (value instanceof Vector3F)
         {
-            EulerAngle angle = (EulerAngle) value;
+            Vector3F angle = (Vector3F) value;
 
             try
             {
-                return getNmsConstructor("Vector3f", float.class, float.class, float.class).newInstance((float) angle.getX(),
-                        (float) angle.getY(), (float) angle.getZ());
+                return getNmsConstructor("Vector3f", float.class, float.class, float.class).newInstance(angle.getX(),
+                        angle.getY(), angle.getZ());
             }
             catch (Exception ex)
             {
                 ex.printStackTrace();
             }
         }
-        else if (value instanceof BlockFace)
+        else if (value instanceof Direction)
         {
-            return getEnumDirection(((BlockFace) value).ordinal());
+            try
+            {
+                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class).invoke(null, ((Direction) value).ordinal());
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
         }
 
         return value;

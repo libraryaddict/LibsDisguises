@@ -738,7 +738,6 @@ public class PacketsManager
             {
                 packetsToListen.add(Server.ENTITY_LOOK);
                 packetsToListen.add(Server.REL_ENTITY_MOVE_LOOK);
-                packetsToListen.add(Server.REL_ENTITY_MOVE_LOOK);
                 packetsToListen.add(Server.ENTITY_HEAD_ROTATION);
                 packetsToListen.add(Server.ENTITY_TELEPORT);
                 packetsToListen.add(Server.REL_ENTITY_MOVE);

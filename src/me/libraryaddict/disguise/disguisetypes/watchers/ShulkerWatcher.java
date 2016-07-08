@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.block.BlockFace;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -21,12 +22,12 @@ public class ShulkerWatcher extends InsentientWatcher
 
     public BlockFace getFacingDirection()
     {
-        return getValue(FlagType.SHULKER_FACING);
+        return BlockFace.valueOf(getValue(FlagType.SHULKER_FACING).name());
     }
 
     public void setFacingDirection(BlockFace face)
     {
-        setValue(FlagType.SHULKER_FACING, face);
+        setValue(FlagType.SHULKER_FACING, Direction.valueOf(face.name()));
         sendData(FlagType.SHULKER_FACING);
     }
 

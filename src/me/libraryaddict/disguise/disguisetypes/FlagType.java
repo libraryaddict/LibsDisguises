@@ -8,11 +8,10 @@ import java.util.UUID;
 
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
-
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.google.common.base.Optional;
 
@@ -79,23 +78,23 @@ public class FlagType<Y>
 
     public static FlagType<Float> AREA_EFFECT_RADIUS = new FlagType<Float>(AreaEffectCloudWatcher.class, 0, 0F);
 
-    public static FlagType<EulerAngle> ARMORSTAND_BODY = new FlagType<EulerAngle>(ArmorStandWatcher.class, 2,
-            new EulerAngle(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_BODY = new FlagType<Vector3F>(ArmorStandWatcher.class, 2,
+            new Vector3F(0, 0, 0));
 
-    public static FlagType<EulerAngle> ARMORSTAND_HEAD = new FlagType<EulerAngle>(ArmorStandWatcher.class, 1,
-            new EulerAngle(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_HEAD = new FlagType<Vector3F>(ArmorStandWatcher.class, 1,
+            new Vector3F(0, 0, 0));
 
-    public static FlagType<EulerAngle> ARMORSTAND_LEFT_ARM = new FlagType<EulerAngle>(ArmorStandWatcher.class, 3,
-            new EulerAngle(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_LEFT_ARM = new FlagType<Vector3F>(ArmorStandWatcher.class, 3,
+            new Vector3F(0, 0, 0));
 
-    public static FlagType<EulerAngle> ARMORSTAND_LEFT_LEG = new FlagType<EulerAngle>(ArmorStandWatcher.class, 5,
-            new EulerAngle(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_LEFT_LEG = new FlagType<Vector3F>(ArmorStandWatcher.class, 5,
+            new Vector3F(0, 0, 0));
 
     public static FlagType<Byte> ARMORSTAND_META = new FlagType<Byte>(ArmorStandWatcher.class, 0, (byte) 0);
 
-    public static FlagType<EulerAngle> ARMORSTAND_RIGHT_ARM = new FlagType<EulerAngle>(ArmorStandWatcher.class, 4, new EulerAngle(0,0,0));
+    public static FlagType<Vector3F> ARMORSTAND_RIGHT_ARM = new FlagType<Vector3F>(ArmorStandWatcher.class, 4, new Vector3F(0,0,0));
 
-    public static FlagType<EulerAngle> ARMORSTAND_RIGHT_LEG = new FlagType<EulerAngle>(ArmorStandWatcher.class, 6, new EulerAngle(0,0,0));
+    public static FlagType<Vector3F> ARMORSTAND_RIGHT_LEG = new FlagType<Vector3F>(ArmorStandWatcher.class, 6, new Vector3F(0,0,0));
 
     public static FlagType<Byte> ARROW_CRITICAL = new FlagType<Byte>(ArrowWatcher.class, 0, (byte) 0);
 
@@ -225,7 +224,7 @@ public class FlagType<Y>
     public static FlagType<Optional<BlockPosition>> SHULKER_ATTACHED = new FlagType<Optional<BlockPosition>>(ShulkerWatcher.class,
             1, Optional.<BlockPosition> absent());
 
-    public static FlagType<BlockFace> SHULKER_FACING = new FlagType<BlockFace>(ShulkerWatcher.class, 0, BlockFace.DOWN);
+    public static FlagType<Direction> SHULKER_FACING = new FlagType<Direction>(ShulkerWatcher.class, 0, Direction.DOWN);
 
     public static FlagType<Byte> SHULKER_PEEKING = new FlagType<Byte>(ShulkerWatcher.class, 2, (byte) 0);
 

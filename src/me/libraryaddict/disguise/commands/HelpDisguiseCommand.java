@@ -14,6 +14,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -316,6 +319,15 @@ public class HelpDisguiseCommand extends BaseDisguiseCommand
                                 {
                                     valueType = "rabbit type";
                                 }
+                                else if (c == BlockPosition.class)
+                                {
+                                    valueType = "three numbers";
+                                }
+                                else if (c == WrappedGameProfile.class)
+                                {
+                                    valueType = "gameprofile";
+                                }
+
                                 if (valueType != null)
                                 {
                                     ChatColor methodColor = ChatColor.YELLOW;

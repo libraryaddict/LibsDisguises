@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import org.bukkit.util.EulerAngle;
+
+import com.comphenix.protocol.wrappers.Vector3F;
+
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
@@ -36,12 +39,14 @@ public class ArmorStandWatcher extends LivingWatcher
         return getPose(FlagType.ARMORSTAND_LEFT_LEG);
     }
 
-    private EulerAngle getPose(FlagType<EulerAngle> type)
+    private EulerAngle getPose(FlagType<Vector3F> type)
     {
         if (!hasValue(type))
-            setValue(type, new EulerAngle(0, 0, 0));
+            return new EulerAngle(0, 0, 0);
 
-        return getValue(type);
+        Vector3F vec = getValue(type);
+
+        return new EulerAngle(vec.getX(), vec.getY(), vec.getZ());
     }
 
     public EulerAngle getRightArm()
@@ -134,9 +139,9 @@ public class ArmorStandWatcher extends LivingWatcher
         sendData(FlagType.ARMORSTAND_META);
     }
 
-    private void setPose(FlagType type, EulerAngle vector)
+    private void setPose(FlagType<Vector3F> type, EulerAngle vector)
     {
-        setValue(type, vector);
+        setValue(type, new Vector3F((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
         sendData(type);
     }
 

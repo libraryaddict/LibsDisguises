@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.gson.Gson;
@@ -952,7 +953,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             {
                                 BlockFace face = BlockFace.valueOf(valueString.toUpperCase());
 
-                                if (face.ordinal() > 4)
+                                if (face.ordinal() > 5)
                                 {
                                     throw new DisguiseParseException();
                                 }
@@ -961,7 +962,8 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             }
                             catch (Exception ex)
                             {
-                                throw parseToException("a direction (north, east, south, west, up)", valueString, methodName);
+                                throw parseToException("a direction (north, east, south, west, up, down)", valueString,
+                                        methodName);
                             }
                         }
                         else if (param == RabbitType.class)
@@ -986,6 +988,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor
                             catch (Exception ex)
                             {
                                 throw parseToException("rabbit type (white, brown, patches...)", valueString, methodName);
+                            }
+                        }
+                        else if (param == BlockPosition.class)
+                        {
+                            try
+                            {
+                                String[] split = valueString.split(",");
+
+                                assert split.length == 3;
+
+                                value = new BlockPosition(Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                                        Integer.parseInt(split[2]));
+                            }
+                            catch (Exception ex)
+                            {
+                                throw parseToException("three numbers Number,Number,Number", valueString,
+                                        methodName);
                             }
                         }
                     }
