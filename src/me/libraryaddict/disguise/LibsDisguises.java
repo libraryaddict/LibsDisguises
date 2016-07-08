@@ -62,6 +62,29 @@ public class LibsDisguises extends JavaPlugin
     @Override
     public void onEnable()
     {
+        try
+        {
+            Class.forName("com.comphenix.protocol.wrappers.Vector3F").getName();
+        }
+        catch (Exception ex)
+        {
+            System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated ProtocolLib!");
+            System.err.println(
+                    "[LibsDisguises] You need to update ProtocolLib, please try this build http://ci.dmulloy2.net/job/ProtocolLib/lastStableBuild/artifact/modules/ProtocolLib/target/ProtocolLib.jar");
+            return;
+        }
+
+        try
+        {
+            ReflectionManager.getNmsClass("EntityShulker").getName();
+        }
+        catch (Exception ex)
+        {
+            System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated server!");
+            System.err.println("[LibsDisguises] This plugin does not offer backwards support!");
+            return;
+        }
+
         getLogger().info("Discovered MC version: " + ReflectionManager.getBukkitVersion());
 
         saveDefaultConfig();
