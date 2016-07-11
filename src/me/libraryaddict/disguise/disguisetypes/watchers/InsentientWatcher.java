@@ -50,6 +50,6 @@ public class InsentientWatcher extends LivingWatcher
 
     private boolean getInsentientFlag(int i)
     {
-        return ((byte) getValue(FlagType.PLAYER_SKIN) & 1 << i) != 0;
+        return ((byte) getValue(FlagType.INSENTIENT_META) & 1 << i) != 0;
     }
 }

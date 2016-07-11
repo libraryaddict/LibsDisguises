@@ -894,7 +894,7 @@ public class PacketsManager
                         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
                                 .convert(packets[0].getWatchableCollectionModifier().read(0));
 
-                        packets[0] = new PacketContainer(sentPacket.getType());
+                        packets[0] = new PacketContainer(Server.ENTITY_METADATA);
 
                         StructureModifier<Object> newMods = packets[0].getModifier();
 

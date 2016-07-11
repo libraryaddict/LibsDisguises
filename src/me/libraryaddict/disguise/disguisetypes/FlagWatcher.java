@@ -457,7 +457,17 @@ public class FlagWatcher
             {
                 try
                 {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    if (player == getDisguise().getEntity())
+                    {
+                        PacketContainer temp = packet.shallowClone();
+                        temp.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp);
+                    }
+                    else
+                    {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    }
                 }
                 catch (InvocationTargetException e)
                 {

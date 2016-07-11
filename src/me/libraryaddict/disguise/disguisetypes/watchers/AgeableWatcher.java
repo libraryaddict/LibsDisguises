@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagType;
 
 public class AgeableWatcher extends InsentientWatcher
 {
-
     public AgeableWatcher(Disguise disguise)
     {
         super(disguise);
@@ -36,5 +35,4 @@ public class AgeableWatcher extends InsentientWatcher
         setValue(FlagType.AGEABLE_BABY, isBaby);
         sendData(FlagType.AGEABLE_BABY);
     }
-
 }
