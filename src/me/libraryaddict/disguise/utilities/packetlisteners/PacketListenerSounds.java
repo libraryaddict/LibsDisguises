@@ -155,7 +155,7 @@ public class PacketListenerSounds extends PacketAdapter
                                 Class clazz = ReflectionManager.getNmsClass("DamageSource");
 
                                 hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", clazz)
-                                        .invoke(nmsEntity, ReflectionManager.getNmsField(clazz, "GENERIC"));
+                                        .invoke(nmsEntity, ReflectionManager.getNmsField(clazz, "GENERIC").get(null));
                             }
                         }
                         catch (Exception ex)
