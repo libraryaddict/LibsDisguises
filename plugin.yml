@@ -53,10 +53,6 @@ commands:
       aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd]
       permission: libsdisguises.seecmd.viewself
       description: Toggle seeing your own disguise on or off.
-    disguiselist:
-      aliases: [dlist]
-      permission: libsdisguises.seecmd.disguiselist
-      description: See a list of who is disguised as what.
 
 permissions:
     libsdisguises.reload:
@@ -81,7 +77,6 @@ permissions:
          libsdisguises.seecmd.undisguiseradius: true
          libsdisguises.seecmd.disguiseclone: true
          libsdisguises.seecmd.disguiseviewself: true
-         libsdisguises.seecmd.disguiselist: true
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguiseviewself:
@@ -106,5 +101,3 @@ permissions:
       description: See the /undisguiseradius command in tab-completion
     libsdisguises.seecmd.disguiseclone:
       description: See the /disguiseclone command in tab-completion
-    libsdisguises.seecmd.disguiselist:
-      description: See the /disguiselist command in tab-completion

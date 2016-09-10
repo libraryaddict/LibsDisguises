@@ -112,7 +112,6 @@ public class LibsDisguises extends JavaPlugin
         getCommand("disguiseclone").setExecutor(new CloneDisguiseCommand());
         getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
         getCommand("disguiseviewself").setExecutor(new DisguiseViewSelf());
-        getCommand("disguiselist").setExecutor(new DisguiseListCommand());
 
         registerValues();
 
