@@ -117,6 +117,11 @@ public class RadiusDisguiseCommand extends BaseDisguiseCommand
                     + (starting != 0 ? " and EntityType" : ""));
             return true;
         }
+        else if (args.length < 2)
+		{
+			sender.sendMessage(ChatColor.RED + "You need to supply a radius as well as the disguise");
+			return true;
+		}
 
         if (!isNumeric(args[starting]))
         {
