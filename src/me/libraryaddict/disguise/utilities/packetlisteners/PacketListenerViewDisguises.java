@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -20,24 +19,21 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class PacketListenerViewDisguises extends PacketAdapter
 {
-    private LibsDisguises libsDisguises;
-
     public PacketListenerViewDisguises(LibsDisguises plugin)
     {
         super(plugin, ListenerPriority.HIGH, Server.NAMED_ENTITY_SPAWN, Server.ATTACH_ENTITY, Server.REL_ENTITY_MOVE,
                 Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_LOOK, Server.ENTITY_TELEPORT, Server.ENTITY_HEAD_ROTATION,
                 Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT, Server.ANIMATION, Server.BED, Server.ENTITY_EFFECT,
                 Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS);
-
-        libsDisguises = plugin;
     }
 
     @Override
-    public void onPacketSending(PacketEvent event)
+    public void onPacketSending(final PacketEvent event)
     {
         if (event.isCancelled())
             return;
@@ -59,22 +55,22 @@ public class PacketListenerViewDisguises extends PacketAdapter
                 return;
             }
 
+            final Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
+
+            if (disguise == null)
+                return;
+
             // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-            PacketContainer[][] transformed = PacketsManager.transformPacket(event.getPacket(), observer, observer);
+            LibsPackets transformed = PacketsManager.transformPacket(event.getPacket(), disguise, observer, observer);
 
-            PacketContainer[] packets = transformed == null ? null : transformed[0];
-
-            final PacketContainer[] delayedPackets = transformed == null ? null : transformed[1];
-
-            if (packets == null)
+            if (transformed.isUnhandled())
             {
-                packets = new PacketContainer[]
-                    {
-                            event.getPacket()
-                    };
+                transformed.getPackets().add(event.getPacket());
             }
 
-            for (PacketContainer packet : packets)
+            transformed.setPacketType(event.getPacketType());
+
+            for (PacketContainer packet : transformed.getPackets())
             {
                 if (packet.getType() != Server.PLAYER_INFO)
                 {
@@ -96,26 +92,7 @@ public class PacketListenerViewDisguises extends PacketAdapter
                 }
             }
 
-            if (delayedPackets != null && delayedPackets.length > 0)
-            {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
-                {
-                    public void run()
-                    {
-                        try
-                        {
-                            for (PacketContainer packet : delayedPackets)
-                            {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                            }
-                        }
-                        catch (InvocationTargetException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }, 2);
-            }
+            transformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA)
             {
@@ -182,8 +159,6 @@ public class PacketListenerViewDisguises extends PacketAdapter
             }
             else if (event.getPacketType() == Server.ENTITY_STATUS)
             {
-                Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
-
                 if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer()
                         && event.getPacket().getBytes().read(0) == 2)
                 {

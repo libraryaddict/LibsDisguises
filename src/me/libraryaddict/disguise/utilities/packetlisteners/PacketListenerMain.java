@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities.packetlisteners;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -16,30 +15,29 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 
 public class PacketListenerMain extends PacketAdapter
 {
-    private LibsDisguises libsDisguises;
-
     public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen)
     {
         super(plugin, ListenerPriority.HIGH, packetsToListen);
-
-        libsDisguises = plugin;
     }
 
     @Override
-    public void onPacketSending(PacketEvent event)
+    public void onPacketSending(final PacketEvent event)
     {
         if (event.isCancelled())
             return;
 
-        if (event.getPlayer().getName().contains("UNKNOWN[")) // If the player is temporary
-            return;
-
         final Player observer = event.getPlayer();
+
+        if (observer.getName().contains("UNKNOWN[")) // If the player is temporary
+            return;
 
         // First get the entity, the one sending this packet
         StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
@@ -51,11 +49,16 @@ public class PacketListenerMain extends PacketAdapter
         if (entity == observer)
             return;
 
-        PacketContainer[][] packets;
+        final Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+
+        if (disguise == null)
+            return;
+
+        LibsPackets packets;
 
         try
         {
-            packets = PacketsManager.transformPacket(event.getPacket(), event.getPlayer(), entity);
+            packets = PacketsManager.transformPacket(event.getPacket(), disguise, observer, entity);
         }
         catch (Exception ex)
         {
@@ -64,44 +67,23 @@ public class PacketListenerMain extends PacketAdapter
             return;
         }
 
-        if (packets == null)
+        if (packets.isUnhandled())
         {
             return;
         }
+
+        packets.setPacketType(event.getPacketType());
 
         event.setCancelled(true);
 
         try
         {
-            for (PacketContainer packet : packets[0])
+            for (PacketContainer packet : packets.getPackets())
             {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
             }
 
-            final PacketContainer[] delayed = packets[1];
-
-            if (delayed.length == 0)
-            {
-                return;
-            }
-
-            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        for (PacketContainer packet : delayed)
-                        {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                        }
-                    }
-                    catch (InvocationTargetException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }, 2);
+            packets.sendDelayed(observer);
         }
         catch (InvocationTargetException ex)
         {

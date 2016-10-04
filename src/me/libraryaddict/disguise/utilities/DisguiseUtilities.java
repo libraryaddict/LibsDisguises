@@ -56,6 +56,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 
 public class DisguiseUtilities
 {
@@ -1266,18 +1267,23 @@ public class DisguiseUtilities
                 return;
             }
 
-            // Code to stop player pushing in 1.9
+            // Code to stop player pushing
             Scoreboard scoreboard = player.getScoreboard();
             Team t;
 
             if ((t = scoreboard.getTeam("LDPushing")) == null)
             {
                 t = scoreboard.registerNewTeam("LDPushing");
-
-                t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
             }
 
-            t.addEntry(player.getName());
+            if (t.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER)
+            {
+                t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+                t.setCanSeeFriendlyInvisibles(false);
+            }
+
+            if (!t.hasEntry(player.getName()))
+                t.addEntry(player.getName());
 
             // Add himself to his own entity tracker
             Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
@@ -1411,52 +1417,33 @@ public class DisguiseUtilities
     /**
      * Method to send a packet to the self disguise, translate his entity ID to the fake id.
      */
-    private static void sendSelfPacket(final Player player, PacketContainer packet)
+    private static void sendSelfPacket(final Player player, final PacketContainer packet)
     {
-        PacketContainer[][] transformed = PacketsManager.transformPacket(packet, player, player);
+        final Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
-        PacketContainer[] packets = transformed == null ? null : transformed[0];
+        // If disguised.
+        if (disguise == null)
+        {
+            return;
+        }
 
-        final PacketContainer[] delayed = transformed == null ? null : transformed[1];
+        LibsPackets transformed = PacketsManager.transformPacket(packet, disguise, player, player);
 
         try
         {
-            if (packets == null)
-            {
-                packets = new PacketContainer[]
-                    {
-                            packet
-                    };
-            }
+            if (transformed.isUnhandled())
+                transformed.addPacket(packet);
 
-            for (PacketContainer p : packets)
+            transformed.setPacketType(packet.getType());
+
+            for (PacketContainer p : transformed.getPackets())
             {
                 p = p.deepClone();
                 p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
             }
 
-            if (delayed != null && delayed.length > 0)
-            {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            for (PacketContainer packet : delayed)
-                            {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                            }
-                        }
-                        catch (InvocationTargetException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
+            transformed.sendDelayed(player);
         }
         catch (InvocationTargetException e)
         {
