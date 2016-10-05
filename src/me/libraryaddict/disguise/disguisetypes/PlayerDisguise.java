@@ -106,7 +106,11 @@ public class PlayerDisguise extends TargetedDisguise
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
         disguise.setModifyBoundingBox(isModifyBoundingBox());
-        disguise.setWatcher(getWatcher().clone(disguise));
+
+        if (getWatcher() != null)
+        {
+            disguise.setWatcher(getWatcher().clone(disguise));
+        }
 
         disguise.createDisguise(DisguiseType.PLAYER);
 

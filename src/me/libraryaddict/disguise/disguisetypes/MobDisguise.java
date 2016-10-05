@@ -54,7 +54,12 @@ public class MobDisguise extends TargetedDisguise
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
         disguise.setModifyBoundingBox(isModifyBoundingBox());
-        disguise.setWatcher(getWatcher().clone(disguise));
+
+        if (getWatcher() != null)
+        {
+            disguise.setWatcher(getWatcher().clone(disguise));
+        }
+
         return disguise;
     }
 
