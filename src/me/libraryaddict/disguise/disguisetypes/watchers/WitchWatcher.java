@@ -16,12 +16,12 @@ public class WitchWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return (boolean) getValue(FlagType.WITCH_AGGRESSIVE);
+        return (boolean) getData(FlagType.WITCH_AGGRESSIVE);
     }
 
     public void setAggressive(boolean aggressive)
     {
-        setValue(FlagType.WITCH_AGGRESSIVE, aggressive);
+        setData(FlagType.WITCH_AGGRESSIVE, aggressive);
         sendData(FlagType.WITCH_AGGRESSIVE);
     }
 

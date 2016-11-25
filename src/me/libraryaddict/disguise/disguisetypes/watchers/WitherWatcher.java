@@ -22,14 +22,14 @@ public class WitherWatcher extends InsentientWatcher
      */
     public int getInvulnerability()
     {
-        return (int) getValue(FlagType.WITHER_INVUL);
+        return (int) getData(FlagType.WITHER_INVUL);
     }
 
     public int[] getTargets()
     {
         return new int[]
             {
-                    getValue(FlagType.WITHER_TARGET_1), getValue(FlagType.WITHER_TARGET_2), getValue(FlagType.WITHER_TARGET_3)
+                    getData(FlagType.WITHER_TARGET_1), getData(FlagType.WITHER_TARGET_2), getData(FlagType.WITHER_TARGET_3)
             };
     }
 
@@ -38,7 +38,7 @@ public class WitherWatcher extends InsentientWatcher
      */
     public void setInvulnerability(int invulnerability)
     {
-        setValue(FlagType.WITHER_INVUL, invulnerability);
+        setData(FlagType.WITHER_INVUL, invulnerability);
         sendData(FlagType.WITHER_INVUL);
     }
 
@@ -49,9 +49,9 @@ public class WitherWatcher extends InsentientWatcher
             throw new InvalidParameterException(
                     ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
         }
-        setValue(FlagType.WITHER_TARGET_1, targets[0]);
-        setValue(FlagType.WITHER_TARGET_2, targets[1]);
-        setValue(FlagType.WITHER_TARGET_3, targets[2]);
+        setData(FlagType.WITHER_TARGET_1, targets[0]);
+        setData(FlagType.WITHER_TARGET_2, targets[1]);
+        setData(FlagType.WITHER_TARGET_3, targets[2]);
         sendData(FlagType.WITHER_TARGET_1, FlagType.WITHER_TARGET_2, FlagType.WITHER_TARGET_3);
     }
 

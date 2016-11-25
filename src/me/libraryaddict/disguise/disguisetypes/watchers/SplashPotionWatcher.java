@@ -34,13 +34,13 @@ public class SplashPotionWatcher extends FlagWatcher
 
     public void setSplashPotion(ItemStack item)
     {
-        setValue(FlagType.SPLASH_POTION_ITEM, Optional.of(item));
+        setData(FlagType.SPLASH_POTION_ITEM, Optional.of(item));
         sendData(FlagType.SPLASH_POTION_ITEM);
     }
 
     public ItemStack getSplashPotion()
     {
-        return getValue(FlagType.SPLASH_POTION_ITEM).get();
+        return getData(FlagType.SPLASH_POTION_ITEM).get();
     }
 
     public void setPotionId(int newPotionId)

@@ -16,7 +16,7 @@ public class TameableWatcher extends AgeableWatcher
 
     public Optional<UUID> getOwner()
     {
-        return getValue(FlagType.TAMEABLE_OWNER);
+        return getData(FlagType.TAMEABLE_OWNER);
     }
 
     public boolean isSitting()
@@ -31,20 +31,20 @@ public class TameableWatcher extends AgeableWatcher
 
     protected boolean isTameableFlag(int no)
     {
-        return ((byte) getValue(FlagType.TAMEABLE_META) & no) != 0;
+        return ((byte) getData(FlagType.TAMEABLE_META) & no) != 0;
     }
 
     protected void setTameableFlag(int no, boolean flag)
     {
-        byte value = (byte) getValue(FlagType.TAMEABLE_META);
+        byte value = (byte) getData(FlagType.TAMEABLE_META);
 
         if (flag)
         {
-            setValue(FlagType.TAMEABLE_META, (byte) (value | no));
+            setData(FlagType.TAMEABLE_META, (byte) (value | no));
         }
         else
         {
-            setValue(FlagType.TAMEABLE_META, (byte) (value & -(no + 1)));
+            setData(FlagType.TAMEABLE_META, (byte) (value & -(no + 1)));
         }
 
         sendData(FlagType.TAMEABLE_META);
@@ -52,7 +52,7 @@ public class TameableWatcher extends AgeableWatcher
 
     public void setOwner(UUID owner)
     {
-        setValue(FlagType.TAMEABLE_OWNER, Optional.of(owner));
+        setData(FlagType.TAMEABLE_OWNER, Optional.of(owner));
         sendData(FlagType.TAMEABLE_OWNER);
     }
 

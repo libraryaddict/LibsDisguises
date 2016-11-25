@@ -13,12 +13,12 @@ public class PigWatcher extends AgeableWatcher
 
     public boolean isSaddled()
     {
-        return (boolean) getValue(FlagType.PIG_SADDLED);
+        return (boolean) getData(FlagType.PIG_SADDLED);
     }
 
     public void setSaddled(boolean isSaddled)
     {
-        setValue(FlagType.PIG_SADDLED, isSaddled);
+        setData(FlagType.PIG_SADDLED, isSaddled);
         sendData(FlagType.PIG_SADDLED);
     }
 }

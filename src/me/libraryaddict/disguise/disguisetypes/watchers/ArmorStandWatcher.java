@@ -16,7 +16,7 @@ public class ArmorStandWatcher extends LivingWatcher
 
     private boolean getArmorStandFlag(int value)
     {
-        return (getValue(FlagType.ARMORSTAND_META) & value) != 0;
+        return (getData(FlagType.ARMORSTAND_META) & value) != 0;
     }
 
     public EulerAngle getBody()
@@ -44,7 +44,7 @@ public class ArmorStandWatcher extends LivingWatcher
         if (!hasValue(type))
             return new EulerAngle(0, 0, 0);
 
-        Vector3F vec = getValue(type);
+        Vector3F vec = getData(type);
 
         return new EulerAngle(vec.getX(), vec.getY(), vec.getZ());
     }
@@ -86,7 +86,7 @@ public class ArmorStandWatcher extends LivingWatcher
 
     private void setArmorStandFlag(int value, boolean isTrue)
     {
-        byte b1 = (byte) getValue(FlagType.ARMORSTAND_META);
+        byte b1 = (byte) getData(FlagType.ARMORSTAND_META);
 
         if (isTrue)
         {
@@ -97,7 +97,7 @@ public class ArmorStandWatcher extends LivingWatcher
             b1 = (byte) (b1 & value);
         }
 
-        setValue(FlagType.ARMORSTAND_META, b1);
+        setData(FlagType.ARMORSTAND_META, b1);
         sendData(FlagType.ARMORSTAND_META);
     }
 
@@ -141,7 +141,7 @@ public class ArmorStandWatcher extends LivingWatcher
 
     private void setPose(FlagType<Vector3F> type, EulerAngle vector)
     {
-        setValue(type, new Vector3F((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
+        setData(type, new Vector3F((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
         sendData(type);
     }
 

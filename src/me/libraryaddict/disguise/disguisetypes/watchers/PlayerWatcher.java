@@ -26,7 +26,7 @@ public class PlayerWatcher extends LivingWatcher
     {
         super(disguise);
 
-        setValue(FlagType.PLAYER_SKIN, FlagType.PLAYER_SKIN.getDefault());
+        setData(FlagType.PLAYER_SKIN, FlagType.PLAYER_SKIN.getDefault());
     }
 
     @Override
@@ -39,13 +39,13 @@ public class PlayerWatcher extends LivingWatcher
 
     public void setMainHand(MainHand mainHand)
     {
-        setValue(FlagType.PLAYER_HAND, (byte) mainHand.ordinal());
+        setData(FlagType.PLAYER_HAND, (byte) mainHand.ordinal());
         sendData(FlagType.PLAYER_HAND);
     }
 
     public MainHand getMainHand()
     {
-        return MainHand.values()[getValue(FlagType.PLAYER_HAND)];
+        return MainHand.values()[getData(FlagType.PLAYER_HAND)];
     }
 
     public BlockFace getSleepingDirection()
@@ -75,7 +75,7 @@ public class PlayerWatcher extends LivingWatcher
 
     private boolean isSkinFlag(int i)
     {
-        return ((byte) getValue(FlagType.PLAYER_SKIN) & 1 << i) != 0;
+        return ((byte) getData(FlagType.PLAYER_SKIN) & 1 << i) != 0;
     }
 
     public boolean isCapeEnabled()
@@ -257,15 +257,15 @@ public class PlayerWatcher extends LivingWatcher
 
     private void setSkinFlags(int i, boolean flag)
     {
-        byte b0 = (byte) getValue(FlagType.PLAYER_SKIN);
+        byte b0 = (byte) getData(FlagType.PLAYER_SKIN);
 
         if (flag)
         {
-            setValue(FlagType.PLAYER_SKIN, (byte) (b0 | 1 << i));
+            setData(FlagType.PLAYER_SKIN, (byte) (b0 | 1 << i));
         }
         else
         {
-            setValue(FlagType.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
+            setData(FlagType.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
         }
     }
 

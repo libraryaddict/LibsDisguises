@@ -16,7 +16,7 @@ public class WolfWatcher extends TameableWatcher
 
     public AnimalColor getCollarColor()
     {
-        return AnimalColor.getColor(getValue(FlagType.WOLF_COLLAR));
+        return AnimalColor.getColor(getData(FlagType.WOLF_COLLAR));
     }
 
     /**
@@ -26,7 +26,7 @@ public class WolfWatcher extends TameableWatcher
      */
     public float getDamageTaken()
     {
-        return (float) getValue(FlagType.WOLF_DAMAGE);
+        return (float) getData(FlagType.WOLF_DAMAGE);
     }
 
     /**
@@ -36,18 +36,18 @@ public class WolfWatcher extends TameableWatcher
      */
     public void setDamageTaken(float damage)
     {
-        setValue(FlagType.WOLF_DAMAGE, damage);
+        setData(FlagType.WOLF_DAMAGE, damage);
         sendData(FlagType.WOLF_DAMAGE);
     }
 
     public boolean isBegging()
     {
-        return (boolean) getValue(FlagType.WOLF_BEGGING);
+        return (boolean) getData(FlagType.WOLF_BEGGING);
     }
 
     public void setBegging(boolean begging)
     {
-        setValue(FlagType.WOLF_BEGGING, begging);
+        setData(FlagType.WOLF_BEGGING, begging);
         sendData(FlagType.WOLF_BEGGING);
     }
 
@@ -78,7 +78,7 @@ public class WolfWatcher extends TameableWatcher
             return;
         }
 
-        setValue(FlagType.WOLF_COLLAR, (int) newColor.getDyeData());
+        setData(FlagType.WOLF_COLLAR, (int) newColor.getDyeData());
         sendData(FlagType.WOLF_COLLAR);
     }
 

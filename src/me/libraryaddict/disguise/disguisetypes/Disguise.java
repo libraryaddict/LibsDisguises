@@ -11,7 +11,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton.SkeletonType;
@@ -31,7 +30,6 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
@@ -40,8 +38,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-public abstract class Disguise
-{
+public abstract class Disguise {
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
     private Entity entity;
@@ -71,15 +68,12 @@ public abstract class Disguise
      * @param newType
      *            The disguise
      */
-    protected void createDisguise(DisguiseType newType)
-    {
-        if (getWatcher() != null)
-        {
+    protected void createDisguise(DisguiseType newType) {
+        if (getWatcher() != null) {
             return;
         }
 
-        if (newType.getEntityType() == null)
-        {
+        if (newType.getEntityType() == null) {
             throw new RuntimeException("DisguiseType " + newType
                     + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
         }
@@ -90,45 +84,36 @@ public abstract class Disguise
 
         boolean isAdult = true;
 
-        if (isMobDisguise())
-        {
+        if (isMobDisguise()) {
             isAdult = ((MobDisguise) this).isAdult();
         }
 
-        try
-        {
+        try {
             // Construct the FlagWatcher from the stored class
             setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
         // Set the disguise if its a baby or not
-        if (!isAdult)
-        {
-            if (getWatcher() instanceof AgeableWatcher)
-            {
+        if (!isAdult) {
+            if (getWatcher() instanceof AgeableWatcher) {
                 ((AgeableWatcher) getWatcher()).setBaby(true);
             }
-            else if (getWatcher() instanceof ZombieWatcher)
-            {
+            else if (getWatcher() instanceof ZombieWatcher) {
                 ((ZombieWatcher) getWatcher()).setBaby(true);
             }
         }
 
         // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
-        if (getType() == DisguiseType.WITHER_SKELETON)
-        {
+        if (getType() == DisguiseType.WITHER_SKELETON) {
             ((SkeletonWatcher) getWatcher()).setType(SkeletonType.WITHER);
         }
-        else if (getType() == DisguiseType.STRAY)
-        {
+        else if (getType() == DisguiseType.STRAY) {
             ((SkeletonWatcher) getWatcher()).setType(SkeletonType.STRAY);
         } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
-        else if (getType() == DisguiseType.ZOMBIE_VILLAGER)
-        {
+        else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
             Profession profession = null;
 
             while (profession == null || profession == Profession.NORMAL || profession == Profession.HUSK)
@@ -136,31 +121,16 @@ public abstract class Disguise
 
             ((ZombieWatcher) getWatcher()).setProfession(profession);
         }
-        else if (getType() == DisguiseType.HUSK)
-        {
+        else if (getType() == DisguiseType.HUSK) {
             ((ZombieWatcher) getWatcher()).setProfession(Profession.HUSK);
         }
-        else if (getType() == DisguiseType.ELDER_GUARDIAN)
-        {
+        else if (getType() == DisguiseType.ELDER_GUARDIAN) {
             ((GuardianWatcher) getWatcher()).setElder(true);
-        } // Else if its a horse. Set the horse watcher type
-        else if (getWatcher() instanceof HorseWatcher)
-        {
-            try
-            {
-                Variant horseType = Variant.valueOf(getType().name());
-                ((HorseWatcher) getWatcher()).setVariant(horseType);
-            }
-            catch (Exception ex)
-            {
-                // Ok.. So it aint a horse
-            }
         }
 
         final boolean alwaysSendVelocity;
 
-        switch (getType())
-        {
+        switch (getType()) {
         case EGG:
         case ENDER_PEARL:
         case BAT:
@@ -181,8 +151,7 @@ public abstract class Disguise
 
         double velocitySpeed = 0.0005;
 
-        switch (getType())
-        {
+        switch (getType()) {
         case FIREWORK:
             velocitySpeed = -0.040;
             break;
@@ -232,32 +201,26 @@ public abstract class Disguise
         final TargetedDisguise disguise = (TargetedDisguise) this;
 
         // A scheduler to clean up any unused disguises.
-        velocityRunnable = new Runnable()
-        {
+        velocityRunnable = new Runnable() {
             private int blockX, blockY, blockZ, facing;
             private int deadTicks = 0;
             private int refreshDisguise = 0;
 
             @Override
-            public void run()
-            {
+            public void run() {
                 // If entity is no longer valid. Remove it.
-                if (!getEntity().isValid())
-                {
+                if (!getEntity().isValid()) {
                     // If it has been dead for 30+ ticks
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
                     // The delay is because if it sends the destroy entity packets straight away, then it means no death animation
                     // This is probably still a problem for wither and enderdragon deaths.
-                    if (deadTicks++ > (getType() == DisguiseType.ENDER_DRAGON ? 200 : 20))
-                    {
+                    if (deadTicks++ > (getType() == DisguiseType.ENDER_DRAGON ? 200 : 20)) {
                         deadTicks = 0;
 
-                        if (isRemoveDisguiseOnDeath())
-                        {
+                        if (isRemoveDisguiseOnDeath()) {
                             removeDisguise();
                         }
-                        else
-                        {
+                        else {
                             entity = null;
                             watcher = getWatcher().clone(disguise);
                             task.cancel();
@@ -265,32 +228,27 @@ public abstract class Disguise
                         }
                     }
                 }
-                else
-                {
+                else {
                     deadTicks = 0;
 
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-                    if (getType() == DisguiseType.FIREWORK)
-                    {
+                    if (getType() == DisguiseType.FIREWORK) {
                         refreshDisguise++;
 
-                        if (refreshDisguise % 40 == 0)
-                        {
+                        if (refreshDisguise % 40 == 0) {
                             refreshDisguise = 0;
 
                             DisguiseUtilities.refreshTrackers(disguise);
                         }
                     }
 
-                    if (getType() == DisguiseType.ITEM_FRAME)
-                    {
+                    if (getType() == DisguiseType.ITEM_FRAME) {
                         Location loc = getEntity().getLocation();
 
                         int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
 
                         if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ
-                                || newFacing != facing)
-                        {
+                                || newFacing != facing) {
                             blockX = loc.getBlockX();
                             blockY = loc.getBlockY();
                             blockZ = loc.getBlockZ();
@@ -300,37 +258,31 @@ public abstract class Disguise
                         }
                     }
 
-                    if (isModifyBoundingBox())
-                    {
+                    if (isModifyBoundingBox()) {
                         DisguiseUtilities.doBoundingBox(disguise);
                     }
 
-                    if (getType() == DisguiseType.BAT && !((BatWatcher) getWatcher()).isHanging())
-                    {
+                    if (getType() == DisguiseType.BAT && !((BatWatcher) getWatcher()).isHanging()) {
                         return;
                     }
 
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
-                    if (isVelocitySent() && vectorY != 0 && (alwaysSendVelocity || !getEntity().isOnGround()))
-                    {
+                    if (isVelocitySent() && vectorY != 0 && (alwaysSendVelocity || !getEntity().isOnGround())) {
                         Vector vector = getEntity().getVelocity();
 
                         // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the
                         // if statement.
                         // But it doesn't seem to do anything wrong..
-                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround()))
-                        {
+                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround())) {
                             return;
                         }
 
                         // If disguise isn't a experience orb, or the entity isn't standing on the ground
-                        if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround())
-                        {
+                        if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
 
-                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled())
-                            {
+                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
                                 lookPacket = new PacketContainer(Server.ENTITY_LOOK);
 
                                 StructureModifier<Object> mods = lookPacket.getModifier();
@@ -342,26 +294,22 @@ public abstract class Disguise
                                 mods.write(5, PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()),
                                         (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
-                                if (isSelfDisguiseVisible() && getEntity() instanceof Player)
-                                {
+                                if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
 
                                     selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
 
-                                    try
-                                    {
+                                    try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
                                                 selfLookPacket, false);
                                     }
-                                    catch (InvocationTargetException e)
-                                    {
+                                    catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
                                 }
                             }
 
-                            try
-                            {
+                            try {
                                 PacketContainer velocityPacket = new PacketContainer(Server.ENTITY_VELOCITY);
 
                                 StructureModifier<Integer> mods = velocityPacket.getIntegers();
@@ -369,26 +317,21 @@ public abstract class Disguise
                                 mods.write(1, (int) (vector.getX() * 8000));
                                 mods.write(3, (int) (vector.getZ() * 8000));
 
-                                for (Player player : DisguiseUtilities.getPerverts(disguise))
-                                {
-                                    if (getEntity() == player)
-                                    {
-                                        if (!isSelfDisguiseVisible())
-                                        {
+                                for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                                    if (getEntity() == player) {
+                                        if (!isSelfDisguiseVisible()) {
                                             continue;
                                         }
 
                                         mods.write(0, DisguiseAPI.getSelfDisguiseId());
                                     }
-                                    else
-                                    {
+                                    else {
                                         mods.write(0, getEntity().getEntityId());
                                     }
 
                                     mods.write(2, (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
 
-                                    if (lookPacket != null && player != getEntity())
-                                    {
+                                    if (lookPacket != null && player != getEntity()) {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
                                     }
 
@@ -396,47 +339,38 @@ public abstract class Disguise
                                             false);
                                 }
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                         // If we need to send a packet to update the exp position as it likes to gravitate client sided to
                         // players.
                     }
-                    if (getType() == DisguiseType.EXPERIENCE_ORB)
-                    {
+                    if (getType() == DisguiseType.EXPERIENCE_ORB) {
                         PacketContainer packet = new PacketContainer(Server.REL_ENTITY_MOVE);
 
                         packet.getIntegers().write(0, getEntity().getEntityId());
-                        try
-                        {
-                            for (Player player : DisguiseUtilities.getPerverts(disguise))
-                            {
-                                if (getEntity() != player)
-                                {
+                        try {
+                            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                                if (getEntity() != player) {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 }
-                                else if (isSelfDisguiseVisible())
-                                {
+                                else if (isSelfDisguiseVisible()) {
                                     PacketContainer selfPacket = packet.shallowClone();
 
                                     selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
 
-                                    try
-                                    {
+                                    try {
                                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
                                                 false);
                                     }
-                                    catch (InvocationTargetException e)
-                                    {
+                                    catch (InvocationTargetException e) {
                                         e.printStackTrace();
                                     }
                                 }
                             }
                         }
-                        catch (InvocationTargetException e)
-                        {
+                        catch (InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
@@ -450,8 +384,7 @@ public abstract class Disguise
      *
      * @return entity
      */
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return entity;
     }
 
@@ -460,8 +393,7 @@ public abstract class Disguise
      *
      * @return disguiseType
      */
-    public DisguiseType getType()
-    {
+    public DisguiseType getType() {
         return disguiseType;
     }
 
@@ -470,8 +402,7 @@ public abstract class Disguise
      *
      * @return flagWatcher
      */
-    public FlagWatcher getWatcher()
-    {
+    public FlagWatcher getWatcher() {
         return watcher;
     }
 
@@ -481,68 +412,56 @@ public abstract class Disguise
      *
      * @return isDisguiseInUse
      */
-    public boolean isDisguiseInUse()
-    {
+    public boolean isDisguiseInUse() {
         return disguiseInUse;
     }
 
-    public boolean isHidingArmorFromSelf()
-    {
+    public boolean isHidingArmorFromSelf() {
         return hideArmorFromSelf;
     }
 
-    public boolean isHidingHeldItemFromSelf()
-    {
+    public boolean isHidingHeldItemFromSelf() {
         return hideHeldItemFromSelf;
     }
 
-    public boolean isKeepDisguiseOnEntityDespawn()
-    {
+    public boolean isKeepDisguiseOnEntityDespawn() {
         return this.keepDisguiseEntityDespawn;
     }
 
-    public boolean isKeepDisguiseOnPlayerDeath()
-    {
+    public boolean isKeepDisguiseOnPlayerDeath() {
         return this.keepDisguisePlayerDeath;
     }
 
-    public boolean isKeepDisguiseOnPlayerLogout()
-    {
+    public boolean isKeepDisguiseOnPlayerLogout() {
         return this.keepDisguisePlayerLogout;
     }
 
-    public boolean isMiscDisguise()
-    {
+    public boolean isMiscDisguise() {
         return false;
     }
 
-    public boolean isMobDisguise()
-    {
+    public boolean isMobDisguise() {
         return false;
     }
 
-    public boolean isModifyBoundingBox()
-    {
+    public boolean isModifyBoundingBox() {
         return modifyBoundingBox;
     }
 
-    public boolean isPlayerDisguise()
-    {
+    public boolean isPlayerDisguise() {
         return false;
     }
 
     /**
      * Internal use
      */
-    public boolean isRemoveDisguiseOnDeath()
-    {
+    public boolean isRemoveDisguiseOnDeath() {
         return getEntity() == null || (getEntity() instanceof Player
                 ? (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
                 : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead()));
     }
 
-    public boolean isSelfDisguiseSoundsReplaced()
-    {
+    public boolean isSelfDisguiseSoundsReplaced() {
         return hearSelfDisguise;
     }
 
@@ -551,18 +470,15 @@ public abstract class Disguise
      *
      * @return viewSelfDisguise
      */
-    public boolean isSelfDisguiseVisible()
-    {
+    public boolean isSelfDisguiseVisible() {
         return viewSelfDisguise;
     }
 
-    public boolean isSoundsReplaced()
-    {
+    public boolean isSoundsReplaced() {
         return replaceSounds;
     }
 
-    public boolean isVelocitySent()
-    {
+    public boolean isVelocitySent() {
         return velocitySent;
     }
 
@@ -571,8 +487,7 @@ public abstract class Disguise
      *
      * @return
      */
-    public boolean isShowName()
-    {
+    public boolean isShowName() {
         return showName;
     }
 
@@ -581,20 +496,16 @@ public abstract class Disguise
      *
      * @return removeDiguise
      */
-    public boolean removeDisguise()
-    {
-        if (disguiseInUse)
-        {
+    public boolean removeDisguise() {
+        if (disguiseInUse) {
             UndisguiseEvent event = new UndisguiseEvent(entity, this);
 
             Bukkit.getPluginManager().callEvent(event);
 
-            if (!event.isCancelled())
-            {
+            if (!event.isCancelled()) {
                 disguiseInUse = false;
 
-                if (task != null)
-                {
+                if (task != null) {
                     task.cancel();
                     task = null;
                 }
@@ -602,58 +513,45 @@ public abstract class Disguise
                 HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
 
                 // If this disguise has a entity set
-                if (getEntity() != null)
-                {
+                if (getEntity() != null) {
                     // If this disguise is active
                     // Remove the disguise from the current disguises.
-                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this))
-                    {
-                        if (getEntity() instanceof Player)
-                        {
+                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                        if (getEntity() instanceof Player) {
                             DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                         }
 
                         // Better refresh the entity to undisguise it
-                        if (getEntity().isValid())
-                        {
+                        if (getEntity().isValid()) {
                             DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                         }
-                        else
-                        {
+                        else {
                             DisguiseUtilities.destroyEntity((TargetedDisguise) this);
                         }
                     }
                 }
-                else
-                {
+                else {
                     // Loop through the disguises because it could be used with a unknown entity id.
                     HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
                     Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
 
-                    while (itel.hasNext())
-                    {
+                    while (itel.hasNext()) {
                         int id = itel.next();
 
-                        if (future.get(id).remove(this) && future.get(id).isEmpty())
-                        {
+                        if (future.get(id).remove(this) && future.get(id).isEmpty()) {
                             itel.remove();
                         }
                     }
                 }
 
-                if (isPlayerDisguise())
-                {
+                if (isPlayerDisguise()) {
                     String name = ((PlayerDisguise) this).getName();
 
-                    if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase()))
-                    {
-                        for (HashSet<TargetedDisguise> disguise : disguises.values())
-                        {
-                            for (Disguise d : disguise)
-                            {
-                                if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name))
-                                {
+                    if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase())) {
+                        for (HashSet<TargetedDisguise> disguise : disguises.values()) {
+                            for (Disguise d : disguise) {
+                                if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
                                     return true;
                                 }
                             }
@@ -675,20 +573,16 @@ public abstract class Disguise
      * @param entity
      * @return disguise
      */
-    public Disguise setEntity(Entity entity)
-    {
-        if (this.getEntity() != null)
-        {
-            if (getEntity() == entity)
-            {
+    public Disguise setEntity(Entity entity) {
+        if (this.getEntity() != null) {
+            if (getEntity() == entity) {
                 return this;
             }
 
             throw new RuntimeException("This disguise is already in use! Try .clone()");
         }
 
-        if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity)
-        {
+        if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             throw new RuntimeException(
                     "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the config to do this");
         }
@@ -700,79 +594,66 @@ public abstract class Disguise
         return this;
     }
 
-    public Disguise setShowName(boolean showName)
-    {
+    public Disguise setShowName(boolean showName) {
         this.showName = showName;
 
         return this;
     }
 
-    public Disguise setHearSelfDisguise(boolean hearSelfDisguise)
-    {
+    public Disguise setHearSelfDisguise(boolean hearSelfDisguise) {
         this.hearSelfDisguise = hearSelfDisguise;
 
         return this;
     }
 
-    public Disguise setHideArmorFromSelf(boolean hideArmor)
-    {
+    public Disguise setHideArmorFromSelf(boolean hideArmor) {
         this.hideArmorFromSelf = hideArmor;
 
-        if (getEntity() instanceof Player)
-        {
+        if (getEntity() instanceof Player) {
             ((Player) getEntity()).updateInventory();
         }
 
         return this;
     }
 
-    public Disguise setHideHeldItemFromSelf(boolean hideHeldItem)
-    {
+    public Disguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         this.hideHeldItemFromSelf = hideHeldItem;
 
-        if (getEntity() instanceof Player)
-        {
+        if (getEntity() instanceof Player) {
             ((Player) getEntity()).updateInventory();
         }
 
         return this;
     }
 
-    public Disguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise)
-    {
+    public Disguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         this.keepDisguiseEntityDespawn = keepDisguise;
 
         return this;
     }
 
-    public Disguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise)
-    {
+    public Disguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         this.keepDisguisePlayerDeath = keepDisguise;
 
         return this;
     }
 
-    public Disguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise)
-    {
+    public Disguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         this.keepDisguisePlayerLogout = keepDisguise;
 
         return this;
     }
 
-    public Disguise setModifyBoundingBox(boolean modifyBox)
-    {
-        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS)
-        {
+    public Disguise setModifyBoundingBox(boolean modifyBox) {
+        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
             throw new RuntimeException(
                     "Cannot modify the bounding box of a disguise which is not TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
         }
 
-        if (isModifyBoundingBox() != modifyBox)
-        {
+        if (isModifyBoundingBox() != modifyBox) {
             this.modifyBoundingBox = modifyBox;
 
-            if (DisguiseUtilities.isDisguiseInUse(this))
-            {
+            if (DisguiseUtilities.isDisguiseInUse(this)) {
                 DisguiseUtilities.doBoundingBox((TargetedDisguise) this);
             }
         }
@@ -780,8 +661,7 @@ public abstract class Disguise
         return this;
     }
 
-    public Disguise setReplaceSounds(boolean areSoundsReplaced)
-    {
+    public Disguise setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
 
         return this;
@@ -791,20 +671,17 @@ public abstract class Disguise
      * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
      * datawatcher.
      */
-    private void setupWatcher()
-    {
+    private void setupWatcher() {
         ArrayList<FlagType> disguiseFlags = FlagType.getFlags(getType().getWatcherClass());
         ArrayList<FlagType> entityFlags = FlagType.getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
-        for (FlagType flag : entityFlags)
-        {
+        for (FlagType flag : entityFlags) {
             if (disguiseFlags.contains(flag))
                 continue;
 
             FlagType backup = null;
 
-            for (FlagType flagType : disguiseFlags)
-            {
+            for (FlagType flagType : disguiseFlags) {
                 if (flagType.getIndex() == flag.getIndex())
                     backup = flagType;
             }
@@ -815,8 +692,7 @@ public abstract class Disguise
         getWatcher().setNoGravity(true);
     }
 
-    public Disguise setVelocitySent(boolean sendVelocity)
-    {
+    public Disguise setVelocitySent(boolean sendVelocity) {
         this.velocitySent = sendVelocity;
 
         return this;
@@ -828,22 +704,16 @@ public abstract class Disguise
      * @param viewSelfDisguise
      * @return
      */
-    public Disguise setViewSelfDisguise(boolean viewSelfDisguise)
-    {
-        if (isSelfDisguiseVisible() != viewSelfDisguise)
-        {
+    public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        if (isSelfDisguiseVisible() != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;
 
-            if (getEntity() != null && getEntity() instanceof Player)
-            {
-                if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this)
-                {
-                    if (isSelfDisguiseVisible())
-                    {
+            if (getEntity() != null && getEntity() instanceof Player) {
+                if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
+                    if (isSelfDisguiseVisible()) {
                         DisguiseUtilities.setupFakeDisguise(this);
                     }
-                    else
-                    {
+                    else {
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                     }
                 }
@@ -853,30 +723,24 @@ public abstract class Disguise
         return this;
     }
 
-    public Disguise setWatcher(FlagWatcher newWatcher)
-    {
-        if (!getType().getWatcherClass().isInstance(newWatcher))
-        {
+    public Disguise setWatcher(FlagWatcher newWatcher) {
+        if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of "
                     + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
 
-        if (getEntity() != null)
-        {
+        if (getEntity() != null) {
             setupWatcher();
         }
 
         return this;
     }
 
-    public boolean startDisguise()
-    {
-        if (!isDisguiseInUse())
-        {
-            if (getEntity() == null)
-            {
+    public boolean startDisguise() {
+        if (!isDisguiseInUse()) {
+            if (getEntity() == null) {
                 throw new RuntimeException("No entity is assigned to this disguise!");
             }
 
@@ -887,8 +751,7 @@ public abstract class Disguise
 
             // If they cancelled this disguise event. No idea why.
             // Just return.
-            if (!event.isCancelled())
-            {
+            if (!event.isCancelled()) {
                 disguiseInUse = true;
 
                 task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
@@ -896,8 +759,7 @@ public abstract class Disguise
                 // Stick the disguise in the disguises bin
                 DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
 
-                if (isSelfDisguiseVisible() && getEntity() instanceof Player)
-                {
+                if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                     DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                 }
 
@@ -905,11 +767,9 @@ public abstract class Disguise
                 DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
 
                 // If he is a player, then self disguise himself
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable()
-                {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         DisguiseUtilities.setupFakeDisguise(Disguise.this);
                     }
                 }, 2);
@@ -919,8 +779,7 @@ public abstract class Disguise
         return false;
     }
 
-    public boolean stopDisguise()
-    {
+    public boolean stopDisguise() {
         return removeDisguise();
     }
 
@@ -929,8 +788,7 @@ public abstract class Disguise
      *
      * @return
      */
-    public static List<UUID> getViewSelf()
-    {
+    public static List<UUID> getViewSelf() {
         return viewSelf;
     }
 }

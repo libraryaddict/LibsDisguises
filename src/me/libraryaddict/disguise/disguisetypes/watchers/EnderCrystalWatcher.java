@@ -19,24 +19,24 @@ public class EnderCrystalWatcher extends FlagWatcher
 
     public void setBeamTarget(BlockPosition position)
     {
-        setValue(FlagType.ENDER_CRYSTAL_BEAM, Optional.of(position));
+        setData(FlagType.ENDER_CRYSTAL_BEAM, Optional.of(position));
         sendData(FlagType.ENDER_CRYSTAL_BEAM);
     }
 
     public Optional<BlockPosition> getBeamTarget()
     {
-        return getValue(FlagType.ENDER_CRYSTAL_BEAM);
+        return getData(FlagType.ENDER_CRYSTAL_BEAM);
     }
 
     public void setShowBottom(boolean bool)
     {
-        setValue(FlagType.ENDER_CRYSTAL_PLATE, bool);
+        setData(FlagType.ENDER_CRYSTAL_PLATE, bool);
         sendData(FlagType.ENDER_CRYSTAL_PLATE);
     }
 
     public boolean isShowBottom()
     {
-        return getValue(FlagType.ENDER_CRYSTAL_PLATE);
+        return getData(FlagType.ENDER_CRYSTAL_PLATE);
     }
 
 }

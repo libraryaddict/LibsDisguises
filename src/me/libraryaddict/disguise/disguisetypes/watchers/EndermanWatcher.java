@@ -20,7 +20,7 @@ public class EndermanWatcher extends InsentientWatcher
     @Override
     public ItemStack getItemInMainHand()
     {
-        Optional<WrappedBlockData> value = getValue(FlagType.ENDERMAN_ITEM);
+        Optional<WrappedBlockData> value = getData(FlagType.ENDERMAN_ITEM);
 
         if (value.isPresent())
         {
@@ -62,7 +62,7 @@ public class EndermanWatcher extends InsentientWatcher
         else
             optional = Optional.<WrappedBlockData> of(WrappedBlockData.createData(type, data));
 
-        setValue(FlagType.ENDERMAN_ITEM, optional);
+        setData(FlagType.ENDERMAN_ITEM, optional);
     }
 
     @Deprecated
@@ -73,12 +73,12 @@ public class EndermanWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return getValue(FlagType.ENDERMAN_AGRESSIVE);
+        return getData(FlagType.ENDERMAN_AGRESSIVE);
     }
 
     public void setAggressive(boolean isAggressive)
     {
-        setValue(FlagType.ENDERMAN_AGRESSIVE, isAggressive);
+        setData(FlagType.ENDERMAN_AGRESSIVE, isAggressive);
         sendData(FlagType.ENDERMAN_AGRESSIVE);
     }
 

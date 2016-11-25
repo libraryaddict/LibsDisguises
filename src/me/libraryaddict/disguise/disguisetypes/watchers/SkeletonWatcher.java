@@ -17,23 +17,23 @@ public class SkeletonWatcher extends InsentientWatcher
 
     public void setSwingArms(boolean swingingArms)
     {
-        setValue(FlagType.SKELETON_SWING_ARMS, swingingArms);
+        setData(FlagType.SKELETON_SWING_ARMS, swingingArms);
         sendData(FlagType.SKELETON_SWING_ARMS);
     }
 
     public boolean isSwingArms()
     {
-        return getValue(FlagType.SKELETON_SWING_ARMS);
+        return getData(FlagType.SKELETON_SWING_ARMS);
     }
 
     public void setType(SkeletonType type)
     {
-        setValue(FlagType.SKELETON_TYPE, type.ordinal());
+        setData(FlagType.SKELETON_TYPE, type.ordinal());
         sendData(FlagType.SKELETON_TYPE);
     }
 
     public SkeletonType getType()
     {
-        return SkeletonType.values()[getValue(FlagType.SKELETON_TYPE)];
+        return SkeletonType.values()[getData(FlagType.SKELETON_TYPE)];
     }
 }

@@ -17,12 +17,12 @@ public class VillagerWatcher extends AgeableWatcher
 
     public Profession getProfession()
     {
-        return Profession.values()[getValue(FlagType.VILLAGER_PROFESSION)];
+        return Profession.values()[getData(FlagType.VILLAGER_PROFESSION)];
     }
 
     public void setProfession(int professionId)
     {
-        setValue(FlagType.VILLAGER_PROFESSION, professionId);
+        setData(FlagType.VILLAGER_PROFESSION, professionId);
         sendData(FlagType.VILLAGER_PROFESSION);
     }
 

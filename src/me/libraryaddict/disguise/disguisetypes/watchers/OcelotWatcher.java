@@ -16,12 +16,12 @@ public class OcelotWatcher extends TameableWatcher
 
     public Type getType()
     {
-        return Ocelot.Type.getType(getValue(FlagType.OCELOT_TYPE));
+        return Ocelot.Type.getType(getData(FlagType.OCELOT_TYPE));
     }
 
     public void setType(Type newType)
     {
-        setValue(FlagType.OCELOT_TYPE, newType.getId());
+        setData(FlagType.OCELOT_TYPE, newType.getId());
         sendData(FlagType.OCELOT_TYPE);
     }
 }

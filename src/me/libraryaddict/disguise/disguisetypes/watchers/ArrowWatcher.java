@@ -13,12 +13,12 @@ public class ArrowWatcher extends FlagWatcher
 
     public boolean isCritical()
     {
-        return (byte) getValue(FlagType.ARROW_CRITICAL) == 1;
+        return (byte) getData(FlagType.ARROW_CRITICAL) == 1;
     }
 
     public void setCritical(boolean critical)
     {
-        setValue(FlagType.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
+        setData(FlagType.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
         sendData(FlagType.ARROW_CRITICAL);
     }
 }

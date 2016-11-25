@@ -13,17 +13,17 @@ public class SheepWatcher extends AgeableWatcher
     {
         super(disguise);
 
-        setValue(FlagType.SHEEP_WOOL, (byte) 0);
+        setData(FlagType.SHEEP_WOOL, (byte) 0);
     }
 
     public AnimalColor getColor()
     {
-        return AnimalColor.getColor(((int) getValue(FlagType.SHEEP_WOOL) & 15));
+        return AnimalColor.getColor(((int) getData(FlagType.SHEEP_WOOL) & 15));
     }
 
     public boolean isSheared()
     {
-        return ((byte) getValue(FlagType.SHEEP_WOOL) & 16) != 0;
+        return ((byte) getData(FlagType.SHEEP_WOOL) & 16) != 0;
     }
 
     public void setColor(AnimalColor color)
@@ -33,23 +33,23 @@ public class SheepWatcher extends AgeableWatcher
 
     public void setColor(DyeColor color)
     {
-        byte b0 = (byte) getValue(FlagType.SHEEP_WOOL);
+        byte b0 = (byte) getData(FlagType.SHEEP_WOOL);
 
-        setValue(FlagType.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
+        setData(FlagType.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
         sendData(FlagType.SHEEP_WOOL);
     }
 
     public void setSheared(boolean flag)
     {
-        byte b0 = (byte) getValue(FlagType.SHEEP_WOOL);
+        byte b0 = (byte) getData(FlagType.SHEEP_WOOL);
 
         if (flag)
         {
-            setValue(FlagType.SHEEP_WOOL, (byte) (b0 | 16));
+            setData(FlagType.SHEEP_WOOL, (byte) (b0 | 16));
         }
         else
         {
-            setValue(FlagType.SHEEP_WOOL, (byte) (b0 & -17));
+            setData(FlagType.SHEEP_WOOL, (byte) (b0 & -17));
         }
 
         sendData(FlagType.SHEEP_WOOL);

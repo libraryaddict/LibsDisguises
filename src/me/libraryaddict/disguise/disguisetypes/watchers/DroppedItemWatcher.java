@@ -17,12 +17,12 @@ public class DroppedItemWatcher extends FlagWatcher
 
     public ItemStack getItemStack()
     {
-        return getValue(FlagType.DROPPED_ITEM).get();
+        return getData(FlagType.DROPPED_ITEM).get();
     }
 
     public void setItemStack(ItemStack item)
     {
-        setValue(FlagType.DROPPED_ITEM, Optional.<ItemStack> of(item));
+        setData(FlagType.DROPPED_ITEM, Optional.<ItemStack> of(item));
         sendData(FlagType.DROPPED_ITEM);
     }
 }

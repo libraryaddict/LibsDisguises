@@ -9,8 +9,7 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Zombie;
 
-public enum DisguiseType
-{
+public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
 
     ARMOR_STAND(78),
@@ -53,6 +52,10 @@ public enum DisguiseType
 
     ENDERMITE,
 
+    EVOKER,
+
+    EVOKER_FANGS(79),
+
     EXPERIENCE_ORB,
 
     FALLING_BLOCK(70, 1),
@@ -76,6 +79,10 @@ public enum DisguiseType
     IRON_GOLEM,
 
     ITEM_FRAME(71),
+
+    LLAMA,
+
+    LLAMA_SPIT(68),
 
     LEASH_HITCH(77),
 
@@ -153,7 +160,11 @@ public enum DisguiseType
 
     UNKNOWN,
 
+    VEX,
+
     VILLAGER,
+
+    VINDICATOR,
 
     WITCH,
 
@@ -169,30 +180,20 @@ public enum DisguiseType
 
     ZOMBIE_VILLAGER;
 
-    static
-    {
+    static {
         // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
         // Without erroring up everything.
 
-        for (DisguiseType type : values())
-        {
+        for (DisguiseType type : values()) {
 
-            try
-            {
+            try {
                 DisguiseType toUse = type;
                 String name;
 
-                switch (type)
-                {
+                switch (type) {
                 // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                 // Usable.
                 case ITEM_FRAME:
-                    break;
-                case DONKEY:
-                case MULE:
-                case UNDEAD_HORSE:
-                case SKELETON_HORSE:
-                    toUse = DisguiseType.HORSE;
                     break;
                 case ZOMBIE_VILLAGER:
                 case HUSK:
@@ -213,23 +214,19 @@ public enum DisguiseType
 
                 type.setEntityType(EntityType.valueOf(name));
             }
-            catch (Throwable ex)
-            {
+            catch (Throwable ex) {
                 // This version of Spigot doesn't have the disguise.
             }
         }
     }
 
-    public static DisguiseType getType(Entity entity)
-    {
+    public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());
 
-        switch (disguiseType)
-        {
+        switch (disguiseType) {
         case ZOMBIE:
 
-            if (((Zombie) entity).isVillager())
-            {
+            if (((Zombie) entity).isVillager()) {
                 disguiseType = DisguiseType.ZOMBIE_VILLAGER;
             }
 
@@ -243,16 +240,14 @@ public enum DisguiseType
 
         case SKELETON:
 
-            if (((Skeleton) entity).getSkeletonType() == SkeletonType.WITHER)
-            {
+            if (((Skeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
                 disguiseType = DisguiseType.WITHER_SKELETON;
             }
 
             break;
         case GUARDIAN:
 
-            if (((Guardian) entity).isElder())
-            {
+            if (((Guardian) entity).isElder()) {
                 disguiseType = DisguiseType.ELDER_GUARDIAN;
             }
 
@@ -265,14 +260,11 @@ public enum DisguiseType
 
     }
 
-    public static DisguiseType getType(EntityType entityType)
-    {
-        try
-        {
+    public static DisguiseType getType(EntityType entityType) {
+        try {
             return valueOf(entityType.name().toUpperCase());
         }
-        catch (Throwable ex)
-        {
+        catch (Throwable ex) {
             return DisguiseType.UNKNOWN;
         }
     }
@@ -283,14 +275,11 @@ public enum DisguiseType
 
     private Class<? extends FlagWatcher> watcherClass;
 
-    DisguiseType(int... ints)
-    {
-        for (int i = 0; i < ints.length; i++)
-        {
+    DisguiseType(int... ints) {
+        for (int i = 0; i < ints.length; i++) {
             int value = ints[i];
 
-            switch (i)
-            {
+            switch (i) {
             case 0:
                 objectId = value;
 
@@ -305,23 +294,19 @@ public enum DisguiseType
         }
     }
 
-    public int getDefaultData()
-    {
+    public int getDefaultData() {
         return defaultData;
     }
 
-    public Class<? extends Entity> getEntityClass()
-    {
-        if (entityType != null)
-        {
+    public Class<? extends Entity> getEntityClass() {
+        if (entityType != null) {
             return getEntityType().getEntityClass();
         }
 
         return Entity.class;
     }
 
-    public EntityType getEntityType()
-    {
+    public EntityType getEntityType() {
         return entityType;
     }
 
@@ -330,8 +315,7 @@ public enum DisguiseType
      * 
      * @return
      */
-    public int getObjectId()
-    {
+    public int getObjectId() {
         return objectId;
     }
 
@@ -340,52 +324,42 @@ public enum DisguiseType
      * 
      * @return
      */
-    public int getTypeId()
-    {
+    public int getTypeId() {
         return (int) getEntityType().getTypeId();
     }
 
-    public Class<? extends FlagWatcher> getWatcherClass()
-    {
+    public Class<? extends FlagWatcher> getWatcherClass() {
         return watcherClass;
     }
 
-    public boolean isMisc()
-    {
+    public boolean isMisc() {
         return getEntityType() != null && !getEntityType().isAlive();
     }
 
-    public boolean isMob()
-    {
+    public boolean isMob() {
         return getEntityType() != null && getEntityType().isAlive() && !isPlayer();
     }
 
-    public boolean isPlayer()
-    {
+    public boolean isPlayer() {
         return this == DisguiseType.PLAYER;
     }
 
-    public boolean isUnknown()
-    {
+    public boolean isUnknown() {
         return this == DisguiseType.UNKNOWN;
     }
 
-    private void setEntityType(EntityType entityType)
-    {
+    private void setEntityType(EntityType entityType) {
         this.entityType = entityType;
     }
 
-    public void setWatcherClass(Class<? extends FlagWatcher> c)
-    {
+    public void setWatcherClass(Class<? extends FlagWatcher> c) {
         watcherClass = c;
     }
 
-    public String toReadable()
-    {
+    public String toReadable() {
         String[] split = name().split("_");
 
-        for (int i = 0; i < split.length; i++)
-        {
+        for (int i = 0; i < split.length; i++) {
             split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
         }
 

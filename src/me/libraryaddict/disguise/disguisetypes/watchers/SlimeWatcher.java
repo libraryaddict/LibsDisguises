@@ -15,7 +15,7 @@ public class SlimeWatcher extends InsentientWatcher
 
     public int getSize()
     {
-        return (int) getValue(FlagType.SLIME_SIZE);
+        return (int) getData(FlagType.SLIME_SIZE);
     }
 
     public void setSize(int size)
@@ -25,7 +25,7 @@ public class SlimeWatcher extends InsentientWatcher
             size = 1;
         }
 
-        setValue(FlagType.SLIME_SIZE, size);
+        setData(FlagType.SLIME_SIZE, size);
         sendData(FlagType.SLIME_SIZE);
     }
 

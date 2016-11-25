@@ -13,12 +13,12 @@ public class GhastWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return getValue(FlagType.GHAST_AGRESSIVE);
+        return getData(FlagType.GHAST_AGRESSIVE);
     }
 
     public void setAggressive(boolean isAggressive)
     {
-        setValue(FlagType.GHAST_AGRESSIVE, isAggressive);
+        setData(FlagType.GHAST_AGRESSIVE, isAggressive);
         sendData(FlagType.GHAST_AGRESSIVE);
     }
 

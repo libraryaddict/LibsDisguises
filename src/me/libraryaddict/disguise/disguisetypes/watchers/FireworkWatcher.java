@@ -18,12 +18,12 @@ public class FireworkWatcher extends FlagWatcher
 
     public ItemStack getFirework()
     {
-        if (getValue(FlagType.FIREWORK_ITEM) == null)
+        if (getData(FlagType.FIREWORK_ITEM) == null)
         {
             return new ItemStack(Material.AIR);
         }
 
-        return (ItemStack) getValue(FlagType.FIREWORK_ITEM).get();
+        return (ItemStack) getData(FlagType.FIREWORK_ITEM).get();
     }
 
     public void setFirework(ItemStack newItem)
@@ -36,7 +36,7 @@ public class FireworkWatcher extends FlagWatcher
         newItem = newItem.clone();
         newItem.setAmount(1);
 
-        setValue(FlagType.FIREWORK_ITEM, Optional.<ItemStack> of(newItem));
+        setData(FlagType.FIREWORK_ITEM, Optional.<ItemStack> of(newItem));
         sendData(FlagType.FIREWORK_ITEM);
     }
 

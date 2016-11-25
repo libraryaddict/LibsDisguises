@@ -13,23 +13,23 @@ public class CreeperWatcher extends InsentientWatcher
 
     public boolean isIgnited()
     {
-        return (boolean) getValue(FlagType.CREEPER_IGNITED);
+        return (boolean) getData(FlagType.CREEPER_IGNITED);
     }
 
     public boolean isPowered()
     {
-        return (boolean) getValue(FlagType.CREEPER_POWERED);
+        return (boolean) getData(FlagType.CREEPER_POWERED);
     }
 
     public void setIgnited(boolean ignited)
     {
-        setValue(FlagType.CREEPER_IGNITED, ignited);
+        setData(FlagType.CREEPER_IGNITED, ignited);
         sendData(FlagType.CREEPER_IGNITED);
     }
 
     public void setPowered(boolean powered)
     {
-        setValue(FlagType.CREEPER_POWERED, powered);
+        setData(FlagType.CREEPER_POWERED, powered);
         sendData(FlagType.CREEPER_POWERED);
     }
 

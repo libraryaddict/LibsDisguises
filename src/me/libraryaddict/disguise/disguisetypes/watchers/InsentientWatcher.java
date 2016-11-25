@@ -36,20 +36,20 @@ public class InsentientWatcher extends LivingWatcher
 
     private void setInsentientFlag(int i, boolean flag)
     {
-        byte b0 = (byte) getValue(FlagType.INSENTIENT_META);
+        byte b0 = (byte) getData(FlagType.INSENTIENT_META);
 
         if (flag)
         {
-            setValue(FlagType.INSENTIENT_META, (byte) (b0 | 1 << i));
+            setData(FlagType.INSENTIENT_META, (byte) (b0 | 1 << i));
         }
         else
         {
-            setValue(FlagType.INSENTIENT_META, (byte) (b0 & (~1 << i)));
+            setData(FlagType.INSENTIENT_META, (byte) (b0 & (~1 << i)));
         }
     }
 
     private boolean getInsentientFlag(int i)
     {
-        return ((byte) getValue(FlagType.INSENTIENT_META) & 1 << i) != 0;
+        return ((byte) getData(FlagType.INSENTIENT_META) & 1 << i) != 0;
     }
 }

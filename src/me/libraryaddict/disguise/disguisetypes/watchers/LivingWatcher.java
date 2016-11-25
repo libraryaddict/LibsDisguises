@@ -82,7 +82,7 @@ public class LivingWatcher extends FlagWatcher
 
     public float getHealth()
     {
-        return (float) getValue(FlagType.LIVING_HEALTH);
+        return (float) getData(FlagType.LIVING_HEALTH);
     }
 
     public double getMaxHealth()
@@ -92,7 +92,7 @@ public class LivingWatcher extends FlagWatcher
 
     public boolean isPotionParticlesAmbient()
     {
-        return (boolean) getValue(FlagType.LIVING_POTION_AMBIENT);
+        return (boolean) getData(FlagType.LIVING_POTION_AMBIENT);
     }
 
     private int getPotions()
@@ -152,30 +152,30 @@ public class LivingWatcher extends FlagWatcher
 
     public void setPotionParticlesAmbient(boolean particles)
     {
-        setValue(FlagType.LIVING_POTION_AMBIENT, particles);
+        setData(FlagType.LIVING_POTION_AMBIENT, particles);
         sendData(FlagType.LIVING_POTION_AMBIENT);
     }
 
     private void sendPotionEffects()
     {
-        setValue(FlagType.LIVING_POTIONS, getPotions());
+        setData(FlagType.LIVING_POTIONS, getPotions());
         sendData(FlagType.LIVING_POTIONS);
     }
 
     public void setHealth(float health)
     {
-        setValue(FlagType.LIVING_HEALTH, health);
+        setData(FlagType.LIVING_HEALTH, health);
         sendData(FlagType.LIVING_HEALTH);
     }
 
     public int getArrowsSticking()
     {
-        return (int) getValue(FlagType.LIVING_ARROWS);
+        return (int) getData(FlagType.LIVING_ARROWS);
     }
 
     public void setArrowsSticking(int arrowsNo)
     {
-        setValue(FlagType.LIVING_ARROWS, arrowsNo);
+        setData(FlagType.LIVING_ARROWS, arrowsNo);
         sendData(FlagType.LIVING_ARROWS);
     }
 

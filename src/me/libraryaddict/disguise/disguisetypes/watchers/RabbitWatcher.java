@@ -16,12 +16,12 @@ public class RabbitWatcher extends AgeableWatcher
 
     public RabbitType getType()
     {
-        return RabbitType.getType((int) getValue(FlagType.RABBIT_TYPE));
+        return RabbitType.getType((int) getData(FlagType.RABBIT_TYPE));
     }
 
     public void setType(RabbitType type)
     {
-        setValue(FlagType.RABBIT_TYPE, type.getTypeId());
+        setData(FlagType.RABBIT_TYPE, type.getTypeId());
         sendData(FlagType.RABBIT_TYPE);
     }
 

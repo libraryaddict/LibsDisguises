@@ -22,7 +22,7 @@ public class GuardianWatcher extends InsentientWatcher
      */
     public boolean isTarget()
     {
-        return ((int) getValue(FlagType.GUARDIAN_TARGET)) != 0;
+        return ((int) getData(FlagType.GUARDIAN_TARGET)) != 0;
     }
 
     /**
@@ -32,7 +32,7 @@ public class GuardianWatcher extends InsentientWatcher
      */
     public void setTarget(int entityId)
     {
-        setValue(FlagType.GUARDIAN_TARGET, entityId);
+        setData(FlagType.GUARDIAN_TARGET, entityId);
         sendData(FlagType.GUARDIAN_TARGET);
     }
 
@@ -53,7 +53,7 @@ public class GuardianWatcher extends InsentientWatcher
         if (player == null)
             return;
 
-        setValue(FlagType.GUARDIAN_TARGET, player.getEntityId());
+        setData(FlagType.GUARDIAN_TARGET, player.getEntityId());
         sendData(FlagType.GUARDIAN_TARGET);
     }
 
@@ -79,20 +79,20 @@ public class GuardianWatcher extends InsentientWatcher
 
     protected boolean isGuardianFlag(int no)
     {
-        return (getValue(FlagType.GUARDIAN_FLAG) & no) != 0;
+        return (getData(FlagType.GUARDIAN_FLAG) & no) != 0;
     }
 
     protected void setGuardianFlag(int no, boolean flag)
     {
-        byte b0 = getValue(FlagType.GUARDIAN_FLAG);
+        byte b0 = getData(FlagType.GUARDIAN_FLAG);
 
         if (flag)
         {
-            setValue(FlagType.GUARDIAN_FLAG, (byte) (b0 | no));
+            setData(FlagType.GUARDIAN_FLAG, (byte) (b0 | no));
         }
         else
         {
-            setValue(FlagType.GUARDIAN_FLAG, (byte) (b0 & -(no + 1)));
+            setData(FlagType.GUARDIAN_FLAG, (byte) (b0 & -(no + 1)));
         }
 
         sendData(FlagType.GUARDIAN_FLAG);

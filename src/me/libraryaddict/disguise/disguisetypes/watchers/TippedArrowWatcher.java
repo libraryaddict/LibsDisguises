@@ -25,13 +25,13 @@ public class TippedArrowWatcher extends ArrowWatcher
 
     public Color getColor()
     {
-        int color = (int) getValue(FlagType.TIPPED_ARROW_COLOR);
+        int color = (int) getData(FlagType.TIPPED_ARROW_COLOR);
         return Color.fromRGB(color);
     }
 
     public void setColor(Color color)
     {
-        setValue(FlagType.TIPPED_ARROW_COLOR, color.asRGB());
+        setData(FlagType.TIPPED_ARROW_COLOR, color.asRGB());
         sendData(FlagType.TIPPED_ARROW_COLOR);
     }
 }

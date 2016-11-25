@@ -28,16 +28,20 @@ import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderDragonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EvokerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseAbstractWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.HorseChestedWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LlamaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PigWatcher;
@@ -53,15 +57,16 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.VexWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.VillagerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.VindicatorWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitchWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitherSkullWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitherWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 
-public class FlagType<Y>
-{
+public class FlagType<Y> {
     private static FlagType[] _values = new FlagType[0];
 
     public static FlagType<Boolean> AGEABLE_BABY = new FlagType<Boolean>(AgeableWatcher.class, 0, false);
@@ -79,11 +84,9 @@ public class FlagType<Y>
 
     public static FlagType<Float> AREA_EFFECT_RADIUS = new FlagType<Float>(AreaEffectCloudWatcher.class, 0, 0F);
 
-    public static FlagType<Vector3F> ARMORSTAND_BODY = new FlagType<Vector3F>(ArmorStandWatcher.class, 2,
-            new Vector3F(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_BODY = new FlagType<Vector3F>(ArmorStandWatcher.class, 2, new Vector3F(0, 0, 0));
 
-    public static FlagType<Vector3F> ARMORSTAND_HEAD = new FlagType<Vector3F>(ArmorStandWatcher.class, 1,
-            new Vector3F(0, 0, 0));
+    public static FlagType<Vector3F> ARMORSTAND_HEAD = new FlagType<Vector3F>(ArmorStandWatcher.class, 1, new Vector3F(0, 0, 0));
 
     public static FlagType<Vector3F> ARMORSTAND_LEFT_ARM = new FlagType<Vector3F>(ArmorStandWatcher.class, 3,
             new Vector3F(0, 0, 0));
@@ -93,9 +96,11 @@ public class FlagType<Y>
 
     public static FlagType<Byte> ARMORSTAND_META = new FlagType<Byte>(ArmorStandWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Vector3F> ARMORSTAND_RIGHT_ARM = new FlagType<Vector3F>(ArmorStandWatcher.class, 4, new Vector3F(0,0,0));
+    public static FlagType<Vector3F> ARMORSTAND_RIGHT_ARM = new FlagType<Vector3F>(ArmorStandWatcher.class, 4,
+            new Vector3F(0, 0, 0));
 
-    public static FlagType<Vector3F> ARMORSTAND_RIGHT_LEG = new FlagType<Vector3F>(ArmorStandWatcher.class, 6, new Vector3F(0,0,0));
+    public static FlagType<Vector3F> ARMORSTAND_RIGHT_LEG = new FlagType<Vector3F>(ArmorStandWatcher.class, 6,
+            new Vector3F(0, 0, 0));
 
     public static FlagType<Byte> ARROW_CRITICAL = new FlagType<Byte>(ArrowWatcher.class, 0, (byte) 0);
 
@@ -148,6 +153,8 @@ public class FlagType<Y>
 
     public static FlagType<Boolean> ENTITY_SILENT = new FlagType<Boolean>(FlagWatcher.class, 4, false);
 
+    public static FlagType<Byte> EVOKER_SPELL_TICKS = new FlagType<Byte>(EvokerWatcher.class, 0, (byte) 0);
+
     public static FlagType<BlockPosition> FALLING_BLOCK_POSITION = new FlagType<BlockPosition>(FallingBlockWatcher.class, 0,
             BlockPosition.ORIGIN);
 
@@ -162,16 +169,18 @@ public class FlagType<Y>
 
     public static FlagType<Integer> GUARDIAN_TARGET = new FlagType<Integer>(GuardianWatcher.class, 1, 0);
 
-    public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 4, 0);
+    public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 1, 0);
 
-    public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 2, 0);
+    public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 0, 0);
 
-    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseWatcher.class, 0, (byte) 0);
+    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseAbstractWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseWatcher.class, 3,
+    public static FlagType<Boolean> HORSE_CARRYING_CHEST = new FlagType<Boolean>(HorseChestedWatcher.class, 0, false);
+
+    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseAbstractWatcher.class, 1,
             Optional.<UUID> absent());
 
-    public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 1, 0);
+    // public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 0, 0);
 
     public static FlagType<Byte> INSENTIENT_META = new FlagType<Byte>(InsentientWatcher.class, 0, (byte) 0);
 
@@ -181,6 +190,12 @@ public class FlagType<Y>
             Optional.<ItemStack> absent());
 
     public static FlagType<Integer> ITEMFRAME_ROTATION = new FlagType<Integer>(ItemFrameWatcher.class, 1, 0);
+
+    public static FlagType<Integer> LLAMA_STRENGTH = new FlagType<Integer>(LlamaWatcher.class, 0, 0);
+
+    public static FlagType<Integer> LLAMA_COLOR = new FlagType<Integer>(LlamaWatcher.class, 1, -1);
+
+    public static FlagType<Integer> LLAMA_CARPET = new FlagType<Integer>(LlamaWatcher.class, 2, 0);
 
     public static FlagType<Integer> LIVING_ARROWS = new FlagType<Integer>(LivingWatcher.class, 4, 0);
 
@@ -229,6 +244,8 @@ public class FlagType<Y>
 
     public static FlagType<Byte> SHULKER_PEEKING = new FlagType<Byte>(ShulkerWatcher.class, 2, (byte) 0);
 
+    public static FlagType<Byte> SHULKER_COLOR = new FlagType<Byte>(ShulkerWatcher.class, 3, (byte) 10);
+
     public static FlagType<Boolean> SKELETON_SWING_ARMS = new FlagType<Boolean>(SkeletonWatcher.class, 1, false);
 
     public static FlagType<Integer> SKELETON_TYPE = new FlagType<Integer>(SkeletonWatcher.class, 0, 0);
@@ -257,7 +274,11 @@ public class FlagType<Y>
 
     public static FlagType<Integer> TNT_FUSE_TICKS = new FlagType<Integer>(TNTWatcher.class, 0, Integer.MAX_VALUE);
 
+    public static FlagType<Boolean> VEX_ANGRY = new FlagType<Boolean>(VexWatcher.class, 0, false);
+
     public static FlagType<Integer> VILLAGER_PROFESSION = new FlagType<Integer>(VillagerWatcher.class, 0, 0);
+
+    public static FlagType<Byte> VINDICATOR_JOHNNY = new FlagType<Byte>(VindicatorWatcher.class, 0, (byte) 0);
 
     public static FlagType<Boolean> WITCH_AGGRESSIVE = new FlagType<Boolean>(WitchWatcher.class, 0, false);
 
@@ -285,10 +306,8 @@ public class FlagType<Y>
 
     public static FlagType<Boolean> ZOMBIE_SHAKING = new FlagType<Boolean>(ZombieWatcher.class, 2, false);
 
-    static
-    {
-        for (FlagType flagType : values())
-        {
+    static {
+        for (FlagType flagType : values()) {
             if (flagType.getFlagWatcher() == FlagWatcher.class)
                 continue;
 
@@ -302,32 +321,27 @@ public class FlagType<Y>
 
         HashMap<Class, Integer> maxValues = new HashMap<Class, Integer>();
 
-        for (FlagType type : values())
-        {
+        for (FlagType type : values()) {
             if (maxValues.containsKey(type.getFlagWatcher()) && maxValues.get(type.getFlagWatcher()) > type.getIndex())
                 continue;
 
             maxValues.put(type.getFlagWatcher(), type.getIndex());
         }
 
-        for (Entry<Class, Integer> entry : maxValues.entrySet())
-        {
+        for (Entry<Class, Integer> entry : maxValues.entrySet()) {
             loop:
 
-            for (int i = 0; i < entry.getValue(); i++)
-            {
+            for (int i = 0; i < entry.getValue(); i++) {
                 FlagType found = null;
 
-                for (FlagType type : values())
-                {
+                for (FlagType type : values()) {
                     if (type.getIndex() != i)
                         continue;
 
                     if (!type.getFlagWatcher().isAssignableFrom(entry.getKey()))
                         continue;
 
-                    if (found != null)
-                    {
+                    if (found != null) {
                         System.err.println(entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index "
                                 + i + " (" + type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName()
                                 + ")");
@@ -345,10 +359,8 @@ public class FlagType<Y>
         }
     }
 
-    public static FlagType getFlag(Class<? extends FlagWatcher> watcherClass, int flagNo)
-    {
-        for (FlagType type : values())
-        {
+    public static FlagType getFlag(Class<? extends FlagWatcher> watcherClass, int flagNo) {
+        for (FlagType type : values()) {
             if (type.getIndex() != flagNo)
                 continue;
 
@@ -361,12 +373,10 @@ public class FlagType<Y>
         return null;
     }
 
-    public static ArrayList<FlagType> getFlags(Class<? extends FlagWatcher> watcherClass)
-    {
+    public static ArrayList<FlagType> getFlags(Class<? extends FlagWatcher> watcherClass) {
         ArrayList<FlagType> list = new ArrayList<FlagType>();
 
-        for (FlagType type : values())
-        {
+        for (FlagType type : values()) {
             if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
                 continue;
 
@@ -376,28 +386,24 @@ public class FlagType<Y>
         return list;
     }
 
-    private static int getNoIndexes(Class c)
-    {
+    private static int getNoIndexes(Class c) {
         int found = 0;
 
-        for (FlagType type : values())
-        {
+        for (FlagType type : values()) {
             if (type.getFlagWatcher() != c)
                 continue;
 
             found++;
         }
 
-        if (c != FlagWatcher.class)
-        {
+        if (c != FlagWatcher.class) {
             found += getNoIndexes(c.getSuperclass());
         }
 
         return found;
     }
 
-    public static FlagType[] values()
-    {
+    public static FlagType[] values() {
         return _values;
     }
 
@@ -405,8 +411,7 @@ public class FlagType<Y>
     private int _index;
     private Class<? extends FlagWatcher> _watcher;
 
-    private FlagType(Class<? extends FlagWatcher> watcher, int index, Y defaultValue)
-    {
+    private FlagType(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {
         _index = index;
         _watcher = watcher;
         _defaultValue = defaultValue;
@@ -415,18 +420,15 @@ public class FlagType<Y>
         _values[_values.length - 1] = this;
     }
 
-    public Y getDefault()
-    {
+    public Y getDefault() {
         return _defaultValue;
     }
 
-    public Class<? extends FlagWatcher> getFlagWatcher()
-    {
+    public Class<? extends FlagWatcher> getFlagWatcher() {
         return _watcher;
     }
 
-    public int getIndex()
-    {
+    public int getIndex() {
         return _index;
     }
 }

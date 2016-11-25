@@ -8,8 +8,7 @@ import org.bukkit.Sound;
 /**
  * Only living disguises go in here!
  */
-public enum DisguiseSound
-{
+public enum DisguiseSound {
 
     ARROW(null, null, null, null, Sound.ENTITY_ARROW_HIT, Sound.ENTITY_ARROW_SHOOT),
 
@@ -44,6 +43,13 @@ public enum DisguiseSound
     ENDERMITE(Sound.ENTITY_SILVERFISH_HURT, Sound.ENTITY_ENDERMITE_STEP, Sound.ENTITY_ENDERMITE_DEATH,
             Sound.ENTITY_ENDERMITE_AMBIENT),
 
+    EVOKER(Sound.ENTITY_EVOCATION_ILLAGER_HURT, null, Sound.ENTITY_EVOCATION_ILLAGER_DEATH,
+            Sound.ENTITY_EVOCATION_ILLAGER_AMBIENT, Sound.ENTITY_EVOCATION_ILLAGER_CAST_SPELL,
+            Sound.ENTITY_EVOCATION_ILLAGER_PREPARE_ATTACK, Sound.ENTITY_EVOCATION_ILLAGER_PREPARE_SUMMON,
+            Sound.ENTITY_EVOCATION_ILLAGER_PREPARE_WOLOLO),
+
+    EVOKER_FANGS(null, null, null, null, Sound.ENTITY_EVOCATION_FANGS_ATTACK),
+
     GHAST(Sound.ENTITY_GHAST_HURT, null, Sound.ENTITY_GHAST_DEATH, Sound.ENTITY_GHAST_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL,
             Sound.ENTITY_GHAST_SHOOT, Sound.ENTITY_PLAYER_BIG_FALL, Sound.ENTITY_GHAST_SCREAM, Sound.ENTITY_GHAST_WARN),
 
@@ -57,6 +63,9 @@ public enum DisguiseSound
 
     IRON_GOLEM(Sound.ENTITY_IRONGOLEM_HURT, Sound.ENTITY_IRONGOLEM_STEP, Sound.ENTITY_IRONGOLEM_DEATH,
             Sound.ENTITY_IRONGOLEM_ATTACK),
+
+    LLAMA(Sound.ENTITY_LLAMA_HURT, Sound.ENTITY_LLAMA_STEP, Sound.ENTITY_LLAMA_DEATH, Sound.ENTITY_LLAMA_AMBIENT,
+            Sound.ENTITY_LLAMA_ANGRY, Sound.ENTITY_LLAMA_CHEST, Sound.ENTITY_LLAMA_EAT, Sound.ENTITY_LLAMA_SWAG),
 
     MAGMA_CUBE(Sound.ENTITY_MAGMACUBE_HURT, Sound.ENTITY_MAGMACUBE_JUMP, null, null),
 
@@ -104,8 +113,13 @@ public enum DisguiseSound
             Sound.ENTITY_HORSE_GALLOP, Sound.ENTITY_HORSE_SADDLE, Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_STEP_WOOD,
             Sound.ENTITY_HORSE_ARMOR, Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP, Sound.ENTITY_HORSE_ANGRY),
 
+    VEX(Sound.ENTITY_VEX_HURT, null, Sound.ENTITY_VEX_DEATH, Sound.ENTITY_VEX_AMBIENT, Sound.ENTITY_VEX_CHARGE),
+
     VILLAGER(Sound.ENTITY_VILLAGER_HURT, null, Sound.ENTITY_VILLAGER_DEATH, Sound.ENTITY_VILLAGER_AMBIENT,
             Sound.ENTITY_VILLAGER_TRADING, Sound.ENTITY_VILLAGER_NO, Sound.ENTITY_VILLAGER_YES),
+
+    VINDICATOR(Sound.ENTITY_VINDICATION_ILLAGER_HURT, null, Sound.ENTITY_VINDICATION_ILLAGER_DEATH,
+            Sound.ENTITY_VINDICATION_ILLAGER_AMBIENT),
 
     WITCH(Sound.ENTITY_WITCH_HURT, null, Sound.ENTITY_WITCH_DEATH, Sound.ENTITY_WITCH_AMBIENT),
 
@@ -126,19 +140,15 @@ public enum DisguiseSound
                     Sound.ENTITY_ZOMBIE_INFECT, Sound.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, Sound.ENTITY_ZOMBIE_ATTACK_DOOR_WOOD,
                     Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR);
 
-    public enum SoundType
-    {
+    public enum SoundType {
         CANCEL, DEATH, HURT, IDLE, STEP
     }
 
-    public static DisguiseSound getType(String name)
-    {
-        try
-        {
+    public static DisguiseSound getType(String name) {
+        try {
             return valueOf(name);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             return null;
         }
     }
@@ -147,43 +157,35 @@ public enum DisguiseSound
     private float damageSoundVolume = 1F;
     private HashMap<SoundType, String> disguiseSounds = new HashMap<>();
 
-    DisguiseSound(Object hurt, Object step, Object death, Object idle, Object... sounds)
-    {
+    DisguiseSound(Object hurt, Object step, Object death, Object idle, Object... sounds) {
         addSound(hurt, SoundType.HURT);
         addSound(step, SoundType.STEP);
         addSound(death, SoundType.DEATH);
         addSound(idle, SoundType.IDLE);
 
-        for (Object obj : sounds)
-        {
+        for (Object obj : sounds) {
             addSound(obj, SoundType.CANCEL);
         }
 
     }
 
-    private void addSound(Object sound, SoundType type)
-    {
+    private void addSound(Object sound, SoundType type) {
         String s;
 
-        if (sound == null)
-        {
+        if (sound == null) {
             return;
         }
-        else if (sound instanceof String)
-        {
+        else if (sound instanceof String) {
             s = (String) sound;
         }
-        else if (sound instanceof Sound)
-        {
+        else if (sound instanceof Sound) {
             s = ReflectionManager.getCraftSound((Sound) sound);
         }
-        else
-        {
+        else {
             throw new RuntimeException("Was given a unknown object " + sound);
         }
 
-        switch (type)
-        {
+        switch (type) {
         case HURT:
             disguiseSounds.put(SoundType.HURT, s);
             break;
@@ -201,58 +203,47 @@ public enum DisguiseSound
         }
     }
 
-    public float getDamageAndIdleSoundVolume()
-    {
+    public float getDamageAndIdleSoundVolume() {
         return damageSoundVolume;
     }
 
-    public String getSound(SoundType type)
-    {
-        if (type == null || !disguiseSounds.containsKey(type))
-        {
+    public String getSound(SoundType type) {
+        if (type == null || !disguiseSounds.containsKey(type)) {
             return null;
         }
 
         return disguiseSounds.get(type);
     }
 
-    public HashSet<String> getSoundsToCancel()
-    {
+    public HashSet<String> getSoundsToCancel() {
         return cancelSounds;
     }
 
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
-    public SoundType getType(String sound, boolean ignoreDamage)
-    {
+    public SoundType getType(String sound, boolean ignoreDamage) {
         if (sound == null)
             return SoundType.CANCEL;
 
-        if (isCancelSound(sound))
-        {
+        if (isCancelSound(sound)) {
             return SoundType.CANCEL;
         }
 
         if (disguiseSounds.containsKey(SoundType.STEP) && disguiseSounds.get(SoundType.STEP).startsWith("step.")
-                && sound.startsWith("step."))
-        {
+                && sound.startsWith("step.")) {
             return SoundType.STEP;
         }
 
-        for (SoundType type : SoundType.values())
-        {
-            if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT))
-            {
+        for (SoundType type : SoundType.values()) {
+            if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT)) {
                 continue;
             }
 
             String s = disguiseSounds.get(type);
 
-            if (s != null)
-            {
-                if (s.equals(sound))
-                {
+            if (s != null) {
+                if (s.equals(sound)) {
                     return type;
                 }
             }
@@ -261,46 +252,36 @@ public enum DisguiseSound
         return null;
     }
 
-    public boolean isCancelSound(String sound)
-    {
+    public boolean isCancelSound(String sound) {
         return getSoundsToCancel().contains(sound);
     }
 
-    public void removeSound(SoundType type, Sound sound)
-    {
+    public void removeSound(SoundType type, Sound sound) {
         removeSound(type, ReflectionManager.getCraftSound(sound));
     }
 
-    public void removeSound(SoundType type, String sound)
-    {
-        if (type == SoundType.CANCEL)
-        {
+    public void removeSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL) {
             cancelSounds.remove(sound);
         }
-        else
-        {
+        else {
             disguiseSounds.remove(type);
         }
     }
 
-    public void setDamageAndIdleSoundVolume(float strength)
-    {
+    public void setDamageAndIdleSoundVolume(float strength) {
         this.damageSoundVolume = strength;
     }
 
-    public void setSound(SoundType type, Sound sound)
-    {
+    public void setSound(SoundType type, Sound sound) {
         setSound(type, ReflectionManager.getCraftSound(sound));
     }
 
-    public void setSound(SoundType type, String sound)
-    {
-        if (type == SoundType.CANCEL)
-        {
+    public void setSound(SoundType type, String sound) {
+        if (type == SoundType.CANCEL) {
             cancelSounds.add(sound);
         }
-        else
-        {
+        else {
             disguiseSounds.put(type, sound);
         }
     }

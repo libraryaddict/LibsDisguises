@@ -16,12 +16,12 @@ public class EnderDragonWatcher extends InsentientWatcher
 
     public int getPhase()
     {
-        return getValue(FlagType.ENDERDRAGON_PHASE);
+        return getData(FlagType.ENDERDRAGON_PHASE);
     }
 
     public void setPhase(int phase)
     {
-        setValue(FlagType.ENDERDRAGON_PHASE, phase);
+        setData(FlagType.ENDERDRAGON_PHASE, phase);
         sendData(FlagType.ENDERDRAGON_PHASE);
     }
 }

@@ -20,12 +20,12 @@ public class ZombieWatcher extends InsentientWatcher
 
     public boolean isBaby()
     {
-        return getValue(FlagType.ZOMBIE_BABY);
+        return getData(FlagType.ZOMBIE_BABY);
     }
 
     public boolean isShaking()
     {
-        return getValue(FlagType.ZOMBIE_SHAKING);
+        return getData(FlagType.ZOMBIE_SHAKING);
     }
 
     /**
@@ -35,12 +35,12 @@ public class ZombieWatcher extends InsentientWatcher
      */
     public boolean isVillager()
     {
-        return ((int) getValue(FlagType.ZOMBIE_PROFESSION)) != 0;
+        return ((int) getData(FlagType.ZOMBIE_PROFESSION)) != 0;
     }
 
     public boolean isAggressive()
     {
-        return (boolean) getValue(FlagType.ZOMBIE_AGGRESSIVE);
+        return (boolean) getData(FlagType.ZOMBIE_AGGRESSIVE);
     }
 
     /**
@@ -50,7 +50,7 @@ public class ZombieWatcher extends InsentientWatcher
      */
     public Profession getProfession()
     {
-        return Profession.values()[getValue(FlagType.ZOMBIE_PROFESSION)];
+        return Profession.values()[getData(FlagType.ZOMBIE_PROFESSION)];
     }
 
     public void setAdult()
@@ -65,13 +65,13 @@ public class ZombieWatcher extends InsentientWatcher
 
     public void setBaby(boolean baby)
     {
-        setValue(FlagType.ZOMBIE_BABY, baby);
+        setData(FlagType.ZOMBIE_BABY, baby);
         sendData(FlagType.ZOMBIE_BABY);
     }
 
     public void setShaking(boolean shaking)
     {
-        setValue(FlagType.ZOMBIE_SHAKING, shaking);
+        setData(FlagType.ZOMBIE_SHAKING, shaking);
         sendData(FlagType.ZOMBIE_SHAKING);
     }
 
@@ -82,7 +82,7 @@ public class ZombieWatcher extends InsentientWatcher
      */
     public void setProfession(int id)
     {
-        setValue(FlagType.ZOMBIE_PROFESSION, id);
+        setData(FlagType.ZOMBIE_PROFESSION, id);
         sendData(FlagType.ZOMBIE_PROFESSION);
     }
 
@@ -93,13 +93,13 @@ public class ZombieWatcher extends InsentientWatcher
      */
     public void setProfession(Profession profession)
     {
-        setValue(FlagType.ZOMBIE_PROFESSION, profession.ordinal());
+        setData(FlagType.ZOMBIE_PROFESSION, profession.ordinal());
         sendData(FlagType.ZOMBIE_PROFESSION);
     }
 
     public void setAggressive(boolean handsup)
     {
-        setValue(FlagType.ZOMBIE_AGGRESSIVE, handsup);
+        setData(FlagType.ZOMBIE_AGGRESSIVE, handsup);
         sendData(FlagType.ZOMBIE_AGGRESSIVE);
     }
 

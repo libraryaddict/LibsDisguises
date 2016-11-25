@@ -12,12 +12,12 @@ public class PolarBearWatcher extends AgeableWatcher
 
     public void setStanding(boolean standing)
     {
-        setValue(FlagType.POLAR_BEAR_STANDING, standing);
+        setData(FlagType.POLAR_BEAR_STANDING, standing);
         sendData(FlagType.POLAR_BEAR_STANDING);
     }
 
     public boolean isStanding()
     {
-        return getValue(FlagType.POLAR_BEAR_STANDING);
+        return getData(FlagType.POLAR_BEAR_STANDING);
     }
 }

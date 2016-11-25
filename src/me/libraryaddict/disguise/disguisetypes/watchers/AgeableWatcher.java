@@ -17,7 +17,7 @@ public class AgeableWatcher extends InsentientWatcher
 
     public boolean isBaby()
     {
-        return getValue(FlagType.AGEABLE_BABY);
+        return getData(FlagType.AGEABLE_BABY);
     }
 
     public void setAdult()
@@ -32,7 +32,7 @@ public class AgeableWatcher extends InsentientWatcher
 
     public void setBaby(boolean isBaby)
     {
-        setValue(FlagType.AGEABLE_BABY, isBaby);
+        setData(FlagType.AGEABLE_BABY, isBaby);
         sendData(FlagType.AGEABLE_BABY);
     }
 }

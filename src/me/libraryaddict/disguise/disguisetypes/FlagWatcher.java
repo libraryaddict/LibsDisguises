@@ -243,7 +243,7 @@ public class FlagWatcher
 
     public String getCustomName()
     {
-        return (String) getValue(FlagType.ENTITY_CUSTOM_NAME);
+        return (String) getData(FlagType.ENTITY_CUSTOM_NAME);
     }
 
     protected TargetedDisguise getDisguise()
@@ -253,7 +253,7 @@ public class FlagWatcher
 
     private boolean getEntityFlag(int byteValue)
     {
-        return (getValue(FlagType.ENTITY_META) & 1 << byteValue) != 0;
+        return (getData(FlagType.ENTITY_META) & 1 << byteValue) != 0;
     }
 
     public EntityEquipment getEquipment()
@@ -301,7 +301,7 @@ public class FlagWatcher
         return null;
     }
 
-    protected <Y> Y getValue(FlagType<Y> flagType)
+    protected <Y> Y getData(FlagType<Y> flagType)
     {
         if (_entityValues.containsKey(flagType.getIndex()))
         {
@@ -338,7 +338,7 @@ public class FlagWatcher
 
     public boolean isCustomNameVisible()
     {
-        return getValue(FlagType.ENTITY_CUSTOM_NAME_VISIBLE);
+        return getData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
     public boolean isEntityAnimationsAdded()
@@ -363,7 +363,7 @@ public class FlagWatcher
 
     public boolean isNoGravity()
     {
-        return getValue(FlagType.ENTITY_NO_GRAVITY);
+        return getData(FlagType.ENTITY_NO_GRAVITY);
     }
 
     public boolean isRightClicking()
@@ -509,13 +509,13 @@ public class FlagWatcher
             name = name.substring(0, 64);
         }
 
-        setValue(FlagType.ENTITY_CUSTOM_NAME, name);
+        setData(FlagType.ENTITY_CUSTOM_NAME, name);
         sendData(FlagType.ENTITY_CUSTOM_NAME);
     }
 
     public void setCustomNameVisible(boolean display)
     {
-        setValue(FlagType.ENTITY_CUSTOM_NAME_VISIBLE, display);
+        setData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE, display);
         sendData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
@@ -523,15 +523,15 @@ public class FlagWatcher
     {
         _modifiedEntityAnimations.add(byteValue);
 
-        byte b0 = (byte) getValue(FlagType.ENTITY_META);
+        byte b0 = (byte) getData(FlagType.ENTITY_META);
 
         if (flag)
         {
-            setValue(FlagType.ENTITY_META, (byte) (b0 | 1 << byteValue));
+            setData(FlagType.ENTITY_META, (byte) (b0 | 1 << byteValue));
         }
         else
         {
-            setValue(FlagType.ENTITY_META, (byte) (b0 & ~(1 << byteValue)));
+            setData(FlagType.ENTITY_META, (byte) (b0 & ~(1 << byteValue)));
         }
     }
 
@@ -653,7 +653,7 @@ public class FlagWatcher
 
     public void setNoGravity(boolean noGravity)
     {
-        setValue(FlagType.ENTITY_NO_GRAVITY, noGravity);
+        setData(FlagType.ENTITY_NO_GRAVITY, noGravity);
         sendData(FlagType.ENTITY_NO_GRAVITY);
     }
 
@@ -675,7 +675,7 @@ public class FlagWatcher
         sendData(FlagType.ENTITY_META);
     }
 
-    protected <Y> void setValue(FlagType<Y> id, Y value)
+    protected <Y> void setData(FlagType<Y> id, Y value)
     {
         _entityValues.put(id.getIndex(), value);
 

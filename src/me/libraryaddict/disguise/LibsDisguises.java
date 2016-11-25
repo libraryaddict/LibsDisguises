@@ -36,7 +36,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
@@ -54,32 +53,26 @@ import me.libraryaddict.disguise.utilities.Metrics;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-public class LibsDisguises extends JavaPlugin
-{
+public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
 
     @Override
-    public void onEnable()
-    {
-        try
-        {
+    public void onEnable() {
+        try {
             Class.forName("com.comphenix.protocol.wrappers.Vector3F").getName();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated ProtocolLib!");
             System.err.println(
                     "[LibsDisguises] You need to update ProtocolLib, please try this build http://ci.dmulloy2.net/job/ProtocolLib/lastStableBuild/artifact/modules/ProtocolLib/target/ProtocolLib.jar");
             return;
         }
 
-        try
-        {
+        try {
             ReflectionManager.getNmsClass("EntityShulker").getName();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated server!");
             System.err.println("[LibsDisguises] This plugin does not offer backwards support!");
             return;
@@ -117,21 +110,18 @@ public class LibsDisguises extends JavaPlugin
 
         instance = this;
 
-        try
-        {
+        try {
             Metrics metrics = new Metrics(this);
             metrics.start();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
         }
     }
 
     /**
      * Reloads the config with new config options.
      */
-    public void reload()
-    {
+    public void reload() {
         HandlerList.unregisterAll(listener);
 
         reloadConfig();
@@ -142,21 +132,16 @@ public class LibsDisguises extends JavaPlugin
      * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume
      * for mob noises. As well as setting their watcher class and entity size.
      */
-    private void registerValues()
-    {
-        for (DisguiseType disguiseType : DisguiseType.values())
-        {
-            if (disguiseType.getEntityType() == null)
-            {
+    private void registerValues() {
+        for (DisguiseType disguiseType : DisguiseType.values()) {
+            if (disguiseType.getEntityType() == null) {
                 continue;
             }
 
             Class watcherClass = null;
 
-            try
-            {
-                switch (disguiseType)
-                {
+            try {
+                switch (disguiseType) {
                 case SPECTRAL_ARROW:
                     watcherClass = ArrowWatcher.class;
                     break;
@@ -174,12 +159,6 @@ public class LibsDisguises extends JavaPlugin
                 case SPIDER:
                 case CAVE_SPIDER:
                     watcherClass = SpiderWatcher.class;
-                    break;
-                case DONKEY:
-                case MULE:
-                case UNDEAD_HORSE:
-                case SKELETON_HORSE:
-                    watcherClass = HorseWatcher.class;
                     break;
                 case ZOMBIE_VILLAGER:
                 case PIG_ZOMBIE:
@@ -202,57 +181,46 @@ public class LibsDisguises extends JavaPlugin
                     break;
                 }
             }
-            catch (ClassNotFoundException ex)
-            {
+            catch (ClassNotFoundException ex) {
                 // There is no explicit watcher for this entity.
                 Class entityClass = disguiseType.getEntityType().getEntityClass();
 
-                if (entityClass != null)
-                {
-                    if (Tameable.class.isAssignableFrom(entityClass))
-                    {
+                if (entityClass != null) {
+                    if (Tameable.class.isAssignableFrom(entityClass)) {
                         watcherClass = TameableWatcher.class;
                     }
-                    else if (Ageable.class.isAssignableFrom(entityClass))
-                    {
+                    else if (Ageable.class.isAssignableFrom(entityClass)) {
                         watcherClass = AgeableWatcher.class;
                     }
-                    else if (Creature.class.isAssignableFrom(entityClass))
-                    {
+                    else if (Creature.class.isAssignableFrom(entityClass)) {
                         watcherClass = InsentientWatcher.class;
                     }
-                    else if (LivingEntity.class.isAssignableFrom(entityClass))
-                    {
+                    else if (LivingEntity.class.isAssignableFrom(entityClass)) {
                         watcherClass = LivingWatcher.class;
                     }
-                    else
-                    {
+                    else {
                         watcherClass = FlagWatcher.class;
                     }
                 }
-                else
-                {
+                else {
                     watcherClass = FlagWatcher.class; // Disguise is unknown type
                 }
             }
 
-            if (watcherClass == null)
-            {
+            if (watcherClass == null) {
                 System.err.println("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
                 continue;
             }
 
             disguiseType.setWatcherClass(watcherClass);
 
-            if (DisguiseValues.getDisguiseValues(disguiseType) != null)
-            {
+            if (DisguiseValues.getDisguiseValues(disguiseType) != null) {
                 continue;
             }
 
             String nmsEntityName = toReadable(disguiseType.name());
 
-            switch (disguiseType)
-            {
+            switch (disguiseType) {
             case WITHER_SKELETON:
             case ZOMBIE_VILLAGER:
             case DONKEY:
@@ -299,18 +267,15 @@ public class LibsDisguises extends JavaPlugin
                 break;
             }
 
-            try
-            {
-                if (nmsEntityName.equalsIgnoreCase("Unknown"))
-                {
+            try {
+                if (nmsEntityName.equalsIgnoreCase("Unknown")) {
                     DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
 
                     disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
                     DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
 
-                    if (sound != null)
-                    {
+                    if (sound != null) {
                         sound.setDamageAndIdleSoundVolume(1f);
                     }
 
@@ -319,8 +284,7 @@ public class LibsDisguises extends JavaPlugin
 
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
 
-                if (nmsEntity == null)
-                {
+                if (nmsEntity == null) {
                     getLogger().warning("Entity not found! (" + nmsEntityName + ")");
 
                     continue;
@@ -329,10 +293,8 @@ public class LibsDisguises extends JavaPlugin
                 Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
                 int entitySize = 0;
 
-                for (Field field : ReflectionManager.getNmsClass("Entity").getFields())
-                {
-                    if (field.getType().getName().equals("EnumEntitySize"))
-                    {
+                for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
+                    if (field.getType().getName().equals("EnumEntitySize")) {
                         Enum enumEntitySize = (Enum) field.get(nmsEntity);
 
                         entitySize = enumEntitySize.ordinal();
@@ -346,12 +308,10 @@ public class LibsDisguises extends JavaPlugin
 
                 WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
 
-                for (WrappedWatchableObject watch : watcher.getWatchableObjects())
-                {
+                for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     FlagType flagType = FlagType.getFlag(watcherClass, watch.getIndex());
 
-                    if (flagType == null)
-                    {
+                    if (flagType == null) {
                         System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " + watch.getIndex()
                                 + " can't be found!");
                         System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
@@ -363,12 +323,10 @@ public class LibsDisguises extends JavaPlugin
 
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
 
-                if (sound != null)
-                {
+                if (sound != null) {
                     Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
 
-                    if (soundStrength != null)
-                    {
+                    if (soundStrength != null) {
                         sound.setDamageAndIdleSoundVolume(soundStrength);
                     }
                 }
@@ -376,14 +334,12 @@ public class LibsDisguises extends JavaPlugin
                 // Get the bounding box
                 disguiseValues.setAdultBox(ReflectionManager.getBoundingBox(bukkitEntity));
 
-                if (bukkitEntity instanceof Ageable)
-                {
+                if (bukkitEntity instanceof Ageable) {
                     ((Ageable) bukkitEntity).setBaby();
 
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 }
-                else if (bukkitEntity instanceof Zombie)
-                {
+                else if (bukkitEntity instanceof Zombie) {
                     ((Zombie) bukkitEntity).setBaby(true);
 
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
@@ -391,8 +347,7 @@ public class LibsDisguises extends JavaPlugin
 
                 disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
             }
-            catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex)
-            {
+            catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
                 System.out.print(
                         "[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
                 System.out.print("[LibsDisguises] Before reporting this error, "
@@ -405,20 +360,17 @@ public class LibsDisguises extends JavaPlugin
         }
     }
 
-    private String toReadable(String string)
-    {
+    private String toReadable(String string) {
         StringBuilder builder = new StringBuilder();
 
-        for (String s : string.split("_"))
-        {
+        for (String s : string.split("_")) {
             builder.append(s.substring(0, 1)).append(s.substring(1).toLowerCase());
         }
 
         return builder.toString();
     }
 
-    public DisguiseListener getListener()
-    {
+    public DisguiseListener getListener() {
         return listener;
     }
 
@@ -427,8 +379,7 @@ public class LibsDisguises extends JavaPlugin
      *
      * @return The instance of this plugin
      */
-    public static LibsDisguises getInstance()
-    {
+    public static LibsDisguises getInstance() {
         return instance;
     }
 }
