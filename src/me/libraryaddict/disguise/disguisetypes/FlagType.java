@@ -299,6 +299,8 @@ public class FlagType<Y> {
 
     public static FlagType<Boolean> ZOMBIE_AGGRESSIVE = new FlagType<Boolean>(ZombieWatcher.class, 2, false);
 
+    public static FlagType<Integer> ZOMBIE_PLACEHOLDER = new FlagType<Integer>(ZombieWatcher.class, 1, 0);
+
     public static FlagType<Boolean> ZOMBIE_BABY = new FlagType<Boolean>(ZombieWatcher.class, 0, false);
 
     public static FlagType<Integer> ZOMBIE_VILLAGER_PROFESSION = new FlagType<Integer>(ZombieVillagerWatcher.class, 1, 0);
