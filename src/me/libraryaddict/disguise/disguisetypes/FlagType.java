@@ -274,7 +274,7 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> TNT_FUSE_TICKS = new FlagType<Integer>(TNTWatcher.class, 0, Integer.MAX_VALUE);
 
-    public static FlagType<Boolean> VEX_ANGRY = new FlagType<Boolean>(VexWatcher.class, 0, false);
+    public static FlagType<Byte> VEX_ANGRY = new FlagType<Byte>(VexWatcher.class, 0, (byte) 0);
 
     public static FlagType<Integer> VILLAGER_PROFESSION = new FlagType<Integer>(VillagerWatcher.class, 0, 0);
 

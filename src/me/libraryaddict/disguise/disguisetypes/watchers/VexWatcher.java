@@ -10,12 +10,12 @@ public class VexWatcher extends InsentientWatcher {
     }
 
     public void setAngry(boolean angry) {
-        setData(FlagType.VEX_ANGRY, angry);
+        setData(FlagType.VEX_ANGRY, (byte) (angry ? 1 : 0));
         sendData(FlagType.VEX_ANGRY);
     }
 
     public boolean isAngry() {
-        return getData(FlagType.VEX_ANGRY);
+        return getData(FlagType.VEX_ANGRY) == 1;
     }
 
 }
