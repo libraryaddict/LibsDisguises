@@ -456,9 +456,9 @@ public class PacketsManager {
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 data = ReflectionManager.getCombinedId(((MiscDisguise) disguise).getId(), data);
             }
-            else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == 0) {
+            else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
-                data = disguisedEntity.getEntityId();
+                data = observer.getEntityId();
             }
             else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
