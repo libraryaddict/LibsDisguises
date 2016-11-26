@@ -13,13 +13,13 @@ public class FishingHookWatcher extends FlagWatcher
 
     public void setHooked(int hookedId)
     {
-        setData(FlagType.FISHING_HOOK, hookedId + 1);
-        sendData(FlagType.FISHING_HOOK);
+        setData(FlagType.FISHING_HOOK_HOOKED, hookedId + 1);
+        sendData(FlagType.FISHING_HOOK_HOOKED);
     }
 
     public int getHooked()
     {
-        int hooked = getData(FlagType.FISHING_HOOK);
+        int hooked = getData(FlagType.FISHING_HOOK_HOOKED);
 
         if (hooked > 0)
             hooked--;

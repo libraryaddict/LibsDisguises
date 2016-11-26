@@ -3,11 +3,6 @@ package me.libraryaddict.disguise.disguisetypes;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Zombie;
 
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
@@ -154,9 +149,9 @@ public enum DisguiseType {
 
     THROWN_EXP_BOTTLE(75),
 
-    TIPPED_ARROW(92),
+    TIPPED_ARROW(60),
 
-    UNDEAD_HORSE,
+    ZOMBIE_HORSE,
 
     UNKNOWN,
 
@@ -190,7 +185,7 @@ public enum DisguiseType {
                 DisguiseType toUse = type;
                 String name;
 
-                switch (type) {
+                /*   switch (type) {
                 // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
                 // Usable.
                 case ITEM_FRAME:
@@ -199,16 +194,9 @@ public enum DisguiseType {
                 case HUSK:
                     toUse = DisguiseType.ZOMBIE;
                     break;
-                case WITHER_SKELETON:
-                case STRAY:
-                    toUse = DisguiseType.SKELETON;
-                    break;
-                case ELDER_GUARDIAN:
-                    toUse = DisguiseType.GUARDIAN;
-                    break;
                 default:
                     break;
-                }
+                }*/
 
                 name = toUse.name();
 
@@ -222,39 +210,6 @@ public enum DisguiseType {
 
     public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());
-
-        switch (disguiseType) {
-        case ZOMBIE:
-
-            if (((Zombie) entity).isVillager()) {
-                disguiseType = DisguiseType.ZOMBIE_VILLAGER;
-            }
-
-            break;
-
-        case HORSE:
-
-            disguiseType = DisguiseType.valueOf(((Horse) entity).getVariant().name());
-
-            break;
-
-        case SKELETON:
-
-            if (((Skeleton) entity).getSkeletonType() == SkeletonType.WITHER) {
-                disguiseType = DisguiseType.WITHER_SKELETON;
-            }
-
-            break;
-        case GUARDIAN:
-
-            if (((Guardian) entity).isElder()) {
-                disguiseType = DisguiseType.ELDER_GUARDIAN;
-            }
-
-            break;
-        default:
-            break;
-        }
 
         return disguiseType;
 

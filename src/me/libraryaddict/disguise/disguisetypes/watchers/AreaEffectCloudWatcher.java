@@ -7,51 +7,43 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 /**
  * @author Navid
  */
-public class AreaEffectCloudWatcher extends FlagWatcher
-{
+public class AreaEffectCloudWatcher extends FlagWatcher {
 
-    public AreaEffectCloudWatcher(Disguise disguise)
-    {
+    public AreaEffectCloudWatcher(Disguise disguise) {
         super(disguise);
+
+        setRadius(1);
     }
 
-    public float getRadius()
-    {
+    public float getRadius() {
         return getData(FlagType.AREA_EFFECT_RADIUS);
     }
 
-    public int getColor()
-    {
-        return getData(FlagType.AREA_EFFECT_COLOR);
+    public int getColor() {
+        return getData(FlagType.AREA_EFFECT_CLOUD_COLOR);
     }
 
-    public boolean isIgnoreRadius()
-    {
+    public boolean isIgnoreRadius() {
         return getData(FlagType.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    public int getParticleId()
-    {
+    public int getParticleId() {
         return getData(FlagType.AREA_EFFECT_PARTICLE);
     }
 
-    public void setRadius(float radius)
-    {
+    public void setRadius(float radius) {
         setData(FlagType.AREA_EFFECT_RADIUS, radius);
     }
 
-    public void setColor(int color)
-    {
-        setData(FlagType.AREA_EFFECT_COLOR, color);
+    public void setColor(int color) {
+        setData(FlagType.AREA_EFFECT_CLOUD_COLOR, color);
     }
 
-    public void setIgnoreRadius(boolean ignore)
-    {
+    public void setIgnoreRadius(boolean ignore) {
         setData(FlagType.AREA_EFFECT_IGNORE_RADIUS, ignore);
     }
 
-    public void setParticleId(int particleId)
-    {
+    public void setParticleId(int particleId) {
         setData(FlagType.AREA_EFFECT_PARTICLE, particleId);
     }
 

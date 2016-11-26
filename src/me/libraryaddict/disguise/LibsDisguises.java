@@ -225,7 +225,7 @@ public class LibsDisguises extends JavaPlugin {
             case ZOMBIE_VILLAGER:
             case DONKEY:
             case MULE:
-            case UNDEAD_HORSE:
+            case ZOMBIE_HORSE:
             case SKELETON_HORSE:
             case STRAY:
             case HUSK:
@@ -316,6 +316,17 @@ public class LibsDisguises extends JavaPlugin {
                                 + " can't be found!");
                         System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
                                 + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
+                        System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
+                        continue;
+                    }
+
+                    if (ReflectionManager.convertInvalidItem(flagType.getDefault()).getClass() != ReflectionManager
+                            .convertInvalidItem(watch.getValue()).getClass()) {
+                        System.err.println("Mismatch of FlagType's for " + disguiseType.name() + "! Index " + watch.getIndex()
+                                + " has the wrong classtype!");
+                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
+                                + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName() + " which doesn't match up with "
+                                + flagType.getDefault().getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                         continue;
                     }

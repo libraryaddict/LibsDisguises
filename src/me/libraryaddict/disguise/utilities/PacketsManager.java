@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -102,6 +103,10 @@ public class PacketsManager {
 
         public ArrayList<PacketContainer> getPackets() {
             return packets;
+        }
+
+        public Collection<ArrayList<PacketContainer>> getDelayedPackets() {
+            return delayedPackets.values();
         }
 
         public void sendDelayed(final Player observer) {
@@ -492,6 +497,16 @@ public class PacketsManager {
 
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, yaw);
+        }
+
+        if (disguise.getType() == DisguiseType.EVOKER_FANGS) {
+            PacketContainer newPacket = new PacketContainer(Server.ENTITY_STATUS);
+
+            StructureModifier<Object> mods = newPacket.getModifier();
+            mods.write(0, disguise.getEntity().getEntityId());
+            mods.write(1, (byte) 4);
+
+            packets.addPacket(newPacket);
         }
 
         return packets;

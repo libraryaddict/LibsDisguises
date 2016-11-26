@@ -778,7 +778,7 @@ public class ReflectionManager {
         return null;
     }
 
-    private static Object convertInvalidItem(Object value) {
+    public static Object convertInvalidItem(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
 
@@ -787,10 +787,7 @@ public class ReflectionManager {
 
             Object val = opt.get();
 
-            if (val instanceof ItemStack) {
-                return Optional.of(getNmsItem((ItemStack) val));
-            }
-            else if (val instanceof BlockPosition) {
+            if (val instanceof BlockPosition) {
                 BlockPosition pos = (BlockPosition) val;
 
                 try {
@@ -840,6 +837,9 @@ public class ReflectionManager {
                 ex.printStackTrace();
             }
         }
+        else if (value instanceof ItemStack) {
+            return getNmsItem((ItemStack) value);
+        }
 
         return value;
     }
@@ -871,8 +871,10 @@ public class ReflectionManager {
         }
 
         if (serializer == null) {
-            throw new IllegalArgumentException(
-                    "Unable to find Serializer for " + value + "! Are you running the latest version of ProtocolLib?");
+            throw new IllegalArgumentException("Unable to find Serializer for " + value
+                    + (value instanceof Optional && ((Optional) value).isPresent()
+                            ? " (" + ((Optional) value).get().getClass().getName() + ")" : "")
+                    + "! Are you running the latest version of ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);

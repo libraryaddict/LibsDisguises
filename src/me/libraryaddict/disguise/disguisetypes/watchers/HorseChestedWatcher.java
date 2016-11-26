@@ -10,11 +10,11 @@ public class HorseChestedWatcher extends HorseAbstractWatcher {
     }
 
     public void setCarryingChest(boolean carryingChest) {
-        setData(FlagType.HORSE_CARRYING_CHEST, carryingChest);
-        sendData(FlagType.HORSE_CARRYING_CHEST);
+        setData(FlagType.HORSE_CHESTED_CARRYING_CHEST, carryingChest);
+        sendData(FlagType.HORSE_CHESTED_CARRYING_CHEST);
     }
 
     public boolean isCarryingChest() {
-        return getData(FlagType.HORSE_CARRYING_CHEST);
+        return getData(FlagType.HORSE_CHESTED_CARRYING_CHEST);
     }
 }

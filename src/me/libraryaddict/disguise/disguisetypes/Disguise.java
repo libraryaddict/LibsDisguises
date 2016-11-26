@@ -13,8 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Villager.Profession;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
@@ -29,8 +27,6 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
@@ -104,28 +100,6 @@ public abstract class Disguise {
             else if (getWatcher() instanceof ZombieWatcher) {
                 ((ZombieWatcher) getWatcher()).setBaby(true);
             }
-        }
-
-        // If the disguise type is a wither, set the flagwatcher value for the skeleton to a wither skeleton
-        if (getType() == DisguiseType.WITHER_SKELETON) {
-            ((SkeletonWatcher) getWatcher()).setType(SkeletonType.WITHER);
-        }
-        else if (getType() == DisguiseType.STRAY) {
-            ((SkeletonWatcher) getWatcher()).setType(SkeletonType.STRAY);
-        } // Else if its a zombie, but the disguise type is a zombie villager. Set the value.
-        else if (getType() == DisguiseType.ZOMBIE_VILLAGER) {
-            Profession profession = null;
-
-            while (profession == null || profession == Profession.NORMAL || profession == Profession.HUSK)
-                profession = Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)];
-
-            ((ZombieWatcher) getWatcher()).setProfession(profession);
-        }
-        else if (getType() == DisguiseType.HUSK) {
-            ((ZombieWatcher) getWatcher()).setProfession(Profession.HUSK);
-        }
-        else if (getType() == DisguiseType.ELDER_GUARDIAN) {
-            ((GuardianWatcher) getWatcher()).setElder(true);
         }
 
         final boolean alwaysSendVelocity;

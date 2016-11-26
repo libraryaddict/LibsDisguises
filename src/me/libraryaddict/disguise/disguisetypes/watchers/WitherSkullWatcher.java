@@ -14,13 +14,13 @@ public class WitherSkullWatcher extends FlagWatcher
 
     public boolean isBlue()
     {
-        return (boolean) getData(FlagType.WITHERSKULL_BLUE);
+        return (boolean) getData(FlagType.WITHER_SKULL_BLUE);
     }
 
     public void setBlue(boolean blue)
     {
-        setData(FlagType.WITHERSKULL_BLUE, blue);
-        sendData(FlagType.WITHERSKULL_BLUE);
+        setData(FlagType.WITHER_SKULL_BLUE, blue);
+        sendData(FlagType.WITHER_SKULL_BLUE);
     }
 
 }
