@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packetlisteners;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -293,10 +294,10 @@ public class PacketListenerInventory extends PacketAdapter {
             }
         }
         else if (event.getPacketType() == Server.WINDOW_ITEMS) {
-            event.setPacket(event.getPacket().deepClone());
+            event.setPacket(event.getPacket().shallowClone());
 
             StructureModifier<List<ItemStack>> mods = event.getPacket().getItemListModifier();
-            List<ItemStack> items = mods.read(0);
+            List<ItemStack> items = new ArrayList<ItemStack>(mods.read(0));
 
             for (int slot = 0; slot < items.size(); slot++) {
                 if (slot >= 5 && slot <= 8) {
