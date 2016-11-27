@@ -18,7 +18,7 @@ public class LibsDisguisesCommand implements CommandExecutor
         {
             sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v."
                     + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion()
-                    + " by libraryaddict, maintained by NavidK0.\n"
+                    + " by libraryaddict, formerly maintained by ByteFlux and Navid K.\n"
                     + "Use /libsdisguises reload to reload the config. All disguises will be blown by doing this.");
         }
         else if (args.length > 0)
