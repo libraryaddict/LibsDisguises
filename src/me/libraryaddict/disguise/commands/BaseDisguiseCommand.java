@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -55,6 +56,46 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
     }
 
+    private Object callValueOf(Class<?> param, String valueString, String methodName, String description)
+            throws DisguiseParseException {
+        Object value;
+        try {
+            value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
+        }
+        catch (Exception ex) {
+            throw parseToException(description, valueString, methodName);
+        }
+        return value;
+    }
+
+    private void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions)
+            throws DisguiseParseException {
+
+        if (!passesCheck(optionPermissions, usedOptions)) {
+            throw new DisguiseParseException(ChatColor.RED + "You do not have the permission to use the option "
+                    + usedOptions.get(usedOptions.size() - 1));
+        }
+    }
+
+    protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
+        if (origArgs.length == 0)
+            return list;
+
+        Iterator<String> itel = list.iterator();
+        String label = origArgs[origArgs.length - 1].toLowerCase();
+
+        while (itel.hasNext()) {
+            String name = itel.next();
+
+            if (name.toLowerCase().startsWith(label))
+                continue;
+
+            itel.remove();
+        }
+
+        return list;
+    }
+
     protected ArrayList<String> getAllowedDisguises(HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> hashMap) {
         ArrayList<String> allowedDisguises = new ArrayList<>();
 
@@ -67,8 +108,19 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return allowedDisguises;
     }
 
-    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
-        return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
+    protected String[] getArgs(String[] args) {
+        ArrayList<String> newArgs = new ArrayList<String>();
+
+        for (int i = 0; i < args.length - 1; i++) {
+            String s = args[i];
+
+            if (s.trim().isEmpty())
+                continue;
+
+            newArgs.add(s);
+        }
+
+        return newArgs.toArray(new String[0]);
     }
 
     protected HashMap<String, Boolean> getDisguiseOptions(CommandSender sender, DisguiseType type) {
@@ -123,6 +175,44 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         }
 
         return methods;
+    }
+
+    private Entry<Method, Integer> getMethod(Method[] methods, String methodName, int toStart) {
+        for (int i = toStart; i < methods.length; i++) {
+            Method method = methods[i];
+            if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
+                    && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
+                return new HashMap.SimpleEntry(method, ++i);
+            }
+        }
+        return null;
+    }
+
+    private HashMap<ArrayList<String>, Boolean> getOptions(String perm) {
+        ArrayList<String> list = new ArrayList<>();
+        boolean isRemove = true;
+        String[] split = perm.split("\\.");
+        for (int i = 1; i < split.length; i++) {
+            String option = split[i];
+            boolean value = option.startsWith("-");
+            if (value) {
+                option = option.substring(1);
+                isRemove = false;
+            }
+            if (option.equals("baby")) {
+                option = "setbaby";
+            }
+            list.add(option);
+        }
+
+        HashMap<ArrayList<String>, Boolean> options = new HashMap<>();
+        options.put(list, isRemove);
+
+        return options;
+    }
+
+    protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
+        return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
     }
 
     /**
@@ -325,29 +415,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return map;
     }
 
-    private HashMap<ArrayList<String>, Boolean> getOptions(String perm) {
-        ArrayList<String> list = new ArrayList<>();
-        boolean isRemove = true;
-        String[] split = perm.split("\\.");
-        for (int i = 1; i < split.length; i++) {
-            String option = split[i];
-            boolean value = option.startsWith("-");
-            if (value) {
-                option = option.substring(1);
-                isRemove = false;
-            }
-            if (option.equals("baby")) {
-                option = "setbaby";
-            }
-            list.add(option);
-        }
-
-        HashMap<ArrayList<String>, Boolean> options = new HashMap<>();
-        options.put(list, isRemove);
-
-        return options;
-    }
-
     protected boolean isDouble(String string) {
         try {
             Float.parseFloat(string);
@@ -387,6 +454,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         if (map.isEmpty()) {
             throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
         }
+
         if (args.length == 0) {
             sendCommandUsage(sender, map);
             throw new DisguiseParseException();
@@ -403,6 +471,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
                 disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
+
                 if (disguise == null) {
                     throw new DisguiseParseException(ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
                 }
@@ -410,6 +479,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
             else {
                 throw new DisguiseParseException(ChatColor.RED + "You do not have perimssion to use disguise references!");
             }
+
             optionPermissions = (map.containsKey(disguise.getType()) ? map.get(disguise.getType())
                     : new HashMap<ArrayList<String>, Boolean>());
         }
@@ -477,6 +547,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             usedOptions.add("setbaby");
                             doCheck(optionPermissions, usedOptions);
                             adult = args[1].equalsIgnoreCase("adult");
+
                             toSkip++;
                         }
                     }
@@ -488,6 +559,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     int miscId = -1;
                     int miscData = -1;
                     String secondArg = null;
+
                     if (args.length > 1) {
                         // They have defined more arguments!
                         // If the first arg is a number
@@ -498,6 +570,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
                             args[1] = split[0];
                         }
+
                         if (isNumeric(args[1])) {
                             miscId = Integer.parseInt(args[1]);
                         }
@@ -545,6 +618,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                             }
                         }
                     }
+
                     if (!disguiseOptions.isEmpty() && miscId != -1) {
                         String toCheck = "" + miscId;
 
@@ -563,17 +637,21 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                                             + " on the " + disguiseType.toReadable() + " disguise!");
                         }
                     }
+
                     if (miscId != -1) {
                         if (disguiseType == DisguiseType.FALLING_BLOCK) {
                             usedOptions.add("setblock");
+
                             doCheck(optionPermissions, usedOptions);
                         }
                         else if (disguiseType == DisguiseType.PAINTING) {
                             usedOptions.add("setpainting");
+
                             doCheck(optionPermissions, usedOptions);
                         }
                         else if (disguiseType == DisguiseType.SPLASH_POTION) {
                             usedOptions.add("setpotionid");
+
                             doCheck(optionPermissions, usedOptions);
                         }
                     }
@@ -899,54 +977,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return disguise;
     }
 
-    private Entry<Method, Integer> getMethod(Method[] methods, String methodName, int toStart) {
-        for (int i = toStart; i < methods.length; i++) {
-            Method method = methods[i];
-            if (!method.getName().startsWith("get") && method.getName().equalsIgnoreCase(methodName)
-                    && method.getAnnotation(Deprecated.class) == null && method.getParameterTypes().length == 1) {
-                return new HashMap.SimpleEntry(method, ++i);
-            }
-        }
-        return null;
-    }
-
-    private Object callValueOf(Class<?> param, String valueString, String methodName, String description)
-            throws DisguiseParseException {
-        Object value;
-        try {
-            value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
-        }
-        catch (Exception ex) {
-            throw parseToException(description, valueString, methodName);
-        }
-        return value;
-    }
-
-    private boolean passesCheck(HashMap<ArrayList<String>, Boolean> map1, ArrayList<String> usedOptions) {
-        boolean hasPermission = false;
-        for (ArrayList<String> list : map1.keySet()) {
-            boolean myPerms = true;
-            for (String option : usedOptions) {
-                if (!(map1.get(list) && list.contains("*")) && (list.contains(option) != map1.get(list))) {
-                    myPerms = false;
-                    break;
-                }
-            }
-            if (myPerms) {
-                hasPermission = true;
-            }
-        }
-        return hasPermission;
-    }
-
-    private void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions)
-            throws DisguiseParseException {
-        if (!passesCheck(optionPermissions, usedOptions)) {
-            throw new DisguiseParseException(ChatColor.RED + "You do not have the permission to use the option "
-                    + usedOptions.get(usedOptions.size() - 1));
-        }
-    }
-
     private DisguiseParseException parseToException(String expectedValue, String receivedInstead, String methodName) {
         return new DisguiseParseException(
                 ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED + ", received " + ChatColor.GREEN
@@ -976,6 +1006,27 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                 throw parseToException("item ID:Durability combo", string, "%s");
             }
         }
+    }
+
+    public boolean passesCheck(HashMap<ArrayList<String>, Boolean> theirPermissions, ArrayList<String> usedOptions) {
+        boolean hasPermission = false;
+
+        for (ArrayList<String> list : theirPermissions.keySet()) {
+            boolean myPerms = true;
+
+            for (String option : usedOptions) {
+                if (!(theirPermissions.get(list) && list.contains("*"))
+                        && (list.contains(option) != theirPermissions.get(list))) {
+                    myPerms = false;
+                    break;
+                }
+            }
+
+            if (myPerms) {
+                hasPermission = true;
+            }
+        }
+        return hasPermission;
     }
 
     protected abstract void sendCommandUsage(CommandSender sender,

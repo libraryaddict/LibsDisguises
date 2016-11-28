@@ -172,11 +172,11 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 1, 0);
 
+    public static FlagType<Boolean> HORSE_CHESTED_CARRYING_CHEST = new FlagType<Boolean>(HorseChestedWatcher.class, 0, false);
+
     public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 0, 0);
 
     public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseAbstractWatcher.class, 0, (byte) 0);
-
-    public static FlagType<Boolean> HORSE_CHESTED_CARRYING_CHEST = new FlagType<Boolean>(HorseChestedWatcher.class, 0, false);
 
     public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseAbstractWatcher.class, 1,
             Optional.<UUID> absent());
@@ -192,12 +192,6 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> ITEMFRAME_ROTATION = new FlagType<Integer>(ItemFrameWatcher.class, 1, 0);
 
-    public static FlagType<Integer> LLAMA_STRENGTH = new FlagType<Integer>(LlamaWatcher.class, 0, 0);
-
-    public static FlagType<Integer> LLAMA_COLOR = new FlagType<Integer>(LlamaWatcher.class, 1, -1);
-
-    public static FlagType<Integer> LLAMA_CARPET = new FlagType<Integer>(LlamaWatcher.class, 2, 0);
-
     public static FlagType<Integer> LIVING_ARROWS = new FlagType<Integer>(LivingWatcher.class, 4, 0);
 
     public static FlagType<Byte> LIVING_HAND = new FlagType<Byte>(LivingWatcher.class, 0, (byte) 0);
@@ -207,6 +201,12 @@ public class FlagType<Y> {
     public static FlagType<Boolean> LIVING_POTION_AMBIENT = new FlagType<Boolean>(LivingWatcher.class, 3, false);
 
     public static FlagType<Integer> LIVING_POTIONS = new FlagType<Integer>(LivingWatcher.class, 2, 0);
+
+    public static FlagType<Integer> LLAMA_CARPET = new FlagType<Integer>(LlamaWatcher.class, 2, 0);
+
+    public static FlagType<Integer> LLAMA_COLOR = new FlagType<Integer>(LlamaWatcher.class, 1, -1);
+
+    public static FlagType<Integer> LLAMA_STRENGTH = new FlagType<Integer>(LlamaWatcher.class, 0, 0);
 
     public static FlagType<Integer> MINECART_BLOCK = new FlagType<Integer>(MinecartWatcher.class, 3, 0);
 
@@ -241,11 +241,11 @@ public class FlagType<Y> {
     public static FlagType<Optional<BlockPosition>> SHULKER_ATTACHED = new FlagType<Optional<BlockPosition>>(ShulkerWatcher.class,
             1, Optional.<BlockPosition> absent());
 
+    public static FlagType<Byte> SHULKER_COLOR = new FlagType<Byte>(ShulkerWatcher.class, 3, (byte) 10);
+
     public static FlagType<Direction> SHULKER_FACING = new FlagType<Direction>(ShulkerWatcher.class, 0, Direction.DOWN);
 
     public static FlagType<Byte> SHULKER_PEEKING = new FlagType<Byte>(ShulkerWatcher.class, 2, (byte) 0);
-
-    public static FlagType<Byte> SHULKER_COLOR = new FlagType<Byte>(ShulkerWatcher.class, 3, (byte) 10);
 
     public static FlagType<Boolean> SKELETON_SWING_ARMS = new FlagType<Boolean>(SkeletonWatcher.class, 0, false);
 
@@ -299,9 +299,9 @@ public class FlagType<Y> {
 
     public static FlagType<Boolean> ZOMBIE_AGGRESSIVE = new FlagType<Boolean>(ZombieWatcher.class, 2, false);
 
-    public static FlagType<Integer> ZOMBIE_PLACEHOLDER = new FlagType<Integer>(ZombieWatcher.class, 1, 0);
-
     public static FlagType<Boolean> ZOMBIE_BABY = new FlagType<Boolean>(ZombieWatcher.class, 0, false);
+
+    public static FlagType<Integer> ZOMBIE_PLACEHOLDER = new FlagType<Integer>(ZombieWatcher.class, 1, 0);
 
     public static FlagType<Integer> ZOMBIE_VILLAGER_PROFESSION = new FlagType<Integer>(ZombieVillagerWatcher.class, 1, 0);
 

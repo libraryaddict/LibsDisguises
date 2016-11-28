@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
@@ -20,9 +23,9 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.commands.CloneDisguiseCommand;
 import me.libraryaddict.disguise.commands.DisguiseCommand;
+import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
 import me.libraryaddict.disguise.commands.DisguiseViewSelf;
 import me.libraryaddict.disguise.commands.EntityDisguiseCommand;
-import me.libraryaddict.disguise.commands.HelpDisguiseCommand;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.PlayerDisguiseCommand;
 import me.libraryaddict.disguise.commands.RadiusDisguiseCommand;
@@ -93,18 +96,18 @@ public class LibsDisguises extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(listener, this);
 
-        getCommand("disguise").setExecutor(new DisguiseCommand());
-        getCommand("undisguise").setExecutor(new UndisguiseCommand());
-        getCommand("disguiseplayer").setExecutor(new PlayerDisguiseCommand());
-        getCommand("undisguiseplayer").setExecutor(new UndisguisePlayerCommand());
-        getCommand("undisguiseentity").setExecutor(new UndisguiseEntityCommand());
-        getCommand("disguiseentity").setExecutor(new EntityDisguiseCommand());
-        getCommand("disguiseradius").setExecutor(new RadiusDisguiseCommand(getConfig().getInt("DisguiseRadiusMax")));
-        getCommand("undisguiseradius").setExecutor(new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
-        getCommand("disguisehelp").setExecutor(new HelpDisguiseCommand());
-        getCommand("disguiseclone").setExecutor(new CloneDisguiseCommand());
-        getCommand("libsdisguises").setExecutor(new LibsDisguisesCommand());
-        getCommand("disguiseviewself").setExecutor(new DisguiseViewSelf());
+        registerCommand("disguise", new DisguiseCommand());
+        registerCommand("undisguise", new UndisguiseCommand());
+        registerCommand("disguiseplayer", new PlayerDisguiseCommand());
+        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
+        registerCommand("disguiseentity", new EntityDisguiseCommand());
+        registerCommand("disguiseradius", new RadiusDisguiseCommand(getConfig().getInt("DisguiseRadiusMax")));
+        registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
+        registerCommand("disguisehelp", new DisguiseHelpCommand());
+        registerCommand("disguiseclone", new CloneDisguiseCommand());
+        registerCommand("libsdisguises", new LibsDisguisesCommand());
+        registerCommand("disguiseviewself", new DisguiseViewSelf());
 
         registerValues();
 
@@ -115,6 +118,16 @@ public class LibsDisguises extends JavaPlugin {
             metrics.start();
         }
         catch (IOException e) {
+        }
+    }
+
+    private void registerCommand(String commandName, CommandExecutor executioner) {
+        PluginCommand command = getCommand(commandName);
+
+        command.setExecutor(executioner);
+
+        if (executioner instanceof TabCompleter) {
+            command.setTabCompleter((TabCompleter) executioner);
         }
     }
 
