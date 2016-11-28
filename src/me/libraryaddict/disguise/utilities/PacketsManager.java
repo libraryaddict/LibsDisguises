@@ -58,7 +58,7 @@ public class PacketsManager {
     public static class LibsPackets {
         private ArrayList<PacketContainer> packets = new ArrayList<PacketContainer>();
         private HashMap<Integer, ArrayList<PacketContainer>> delayedPackets = new HashMap<Integer, ArrayList<PacketContainer>>();
-        private boolean isSpawnPlayer;
+        private boolean isSpawnPacket;
         private Disguise disguise;
         private boolean doNothing;
 
@@ -79,7 +79,7 @@ public class PacketsManager {
         }
 
         public void setPacketType(PacketType type) {
-            isSpawnPlayer = type.name().contains("SPAWN_");
+            isSpawnPacket = type.name().contains("SPAWN_");
         }
 
         public void addPacket(PacketContainer packet) {
@@ -122,7 +122,7 @@ public class PacketsManager {
                             e.printStackTrace();
                         }
 
-                        if (isSpawnPlayer) {
+                        if (isSpawnPacket) {
                             PacketsManager.removeCancel(disguise, observer);
                         }
                     }
@@ -392,8 +392,6 @@ public class PacketsManager {
                 PacketContainer metaPacket = new PacketContainer(Play.Server.ENTITY_METADATA);
 
                 newWatcher = createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
-                newWatcher.setObject(new WrappedDataWatcherObject(FlagType.ENTITY_META.getIndex(), Registry.get(Byte.class)),
-                        (byte) 0);
 
                 metaPacket.getIntegers().write(0, entityId); // Id
                 metaPacket.getWatchableCollectionModifier().write(0, newWatcher.getWatchableObjects());
