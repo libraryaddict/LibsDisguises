@@ -55,6 +55,10 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                     + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion()
                     + " by libraryaddict, maintained by NavidK0.\n" + "Use " + ChatColor.GREEN + "/libsdisguises reload"
                     + ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this.");
+
+            if (!"%%__USER__%%".contains("__USER__")) {
+                sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
+            }
         }
         else if (args.length > 0) {
             if (sender.hasPermission("libsdisguises.reload")) {
