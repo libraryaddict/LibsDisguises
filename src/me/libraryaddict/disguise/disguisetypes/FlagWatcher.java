@@ -27,21 +27,21 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class FlagWatcher {
-    private boolean _addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
+    private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
     /**
      * These are the entity values I need to add else it could crash them..
      */
-    private HashMap<Integer, Object> _backupEntityValues = new HashMap<>();
-    private TargetedDisguise _disguise;
-    private HashMap<Integer, Object> _entityValues = new HashMap<>();
-    private EntityEquipment _equipment;
-    private boolean _hasDied;
-    private HashSet<Integer> _modifiedEntityAnimations = new HashSet<>();
-    private List<WrappedWatchableObject> _watchableObjects;
+    private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
+    private TargetedDisguise disguise;
+    private HashMap<Integer, Object> entityValues = new HashMap<>();
+    private EntityEquipment equipment;
+    private boolean hasDied;
+    private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
+    private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
-        _disguise = (TargetedDisguise) disguise;
-        _equipment = ReflectionManager.createEntityEquipment(disguise.getEntity());
+        this.disguise = (TargetedDisguise) disguise;
+        equipment = ReflectionManager.createEntityEquipment(disguise.getEntity());
 
         this.setData(FlagType.ENTITY_AIR_TICKS, 0);
     }
@@ -50,7 +50,7 @@ public class FlagWatcher {
         byte valueByte = originalValue;
 
         for (int i = 0; i < 6; i++) {
-            if ((entityValue & 1 << i) != 0 && !_modifiedEntityAnimations.contains(i)) {
+            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
                 valueByte = (byte) (valueByte | 1 << i);
             }
         }
@@ -71,10 +71,10 @@ public class FlagWatcher {
             cloned = new FlagWatcher(getDisguise());
         }
 
-        cloned._entityValues = (HashMap<Integer, Object>) _entityValues.clone();
-        cloned._equipment = ReflectionManager.createEntityEquipment(cloned.getDisguise().getEntity());
-        cloned._modifiedEntityAnimations = (HashSet<Integer>) _modifiedEntityAnimations.clone();
-        cloned._addEntityAnimations = _addEntityAnimations;
+        cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
+        cloned.equipment = ReflectionManager.createEntityEquipment(cloned.getDisguise().getEntity());
+        cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
+        cloned.addEntityAnimations = addEntityAnimations;
 
         return cloned;
     }
@@ -96,19 +96,19 @@ public class FlagWatcher {
 
             Object value = null;
 
-            if (_entityValues.containsKey(id)) {
-                if (_entityValues.get(id) == null) {
+            if (entityValues.containsKey(id)) {
+                if (entityValues.get(id) == null) {
                     continue;
                 }
 
-                value = _entityValues.get(id);
+                value = entityValues.get(id);
             }
-            else if (_backupEntityValues.containsKey(id)) {
-                if (_backupEntityValues.get(id) == null) {
+            else if (backupEntityValues.containsKey(id)) {
+                if (backupEntityValues.get(id) == null) {
                     continue;
                 }
 
-                value = _backupEntityValues.get(id);
+                value = backupEntityValues.get(id);
             }
 
             if (value != null) {
@@ -145,12 +145,12 @@ public class FlagWatcher {
 
         if (sendAllCustom) {
             // Its sending the entire meta data. Better add the custom meta
-            for (Integer id : _entityValues.keySet()) {
+            for (Integer id : entityValues.keySet()) {
                 if (sentValues.contains(id)) {
                     continue;
                 }
 
-                Object value = _entityValues.get(id);
+                Object value = entityValues.get(id);
 
                 if (value == null) {
                     continue;
@@ -175,14 +175,14 @@ public class FlagWatcher {
                     if (value != null && value instanceof Float) {
                         float newHealth = (Float) value;
 
-                        if (newHealth > 0 && _hasDied) {
-                            _hasDied = false;
+                        if (newHealth > 0 && hasDied) {
+                            hasDied = false;
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(), new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), _disguise);
+                                        DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), disguise);
                                     }
                                     catch (Exception ex) {
                                         ex.printStackTrace();
@@ -190,8 +190,8 @@ public class FlagWatcher {
                                 }
                             }, 2);
                         }
-                        else if (newHealth <= 0 && !_hasDied) {
-                            _hasDied = true;
+                        else if (newHealth <= 0 && !hasDied) {
+                            hasDied = true;
                         }
                     }
                 }
@@ -213,7 +213,7 @@ public class FlagWatcher {
     }
 
     protected TargetedDisguise getDisguise() {
-        return _disguise;
+        return disguise;
     }
 
     private boolean getEntityFlag(int byteValue) {
@@ -221,59 +221,59 @@ public class FlagWatcher {
     }
 
     public EntityEquipment getEquipment() {
-        return _equipment;
+        return equipment;
     }
 
     public ItemStack getItemInMainHand() {
-        if (_equipment == null)
+        if (equipment == null)
             return null;
 
-        return _equipment.getItemInMainHand();
+        return equipment.getItemInMainHand();
     }
 
     public ItemStack getItemInOffHand() {
-        if (_equipment == null)
+        if (equipment == null)
             return null;
 
-        return _equipment.getItemInOffHand();
+        return equipment.getItemInOffHand();
     }
 
     public ItemStack getItemStack(EquipmentSlot slot) {
-        if (_equipment == null)
+        if (equipment == null)
             return null;
 
         switch (slot) {
         case CHEST:
-            return _equipment.getChestplate();
+            return equipment.getChestplate();
         case FEET:
-            return _equipment.getBoots();
+            return equipment.getBoots();
         case HAND:
-            return _equipment.getItemInMainHand();
+            return equipment.getItemInMainHand();
         case HEAD:
-            return _equipment.getHelmet();
+            return equipment.getHelmet();
         case LEGS:
-            return _equipment.getLeggings();
+            return equipment.getLeggings();
         case OFF_HAND:
-            return _equipment.getItemInOffHand();
+            return equipment.getItemInOffHand();
         }
 
         return null;
     }
 
     protected <Y> Y getData(FlagType<Y> flagType) {
-        if (_entityValues.containsKey(flagType.getIndex())) {
-            return (Y) _entityValues.get(flagType.getIndex());
+        if (entityValues.containsKey(flagType.getIndex())) {
+            return (Y) entityValues.get(flagType.getIndex());
         }
 
         return flagType.getDefault();
     }
 
     public List<WrappedWatchableObject> getWatchableObjects() {
-        if (_watchableObjects == null) {
+        if (watchableObjects == null) {
             rebuildWatchableObjects();
         }
 
-        return _watchableObjects;
+        return watchableObjects;
     }
 
     public boolean hasCustomName() {
@@ -281,7 +281,7 @@ public class FlagWatcher {
     }
 
     protected boolean hasValue(FlagType no) {
-        return _entityValues.containsKey(no.getIndex());
+        return entityValues.containsKey(no.getIndex());
     }
 
     public boolean isBurning() {
@@ -293,7 +293,7 @@ public class FlagWatcher {
     }
 
     public boolean isEntityAnimationsAdded() {
-        return _addEntityAnimations;
+        return addEntityAnimations;
     }
 
     public boolean isFlyingWithElytra() {
@@ -325,16 +325,16 @@ public class FlagWatcher {
     }
 
     public void rebuildWatchableObjects() {
-        _watchableObjects = new ArrayList<>();
+        watchableObjects = new ArrayList<>();
 
         for (int i = 0; i <= 31; i++) {
             WrappedWatchableObject watchable = null;
 
-            if (_entityValues.containsKey(i) && _entityValues.get(i) != null) {
-                watchable = ReflectionManager.createWatchable(i, _entityValues.get(i));
+            if (entityValues.containsKey(i) && entityValues.get(i) != null) {
+                watchable = ReflectionManager.createWatchable(i, entityValues.get(i));
             }
-            else if (_backupEntityValues.containsKey(i) && _backupEntityValues.get(i) != null) {
-                watchable = ReflectionManager.createWatchable(i, _backupEntityValues.get(i));
+            else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
+                watchable = ReflectionManager.createWatchable(i, backupEntityValues.get(i));
             }
             else {
                 continue;
@@ -343,7 +343,7 @@ public class FlagWatcher {
             if (watchable == null)
                 continue;
 
-            _watchableObjects.add(watchable);
+            watchableObjects.add(watchable);
         }
     }
 
@@ -355,16 +355,16 @@ public class FlagWatcher {
         List<WrappedWatchableObject> list = new ArrayList<>();
 
         for (FlagType data : dataValues) {
-            if (!_entityValues.containsKey(data.getIndex()) || _entityValues.get(data.getIndex()) == null) {
+            if (!entityValues.containsKey(data.getIndex()) || entityValues.get(data.getIndex()) == null) {
                 continue;
             }
 
-            Object value = _entityValues.get(data.getIndex());
+            Object value = entityValues.get(data.getIndex());
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == FlagType.ENTITY_META) {
-                if (!PacketsManager.isStaticMetadataDisguiseType(_disguise)) {
+                if (!PacketsManager.isStaticMetadataDisguiseType(disguise)) {
                     value = addEntityAnimations((byte) value,
-                            WrappedDataWatcher.getEntityWatcher(_disguise.getEntity()).getByte(0));
+                            WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
                 }
             }
 
@@ -404,7 +404,7 @@ public class FlagWatcher {
     }
 
     public void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
-        _addEntityAnimations = isEntityAnimationsAdded;
+        addEntityAnimations = isEntityAnimationsAdded;
     }
 
     public void setArmor(ItemStack[] itemstack) {
@@ -415,7 +415,7 @@ public class FlagWatcher {
     }
 
     protected void setBackupValue(FlagType no, Object value) {
-        _backupEntityValues.put(no.getIndex(), value);
+        backupEntityValues.put(no.getIndex(), value);
     }
 
     public void setBurning(boolean setBurning) {
@@ -439,7 +439,7 @@ public class FlagWatcher {
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
-        _modifiedEntityAnimations.add(byteValue);
+        modifiedEntityAnimations.add(byteValue);
 
         byte b0 = (byte) getData(FlagType.ENTITY_META);
 
@@ -511,7 +511,7 @@ public class FlagWatcher {
     }
 
     public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (_equipment == null)
+        if (equipment == null)
             return;
 
         // Itemstack which is null means that its not replacing the disguises itemstack.
@@ -529,7 +529,7 @@ public class FlagWatcher {
             itemToSend = ReflectionManager.getNmsItem(itemStack);
         }
 
-        setItemStack(_equipment, slot, itemStack);
+        setItemStack(equipment, slot, itemStack);
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
@@ -575,7 +575,7 @@ public class FlagWatcher {
         if (value == null && id.getDefault() instanceof ItemStack)
             throw new IllegalArgumentException("Cannot use null ItemStacks");
 
-        _entityValues.put(id.getIndex(), value);
+        entityValues.put(id.getIndex(), value);
 
         if (!DisguiseConfig.isMetadataPacketsEnabled()) {
             rebuildWatchableObjects();
