@@ -26,11 +26,11 @@ import me.libraryaddict.disguise.utilities.ClassGetter;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
-public class RadiusDisguiseCommand extends BaseDisguiseCommand implements TabCompleter {
+public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
     private ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
 
-    public RadiusDisguiseCommand(int maxRadius) {
+    public DisguiseRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
         for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
             if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {

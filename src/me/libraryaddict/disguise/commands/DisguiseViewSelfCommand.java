@@ -11,7 +11,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 /**
  * @author Navid
  */
-public class DisguiseViewSelf implements CommandExecutor {
+public class DisguiseViewSelfCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

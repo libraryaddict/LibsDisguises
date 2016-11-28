@@ -21,7 +21,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
-public class PlayerDisguiseCommand extends BaseDisguiseCommand implements TabCompleter {
+public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

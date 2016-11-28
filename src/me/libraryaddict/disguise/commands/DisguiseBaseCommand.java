@@ -43,7 +43,7 @@ import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 /**
  * @author libraryaddict
  */
-public abstract class BaseDisguiseCommand implements CommandExecutor {
+public abstract class DisguiseBaseCommand implements CommandExecutor {
     public class DisguiseParseException extends Exception {
         private static final long serialVersionUID = 1276971370793124510L;
 
@@ -123,6 +123,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         return newArgs.toArray(new String[0]);
     }
 
+    public String getPermNode() {
+        if (this instanceof DisguiseCommand) {
+            return "disguise";
+        }
+        else if (this instanceof DisguiseEntityCommand) {
+            return "disguiseentity";
+        }
+        else if (this instanceof DisguisePlayerCommand) {
+            return "disguiseplayer";
+        }
+        else if (this instanceof DisguiseRadiusCommand) {
+            return "disguiseradius";
+        }
+        else
+            throw new UnsupportedOperationException("Unknown disguise command, perm node not found");
+    }
+
     protected HashMap<String, Boolean> getDisguiseOptions(CommandSender sender, DisguiseType type) {
         switch (type) {
         case PLAYER:
@@ -133,7 +150,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         case DROPPED_ITEM:
             HashMap<String, Boolean> returns = new HashMap<>();
 
-            String beginning = "libsdisguises.options." + getClass().getSimpleName().toLowerCase().replace("command", "") + ".";
+            String beginning = "libsdisguises.options." + getPermNode() + ".";
 
             for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
                 String lowerPerm = permission.getPermission().toLowerCase();
@@ -192,7 +209,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
     }
 
     protected HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
-        return getPermissions(sender, "libsdisguises." + getClass().getSimpleName().replace("Command", "").toLowerCase() + ".");
+        return getPermissions(sender, "libsdisguises." + getPermNode() + ".");
     }
 
     /**
@@ -309,6 +326,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         for (String perm : perms.keySet()) {
             if (!perms.get(perm)) {
                 perm = perm.substring(permissionNode.length());
+
                 String disguiseType = perm.split("\\.")[0];
                 DisguiseType dType = null;
 
@@ -424,7 +442,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
      * @param args
      * @param map
      * @return
-     * @throws BaseDisguiseCommand.DisguiseParseException
+     * @throws DisguiseBaseCommand.DisguiseParseException
      * @throws java.lang.IllegalAccessException
      * @throws java.lang.reflect.InvocationTargetException
      */

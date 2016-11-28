@@ -21,14 +21,14 @@ import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-import me.libraryaddict.disguise.commands.CloneDisguiseCommand;
+import me.libraryaddict.disguise.commands.DisguiseCloneCommand;
 import me.libraryaddict.disguise.commands.DisguiseCommand;
 import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
-import me.libraryaddict.disguise.commands.DisguiseViewSelf;
-import me.libraryaddict.disguise.commands.EntityDisguiseCommand;
+import me.libraryaddict.disguise.commands.DisguiseViewSelfCommand;
+import me.libraryaddict.disguise.commands.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
-import me.libraryaddict.disguise.commands.PlayerDisguiseCommand;
-import me.libraryaddict.disguise.commands.RadiusDisguiseCommand;
+import me.libraryaddict.disguise.commands.DisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.DisguiseRadiusCommand;
 import me.libraryaddict.disguise.commands.UndisguiseCommand;
 import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
@@ -98,16 +98,16 @@ public class LibsDisguises extends JavaPlugin {
 
         registerCommand("disguise", new DisguiseCommand());
         registerCommand("undisguise", new UndisguiseCommand());
-        registerCommand("disguiseplayer", new PlayerDisguiseCommand());
+        registerCommand("disguiseplayer", new DisguisePlayerCommand());
         registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
         registerCommand("undisguiseentity", new UndisguiseEntityCommand());
-        registerCommand("disguiseentity", new EntityDisguiseCommand());
-        registerCommand("disguiseradius", new RadiusDisguiseCommand(getConfig().getInt("DisguiseRadiusMax")));
+        registerCommand("disguiseentity", new DisguiseEntityCommand());
+        registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
         registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
         registerCommand("disguisehelp", new DisguiseHelpCommand());
-        registerCommand("disguiseclone", new CloneDisguiseCommand());
+        registerCommand("disguiseclone", new DisguiseCloneCommand());
         registerCommand("libsdisguises", new LibsDisguisesCommand());
-        registerCommand("disguiseviewself", new DisguiseViewSelf());
+        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
 
         registerValues();
 

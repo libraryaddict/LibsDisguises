@@ -215,8 +215,16 @@ public abstract class Disguise {
                             DisguiseUtilities.refreshTrackers(disguise);
                         }
                     }
+                    else if (getType() == DisguiseType.EVOKER_FANGS) {
+                        refreshDisguise++;
 
-                    if (getType() == DisguiseType.ITEM_FRAME) {
+                        if (refreshDisguise % 20 == 0) {
+                            refreshDisguise = 0;
+
+                            DisguiseUtilities.refreshTrackers(disguise);
+                        }
+                    }
+                    else if (getType() == DisguiseType.ITEM_FRAME) {
                         Location loc = getEntity().getLocation();
 
                         int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;

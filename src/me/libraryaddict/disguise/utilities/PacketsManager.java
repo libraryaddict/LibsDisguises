@@ -186,7 +186,6 @@ public class PacketsManager {
                 ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
 
                 if (itemstack == null || itemstack.getType() == Material.AIR) {
-                    System.out.println("Not wearing anything for " + slot.name());
                     continue;
                 }
 

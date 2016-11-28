@@ -18,7 +18,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
-public class DisguiseHelpCommand extends BaseDisguiseCommand implements TabCompleter {
+public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -149,6 +149,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand implements TabCompl
                 }
             }
         }
+
         sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
         return true;
     }
