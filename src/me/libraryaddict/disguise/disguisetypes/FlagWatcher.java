@@ -34,16 +34,15 @@ public class FlagWatcher {
     private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
     private TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<>();
-    private EntityEquipment equipment;
+    private LibsEquipment equipment;
     private boolean hasDied;
     private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
-        equipment = ReflectionManager.createEntityEquipment(disguise.getEntity());
-
         this.setData(FlagType.ENTITY_AIR_TICKS, 0);
+        equipment = new LibsEquipment(this);
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
@@ -72,7 +71,7 @@ public class FlagWatcher {
         }
 
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
-        cloned.equipment = ReflectionManager.createEntityEquipment(cloned.getDisguise().getEntity());
+        cloned.equipment = equipment.clone(cloned);
         cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
         cloned.addEntityAnimations = addEntityAnimations;
 
@@ -202,10 +201,7 @@ public class FlagWatcher {
     }
 
     public ItemStack[] getArmor() {
-        ItemStack[] armor = new ItemStack[4];
-        System.arraycopy(armor, 0, armor, 0, 4);
-
-        return armor;
+        return getEquipment().getArmorContents();
     }
 
     public String getCustomName() {
@@ -225,39 +221,15 @@ public class FlagWatcher {
     }
 
     public ItemStack getItemInMainHand() {
-        if (equipment == null)
-            return null;
-
         return equipment.getItemInMainHand();
     }
 
     public ItemStack getItemInOffHand() {
-        if (equipment == null)
-            return null;
-
         return equipment.getItemInOffHand();
     }
 
     public ItemStack getItemStack(EquipmentSlot slot) {
-        if (equipment == null)
-            return null;
-
-        switch (slot) {
-        case CHEST:
-            return equipment.getChestplate();
-        case FEET:
-            return equipment.getBoots();
-        case HAND:
-            return equipment.getItemInMainHand();
-        case HEAD:
-            return equipment.getHelmet();
-        case LEGS:
-            return equipment.getLeggings();
-        case OFF_HAND:
-            return equipment.getItemInOffHand();
-        }
-
-        return null;
+        return equipment.getItem(slot);
     }
 
     protected <Y> Y getData(FlagType<Y> flagType) {
@@ -407,11 +379,8 @@ public class FlagWatcher {
         addEntityAnimations = isEntityAnimationsAdded;
     }
 
-    public void setArmor(ItemStack[] itemstack) {
-        setItemStack(EquipmentSlot.HEAD, itemstack[0]);
-        setItemStack(EquipmentSlot.CHEST, itemstack[1]);
-        setItemStack(EquipmentSlot.LEGS, itemstack[2]);
-        setItemStack(EquipmentSlot.FEET, itemstack[3]);
+    public void setArmor(ItemStack[] items) {
+        getEquipment().setArmorContents(items);
     }
 
     protected void setBackupValue(FlagType no, Object value) {
@@ -484,69 +453,61 @@ public class FlagWatcher {
         setItemStack(EquipmentSlot.OFF_HAND, itemstack);
     }
 
-    private void setItemStack(EntityEquipment equipment, EquipmentSlot slot, ItemStack itemStack) {
-        if (equipment == null)
-            return;
+    public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
+        setItemStack(slot, itemStack);
 
-        switch (slot) {
-        case CHEST:
-            equipment.setChestplate(itemStack);
-            break;
-        case FEET:
-            equipment.setBoots(itemStack);
-            break;
-        case HAND:
-            equipment.setItemInMainHand(itemStack);
-            break;
-        case HEAD:
-            equipment.setHelmet(itemStack);
-            break;
-        case LEGS:
-            equipment.setLeggings(itemStack);
-            break;
-        case OFF_HAND:
-            equipment.setItemInOffHand(itemStack);
-            break;
-        }
+        sendItemStack(slot, itemStack);
     }
 
-    public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (equipment == null)
+    protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this
+                || getDisguise().getEntity() == null)
             return;
 
-        // Itemstack which is null means that its not replacing the disguises itemstack.
-        if (itemStack == null) {
-            // Find the item to replace it with
-            if (getDisguise().getEntity() instanceof LivingEntity) {
-                EntityEquipment equipment = ((LivingEntity) getDisguise().getEntity()).getEquipment();
-                setItemStack(equipment, slot, itemStack);
+        if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
+            EntityEquipment equip = ((LivingEntity) getDisguise().getEntity()).getEquipment();
+
+            switch (slot) {
+            case HAND:
+                itemStack = equip.getItemInMainHand();
+                break;
+            case OFF_HAND:
+                itemStack = equip.getItemInOffHand();
+                break;
+            case HEAD:
+                itemStack = equip.getHelmet();
+                break;
+            case CHEST:
+                itemStack = equip.getChestplate();
+                break;
+            case LEGS:
+                itemStack = equip.getLeggings();
+                break;
+            case FEET:
+                itemStack = equip.getBoots();
+                break;
+            default:
+                break;
             }
         }
 
-        Object itemToSend = null;
+        Object itemToSend = ReflectionManager.getNmsItem(itemStack);
 
-        if (itemStack != null && itemStack.getTypeId() != 0) {
-            itemToSend = ReflectionManager.getNmsItem(itemStack);
-        }
+        PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
 
-        setItemStack(equipment, slot, itemStack);
+        StructureModifier<Object> mods = packet.getModifier();
 
-        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
-            PacketContainer packet = new PacketContainer(Server.ENTITY_EQUIPMENT);
+        mods.write(0, getDisguise().getEntity().getEntityId());
+        mods.write(1, ReflectionManager.createEnumItemSlot(slot));
+        mods.write(2, itemToSend);
 
-            StructureModifier<Object> mods = packet.getModifier();
+        for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
 
-            mods.write(0, getDisguise().getEntity().getEntityId());
-            mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-            mods.write(2, itemToSend);
-
-            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
-                catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
     }

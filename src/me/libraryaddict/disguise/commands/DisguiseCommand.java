@@ -123,7 +123,7 @@ public class DisguiseCommand extends BaseDisguiseCommand implements TabCompleter
                                 addMethods = false;
 
                             if (info.isEnums()) {
-                                for (String e : info.getEnums()) {
+                                for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
                                     tabs.add(e);
                                 }
                             }

@@ -3,10 +3,13 @@ package me.libraryaddict.disguise.utilities;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
@@ -82,7 +85,7 @@ public class ReflectionFlagWatchers {
             return description;
         }
 
-        public String[] getEnums() {
+        public String[] getEnums(String tabComplete) {
             return enums;
         }
     }
@@ -141,6 +144,34 @@ public class ReflectionFlagWatchers {
 
             potionEnums.add(toReadable(effectType.getName()));
         }
+        String[] materials = new String[Material.values().length];
+
+        for (int i = 0; i < Material.values().length; i++) {
+            materials[i] = Material.values()[i].name();
+        }
+
+        paramList.add(new ParamInfo(ItemStack.class, "Item (id:damage)", "An ItemStack compromised of ID:Durability", materials));
+
+        paramList.add(new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..)",
+                "Four ItemStacks seperated by an ,", materials) {
+            @Override
+            public String[] getEnums(String tabComplete) {
+                String beginning = tabComplete.substring(0, tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
+                String end = tabComplete.substring(tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
+
+                ArrayList<String> toReturn = new ArrayList<String>();
+
+                for (String material : super.getEnums("")) {
+                    if (!material.toLowerCase().startsWith(end.toLowerCase()))
+                        continue;
+
+                    toReturn.add(beginning + material);
+                }
+
+                return toReturn.toArray(new String[0]);
+            }
+
+        });
 
         paramList.add(new ParamInfo(PotionEffectType.class, "Potion Effect", "View all the potion effects you can add",
                 potionEnums.toArray(new String[0])));
@@ -151,14 +182,18 @@ public class ReflectionFlagWatchers {
         paramList.add(new ParamInfo(int.class, "Number", "A whole number, no decimcals"));
         paramList.add(new ParamInfo(double.class, "Number", "A number which can have decimals"));
         paramList.add(new ParamInfo(float.class, "Number", "A number which can have decimals"));
-        paramList.add(new ParamInfo(ItemStack.class, "Item (id:damage)", "An ItemStack compromised of ID:Durability"));
-        paramList.add(
-                new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..)", "Four ItemStacks seperated by an ,"));
         paramList.add(new ParamInfo(Horse.Style.class, "Horse Style", "Horse style which is the patterns on the horse"));
         paramList.add(new ParamInfo(int[].class, "number,number,number...", "Numbers seperated by an ,"));
         paramList.add(new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers seperated by an ,"));
         paramList.add(new ParamInfo(GameProfile.class, "GameProfile",
                 "Get the gameprofile here https://sessionserver.mojang.com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
+
+        Collections.sort(paramList, new Comparator<ParamInfo>() {
+            @Override
+            public int compare(ParamInfo o1, ParamInfo o2) {
+                return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
+            }
+        });
     }
 
     public static Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
@@ -182,6 +217,9 @@ public class ReflectionFlagWatchers {
                 itel.remove();
             }
             else if (!method.getReturnType().equals(Void.TYPE)) {
+                itel.remove();
+            }
+            else if (method.getName().equals("removePotionEffect")) {
                 itel.remove();
             }
         }

@@ -25,26 +25,21 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-public class LivingWatcher extends FlagWatcher
-{
+public class LivingWatcher extends FlagWatcher {
     static Map<Integer, Object> list = new HashMap<>();
     static Method getId;
 
-    static
-    {
-        try
-        {
+    static {
+        try {
             getId = ReflectionManager.getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
             Object REGISTRY = ReflectionManager.getNmsField("MobEffectList", "REGISTRY").get(null);
 
-            for (Object next : ((Iterable) REGISTRY))
-            {
+            for (Object next : ((Iterable) REGISTRY)) {
                 int id = (int) getId.invoke(null, next);
                 list.put(id, next);
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -53,15 +48,12 @@ public class LivingWatcher extends FlagWatcher
     private boolean maxHealthSet;
     private HashSet<Integer> potionEffects = new HashSet<>();
 
-    public LivingWatcher(Disguise disguise)
-    {
+    public LivingWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public void addPotionEffect(PotionEffectType potionEffect)
-    {
-        if (!hasPotionEffect(potionEffect))
-        {
+    public void addPotionEffect(PotionEffectType potionEffect) {
+        if (!hasPotionEffect(potionEffect)) {
             removePotionEffect(potionEffect);
             potionEffects.add(potionEffect.getId());
 
@@ -70,8 +62,7 @@ public class LivingWatcher extends FlagWatcher
     }
 
     @Override
-    public LivingWatcher clone(Disguise disguise)
-    {
+    public LivingWatcher clone(Disguise disguise) {
         LivingWatcher clone = (LivingWatcher) super.clone(disguise);
         clone.potionEffects = (HashSet<Integer>) potionEffects.clone();
         clone.maxHealth = maxHealth;
@@ -80,27 +71,22 @@ public class LivingWatcher extends FlagWatcher
         return clone;
     }
 
-    public float getHealth()
-    {
+    public float getHealth() {
         return (float) getData(FlagType.LIVING_HEALTH);
     }
 
-    public double getMaxHealth()
-    {
+    public double getMaxHealth() {
         return maxHealth;
     }
 
-    public boolean isPotionParticlesAmbient()
-    {
+    public boolean isPotionParticlesAmbient() {
         return (boolean) getData(FlagType.LIVING_POTION_AMBIENT);
     }
 
-    private int getPotions()
-    {
+    private int getPotions() {
         int m = 3694022;
 
-        if (potionEffects.isEmpty())
-        {
+        if (potionEffects.isEmpty()) {
             return m;
         }
 
@@ -108,10 +94,8 @@ public class LivingWatcher extends FlagWatcher
         float f2 = 0.0F;
         float f3 = 0.0F;
         float f4 = 0.0F;
-        try
-        {
-            for (int localMobEffect : potionEffects)
-            {
+        try {
+            for (int localMobEffect : potionEffects) {
                 int n = (Integer) getId.invoke(list.get(localMobEffect));
                 f1 += (n >> 16 & 0xFF) / 255.0F;
                 f2 += (n >> 8 & 0xFF) / 255.0F;
@@ -119,8 +103,7 @@ public class LivingWatcher extends FlagWatcher
                 f4 += 1.0F;
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -131,61 +114,50 @@ public class LivingWatcher extends FlagWatcher
         return (int) f1 << 16 | (int) f2 << 8 | (int) f3;
     }
 
-    public boolean hasPotionEffect(PotionEffectType type)
-    {
+    public boolean hasPotionEffect(PotionEffectType type) {
         return potionEffects.contains(type.getId());
     }
 
-    public boolean isMaxHealthSet()
-    {
+    public boolean isMaxHealthSet() {
         return maxHealthSet;
     }
 
-    public void removePotionEffect(PotionEffectType type)
-    {
-        if (potionEffects.contains(type.getId()))
-        {
+    public void removePotionEffect(PotionEffectType type) {
+        if (potionEffects.contains(type.getId())) {
             potionEffects.remove(type.getId());
             sendPotionEffects();
         }
     }
 
-    public void setPotionParticlesAmbient(boolean particles)
-    {
+    public void setPotionParticlesAmbient(boolean particles) {
         setData(FlagType.LIVING_POTION_AMBIENT, particles);
         sendData(FlagType.LIVING_POTION_AMBIENT);
     }
 
-    private void sendPotionEffects()
-    {
+    private void sendPotionEffects() {
         setData(FlagType.LIVING_POTIONS, getPotions());
         sendData(FlagType.LIVING_POTIONS);
     }
 
-    public void setHealth(float health)
-    {
+    public void setHealth(float health) {
         setData(FlagType.LIVING_HEALTH, health);
         sendData(FlagType.LIVING_HEALTH);
     }
 
-    public int getArrowsSticking()
-    {
+    public int getArrowsSticking() {
         return (int) getData(FlagType.LIVING_ARROWS);
     }
 
-    public void setArrowsSticking(int arrowsNo)
-    {
+    public void setArrowsSticking(int arrowsNo) {
         setData(FlagType.LIVING_ARROWS, arrowsNo);
         sendData(FlagType.LIVING_ARROWS);
     }
 
-    public void setMaxHealth(double newHealth)
-    {
+    public void setMaxHealth(double newHealth) {
         this.maxHealth = newHealth;
         this.maxHealthSet = true;
 
-        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this)
-        {
+        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             PacketContainer packet = new PacketContainer(Server.UPDATE_ATTRIBUTES);
 
             List<WrappedAttribute> attributes = new ArrayList<>();
@@ -203,18 +175,14 @@ public class LivingWatcher extends FlagWatcher
             packet.getIntegers().write(0, entity.getEntityId());
             packet.getAttributeCollectionModifier().write(0, attributes);
 
-            for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
-            {
-                try
-                {
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                 }
-                catch (InvocationTargetException e)
-                {
+                catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
-
 }

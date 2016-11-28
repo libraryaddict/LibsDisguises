@@ -20,7 +20,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -893,22 +892,6 @@ public class ReflectionManager {
 
     public static WrappedWatchableObject createWatchable(int index, Object obj) {
         return new WrappedWatchableObject(createDataWatcherItem(index, obj));
-    }
-
-    public static EntityEquipment createEntityEquipment(Entity entity) {
-        if (!(entity instanceof LivingEntity))
-            return null;
-
-        Constructor construct = getCraftConstructor("inventory.CraftEntityEquipment", getCraftClass("entity.CraftLivingEntity"));
-
-        try {
-            return (EntityEquipment) construct.newInstance((LivingEntity) entity);
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassCastException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     public static int getCombinedId(int id, int data) {

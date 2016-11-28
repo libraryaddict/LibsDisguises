@@ -46,7 +46,7 @@ public class DisguiseHelpCommand extends BaseDisguiseCommand implements TabCompl
 
                     if (help != null) {
                         sender.sendMessage(ChatColor.RED + help.getName() + ": " + ChatColor.GREEN
-                                + StringUtils.join(help.getEnums(), ChatColor.RED + ", " + ChatColor.GREEN));
+                                + StringUtils.join(help.getEnums(""), ChatColor.RED + ", " + ChatColor.GREEN));
                         return true;
                     }
 

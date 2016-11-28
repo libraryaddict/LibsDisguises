@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.commands;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +38,7 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 
 /**
  * @author libraryaddict
@@ -155,26 +155,6 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         default:
             return new HashMap<>();
         }
-    }
-
-    protected Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
-        Method[] methods = watcherClass.getMethods();
-
-        methods = Arrays.copyOf(methods, methods.length + 4);
-        int i = 4;
-
-        for (String methodName : new String[] {
-                "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise"
-        }) {
-            try {
-                methods[methods.length - i--] = Disguise.class.getMethod(methodName, boolean.class);
-            }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        return methods;
     }
 
     private Entry<Method, Integer> getMethod(Method[] methods, String methodName, int toStart) {
@@ -665,7 +645,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
         args = newArgs;
 
-        Method[] methods = this.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
+        Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
             String methodName = args[i];
@@ -985,9 +965,23 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
 
     private ItemStack parseToItemstack(String string) throws Exception {
         String[] split = string.split(":", -1);
+
+        int itemId = -1;
+
         if (isNumeric(split[0])) {
-            int itemId = Integer.parseInt(split[0]);
+            itemId = Integer.parseInt(split[0]);
+        }
+        else {
+            try {
+                itemId = Material.valueOf(split[0].toUpperCase()).getId();
+            }
+            catch (Exception ex) {
+            }
+        }
+
+        if (itemId != -1) {
             short itemDura = 0;
+
             if (split.length > 1) {
                 if (isNumeric(split[1])) {
                     itemDura = Short.parseShort(split[1]);
@@ -996,6 +990,7 @@ public abstract class BaseDisguiseCommand implements CommandExecutor {
                     throw parseToException("item ID:Durability combo", string, "%s");
                 }
             }
+
             return new ItemStack(itemId, 1, itemDura);
         }
         else {
