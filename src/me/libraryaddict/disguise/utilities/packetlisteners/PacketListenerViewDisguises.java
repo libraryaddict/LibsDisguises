@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -46,6 +47,14 @@ public class PacketListenerViewDisguises extends PacketAdapter {
             }
 
             if (!DisguiseAPI.isSelfDisguised(observer)) {
+                if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
+                    Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
+
+                    if (disguise != null && disguise.isSelfDisguiseVisible()) {
+                        event.setCancelled(true);
+                    }
+                }
+
                 return;
             }
 

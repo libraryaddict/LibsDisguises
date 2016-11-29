@@ -209,7 +209,7 @@ public abstract class Disguise {
                     if (getType() == DisguiseType.FIREWORK) {
                         refreshDisguise++;
 
-                        if (refreshDisguise % 40 == 0) {
+                        if (refreshDisguise == 40) {
                             refreshDisguise = 0;
 
                             DisguiseUtilities.refreshTrackers(disguise);
@@ -218,7 +218,7 @@ public abstract class Disguise {
                     else if (getType() == DisguiseType.EVOKER_FANGS) {
                         refreshDisguise++;
 
-                        if (refreshDisguise % 20 == 0) {
+                        if (refreshDisguise == 23) {
                             refreshDisguise = 0;
 
                             DisguiseUtilities.refreshTrackers(disguise);
