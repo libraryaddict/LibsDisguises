@@ -5,8 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import me.libraryaddict.disguise.utilities.PacketsManager;
 
-public class DisguiseConfig
-{
+public class DisguiseConfig {
 
     private static boolean animationEnabled;
     private static boolean bedEnabled;
@@ -44,40 +43,50 @@ public class DisguiseConfig
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
     private static String updateNotificationPermission;
     private static boolean witherSkullEnabled;
+    private static boolean hideDisguisedPlayers;
+    private static boolean displayPlayerDisguisesInTab;
 
-    public static String getDisguiseBlownMessage()
-    {
+    public static void setHideDisguisedPlayers(boolean hideDisguisedPlayersInTab) {
+        hideDisguisedPlayers = hideDisguisedPlayersInTab;
+    }
+
+    public static void setShowDisguisedPlayersInTab(boolean displayPlayerDisguisesInTablist) {
+        displayPlayerDisguisesInTab = displayPlayerDisguisesInTablist;
+    }
+
+    public static boolean isHideDisguisedPlayers() {
+        return hideDisguisedPlayers;
+    }
+
+    public static boolean isShowDisguisedPlayersInTab() {
+        return displayPlayerDisguisesInTab;
+    }
+
+    public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
     }
 
-    public static int getDisguiseCloneExpire()
-    {
+    public static int getDisguiseCloneExpire() {
         return disguiseCloneExpire;
     }
 
-    public static int getDisguiseEntityExpire()
-    {
+    public static int getDisguiseEntityExpire() {
         return disguiseEntityExpire;
     }
 
-    public static int getMaxClonedDisguises()
-    {
+    public static int getMaxClonedDisguises() {
         return maxClonedDisguises;
     }
 
-    public static String getUpdateMessage()
-    {
+    public static String getUpdateMessage() {
         return updateMessage;
     }
 
-    public static String getUpdateNotificationPermission()
-    {
+    public static String getUpdateNotificationPermission() {
         return updateNotificationPermission;
     }
 
-    public static void initConfig(ConfigurationSection config)
-    {
-
+    public static void initConfig(ConfigurationSection config) {
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setVelocitySent(config.getBoolean("SendVelocity"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises")); // Since we can now toggle, the view disguises listener must
@@ -114,134 +123,112 @@ public class DisguiseConfig
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateNotificationPermission(config.getString("Permission"));
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
+        setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
+        setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
     }
 
-    public static boolean isAnimationPacketsEnabled()
-    {
+    public static boolean isAnimationPacketsEnabled() {
         return animationEnabled;
     }
 
-    public static boolean isBedPacketsEnabled()
-    {
+    public static boolean isBedPacketsEnabled() {
         return bedEnabled;
     }
 
-    public static boolean isCollectPacketsEnabled()
-    {
+    public static boolean isCollectPacketsEnabled() {
         return collectEnabled;
     }
 
-    public static boolean isDisguiseBlownOnAttack()
-    {
+    public static boolean isDisguiseBlownOnAttack() {
         return blowDisguisesOnAttack;
     }
 
-    public static boolean isEntityAnimationsAdded()
-    {
+    public static boolean isEntityAnimationsAdded() {
         return entityAnimationsAdded;
     }
 
-    public static boolean isEntityStatusPacketsEnabled()
-    {
+    public static boolean isEntityStatusPacketsEnabled() {
         return entityStatusEnabled;
     }
 
-    public static boolean isEquipmentPacketsEnabled()
-    {
+    public static boolean isEquipmentPacketsEnabled() {
         return equipmentEnabled;
     }
 
     /**
      * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor floating around
      */
-    public static boolean isHidingArmorFromSelf()
-    {
+    public static boolean isHidingArmorFromSelf() {
         return hidingArmor;
     }
 
     /**
      * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
      */
-    public static boolean isHidingHeldItemFromSelf()
-    {
+    public static boolean isHidingHeldItemFromSelf() {
         return hidingHeldItem;
     }
 
-    public static boolean isKeepDisguiseOnEntityDespawn()
-    {
+    public static boolean isKeepDisguiseOnEntityDespawn() {
         return keepDisguiseEntityDespawn;
     }
 
-    public static boolean isKeepDisguiseOnPlayerDeath()
-    {
+    public static boolean isKeepDisguiseOnPlayerDeath() {
         return keepDisguisePlayerDeath;
     }
 
-    public static boolean isKeepDisguiseOnPlayerLogout()
-    {
+    public static boolean isKeepDisguiseOnPlayerLogout() {
         return keepDisguisePlayerLogout;
     }
 
-    public static boolean isMaxHealthDeterminedByDisguisedEntity()
-    {
+    public static boolean isMaxHealthDeterminedByDisguisedEntity() {
         return maxHealthIsDisguisedEntity;
     }
 
-    public static boolean isMetadataPacketsEnabled()
-    {
+    public static boolean isMetadataPacketsEnabled() {
         return sendsEntityMetadata;
     }
 
-    public static boolean isMiscDisguisesForLivingEnabled()
-    {
+    public static boolean isMiscDisguisesForLivingEnabled() {
         return miscDisguisesForLivingEnabled;
     }
 
-    public static boolean isModifyBoundingBox()
-    {
+    public static boolean isModifyBoundingBox() {
         return modifyBoundingBox;
     }
 
-    public static boolean isMonstersIgnoreDisguises()
-    {
+    public static boolean isMonstersIgnoreDisguises() {
         return targetDisguises;
     }
 
-    public static boolean isMovementPacketsEnabled()
-    {
+    public static boolean isMovementPacketsEnabled() {
         return movementEnabled;
     }
 
-    public static boolean isNameAboveHeadAlwaysVisible()
-    {
+    public static boolean isNameAboveHeadAlwaysVisible() {
         return showNameAboveHeadAlwaysVisible;
     }
 
-    public static boolean isNameOfPlayerShownAboveDisguise()
-    {
+    public static boolean isNameOfPlayerShownAboveDisguise() {
         return showNameAboveHead;
     }
 
-    public static boolean isSelfDisguisesSoundsReplaced()
-    {
+    public static boolean isSelfDisguisesSoundsReplaced() {
         return hearSelfDisguise;
     }
 
-    public static boolean isSheepDyeable()
-    {
+    public static boolean isSheepDyeable() {
         return colorizeSheep;
     }
 
     /**
      * Is the sound packets caught and modified
      */
-    public static boolean isSoundEnabled()
-    {
+    public static boolean isSoundEnabled() {
         return PacketsManager.isHearDisguisesEnabled();
     }
 
-    public static boolean isUndisguiseOnWorldChange()
-    {
+    public static boolean isUndisguiseOnWorldChange() {
         return undisguiseSwitchWorlds;
     }
 
@@ -250,8 +237,7 @@ public class DisguiseConfig
      *
      * @return
      */
-    public static boolean isVelocitySent()
-    {
+    public static boolean isVelocitySent() {
         return sendVelocity;
     }
 
@@ -260,90 +246,72 @@ public class DisguiseConfig
      *
      * @return
      */
-    public static boolean isViewDisguises()
-    {
+    public static boolean isViewDisguises() {
         return viewSelfDisguise;
     }
 
-    public static boolean isWitherSkullPacketsEnabled()
-    {
+    public static boolean isWitherSkullPacketsEnabled() {
         return witherSkullEnabled;
     }
 
-    public static boolean isWolfDyeable()
-    {
+    public static boolean isWolfDyeable() {
         return colorizeWolf;
     }
 
-    public static void setAddEntityAnimations(boolean isEntityAnimationsAdded)
-    {
+    public static void setAddEntityAnimations(boolean isEntityAnimationsAdded) {
         entityAnimationsAdded = isEntityAnimationsAdded;
     }
 
-    public static void setAnimationPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isAnimationPacketsEnabled())
-        {
+    public static void setAnimationPacketsEnabled(boolean enabled) {
+        if (enabled != isAnimationPacketsEnabled()) {
             animationEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setBedPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isBedPacketsEnabled())
-        {
+    public static void setBedPacketsEnabled(boolean enabled) {
+        if (enabled != isBedPacketsEnabled()) {
             bedEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setCollectPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isCollectPacketsEnabled())
-        {
+    public static void setCollectPacketsEnabled(boolean enabled) {
+        if (enabled != isCollectPacketsEnabled()) {
             collectEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setDisguiseBlownMessage(String newMessage)
-    {
+    public static void setDisguiseBlownMessage(String newMessage) {
         disguiseBlownMessage = newMessage;
     }
 
-    public static void setDisguiseBlownOnAttack(boolean blowDisguise)
-    {
+    public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
         blowDisguisesOnAttack = blowDisguise;
     }
 
-    public static void setDisguiseCloneExpire(int newExpires)
-    {
+    public static void setDisguiseCloneExpire(int newExpires) {
         disguiseCloneExpire = newExpires;
     }
 
-    public static void setDisguiseEntityExpire(int newExpires)
-    {
+    public static void setDisguiseEntityExpire(int newExpires) {
         disguiseEntityExpire = newExpires;
     }
 
-    public static void setEntityStatusPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isEntityStatusPacketsEnabled())
-        {
+    public static void setEntityStatusPacketsEnabled(boolean enabled) {
+        if (enabled != isEntityStatusPacketsEnabled()) {
             entityStatusEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setEquipmentPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isEquipmentPacketsEnabled())
-        {
+    public static void setEquipmentPacketsEnabled(boolean enabled) {
+        if (enabled != isEquipmentPacketsEnabled()) {
             equipmentEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
@@ -353,10 +321,8 @@ public class DisguiseConfig
     /**
      * Can players hear their own disguises
      */
-    public static void setHearSelfDisguise(boolean replaceSound)
-    {
-        if (hearSelfDisguise != replaceSound)
-        {
+    public static void setHearSelfDisguise(boolean replaceSound) {
+        if (hearSelfDisguise != replaceSound) {
             hearSelfDisguise = replaceSound;
         }
     }
@@ -364,10 +330,8 @@ public class DisguiseConfig
     /**
      * Set the plugin to hide self disguises armor from theirselves
      */
-    public static void setHideArmorFromSelf(boolean hideArmor)
-    {
-        if (hidingArmor != hideArmor)
-        {
+    public static void setHideArmorFromSelf(boolean hideArmor) {
+        if (hidingArmor != hideArmor) {
             hidingArmor = hideArmor;
 
             PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
@@ -377,121 +341,98 @@ public class DisguiseConfig
     /**
      * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
      */
-    public static void setHideHeldItemFromSelf(boolean hideHelditem)
-    {
-        if (hidingHeldItem != hideHelditem)
-        {
+    public static void setHideHeldItemFromSelf(boolean hideHelditem) {
+        if (hidingHeldItem != hideHelditem) {
             hidingHeldItem = hideHelditem;
 
             PacketsManager.setInventoryListenerEnabled(isHidingHeldItemFromSelf() || isHidingArmorFromSelf());
         }
     }
 
-    public static void setKeepDisguiseOnEntityDespawn(boolean keepDisguise)
-    {
+    public static void setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         keepDisguiseEntityDespawn = keepDisguise;
     }
 
-    public static void setKeepDisguiseOnPlayerDeath(boolean keepDisguise)
-    {
+    public static void setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         keepDisguisePlayerDeath = keepDisguise;
     }
 
-    public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise)
-    {
+    public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         keepDisguisePlayerLogout = keepDisguise;
     }
 
-    public static void setMaxClonedDisguises(int newMax)
-    {
+    public static void setMaxClonedDisguises(int newMax) {
         maxClonedDisguises = newMax;
     }
 
-    public static void setMaxHealthDeterminedByDisguisedEntity(boolean isDetermined)
-    {
+    public static void setMaxHealthDeterminedByDisguisedEntity(boolean isDetermined) {
         maxHealthIsDisguisedEntity = isDetermined;
     }
 
-    public static void setMetadataPacketsEnabled(boolean enabled)
-    {
+    public static void setMetadataPacketsEnabled(boolean enabled) {
         sendsEntityMetadata = enabled;
     }
 
-    public static void setMiscDisguisesForLivingEnabled(boolean enabled)
-    {
-        if (enabled != isMiscDisguisesForLivingEnabled())
-        {
+    public static void setMiscDisguisesForLivingEnabled(boolean enabled) {
+        if (enabled != isMiscDisguisesForLivingEnabled()) {
             miscDisguisesForLivingEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setModifyBoundingBox(boolean modifyBounding)
-    {
+    public static void setModifyBoundingBox(boolean modifyBounding) {
         modifyBoundingBox = modifyBounding;
     }
 
-    public static void setMonstersIgnoreDisguises(boolean ignore)
-    {
+    public static void setMonstersIgnoreDisguises(boolean ignore) {
         targetDisguises = ignore;
     }
 
-    public static void setMovementPacketsEnabled(boolean enabled)
-    {
-        if (enabled != isMovementPacketsEnabled())
-        {
+    public static void setMovementPacketsEnabled(boolean enabled) {
+        if (enabled != isMovementPacketsEnabled()) {
             movementEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }
     }
 
-    public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible)
-    {
+    public static void setNameAboveHeadAlwaysVisible(boolean alwaysVisible) {
         showNameAboveHeadAlwaysVisible = alwaysVisible;
     }
 
-    public static void setNameOfPlayerShownAboveDisguise(boolean showNames)
-    {
+    public static void setNameOfPlayerShownAboveDisguise(boolean showNames) {
         showNameAboveHead = showNames;
     }
 
-    public static void setSheepDyeable(boolean color)
-    {
+    public static void setSheepDyeable(boolean color) {
         colorizeSheep = color;
     }
 
     /**
      * Set if the disguises play sounds when hurt
      */
-    public static void setSoundsEnabled(boolean isSoundsEnabled)
-    {
+    public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
     }
 
-    public static void setUndisguiseOnWorldChange(boolean isUndisguise)
-    {
+    public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
         undisguiseSwitchWorlds = isUndisguise;
     }
 
-    public static void setUpdateMessage(String newMessage)
-    {
+    public static void setUpdateMessage(String newMessage) {
         updateMessage = newMessage;
     }
 
-    public static void setUpdateNotificationPermission(String newPermission)
-    {
+    public static void setUpdateNotificationPermission(String newPermission) {
         updateNotificationPermission = newPermission;
     }
 
-    public static void setStopShulkerDisguisesFromMoving(boolean stopShulkerDisguisesFromMoving)
-    {
+    public static void setStopShulkerDisguisesFromMoving(boolean stopShulkerDisguisesFromMoving) {
         DisguiseConfig.stopShulkerDisguisesFromMoving = stopShulkerDisguisesFromMoving;
     }
 
-    public static boolean isStopShulkerDisguisesFromMoving()
-    {
+    public static boolean isStopShulkerDisguisesFromMoving() {
         return stopShulkerDisguisesFromMoving;
     }
 
@@ -500,27 +441,22 @@ public class DisguiseConfig
      *
      * @param sendVelocityPackets
      */
-    public static void setVelocitySent(boolean sendVelocityPackets)
-    {
+    public static void setVelocitySent(boolean sendVelocityPackets) {
         sendVelocity = sendVelocityPackets;
     }
 
-    public static void setViewDisguises(boolean seeOwnDisguise)
-    {
+    public static void setViewDisguises(boolean seeOwnDisguise) {
         viewSelfDisguise = seeOwnDisguise;
     }
 
-    public static void setWitherSkullPacketsEnabled(boolean enabled)
-    {
+    public static void setWitherSkullPacketsEnabled(boolean enabled) {
         witherSkullEnabled = enabled;
     }
 
-    public static void setWolfDyeable(boolean color)
-    {
+    public static void setWolfDyeable(boolean color) {
         colorizeWolf = color;
     }
 
-    private DisguiseConfig()
-    {
+    private DisguiseConfig() {
     }
 }

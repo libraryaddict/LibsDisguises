@@ -225,7 +225,7 @@ public class ReflectionFlagWatchers {
         }
 
         for (String methodName : new String[] {
-                "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise"
+                "setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer"
         }) {
             try {
                 methods.add(Disguise.class.getMethod(methodName, boolean.class));

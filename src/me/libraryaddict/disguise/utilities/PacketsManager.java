@@ -52,6 +52,7 @@ import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerClientI
 import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerInventory;
 import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerMain;
 import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerSounds;
+import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerTabList;
 import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerViewDisguises;
 
 public class PacketsManager {
@@ -139,6 +140,7 @@ public class PacketsManager {
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
     private static PacketListener viewDisguisesListener;
+    private static PacketListener tabListListener;
     private static boolean viewDisguisesListenerEnabled;
     private static HashMap<Disguise, ArrayList<UUID>> _cancelMeta = new HashMap<Disguise, ArrayList<UUID>>();
 
@@ -148,8 +150,10 @@ public class PacketsManager {
         // Because it kicks you for hacking.
 
         clientInteractEntityListener = new PacketListenerClientInteract(libsDisguises);
+        tabListListener = new PacketListenerTabList(libsDisguises);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
+        ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
 
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();
@@ -310,7 +314,9 @@ public class PacketsManager {
 
             // Send player info along with the disguise
             PacketContainer sendTab = new PacketContainer(Server.PLAYER_INFO);
-            packets.addPacket(sendTab);
+
+            if (!((PlayerDisguise) disguise).isDisplayedInTab())
+                packets.addPacket(sendTab);
 
             // Add player to the list, necessary to spawn them
             sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
@@ -405,9 +411,11 @@ public class PacketsManager {
 
             // Remove player from the list
             PacketContainer deleteTab = sendTab.shallowClone();
-            packets.addDelayedPacket(deleteTab, 40);
-
             deleteTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
+
+            if (!((PlayerDisguise) disguise).isDisplayedInTab()) {
+                packets.addDelayedPacket(deleteTab, 40);
+            }
         }
         else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();

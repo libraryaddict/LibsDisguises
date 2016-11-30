@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,10 +17,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
+import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -35,6 +41,17 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public abstract class Disguise {
+    private static List<UUID> viewSelf = new ArrayList<>();
+
+    /**
+     * Returns the list of people who have /disguiseViewSelf toggled on
+     *
+     * @return
+     */
+    public static List<UUID> getViewSelf() {
+        return viewSelf;
+    }
+
     private boolean disguiseInUse;
     private DisguiseType disguiseType;
     private Entity entity;
@@ -45,15 +62,14 @@ public abstract class Disguise {
     private boolean keepDisguisePlayerDeath = DisguiseConfig.isKeepDisguiseOnPlayerDeath();
     private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
+    private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
+    private boolean showName;
     private BukkitTask task;
     private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
-    private boolean showName = false;
-
-    private static List<UUID> viewSelf = new ArrayList<>();
 
     @Override
     public abstract Disguise clone();
@@ -398,6 +414,13 @@ public abstract class Disguise {
         return disguiseInUse;
     }
 
+    /**
+     * Will a disguised player appear in tab
+     */
+    public boolean isHidePlayer() {
+        return playerHiddenFromTab;
+    }
+
     public boolean isHidingArmorFromSelf() {
         return hideArmorFromSelf;
     }
@@ -456,14 +479,6 @@ public abstract class Disguise {
         return viewSelfDisguise;
     }
 
-    public boolean isSoundsReplaced() {
-        return replaceSounds;
-    }
-
-    public boolean isVelocitySent() {
-        return velocitySent;
-    }
-
     /**
      * Returns true if the entity's name is showing through the disguise
      *
@@ -471,6 +486,14 @@ public abstract class Disguise {
      */
     public boolean isShowName() {
         return showName;
+    }
+
+    public boolean isSoundsReplaced() {
+        return replaceSounds;
+    }
+
+    public boolean isVelocitySent() {
+        return velocitySent;
     }
 
     /**
@@ -496,6 +519,51 @@ public abstract class Disguise {
 
                 // If this disguise has a entity set
                 if (getEntity() != null) {
+                    if (this instanceof PlayerDisguise) {
+                        PlayerDisguise disguise = (PlayerDisguise) this;
+
+                        if (disguise.isDisplayedInTab()) {
+                            PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                            deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+                            deleteTab.getPlayerInfoDataLists().write(0,
+                                    Arrays.asList(new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                                            WrappedChatComponent.fromText(disguise.getName()))));
+
+                            try {
+                                for (Player player : Bukkit.getOnlinePlayers()) {
+                                    if (!((TargetedDisguise) this).canSee(player))
+                                        continue;
+
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                                }
+                            }
+                            catch (InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    if (isHidePlayer() && getEntity() instanceof Player) {
+                        PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                        deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
+                        deleteTab.getPlayerInfoDataLists().write(0,
+                                Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                                        NativeGameMode.SURVIVAL,
+                                        WrappedChatComponent.fromText(((Player) getEntity()).getDisplayName()))));
+
+                        try {
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+                                if (!((TargetedDisguise) this).canSee(player))
+                                    continue;
+
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                            }
+                        }
+                        catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     // If this disguise is active
                     // Remove the disguise from the current disguises.
                     if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
@@ -546,6 +614,7 @@ public abstract class Disguise {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -556,7 +625,7 @@ public abstract class Disguise {
      * @return disguise
      */
     public Disguise setEntity(Entity entity) {
-        if (this.getEntity() != null) {
+        if (getEntity() != null) {
             if (getEntity() == entity) {
                 return this;
             }
@@ -572,12 +641,6 @@ public abstract class Disguise {
         this.entity = entity;
 
         setupWatcher();
-
-        return this;
-    }
-
-    public Disguise setShowName(boolean showName) {
-        this.showName = showName;
 
         return this;
     }
@@ -606,6 +669,13 @@ public abstract class Disguise {
         }
 
         return this;
+    }
+
+    public void setHidePlayer(boolean hidePlayerInTab) {
+        if (isDisguiseInUse())
+            throw new IllegalStateException("Cannot set this while disguise is in use!"); // Cos I'm lazy
+
+        playerHiddenFromTab = hidePlayerInTab;
     }
 
     public Disguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
@@ -645,6 +715,12 @@ public abstract class Disguise {
 
     public Disguise setReplaceSounds(boolean areSoundsReplaced) {
         replaceSounds = areSoundsReplaced;
+
+        return this;
+    }
+
+    public Disguise setShowName(boolean showName) {
+        this.showName = showName;
 
         return this;
     }
@@ -733,44 +809,82 @@ public abstract class Disguise {
 
             // If they cancelled this disguise event. No idea why.
             // Just return.
-            if (!event.isCancelled()) {
-                disguiseInUse = true;
-
-                task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
-
-                // Stick the disguise in the disguises bin
-                DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
-
-                if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
-                    DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                }
-
-                // Resend the disguised entity's packet
-                DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-
-                // If he is a player, then self disguise himself
-                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
-                    @Override
-                    public void run() {
-                        DisguiseUtilities.setupFakeDisguise(Disguise.this);
-                    }
-                }, 2);
-                return true;
+            if (event.isCancelled()) {
+                return false;
             }
+
+            disguiseInUse = true;
+
+            task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
+
+            if (this instanceof PlayerDisguise) {
+                PlayerDisguise disguise = (PlayerDisguise) this;
+
+                if (disguise.isDisplayedInTab()) {
+                    PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                    addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
+                    addTab.getPlayerInfoDataLists().write(0, Arrays.asList(new PlayerInfoData(disguise.getGameProfile(), 0,
+                            NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(disguise.getName()))));
+
+                    try {
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (!((TargetedDisguise) this).canSee(player))
+                                continue;
+
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                        }
+                    }
+                    catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // Stick the disguise in the disguises bin
+            DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+
+            if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
+                DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+            }
+
+            // Resend the disguised entity's packet
+            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+
+            // If he is a player, then self disguise himself
+            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    DisguiseUtilities.setupFakeDisguise(Disguise.this);
+                }
+            }, 2);
+
+            if (isHidePlayer() && getEntity() instanceof Player) {
+                PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+                addTab.getPlayerInfoDataLists().write(0,
+                        Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                                NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
+
+                try {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (!((TargetedDisguise) this).canSee(player))
+                            continue;
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                    }
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return true;
         }
+
         return false;
     }
 
     public boolean stopDisguise() {
         return removeDisguise();
-    }
-
-    /**
-     * Returns the list of people who have /disguiseViewSelf toggled on
-     *
-     * @return
-     */
-    public static List<UUID> getViewSelf() {
-        return viewSelf;
     }
 }

@@ -23,12 +23,12 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import me.libraryaddict.disguise.commands.DisguiseCloneCommand;
 import me.libraryaddict.disguise.commands.DisguiseCommand;
-import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
-import me.libraryaddict.disguise.commands.DisguiseViewSelfCommand;
 import me.libraryaddict.disguise.commands.DisguiseEntityCommand;
-import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
+import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
 import me.libraryaddict.disguise.commands.DisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.DisguiseViewSelfCommand;
+import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.UndisguiseCommand;
 import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
@@ -73,7 +73,7 @@ public class LibsDisguises extends JavaPlugin {
         }
 
         try {
-            ReflectionManager.getNmsClass("EntityShulker").getName();
+            ReflectionManager.getNmsClass("EntityEvoker").getName();
         }
         catch (Exception ex) {
             System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated server!");

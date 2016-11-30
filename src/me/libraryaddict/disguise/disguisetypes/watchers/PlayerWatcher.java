@@ -17,48 +17,53 @@ import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
-public class PlayerWatcher extends LivingWatcher
-{
+public class PlayerWatcher extends LivingWatcher {
     private boolean isInBed;
     private BlockFace sleepingDirection;
+    private boolean alwaysShowInTab = DisguiseConfig.isShowDisguisedPlayersInTab();
 
-    public PlayerWatcher(Disguise disguise)
-    {
+    public PlayerWatcher(Disguise disguise) {
         super(disguise);
 
         setData(FlagType.PLAYER_SKIN, FlagType.PLAYER_SKIN.getDefault());
     }
 
+    public boolean isDisplayedInTab() {
+        return alwaysShowInTab;
+    }
+
+    public void setDisplayedInTab(boolean showPlayerInTab) {
+        if (getDisguise().isDisguiseInUse())
+            throw new IllegalStateException("Cannot set this while disguise is in use!");
+
+        alwaysShowInTab = showPlayerInTab;
+    }
+
     @Override
-    public PlayerWatcher clone(Disguise disguise)
-    {
+    public PlayerWatcher clone(Disguise disguise) {
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);
         watcher.isInBed = isInBed;
+        watcher.sleepingDirection = sleepingDirection;
+        watcher.alwaysShowInTab = alwaysShowInTab;
         return watcher;
     }
 
-    public void setMainHand(MainHand mainHand)
-    {
+    public void setMainHand(MainHand mainHand) {
         setData(FlagType.PLAYER_HAND, (byte) mainHand.ordinal());
         sendData(FlagType.PLAYER_HAND);
     }
 
-    public MainHand getMainHand()
-    {
+    public MainHand getMainHand() {
         return MainHand.values()[getData(FlagType.PLAYER_HAND)];
     }
 
-    public BlockFace getSleepingDirection()
-    {
-        if (sleepingDirection == null)
-        {
-            if (this.getDisguise().getEntity() != null && isSleeping())
-            {
+    public BlockFace getSleepingDirection() {
+        if (sleepingDirection == null) {
+            if (this.getDisguise().getEntity() != null && isSleeping()) {
                 this.sleepingDirection = BlockFace
                         .values()[Math.round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
             }
-            else
-            {
+            else {
                 return BlockFace.EAST;
             }
         }
@@ -73,117 +78,97 @@ public class PlayerWatcher extends LivingWatcher
     // Bit 5 (0x20): Right Pants Leg enabled
     // Bit 6 (0x40): Hat enabled
 
-    private boolean isSkinFlag(int i)
-    {
+    private boolean isSkinFlag(int i) {
         return ((byte) getData(FlagType.PLAYER_SKIN) & 1 << i) != 0;
     }
 
-    public boolean isCapeEnabled()
-    {
+    public boolean isCapeEnabled() {
         return isSkinFlag(1);
     }
 
-    public boolean isJackedEnabled()
-    {
+    public boolean isJackedEnabled() {
         return isSkinFlag(2);
     }
 
-    public boolean isLeftSleeveEnabled()
-    {
+    public boolean isLeftSleeveEnabled() {
         return isSkinFlag(3);
     }
 
-    public boolean isRightSleeveEnabled()
-    {
+    public boolean isRightSleeveEnabled() {
         return isSkinFlag(4);
     }
 
-    public boolean isLeftPantsEnabled()
-    {
+    public boolean isLeftPantsEnabled() {
         return isSkinFlag(5);
     }
 
-    public boolean isRightPantsEnabled()
-    {
+    public boolean isRightPantsEnabled() {
         return isSkinFlag(6);
     }
 
-    public boolean isHatEnabled()
-    {
+    public boolean isHatEnabled() {
         return isSkinFlag(7);
     }
 
-    public void setCapeEnabled(boolean enabled)
-    {
+    public void setCapeEnabled(boolean enabled) {
         setSkinFlags(1, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setJackedEnabled(boolean enabled)
-    {
+    public void setJacketEnabled(boolean enabled) {
         setSkinFlags(2, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setLeftSleeveEnabled(boolean enabled)
-    {
+    public void setLeftSleeveEnabled(boolean enabled) {
         setSkinFlags(3, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setRightSleeveEnabled(boolean enabled)
-    {
+    public void setRightSleeveEnabled(boolean enabled) {
         setSkinFlags(4, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setLeftPantsEnabled(boolean enabled)
-    {
+    public void setLeftPantsEnabled(boolean enabled) {
         setSkinFlags(5, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setRightPantsEnabled(boolean enabled)
-    {
+    public void setRightPantsEnabled(boolean enabled) {
         setSkinFlags(6, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public void setHatEnabled(boolean enabled)
-    {
+    public void setHatEnabled(boolean enabled) {
         setSkinFlags(7, enabled);
 
         sendData(FlagType.PLAYER_SKIN);
     }
 
-    public boolean isSleeping()
-    {
+    public boolean isSleeping() {
         return isInBed;
     }
 
-    public void setSkin(String playerName)
-    {
+    public void setSkin(String playerName) {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
-    public void setSkin(WrappedGameProfile profile)
-    {
+    public void setSkin(WrappedGameProfile profile) {
         ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
 
-    public void setSleeping(BlockFace sleepingDirection)
-    {
+    public void setSleeping(BlockFace sleepingDirection) {
         setSleeping(true, sleepingDirection);
     }
 
-    public void setSleeping(boolean sleep)
-    {
+    public void setSleeping(boolean sleep) {
         setSleeping(sleep, null);
     }
 
@@ -193,30 +178,22 @@ public class PlayerWatcher extends LivingWatcher
      * @param sleeping
      * @param sleepingDirection
      */
-    public void setSleeping(boolean sleeping, BlockFace sleepingDirection)
-    {
-        if (sleepingDirection != null)
-        {
+    public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
+        if (sleepingDirection != null) {
             this.sleepingDirection = BlockFace.values()[sleepingDirection.ordinal() % 4];
         }
 
         isInBed = sleeping;
 
-        if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise()))
-        {
-            try
-            {
-                if (isSleeping())
-                {
-                    for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
-                    {
+        if (DisguiseConfig.isBedPacketsEnabled() && DisguiseUtilities.isDisguiseInUse(getDisguise())) {
+            try {
+                if (isSleeping()) {
+                    for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
                         PacketContainer[] packets = DisguiseUtilities.getBedPackets(getDisguise().getEntity().getLocation(),
                                 player.getLocation(), (PlayerDisguise) getDisguise());
 
-                        if (getDisguise().getEntity() == player)
-                        {
-                            for (PacketContainer packet : packets)
-                            {
+                        if (getDisguise().getEntity() == player) {
+                            for (PacketContainer packet : packets) {
                                 packet = packet.shallowClone();
 
                                 packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
@@ -224,17 +201,14 @@ public class PlayerWatcher extends LivingWatcher
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                             }
                         }
-                        else
-                        {
-                            for (PacketContainer packet : packets)
-                            {
+                        else {
+                            for (PacketContainer packet : packets) {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                             }
                         }
                     }
                 }
-                else
-                {
+                else {
                     PacketContainer packet = new PacketContainer(Server.ANIMATION);
 
                     StructureModifier<Integer> mods = packet.getIntegers();
@@ -242,29 +216,24 @@ public class PlayerWatcher extends LivingWatcher
                     mods.write(0, getDisguise().getEntity().getEntityId());
                     mods.write(1, 3);
 
-                    for (Player player : DisguiseUtilities.getPerverts(getDisguise()))
-                    {
+                    for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                     }
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private void setSkinFlags(int i, boolean flag)
-    {
+    private void setSkinFlags(int i, boolean flag) {
         byte b0 = (byte) getData(FlagType.PLAYER_SKIN);
 
-        if (flag)
-        {
+        if (flag) {
             setData(FlagType.PLAYER_SKIN, (byte) (b0 | 1 << i));
         }
-        else
-        {
+        else {
             setData(FlagType.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
         }
     }

@@ -98,6 +98,12 @@ UndisguiseOnWorldChange: false
 # Contact Mojang's servers? Disabling this option will disable player skin disguises!
 ContactMojangServers: true
 
+# Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
+HideDisguisedPlayersTab: false
+
+# Always show player disguises in tab? The names will continue to appear in tab until the disguise is removed.
+ShowPlayerDisguisesTab: false
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:

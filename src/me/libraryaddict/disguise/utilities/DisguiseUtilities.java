@@ -278,8 +278,6 @@ public class DisguiseUtilities {
                             // But the rest of the time.. Its going to conflict.
                             // The below is debug output. Most people wouldn't care for it.
 
-                            // System.out.print("Cannot set more than one " + TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
-                            // + " on a entity. Removed the old disguise.");
                             disguiseItel.remove();
                             d.removeDisguise();
                         }

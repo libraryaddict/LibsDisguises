@@ -1,9 +1,21 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.UUID;
+
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
+import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import me.libraryaddict.disguise.LibsDisguises;
@@ -12,58 +24,51 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
-public class PlayerDisguise extends TargetedDisguise
-{
+public class PlayerDisguise extends TargetedDisguise {
     private LibsProfileLookup currentLookup;
     private WrappedGameProfile gameProfile;
     private String playerName;
     private String skinToUse;
+    private UUID uuid = UUID.randomUUID();
 
-    private PlayerDisguise()
-    {
+    private PlayerDisguise() {
         // Internal usage only
     }
 
-    public PlayerDisguise(Player player)
-    {
+    public PlayerDisguise(Player player) {
         this(ReflectionManager.getGameProfile(player));
     }
 
-    public PlayerDisguise(Player player, Player skinToUse)
-    {
+    public PlayerDisguise(Player player, Player skinToUse) {
         this(ReflectionManager.getGameProfile(player), ReflectionManager.getGameProfile(skinToUse));
     }
 
-    public PlayerDisguise(String name)
-    {
+    public PlayerDisguise(String name) {
         setName(name);
         setSkin(name);
 
         createDisguise(DisguiseType.PLAYER);
     }
 
-    public PlayerDisguise(String name, String skinToUse)
-    {
+    public PlayerDisguise(String name, String skinToUse) {
         setName(name);
         setSkin(skinToUse);
 
         createDisguise(DisguiseType.PLAYER);
     }
 
-    public PlayerDisguise(WrappedGameProfile gameProfile)
-    {
+    public PlayerDisguise(WrappedGameProfile gameProfile) {
         setName(gameProfile.getName());
 
-        this.gameProfile = gameProfile;
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
 
         createDisguise(DisguiseType.PLAYER);
     }
 
-    public PlayerDisguise(WrappedGameProfile gameProfile, WrappedGameProfile skinToUse)
-    {
+    public PlayerDisguise(WrappedGameProfile gameProfile, WrappedGameProfile skinToUse) {
         setName(gameProfile.getName());
 
-        this.gameProfile = gameProfile;
+        this.gameProfile = ReflectionManager.getGameProfile(uuid, gameProfile.getName());
 
         setSkin(skinToUse);
 
@@ -71,31 +76,27 @@ public class PlayerDisguise extends TargetedDisguise
     }
 
     @Override
-    public PlayerDisguise addPlayer(Player player)
-    {
+    public PlayerDisguise addPlayer(Player player) {
         return (PlayerDisguise) super.addPlayer(player);
     }
 
     @Override
-    public PlayerDisguise addPlayer(String playername)
-    {
+    public PlayerDisguise addPlayer(String playername) {
         return (PlayerDisguise) super.addPlayer(playername);
     }
 
     @Override
-    public PlayerDisguise clone()
-    {
+    public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise();
 
         disguise.playerName = getName();
 
-        if (disguise.currentLookup == null && disguise.gameProfile != null)
-        {
+        if (disguise.currentLookup == null && disguise.gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getClonedProfile(getGameProfile());
+            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid, getGameProfile().getName(),
+                    getGameProfile());
         }
-        else
-        {
+        else {
             disguise.setSkin(getSkin());
         }
 
@@ -107,8 +108,7 @@ public class PlayerDisguise extends TargetedDisguise
         disguise.setVelocitySent(isVelocitySent());
         disguise.setModifyBoundingBox(isModifyBoundingBox());
 
-        if (getWatcher() != null)
-        {
+        if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
         }
 
@@ -117,17 +117,13 @@ public class PlayerDisguise extends TargetedDisguise
         return disguise;
     }
 
-    public WrappedGameProfile getGameProfile()
-    {
-        if (gameProfile == null)
-        {
-            if (getSkin() != null)
-            {
-                gameProfile = ReflectionManager.getGameProfile(null, getName());
+    public WrappedGameProfile getGameProfile() {
+        if (gameProfile == null) {
+            if (getSkin() != null) {
+                gameProfile = ReflectionManager.getGameProfile(uuid, getName());
             }
-            else
-            {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(),
+            else {
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(),
                         DisguiseUtilities.getProfileFromMojang(this));
             }
         }
@@ -135,103 +131,93 @@ public class PlayerDisguise extends TargetedDisguise
         return gameProfile;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return playerName;
     }
 
-    public String getSkin()
-    {
+    public String getSkin() {
         return skinToUse;
     }
 
     @Override
-    public PlayerWatcher getWatcher()
-    {
+    public PlayerWatcher getWatcher() {
         return (PlayerWatcher) super.getWatcher();
     }
 
+    public boolean isDisplayedInTab() {
+        return getWatcher().isDisplayedInTab();
+    }
+
     @Override
-    public boolean isPlayerDisguise()
-    {
+    public boolean isPlayerDisguise() {
         return true;
     }
 
     @Override
-    public PlayerDisguise removePlayer(Player player)
-    {
+    public PlayerDisguise removePlayer(Player player) {
         return (PlayerDisguise) super.removePlayer(player);
     }
 
     @Override
-    public PlayerDisguise removePlayer(String playername)
-    {
+    public PlayerDisguise removePlayer(String playername) {
         return (PlayerDisguise) super.removePlayer(playername);
     }
 
     @Override
-    public PlayerDisguise setDisguiseTarget(TargetType newTargetType)
-    {
+    public PlayerDisguise setDisguiseTarget(TargetType newTargetType) {
         return (PlayerDisguise) super.setDisguiseTarget(newTargetType);
     }
 
+    public void setDisplayedInTab(boolean showPlayerInTab) {
+        getWatcher().setDisplayedInTab(showPlayerInTab);
+    }
+
     @Override
-    public PlayerDisguise setEntity(Entity entity)
-    {
+    public PlayerDisguise setEntity(Entity entity) {
         return (PlayerDisguise) super.setEntity(entity);
     }
 
-    public void setGameProfile(WrappedGameProfile gameProfile)
-    {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, gameProfile.getName(), gameProfile);
+    public void setGameProfile(WrappedGameProfile gameProfile) {
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
     }
 
     @Override
-    public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise)
-    {
+    public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
         return (PlayerDisguise) super.setHearSelfDisguise(hearSelfDisguise);
     }
 
     @Override
-    public PlayerDisguise setHideArmorFromSelf(boolean hideArmor)
-    {
+    public PlayerDisguise setHideArmorFromSelf(boolean hideArmor) {
         return (PlayerDisguise) super.setHideArmorFromSelf(hideArmor);
     }
 
     @Override
-    public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem)
-    {
+    public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
         return (PlayerDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
     }
 
     @Override
-    public PlayerDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise)
-    {
+    public PlayerDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
     }
 
     @Override
-    public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise)
-    {
+    public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
     }
 
     @Override
-    public PlayerDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise)
-    {
+    public PlayerDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
         return (PlayerDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
     @Override
-    public PlayerDisguise setModifyBoundingBox(boolean modifyBox)
-    {
+    public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
-    private void setName(String name)
-    {
-        if (name.length() > 16)
-        {
+    private void setName(String name) {
+        if (name.length() > 16) {
             name = name.substring(0, 16);
         }
 
@@ -239,32 +225,25 @@ public class PlayerDisguise extends TargetedDisguise
     }
 
     @Override
-    public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced)
-    {
+    public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced) {
         return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
-    public PlayerDisguise setSkin(String newSkin)
-    {
+    public PlayerDisguise setSkin(String newSkin) {
         skinToUse = newSkin;
 
-        if (newSkin == null)
-        {
+        if (newSkin == null) {
             currentLookup = null;
             gameProfile = null;
         }
-        else
-        {
-            if (newSkin.length() > 16)
-            {
+        else {
+            if (newSkin.length() > 16) {
                 skinToUse = newSkin.substring(0, 16);
             }
 
-            currentLookup = new LibsProfileLookup()
-            {
+            currentLookup = new LibsProfileLookup() {
                 @Override
-                public void onLookup(WrappedGameProfile gameProfile)
-                {
+                public void onLookup(WrappedGameProfile gameProfile) {
                     if (currentLookup != this || gameProfile == null)
                         return;
 
@@ -277,8 +256,7 @@ public class PlayerDisguise extends TargetedDisguise
             WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
                     LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
 
-            if (gameProfile != null)
-            {
+            if (gameProfile != null) {
                 setSkin(gameProfile);
             }
         }
@@ -293,10 +271,8 @@ public class PlayerDisguise extends TargetedDisguise
      *            GameProfile
      * @return
      */
-    public PlayerDisguise setSkin(WrappedGameProfile gameProfile)
-    {
-        if (gameProfile == null)
-        {
+    public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
+        if (gameProfile == null) {
             this.gameProfile = null;
             this.skinToUse = null;
             return this;
@@ -307,10 +283,32 @@ public class PlayerDisguise extends TargetedDisguise
         currentLookup = null;
 
         this.skinToUse = gameProfile.getName();
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(null, getName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(), gameProfile);
 
-        if (DisguiseUtilities.isDisguiseInUse(this))
-        {
+        if (DisguiseUtilities.isDisguiseInUse(this)) {
+            if (isDisplayedInTab()) {
+                PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
+                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(new PlayerInfoData(getGameProfile(), 0,
+                        NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(getName()))));
+
+                PacketContainer deleteTab = addTab.shallowClone();
+                deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+
+                try {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (!((TargetedDisguise) this).canSee(player))
+                            continue;
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                    }
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+
             DisguiseUtilities.refreshTrackers(this);
         }
 
@@ -318,32 +316,27 @@ public class PlayerDisguise extends TargetedDisguise
     }
 
     @Override
-    public PlayerDisguise setVelocitySent(boolean sendVelocity)
-    {
+    public PlayerDisguise setVelocitySent(boolean sendVelocity) {
         return (PlayerDisguise) super.setVelocitySent(sendVelocity);
     }
 
     @Override
-    public PlayerDisguise setViewSelfDisguise(boolean viewSelfDisguise)
-    {
+    public PlayerDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (PlayerDisguise) super.setViewSelfDisguise(viewSelfDisguise);
     }
 
     @Override
-    public PlayerDisguise setWatcher(FlagWatcher newWatcher)
-    {
+    public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
         return (PlayerDisguise) super.setWatcher(newWatcher);
     }
 
     @Override
-    public PlayerDisguise silentlyAddPlayer(String playername)
-    {
+    public PlayerDisguise silentlyAddPlayer(String playername) {
         return (PlayerDisguise) super.silentlyAddPlayer(playername);
     }
 
     @Override
-    public PlayerDisguise silentlyRemovePlayer(String playername)
-    {
+    public PlayerDisguise silentlyRemovePlayer(String playername) {
         return (PlayerDisguise) super.silentlyRemovePlayer(playername);
     }
 }
