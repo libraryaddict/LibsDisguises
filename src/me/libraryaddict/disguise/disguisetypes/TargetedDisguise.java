@@ -23,6 +23,10 @@ import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public abstract class TargetedDisguise extends Disguise {
 
+    public TargetedDisguise(DisguiseType disguiseType) {
+        super(disguiseType);
+    }
+
     public enum TargetType {
         HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS, SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
     }

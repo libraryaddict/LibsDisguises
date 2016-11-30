@@ -43,6 +43,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * 
      * @param id
      */
+    @Deprecated
     public void setProfession(int id) {
         setData(FlagType.ZOMBIE_VILLAGER_PROFESSION, id);
         sendData(FlagType.ZOMBIE_VILLAGER_PROFESSION);

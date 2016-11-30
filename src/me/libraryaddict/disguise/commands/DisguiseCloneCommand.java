@@ -12,7 +12,7 @@ import org.bukkit.command.TabCompleter;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 
 public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
@@ -79,7 +79,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(ChatColor.DARK_GREEN
                 + "Right click a entity to get a disguise reference you can pass to other disguise commands!");
         sender.sendMessage(ChatColor.DARK_GREEN

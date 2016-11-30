@@ -5,7 +5,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,8 +36,10 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Optional;
+import com.google.gson.Gson;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
@@ -89,6 +94,42 @@ public class ReflectionManager {
         entityCountField = getNmsField("Entity", "entityCount");
 
         entityCountField.setAccessible(true);
+    }
+
+    public static WrappedGameProfile parseGameProfile(String toParse) {
+        Map<String, Object> response = new Gson().fromJson(toParse, Map.class);
+
+        String id = (String) response.get("id");
+
+        if (!id.contains("-")) {
+            id = Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(id)
+                    .replaceFirst("$1-$2-$3-$4-$5");
+        }
+
+        WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.fromString(id), (String) response.get("name"));
+
+        if (response.containsKey("properties")) {
+            ArrayList<Map<String, String>> properties = (ArrayList) response.get("properties");
+
+            for (Map<String, String> s : properties) {
+                String gName = null;
+                String gValue = null;
+                String gSigned = null;
+
+                if (s.containsKey("name"))
+                    gName = s.get("name");
+
+                if (s.containsKey("value"))
+                    gValue = s.get("value");
+
+                if (s.containsKey("signature"))
+                    gSigned = s.get("signature");
+
+                gameProfile.getProperties().put(gName, new WrappedSignedProperty(gName, gValue, gSigned));
+            }
+        }
+
+        return gameProfile;
     }
 
     public static Object createEntityInstance(String entityName) {

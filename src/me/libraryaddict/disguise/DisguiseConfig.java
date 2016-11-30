@@ -1,8 +1,17 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
@@ -45,6 +54,7 @@ public class DisguiseConfig {
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
+    private static HashMap<String, Disguise> customDisguises = new HashMap<String, Disguise>();
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
@@ -109,6 +119,68 @@ public class DisguiseConfig {
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
+
+        customDisguises.clear();
+
+        File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
+
+        if (!disguisesFile.exists())
+            return;
+
+        YamlConfiguration disguisesConfig = YamlConfiguration.loadConfiguration(disguisesFile);
+
+        ConfigurationSection section = disguisesConfig.getConfigurationSection("Disguises");
+
+        if (section == null) {
+            return;
+        }
+
+        for (String key : section.getKeys(false)) {
+            String toParse = section.getString(key);
+
+            if (getCustomDisguise(toParse) != null) {
+                System.err
+                        .println("[LibsDisguises] Cannot create the custom disguise '" + key + "' as there is a name conflict!");
+                continue;
+            }
+
+            try {
+                Disguise disguise = DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), "disguise", toParse.split(" "),
+                        DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+
+                customDisguises.put(key, disguise);
+
+                System.out.println("[LibsDisguises] Loaded custom disguise " + key);
+            }
+            catch (DisguiseParseException e) {
+                System.err.println("[LibsDisguises] Error while loading custom disguise '" + key + "'"
+                        + (e.getMessage() == null ? "" : ": " + e.getMessage()));
+
+                if (e.getMessage() == null)
+                    e.printStackTrace();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.out.println("[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise"
+                + (customDisguises.size() == 1 ? "" : "s"));
+    }
+
+    public static HashMap<String, Disguise> getCustomDisguises() {
+        return customDisguises;
+    }
+
+    public static Entry<String, Disguise> getCustomDisguise(String disguise) {
+        for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
+                continue;
+
+            return entry;
+        }
+
+        return null;
     }
 
     public static boolean isAnimationPacketsEnabled() {

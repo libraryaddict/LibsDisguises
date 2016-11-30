@@ -26,6 +26,7 @@ import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 
 public class ReflectionFlagWatchers {
     public static class ParamInfo {
@@ -105,6 +106,10 @@ public class ReflectionFlagWatchers {
         }
 
         return null;
+    }
+
+    public static ParamInfo getParamInfo(DisguisePerm disguiseType, String methodName) {
+        return getParamInfo(disguiseType.getType(), methodName);
     }
 
     public static ParamInfo getParamInfo(DisguiseType disguiseType, String methodName) {

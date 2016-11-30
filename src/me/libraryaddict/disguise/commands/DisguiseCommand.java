@@ -18,6 +18,9 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
@@ -29,10 +32,15 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             return true;
         }
 
+        if (args.length == 0) {
+            sendCommandUsage(sender, getPermissions(sender));
+            return true;
+        }
+
         Disguise disguise;
 
         try {
-            disguise = parseDisguise(sender, args, getPermissions(sender));
+            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), args, getPermissions(sender));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -73,25 +81,21 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         ArrayList<String> tabs = new ArrayList<String>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
 
         if (args.length == 0) {
-            for (DisguiseType type : perms.keySet()) {
-                tabs.add(type.toReadable().replaceAll(" ", "_"));
+            for (String type : getAllowedDisguises(perms)) {
+                tabs.add(type);
             }
         }
         else {
-            DisguiseType disguiseType;
+            DisguisePerm disguiseType = DisguiseParser.getDisguisePerm(args[0]);
 
-            try {
-                disguiseType = DisguiseType.valueOf(args[0].toUpperCase());
-            }
-            catch (Exception ex) {
-                // No disguisetype specificied, cannot help.
+            if (disguiseType == null)
                 return filterTabs(tabs, origArgs);
-            }
+            // No disguisetype specificied, cannot help.
 
-            if (args.length == 1 && disguiseType == DisguiseType.PLAYER) {
+            if (args.length == 1 && disguiseType.getType() == DisguiseType.PLAYER) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     tabs.add(player.getName());
                 }
@@ -100,7 +104,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                 ArrayList<String> usedOptions = new ArrayList<String>();
 
                 for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                    for (int i = disguiseType == DisguiseType.PLAYER ? 2 : 1; i < args.length; i++) {
+                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? 2 : 1; i < args.length; i++) {
                         String arg = args[i];
 
                         if (!method.getName().equalsIgnoreCase(arg))
@@ -154,7 +158,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise to become the disguise!");
         sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN

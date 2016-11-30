@@ -71,6 +71,10 @@ public abstract class Disguise {
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
 
+    public Disguise(DisguiseType disguiseType) {
+        this.disguiseType = disguiseType;
+    }
+
     @Override
     public abstract Disguise clone();
 
@@ -80,18 +84,12 @@ public abstract class Disguise {
      * @param newType
      *            The disguise
      */
-    protected void createDisguise(DisguiseType newType) {
-        if (getWatcher() != null) {
-            return;
-        }
-
-        if (newType.getEntityType() == null) {
-            throw new RuntimeException("DisguiseType " + newType
+    protected void createDisguise() {
+        if (getType().getEntityType() == null) {
+            throw new RuntimeException("DisguiseType " + getType()
                     + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
         }
 
-        // Set the disguise type
-        disguiseType = newType;
         // Get if they are a adult now..
 
         boolean isAdult = true;
@@ -100,12 +98,14 @@ public abstract class Disguise {
             isAdult = ((MobDisguise) this).isAdult();
         }
 
-        try {
-            // Construct the FlagWatcher from the stored class
-            setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        if (getWatcher() == null) {
+            try {
+                // Construct the FlagWatcher from the stored class
+                setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // Set the disguise if its a baby or not

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -81,12 +82,19 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
+        instance = this;
+        saveDefaultConfig();
+
         getLogger().info("Discovered MC version: " + ReflectionManager.getBukkitVersion());
 
-        saveDefaultConfig();
+        if (!new File(getDataFolder(), "disguises.yml").exists()) {
+            saveResource("disguises.yml", false);
+        }
 
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
+
+        registerValues();
 
         DisguiseConfig.initConfig(getConfig());
 
@@ -108,10 +116,6 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("disguiseclone", new DisguiseCloneCommand());
         registerCommand("libsdisguises", new LibsDisguisesCommand());
         registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-
-        registerValues();
-
-        instance = this;
 
         try {
             Metrics metrics = new Metrics(this);

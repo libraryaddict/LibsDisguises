@@ -47,7 +47,7 @@ public class FlagWatcher {
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
         for (int i = 0; i < 6; i++) {
-            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i]) {
+            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i - 1]) {
                 originalValue = (byte) (originalValue | 1 << i);
             }
         }
@@ -401,7 +401,7 @@ public class FlagWatcher {
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
-        modifiedEntityAnimations[byteValue] = true;
+        modifiedEntityAnimations[byteValue - 1] = true;
 
         byte b0 = (byte) getData(FlagType.ENTITY_META);
 
@@ -447,7 +447,7 @@ public class FlagWatcher {
     }
 
     public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        setItemStack(slot, itemStack);
+        equipment.setItem(slot, itemStack);
 
         sendItemStack(slot, itemStack);
     }

@@ -23,6 +23,9 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.ClassGetter;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
@@ -46,7 +49,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
@@ -125,8 +128,13 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         System.arraycopy(args, starting + 1, newArgs, 0, newArgs.length);
         Disguise disguise;
 
+        if (newArgs.length == 0) {
+            sendCommandUsage(sender, map);
+            return true;
+        }
+
         try {
-            disguise = parseDisguise(sender, newArgs, map);
+            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), newArgs, map);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -195,7 +203,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> tabs = new ArrayList<String>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (Class<? extends Entity> entityClass : validClasses) {
@@ -222,22 +230,18 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (args.length == starting) {
-            for (DisguiseType type : perms.keySet()) {
-                tabs.add(type.toReadable().replaceAll(" ", "_"));
+            for (String type : getAllowedDisguises(perms)) {
+                tabs.add(type);
             }
         }
         else {
-            DisguiseType disguiseType;
 
-            try {
-                disguiseType = DisguiseType.valueOf(args[starting].toUpperCase());
-            }
-            catch (Exception ex) {
-                // No disguisetype specificied, cannot help.
+            DisguisePerm disguiseType = DisguiseParser.getDisguisePerm(args[starting]);
+
+            if (disguiseType == null)
                 return filterTabs(tabs, origArgs);
-            }
 
-            if (args.length == 1 + starting && disguiseType == DisguiseType.PLAYER) {
+            if (args.length == 1 + starting && disguiseType.getType() == DisguiseType.PLAYER) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     tabs.add(player.getName());
                 }
@@ -246,7 +250,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 ArrayList<String> usedOptions = new ArrayList<String>();
 
                 for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                    for (int i = disguiseType == DisguiseType.PLAYER ? starting + 2 : starting + 1; i < args.length; i++) {
+                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? starting + 2
+                            : starting + 1; i < args.length; i++) {
                         String arg = args[i];
 
                         if (!method.getName().equalsIgnoreCase(arg))
@@ -300,7 +305,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at " + maxRadius + " blocks!");

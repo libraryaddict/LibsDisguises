@@ -18,6 +18,9 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 
@@ -25,7 +28,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
@@ -52,9 +55,15 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
 
+        if (newArgs.length == 0) {
+            sendCommandUsage(sender, map);
+            return true;
+        }
+
         Disguise disguise;
+
         try {
-            disguise = parseDisguise(sender, newArgs, map);
+            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), newArgs, map);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -104,7 +113,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> tabs = new ArrayList<String>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -112,22 +121,17 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             }
         }
         else if (args.length == 1) {
-            for (DisguiseType type : perms.keySet()) {
-                tabs.add(type.toReadable().replaceAll(" ", "_"));
+            for (String type : getAllowedDisguises(perms)) {
+                tabs.add(type);
             }
         }
         else {
-            DisguiseType disguiseType;
+            DisguisePerm disguiseType = DisguiseParser.getDisguisePerm(args[1]);
 
-            try {
-                disguiseType = DisguiseType.valueOf(args[1].toUpperCase());
-            }
-            catch (Exception ex) {
-                // No disguisetype specificied, cannot help.
+            if (disguiseType == null)
                 return filterTabs(tabs, origArgs);
-            }
 
-            if (args.length == 2 && disguiseType == DisguiseType.PLAYER) {
+            if (args.length == 2 && disguiseType.getType() == DisguiseType.PLAYER) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     tabs.add(player.getName());
                 }
@@ -136,7 +140,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
                 ArrayList<String> usedOptions = new ArrayList<String>();
 
                 for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                    for (int i = disguiseType == DisguiseType.PLAYER ? 3 : 2; i < args.length; i++) {
+                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? 3 : 2; i < args.length; i++) {
                         String arg = args[i];
 
                         if (!method.getName().equalsIgnoreCase(arg))
@@ -190,7 +194,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguiseType, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");

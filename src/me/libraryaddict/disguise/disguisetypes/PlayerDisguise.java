@@ -32,7 +32,7 @@ public class PlayerDisguise extends TargetedDisguise {
     private UUID uuid = UUID.randomUUID();
 
     private PlayerDisguise() {
-        // Internal usage only
+        super(DisguiseType.PLAYER);
     }
 
     public PlayerDisguise(Player player) {
@@ -44,35 +44,43 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise(String name) {
+        this();
+
         setName(name);
         setSkin(name);
 
-        createDisguise(DisguiseType.PLAYER);
+        createDisguise();
     }
 
     public PlayerDisguise(String name, String skinToUse) {
+        this();
+
         setName(name);
         setSkin(skinToUse);
 
-        createDisguise(DisguiseType.PLAYER);
+        createDisguise();
     }
 
     public PlayerDisguise(WrappedGameProfile gameProfile) {
+        this();
+
         setName(gameProfile.getName());
 
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
 
-        createDisguise(DisguiseType.PLAYER);
+        createDisguise();
     }
 
     public PlayerDisguise(WrappedGameProfile gameProfile, WrappedGameProfile skinToUse) {
+        this();
+
         setName(gameProfile.getName());
 
         this.gameProfile = ReflectionManager.getGameProfile(uuid, gameProfile.getName());
 
         setSkin(skinToUse);
 
-        createDisguise(DisguiseType.PLAYER);
+        createDisguise();
     }
 
     @Override
@@ -112,7 +120,7 @@ public class PlayerDisguise extends TargetedDisguise {
             disguise.setWatcher(getWatcher().clone(disguise));
         }
 
-        disguise.createDisguise(DisguiseType.PLAYER);
+        disguise.createDisguise();
 
         return disguise;
     }
@@ -230,6 +238,16 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setSkin(String newSkin) {
+        if (newSkin != null && newSkin.length() > 50) {
+            try {
+                setSkin(ReflectionManager.parseGameProfile(newSkin));
+            }
+            catch (Exception ex) {
+                throw new IllegalArgumentException(
+                        "The skin is too long to be a playername, but cannot be parsed to a GameProfile!");
+            }
+        }
+
         skinToUse = newSkin;
 
         if (newSkin == null) {
