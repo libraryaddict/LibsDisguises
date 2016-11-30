@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +24,6 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class FlagWatcher {
@@ -36,7 +36,7 @@ public class FlagWatcher {
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;
-    private HashSet<Integer> modifiedEntityAnimations = new HashSet<>();
+    private boolean[] modifiedEntityAnimations = new boolean[6];
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
@@ -46,15 +46,11 @@ public class FlagWatcher {
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
-        byte valueByte = originalValue;
-
         for (int i = 0; i < 6; i++) {
-            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations.contains(i)) {
-                valueByte = (byte) (valueByte | 1 << i);
+            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i]) {
+                originalValue = (byte) (originalValue | 1 << i);
             }
         }
-
-        originalValue = valueByte;
 
         return originalValue;
     }
@@ -72,7 +68,7 @@ public class FlagWatcher {
 
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();
         cloned.equipment = equipment.clone(cloned);
-        cloned.modifiedEntityAnimations = (HashSet<Integer>) modifiedEntityAnimations.clone();
+        cloned.modifiedEntityAnimations = Arrays.copyOf(modifiedEntityAnimations, modifiedEntityAnimations.length);
         cloned.addEntityAnimations = addEntityAnimations;
 
         return cloned;
@@ -89,7 +85,7 @@ public class FlagWatcher {
 
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (id == 1) {
+            if (id == FlagType.ENTITY_AIR_TICKS.getIndex()) {
                 sendAllCustom = true;
             }
 
@@ -334,10 +330,7 @@ public class FlagWatcher {
             Object value = entityValues.get(data.getIndex());
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == FlagType.ENTITY_META) {
-                if (!PacketsManager.isStaticMetadataDisguiseType(disguise)) {
-                    value = addEntityAnimations((byte) value,
-                            WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
-                }
+                value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
 
             WrappedWatchableObject watch = ReflectionManager.createWatchable(data.getIndex(), value);
@@ -408,7 +401,7 @@ public class FlagWatcher {
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
-        modifiedEntityAnimations.add(byteValue);
+        modifiedEntityAnimations[byteValue] = true;
 
         byte b0 = (byte) getData(FlagType.ENTITY_META);
 

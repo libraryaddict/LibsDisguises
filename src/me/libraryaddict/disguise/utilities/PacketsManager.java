@@ -80,7 +80,7 @@ public class PacketsManager {
         }
 
         public void setPacketType(PacketType type) {
-            isSpawnPacket = type.name().contains("SPAWN_");
+            isSpawnPacket = type.name().contains("SPAWN") && type.name().contains("ENTITY");
         }
 
         public void addPacket(PacketContainer packet) {
@@ -142,7 +142,7 @@ public class PacketsManager {
     private static PacketListener viewDisguisesListener;
     private static PacketListener tabListListener;
     private static boolean viewDisguisesListenerEnabled;
-    private static HashMap<Disguise, ArrayList<UUID>> _cancelMeta = new HashMap<Disguise, ArrayList<UUID>>();
+    private static HashMap<Disguise, ArrayList<UUID>> cancelMeta = new HashMap<Disguise, ArrayList<UUID>>();
 
     public static void addPacketListeners() {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
@@ -162,7 +162,7 @@ public class PacketsManager {
     public static void removeCancel(Disguise disguise, Player observer) {
         ArrayList<UUID> cancel;
 
-        if ((cancel = _cancelMeta.get(disguise)) == null)
+        if ((cancel = cancelMeta.get(disguise)) == null)
             return;
 
         cancel.remove(observer.getUniqueId());
@@ -170,7 +170,7 @@ public class PacketsManager {
         if (!cancel.isEmpty())
             return;
 
-        _cancelMeta.remove(disguise);
+        cancelMeta.remove(disguise);
     }
 
     /**
@@ -402,10 +402,11 @@ public class PacketsManager {
                 metaPacket.getIntegers().write(0, entityId); // Id
                 metaPacket.getWatchableCollectionModifier().write(0, newWatcher.getWatchableObjects());
 
-                if (!_cancelMeta.containsKey(disguise))
-                    _cancelMeta.put(disguise, new ArrayList<UUID>());
+                if (!cancelMeta.containsKey(disguise))
+                    cancelMeta.put(disguise, new ArrayList<UUID>());
 
-                _cancelMeta.get(disguise).add(observer.getUniqueId());
+                cancelMeta.get(disguise).add(observer.getUniqueId());
+
                 packets.addDelayedPacket(metaPacket, 4);
             }
 
@@ -929,8 +930,8 @@ public class PacketsManager {
             else if (sentPacket.getType() == Server.ENTITY_METADATA) {
                 packets.clear();
 
-                if (DisguiseConfig.isMetadataPacketsEnabled() && !isStaticMetadataDisguiseType(disguise)
-                        && (!_cancelMeta.containsKey(disguise) || !_cancelMeta.get(disguise).contains(observer.getUniqueId()))) {
+                if (DisguiseConfig.isMetadataPacketsEnabled()
+                        && (!cancelMeta.containsKey(disguise) || !cancelMeta.get(disguise).contains(observer.getUniqueId()))) {
                     List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
                             .convert(sentPacket.getWatchableCollectionModifier().read(0));
 
@@ -1066,7 +1067,7 @@ public class PacketsManager {
                     packets.addPacket(equipPacket);
 
                     equipPacket.getModifier().write(2,
-                            (itemStack.getTypeId() == 0 ? null : ReflectionManager.getNmsItem(itemStack)));
+                            ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
                 }
 
                 if (disguise.getWatcher().isRightClicking() && slot == EquipmentSlot.HAND) {
@@ -1076,7 +1077,7 @@ public class PacketsManager {
                         // Convert the datawatcher
                         List<WrappedWatchableObject> list = new ArrayList<>();
 
-                        if (DisguiseConfig.isMetadataPacketsEnabled() && !isStaticMetadataDisguiseType(disguise)) {
+                        if (DisguiseConfig.isMetadataPacketsEnabled()) {
                             WrappedWatchableObject watch = ReflectionManager.createWatchable(0,
                                     WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 
@@ -1172,19 +1173,5 @@ public class PacketsManager {
         }
 
         return packets;
-    }
-
-    /**
-     * Returns true if this disguise type doesn't have changing metadata.
-     * 
-     * @param disguise
-     * @return
-     */
-    public static boolean isStaticMetadataDisguiseType(Disguise disguise) {
-        return false;
-        /*        return (disguise.getType() == DisguiseType.WOLF || disguise.getType() == DisguiseType.OCELOT
-                || disguise.getType() == DisguiseType.ENDERMAN || disguise.getType() == DisguiseType.SHULKER
-                || disguise.getType() == DisguiseType.SPLASH_POTION || disguise.getType() == DisguiseType.FIREWORK
-                || disguise.getType() == DisguiseType.DROPPED_ITEM || disguise.getType() == DisguiseType.ENDER_CRYSTAL);*/
     }
 }

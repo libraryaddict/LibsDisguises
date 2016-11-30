@@ -21,16 +21,13 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 
-public class PacketListenerMain extends PacketAdapter
-{
-    public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen)
-    {
+public class PacketListenerMain extends PacketAdapter {
+    public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen) {
         super(plugin, ListenerPriority.HIGH, packetsToListen);
     }
 
     @Override
-    public void onPacketSending(final PacketEvent event)
-    {
+    public void onPacketSending(final PacketEvent event) {
         if (event.isCancelled())
             return;
 
@@ -56,19 +53,16 @@ public class PacketListenerMain extends PacketAdapter
 
         LibsPackets packets;
 
-        try
-        {
+        try {
             packets = PacketsManager.transformPacket(event.getPacket(), disguise, observer, entity);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             ex.printStackTrace();
             event.setCancelled(true);
             return;
         }
 
-        if (packets.isUnhandled())
-        {
+        if (packets.isUnhandled()) {
             return;
         }
 
@@ -76,17 +70,14 @@ public class PacketListenerMain extends PacketAdapter
 
         event.setCancelled(true);
 
-        try
-        {
-            for (PacketContainer packet : packets.getPackets())
-            {
+        try {
+            for (PacketContainer packet : packets.getPackets()) {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
             }
 
             packets.sendDelayed(observer);
         }
-        catch (InvocationTargetException ex)
-        {
+        catch (InvocationTargetException ex) {
             ex.printStackTrace();
         }
 
