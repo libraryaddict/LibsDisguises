@@ -114,7 +114,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                     }
                 }
 
-                if (passesCheck(perms.get(disguiseType), usedOptions)) {
+                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 1) {

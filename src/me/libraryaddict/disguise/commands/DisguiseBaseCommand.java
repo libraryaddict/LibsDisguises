@@ -97,25 +97,9 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         }
     }
 
-    public boolean passesCheck(HashMap<ArrayList<String>, Boolean> theirPermissions, ArrayList<String> usedOptions) {
-        boolean hasPermission = false;
-
-        for (ArrayList<String> list : theirPermissions.keySet()) {
-            boolean myPerms = true;
-
-            for (String option : usedOptions) {
-                if (!(theirPermissions.get(list) && list.contains("*"))
-                        && (list.contains(option) != theirPermissions.get(list))) {
-                    myPerms = false;
-                    break;
-                }
-            }
-
-            if (myPerms) {
-                hasPermission = true;
-            }
-        }
-        return hasPermission;
+    public boolean passesCheck(CommandSender sender, HashMap<ArrayList<String>, Boolean> theirPermissions,
+            ArrayList<String> usedOptions) {
+        return DisguiseParser.passesCheck(sender, theirPermissions, usedOptions);
     }
 
     protected abstract void sendCommandUsage(CommandSender sender,

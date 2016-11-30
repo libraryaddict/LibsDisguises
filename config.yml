@@ -104,6 +104,9 @@ HideDisguisedPlayersFromTab: false
 # Always show player disguises in tab? The names will continue to appear in tab until the disguise is removed.
 ShowPlayerDisguisesInTab: false
 
+# Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
+DisableInvisibility: false
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:

@@ -148,12 +148,12 @@ public class DisguiseParser {
         return value;
     }
 
-    private static void doCheck(HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions)
-            throws DisguiseParseException {
+    private static void doCheck(CommandSender sender, HashMap<ArrayList<String>, Boolean> optionPermissions,
+            ArrayList<String> usedOptions) throws DisguiseParseException {
 
-        if (!passesCheck(optionPermissions, usedOptions)) {
-            throw new DisguiseParseException(ChatColor.RED + "You do not have the permission to use the option "
-                    + usedOptions.get(usedOptions.size() - 1));
+        if (!passesCheck(sender, optionPermissions, usedOptions)) {
+            throw new DisguiseParseException(
+                    ChatColor.RED + "You do not have permission to use the option " + usedOptions.get(usedOptions.size() - 1));
         }
     }
 
@@ -569,7 +569,7 @@ public class DisguiseParser {
                     if (args.length > 1) {
                         if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
                             usedOptions.add("setbaby");
-                            doCheck(optionPermissions, usedOptions);
+                            doCheck(sender, optionPermissions, usedOptions);
                             adult = args[1].equalsIgnoreCase("adult");
 
                             toSkip++;
@@ -668,17 +668,17 @@ public class DisguiseParser {
                         if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
                             usedOptions.add("setblock");
 
-                            doCheck(optionPermissions, usedOptions);
+                            doCheck(sender, optionPermissions, usedOptions);
                         }
                         else if (disguisePerm.getType() == DisguiseType.PAINTING) {
                             usedOptions.add("setpainting");
 
-                            doCheck(optionPermissions, usedOptions);
+                            doCheck(sender, optionPermissions, usedOptions);
                         }
                         else if (disguisePerm.getType() == DisguiseType.SPLASH_POTION) {
                             usedOptions.add("setpotionid");
 
-                            doCheck(optionPermissions, usedOptions);
+                            doCheck(sender, optionPermissions, usedOptions);
                         }
                     }
                     // Construct the disguise
@@ -961,7 +961,7 @@ public class DisguiseParser {
                 usedOptions.add(methodName.toLowerCase());
             }
 
-            doCheck(optionPermissions, usedOptions);
+            doCheck(sender, optionPermissions, usedOptions);
 
             if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass())) {
                 methodToUse.invoke(disguise.getWatcher(), value);
@@ -1020,13 +1020,19 @@ public class DisguiseParser {
         }
     }
 
-    private static boolean passesCheck(HashMap<ArrayList<String>, Boolean> theirPermissions, ArrayList<String> usedOptions) {
+    public static boolean passesCheck(CommandSender sender, HashMap<ArrayList<String>, Boolean> theirPermissions,
+            ArrayList<String> usedOptions) {
         boolean hasPermission = false;
 
         for (ArrayList<String> list : theirPermissions.keySet()) {
             boolean myPerms = true;
 
             for (String option : usedOptions) {
+                if (!sender.getName().equals("CONSOLE") && option.equalsIgnoreCase("setInvisible")
+                        && DisguiseConfig.isDisabledInvisibility()) {
+                    myPerms = false;
+                }
+
                 if (!(theirPermissions.get(list) && list.contains("*"))
                         && (list.contains(option) != theirPermissions.get(list))) {
                     myPerms = false;
@@ -1038,6 +1044,7 @@ public class DisguiseParser {
                 hasPermission = true;
             }
         }
+
         return hasPermission;
     }
 }

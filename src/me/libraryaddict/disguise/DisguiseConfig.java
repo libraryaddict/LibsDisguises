@@ -22,6 +22,8 @@ public class DisguiseConfig {
     private static boolean collectEnabled;
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
+    private static HashMap<String, Disguise> customDisguises = new HashMap<String, Disguise>();
+    private static boolean disableInvisibility;
     private static String disguiseBlownMessage;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
@@ -54,7 +56,21 @@ public class DisguiseConfig {
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
-    private static HashMap<String, Disguise> customDisguises = new HashMap<String, Disguise>();
+
+    public static Entry<String, Disguise> getCustomDisguise(String disguise) {
+        for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
+            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
+                continue;
+
+            return entry;
+        }
+
+        return null;
+    }
+
+    public static HashMap<String, Disguise> getCustomDisguises() {
+        return customDisguises;
+    }
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
@@ -119,6 +135,7 @@ public class DisguiseConfig {
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
+        setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
 
         customDisguises.clear();
 
@@ -168,21 +185,6 @@ public class DisguiseConfig {
                 + (customDisguises.size() == 1 ? "" : "s"));
     }
 
-    public static HashMap<String, Disguise> getCustomDisguises() {
-        return customDisguises;
-    }
-
-    public static Entry<String, Disguise> getCustomDisguise(String disguise) {
-        for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
-                continue;
-
-            return entry;
-        }
-
-        return null;
-    }
-
     public static boolean isAnimationPacketsEnabled() {
         return animationEnabled;
     }
@@ -193,6 +195,10 @@ public class DisguiseConfig {
 
     public static boolean isCollectPacketsEnabled() {
         return collectEnabled;
+    }
+
+    public static boolean isDisabledInvisibility() {
+        return disableInvisibility;
     }
 
     public static boolean isDisguiseBlownOnAttack() {
@@ -352,6 +358,10 @@ public class DisguiseConfig {
 
             PacketsManager.setupMainPacketsListener();
         }
+    }
+
+    public static void setDisabledInvisibility(boolean disableInvis) {
+        disableInvisibility = disableInvis;
     }
 
     public static void setDisguiseBlownMessage(String newMessage) {

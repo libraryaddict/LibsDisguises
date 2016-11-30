@@ -98,7 +98,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                if (passesCheck(perms.get(disguiseType), usedOptions)) {
+                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 1) {
