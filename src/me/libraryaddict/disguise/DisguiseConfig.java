@@ -16,11 +16,12 @@ public class DisguiseConfig {
     private static String disguiseBlownMessage;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
+    private static boolean displayPlayerDisguisesInTab;
     private static boolean entityAnimationsAdded;
     private static boolean entityStatusEnabled;
     private static boolean equipmentEnabled;
     private static boolean hearSelfDisguise;
-    private static boolean viewSelfDisguise;
+    private static boolean hideDisguisedPlayers;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
     private static boolean keepDisguiseEntityDespawn;
@@ -35,32 +36,15 @@ public class DisguiseConfig {
     private static boolean sendVelocity;
     private static boolean showNameAboveHead;
     private static boolean showNameAboveHeadAlwaysVisible;
+    private static boolean stopShulkerDisguisesFromMoving;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
-    private static boolean stopShulkerDisguisesFromMoving;
     private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
             + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
             + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
     private static String updateNotificationPermission;
+    private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
-    private static boolean hideDisguisedPlayers;
-    private static boolean displayPlayerDisguisesInTab;
-
-    public static void setHideDisguisedPlayers(boolean hideDisguisedPlayersInTab) {
-        hideDisguisedPlayers = hideDisguisedPlayersInTab;
-    }
-
-    public static void setShowDisguisedPlayersInTab(boolean displayPlayerDisguisesInTablist) {
-        displayPlayerDisguisesInTab = displayPlayerDisguisesInTablist;
-    }
-
-    public static boolean isHideDisguisedPlayers() {
-        return hideDisguisedPlayers;
-    }
-
-    public static boolean isShowDisguisedPlayersInTab() {
-        return displayPlayerDisguisesInTab;
-    }
 
     public static String getDisguiseBlownMessage() {
         return disguiseBlownMessage;
@@ -155,6 +139,10 @@ public class DisguiseConfig {
         return equipmentEnabled;
     }
 
+    public static boolean isHideDisguisedPlayers() {
+        return hideDisguisedPlayers;
+    }
+
     /**
      * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor floating around
      */
@@ -221,11 +209,19 @@ public class DisguiseConfig {
         return colorizeSheep;
     }
 
+    public static boolean isShowDisguisedPlayersInTab() {
+        return displayPlayerDisguisesInTab;
+    }
+
     /**
      * Is the sound packets caught and modified
      */
     public static boolean isSoundEnabled() {
         return PacketsManager.isHearDisguisesEnabled();
+    }
+
+    public static boolean isStopShulkerDisguisesFromMoving() {
+        return stopShulkerDisguisesFromMoving;
     }
 
     public static boolean isUndisguiseOnWorldChange() {
@@ -338,6 +334,10 @@ public class DisguiseConfig {
         }
     }
 
+    public static void setHideDisguisedPlayers(boolean hideDisguisedPlayersInTab) {
+        hideDisguisedPlayers = hideDisguisedPlayersInTab;
+    }
+
     /**
      * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
      */
@@ -409,11 +409,19 @@ public class DisguiseConfig {
         colorizeSheep = color;
     }
 
+    public static void setShowDisguisedPlayersInTab(boolean displayPlayerDisguisesInTablist) {
+        displayPlayerDisguisesInTab = displayPlayerDisguisesInTablist;
+    }
+
     /**
      * Set if the disguises play sounds when hurt
      */
     public static void setSoundsEnabled(boolean isSoundsEnabled) {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
+    }
+
+    public static void setStopShulkerDisguisesFromMoving(boolean stopShulkerDisguisesFromMoving) {
+        DisguiseConfig.stopShulkerDisguisesFromMoving = stopShulkerDisguisesFromMoving;
     }
 
     public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
@@ -426,14 +434,6 @@ public class DisguiseConfig {
 
     public static void setUpdateNotificationPermission(String newPermission) {
         updateNotificationPermission = newPermission;
-    }
-
-    public static void setStopShulkerDisguisesFromMoving(boolean stopShulkerDisguisesFromMoving) {
-        DisguiseConfig.stopShulkerDisguisesFromMoving = stopShulkerDisguisesFromMoving;
-    }
-
-    public static boolean isStopShulkerDisguisesFromMoving() {
-        return stopShulkerDisguisesFromMoving;
     }
 
     /**
