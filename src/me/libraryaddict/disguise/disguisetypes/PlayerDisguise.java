@@ -240,7 +240,7 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise setSkin(String newSkin) {
         if (newSkin != null && newSkin.length() > 50) {
             try {
-                setSkin(ReflectionManager.parseGameProfile(newSkin));
+                return setSkin(ReflectionManager.parseGameProfile(newSkin));
             }
             catch (Exception ex) {
                 throw new IllegalArgumentException(
