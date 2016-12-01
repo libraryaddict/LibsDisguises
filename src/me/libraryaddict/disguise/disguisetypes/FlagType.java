@@ -34,8 +34,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseAbstractWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseChestedWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
@@ -172,13 +172,13 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> HORSE_ARMOR = new FlagType<Integer>(HorseWatcher.class, 1, 0);
 
-    public static FlagType<Boolean> HORSE_CHESTED_CARRYING_CHEST = new FlagType<Boolean>(HorseChestedWatcher.class, 0, false);
+    public static FlagType<Boolean> HORSE_CHESTED_CARRYING_CHEST = new FlagType<Boolean>(ChestedHorseWatcher.class, 0, false);
 
     public static FlagType<Integer> HORSE_COLOR = new FlagType<Integer>(HorseWatcher.class, 0, 0);
 
-    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(HorseAbstractWatcher.class, 0, (byte) 0);
+    public static FlagType<Byte> HORSE_META = new FlagType<Byte>(AbstractHorseWatcher.class, 0, (byte) 0);
 
-    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(HorseAbstractWatcher.class, 1,
+    public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(AbstractHorseWatcher.class, 1,
             Optional.<UUID> absent());
 
     // public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 0, 0);

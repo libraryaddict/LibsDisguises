@@ -7,8 +7,8 @@ import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class HorseAbstractWatcher extends AgeableWatcher {
-    public HorseAbstractWatcher(Disguise disguise) {
+public class AbstractHorseWatcher extends AgeableWatcher {
+    public AbstractHorseWatcher(Disguise disguise) {
         super(disguise);
     }
 

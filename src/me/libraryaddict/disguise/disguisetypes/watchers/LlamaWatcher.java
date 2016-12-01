@@ -6,7 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class LlamaWatcher extends HorseChestedWatcher {
+public class LlamaWatcher extends ChestedHorseWatcher {
 
     public LlamaWatcher(Disguise disguise) {
         super(disguise);

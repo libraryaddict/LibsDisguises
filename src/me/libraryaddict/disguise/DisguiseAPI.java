@@ -27,7 +27,7 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.disguisetypes.watchers.HorseAbstractWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -83,7 +83,7 @@ public class DisguiseAPI {
                 ItemStack saddle = horseInventory.getSaddle();
 
                 if (saddle != null && saddle.getType() == Material.SADDLE) {
-                    ((HorseAbstractWatcher) watcher).setSaddled(true);
+                    ((AbstractHorseWatcher) watcher).setSaddled(true);
                 }
 
                 if (watcher instanceof HorseWatcher)

@@ -9,7 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
-public class HorseWatcher extends HorseAbstractWatcher {
+public class HorseWatcher extends AbstractHorseWatcher {
     public HorseWatcher(Disguise disguise) {
         super(disguise);
 

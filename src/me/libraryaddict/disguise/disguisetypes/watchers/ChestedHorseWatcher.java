@@ -3,9 +3,9 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagType;
 
-public class HorseChestedWatcher extends HorseAbstractWatcher {
+public class ChestedHorseWatcher extends AbstractHorseWatcher {
 
-    public HorseChestedWatcher(Disguise disguise) {
+    public ChestedHorseWatcher(Disguise disguise) {
         super(disguise);
     }
 
