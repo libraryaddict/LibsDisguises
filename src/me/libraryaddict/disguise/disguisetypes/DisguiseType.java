@@ -254,7 +254,7 @@ public enum DisguiseType {
     }
 
     public Class<? extends Entity> getEntityClass() {
-        if (entityType != null) {
+        if (entityType != null && getEntityType().getEntityClass() != null) {
             return getEntityType().getEntityClass();
         }
 
