@@ -36,7 +36,7 @@ public class FlagWatcher {
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;
-    private boolean[] modifiedEntityAnimations = new boolean[6];
+    private boolean[] modifiedEntityAnimations = new boolean[7];
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
