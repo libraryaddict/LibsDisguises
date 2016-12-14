@@ -1,7 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.bukkit.Sound;
 
@@ -81,7 +82,11 @@ public enum DisguiseSound {
     PIG_ZOMBIE(Sound.ENTITY_ZOMBIE_PIG_HURT, null, Sound.ENTITY_ZOMBIE_PIG_DEATH, Sound.ENTITY_ZOMBIE_PIG_AMBIENT,
             Sound.ENTITY_ZOMBIE_PIG_ANGRY),
 
-    PLAYER(Sound.ENTITY_PLAYER_HURT, Sound.BLOCK_GRASS_STEP, Sound.ENTITY_PLAYER_DEATH, null),
+    PLAYER(Sound.ENTITY_PLAYER_HURT, new Sound[] {
+            Sound.BLOCK_ANVIL_STEP, Sound.BLOCK_CLOTH_STEP, Sound.BLOCK_GLASS_STEP, Sound.BLOCK_GRASS_STEP,
+            Sound.BLOCK_GRAVEL_STEP, Sound.BLOCK_LADDER_STEP, Sound.BLOCK_METAL_STEP, Sound.BLOCK_SAND_STEP,
+            Sound.BLOCK_SLIME_STEP, Sound.BLOCK_SNOW_STEP, Sound.BLOCK_STONE_STEP, Sound.BLOCK_WOOD_STEP
+    }, Sound.ENTITY_PLAYER_DEATH, null),
 
     RABBIT(Sound.ENTITY_RABBIT_HURT, Sound.ENTITY_RABBIT_JUMP, Sound.ENTITY_RABBIT_DEATH, Sound.ENTITY_RABBIT_AMBIENT),
 
@@ -154,9 +159,8 @@ public enum DisguiseSound {
         }
     }
 
-    private HashSet<String> cancelSounds = new HashSet<>();
     private float damageSoundVolume = 1F;
-    private HashMap<SoundType, String> disguiseSounds = new HashMap<>();
+    private HashMap<Object, Object> disguiseSounds = new HashMap<>();
 
     DisguiseSound(Object hurt, Object step, Object death, Object idle, Object... sounds) {
         addSound(hurt, SoundType.HURT);
@@ -167,7 +171,18 @@ public enum DisguiseSound {
         for (Object obj : sounds) {
             addSound(obj, SoundType.CANCEL);
         }
+    }
 
+    DisguiseSound(Object hurt, Object[] step, Object death, Object idle, Object... sounds) {
+        addSound(hurt, SoundType.HURT);
+        for (Object obj : step)
+            addSound(obj, SoundType.STEP);
+        addSound(death, SoundType.DEATH);
+        addSound(idle, SoundType.IDLE);
+
+        for (Object obj : sounds) {
+            addSound(obj, SoundType.CANCEL);
+        }
     }
 
     private void addSound(Object sound, SoundType type) {
@@ -200,7 +215,7 @@ public enum DisguiseSound {
             disguiseSounds.put(SoundType.IDLE, s);
             break;
         case CANCEL:
-            cancelSounds.add(s);
+            disguiseSounds.put(s, SoundType.CANCEL);
         }
     }
 
@@ -209,15 +224,43 @@ public enum DisguiseSound {
     }
 
     public String getSound(SoundType type) {
-        if (type == null || !disguiseSounds.containsKey(type)) {
+        if (type == null) {
             return null;
         }
 
-        return disguiseSounds.get(type);
+        if (disguiseSounds.containsKey(type)) {
+            return (String) disguiseSounds.get(type);
+        }
+        else if (disguiseSounds.containsValue(type)) {
+            for (Entry<Object, Object> entry : disguiseSounds.entrySet()) {
+                if (entry.getValue() != type)
+                    continue;
+
+                return (String) entry.getKey();
+            }
+        }
+
+        return null;
     }
 
-    public HashSet<String> getSoundsToCancel() {
-        return cancelSounds;
+    public SoundType getSound(String sound) {
+        if (sound == null) {
+            return null;
+        }
+
+        if (disguiseSounds.containsKey(sound)) {
+            return (SoundType) disguiseSounds.get(sound);
+        }
+        else if (disguiseSounds.containsValue(sound)) {
+            for (Entry<Object, Object> entry : disguiseSounds.entrySet()) {
+                if (!Objects.equals(sound, entry.getValue()))
+                    continue;
+
+                return (SoundType) entry.getKey();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -231,21 +274,29 @@ public enum DisguiseSound {
             return SoundType.CANCEL;
         }
 
-        if (disguiseSounds.containsKey(SoundType.STEP) && disguiseSounds.get(SoundType.STEP).startsWith("step.")
+        /*if (disguiseSounds.containsKey(SoundType.STEP) && disguiseSounds.get(SoundType.STEP).startsWith("step.")
                 && sound.startsWith("step.")) {
             return SoundType.STEP;
-        }
+        }*/
 
         for (SoundType type : SoundType.values()) {
             if (!disguiseSounds.containsKey(type) || type == SoundType.DEATH || (ignoreDamage && type == SoundType.HURT)) {
                 continue;
             }
 
-            String s = disguiseSounds.get(type);
+            Object s = disguiseSounds.get(type);
 
             if (s != null) {
-                if (s.equals(sound)) {
+                if (Objects.equals(s, sound)) {
                     return type;
+                }
+            }
+            else {
+                for (Entry<Object, Object> entry : disguiseSounds.entrySet()) {
+                    if (!Objects.equals(sound, entry.getKey()))
+                        continue;
+
+                    return (SoundType) entry.getValue();
                 }
             }
         }
@@ -254,13 +305,13 @@ public enum DisguiseSound {
     }
 
     public boolean isCancelSound(String sound) {
-        return getSoundsToCancel().contains(sound);
+        return getSound(sound) == SoundType.CANCEL;
     }
 
-    public void removeSound(SoundType type, Sound sound) {
+    /*  public void removeSound(SoundType type, Sound sound) {
         removeSound(type, ReflectionManager.getCraftSound(sound));
     }
-
+    
     public void removeSound(SoundType type, String sound) {
         if (type == SoundType.CANCEL) {
             cancelSounds.remove(sound);
@@ -268,16 +319,16 @@ public enum DisguiseSound {
         else {
             disguiseSounds.remove(type);
         }
-    }
+    }*/
 
     public void setDamageAndIdleSoundVolume(float strength) {
         this.damageSoundVolume = strength;
     }
 
-    public void setSound(SoundType type, Sound sound) {
+    /* public void setSound(SoundType type, Sound sound) {
         setSound(type, ReflectionManager.getCraftSound(sound));
     }
-
+    
     public void setSound(SoundType type, String sound) {
         if (type == SoundType.CANCEL) {
             cancelSounds.add(sound);
@@ -285,5 +336,5 @@ public enum DisguiseSound {
         else {
             disguiseSounds.put(type, sound);
         }
-    }
+    }*/
 }
