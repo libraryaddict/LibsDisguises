@@ -16,6 +16,7 @@ import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.google.common.base.Optional;
 
+import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
@@ -23,6 +24,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
@@ -34,8 +36,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
@@ -202,9 +202,9 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> LIVING_POTIONS = new FlagType<Integer>(LivingWatcher.class, 2, 0);
 
-    public static FlagType<Integer> LLAMA_CARPET = new FlagType<Integer>(LlamaWatcher.class, 2, 0);
+    public static FlagType<Integer> LLAMA_CARPET = new FlagType<Integer>(LlamaWatcher.class, 1, 0);
 
-    public static FlagType<Integer> LLAMA_COLOR = new FlagType<Integer>(LlamaWatcher.class, 1, -1);
+    public static FlagType<Integer> LLAMA_COLOR = new FlagType<Integer>(LlamaWatcher.class, 2, -1);
 
     public static FlagType<Integer> LLAMA_STRENGTH = new FlagType<Integer>(LlamaWatcher.class, 0, 0);
 

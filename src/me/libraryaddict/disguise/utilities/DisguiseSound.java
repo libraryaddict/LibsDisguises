@@ -175,8 +175,13 @@ public enum DisguiseSound {
 
     DisguiseSound(Object hurt, Object[] step, Object death, Object idle, Object... sounds) {
         addSound(hurt, SoundType.HURT);
-        for (Object obj : step)
-            addSound(obj, SoundType.STEP);
+
+        if (step != null) {
+            for (Object obj : step) {
+                addSound(obj, SoundType.STEP);
+            }
+        }
+
         addSound(death, SoundType.DEATH);
         addSound(idle, SoundType.IDLE);
 

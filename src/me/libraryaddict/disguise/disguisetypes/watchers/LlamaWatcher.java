@@ -22,7 +22,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public void setCarpet(AnimalColor color) {
-        setData(FlagType.LLAMA_CARPET, color.ordinal());
+        setData(FlagType.LLAMA_CARPET, color.getId());
         sendData(FlagType.LLAMA_CARPET);
     }
 
