@@ -56,6 +56,7 @@ public class DisguiseConfig {
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
+    private static boolean disablePushing;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -66,6 +67,10 @@ public class DisguiseConfig {
         }
 
         return null;
+    }
+
+    public static boolean isPushingDisabled() {
+        return disablePushing;
     }
 
     public static HashMap<String, Disguise> getCustomDisguises() {
@@ -136,6 +141,7 @@ public class DisguiseConfig {
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
+        disablePushing = config.getBoolean("DisablePushing");
 
         customDisguises.clear();
 

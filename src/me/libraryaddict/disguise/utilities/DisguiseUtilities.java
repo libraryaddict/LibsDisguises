@@ -988,12 +988,14 @@ public class DisguiseUtilities {
             ex.printStackTrace();
         }
 
-        // Code to stop player pushing in 1.9
-        Scoreboard scoreboard = player.getScoreboard();
-        Team t;
+        if (DisguiseConfig.isPushingDisabled()) {
+            // Code to stop player pushing in 1.9
+            Scoreboard scoreboard = player.getScoreboard();
+            Team t;
 
-        if ((t = scoreboard.getTeam("LDPushing")) != null) {
-            t.removeEntry(player.getName());
+            if ((t = scoreboard.getTeam("LDPushing")) != null) {
+                t.removeEntry(player.getName());
+            }
         }
 
         // player.spigot().setCollidesWithEntities(true);
@@ -1071,21 +1073,23 @@ public class DisguiseUtilities {
                 return;
             }
 
-            // Code to stop player pushing
-            Scoreboard scoreboard = player.getScoreboard();
-            Team t;
+            if (DisguiseConfig.isPushingDisabled()) {
+                // Code to stop player pushing
+                Scoreboard scoreboard = player.getScoreboard();
+                Team t;
 
-            if ((t = scoreboard.getTeam("LDPushing")) == null) {
-                t = scoreboard.registerNewTeam("LDPushing");
+                if ((t = scoreboard.getTeam("LDPushing")) == null) {
+                    t = scoreboard.registerNewTeam("LDPushing");
+                }
+
+                if (t.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
+                    t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+                    t.setCanSeeFriendlyInvisibles(false);
+                }
+
+                if (!t.hasEntry(player.getName()))
+                    t.addEntry(player.getName());
             }
-
-            if (t.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
-                t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-                t.setCanSeeFriendlyInvisibles(false);
-            }
-
-            if (!t.hasEntry(player.getName()))
-                t.addEntry(player.getName());
 
             // Add himself to his own entity tracker
             Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
