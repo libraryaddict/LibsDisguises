@@ -146,7 +146,8 @@ public class DisguiseConfig {
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
 
         try {
-            disablePushing = DisguisePushing.valueOf(config.getString("DisablePushing").toUpperCase());
+            disablePushing = DisguisePushing
+                    .valueOf(config.getString("DisablePushing", DisguisePushing.MODIFY.name()).toUpperCase());
         }
         catch (Exception ex) {
             System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesTeams")
