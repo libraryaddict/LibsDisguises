@@ -15,6 +15,9 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException
 import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
+    public static enum DisguisePushing {
+        MODIFY, IGNORE, CREATE;
+    }
 
     private static boolean animationEnabled;
     private static boolean bedEnabled;
@@ -56,7 +59,7 @@ public class DisguiseConfig {
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
-    private static boolean disablePushing;
+    private static DisguisePushing disablePushing;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -69,7 +72,7 @@ public class DisguiseConfig {
         return null;
     }
 
-    public static boolean isPushingDisabled() {
+    public static DisguisePushing getPushingOption() {
         return disablePushing;
     }
 
@@ -141,7 +144,14 @@ public class DisguiseConfig {
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
-        disablePushing = config.getBoolean("DisablePushing");
+
+        try {
+            disablePushing = DisguisePushing.valueOf(config.getString("DisablePushing").toUpperCase());
+        }
+        catch (Exception ex) {
+            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesTeams")
+                    + "' to a valid option for SelfDisguisesTeam");
+        }
 
         customDisguises.clear();
 

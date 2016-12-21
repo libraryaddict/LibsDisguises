@@ -1,9 +1,11 @@
 # Shall I notify people of a LibsDisguises update?
 NotifyUpdate: true
 
-# Should the plugin use scoreboards to disable pushing? Please note that disabling this effectively means that self disguises will push the disguiser around
-# Alternatively when this is enabled this will remove the player from any scoreboard team he is in
-DisablePushing: true
+# How should the plugin handle self disguises scoreboards?
+# MODIFY - Modifies the player's existing scoreboard if possible, otherwise assigns them to a new scoreboard team
+# IGNORE - Doesn't touch scoreboards at all, effectively means that if you didn't disable pushing in their scoreboard team they will be pushed around
+# CREATE - Assigns them to a new team which copies the attributes of their previous scoreboard team. This means they keep nametag color and other options.
+SelfDisguisesScoreboard: MODIFY
 
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'

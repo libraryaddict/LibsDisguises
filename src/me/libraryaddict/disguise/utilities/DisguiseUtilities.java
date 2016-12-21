@@ -47,6 +47,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -84,6 +85,7 @@ public class DisguiseUtilities {
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
     private static PacketContainer spawnChunk;
+    private static HashMap<UUID, String> previousTeam = new HashMap<UUID, String>();
 
     static {
         try {
@@ -988,13 +990,28 @@ public class DisguiseUtilities {
             ex.printStackTrace();
         }
 
-        if (DisguiseConfig.isPushingDisabled()) {
+        String prevTeam = previousTeam.remove(player.getUniqueId());
+
+        if (DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE) {
             // Code to stop player pushing in 1.9
             Scoreboard scoreboard = player.getScoreboard();
-            Team t;
+            Team team = scoreboard.getTeam(prevTeam);
+            Team ldTeam = scoreboard.getEntryTeam(player.getName());
 
-            if ((t = scoreboard.getTeam("LDPushing")) != null) {
-                t.removeEntry(player.getName());
+            if (ldTeam != null) {
+                if (!ldTeam.getName().equals("LDPushing") && !ldTeam.getName().endsWith("_LDP"))
+                    ldTeam = null;
+            }
+
+            if (team != null) {
+                team.addEntry(player.getName());
+            }
+            else if (ldTeam != null) {
+                ldTeam.removeEntry(player.getName());
+            }
+
+            if (ldTeam != null && ldTeam.getEntries().isEmpty()) {
+                ldTeam.unregister();
             }
         }
 
@@ -1073,22 +1090,55 @@ public class DisguiseUtilities {
                 return;
             }
 
-            if (DisguiseConfig.isPushingDisabled()) {
+            DisguisePushing pOption = DisguiseConfig.getPushingOption();
+
+            if (pOption != DisguisePushing.IGNORE) {
                 // Code to stop player pushing
                 Scoreboard scoreboard = player.getScoreboard();
-                Team t;
+                Team prevTeam = scoreboard.getEntryTeam(player.getName());
 
-                if ((t = scoreboard.getTeam("LDPushing")) == null) {
-                    t = scoreboard.registerNewTeam("LDPushing");
+                if (prevTeam != null && pOption == DisguisePushing.CREATE) {
+                    previousTeam.put(player.getUniqueId(), prevTeam.getName());
+                }
+
+                Team t;
+                String createName = null;
+
+                if (pOption == DisguisePushing.CREATE) {
+                    createName = (prevTeam == null ? "No Team" : prevTeam.getName());
+
+                    createName = createName.substring(0, Math.min(12, createName.length()));
+                }
+                else {
+                    createName = "LDPushing";
+                }
+
+                if ((t = scoreboard.getTeam(createName)) == null) {
+                    t = scoreboard.registerNewTeam(createName);
                 }
 
                 if (t.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
                     t.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+                }
+
+                if (t.canSeeFriendlyInvisibles()) {
                     t.setCanSeeFriendlyInvisibles(false);
                 }
 
                 if (!t.hasEntry(player.getName()))
                     t.addEntry(player.getName());
+
+                if (pOption == DisguisePushing.CREATE && prevTeam != null) {
+                    t.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
+                    t.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
+                    t.setDisplayName(prevTeam.getDisplayName());
+                    t.setPrefix(prevTeam.getPrefix());
+                    t.setSuffix(prevTeam.getSuffix());
+
+                    for (Option option : Team.Option.values()) {
+                        t.setOption(option, prevTeam.getOption(option));
+                    }
+                }
             }
 
             // Add himself to his own entity tracker
