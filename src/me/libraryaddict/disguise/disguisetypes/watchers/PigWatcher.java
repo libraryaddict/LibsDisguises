@@ -18,12 +18,12 @@ public class PigWatcher extends AgeableWatcher {
         sendData(FlagType.PIG_SADDLED);
     }
 
-    public int getUnknown() {
+    /* public int getUnknown() {
         return getData(FlagType.PIG_UNKNOWN);
     }
-
+    
     public void setUnknown(int unknown) {
         setData(FlagType.PIG_UNKNOWN, unknown);
         sendData(FlagType.PIG_UNKNOWN);
-    }
+    }*/
 }
