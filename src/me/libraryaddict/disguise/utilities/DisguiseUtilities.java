@@ -995,7 +995,7 @@ public class DisguiseUtilities {
         if (DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE) {
             // Code to stop player pushing in 1.9
             Scoreboard scoreboard = player.getScoreboard();
-            Team team = scoreboard.getTeam(prevTeam);
+            Team team = prevTeam == null ? null : scoreboard.getTeam(prevTeam);
             Team ldTeam = scoreboard.getEntryTeam(player.getName());
 
             if (ldTeam != null) {

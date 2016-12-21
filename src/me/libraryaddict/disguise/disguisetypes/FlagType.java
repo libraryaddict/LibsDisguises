@@ -162,6 +162,8 @@ public class FlagType<Y> {
     public static FlagType<ItemStack> FIREWORK_ITEM = new FlagType<ItemStack>(FireworkWatcher.class, 0,
             new ItemStack(Material.AIR));
 
+    public static FlagType<Integer> FIREWORK_ATTACHED_ENTITY = new FlagType<Integer>(FireworkWatcher.class, 1, 0);
+
     public static FlagType<Integer> FISHING_HOOK_HOOKED = new FlagType<Integer>(FishingHookWatcher.class, 0, 0);
 
     public static FlagType<Boolean> GHAST_AGRESSIVE = new FlagType<Boolean>(GhastWatcher.class, 0, false);
@@ -180,8 +182,6 @@ public class FlagType<Y> {
 
     public static FlagType<Optional<UUID>> HORSE_OWNER = new FlagType<Optional<UUID>>(AbstractHorseWatcher.class, 1,
             Optional.<UUID> absent());
-
-    // public static FlagType<Integer> HORSE_VARIANT = new FlagType<Integer>(HorseWatcher.class, 0, 0);
 
     public static FlagType<Byte> INSENTIENT_META = new FlagType<Byte>(InsentientWatcher.class, 0, (byte) 0);
 
@@ -223,6 +223,8 @@ public class FlagType<Y> {
     public static FlagType<Integer> OCELOT_TYPE = new FlagType<Integer>(OcelotWatcher.class, 0, 0);
 
     public static FlagType<Boolean> PIG_SADDLED = new FlagType<Boolean>(PigWatcher.class, 0, false);
+
+    public static FlagType<Integer> PIG_UNKNOWN = new FlagType<Integer>(PigWatcher.class, 1, 0);
 
     public static FlagType<Float> PLAYER_ABSORPTION = new FlagType<Float>(PlayerWatcher.class, 0, 0F);
 

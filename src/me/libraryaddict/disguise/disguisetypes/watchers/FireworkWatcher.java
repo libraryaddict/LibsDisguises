@@ -32,4 +32,12 @@ public class FireworkWatcher extends FlagWatcher {
         sendData(FlagType.FIREWORK_ITEM);
     }
 
+    public void setAttachedEntity(int entityId) {
+        setData(FlagType.FIREWORK_ATTACHED_ENTITY, entityId);
+        sendData(FlagType.FIREWORK_ATTACHED_ENTITY);
+    }
+
+    public int getAttachedEntity() {
+        return getData(FlagType.FIREWORK_ATTACHED_ENTITY);
+    }
 }
