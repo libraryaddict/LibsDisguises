@@ -36,7 +36,7 @@ public class FlagWatcher {
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;
-    private boolean[] modifiedEntityAnimations = new boolean[7];
+    private boolean[] modifiedEntityAnimations = new boolean[8];
     private List<WrappedWatchableObject> watchableObjects;
 
     public FlagWatcher(Disguise disguise) {
@@ -47,7 +47,7 @@ public class FlagWatcher {
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
         for (int i = 0; i < 6; i++) {
-            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i - 1]) {
+            if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i]) {
                 originalValue = (byte) (originalValue | 1 << i);
             }
         }
@@ -401,7 +401,7 @@ public class FlagWatcher {
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
-        modifiedEntityAnimations[byteValue - 1] = true;
+        modifiedEntityAnimations[byteValue] = true;
 
         byte b0 = (byte) getData(FlagType.ENTITY_META);
 
