@@ -237,6 +237,33 @@ public class PlayerDisguise extends TargetedDisguise {
         return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
     }
 
+    @Override
+    public boolean startDisguise() {
+        if (isDisguiseInUse() || skinToUse == null)
+            return super.startDisguise();
+
+        currentLookup = new LibsProfileLookup() {
+            @Override
+            public void onLookup(WrappedGameProfile gameProfile) {
+                if (currentLookup != this || gameProfile == null)
+                    return;
+
+                setSkin(gameProfile);
+
+                currentLookup = null;
+            }
+        };
+
+        WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
+                LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+
+        if (gameProfile != null) {
+            setSkin(gameProfile);
+        }
+
+        return super.startDisguise();
+    }
+
     public PlayerDisguise setSkin(String newSkin) {
         if (newSkin != null && newSkin.length() > 50) {
             try {
@@ -257,25 +284,6 @@ public class PlayerDisguise extends TargetedDisguise {
         else {
             if (newSkin.length() > 16) {
                 skinToUse = newSkin.substring(0, 16);
-            }
-
-            currentLookup = new LibsProfileLookup() {
-                @Override
-                public void onLookup(WrappedGameProfile gameProfile) {
-                    if (currentLookup != this || gameProfile == null)
-                        return;
-
-                    setSkin(gameProfile);
-
-                    currentLookup = null;
-                }
-            };
-
-            WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
-                    LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
-
-            if (gameProfile != null) {
-                setSkin(gameProfile);
             }
         }
 
