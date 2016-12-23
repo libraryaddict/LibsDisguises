@@ -5,7 +5,7 @@ A disguise plugin made by libraryaddict which is pretty cool.<br>
 
 NOTE: These versions will NOT work with Spigot 1.8.8 and before.
 
-Spigot page: <a href="https://www.spigotmc.org/resources/libs-disguises.81/">Link</a>
+Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
 
 
 When posting an issue:<br>
