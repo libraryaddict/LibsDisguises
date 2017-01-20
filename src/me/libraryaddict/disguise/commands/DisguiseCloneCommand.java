@@ -5,14 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
@@ -26,8 +29,14 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             boolean doEquipment = true;
             boolean doSneak = false;
             boolean doSprint = false;
+            Player player = null;
 
-            for (String option : args) {
+            if (args.length > 0) {
+                player = Bukkit.getPlayerExact(args[0]);
+            }
+
+            for (int i = player == null ? 0 : 1; i < args.length; i++) {
+                String option = args[i];
                 if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip")
                         || StringUtils.startsWithIgnoreCase(option, "ignoreEnquip")) {
                     doEquipment = false;
@@ -49,12 +58,19 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
                 }
             }
 
-            LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), new Boolean[] {
+            Boolean[] options = new Boolean[] {
                     doEquipment, doSneak, doSprint
-            });
+            };
 
-            sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
-                    + " seconds to grab the disguise reference!");
+            if (player != null) {
+                DisguiseUtilities.createClonedDisguise((Player) sender, player, options);
+            }
+            else {
+                LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), options);
+
+                sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseCloneExpire()
+                        + " seconds to grab the disguise reference!");
+            }
         }
         else {
             sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
@@ -66,6 +82,14 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
         ArrayList<String> tabs = new ArrayList<String>();
+
+        String[] args = getArgs(origArgs);
+
+        if (args.length == 0) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                tabs.add(player.getName());
+            }
+        }
 
         tabs.add("ignoreEquip");
         tabs.add("doSneakSprint");

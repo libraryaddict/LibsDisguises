@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -58,6 +59,9 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ClickEvent.Action;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class DisguiseUtilities {
     public static final Random random = new Random();
@@ -140,6 +144,50 @@ public class DisguiseUtilities {
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static void createClonedDisguise(Player player, Entity toClone, Boolean[] options) {
+        Disguise disguise = DisguiseAPI.getDisguise(player, toClone);
+
+        if (disguise == null) {
+            disguise = DisguiseAPI.constructDisguise(toClone, options[0], options[1], options[2]);
+        }
+        else {
+            disguise = disguise.clone();
+        }
+
+        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
+        String reference = null;
+        int referenceLength = Math.max(2, (int) Math.ceil((0.1D + DisguiseConfig.getMaxClonedDisguises()) / 26D));
+        int attempts = 0;
+
+        while (reference == null && attempts++ < 1000) {
+            reference = "@";
+
+            for (int i = 0; i < referenceLength; i++) {
+                reference += alphabet[DisguiseUtilities.random.nextInt(alphabet.length)];
+            }
+
+            if (DisguiseUtilities.getClonedDisguise(reference) != null) {
+                reference = null;
+            }
+        }
+
+        if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
+            String entityName = DisguiseType.getType(toClone).toReadable();
+
+            ComponentBuilder text = new ComponentBuilder(
+                    ChatColor.RED + "Constructed a " + entityName + " disguise! Your reference is ");
+            text.append(reference).event(new ClickEvent(Action.SUGGEST_COMMAND, reference));
+
+            player.sendRawMessage(text.toString());
+            player.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
+        }
+        else {
+            player.sendMessage(
+                    ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please set this in the config");
         }
     }
 

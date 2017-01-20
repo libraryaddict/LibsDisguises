@@ -329,41 +329,7 @@ public class DisguiseListener implements Listener {
             if (disguiseClone.containsKey(p.getName())) {
                 Boolean[] options = disguiseClone.remove(p.getName());
 
-                Disguise disguise = DisguiseAPI.getDisguise(p, entity);
-
-                if (disguise == null) {
-                    disguise = DisguiseAPI.constructDisguise(entity, options[0], options[1], options[2]);
-                }
-                else {
-                    disguise = disguise.clone();
-                }
-
-                char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
-                String reference = null;
-                int referenceLength = Math.max(2, (int) Math.ceil((0.1D + DisguiseConfig.getMaxClonedDisguises()) / 26D));
-                int attempts = 0;
-
-                while (reference == null && attempts++ < 1000) {
-                    reference = "@";
-
-                    for (int i = 0; i < referenceLength; i++) {
-                        reference += alphabet[DisguiseUtilities.random.nextInt(alphabet.length)];
-                    }
-
-                    if (DisguiseUtilities.getClonedDisguise(reference) != null) {
-                        reference = null;
-                    }
-                }
-
-                if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
-                    p.sendMessage(ChatColor.RED + "Constructed a " + entityName + " disguise! Your reference is " + reference);
-                    p.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
-                }
-                else {
-                    p.sendMessage(
-                            ChatColor.RED + "Failed to store the reference due to lack of size. Please set this in the config");
-                }
+                DisguiseUtilities.createClonedDisguise(p, entity, options);
             }
             else if (disguiseEntity.containsKey(p.getName())) {
                 Disguise disguise = disguiseEntity.remove(p.getName());
