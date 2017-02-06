@@ -117,8 +117,6 @@ public class PacketListenerViewDisguises extends PacketAdapter {
 
                         watch.setValue(a);
                     }
-
-                    event.setCancelled(false);
                 }
             }
             else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN) {
