@@ -85,9 +85,11 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<Float>(AreaEffectCloudWatcher.class, 0, 0F);
 
-    public static MetaIndex<Vector3F> ARMORSTAND_BODY = new MetaIndex<Vector3F>(ArmorStandWatcher.class, 2, new Vector3F(0, 0, 0));
+    public static MetaIndex<Vector3F> ARMORSTAND_BODY = new MetaIndex<Vector3F>(ArmorStandWatcher.class, 2,
+            new Vector3F(0, 0, 0));
 
-    public static MetaIndex<Vector3F> ARMORSTAND_HEAD = new MetaIndex<Vector3F>(ArmorStandWatcher.class, 1, new Vector3F(0, 0, 0));
+    public static MetaIndex<Vector3F> ARMORSTAND_HEAD = new MetaIndex<Vector3F>(ArmorStandWatcher.class, 1,
+            new Vector3F(0, 0, 0));
 
     public static MetaIndex<Vector3F> ARMORSTAND_LEFT_ARM = new MetaIndex<Vector3F>(ArmorStandWatcher.class, 3,
             new Vector3F(0, 0, 0));
@@ -240,8 +242,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SHEEP_WOOL = new MetaIndex<Byte>(SheepWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<Optional<BlockPosition>> SHULKER_ATTACHED = new MetaIndex<Optional<BlockPosition>>(ShulkerWatcher.class,
-            1, Optional.<BlockPosition> absent());
+    public static MetaIndex<Optional<BlockPosition>> SHULKER_ATTACHED = new MetaIndex<Optional<BlockPosition>>(
+            ShulkerWatcher.class, 1, Optional.<BlockPosition> absent());
 
     public static MetaIndex<Byte> SHULKER_COLOR = new MetaIndex<Byte>(ShulkerWatcher.class, 3, (byte) 10);
 
@@ -253,7 +255,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<Integer>(SlimeWatcher.class, 0, 0);
 
-    public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<Byte>(SnowmanWatcher.class, 0, (byte) 0);
+    public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<Byte>(SnowmanWatcher.class, 0, (byte) 16);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<Byte>(SpiderWatcher.class, 0, (byte) 0);
 
