@@ -253,7 +253,7 @@ public class FlagType<Y> {
 
     public static FlagType<Integer> SLIME_SIZE = new FlagType<Integer>(SlimeWatcher.class, 0, 0);
 
-    public static FlagType<Byte> SNOWMAN_HAT = new FlagType<Byte>(SnowmanWatcher.class, 0, (byte) 0);
+    public static FlagType<Byte> SNOWMAN_DERP = new FlagType<Byte>(SnowmanWatcher.class, 0, (byte) 0);
 
     public static FlagType<Byte> SPIDER_CLIMB = new FlagType<Byte>(SpiderWatcher.class, 0, (byte) 0);
 
