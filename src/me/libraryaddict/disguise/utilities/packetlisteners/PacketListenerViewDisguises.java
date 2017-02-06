@@ -154,7 +154,7 @@ public class PacketListenerViewDisguises extends PacketAdapter {
             else if (event.getPacketType() == Server.ATTACH_ENTITY || event.getPacketType() == Server.REL_ENTITY_MOVE
                     || event.getPacketType() == Server.REL_ENTITY_MOVE_LOOK || event.getPacketType() == Server.ENTITY_LOOK
                     || event.getPacketType() == Server.ENTITY_TELEPORT || event.getPacketType() == Server.ENTITY_HEAD_ROTATION
-                    || event.getPacketType() == Server.ENTITY_EFFECT || event.getPacketType() == Server.ENTITY_EQUIPMENT) {
+                    || event.getPacketType() == Server.ENTITY_EQUIPMENT) {
                 event.setCancelled(true);
             }
             else if (event.getPacketType() == Server.ENTITY_STATUS) {
