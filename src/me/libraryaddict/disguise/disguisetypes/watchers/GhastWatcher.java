@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class GhastWatcher extends InsentientWatcher
 {
@@ -13,13 +13,13 @@ public class GhastWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return getData(FlagType.GHAST_AGRESSIVE);
+        return getData(MetaIndex.GHAST_AGRESSIVE);
     }
 
     public void setAggressive(boolean isAggressive)
     {
-        setData(FlagType.GHAST_AGRESSIVE, isAggressive);
-        sendData(FlagType.GHAST_AGRESSIVE);
+        setData(MetaIndex.GHAST_AGRESSIVE, isAggressive);
+        sendData(MetaIndex.GHAST_AGRESSIVE);
     }
 
 }

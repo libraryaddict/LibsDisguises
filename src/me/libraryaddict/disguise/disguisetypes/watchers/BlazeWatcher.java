@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class BlazeWatcher extends InsentientWatcher
 {
@@ -12,13 +12,13 @@ public class BlazeWatcher extends InsentientWatcher
 
     public boolean isBlazing()
     {
-        return getData(FlagType.BLAZE_BLAZING) == 1;
+        return getData(MetaIndex.BLAZE_BLAZING) == 1;
     }
 
     public void setBlazing(boolean isBlazing)
     {
-        setData(FlagType.BLAZE_BLAZING, (byte) (isBlazing ? 1 : 0));
-        sendData(FlagType.BLAZE_BLAZING);
+        setData(MetaIndex.BLAZE_BLAZING, (byte) (isBlazing ? 1 : 0));
+        sendData(MetaIndex.BLAZE_BLAZING);
     }
 
 }

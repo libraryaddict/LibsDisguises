@@ -20,7 +20,7 @@ import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
@@ -72,7 +72,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public float getHealth() {
-        return (float) getData(FlagType.LIVING_HEALTH);
+        return (float) getData(MetaIndex.LIVING_HEALTH);
     }
 
     public double getMaxHealth() {
@@ -80,7 +80,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public boolean isPotionParticlesAmbient() {
-        return (boolean) getData(FlagType.LIVING_POTION_AMBIENT);
+        return (boolean) getData(MetaIndex.LIVING_POTION_AMBIENT);
     }
 
     private int getPotions() {
@@ -130,27 +130,27 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public void setPotionParticlesAmbient(boolean particles) {
-        setData(FlagType.LIVING_POTION_AMBIENT, particles);
-        sendData(FlagType.LIVING_POTION_AMBIENT);
+        setData(MetaIndex.LIVING_POTION_AMBIENT, particles);
+        sendData(MetaIndex.LIVING_POTION_AMBIENT);
     }
 
     private void sendPotionEffects() {
-        setData(FlagType.LIVING_POTIONS, getPotions());
-        sendData(FlagType.LIVING_POTIONS);
+        setData(MetaIndex.LIVING_POTIONS, getPotions());
+        sendData(MetaIndex.LIVING_POTIONS);
     }
 
     public void setHealth(float health) {
-        setData(FlagType.LIVING_HEALTH, health);
-        sendData(FlagType.LIVING_HEALTH);
+        setData(MetaIndex.LIVING_HEALTH, health);
+        sendData(MetaIndex.LIVING_HEALTH);
     }
 
     public int getArrowsSticking() {
-        return (int) getData(FlagType.LIVING_ARROWS);
+        return (int) getData(MetaIndex.LIVING_ARROWS);
     }
 
     public void setArrowsSticking(int arrowsNo) {
-        setData(FlagType.LIVING_ARROWS, arrowsNo);
-        sendData(FlagType.LIVING_ARROWS);
+        setData(MetaIndex.LIVING_ARROWS, arrowsNo);
+        sendData(MetaIndex.LIVING_ARROWS);
     }
 
     public void setMaxHealth(double newHealth) {

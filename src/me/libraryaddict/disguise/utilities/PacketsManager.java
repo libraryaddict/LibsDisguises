@@ -42,7 +42,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -361,7 +361,7 @@ public class PacketsManager {
             spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
 
             // Make him invisible
-            newWatcher.setObject(new WrappedDataWatcherObject(FlagType.ENTITY_META.getIndex(), Registry.get(Byte.class)),
+            newWatcher.setObject(new WrappedDataWatcherObject(MetaIndex.ENTITY_META.getIndex(), Registry.get(Byte.class)),
                     (byte) 32);
 
             packets.addPacket(spawnPlayer);

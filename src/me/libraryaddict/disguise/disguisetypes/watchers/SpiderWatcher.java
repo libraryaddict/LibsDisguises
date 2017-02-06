@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class SpiderWatcher extends InsentientWatcher
 {
@@ -12,12 +12,12 @@ public class SpiderWatcher extends InsentientWatcher
 
     public void setClimbing(boolean climbing)
     {
-        setData(FlagType.SPIDER_CLIMB, (byte) (climbing ? 1 : 0));
-        sendData(FlagType.SPIDER_CLIMB);
+        setData(MetaIndex.SPIDER_CLIMB, (byte) (climbing ? 1 : 0));
+        sendData(MetaIndex.SPIDER_CLIMB);
     }
 
     public boolean isClimbing()
     {
-        return getData(FlagType.SPIDER_CLIMB) == (byte) 1;
+        return getData(MetaIndex.SPIDER_CLIMB) == (byte) 1;
     }
 }

@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.entity.Villager.Profession;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class VillagerWatcher extends AgeableWatcher {
@@ -14,13 +14,13 @@ public class VillagerWatcher extends AgeableWatcher {
     }
 
     public Profession getProfession() {
-        return Profession.values()[getData(FlagType.VILLAGER_PROFESSION)];
+        return Profession.values()[getData(MetaIndex.VILLAGER_PROFESSION)];
     }
 
     @Deprecated
     public void setProfession(int professionId) {
-        setData(FlagType.VILLAGER_PROFESSION, professionId);
-        sendData(FlagType.VILLAGER_PROFESSION);
+        setData(MetaIndex.VILLAGER_PROFESSION, professionId);
+        sendData(MetaIndex.VILLAGER_PROFESSION);
     }
 
     public void setProfession(Profession newProfession) {

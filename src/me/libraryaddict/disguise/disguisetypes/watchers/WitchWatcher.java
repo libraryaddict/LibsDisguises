@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 /**
  * @author Navid
@@ -16,13 +16,13 @@ public class WitchWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return (boolean) getData(FlagType.WITCH_AGGRESSIVE);
+        return (boolean) getData(MetaIndex.WITCH_AGGRESSIVE);
     }
 
     public void setAggressive(boolean aggressive)
     {
-        setData(FlagType.WITCH_AGGRESSIVE, aggressive);
-        sendData(FlagType.WITCH_AGGRESSIVE);
+        setData(MetaIndex.WITCH_AGGRESSIVE, aggressive);
+        sendData(MetaIndex.WITCH_AGGRESSIVE);
     }
 
 }

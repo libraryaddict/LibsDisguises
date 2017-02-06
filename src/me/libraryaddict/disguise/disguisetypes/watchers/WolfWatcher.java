@@ -4,7 +4,7 @@ import org.bukkit.DyeColor;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class WolfWatcher extends TameableWatcher
 {
@@ -16,7 +16,7 @@ public class WolfWatcher extends TameableWatcher
 
     public AnimalColor getCollarColor()
     {
-        return AnimalColor.getColor(getData(FlagType.WOLF_COLLAR));
+        return AnimalColor.getColor(getData(MetaIndex.WOLF_COLLAR));
     }
 
     /**
@@ -26,7 +26,7 @@ public class WolfWatcher extends TameableWatcher
      */
     public float getDamageTaken()
     {
-        return (float) getData(FlagType.WOLF_DAMAGE);
+        return (float) getData(MetaIndex.WOLF_DAMAGE);
     }
 
     /**
@@ -36,19 +36,19 @@ public class WolfWatcher extends TameableWatcher
      */
     public void setDamageTaken(float damage)
     {
-        setData(FlagType.WOLF_DAMAGE, damage);
-        sendData(FlagType.WOLF_DAMAGE);
+        setData(MetaIndex.WOLF_DAMAGE, damage);
+        sendData(MetaIndex.WOLF_DAMAGE);
     }
 
     public boolean isBegging()
     {
-        return (boolean) getData(FlagType.WOLF_BEGGING);
+        return (boolean) getData(MetaIndex.WOLF_BEGGING);
     }
 
     public void setBegging(boolean begging)
     {
-        setData(FlagType.WOLF_BEGGING, begging);
-        sendData(FlagType.WOLF_BEGGING);
+        setData(MetaIndex.WOLF_BEGGING, begging);
+        sendData(MetaIndex.WOLF_BEGGING);
     }
 
     public boolean isAngry()
@@ -78,8 +78,8 @@ public class WolfWatcher extends TameableWatcher
             return;
         }
 
-        setData(FlagType.WOLF_COLLAR, (int) newColor.getDyeData());
-        sendData(FlagType.WOLF_COLLAR);
+        setData(MetaIndex.WOLF_COLLAR, (int) newColor.getDyeData());
+        sendData(MetaIndex.WOLF_COLLAR);
     }
 
 }

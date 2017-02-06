@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
@@ -27,12 +27,12 @@ public class SplashPotionWatcher extends FlagWatcher {
     }
 
     public void setSplashPotion(ItemStack item) {
-        setData(FlagType.SPLASH_POTION_ITEM, item);
-        sendData(FlagType.SPLASH_POTION_ITEM);
+        setData(MetaIndex.SPLASH_POTION_ITEM, item);
+        sendData(MetaIndex.SPLASH_POTION_ITEM);
     }
 
     public ItemStack getSplashPotion() {
-        return getData(FlagType.SPLASH_POTION_ITEM);
+        return getData(MetaIndex.SPLASH_POTION_ITEM);
     }
 
     public void setPotionId(int newPotionId) {

@@ -4,7 +4,7 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Ocelot.Type;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class OcelotWatcher extends TameableWatcher
 {
@@ -16,12 +16,12 @@ public class OcelotWatcher extends TameableWatcher
 
     public Type getType()
     {
-        return Ocelot.Type.getType(getData(FlagType.OCELOT_TYPE));
+        return Ocelot.Type.getType(getData(MetaIndex.OCELOT_TYPE));
     }
 
     public void setType(Type newType)
     {
-        setData(FlagType.OCELOT_TYPE, newType.getId());
-        sendData(FlagType.OCELOT_TYPE);
+        setData(MetaIndex.OCELOT_TYPE, newType.getId());
+        sendData(MetaIndex.OCELOT_TYPE);
     }
 }

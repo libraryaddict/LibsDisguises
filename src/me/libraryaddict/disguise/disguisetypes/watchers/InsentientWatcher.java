@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.inventory.MainHand;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class InsentientWatcher extends LivingWatcher
 {
@@ -15,7 +15,7 @@ public class InsentientWatcher extends LivingWatcher
     public void setMainHand(MainHand mainHand)
     {
         setInsentientFlag(2, mainHand == MainHand.RIGHT);
-        sendData(FlagType.INSENTIENT_META);
+        sendData(MetaIndex.INSENTIENT_META);
     }
 
     public MainHand getMainHand()
@@ -31,25 +31,25 @@ public class InsentientWatcher extends LivingWatcher
     public void setAI(boolean ai)
     {
         setInsentientFlag(1, ai);
-        sendData(FlagType.INSENTIENT_META);
+        sendData(MetaIndex.INSENTIENT_META);
     }
 
     private void setInsentientFlag(int i, boolean flag)
     {
-        byte b0 = (byte) getData(FlagType.INSENTIENT_META);
+        byte b0 = (byte) getData(MetaIndex.INSENTIENT_META);
 
         if (flag)
         {
-            setData(FlagType.INSENTIENT_META, (byte) (b0 | 1 << i));
+            setData(MetaIndex.INSENTIENT_META, (byte) (b0 | 1 << i));
         }
         else
         {
-            setData(FlagType.INSENTIENT_META, (byte) (b0 & (~1 << i)));
+            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & (~1 << i)));
         }
     }
 
     private boolean getInsentientFlag(int i)
     {
-        return ((byte) getData(FlagType.INSENTIENT_META) & 1 << i) != 0;
+        return ((byte) getData(MetaIndex.INSENTIENT_META) & 1 << i) != 0;
     }
 }

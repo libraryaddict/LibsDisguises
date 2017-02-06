@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class PolarBearWatcher extends AgeableWatcher
 {
@@ -12,12 +12,12 @@ public class PolarBearWatcher extends AgeableWatcher
 
     public void setStanding(boolean standing)
     {
-        setData(FlagType.POLAR_BEAR_STANDING, standing);
-        sendData(FlagType.POLAR_BEAR_STANDING);
+        setData(MetaIndex.POLAR_BEAR_STANDING, standing);
+        sendData(MetaIndex.POLAR_BEAR_STANDING);
     }
 
     public boolean isStanding()
     {
-        return getData(FlagType.POLAR_BEAR_STANDING);
+        return getData(MetaIndex.POLAR_BEAR_STANDING);
     }
 }

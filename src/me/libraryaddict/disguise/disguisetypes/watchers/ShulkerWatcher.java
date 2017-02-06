@@ -8,7 +8,7 @@ import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 /**
  * @author Navid
@@ -20,25 +20,25 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public BlockFace getFacingDirection() {
-        return BlockFace.valueOf(getData(FlagType.SHULKER_FACING).name());
+        return BlockFace.valueOf(getData(MetaIndex.SHULKER_FACING).name());
     }
 
     public void setFacingDirection(BlockFace face) {
-        setData(FlagType.SHULKER_FACING, Direction.valueOf(face.name()));
-        sendData(FlagType.SHULKER_FACING);
+        setData(MetaIndex.SHULKER_FACING, Direction.valueOf(face.name()));
+        sendData(MetaIndex.SHULKER_FACING);
     }
 
     public BlockPosition getAttachmentPosition() {
-        return getData(FlagType.SHULKER_ATTACHED).get();
+        return getData(MetaIndex.SHULKER_ATTACHED).get();
     }
 
     public void setAttachmentPosition(BlockPosition pos) {
-        setData(FlagType.SHULKER_ATTACHED, Optional.of(pos));
-        sendData(FlagType.SHULKER_ATTACHED);
+        setData(MetaIndex.SHULKER_ATTACHED, Optional.of(pos));
+        sendData(MetaIndex.SHULKER_ATTACHED);
     }
 
     public int getShieldHeight() {
-        return getData(FlagType.SHULKER_PEEKING);
+        return getData(MetaIndex.SHULKER_PEEKING);
     }
 
     public void setShieldHeight(int newHeight) {
@@ -48,12 +48,12 @@ public class ShulkerWatcher extends InsentientWatcher {
         if (newHeight > 127)
             newHeight = 127;
 
-        setData(FlagType.SHULKER_PEEKING, (byte) newHeight);
-        sendData(FlagType.SHULKER_PEEKING);
+        setData(MetaIndex.SHULKER_PEEKING, (byte) newHeight);
+        sendData(MetaIndex.SHULKER_PEEKING);
     }
 
     public void setColor(AnimalColor color) {
-        setData(FlagType.SHULKER_COLOR, (byte) color.getId());
-        sendData(FlagType.SHULKER_COLOR);
+        setData(MetaIndex.SHULKER_COLOR, (byte) color.getId());
+        sendData(MetaIndex.SHULKER_COLOR);
     }
 }

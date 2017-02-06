@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class AbstractHorseWatcher extends AgeableWatcher {
     public AbstractHorseWatcher(Disguise disguise) {
@@ -13,7 +13,7 @@ public class AbstractHorseWatcher extends AgeableWatcher {
     }
 
     public Optional<UUID> getOwner() {
-        return getData(FlagType.HORSE_OWNER);
+        return getData(MetaIndex.HORSE_OWNER);
     }
 
     public boolean hasChest() {
@@ -49,7 +49,7 @@ public class AbstractHorseWatcher extends AgeableWatcher {
     }
 
     private byte getHorseFlag() {
-        return getData(FlagType.HORSE_META);
+        return getData(MetaIndex.HORSE_META);
     }
 
     public void setCanBreed(boolean breed) {
@@ -61,16 +61,16 @@ public class AbstractHorseWatcher extends AgeableWatcher {
     }
 
     private void setHorseFlag(int i, boolean flag) {
-        byte j = getData(FlagType.HORSE_META);
+        byte j = getData(MetaIndex.HORSE_META);
 
         if (flag) {
-            setData(FlagType.HORSE_META, (byte) (j | i));
+            setData(MetaIndex.HORSE_META, (byte) (j | i));
         }
         else {
-            setData(FlagType.HORSE_META, (byte) (j & ~i));
+            setData(MetaIndex.HORSE_META, (byte) (j & ~i));
         }
 
-        sendData(FlagType.HORSE_META);
+        sendData(MetaIndex.HORSE_META);
     }
 
     public void setGrazing(boolean grazing) {
@@ -82,8 +82,8 @@ public class AbstractHorseWatcher extends AgeableWatcher {
     }
 
     public void setOwner(UUID uuid) {
-        setData(FlagType.HORSE_OWNER, Optional.of(uuid));
-        sendData(FlagType.HORSE_OWNER);
+        setData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
+        sendData(MetaIndex.HORSE_OWNER);
     }
 
     public void setRearing(boolean rear) {

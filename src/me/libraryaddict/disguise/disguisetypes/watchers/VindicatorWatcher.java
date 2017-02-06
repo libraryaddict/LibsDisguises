@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class VindicatorWatcher extends InsentientWatcher {
 
@@ -10,8 +10,8 @@ public class VindicatorWatcher extends InsentientWatcher {
     }
 
     public void setJohnny(boolean isJohnny) {
-        setData(FlagType.VINDICATOR_JOHNNY, (byte) (isJohnny ? 1 : 0));
-        sendData(FlagType.VINDICATOR_JOHNNY);
+        setData(MetaIndex.VINDICATOR_JOHNNY, (byte) (isJohnny ? 1 : 0));
+        sendData(MetaIndex.VINDICATOR_JOHNNY);
     }
 
 }

@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.entity.Villager.Profession;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
 
@@ -12,7 +12,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     public boolean isShaking() {
-        return getData(FlagType.ZOMBIE_VILLAGER_SHAKING);
+        return getData(MetaIndex.ZOMBIE_VILLAGER_SHAKING);
     }
 
     /**
@@ -21,12 +21,12 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * @return
      */
     public boolean isVillager() {
-        return ((int) getData(FlagType.ZOMBIE_VILLAGER_PROFESSION)) != 0;
+        return ((int) getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)) != 0;
     }
 
     public void setShaking(boolean shaking) {
-        setData(FlagType.ZOMBIE_VILLAGER_SHAKING, shaking);
-        sendData(FlagType.ZOMBIE_VILLAGER_SHAKING);
+        setData(MetaIndex.ZOMBIE_VILLAGER_SHAKING, shaking);
+        sendData(MetaIndex.ZOMBIE_VILLAGER_SHAKING);
     }
 
     /**
@@ -35,7 +35,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * @return
      */
     public Profession getProfession() {
-        return Profession.values()[getData(FlagType.ZOMBIE_VILLAGER_PROFESSION)];
+        return Profession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)];
     }
 
     /**
@@ -45,8 +45,8 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      */
     @Deprecated
     public void setProfession(int id) {
-        setData(FlagType.ZOMBIE_VILLAGER_PROFESSION, id);
-        sendData(FlagType.ZOMBIE_VILLAGER_PROFESSION);
+        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id);
+        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
     /**
@@ -55,8 +55,8 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * @param profession
      */
     public void setProfession(Profession profession) {
-        setData(FlagType.ZOMBIE_VILLAGER_PROFESSION, profession.ordinal());
-        sendData(FlagType.ZOMBIE_VILLAGER_PROFESSION);
+        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, profession.ordinal());
+        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
 }

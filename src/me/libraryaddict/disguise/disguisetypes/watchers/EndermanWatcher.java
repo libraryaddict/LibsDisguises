@@ -7,7 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class EndermanWatcher extends InsentientWatcher
 {
@@ -20,7 +20,7 @@ public class EndermanWatcher extends InsentientWatcher
     @Override
     public ItemStack getItemInMainHand()
     {
-        Optional<WrappedBlockData> value = getData(FlagType.ENDERMAN_ITEM);
+        Optional<WrappedBlockData> value = getData(MetaIndex.ENDERMAN_ITEM);
 
         if (value.isPresent())
         {
@@ -62,7 +62,7 @@ public class EndermanWatcher extends InsentientWatcher
         else
             optional = Optional.<WrappedBlockData> of(WrappedBlockData.createData(type, data));
 
-        setData(FlagType.ENDERMAN_ITEM, optional);
+        setData(MetaIndex.ENDERMAN_ITEM, optional);
     }
 
     @Deprecated
@@ -73,13 +73,13 @@ public class EndermanWatcher extends InsentientWatcher
 
     public boolean isAggressive()
     {
-        return getData(FlagType.ENDERMAN_AGRESSIVE);
+        return getData(MetaIndex.ENDERMAN_AGRESSIVE);
     }
 
     public void setAggressive(boolean isAggressive)
     {
-        setData(FlagType.ENDERMAN_AGRESSIVE, isAggressive);
-        sendData(FlagType.ENDERMAN_AGRESSIVE);
+        setData(MetaIndex.ENDERMAN_AGRESSIVE, isAggressive);
+        sendData(MetaIndex.ENDERMAN_AGRESSIVE);
     }
 
 }

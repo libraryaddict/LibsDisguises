@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class VexWatcher extends InsentientWatcher {
 
@@ -10,12 +10,12 @@ public class VexWatcher extends InsentientWatcher {
     }
 
     public void setAngry(boolean angry) {
-        setData(FlagType.VEX_ANGRY, (byte) (angry ? 1 : 0));
-        sendData(FlagType.VEX_ANGRY);
+        setData(MetaIndex.VEX_ANGRY, (byte) (angry ? 1 : 0));
+        sendData(MetaIndex.VEX_ANGRY);
     }
 
     public boolean isAngry() {
-        return getData(FlagType.VEX_ANGRY) == 1;
+        return getData(MetaIndex.VEX_ANGRY) == 1;
     }
 
 }

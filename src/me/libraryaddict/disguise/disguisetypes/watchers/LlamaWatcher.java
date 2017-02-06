@@ -4,7 +4,7 @@ import org.bukkit.entity.Llama;
 
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class LlamaWatcher extends ChestedHorseWatcher {
 
@@ -13,30 +13,30 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     }
 
     public void setColor(Llama.Color color) {
-        setData(FlagType.LLAMA_COLOR, color.ordinal());
-        sendData(FlagType.LLAMA_COLOR);
+        setData(MetaIndex.LLAMA_COLOR, color.ordinal());
+        sendData(MetaIndex.LLAMA_COLOR);
     }
 
     public Llama.Color getColor() {
-        return Llama.Color.values()[getData(FlagType.LLAMA_COLOR)];
+        return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
     }
 
     public void setCarpet(AnimalColor color) {
-        setData(FlagType.LLAMA_CARPET, color.getId());
-        sendData(FlagType.LLAMA_CARPET);
+        setData(MetaIndex.LLAMA_CARPET, color.getId());
+        sendData(MetaIndex.LLAMA_CARPET);
     }
 
     public AnimalColor getCarpet() {
-        return AnimalColor.getColor(getData(FlagType.LLAMA_CARPET));
+        return AnimalColor.getColor(getData(MetaIndex.LLAMA_CARPET));
     }
 
     public void setStrength(int strength) {
-        setData(FlagType.LLAMA_STRENGTH, strength);
-        sendData(FlagType.LLAMA_STRENGTH);
+        setData(MetaIndex.LLAMA_STRENGTH, strength);
+        sendData(MetaIndex.LLAMA_STRENGTH);
     }
 
     public int getStrength() {
-        return getData(FlagType.LLAMA_STRENGTH);
+        return getData(MetaIndex.LLAMA_STRENGTH);
     }
 
 }

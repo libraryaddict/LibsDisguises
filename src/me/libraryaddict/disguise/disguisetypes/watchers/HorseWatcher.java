@@ -6,7 +6,7 @@ import org.bukkit.entity.Horse.Style;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class HorseWatcher extends AbstractHorseWatcher {
@@ -18,7 +18,7 @@ public class HorseWatcher extends AbstractHorseWatcher {
     }
 
     public Color getColor() {
-        return Color.values()[((Integer) getData(FlagType.HORSE_COLOR) & 0xFF)];
+        return Color.values()[((Integer) getData(MetaIndex.HORSE_COLOR) & 0xFF)];
     }
 
     public ItemStack getHorseArmor() {
@@ -39,26 +39,26 @@ public class HorseWatcher extends AbstractHorseWatcher {
     }
 
     public Style getStyle() {
-        return Style.values()[(getData(FlagType.HORSE_COLOR) >>> 8)];
+        return Style.values()[(getData(MetaIndex.HORSE_COLOR) >>> 8)];
     }
 
     public void setColor(Color color) {
-        setData(FlagType.HORSE_COLOR, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
-        sendData(FlagType.HORSE_COLOR);
+        setData(MetaIndex.HORSE_COLOR, color.ordinal() & 0xFF | getStyle().ordinal() << 8);
+        sendData(MetaIndex.HORSE_COLOR);
     }
 
     protected int getHorseArmorAsInt() {
-        return getData(FlagType.HORSE_ARMOR);
+        return getData(MetaIndex.HORSE_ARMOR);
     }
 
     protected void setHorseArmor(int armor) {
-        setData(FlagType.HORSE_ARMOR, armor);
-        sendData(FlagType.HORSE_ARMOR);
+        setData(MetaIndex.HORSE_ARMOR, armor);
+        sendData(MetaIndex.HORSE_ARMOR);
     }
 
     public void setStyle(Style style) {
-        setData(FlagType.HORSE_COLOR, getColor().ordinal() & 0xFF | style.ordinal() << 8);
-        sendData(FlagType.HORSE_COLOR);
+        setData(MetaIndex.HORSE_COLOR, getColor().ordinal() & 0xFF | style.ordinal() << 8);
+        sendData(MetaIndex.HORSE_COLOR);
     }
 
     public void setHorseArmor(ItemStack item) {

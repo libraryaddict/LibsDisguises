@@ -13,7 +13,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
@@ -25,7 +25,7 @@ public class PlayerWatcher extends LivingWatcher {
     public PlayerWatcher(Disguise disguise) {
         super(disguise);
 
-        setData(FlagType.PLAYER_SKIN, FlagType.PLAYER_SKIN.getDefault());
+        setData(MetaIndex.PLAYER_SKIN, MetaIndex.PLAYER_SKIN.getDefault());
     }
 
     public boolean isDisplayedInTab() {
@@ -49,12 +49,12 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public void setMainHand(MainHand mainHand) {
-        setData(FlagType.PLAYER_HAND, (byte) mainHand.ordinal());
-        sendData(FlagType.PLAYER_HAND);
+        setData(MetaIndex.PLAYER_HAND, (byte) mainHand.ordinal());
+        sendData(MetaIndex.PLAYER_HAND);
     }
 
     public MainHand getMainHand() {
-        return MainHand.values()[getData(FlagType.PLAYER_HAND)];
+        return MainHand.values()[getData(MetaIndex.PLAYER_HAND)];
     }
 
     public BlockFace getSleepingDirection() {
@@ -79,7 +79,7 @@ public class PlayerWatcher extends LivingWatcher {
     // Bit 6 (0x40): Hat enabled
 
     private boolean isSkinFlag(int i) {
-        return ((byte) getData(FlagType.PLAYER_SKIN) & 1 << i) != 0;
+        return ((byte) getData(MetaIndex.PLAYER_SKIN) & 1 << i) != 0;
     }
 
     public boolean isCapeEnabled() {
@@ -113,43 +113,43 @@ public class PlayerWatcher extends LivingWatcher {
     public void setCapeEnabled(boolean enabled) {
         setSkinFlags(1, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setJacketEnabled(boolean enabled) {
         setSkinFlags(2, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setLeftSleeveEnabled(boolean enabled) {
         setSkinFlags(3, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setRightSleeveEnabled(boolean enabled) {
         setSkinFlags(4, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setLeftPantsEnabled(boolean enabled) {
         setSkinFlags(5, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setRightPantsEnabled(boolean enabled) {
         setSkinFlags(6, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public void setHatEnabled(boolean enabled) {
         setSkinFlags(7, enabled);
 
-        sendData(FlagType.PLAYER_SKIN);
+        sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isSleeping() {
@@ -228,13 +228,13 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     private void setSkinFlags(int i, boolean flag) {
-        byte b0 = (byte) getData(FlagType.PLAYER_SKIN);
+        byte b0 = (byte) getData(MetaIndex.PLAYER_SKIN);
 
         if (flag) {
-            setData(FlagType.PLAYER_SKIN, (byte) (b0 | 1 << i));
+            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 | 1 << i));
         }
         else {
-            setData(FlagType.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
+            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
         }
     }
 

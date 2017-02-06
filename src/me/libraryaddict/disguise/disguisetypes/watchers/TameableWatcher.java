@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.google.common.base.Optional;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class TameableWatcher extends AgeableWatcher
 {
@@ -16,7 +16,7 @@ public class TameableWatcher extends AgeableWatcher
 
     public Optional<UUID> getOwner()
     {
-        return getData(FlagType.TAMEABLE_OWNER);
+        return getData(MetaIndex.TAMEABLE_OWNER);
     }
 
     public boolean isSitting()
@@ -31,29 +31,29 @@ public class TameableWatcher extends AgeableWatcher
 
     protected boolean isTameableFlag(int no)
     {
-        return ((byte) getData(FlagType.TAMEABLE_META) & no) != 0;
+        return ((byte) getData(MetaIndex.TAMEABLE_META) & no) != 0;
     }
 
     protected void setTameableFlag(int no, boolean flag)
     {
-        byte value = (byte) getData(FlagType.TAMEABLE_META);
+        byte value = (byte) getData(MetaIndex.TAMEABLE_META);
 
         if (flag)
         {
-            setData(FlagType.TAMEABLE_META, (byte) (value | no));
+            setData(MetaIndex.TAMEABLE_META, (byte) (value | no));
         }
         else
         {
-            setData(FlagType.TAMEABLE_META, (byte) (value & -(no + 1)));
+            setData(MetaIndex.TAMEABLE_META, (byte) (value & -(no + 1)));
         }
 
-        sendData(FlagType.TAMEABLE_META);
+        sendData(MetaIndex.TAMEABLE_META);
     }
 
     public void setOwner(UUID owner)
     {
-        setData(FlagType.TAMEABLE_OWNER, Optional.of(owner));
-        sendData(FlagType.TAMEABLE_OWNER);
+        setData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
+        sendData(MetaIndex.TAMEABLE_OWNER);
     }
 
     public void setSitting(boolean sitting)

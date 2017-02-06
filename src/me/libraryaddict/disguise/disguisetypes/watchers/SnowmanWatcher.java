@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class SnowmanWatcher extends InsentientWatcher {
     public SnowmanWatcher(Disguise disguise) {
@@ -9,11 +9,11 @@ public class SnowmanWatcher extends InsentientWatcher {
     }
 
     public void setDerp(boolean derp) {
-        setData(FlagType.SNOWMAN_DERP, (byte) (derp ? 0 : 16));
-        sendData(FlagType.SNOWMAN_DERP);
+        setData(MetaIndex.SNOWMAN_DERP, (byte) (derp ? 0 : 16));
+        sendData(MetaIndex.SNOWMAN_DERP);
     }
 
     public boolean isDerp() {
-        return getData(FlagType.SNOWMAN_DERP) == 0;
+        return getData(MetaIndex.SNOWMAN_DERP) == 0;
     }
 }

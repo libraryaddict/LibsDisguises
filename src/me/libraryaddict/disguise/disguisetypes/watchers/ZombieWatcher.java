@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class ZombieWatcher extends InsentientWatcher {
 
@@ -14,11 +14,11 @@ public class ZombieWatcher extends InsentientWatcher {
     }
 
     public boolean isBaby() {
-        return getData(FlagType.ZOMBIE_BABY);
+        return getData(MetaIndex.ZOMBIE_BABY);
     }
 
     public boolean isAggressive() {
-        return (boolean) getData(FlagType.ZOMBIE_AGGRESSIVE);
+        return (boolean) getData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
     public void setAdult() {
@@ -30,13 +30,13 @@ public class ZombieWatcher extends InsentientWatcher {
     }
 
     public void setBaby(boolean baby) {
-        setData(FlagType.ZOMBIE_BABY, baby);
-        sendData(FlagType.ZOMBIE_BABY);
+        setData(MetaIndex.ZOMBIE_BABY, baby);
+        sendData(MetaIndex.ZOMBIE_BABY);
     }
 
     public void setAggressive(boolean handsup) {
-        setData(FlagType.ZOMBIE_AGGRESSIVE, handsup);
-        sendData(FlagType.ZOMBIE_AGGRESSIVE);
+        setData(MetaIndex.ZOMBIE_AGGRESSIVE, handsup);
+        sendData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
 }

@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.inventory.ItemStack;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 public class DroppedItemWatcher extends FlagWatcher {
@@ -12,11 +12,11 @@ public class DroppedItemWatcher extends FlagWatcher {
     }
 
     public ItemStack getItemStack() {
-        return getData(FlagType.DROPPED_ITEM);
+        return getData(MetaIndex.DROPPED_ITEM);
     }
 
     public void setItemStack(ItemStack item) {
-        setData(FlagType.DROPPED_ITEM, item);
-        sendData(FlagType.DROPPED_ITEM);
+        setData(MetaIndex.DROPPED_ITEM, item);
+        sendData(MetaIndex.DROPPED_ITEM);
     }
 }

@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class GuardianWatcher extends InsentientWatcher {
     public GuardianWatcher(Disguise disguise) {
@@ -18,7 +18,7 @@ public class GuardianWatcher extends InsentientWatcher {
      * @return
      */
     public boolean isTarget() {
-        return ((int) getData(FlagType.GUARDIAN_TARGET)) != 0;
+        return ((int) getData(MetaIndex.GUARDIAN_TARGET)) != 0;
     }
 
     /**
@@ -27,8 +27,8 @@ public class GuardianWatcher extends InsentientWatcher {
      * @param entityId
      */
     public void setTarget(int entityId) {
-        setData(FlagType.GUARDIAN_TARGET, entityId);
-        sendData(FlagType.GUARDIAN_TARGET);
+        setData(MetaIndex.GUARDIAN_TARGET, entityId);
+        sendData(MetaIndex.GUARDIAN_TARGET);
     }
 
     public void setTarget(Entity entity) {
@@ -46,17 +46,17 @@ public class GuardianWatcher extends InsentientWatcher {
         if (player == null)
             return;
 
-        setData(FlagType.GUARDIAN_TARGET, player.getEntityId());
-        sendData(FlagType.GUARDIAN_TARGET);
+        setData(MetaIndex.GUARDIAN_TARGET, player.getEntityId());
+        sendData(MetaIndex.GUARDIAN_TARGET);
     }
 
     public boolean isRetractingSpikes() {
-        return getData(FlagType.GUARDIAN_RETRACT_SPIKES);
+        return getData(MetaIndex.GUARDIAN_RETRACT_SPIKES);
     }
 
     public void setRetractingSpikes(boolean isRetracting) {
-        setData(FlagType.GUARDIAN_RETRACT_SPIKES, isRetracting);
-        sendData(FlagType.GUARDIAN_RETRACT_SPIKES);
+        setData(MetaIndex.GUARDIAN_RETRACT_SPIKES, isRetracting);
+        sendData(MetaIndex.GUARDIAN_RETRACT_SPIKES);
     }
 
 }

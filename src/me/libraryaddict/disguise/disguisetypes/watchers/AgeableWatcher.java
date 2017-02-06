@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class AgeableWatcher extends InsentientWatcher
 {
@@ -17,7 +17,7 @@ public class AgeableWatcher extends InsentientWatcher
 
     public boolean isBaby()
     {
-        return getData(FlagType.AGEABLE_BABY);
+        return getData(MetaIndex.AGEABLE_BABY);
     }
 
     public void setAdult()
@@ -32,7 +32,7 @@ public class AgeableWatcher extends InsentientWatcher
 
     public void setBaby(boolean isBaby)
     {
-        setData(FlagType.AGEABLE_BABY, isBaby);
-        sendData(FlagType.AGEABLE_BABY);
+        setData(MetaIndex.AGEABLE_BABY, isBaby);
+        sendData(MetaIndex.AGEABLE_BABY);
     }
 }

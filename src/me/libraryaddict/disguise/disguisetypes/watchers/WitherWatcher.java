@@ -5,7 +5,7 @@ import java.security.InvalidParameterException;
 import org.bukkit.ChatColor;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class WitherWatcher extends InsentientWatcher
 {
@@ -22,14 +22,14 @@ public class WitherWatcher extends InsentientWatcher
      */
     public int getInvulnerability()
     {
-        return (int) getData(FlagType.WITHER_INVUL);
+        return (int) getData(MetaIndex.WITHER_INVUL);
     }
 
     public int[] getTargets()
     {
         return new int[]
             {
-                    getData(FlagType.WITHER_TARGET_1), getData(FlagType.WITHER_TARGET_2), getData(FlagType.WITHER_TARGET_3)
+                    getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2), getData(MetaIndex.WITHER_TARGET_3)
             };
     }
 
@@ -38,8 +38,8 @@ public class WitherWatcher extends InsentientWatcher
      */
     public void setInvulnerability(int invulnerability)
     {
-        setData(FlagType.WITHER_INVUL, invulnerability);
-        sendData(FlagType.WITHER_INVUL);
+        setData(MetaIndex.WITHER_INVUL, invulnerability);
+        sendData(MetaIndex.WITHER_INVUL);
     }
 
     public void setTargets(int... targets)
@@ -49,10 +49,10 @@ public class WitherWatcher extends InsentientWatcher
             throw new InvalidParameterException(
                     ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
         }
-        setData(FlagType.WITHER_TARGET_1, targets[0]);
-        setData(FlagType.WITHER_TARGET_2, targets[1]);
-        setData(FlagType.WITHER_TARGET_3, targets[2]);
-        sendData(FlagType.WITHER_TARGET_1, FlagType.WITHER_TARGET_2, FlagType.WITHER_TARGET_3);
+        setData(MetaIndex.WITHER_TARGET_1, targets[0]);
+        setData(MetaIndex.WITHER_TARGET_2, targets[1]);
+        setData(MetaIndex.WITHER_TARGET_3, targets[2]);
+        sendData(MetaIndex.WITHER_TARGET_1, MetaIndex.WITHER_TARGET_2, MetaIndex.WITHER_TARGET_3);
     }
 
 }

@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 /**
  * @author Navid
@@ -16,12 +16,12 @@ public class EnderDragonWatcher extends InsentientWatcher
 
     public int getPhase()
     {
-        return getData(FlagType.ENDERD_RAGON_PHASE);
+        return getData(MetaIndex.ENDERD_RAGON_PHASE);
     }
 
     public void setPhase(int phase)
     {
-        setData(FlagType.ENDERD_RAGON_PHASE, phase);
-        sendData(FlagType.ENDERD_RAGON_PHASE);
+        setData(MetaIndex.ENDERD_RAGON_PHASE, phase);
+        sendData(MetaIndex.ENDERD_RAGON_PHASE);
     }
 }

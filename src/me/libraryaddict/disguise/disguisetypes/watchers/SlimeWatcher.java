@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 public class SlimeWatcher extends InsentientWatcher
@@ -15,7 +15,7 @@ public class SlimeWatcher extends InsentientWatcher
 
     public int getSize()
     {
-        return (int) getData(FlagType.SLIME_SIZE);
+        return (int) getData(MetaIndex.SLIME_SIZE);
     }
 
     public void setSize(int size)
@@ -25,8 +25,8 @@ public class SlimeWatcher extends InsentientWatcher
             size = 1;
         }
 
-        setData(FlagType.SLIME_SIZE, size);
-        sendData(FlagType.SLIME_SIZE);
+        setData(MetaIndex.SLIME_SIZE, size);
+        sendData(MetaIndex.SLIME_SIZE);
     }
 
 }

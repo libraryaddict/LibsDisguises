@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import org.bukkit.Color;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 
 /**
@@ -25,13 +25,13 @@ public class TippedArrowWatcher extends ArrowWatcher
 
     public Color getColor()
     {
-        int color = (int) getData(FlagType.TIPPED_ARROW_COLOR);
+        int color = (int) getData(MetaIndex.TIPPED_ARROW_COLOR);
         return Color.fromRGB(color);
     }
 
     public void setColor(Color color)
     {
-        setData(FlagType.TIPPED_ARROW_COLOR, color.asRGB());
-        sendData(FlagType.TIPPED_ARROW_COLOR);
+        setData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
+        sendData(MetaIndex.TIPPED_ARROW_COLOR);
     }
 }

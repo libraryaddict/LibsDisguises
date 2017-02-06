@@ -35,7 +35,7 @@ import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagType;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
@@ -326,7 +326,7 @@ public class LibsDisguises extends JavaPlugin {
                 WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
 
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
-                    FlagType flagType = FlagType.getFlag(watcherClass, watch.getIndex());
+                    MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
 
                     if (flagType == null) {
                         System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " + watch.getIndex()

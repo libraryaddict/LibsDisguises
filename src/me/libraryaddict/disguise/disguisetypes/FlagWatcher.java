@@ -41,7 +41,7 @@ public class FlagWatcher {
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
-        this.setData(FlagType.ENTITY_AIR_TICKS, 0);
+        this.setData(MetaIndex.ENTITY_AIR_TICKS, 0);
         equipment = new LibsEquipment(this);
     }
 
@@ -85,7 +85,7 @@ public class FlagWatcher {
 
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (id == FlagType.ENTITY_AIR_TICKS.getIndex()) {
+            if (id == MetaIndex.ENTITY_AIR_TICKS.getIndex()) {
                 sendAllCustom = true;
             }
 
@@ -201,7 +201,7 @@ public class FlagWatcher {
     }
 
     public String getCustomName() {
-        return (String) getData(FlagType.ENTITY_CUSTOM_NAME);
+        return (String) getData(MetaIndex.ENTITY_CUSTOM_NAME);
     }
 
     protected TargetedDisguise getDisguise() {
@@ -209,7 +209,7 @@ public class FlagWatcher {
     }
 
     private boolean getEntityFlag(int byteValue) {
-        return (getData(FlagType.ENTITY_META) & 1 << byteValue) != 0;
+        return (getData(MetaIndex.ENTITY_META) & 1 << byteValue) != 0;
     }
 
     public EntityEquipment getEquipment() {
@@ -228,7 +228,7 @@ public class FlagWatcher {
         return equipment.getItem(slot);
     }
 
-    protected <Y> Y getData(FlagType<Y> flagType) {
+    protected <Y> Y getData(MetaIndex<Y> flagType) {
         if (entityValues.containsKey(flagType.getIndex())) {
             return (Y) entityValues.get(flagType.getIndex());
         }
@@ -248,7 +248,7 @@ public class FlagWatcher {
         return getCustomName() != null;
     }
 
-    protected boolean hasValue(FlagType no) {
+    protected boolean hasValue(MetaIndex no) {
         return entityValues.containsKey(no.getIndex());
     }
 
@@ -257,7 +257,7 @@ public class FlagWatcher {
     }
 
     public boolean isCustomNameVisible() {
-        return getData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE);
+        return getData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
     public boolean isEntityAnimationsAdded() {
@@ -277,7 +277,7 @@ public class FlagWatcher {
     }
 
     public boolean isNoGravity() {
-        return getData(FlagType.ENTITY_NO_GRAVITY);
+        return getData(MetaIndex.ENTITY_NO_GRAVITY);
     }
 
     public boolean isRightClicking() {
@@ -315,21 +315,21 @@ public class FlagWatcher {
         }
     }
 
-    protected void sendData(FlagType... dataValues) {
+    protected void sendData(MetaIndex... dataValues) {
         if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this) {
             return;
         }
 
         List<WrappedWatchableObject> list = new ArrayList<>();
 
-        for (FlagType data : dataValues) {
+        for (MetaIndex data : dataValues) {
             if (!entityValues.containsKey(data.getIndex()) || entityValues.get(data.getIndex()) == null) {
                 continue;
             }
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == FlagType.ENTITY_META) {
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == MetaIndex.ENTITY_META) {
                 value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
 
@@ -376,14 +376,14 @@ public class FlagWatcher {
         getEquipment().setArmorContents(items);
     }
 
-    protected void setBackupValue(FlagType no, Object value) {
+    protected void setBackupValue(MetaIndex no, Object value) {
         backupEntityValues.put(no.getIndex(), value);
     }
 
     public void setBurning(boolean setBurning) {
         setEntityFlag(0, setBurning);
 
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void setCustomName(String name) {
@@ -391,41 +391,41 @@ public class FlagWatcher {
             name = name.substring(0, 64);
         }
 
-        setData(FlagType.ENTITY_CUSTOM_NAME, name);
-        sendData(FlagType.ENTITY_CUSTOM_NAME);
+        setData(MetaIndex.ENTITY_CUSTOM_NAME, name);
+        sendData(MetaIndex.ENTITY_CUSTOM_NAME);
     }
 
     public void setCustomNameVisible(boolean display) {
-        setData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE, display);
-        sendData(FlagType.ENTITY_CUSTOM_NAME_VISIBLE);
+        setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
+        sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
         modifiedEntityAnimations[byteValue] = true;
 
-        byte b0 = (byte) getData(FlagType.ENTITY_META);
+        byte b0 = (byte) getData(MetaIndex.ENTITY_META);
 
         if (flag) {
-            setData(FlagType.ENTITY_META, (byte) (b0 | 1 << byteValue));
+            setData(MetaIndex.ENTITY_META, (byte) (b0 | 1 << byteValue));
         }
         else {
-            setData(FlagType.ENTITY_META, (byte) (b0 & ~(1 << byteValue)));
+            setData(MetaIndex.ENTITY_META, (byte) (b0 & ~(1 << byteValue)));
         }
     }
 
     public void setFlyingWithElytra(boolean flying) {
         setEntityFlag(7, flying);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void setGlowing(boolean glowing) {
         setEntityFlag(6, glowing);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void setInvisible(boolean setInvis) {
         setEntityFlag(5, setInvis);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     /**
@@ -506,26 +506,26 @@ public class FlagWatcher {
     }
 
     public void setNoGravity(boolean noGravity) {
-        setData(FlagType.ENTITY_NO_GRAVITY, noGravity);
-        sendData(FlagType.ENTITY_NO_GRAVITY);
+        setData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
+        sendData(MetaIndex.ENTITY_NO_GRAVITY);
     }
 
     public void setRightClicking(boolean setRightClicking) {
         setEntityFlag(4, setRightClicking);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void setSneaking(boolean setSneaking) {
         setEntityFlag(1, setSneaking);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void setSprinting(boolean setSprinting) {
         setEntityFlag(3, setSprinting);
-        sendData(FlagType.ENTITY_META);
+        sendData(MetaIndex.ENTITY_META);
     }
 
-    protected <Y> void setData(FlagType<Y> id, Y value) {
+    protected <Y> void setData(MetaIndex<Y> id, Y value) {
         if (value == null && id.getDefault() instanceof ItemStack)
             throw new IllegalArgumentException("Cannot use null ItemStacks");
 

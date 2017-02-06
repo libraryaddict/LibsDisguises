@@ -730,16 +730,16 @@ public abstract class Disguise {
      * datawatcher.
      */
     private void setupWatcher() {
-        ArrayList<FlagType> disguiseFlags = FlagType.getFlags(getType().getWatcherClass());
-        ArrayList<FlagType> entityFlags = FlagType.getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
+        ArrayList<MetaIndex> disguiseFlags = MetaIndex.getFlags(getType().getWatcherClass());
+        ArrayList<MetaIndex> entityFlags = MetaIndex.getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
-        for (FlagType flag : entityFlags) {
+        for (MetaIndex flag : entityFlags) {
             if (disguiseFlags.contains(flag))
                 continue;
 
-            FlagType backup = null;
+            MetaIndex backup = null;
 
-            for (FlagType flagType : disguiseFlags) {
+            for (MetaIndex flagType : disguiseFlags) {
                 if (flagType.getIndex() == flag.getIndex())
                     backup = flagType;
             }
