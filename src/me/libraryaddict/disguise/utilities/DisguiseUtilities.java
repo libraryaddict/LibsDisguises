@@ -59,9 +59,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class DisguiseUtilities {
     public static final Random random = new Random();
@@ -178,11 +175,7 @@ public class DisguiseUtilities {
         if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
             String entityName = DisguiseType.getType(toClone).toReadable();
 
-            ComponentBuilder text = new ComponentBuilder(
-                    ChatColor.RED + "Constructed a " + entityName + " disguise! Your reference is ");
-            text.append(reference).event(new ClickEvent(Action.SUGGEST_COMMAND, reference));
-
-            player.sendRawMessage(text.toString());
+            player.sendMessage(ChatColor.RED + "Constructed a " + entityName + " disguise! Your reference is " + reference);
             player.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
         }
         else {
