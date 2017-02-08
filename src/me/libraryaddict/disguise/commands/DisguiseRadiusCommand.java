@@ -9,9 +9,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.craftbukkit.v1_11_R1.command.CraftBlockCommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -152,7 +154,16 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         int disguisedEntitys = 0;
         int miscDisguises = 0;
 
-        for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
+        Location center;
+
+        if (sender instanceof Player) {
+            center = ((Player) sender).getLocation();
+        }
+        else {
+            center = ((CraftBlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
+        }
+
+        for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
             if (entity == sender) {
                 continue;
             }
