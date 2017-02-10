@@ -7,7 +7,7 @@ import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
-public class AbstractHorseWatcher extends AgeableWatcher {
+public abstract class AbstractHorseWatcher extends AgeableWatcher {
     public AbstractHorseWatcher(Disguise disguise) {
         super(disguise);
     }
