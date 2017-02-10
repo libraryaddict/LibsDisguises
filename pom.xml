@@ -59,7 +59,7 @@
         </repository>
 		<repository>
 			<id>md_5-releases</id>
-			<url>http://repo.md-5.net/content/repositories/releases/</url>
+			<url>https://repo.md-5.net/content/repositories/releases/</url>
 		</repository>
         <repository>
             <id>spigot-repo</id>
@@ -70,11 +70,11 @@
 	<distributionManagement>
 		<repository>
 			<id>md_5-releases</id>
-			<url>http://repo.md-5.net/content/repositories/releases/</url>
+			<url>https://repo.md-5.net/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>md_5-snapshots</id>
-			<url>http://repo.md-5.net/content/repositories/snapshots/</url>
+			<url>https://repo.md-5.net/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
