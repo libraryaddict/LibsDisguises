@@ -3,7 +3,7 @@ LibsDisguises (1.9+)
 
 One of the worst disguise plugins to hit the market, not only is the programming completely full of bugs, the author doesn't seem to care about the lack of up-to-date documentation.<br>
 
-NOTE: These versions will NOT work with Spigot 1.8.8 and before.
+NOTE: These versions will NOT work with older versions of Minecraft.
 
 Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
 
