@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +42,9 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
@@ -50,6 +54,7 @@ public class DisguiseListener implements Listener {
     private String currentVersion;
     private HashMap<String, Boolean[]> disguiseClone = new HashMap<>();
     private HashMap<String, Disguise> disguiseEntity = new HashMap<>();
+    private HashMap<String, String[]> disguiseModify = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private String latestVersion;
     private LibsDisguises plugin;
@@ -310,78 +315,112 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent event) {
-        if (disguiseEntity.containsKey(event.getPlayer().getName()) || disguiseClone.containsKey(event.getPlayer().getName())) {
-            Player p = event.getPlayer();
+        if (!disguiseEntity.containsKey(event.getPlayer().getName()) && !disguiseClone.containsKey(event.getPlayer().getName())) {
+            return;
+        }
 
-            event.setCancelled(true);
-            disguiseRunnable.remove(p.getName()).cancel();
+        Player p = event.getPlayer();
 
-            Entity entity = event.getRightClicked();
-            String entityName;
+        event.setCancelled(true);
+        disguiseRunnable.remove(p.getName()).cancel();
 
-            if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
-                entityName = entity.getName();
-            }
-            else {
-                entityName = DisguiseType.getType(entity).toReadable();
-            }
+        Entity entity = event.getRightClicked();
+        String entityName;
 
-            if (disguiseClone.containsKey(p.getName())) {
-                Boolean[] options = disguiseClone.remove(p.getName());
+        if (entity instanceof Player && !disguiseClone.containsKey(p.getName())) {
+            entityName = entity.getName();
+        }
+        else {
+            entityName = DisguiseType.getType(entity).toReadable();
+        }
 
-                DisguiseUtilities.createClonedDisguise(p, entity, options);
-            }
-            else if (disguiseEntity.containsKey(p.getName())) {
-                Disguise disguise = disguiseEntity.remove(p.getName());
+        if (disguiseClone.containsKey(p.getName())) {
+            Boolean[] options = disguiseClone.remove(p.getName());
 
-                if (disguise != null) {
-                    if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
-                            && entity instanceof LivingEntity) {
-                        p.sendMessage(ChatColor.RED
-                                + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
-                    }
-                    else {
-                        if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
-                            if (disguise.getWatcher() instanceof LivingWatcher) {
-                                disguise.getWatcher().setCustomName(((Player) entity).getDisplayName());
+            DisguiseUtilities.createClonedDisguise(p, entity, options);
+        }
+        else if (disguiseEntity.containsKey(p.getName())) {
+            Disguise disguise = disguiseEntity.remove(p.getName());
 
-                                if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
-                                    disguise.getWatcher().setCustomNameVisible(true);
-                                }
-                            }
-                        }
-
-                        DisguiseAPI.disguiseToAll(entity, disguise);
-
-                        String disguiseName = "a ";
-
-                        if (disguise instanceof PlayerDisguise) {
-                            disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
-                        }
-                        else {
-                            disguiseName += disguise.getType().toReadable();
-                        }
-
-                        if (disguise.isDisguiseInUse()) {
-                            p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
-                                    + " as " + disguiseName + "!");
-                        }
-                        else {
-                            p.sendMessage(ChatColor.RED + "Failed to disguise " + (entity instanceof Player ? "" : "the ")
-                                    + entityName + " as " + disguiseName + "!");
-                        }
-                    }
+            if (disguise != null) {
+                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()
+                        && entity instanceof LivingEntity) {
+                    p.sendMessage(ChatColor.RED
+                            + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!");
                 }
                 else {
-                    if (DisguiseAPI.isDisguised(entity)) {
-                        DisguiseAPI.undisguiseToAll(entity);
+                    if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                        if (disguise.getWatcher() instanceof LivingWatcher) {
+                            disguise.getWatcher().setCustomName(((Player) entity).getDisplayName());
 
-                        p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
+                            if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
+                                disguise.getWatcher().setCustomNameVisible(true);
+                            }
+                        }
+                    }
+
+                    DisguiseAPI.disguiseToAll(entity, disguise);
+
+                    String disguiseName = "a ";
+
+                    if (disguise instanceof PlayerDisguise) {
+                        disguiseName = "the player " + ((PlayerDisguise) disguise).getName();
                     }
                     else {
-                        p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
+                        disguiseName += disguise.getType().toReadable();
+                    }
+
+                    if (disguise.isDisguiseInUse()) {
+                        p.sendMessage(ChatColor.RED + "Disguised " + (entity instanceof Player ? "" : "the ") + entityName
+                                + " as " + disguiseName + "!");
+                    }
+                    else {
+                        p.sendMessage(ChatColor.RED + "Failed to disguise " + (entity instanceof Player ? "" : "the ")
+                                + entityName + " as " + disguiseName + "!");
                     }
                 }
+            }
+            else {
+                if (DisguiseAPI.isDisguised(entity)) {
+                    DisguiseAPI.undisguiseToAll(entity);
+
+                    p.sendMessage(ChatColor.RED + "Undisguised " + (entity instanceof Player ? "" : "the ") + entityName);
+                }
+                else {
+                    p.sendMessage(ChatColor.RED + (entity instanceof Player ? "" : "the") + entityName + " isn't disguised!");
+                }
+            }
+        }
+        else if (disguiseModify.containsKey(p.getName())) {
+            String[] options = disguiseModify.remove(p.getName());
+
+            Disguise disguise = DisguiseAPI.getDisguise(p, entity);
+
+            if (disguise == null) {
+                p.sendMessage(ChatColor.RED + entityName + " is not disguised!");
+                return;
+            }
+
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = DisguiseParser.getPermissions(p,
+                    "libsdisguises.disguiseentitymodify.");
+
+            if (!perms.containsKey(new DisguisePerm(disguise.getType()))) {
+                p.sendMessage(ChatColor.RED + "You do not have permission to modify this disguise");
+                return;
+            }
+
+            try {
+                DisguiseParser.callMethods(p, disguise, perms.get(new DisguisePerm(disguise.getType())), new ArrayList<String>(),
+                        options);
+                p.sendMessage(ChatColor.RED + "Modified the disguise!");
+            }
+            catch (DisguiseParseException ex) {
+                if (ex.getMessage() != null) {
+                    p.sendMessage(ex.getMessage());
+                }
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -536,6 +575,27 @@ public class DisguiseListener implements Listener {
 
         disguiseRunnable.put(player, runnable);
         disguiseEntity.put(player, disguise);
+    }
+
+    public void setDisguiseModify(final String player, String[] args) {
+        if (disguiseRunnable.containsKey(player)) {
+            BukkitRunnable run = disguiseRunnable.remove(player);
+            run.cancel();
+            run.run();
+        }
+
+        BukkitRunnable runnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                disguiseModify.remove(player);
+                disguiseRunnable.remove(player);
+            }
+        };
+
+        runnable.runTaskLater(plugin, 20 * DisguiseConfig.getDisguiseEntityExpire());
+
+        disguiseRunnable.put(player, runnable);
+        disguiseModify.put(player, args);
     }
 
 }

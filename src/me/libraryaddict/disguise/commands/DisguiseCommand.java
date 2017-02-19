@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -27,7 +28,7 @@ import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.getName().equals("CONSOLE")) {
+        if (!(sender instanceof Entity)) {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
             return true;
         }

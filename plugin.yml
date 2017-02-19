@@ -53,6 +53,22 @@ commands:
       aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd]
       permission: libsdisguises.seecmd.viewself
       description: Toggle seeing your own disguise on or off.
+    disguisemodify:
+      aliases: [dmodify]
+      permission: libsdisguises.seecmd.disguisemodify
+      description: Modify your own disguise
+    disguisemodifyplayer:
+      aliases: [dmodifyplayer]
+      permission: libsdisguises.seecmd.disguisemodifyplayer
+      description: Modify the disguise of a player
+    disguisemodifyradius:
+      aliases: [dmodifyradius]
+      permission: libsdisguises.seecmd.disguisemodifyradius
+      description: Modify disguises in a radius
+    disguisemodifyentity:
+      aliases: [dmodifyentity]
+      permission: libsdisguises.seecmd.disguisemodifyentity
+      description: Modify a disguise by right clicking them
 
 permissions:
     libsdisguises.reload:

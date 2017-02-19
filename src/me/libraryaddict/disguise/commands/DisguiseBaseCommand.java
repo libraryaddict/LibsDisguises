@@ -66,7 +66,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return newArgs.toArray(new String[0]);
     }
 
-    public String getPermNode() {
+    public final String getPermNode() {
         if (this instanceof DisguiseCommand) {
             return "disguise";
         }
@@ -79,8 +79,21 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         else if (this instanceof DisguiseRadiusCommand) {
             return "disguiseradius";
         }
-        else
+        else if (this instanceof DisguiseModifyCommand) {
+            return "disguisemodify";
+        }
+        else if (this instanceof DisguiseModifyEntityCommand) {
+            return "disguisemodifyentity";
+        }
+        else if (this instanceof DisguiseModifyPlayerCommand) {
+            return "disguisemodifyplayer";
+        }
+        else if (this instanceof DisguiseModifyRadiusCommand) {
+            return "disguisemodifyradius";
+        }
+        else {
             throw new UnsupportedOperationException("Unknown disguise command, perm node not found");
+        }
     }
 
     protected HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {

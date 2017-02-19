@@ -690,8 +690,16 @@ public class DisguiseParser {
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
-        args = newArgs;
 
+        callMethods(sender, disguise, optionPermissions, usedOptions, newArgs);
+
+        // Alright. We've constructed our disguise.
+        return disguise;
+    }
+
+    public static void callMethods(CommandSender sender, Disguise disguise, HashMap<ArrayList<String>, Boolean> optionPermissions,
+            ArrayList<String> usedOptions, String[] args)
+                    throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, DisguiseParseException {
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
@@ -970,8 +978,6 @@ public class DisguiseParser {
                 methodToUse.invoke(disguise, value);
             }
         }
-        // Alright. We've constructed our disguise.
-        return disguise;
     }
 
     private static DisguiseParseException parseToException(String expectedValue, String receivedInstead, String methodName) {

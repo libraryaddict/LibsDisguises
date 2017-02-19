@@ -26,6 +26,10 @@ import me.libraryaddict.disguise.commands.DisguiseCloneCommand;
 import me.libraryaddict.disguise.commands.DisguiseCommand;
 import me.libraryaddict.disguise.commands.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
+import me.libraryaddict.disguise.commands.DisguiseModifyCommand;
+import me.libraryaddict.disguise.commands.DisguiseModifyEntityCommand;
+import me.libraryaddict.disguise.commands.DisguiseModifyPlayerCommand;
+import me.libraryaddict.disguise.commands.DisguiseModifyRadiusCommand;
 import me.libraryaddict.disguise.commands.DisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.DisguiseRadiusCommand;
 import me.libraryaddict.disguise.commands.DisguiseViewSelfCommand;
@@ -35,8 +39,8 @@ import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
@@ -116,6 +120,10 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("disguiseclone", new DisguiseCloneCommand());
         registerCommand("libsdisguises", new LibsDisguisesCommand());
         registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+        registerCommand("disguisemodify", new DisguiseModifyCommand());
+        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
+        registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+        registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
 
         try {
             Metrics metrics = new Metrics(this);

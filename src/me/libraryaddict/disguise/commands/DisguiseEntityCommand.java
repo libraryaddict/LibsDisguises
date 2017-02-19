@@ -27,8 +27,13 @@ import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.getName().equals("CONSOLE")) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
+            return true;
+        }
+
+        if (getPermissions(sender).isEmpty()) {
+            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
             return true;
         }
 
@@ -56,7 +61,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
         LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguise);
 
-        sender.sendMessage(ChatColor.RED + "Right click a entity in the next " + DisguiseConfig.getDisguiseEntityExpire()
+        sender.sendMessage(ChatColor.RED + "Right click an entity in the next " + DisguiseConfig.getDisguiseEntityExpire()
                 + " seconds to disguise it as a " + disguise.getType().toReadable() + "!");
         return true;
     }
@@ -64,6 +69,11 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
         ArrayList<String> tabs = new ArrayList<String>();
+
+        if (!(sender instanceof Player)) {
+            return tabs;
+        }
+
         String[] args = getArgs(origArgs);
 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
