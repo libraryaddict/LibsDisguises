@@ -66,7 +66,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -77,12 +77,12 @@ public class PacketListenerInventory extends PacketAdapter {
                         }
                     }
                 }
-                else if (slot >= 36 && slot <= 44) {
+                else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
                         int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
 
-                        if (slot + 36 == currentSlot) {
-                            org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                        if (slot + 36 == currentSlot || slot == 45) {
+                            org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 
                             if (item != null && item.getType() != Material.AIR) {
                                 PacketContainer packet = new PacketContainer(Server.SET_SLOT);
@@ -90,7 +90,7 @@ public class PacketListenerInventory extends PacketAdapter {
                                 StructureModifier<Object> mods = packet.getModifier();
                                 mods.write(0, 0);
                                 mods.write(1, slot);
-                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -140,7 +140,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         mods.write(0, 0);
                         mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                         try {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -192,7 +192,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -203,18 +203,18 @@ public class PacketListenerInventory extends PacketAdapter {
                         }
                         // Else if its a hotbar slot
                     }
-                    else if (slot >= 36 && slot <= 44) {
+                    else if (slot >= 36 && slot <= 45) {
                         if (disguise.isHidingHeldItemFromSelf()) {
                             int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
 
                             // Check if the player is on the same slot as the slot that its setting
-                            if (slot == currentSlot + 36) {
+                            if (slot == currentSlot + 36 || slot == 45) {
                                 PacketContainer packet = new PacketContainer(Server.SET_SLOT);
 
                                 StructureModifier<Object> mods = packet.getModifier();
                                 mods.write(0, 0);
                                 mods.write(1, slot);
-                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
@@ -271,23 +271,23 @@ public class PacketListenerInventory extends PacketAdapter {
                         event.setPacket(event.getPacket().shallowClone());
 
                         event.getPacket().getModifier().write(2,
-                                ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
                     }
                 }
                 // Else if its a hotbar slot
             }
-            else if (slot >= 36 && slot <= 44) {
+            else if (slot >= 36 && slot <= 45) {
                 if (disguise.isHidingHeldItemFromSelf()) {
                     int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
 
                     // Check if the player is on the same slot as the slot that its setting
-                    if (slot == currentSlot + 36) {
-                        org.bukkit.inventory.ItemStack item = event.getPlayer().getItemInHand();
+                    if (slot == currentSlot + 36 || slot == 45) {
+                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 
                         if (item != null && item.getType() != Material.AIR) {
                             event.setPacket(event.getPacket().shallowClone());
                             event.getPacket().getModifier().write(2,
-                                    ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(0)));
+                                    ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
                         }
                     }
                 }
@@ -313,13 +313,13 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
                     // Else if its a hotbar slot
                 }
-                else if (slot >= 36 && slot <= 44) {
+                else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
                         int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
 
                         // Check if the player is on the same slot as the slot that its setting
-                        if (slot == currentSlot + 36) {
-                            ItemStack item = event.getPlayer().getItemInHand();
+                        if (slot == currentSlot + 36 || slot == 45) {
+                            ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 
                             if (item != null && item.getType() != Material.AIR) {
                                 items.set(slot, new ItemStack(Material.AIR));
