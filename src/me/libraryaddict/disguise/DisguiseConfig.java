@@ -15,7 +15,7 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException
 import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
-    public static enum DisguisePushing {
+    public static enum DisguisePushing { // This enum has a really bad name..
         MODIFY_SCOREBOARD, IGNORE_SCOREBOARD, CREATE_SCOREBOARD;
     }
 
