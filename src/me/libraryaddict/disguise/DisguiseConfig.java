@@ -16,7 +16,7 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
     public static enum DisguisePushing {
-        MODIFY, IGNORE, CREATE;
+        MODIFY_SCOREBOARD, IGNORE_SCOREBOARD, CREATE_SCOREBOARD;
     }
 
     private static boolean animationEnabled;
@@ -146,11 +146,15 @@ public class DisguiseConfig {
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
 
         try {
-            disablePushing = DisguisePushing
-                    .valueOf(config.getString("DisablePushing", DisguisePushing.MODIFY.name()).toUpperCase());
+            String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
+
+            if (!option.endsWith("_SCOREBOARD"))
+                option += "_SCOREBOARD";
+
+            disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesTeams")
+            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesScoreboard")
                     + "' to a valid option for SelfDisguisesTeam");
         }
 

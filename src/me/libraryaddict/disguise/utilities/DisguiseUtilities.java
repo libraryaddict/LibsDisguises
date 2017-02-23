@@ -1033,7 +1033,7 @@ public class DisguiseUtilities {
 
         String prevTeam = previousTeam.remove(player.getUniqueId());
 
-        if (DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE) {
+        if (DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE_SCOREBOARD) {
             // Code to stop player pushing in 1.9
             Scoreboard scoreboard = player.getScoreboard();
             Team team = prevTeam == null ? null : scoreboard.getTeam(prevTeam);
@@ -1133,19 +1133,19 @@ public class DisguiseUtilities {
 
             DisguisePushing pOption = DisguiseConfig.getPushingOption();
 
-            if (pOption != DisguisePushing.IGNORE) {
+            if (pOption != DisguisePushing.IGNORE_SCOREBOARD) {
                 // Code to stop player pushing
                 Scoreboard scoreboard = player.getScoreboard();
                 Team prevTeam = scoreboard.getEntryTeam(player.getName());
 
-                if (prevTeam != null && pOption == DisguisePushing.CREATE) {
+                if (prevTeam != null && pOption == DisguisePushing.CREATE_SCOREBOARD) {
                     previousTeam.put(player.getUniqueId(), prevTeam.getName());
                 }
 
                 Team t;
                 String createName = null;
 
-                if (pOption == DisguisePushing.CREATE) {
+                if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
                     createName = (prevTeam == null ? "No Team" : prevTeam.getName());
 
                     createName = createName.substring(0, Math.min(12, createName.length()));
@@ -1169,7 +1169,7 @@ public class DisguiseUtilities {
                 if (!t.hasEntry(player.getName()))
                     t.addEntry(player.getName());
 
-                if (pOption == DisguisePushing.CREATE && prevTeam != null) {
+                if (pOption == DisguisePushing.CREATE_SCOREBOARD && prevTeam != null) {
                     t.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
                     t.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
                     t.setDisplayName(prevTeam.getDisplayName());
