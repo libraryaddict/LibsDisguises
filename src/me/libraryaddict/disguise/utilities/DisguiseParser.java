@@ -836,6 +836,10 @@ public class DisguiseParser {
                             // Parse to ocelot type
                             value = callValueOf(param, valueString, methodName, "a ocelot type");
                         }
+                        else if (param.getSimpleName().equals("TreeSpecies")) {
+                            // Parse to ocelot type
+                            value = callValueOf(param, valueString, methodName, "a tree species");
+                        }
                         else if (param == PotionEffectType.class) {
                             // Parse to potion effect
                             try {

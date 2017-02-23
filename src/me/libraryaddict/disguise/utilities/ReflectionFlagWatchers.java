@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.Material;
+import org.bukkit.TreeSpecies;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
@@ -140,6 +141,7 @@ public class ReflectionFlagWatchers {
         paramList.add(new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 5), "Direction",
                 "View the five directions usable on player setSleeping disguise"));
         paramList.add(new ParamInfo(Rabbit.Type.class, "Rabbit Type", "View the kinds of rabbits you can turn into"));
+        paramList.add(new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species"));
 
         ArrayList<String> potionEnums = new ArrayList<String>();
 
