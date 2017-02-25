@@ -93,6 +93,10 @@ permissions:
          libsdisguises.seecmd.undisguiseradius: true
          libsdisguises.seecmd.disguiseclone: true
          libsdisguises.seecmd.disguiseviewself: true
+         libsdisguises.seecmd.disguisemodify: true
+         libsdisguises.seecmd.disguisemodifyplayer: true
+         libsdisguises.seecmd.disguisemodifyradius: true
+         libsdisguises.seecmd.disguisemodifyentity: true
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguiseviewself:
@@ -117,3 +121,11 @@ permissions:
       description: See the /undisguiseradius command in tab-completion
     libsdisguises.seecmd.disguiseclone:
       description: See the /disguiseclone command in tab-completion
+    libsdisguises.seecmd.disguisemodify:
+      description: See the /disguisemodify command in tab-completion
+    libsdisguises.seecmd.disguisemodifyplayer:
+      description: See the /disguisemodifyplayer command in tab-completion
+    libsdisguises.seecmd.disguisemodifyradius:
+      description: See the /disguisemodifyradius command in tab-completion
+    libsdisguises.seecmd.disguisemodifyentity:
+      description: See the /disguisemodifyentity command in tab-completion
