@@ -35,6 +35,7 @@ SendVelocity: true
 # For self disguises, they need to have the armor and the held item removed
 # Else they see floating armor, floating held items.
 # This turns the items invisible in the disguised players inventory. It does not actually remove them!
+# Be warned that in creative this can actually delete the item from the inventory due to a weird bug
 RemoveArmor: true
 RemoveHeldItem: false
 
