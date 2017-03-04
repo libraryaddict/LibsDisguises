@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.PacketType;
@@ -37,14 +38,16 @@ public class PacketListenerInventory extends PacketAdapter {
         if (event.isCancelled())
             return;
 
-        if (event.getPlayer().getName().contains("UNKNOWN[")) // If the player is temporary
+        final Player player = event.getPlayer();
+
+        if (player.getName().contains("UNKNOWN[")) // If the player is temporary
             return;
 
-        if (event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory || event.getPlayer().getVehicle() != null) {
+        if (player instanceof com.comphenix.net.sf.cglib.proxy.Factory || player.getVehicle() != null) {
             return;
         }
 
-        Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+        Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
         // If player is disguised, views self disguises and has a inventory modifier
         if (disguise != null && disguise.isSelfDisguiseVisible()
@@ -57,7 +60,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     if (disguise.isHidingArmorFromSelf()) {
                         int armorSlot = Math.abs((slot - 5) - 3);
 
-                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                        org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
                         if (item != null && item.getType() != Material.AIR) {
                             PacketContainer packet = new PacketContainer(Server.SET_SLOT);
@@ -69,7 +72,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                             }
                             catch (InvocationTargetException e) {
                                 e.printStackTrace();
@@ -79,10 +82,10 @@ public class PacketListenerInventory extends PacketAdapter {
                 }
                 else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
-                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                        int currentSlot = player.getInventory().getHeldItemSlot();
 
                         if (slot + 36 == currentSlot || slot == 45) {
-                            org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+                            org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
 
                             if (item != null && item.getType() != Material.AIR) {
                                 PacketContainer packet = new PacketContainer(Server.SET_SLOT);
@@ -93,7 +96,7 @@ public class PacketListenerInventory extends PacketAdapter {
                                 mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 }
                                 catch (InvocationTargetException e) {
                                     e.printStackTrace();
@@ -110,7 +113,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     // 0 1 2 3 - 8
                     // If the packet is coming, then I need to replace the item they are switching to
                     // As for the old item, I need to restore it.
-                    org.bukkit.inventory.ItemStack currentlyHeld = event.getPlayer().getItemInHand();
+                    org.bukkit.inventory.ItemStack currentlyHeld = player.getItemInHand();
                     // If his old weapon isn't air
                     if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
                         PacketContainer packet = new PacketContainer(Server.SET_SLOT);
@@ -118,18 +121,18 @@ public class PacketListenerInventory extends PacketAdapter {
                         StructureModifier<Object> mods = packet.getModifier();
 
                         mods.write(0, 0);
-                        mods.write(1, event.getPlayer().getInventory().getHeldItemSlot() + 36);
+                        mods.write(1, player.getInventory().getHeldItemSlot() + 36);
                         mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
 
                         try {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
                         catch (InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
 
-                    org.bukkit.inventory.ItemStack newHeld = event.getPlayer().getInventory()
+                    org.bukkit.inventory.ItemStack newHeld = player.getInventory()
                             .getItem(event.getPacket().getIntegers().read(0));
 
                     // If his new weapon isn't air either!
@@ -143,7 +146,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                         try {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
                         catch (InvocationTargetException e) {
                             e.printStackTrace();
@@ -165,7 +168,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         // Lets just update the entire inventory..
                         Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
                             public void run() {
-                                event.getPlayer().updateInventory();
+                                player.updateInventory();
                             }
                         });
                     }
@@ -179,7 +182,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         return;
                     }
 
-                    clickedItem = event.getPlayer().getItemOnCursor();
+                    clickedItem = player.getItemOnCursor();
                 }
 
                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {
@@ -195,7 +198,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                             }
                             catch (InvocationTargetException e) {
                                 e.printStackTrace();
@@ -205,7 +208,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
                     else if (slot >= 36 && slot <= 45) {
                         if (disguise.isHidingHeldItemFromSelf()) {
-                            int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                            int currentSlot = player.getInventory().getHeldItemSlot();
 
                             // Check if the player is on the same slot as the slot that its setting
                             if (slot == currentSlot + 36 || slot == 45) {
@@ -217,7 +220,7 @@ public class PacketListenerInventory extends PacketAdapter {
                                 mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 }
                                 catch (InvocationTargetException e) {
                                     e.printStackTrace();
@@ -233,13 +236,15 @@ public class PacketListenerInventory extends PacketAdapter {
 
     @Override
     public void onPacketSending(PacketEvent event) {
+        Player player = event.getPlayer();
+
         // If the inventory is the players inventory
-        if (event.getPlayer() instanceof com.comphenix.net.sf.cglib.proxy.Factory || event.getPlayer().getVehicle() != null
+        if (player instanceof com.comphenix.net.sf.cglib.proxy.Factory || player.getVehicle() != null
                 || event.getPacket().getIntegers().read(0) != 0) {
             return;
         }
 
-        Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer(), event.getPlayer());
+        Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
         if (disguise == null || !disguise.isSelfDisguiseVisible()
                 || (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
@@ -265,7 +270,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     // Get the bukkit armor slot!
                     int armorSlot = Math.abs((slot - 5) - 3);
 
-                    org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                    org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
                     if (item != null && item.getType() != Material.AIR) {
                         event.setPacket(event.getPacket().shallowClone());
@@ -278,11 +283,11 @@ public class PacketListenerInventory extends PacketAdapter {
             }
             else if (slot >= 36 && slot <= 45) {
                 if (disguise.isHidingHeldItemFromSelf()) {
-                    int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                    int currentSlot = player.getInventory().getHeldItemSlot();
 
                     // Check if the player is on the same slot as the slot that its setting
                     if (slot == currentSlot + 36 || slot == 45) {
-                        org.bukkit.inventory.ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+                        org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
 
                         if (item != null && item.getType() != Material.AIR) {
                             event.setPacket(event.getPacket().shallowClone());
@@ -297,7 +302,7 @@ public class PacketListenerInventory extends PacketAdapter {
             event.setPacket(event.getPacket().shallowClone());
 
             StructureModifier<List<ItemStack>> mods = event.getPacket().getItemListModifier();
-            List<ItemStack> items = new ArrayList<ItemStack>(mods.read(0));
+            List<ItemStack> items = new ArrayList<>(mods.read(0));
 
             for (int slot = 0; slot < items.size(); slot++) {
                 if (slot >= 5 && slot <= 8) {
@@ -305,7 +310,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         // Get the bukkit armor slot!
                         int armorSlot = Math.abs((slot - 5) - 3);
 
-                        ItemStack item = event.getPlayer().getInventory().getArmorContents()[armorSlot];
+                        ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
                         if (item != null && item.getType() != Material.AIR) {
                             items.set(slot, new ItemStack(Material.AIR));
@@ -315,11 +320,11 @@ public class PacketListenerInventory extends PacketAdapter {
                 }
                 else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
-                        int currentSlot = event.getPlayer().getInventory().getHeldItemSlot();
+                        int currentSlot = player.getInventory().getHeldItemSlot();
 
                         // Check if the player is on the same slot as the slot that its setting
                         if (slot == currentSlot + 36 || slot == 45) {
-                            ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+                            ItemStack item = player.getInventory().getItemInMainHand();
 
                             if (item != null && item.getType() != Material.AIR) {
                                 items.set(slot, new ItemStack(Material.AIR));
