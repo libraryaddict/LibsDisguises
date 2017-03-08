@@ -83,9 +83,9 @@ public enum DisguiseSound {
             Sound.ENTITY_ZOMBIE_PIG_ANGRY),
 
     PLAYER(Sound.ENTITY_PLAYER_HURT, new Sound[] {
-            Sound.BLOCK_ANVIL_STEP, Sound.BLOCK_CLOTH_STEP, Sound.BLOCK_GLASS_STEP, Sound.BLOCK_GRASS_STEP,
-            Sound.BLOCK_GRAVEL_STEP, Sound.BLOCK_LADDER_STEP, Sound.BLOCK_METAL_STEP, Sound.BLOCK_SAND_STEP,
-            Sound.BLOCK_SLIME_STEP, Sound.BLOCK_SNOW_STEP, Sound.BLOCK_STONE_STEP, Sound.BLOCK_WOOD_STEP
+            Sound.BLOCK_STONE_STEP, Sound.BLOCK_GRASS_STEP, Sound.BLOCK_ANVIL_STEP, Sound.BLOCK_CLOTH_STEP,
+            Sound.BLOCK_GLASS_STEP, Sound.BLOCK_GRAVEL_STEP, Sound.BLOCK_LADDER_STEP, Sound.BLOCK_METAL_STEP,
+            Sound.BLOCK_SAND_STEP, Sound.BLOCK_SLIME_STEP, Sound.BLOCK_SNOW_STEP, Sound.BLOCK_WOOD_STEP
     }, Sound.ENTITY_PLAYER_DEATH, null),
 
     RABBIT(Sound.ENTITY_RABBIT_HURT, Sound.ENTITY_RABBIT_JUMP, Sound.ENTITY_RABBIT_DEATH, Sound.ENTITY_RABBIT_AMBIENT),
@@ -211,7 +211,7 @@ public enum DisguiseSound {
             disguiseSounds.put(SoundType.HURT, s);
             break;
         case STEP:
-            disguiseSounds.put(SoundType.STEP, s);
+            disguiseSounds.put(s, SoundType.STEP);
             break;
         case DEATH:
             disguiseSounds.put(SoundType.DEATH, s);
