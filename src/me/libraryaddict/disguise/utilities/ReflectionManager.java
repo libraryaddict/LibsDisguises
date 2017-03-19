@@ -58,8 +58,8 @@ public class ReflectionManager {
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
-                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers())
-                        && method.getParameterTypes().length == 0) {
+                if (method.getReturnType() == float.class && Modifier.isProtected(
+                        method.getModifiers()) && method.getParameterTypes().length == 0) {
                     Object entity = createEntityInstance("Cow");
 
                     method.setAccessible(true);
@@ -86,8 +86,8 @@ public class ReflectionManager {
 
         ihmGet = getNmsMethod("IntHashMap", "get", int.class);
 
-        boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class,
-                double.class, double.class);
+        boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class,
+                double.class, double.class, double.class);
 
         setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
 
@@ -102,8 +102,9 @@ public class ReflectionManager {
         String id = (String) response.get("id");
 
         if (!id.contains("-")) {
-            id = Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(id)
-                    .replaceFirst("$1-$2-$3-$4-$5");
+            id = Pattern.compile(
+                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(
+                    id).replaceFirst("$1-$2-$3-$4-$5");
         }
 
         WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.fromString(id), (String) response.get("name"));
@@ -139,36 +140,35 @@ public class ReflectionManager {
             Object world = getWorldServer(Bukkit.getWorlds().get(0));
 
             switch (entityName) {
-            case "Player":
-                Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
+                case "Player":
+                    Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
 
-                Object playerinteractmanager = getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass("World"))
-                        .newInstance(world);
+                    Object playerinteractmanager = getNmsClass("PlayerInteractManager").getDeclaredConstructor(
+                            getNmsClass("World")).newInstance(world);
 
-                WrappedGameProfile gameProfile = getGameProfile(null, "Steve");
+                    WrappedGameProfile gameProfile = getGameProfile(null, "Steve");
 
-                entityObject = entityClass
-                        .getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                                gameProfile.getHandleType(), playerinteractmanager.getClass())
-                        .newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
-                break;
-            case "EnderPearl":
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
-                        .newInstance(world, createEntityInstance("Cow"));
-                break;
-            case "Potion":
-                entityObject = entityClass
-                        .getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE,
-                                getNmsClass("ItemStack"))
-                        .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
-                break;
-            case "FishingHook":
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
-                        .newInstance(world, createEntityInstance("Player"));
-                break;
-            default:
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
-                break;
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"),
+                            getNmsClass("WorldServer"), gameProfile.getHandleType(),
+                            playerinteractmanager.getClass()).newInstance(minecraftServer, world,
+                            gameProfile.getHandle(), playerinteractmanager);
+                    break;
+                case "EnderPearl":
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"),
+                            getNmsClass("EntityLiving")).newInstance(world, createEntityInstance("Cow"));
+                    break;
+                case "Potion":
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE,
+                            Double.TYPE, getNmsClass("ItemStack")).newInstance(world, 0d, 0d, 0d,
+                            getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                    break;
+                case "FishingHook":
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"),
+                            getNmsClass("EntityHuman")).newInstance(world, createEntityInstance("Player"));
+                    break;
+                default:
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
+                    break;
             }
 
             return entityObject;
@@ -194,15 +194,15 @@ public class ReflectionManager {
     }
 
     public static Object createMobEffect(PotionEffect effect) {
-        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(),
-                effect.hasParticles());
+        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(),
+                effect.isAmbient(), effect.hasParticles());
     }
 
     public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
         try {
-            return getNmsClass("MobEffect")
-                    .getDeclaredConstructor(getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE)
-                    .newInstance(getMobEffectList(id), duration, amplification, ambient, particles);
+            return getNmsClass("MobEffect").getDeclaredConstructor(getNmsClass("MobEffectList"), Integer.TYPE,
+                    Integer.TYPE, Boolean.TYPE, Boolean.TYPE).newInstance(getMobEffectList(id), duration, amplification,
+                    ambient, particles);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -223,26 +223,26 @@ public class ReflectionManager {
                     stage++;
 
                     switch (stage) {
-                    case 1:
-                        x -= field.getDouble(boundingBox);
-                        break;
-                    case 2:
-                        y -= field.getDouble(boundingBox);
-                        break;
-                    case 3:
-                        z -= field.getDouble(boundingBox);
-                        break;
-                    case 4:
-                        x += field.getDouble(boundingBox);
-                        break;
-                    case 5:
-                        y += field.getDouble(boundingBox);
-                        break;
-                    case 6:
-                        z += field.getDouble(boundingBox);
-                        break;
-                    default:
-                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
+                        case 1:
+                            x -= field.getDouble(boundingBox);
+                            break;
+                        case 2:
+                            y -= field.getDouble(boundingBox);
+                            break;
+                        case 3:
+                            z -= field.getDouble(boundingBox);
+                            break;
+                        case 4:
+                            x += field.getDouble(boundingBox);
+                            break;
+                        case 5:
+                            y += field.getDouble(boundingBox);
+                            break;
+                        case 6:
+                            z += field.getDouble(boundingBox);
+                            break;
+                        default:
+                            throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                     }
                 }
             }
@@ -357,7 +357,8 @@ public class ReflectionManager {
 
     public static Object getBlockPosition(int x, int y, int z) {
         try {
-            return getNmsClass("BlockPosition").getDeclaredConstructor(int.class, int.class, int.class).newInstance(x, y, z);
+            return getNmsClass("BlockPosition").getDeclaredConstructor(int.class, int.class, int.class).newInstance(x,
+                    y, z);
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -390,14 +391,13 @@ public class ReflectionManager {
 
     public static Object getPlayerInfoData(Object playerInfoPacket, WrappedGameProfile gameProfile) {
         try {
-            Object playerListName = getNmsClass("ChatComponentText").getDeclaredConstructor(String.class)
-                    .newInstance(gameProfile.getName());
+            Object playerListName = getNmsClass("ChatComponentText").getDeclaredConstructor(String.class).newInstance(
+                    gameProfile.getName());
 
-            return getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData")
-                    .getDeclaredConstructor(getNmsClass("PacketPlayOutPlayerInfo"), gameProfile.getHandleType(), int.class,
-                            getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"))
-                    .newInstance(playerInfoPacket, gameProfile.getHandle(), 0, getNmsClass("EnumGamemode").getEnumConstants()[1],
-                            playerListName);
+            return getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData").getDeclaredConstructor(
+                    getNmsClass("PacketPlayOutPlayerInfo"), gameProfile.getHandleType(), int.class,
+                    getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent")).newInstance(playerInfoPacket,
+                    gameProfile.getHandle(), 0, getNmsClass("EnumGamemode").getEnumConstants()[1], playerListName);
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -427,9 +427,11 @@ public class ReflectionManager {
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName,
             WrappedGameProfile profileWithSkin) {
         try {
-            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
+            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(),
+                    playerName);
 
-            gameProfile.getProperties().putAll(profileWithSkin.getProperties());
+            if (profileWithSkin != null)
+                gameProfile.getProperties().putAll(profileWithSkin.getProperties());
 
             return gameProfile;
         }
@@ -561,9 +563,7 @@ public class ReflectionManager {
             float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
 
             float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
-            return new float[] {
-                    length, width, height
-            };
+            return new float[]{length, width, height};
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -580,9 +580,9 @@ public class ReflectionManager {
                 if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
                     Object session = method.invoke(minecraftServer);
 
-                    return WrappedGameProfile.fromHandle(session.getClass()
-                            .getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
-                            .invoke(session, gameProfile.getHandle(), true));
+                    return WrappedGameProfile.fromHandle(
+                            session.getClass().getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(),
+                                    boolean.class).invoke(session, gameProfile.getHandle(), true));
                 }
             }
         }
@@ -616,12 +616,9 @@ public class ReflectionManager {
 
                     LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
-                    profileRepo.getClass()
-                            .getDeclaredMethod("findProfilesByNames", String[].class, agent.getClass(),
-                                    Class.forName("com.mojang.authlib.ProfileLookupCallback"))
-                            .invoke(profileRepo, new String[] {
-                                    playername
-                    }, agent, callback);
+                    profileRepo.getClass().getDeclaredMethod("findProfilesByNames", String[].class, agent.getClass(),
+                            Class.forName("com.mojang.authlib.ProfileLookupCallback")).invoke(profileRepo,
+                            new String[]{playername}, agent, callback);
 
                     if (callback.getGameProfile() != null) {
                         return callback.getGameProfile();
@@ -646,9 +643,9 @@ public class ReflectionManager {
         try {
             Location loc = entity.getLocation();
 
-            Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - newBox.getX(), loc.getY() - newBox.getY(),
-                    loc.getZ() - newBox.getZ(), loc.getX() + newBox.getX(), loc.getY() + newBox.getY(),
-                    loc.getZ() + newBox.getZ());
+            Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - newBox.getX(),
+                    loc.getY() - newBox.getY(), loc.getZ() - newBox.getZ(), loc.getX() + newBox.getX(),
+                    loc.getY() + newBox.getY(), loc.getZ() + newBox.getZ());
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         }
@@ -712,20 +709,20 @@ public class ReflectionManager {
             return null;
 
         switch (slot) {
-        case HAND:
-            return (Enum) enums[0];
-        case OFF_HAND:
-            return (Enum) enums[1];
-        case FEET:
-            return (Enum) enums[2];
-        case LEGS:
-            return (Enum) enums[3];
-        case CHEST:
-            return (Enum) enums[4];
-        case HEAD:
-            return (Enum) enums[5];
-        default:
-            return null;
+            case HAND:
+                return (Enum) enums[0];
+            case OFF_HAND:
+                return (Enum) enums[1];
+            case FEET:
+                return (Enum) enums[2];
+            case LEGS:
+                return (Enum) enums[3];
+            case CHEST:
+                return (Enum) enums[4];
+            case HEAD:
+                return (Enum) enums[5];
+            default:
+                return null;
         }
     }
 
@@ -739,18 +736,18 @@ public class ReflectionManager {
             Enum nmsSlot = (Enum) enumItemSlot;
 
             switch (nmsSlot.name()) {
-            case "MAINHAND":
-                return EquipmentSlot.HAND;
-            case "OFFHAND":
-                return EquipmentSlot.OFF_HAND;
-            case "FEET":
-                return EquipmentSlot.FEET;
-            case "LEGS":
-                return EquipmentSlot.LEGS;
-            case "CHEST":
-                return EquipmentSlot.CHEST;
-            case "HEAD":
-                return EquipmentSlot.HEAD;
+                case "MAINHAND":
+                    return EquipmentSlot.HAND;
+                case "OFFHAND":
+                    return EquipmentSlot.OFF_HAND;
+                case "FEET":
+                    return EquipmentSlot.FEET;
+                case "LEGS":
+                    return EquipmentSlot.LEGS;
+                case "CHEST":
+                    return EquipmentSlot.CHEST;
+                case "HEAD":
+                    return EquipmentSlot.HEAD;
             }
         }
         catch (Exception e) {
@@ -770,20 +767,20 @@ public class ReflectionManager {
             return null;
 
         switch (slot) {
-        case HAND:
-            return ((LivingEntity) disguisedEntity).getEquipment().getItemInMainHand();
-        case OFF_HAND:
-            return ((LivingEntity) disguisedEntity).getEquipment().getItemInOffHand();
-        case FEET:
-            return ((LivingEntity) disguisedEntity).getEquipment().getBoots();
-        case LEGS:
-            return ((LivingEntity) disguisedEntity).getEquipment().getLeggings();
-        case CHEST:
-            return ((LivingEntity) disguisedEntity).getEquipment().getChestplate();
-        case HEAD:
-            return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
-        default:
-            return null;
+            case HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInMainHand();
+            case OFF_HAND:
+                return ((LivingEntity) disguisedEntity).getEquipment().getItemInOffHand();
+            case FEET:
+                return ((LivingEntity) disguisedEntity).getEquipment().getBoots();
+            case LEGS:
+                return ((LivingEntity) disguisedEntity).getEquipment().getLeggings();
+            case CHEST:
+                return ((LivingEntity) disguisedEntity).getEquipment().getChestplate();
+            case HEAD:
+                return ((LivingEntity) disguisedEntity).getEquipment().getHelmet();
+            default:
+                return null;
         }
     }
 
@@ -831,14 +828,14 @@ public class ReflectionManager {
                 BlockPosition pos = (BlockPosition) val;
 
                 try {
-                    return Optional.of(getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
-                            pos.getY(), pos.getZ()));
+                    return Optional.of(
+                            getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
+                                    pos.getY(), pos.getZ()));
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            }
-            else if (val instanceof WrappedBlockData) {
+            } else if (val instanceof WrappedBlockData) {
                 try {
                     return Optional.of(((WrappedBlockData) val).getHandle());
                 }
@@ -846,8 +843,7 @@ public class ReflectionManager {
                     ex.printStackTrace();
                 }
             }
-        }
-        else if (value instanceof Vector3F) {
+        } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
 
             try {
@@ -857,27 +853,25 @@ public class ReflectionManager {
             catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        else if (value instanceof Direction) {
+        } else if (value instanceof Direction) {
             try {
-                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class).invoke(null, ((Direction) value).ordinal());
+                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class).invoke(null,
+                        ((Direction) value).ordinal());
             }
             catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        else if (value instanceof BlockPosition) {
+        } else if (value instanceof BlockPosition) {
             BlockPosition pos = (BlockPosition) value;
 
             try {
-                return getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(), pos.getY(),
-                        pos.getZ());
+                return getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
+                        pos.getY(), pos.getZ());
             }
             catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        else if (value instanceof ItemStack) {
+        } else if (value instanceof ItemStack) {
             return getNmsItem((ItemStack) value);
         }
 
@@ -902,19 +896,15 @@ public class ReflectionManager {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
 
-            serializer = Registry.get((opt.isPresent()
-                    ? getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass("IBlockData") : opt.get().getClass()
-                    : UUID.class), true);
-        }
-        else {
+            serializer = Registry.get((opt.isPresent() ? getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass(
+                    "IBlockData") : opt.get().getClass() : UUID.class), true);
+        } else {
             serializer = Registry.get(value.getClass());
         }
 
         if (serializer == null) {
-            throw new IllegalArgumentException("Unable to find Serializer for " + value
-                    + (value instanceof Optional && ((Optional) value).isPresent()
-                            ? " (" + ((Optional) value).get().getClass().getName() + ")" : "")
-                    + "! Are you running the latest version of ProtocolLib?");
+            throw new IllegalArgumentException(
+                    "Unable to find Serializer for " + value + (value instanceof Optional && ((Optional) value).isPresent() ? " (" + ((Optional) value).get().getClass().getName() + ")" : "") + "! Are you running the latest version of ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
@@ -969,5 +959,4 @@ public class ReflectionManager {
 
         return null;
     }
-
 }

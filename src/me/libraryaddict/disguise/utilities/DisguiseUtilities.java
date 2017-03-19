@@ -705,6 +705,8 @@ public class DisguiseUtilities {
                         }
                     }
                 });
+
+                return null;
             }
         }
 
