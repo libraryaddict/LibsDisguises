@@ -99,12 +99,11 @@ public class PlayerDisguise extends TargetedDisguise {
 
         disguise.playerName = getName();
 
-        if (disguise.currentLookup == null && disguise.gameProfile != null) {
+        if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid, getGameProfile().getName(),
-                    getGameProfile());
-        }
-        else {
+            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid,
+                    getGameProfile().getName(), getGameProfile());
+        } else {
             disguise.setSkin(getSkin());
         }
 
@@ -129,8 +128,7 @@ public class PlayerDisguise extends TargetedDisguise {
         if (gameProfile == null) {
             if (getSkin() != null) {
                 gameProfile = ReflectionManager.getGameProfile(uuid, getName());
-            }
-            else {
+            } else {
                 gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(),
                         DisguiseUtilities.getProfileFromMojang(this));
             }
@@ -280,8 +278,7 @@ public class PlayerDisguise extends TargetedDisguise {
         if (newSkin == null) {
             currentLookup = null;
             gameProfile = null;
-        }
-        else {
+        } else {
             if (newSkin.length() > 16) {
                 skinToUse = newSkin.substring(0, 16);
             }
@@ -293,8 +290,7 @@ public class PlayerDisguise extends TargetedDisguise {
     /**
      * Set the GameProfile, without tampering.
      *
-     * @param gameProfile
-     *            GameProfile
+     * @param gameProfile GameProfile
      * @return
      */
     public PlayerDisguise setSkin(WrappedGameProfile gameProfile) {
@@ -315,15 +311,16 @@ public class PlayerDisguise extends TargetedDisguise {
             if (isDisplayedInTab()) {
                 PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                 addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(new PlayerInfoData(getGameProfile(), 0,
-                        NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(getName()))));
+                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                        new PlayerInfoData(getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                                WrappedChatComponent.fromText(getName()))));
 
                 PacketContainer deleteTab = addTab.shallowClone();
                 deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player))
+                        if (!canSee(player))
                             continue;
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);

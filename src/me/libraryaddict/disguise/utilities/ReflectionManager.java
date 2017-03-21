@@ -430,8 +430,9 @@ public class ReflectionManager {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(),
                     playerName);
 
-            if (profileWithSkin != null)
+            if (profileWithSkin != null) {
                 gameProfile.getProperties().putAll(profileWithSkin.getProperties());
+            }
 
             return gameProfile;
         }
