@@ -240,23 +240,25 @@ public class PlayerDisguise extends TargetedDisguise {
         if (isDisguiseInUse() || skinToUse == null)
             return super.startDisguise();
 
-        currentLookup = new LibsProfileLookup() {
-            @Override
-            public void onLookup(WrappedGameProfile gameProfile) {
-                if (currentLookup != this || gameProfile == null)
-                    return;
+        if (getGameProfile() == null) {
+            currentLookup = new LibsProfileLookup() {
+                @Override
+                public void onLookup(WrappedGameProfile gameProfile) {
+                    if (currentLookup != this || gameProfile == null)
+                        return;
 
+                    setSkin(gameProfile);
+
+                    currentLookup = null;
+                }
+            };
+
+            WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
+                    LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+
+            if (gameProfile != null) {
                 setSkin(gameProfile);
-
-                currentLookup = null;
             }
-        };
-
-        WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
-                LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
-
-        if (gameProfile != null) {
-            setSkin(gameProfile);
         }
 
         return super.startDisguise();

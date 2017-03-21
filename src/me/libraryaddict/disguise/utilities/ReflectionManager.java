@@ -113,18 +113,9 @@ public class ReflectionManager {
             ArrayList<Map<String, String>> properties = (ArrayList) response.get("properties");
 
             for (Map<String, String> s : properties) {
-                String gName = null;
-                String gValue = null;
-                String gSigned = null;
-
-                if (s.containsKey("name"))
-                    gName = s.get("name");
-
-                if (s.containsKey("value"))
-                    gValue = s.get("value");
-
-                if (s.containsKey("signature"))
-                    gSigned = s.get("signature");
+                String gName = s.containsKey("name") ? s.get("name") : null;
+                String gValue = s.containsKey("value") ? s.get("value") : null;
+                String gSigned = s.containsKey("signature") ? s.get("signature") : null;
 
                 gameProfile.getProperties().put(gName, new WrappedSignedProperty(gName, gValue, gSigned));
             }

@@ -1,10 +1,17 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,16 +21,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
@@ -69,8 +70,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
         if (disguise.isDisguiseInUse()) {
             sender.sendMessage(ChatColor.RED + "Now disguised as a " + disguise.getType().toReadable());
-        }
-        else {
+        } else {
             sender.sendMessage(ChatColor.RED + "Failed to disguise as a " + disguise.getType().toReadable());
         }
 
@@ -88,8 +88,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             for (String type : getAllowedDisguises(perms)) {
                 tabs.add(type);
             }
-        }
-        else {
+        } else {
             DisguisePerm disguiseType = DisguiseParser.getDisguisePerm(args[0]);
 
             if (disguiseType == null)
@@ -100,8 +99,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     tabs.add(player.getName());
                 }
-            }
-            else {
+            } else {
                 ArrayList<String> usedOptions = new ArrayList<String>();
 
                 for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
@@ -131,8 +129,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                                 for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
                                     tabs.add(e);
                                 }
-                            }
-                            else {
+                            } else {
                                 if (info.getParamClass() == String.class) {
                                     for (Player player : Bukkit.getOnlinePlayers()) {
                                         tabs.add(player.getName());
@@ -144,7 +141,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
+                                disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }
                     }
@@ -159,11 +157,12 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender,
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
         sender.sendMessage(ChatColor.DARK_GREEN + "Choose a disguise to become the disguise!");
-        sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN
-                + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
+        sender.sendMessage(ChatColor.DARK_GREEN + "You can use the disguises: " + ChatColor.GREEN + StringUtils.join(
+                allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
 
         if (allowedDisguises.contains("player")) {
             sender.sendMessage(ChatColor.DARK_GREEN + "/disguise player <Name>");
