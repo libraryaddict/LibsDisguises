@@ -53,17 +53,16 @@ public class DisguiseConfig {
     private static boolean stopShulkerDisguisesFromMoving;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
-    private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED
-            + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED
-            + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
+    private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
-    private static DisguisePushing disablePushing;
+    private static DisguisePushing disablePushing = DisguisePushing.MODIFY_SCOREBOARD;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
+            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(
+                    disguise))
                 continue;
 
             return entry;
@@ -107,8 +106,9 @@ public class DisguiseConfig {
     public static void initConfig(ConfigurationSection config) {
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setVelocitySent(config.getBoolean("SendVelocity"));
-        setViewDisguises(config.getBoolean("ViewSelfDisguises")); // Since we can now toggle, the view disguises listener must
-                                                                  // always be on
+        setViewDisguises(
+                config.getBoolean("ViewSelfDisguises")); // Since we can now toggle, the view disguises listener must
+        // always be on
         PacketsManager.setViewDisguisesListener(true);
         setHearSelfDisguise(config.getBoolean("HearSelfDisguise"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
@@ -146,7 +146,8 @@ public class DisguiseConfig {
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
 
         try {
-            String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
+            String option = config.getString("SelfDisguisesScoreboard",
+                    DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
 
             if (!option.endsWith("_SCOREBOARD"))
                 option += "_SCOREBOARD";
@@ -154,8 +155,8 @@ public class DisguiseConfig {
             disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesScoreboard")
-                    + "' to a valid option for SelfDisguisesTeam");
+            System.out.println("[LibsDisguises] Cannot parse '" + config.getString(
+                    "SelfDisguisesScoreboard") + "' to a valid option for SelfDisguisesTeam");
         }
 
         customDisguises.clear();
@@ -177,22 +178,22 @@ public class DisguiseConfig {
             String toParse = section.getString(key);
 
             if (getCustomDisguise(toParse) != null) {
-                System.err
-                        .println("[LibsDisguises] Cannot create the custom disguise '" + key + "' as there is a name conflict!");
+                System.err.println(
+                        "[LibsDisguises] Cannot create the custom disguise '" + key + "' as there is a name conflict!");
                 continue;
             }
 
             try {
-                Disguise disguise = DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), "disguise", toParse.split(" "),
-                        DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+                Disguise disguise = DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), "disguise",
+                        toParse.split(" "), DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
 
                 customDisguises.put(key, disguise);
 
                 System.out.println("[LibsDisguises] Loaded custom disguise " + key);
             }
             catch (DisguiseParseException e) {
-                System.err.println("[LibsDisguises] Error while loading custom disguise '" + key + "'"
-                        + (e.getMessage() == null ? "" : ": " + e.getMessage()));
+                System.err.println(
+                        "[LibsDisguises] Error while loading custom disguise '" + key + "'" + (e.getMessage() == null ? "" : ": " + e.getMessage()));
 
                 if (e.getMessage() == null)
                     e.printStackTrace();
@@ -202,8 +203,8 @@ public class DisguiseConfig {
             }
         }
 
-        System.out.println("[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise"
-                + (customDisguises.size() == 1 ? "" : "s"));
+        System.out.println(
+                "[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ? "" : "s"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
