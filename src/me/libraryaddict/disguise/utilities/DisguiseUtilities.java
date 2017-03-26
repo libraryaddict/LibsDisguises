@@ -1131,7 +1131,7 @@ public class DisguiseUtilities {
                     }
                 }
 
-                String ldTeamName = null;
+                String ldTeamName = "LD Pushing";
 
                 // If we are creating a new scoreboard because the current one must not be modified
                 if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
@@ -1140,11 +1140,9 @@ public class DisguiseUtilities {
 
                     // Give the teamname a custom name
                     ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
-                } else if (ldTeam == null) {
-                    ldTeamName = "LDPushing";
                 }
 
-                if (ldTeamName != null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
+                if (ldTeam == null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
                     ldTeam = scoreboard.registerNewTeam(ldTeamName);
                 }
 
