@@ -1021,7 +1021,7 @@ public class DisguiseUtilities {
             Team ldTeam = scoreboard.getEntryTeam(player.getName());
 
             if (ldTeam != null) {
-                if (!ldTeam.getName().equals("LDPushing") && !ldTeam.getName().endsWith("_LDP")) {
+                if (!ldTeam.getName().equals("LD Pushing") && !ldTeam.getName().endsWith("_LDP")) {
                     // Its not a team assigned by me
                     ldTeam = null;
                 }
