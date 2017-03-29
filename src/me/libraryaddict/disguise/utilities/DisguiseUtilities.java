@@ -1121,7 +1121,8 @@ public class DisguiseUtilities {
                 String ldTeamName = "LD Pushing";
 
                 // If the player is in a team already
-                if (prevTeam != null && !prevTeam.getName().equals("LD Pushing")) {
+                if (prevTeam != null && !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName().endsWith(
+                        "_LDP"))) {
                     // If we're creating a scoreboard
                     if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
                         // Remember his old team so we can give him it back later
