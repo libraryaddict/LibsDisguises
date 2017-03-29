@@ -1118,9 +1118,10 @@ public class DisguiseUtilities {
                 Scoreboard scoreboard = player.getScoreboard();
                 Team prevTeam = scoreboard.getEntryTeam(player.getName());
                 Team ldTeam = null;
+                String ldTeamName = "LD Pushing";
 
                 // If the player is in a team already
-                if (prevTeam != null) {
+                if (prevTeam != null && !prevTeam.getName().equals("LD Pushing")) {
                     // If we're creating a scoreboard
                     if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
                         // Remember his old team so we can give him it back later
@@ -1129,9 +1130,9 @@ public class DisguiseUtilities {
                         // We're modifying the scoreboard
                         ldTeam = prevTeam;
                     }
+                } else {
+                    prevTeam = null;
                 }
-
-                String ldTeamName = "LD Pushing";
 
                 // If we are creating a new scoreboard because the current one must not be modified
                 if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
