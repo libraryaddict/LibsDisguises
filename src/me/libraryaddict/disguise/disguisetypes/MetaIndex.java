@@ -10,11 +10,9 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
@@ -310,6 +308,31 @@ public class MetaIndex<Y> {
 
                 System.err.println(entry.getKey().getSimpleName() + " has no FlagType registered for the index " + i);
             }
+        }
+    }
+
+    public static void printMetadata() {
+        ArrayList<String> toPrint = new ArrayList<>();
+
+        try {
+            for (Field field : MetaIndex.class.getFields()) {
+                if (field.getType() != MetaIndex.class)
+                    continue;
+
+                MetaIndex index = (MetaIndex) field.get(null);
+
+                toPrint.add(
+                        index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index.getIndex() + " " + index.getDefault().getClass().getSimpleName());
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        Collections.sort(toPrint, String.CASE_INSENSITIVE_ORDER);
+
+        for (String s : toPrint) {
+            System.out.println(s);
         }
     }
 

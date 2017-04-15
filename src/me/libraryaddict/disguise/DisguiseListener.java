@@ -214,14 +214,14 @@ public class DisguiseListener implements Listener {
                     try {
                         PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                         Player player = (Player) targetedDisguise.getEntity();
-                
+
                         addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
                         addTab.getPlayerInfoDataLists()
                                 .write(0,
                                         Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile(player), 0,
                                                 NativeGameMode.SURVIVAL,
                                                 WrappedChatComponent.fromText(player.getDisplayName()))));
-                
+
                         ProtocolLibrary.getProtocolManager().sendServerPacket(p, addTab);
                     }
                     catch (InvocationTargetException e) {

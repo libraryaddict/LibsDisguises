@@ -123,7 +123,8 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("disguisemodify", new DisguiseModifyCommand());
         registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
         registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
-        registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+        registerCommand("disguisemodifyradius",
+                new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
 
         try {
             Metrics metrics = new Metrics(this);
@@ -167,43 +168,43 @@ public class LibsDisguises extends JavaPlugin {
 
             try {
                 switch (disguiseType) {
-                case SPECTRAL_ARROW:
-                    watcherClass = ArrowWatcher.class;
-                    break;
-                case PRIMED_TNT:
-                    watcherClass = TNTWatcher.class;
-                    break;
-                case MINECART_CHEST:
-                case MINECART_COMMAND:
-                case MINECART_FURNACE:
-                case MINECART_HOPPER:
-                case MINECART_MOB_SPAWNER:
-                case MINECART_TNT:
-                    watcherClass = MinecartWatcher.class;
-                    break;
-                case SPIDER:
-                case CAVE_SPIDER:
-                    watcherClass = SpiderWatcher.class;
-                    break;
-                case ZOMBIE_VILLAGER:
-                case PIG_ZOMBIE:
-                case HUSK:
-                    watcherClass = ZombieWatcher.class;
-                    break;
-                case MAGMA_CUBE:
-                    watcherClass = SlimeWatcher.class;
-                    break;
-                case ELDER_GUARDIAN:
-                    watcherClass = GuardianWatcher.class;
-                    break;
-                case WITHER_SKELETON:
-                case STRAY:
-                    watcherClass = SkeletonWatcher.class;
-                    break;
-                default:
-                    watcherClass = Class.forName(
-                            "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
-                    break;
+                    case SPECTRAL_ARROW:
+                        watcherClass = ArrowWatcher.class;
+                        break;
+                    case PRIMED_TNT:
+                        watcherClass = TNTWatcher.class;
+                        break;
+                    case MINECART_CHEST:
+                    case MINECART_COMMAND:
+                    case MINECART_FURNACE:
+                    case MINECART_HOPPER:
+                    case MINECART_MOB_SPAWNER:
+                    case MINECART_TNT:
+                        watcherClass = MinecartWatcher.class;
+                        break;
+                    case SPIDER:
+                    case CAVE_SPIDER:
+                        watcherClass = SpiderWatcher.class;
+                        break;
+                    case ZOMBIE_VILLAGER:
+                    case PIG_ZOMBIE:
+                    case HUSK:
+                        watcherClass = ZombieWatcher.class;
+                        break;
+                    case MAGMA_CUBE:
+                        watcherClass = SlimeWatcher.class;
+                        break;
+                    case ELDER_GUARDIAN:
+                        watcherClass = GuardianWatcher.class;
+                        break;
+                    case WITHER_SKELETON:
+                    case STRAY:
+                        watcherClass = SkeletonWatcher.class;
+                        break;
+                    default:
+                        watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(
+                                disguiseType.name()) + "Watcher");
+                        break;
                 }
             }
             catch (ClassNotFoundException ex) {
@@ -213,21 +214,16 @@ public class LibsDisguises extends JavaPlugin {
                 if (entityClass != null) {
                     if (Tameable.class.isAssignableFrom(entityClass)) {
                         watcherClass = TameableWatcher.class;
-                    }
-                    else if (Ageable.class.isAssignableFrom(entityClass)) {
+                    } else if (Ageable.class.isAssignableFrom(entityClass)) {
                         watcherClass = AgeableWatcher.class;
-                    }
-                    else if (Creature.class.isAssignableFrom(entityClass)) {
+                    } else if (Creature.class.isAssignableFrom(entityClass)) {
                         watcherClass = InsentientWatcher.class;
-                    }
-                    else if (LivingEntity.class.isAssignableFrom(entityClass)) {
+                    } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
                         watcherClass = LivingWatcher.class;
-                    }
-                    else {
+                    } else {
                         watcherClass = FlagWatcher.class;
                     }
-                }
-                else {
+                } else {
                     watcherClass = FlagWatcher.class; // Disguise is unknown type
                 }
             }
@@ -246,50 +242,50 @@ public class LibsDisguises extends JavaPlugin {
             String nmsEntityName = toReadable(disguiseType.name());
 
             switch (disguiseType) {
-            case WITHER_SKELETON:
-            case ZOMBIE_VILLAGER:
-            case DONKEY:
-            case MULE:
-            case ZOMBIE_HORSE:
-            case SKELETON_HORSE:
-            case STRAY:
-            case HUSK:
-                continue;
-            case PRIMED_TNT:
-                nmsEntityName = "TNTPrimed";
-                break;
-            case MINECART_TNT:
-                nmsEntityName = "MinecartTNT";
-                break;
-            case MINECART:
-                nmsEntityName = "MinecartRideable";
-                break;
-            case FIREWORK:
-                nmsEntityName = "Fireworks";
-                break;
-            case SPLASH_POTION:
-                nmsEntityName = "Potion";
-                break;
-            case GIANT:
-                nmsEntityName = "GiantZombie";
-                break;
-            case DROPPED_ITEM:
-                nmsEntityName = "Item";
-                break;
-            case FIREBALL:
-                nmsEntityName = "LargeFireball";
-                break;
-            case LEASH_HITCH:
-                nmsEntityName = "Leash";
-                break;
-            case ELDER_GUARDIAN:
-                nmsEntityName = "Guardian";
-                break;
-            case ARROW:
-            case SPECTRAL_ARROW:
-                nmsEntityName = "TippedArrow";
-            default:
-                break;
+                case WITHER_SKELETON:
+                case ZOMBIE_VILLAGER:
+                case DONKEY:
+                case MULE:
+                case ZOMBIE_HORSE:
+                case SKELETON_HORSE:
+                case STRAY:
+                case HUSK:
+                    continue;
+                case PRIMED_TNT:
+                    nmsEntityName = "TNTPrimed";
+                    break;
+                case MINECART_TNT:
+                    nmsEntityName = "MinecartTNT";
+                    break;
+                case MINECART:
+                    nmsEntityName = "MinecartRideable";
+                    break;
+                case FIREWORK:
+                    nmsEntityName = "Fireworks";
+                    break;
+                case SPLASH_POTION:
+                    nmsEntityName = "Potion";
+                    break;
+                case GIANT:
+                    nmsEntityName = "GiantZombie";
+                    break;
+                case DROPPED_ITEM:
+                    nmsEntityName = "Item";
+                    break;
+                case FIREBALL:
+                    nmsEntityName = "LargeFireball";
+                    break;
+                case LEASH_HITCH:
+                    nmsEntityName = "Leash";
+                    break;
+                case ELDER_GUARDIAN:
+                    nmsEntityName = "Guardian";
+                    break;
+                case ARROW:
+                case SPECTRAL_ARROW:
+                    nmsEntityName = "TippedArrow";
+                default:
+                    break;
             }
 
             try {
@@ -337,21 +333,21 @@ public class LibsDisguises extends JavaPlugin {
                     MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
 
                     if (flagType == null) {
-                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " + watch.getIndex()
-                                + " can't be found!");
-                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
-                                + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
+                        System.err.println(
+                                "Error finding the FlagType for " + disguiseType.name() + "! Index " + watch.getIndex() + " can't be found!");
+                        System.err.println(
+                                "Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                         continue;
                     }
 
-                    if (ReflectionManager.convertInvalidItem(flagType.getDefault()).getClass() != ReflectionManager
-                            .convertInvalidItem(watch.getValue()).getClass()) {
-                        System.err.println("Mismatch of FlagType's for " + disguiseType.name() + "! Index " + watch.getIndex()
-                                + " has the wrong classtype!");
-                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") ("
-                                + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName() + " which doesn't match up with "
-                                + flagType.getDefault().getClass());
+                    if (ReflectionManager.convertInvalidItem(
+                            flagType.getDefault()).getClass() != ReflectionManager.convertInvalidItem(
+                            watch.getValue()).getClass()) {
+                        System.err.println(
+                                "Mismatch of FlagType's for " + disguiseType.name() + "! Index " + watch.getIndex() + " has the wrong classtype!");
+                        System.err.println(
+                                "Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName() + " which doesn't match up with " + flagType.getDefault().getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                         continue;
                     }
@@ -374,8 +370,7 @@ public class LibsDisguises extends JavaPlugin {
                     ((Ageable) bukkitEntity).setBaby();
 
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
-                }
-                else if (bukkitEntity instanceof Zombie) {
+                } else if (bukkitEntity instanceof Zombie) {
                     ((Zombie) bukkitEntity).setBaby(true);
 
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
@@ -386,10 +381,10 @@ public class LibsDisguises extends JavaPlugin {
             catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
                 System.out.print(
                         "[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
-                System.out.print("[LibsDisguises] Before reporting this error, "
-                        + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
-                System.out.print("[LibsDisguises] Development builds are available at (ProtocolLib) "
-                        + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming.com:8080/job/LibsDisguises%201.9+/");
+                System.out.print(
+                        "[LibsDisguises] Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+                System.out.print(
+                        "[LibsDisguises] Development builds are available at (ProtocolLib) " + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming.com:8080/job/LibsDisguises%201.9+/");
 
                 ex.printStackTrace();
             }
