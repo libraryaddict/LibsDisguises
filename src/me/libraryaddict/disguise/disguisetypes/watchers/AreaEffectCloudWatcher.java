@@ -32,19 +32,25 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
     }
 
     public void setRadius(float radius) {
+        if (radius > 30)
+            radius = 30;
+
         setData(MetaIndex.AREA_EFFECT_RADIUS, radius);
+        sendData(MetaIndex.AREA_EFFECT_RADIUS);
     }
 
     public void setColor(int color) {
         setData(MetaIndex.AREA_EFFECT_CLOUD_COLOR, color);
+        sendData(MetaIndex.AREA_EFFECT_CLOUD_COLOR);
     }
 
     public void setIgnoreRadius(boolean ignore) {
         setData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS, ignore);
+        sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
     public void setParticleId(int particleId) {
         setData(MetaIndex.AREA_EFFECT_PARTICLE, particleId);
+        sendData(MetaIndex.AREA_EFFECT_PARTICLE);
     }
-
 }
