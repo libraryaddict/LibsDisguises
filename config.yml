@@ -101,7 +101,7 @@ KeepDisguises:
     EntityDespawn: false
     PlayerDeath: false
     PlayerLogout: false
-  
+
 # This controls if a entitys max health is determined by the entity, or by the disguise.
 # Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
 # Else it will be 1/20 of the boss bar when he is full health.

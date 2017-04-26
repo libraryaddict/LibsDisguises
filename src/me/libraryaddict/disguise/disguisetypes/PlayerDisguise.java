@@ -237,10 +237,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Override
     public boolean startDisguise() {
-        if (isDisguiseInUse() || skinToUse == null)
-            return super.startDisguise();
-
-        if (getGameProfile() == null) {
+        if (!isDisguiseInUse() && skinToUse != null && gameProfile == null) {
             currentLookup = new LibsProfileLookup() {
                 @Override
                 public void onLookup(WrappedGameProfile gameProfile) {
