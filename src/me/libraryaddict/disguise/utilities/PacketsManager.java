@@ -423,7 +423,7 @@ public class PacketsManager {
             StructureModifier<Object> mods = spawnEntity.getModifier();
 
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, disguisedEntity.getUniqueId().toString());
+            mods.write(1, disguisedEntity.getUniqueId());
             mods.write(2, disguise.getType().getTypeId());
 
             // region Vector calculations
