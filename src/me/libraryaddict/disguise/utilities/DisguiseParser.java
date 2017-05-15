@@ -426,7 +426,9 @@ public class DisguiseParser {
                 temp.putAll(rangeDisguises.get(type));
             }
 
-            map.put(type, temp);
+            if (!temp.isEmpty()) {
+                map.put(type, temp);
+            }
         }
 
         return map;
@@ -980,6 +982,9 @@ public class DisguiseParser {
 
     public static boolean passesCheck(CommandSender sender, HashMap<ArrayList<String>, Boolean> theirPermissions,
             ArrayList<String> usedOptions) {
+        if (theirPermissions == null)
+            return false;
+
         boolean hasPermission = false;
 
         for (ArrayList<String> list : theirPermissions.keySet()) {
