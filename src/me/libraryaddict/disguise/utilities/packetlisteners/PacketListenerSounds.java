@@ -79,6 +79,8 @@ public class PacketListenerSounds extends PacketAdapter
                 return;
             }
 
+            if (!soundLoc.getWorld().isChunkLoaded(soundLoc.getBlockX() / 16, soundLoc.getBlockZ() / 16)) return;
+
             Entity disguisedEntity = null;
             DisguiseSound entitySound = null;
 
