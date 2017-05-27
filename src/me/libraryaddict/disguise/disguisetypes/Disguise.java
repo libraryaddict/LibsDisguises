@@ -1,22 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -26,7 +9,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -39,9 +21,20 @@ import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
-public abstract class Disguise {
-    private static List<UUID> viewSelf = new ArrayList<>();
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+public abstract class Disguise implements Serializable {
+    private transient static List<UUID> viewSelf = new ArrayList<>();
 
     /**
      * Returns the list of people who have /disguiseViewSelf toggled on
@@ -52,9 +45,9 @@ public abstract class Disguise {
         return viewSelf;
     }
 
-    private boolean disguiseInUse;
+    private transient boolean disguiseInUse;
     private DisguiseType disguiseType;
-    private Entity entity;
+    private transient Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
@@ -65,8 +58,8 @@ public abstract class Disguise {
     private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private boolean showName;
-    private BukkitTask task;
-    private Runnable velocityRunnable;
+    private transient BukkitTask task;
+    private transient Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
@@ -81,13 +74,12 @@ public abstract class Disguise {
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
      *
-     * @param newType
-     *            The disguise
+     * @param newType The disguise
      */
     protected void createDisguise() {
         if (getType().getEntityType() == null) {
-            throw new RuntimeException("DisguiseType " + getType()
-                    + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
+            throw new RuntimeException(
+                    "DisguiseType " + getType() + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
         }
 
         // Get if they are a adult now..
@@ -106,14 +98,15 @@ public abstract class Disguise {
             catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            getWatcher().setDisguise((TargetedDisguise) this);
         }
 
         // Set the disguise if its a baby or not
         if (!isAdult) {
             if (getWatcher() instanceof AgeableWatcher) {
                 ((AgeableWatcher) getWatcher()).setBaby(true);
-            }
-            else if (getWatcher() instanceof ZombieWatcher) {
+            } else if (getWatcher() instanceof ZombieWatcher) {
                 ((ZombieWatcher) getWatcher()).setBaby(true);
             }
         }
@@ -121,69 +114,69 @@ public abstract class Disguise {
         final boolean alwaysSendVelocity;
 
         switch (getType()) {
-        case EGG:
-        case ENDER_PEARL:
-        case BAT:
-        case EXPERIENCE_ORB:
-        case FIREBALL:
-        case SMALL_FIREBALL:
-        case SNOWBALL:
-        case SPLASH_POTION:
-        case THROWN_EXP_BOTTLE:
-        case WITHER_SKULL:
-        case FIREWORK:
-            alwaysSendVelocity = true;
-            break;
-        default:
-            alwaysSendVelocity = false;
-            break;
+            case EGG:
+            case ENDER_PEARL:
+            case BAT:
+            case EXPERIENCE_ORB:
+            case FIREBALL:
+            case SMALL_FIREBALL:
+            case SNOWBALL:
+            case SPLASH_POTION:
+            case THROWN_EXP_BOTTLE:
+            case WITHER_SKULL:
+            case FIREWORK:
+                alwaysSendVelocity = true;
+                break;
+            default:
+                alwaysSendVelocity = false;
+                break;
         }
 
         double velocitySpeed = 0.0005;
 
         switch (getType()) {
-        case FIREWORK:
-            velocitySpeed = -0.040;
-            break;
-        case WITHER_SKULL:
-            velocitySpeed = 0.000001D;
-            break;
-        case ARROW:
-        case TIPPED_ARROW:
-        case SPECTRAL_ARROW:
-        case BOAT:
-        case ENDER_CRYSTAL:
-        case ENDER_DRAGON:
-        case GHAST:
-        case ITEM_FRAME:
-        case MINECART:
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_MOB_SPAWNER:
-        case MINECART_TNT:
-        case PAINTING:
-        case PLAYER:
-        case SQUID:
-            velocitySpeed = 0;
-            break;
-        case DROPPED_ITEM:
-        case PRIMED_TNT:
-        case WITHER:
-        case FALLING_BLOCK:
-            velocitySpeed = 0.04;
-            break;
-        case EXPERIENCE_ORB:
-            velocitySpeed = 0.0221;
-            break;
-        case SPIDER:
-        case BAT:
-        case CAVE_SPIDER:
-            velocitySpeed = 0.004;
-            break;
-        default:
-            break;
+            case FIREWORK:
+                velocitySpeed = -0.040;
+                break;
+            case WITHER_SKULL:
+                velocitySpeed = 0.000001D;
+                break;
+            case ARROW:
+            case TIPPED_ARROW:
+            case SPECTRAL_ARROW:
+            case BOAT:
+            case ENDER_CRYSTAL:
+            case ENDER_DRAGON:
+            case GHAST:
+            case ITEM_FRAME:
+            case MINECART:
+            case MINECART_CHEST:
+            case MINECART_COMMAND:
+            case MINECART_FURNACE:
+            case MINECART_HOPPER:
+            case MINECART_MOB_SPAWNER:
+            case MINECART_TNT:
+            case PAINTING:
+            case PLAYER:
+            case SQUID:
+                velocitySpeed = 0;
+                break;
+            case DROPPED_ITEM:
+            case PRIMED_TNT:
+            case WITHER:
+            case FALLING_BLOCK:
+                velocitySpeed = 0.04;
+                break;
+            case EXPERIENCE_ORB:
+                velocitySpeed = 0.0221;
+                break;
+            case SPIDER:
+            case BAT:
+            case CAVE_SPIDER:
+                velocitySpeed = 0.004;
+                break;
+            default:
+                break;
         }
 
         final double vectorY = velocitySpeed;
@@ -209,16 +202,14 @@ public abstract class Disguise {
 
                         if (isRemoveDisguiseOnDeath()) {
                             removeDisguise();
-                        }
-                        else {
+                        } else {
                             entity = null;
                             watcher = getWatcher().clone(disguise);
                             task.cancel();
                             task = null;
                         }
                     }
-                }
-                else {
+                } else {
                     deadTicks = 0;
 
                     // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
@@ -230,8 +221,7 @@ public abstract class Disguise {
 
                             DisguiseUtilities.refreshTrackers(disguise);
                         }
-                    }
-                    else if (getType() == DisguiseType.EVOKER_FANGS) {
+                    } else if (getType() == DisguiseType.EVOKER_FANGS) {
                         refreshDisguise++;
 
                         if (refreshDisguise == 23) {
@@ -239,14 +229,12 @@ public abstract class Disguise {
 
                             DisguiseUtilities.refreshTrackers(disguise);
                         }
-                    }
-                    else if (getType() == DisguiseType.ITEM_FRAME) {
+                    } else if (getType() == DisguiseType.ITEM_FRAME) {
                         Location loc = getEntity().getLocation();
 
                         int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
 
-                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ
-                                || newFacing != facing) {
+                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ || newFacing != facing) {
                             blockX = loc.getBlockX();
                             blockY = loc.getBlockY();
                             blockZ = loc.getBlockZ();
@@ -289,8 +277,9 @@ public abstract class Disguise {
 
                                 mods.write(4, PacketsManager.getYaw(getType(), getEntity().getType(),
                                         (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                                mods.write(5, PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()),
-                                        (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
+                                mods.write(5,
+                                        PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()),
+                                                (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();
@@ -322,19 +311,20 @@ public abstract class Disguise {
                                         }
 
                                         mods.write(0, DisguiseAPI.getSelfDisguiseId());
-                                    }
-                                    else {
+                                    } else {
                                         mods.write(0, getEntity().getEntityId());
                                     }
 
-                                    mods.write(2, (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
+                                    mods.write(2,
+                                            (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
 
                                     if (lookPacket != null && player != getEntity()) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket, false);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket,
+                                                false);
                                     }
 
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, velocityPacket.shallowClone(),
-                                            false);
+                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player,
+                                            velocityPacket.shallowClone(), false);
                                 }
                             }
                             catch (Exception e) {
@@ -352,15 +342,14 @@ public abstract class Disguise {
                             for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                                 if (getEntity() != player) {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                                }
-                                else if (isSelfDisguiseVisible()) {
+                                } else if (isSelfDisguiseVisible()) {
                                     PacketContainer selfPacket = packet.shallowClone();
 
                                     selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
 
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(), selfPacket,
-                                                false);
+                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
+                                                selfPacket, false);
                                     }
                                     catch (InvocationTargetException e) {
                                         e.printStackTrace();
@@ -461,9 +450,9 @@ public abstract class Disguise {
      * Internal use
      */
     public boolean isRemoveDisguiseOnDeath() {
-        return getEntity() == null || (getEntity() instanceof Player
-                ? (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() : !isKeepDisguiseOnPlayerDeath())
-                : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead()));
+        return getEntity() == null || (getEntity() instanceof Player ?
+                (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() :
+                        !isKeepDisguiseOnPlayerDeath()) : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead()));
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -525,8 +514,8 @@ public abstract class Disguise {
                         if (disguise.isDisplayedInTab()) {
                             PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                             deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0,
-                                    Arrays.asList(new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                                    new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
                                             WrappedChatComponent.fromText(disguise.getName()))));
 
                             try {
@@ -546,8 +535,8 @@ public abstract class Disguise {
                     if (isHidePlayer() && getEntity() instanceof Player) {
                         PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                         deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                        deleteTab.getPlayerInfoDataLists().write(0,
-                                Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                        deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                         NativeGameMode.SURVIVAL,
                                         WrappedChatComponent.fromText(((Player) getEntity()).getDisplayName()))));
 
@@ -574,13 +563,11 @@ public abstract class Disguise {
                         // Better refresh the entity to undisguise it
                         if (getEntity().isValid()) {
                             DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                        }
-                        else {
+                        } else {
                             DisguiseUtilities.destroyEntity((TargetedDisguise) this);
                         }
                     }
-                }
-                else {
+                } else {
                     // Loop through the disguises because it could be used with a unknown entity id.
                     HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
@@ -592,22 +579,6 @@ public abstract class Disguise {
                         if (future.get(id).remove(this) && future.get(id).isEmpty()) {
                             itel.remove();
                         }
-                    }
-                }
-
-                if (isPlayerDisguise()) {
-                    String name = ((PlayerDisguise) this).getName();
-
-                    if (!DisguiseUtilities.getAddedByPlugins().contains(name.toLowerCase())) {
-                        for (HashSet<TargetedDisguise> disguise : disguises.values()) {
-                            for (Disguise d : disguise) {
-                                if (d.isPlayerDisguise() && ((PlayerDisguise) d).getName().equals(name)) {
-                                    return true;
-                                }
-                            }
-                        }
-
-                        DisguiseUtilities.getGameProfiles().remove(name.toLowerCase());
                     }
                 }
 
@@ -640,7 +611,9 @@ public abstract class Disguise {
 
         this.entity = entity;
 
-        setupWatcher();
+        if (entity != null) {
+            setupWatcher();
+        }
 
         return this;
     }
@@ -731,7 +704,8 @@ public abstract class Disguise {
      */
     private void setupWatcher() {
         ArrayList<MetaIndex> disguiseFlags = MetaIndex.getFlags(getType().getWatcherClass());
-        ArrayList<MetaIndex> entityFlags = MetaIndex.getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
+        ArrayList<MetaIndex> entityFlags = MetaIndex.getFlags(
+                DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
         for (MetaIndex flag : entityFlags) {
             if (disguiseFlags.contains(flag))
@@ -770,8 +744,7 @@ public abstract class Disguise {
                 if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
                     if (isSelfDisguiseVisible()) {
                         DisguiseUtilities.setupFakeDisguise(this);
-                    }
-                    else {
+                    } else {
                         DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                     }
                 }
@@ -783,8 +756,8 @@ public abstract class Disguise {
 
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
-            throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of "
-                    + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
+            throw new IllegalArgumentException(
+                    newWatcher.getClass().getSimpleName() + " is not a instance of " + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
@@ -823,8 +796,9 @@ public abstract class Disguise {
                 if (disguise.isDisplayedInTab()) {
                     PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                     addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                    addTab.getPlayerInfoDataLists().write(0, Arrays.asList(new PlayerInfoData(disguise.getGameProfile(), 0,
-                            NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(disguise.getName()))));
+                    addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                            new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                                    WrappedChatComponent.fromText(disguise.getName()))));
 
                     try {
                         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -861,8 +835,8 @@ public abstract class Disguise {
             if (isHidePlayer() && getEntity() instanceof Player) {
                 PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                 addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                addTab.getPlayerInfoDataLists().write(0,
-                        Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                        new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                 NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
 
                 try {

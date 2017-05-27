@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/executors/BukkitExecutors/1.1-SNAPSHOT/BukkitExecutors-1.1-20170429.151522-2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/executors/BukkitExecutors/1.1-SNAPSHOT/BukkitExecutors-1.1-20170429.151522-2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/comphenix/executors/BukkitExecutors/1.1-SNAPSHOT/BukkitExecutors-1.1-20170429.151522-2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

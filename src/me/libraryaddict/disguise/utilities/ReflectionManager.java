@@ -627,10 +627,6 @@ public class ReflectionManager {
         return null;
     }
 
-    public static void removePlayer(Player player) {
-        // Some future remove code if needed
-    }
-
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
         try {
             Location loc = entity.getLocation();
@@ -888,15 +884,18 @@ public class ReflectionManager {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
 
-            serializer = Registry.get((opt.isPresent() ? getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass(
-                    "IBlockData") : opt.get().getClass() : UUID.class), true);
+            serializer = Registry.get((opt.isPresent() ?
+                    getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass("IBlockData") : opt.get().getClass() :
+                    UUID.class), true);
         } else {
             serializer = Registry.get(value.getClass());
         }
 
         if (serializer == null) {
-            throw new IllegalArgumentException(
-                    "Unable to find Serializer for " + value + (value instanceof Optional && ((Optional) value).isPresent() ? " (" + ((Optional) value).get().getClass().getName() + ")" : "") + "! Are you running the latest version of ProtocolLib?");
+            throw new IllegalArgumentException("Unable to find Serializer for " + value + (
+                    value instanceof Optional && ((Optional) value).isPresent() ?
+                            " (" + ((Optional) value).get().getClass().getName() + ")" :
+                            "") + "! Are you running the latest version of ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);

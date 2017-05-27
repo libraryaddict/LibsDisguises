@@ -297,15 +297,6 @@ public class PacketsManager {
 
             String name = playerDisguise.getName();
             int entityId = disguisedEntity.getEntityId();
-            boolean removeName = false;
-
-            if (!DisguiseUtilities.hasGameProfile(name)) {
-                removeName = !DisguiseUtilities.getAddedByPlugins().contains(name);
-            }
-
-            if (removeName) {
-                DisguiseUtilities.getAddedByPlugins().remove(name);
-            }
 
             // Send player info along with the disguise
             PacketContainer sendTab = new PacketContainer(Server.PLAYER_INFO);

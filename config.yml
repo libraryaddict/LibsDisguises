@@ -1,6 +1,47 @@
 # Shall I notify people of a LibsDisguises update?
 NotifyUpdate: true
 
+# The disguise plugin stores all GameProfiles inside a file called 'cache.yml'
+# This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
+# However some people may prefer to disable this.
+# Even if you disable this, if there was disguises in the cache already then it will use them
+SaveCache: true
+
+# This option is useless if you don't enable SaveCache!
+# If a player has been disguised before and their skin saved into the cache
+# When they join the server will automatically update the cache incase they changed their skin
+UpdatePlayersCache: true
+
+# Should the server save the disguises so that when they are alive again, they are disguised again
+# Players - Are player disguises saved
+# Entities - Are entities disguises saved
+SaveDisguises:
+    Players: false
+    Entities: false
+
+# Where does it save the disguises and gameprofiles to
+SaveData:
+  # If this is true, then it saves to mysql. If this is false, then it saves to file
+  # I do not provide help for setting up Mysql or the databases, there are guides online for that
+  UseMySQL: false
+  # What is the IP and Port required to connect
+  IP: 'localhost:3306'
+  User: 'root'
+  Password: 'password'
+  Database: 'LibsDisguises'
+  # What is the table for GameProfiles called? You shouldn't need to touch this
+  GameProfiles: 'GameProfileCache'
+  # What is the table for disguises called?
+  Disguises: 'DisguisesCache'
+
+# This I don't really recommend turning on as it can make a memory leak..
+# These disguises, as normal will not persist after a server restart.
+# There is also no EntityDeath option as entities do not revive after death.
+# The EntityDespawn option is when you leave the chunk the entity is and the chunk is unloaded
+KeepDisguises:
+    EntityDespawn: false
+    PlayerDeath: false
+
 # How should the plugin handle self disguises scoreboards?
 # MODIFY_SCOREBOARD - Modifies the player's current team if possible, otherwise assigns them to a new scoreboard team
 # IGNORE_SCOREBOARD - Doesn't touch scoreboards at all, effectively means that if you didn't disable pushing in their scoreboard team; They will still be pushed around
@@ -68,6 +109,7 @@ NameAboveHeadAlwaysVisible: true
 # This WILL conflict with NoCheatPlus. Other plugins may also get problems.
 # This shouldn't really be enabled for players as it also interferes with their movement because the server thinks the player is larger than he really is.
 # That makes the player unable to approach this building because the server thinks he is trying to glitch inside blocks.
+# This feature is highly experimental and is garanteed to cause problems for players who are disguised
 ModifyBoundingBox: false
 
 # This prevents disguised players from being targeted by monsters.
@@ -92,15 +134,6 @@ DisguiseEntityExpire: 10
 DisguiseCloneExpire: 10
 # Max disguises to store at a time with the DisguiseClone command
 DisguiseCloneSize: 3
-
-# This I don't really recommend turning on as it can make a memory leak..
-# These disguises, as normal will not persist after a server restart.
-# There is also no EntityDeath option as entities do not revive after death.
-# The EntityDespawn option is when you leave the chunk the entity is and the chunk is unloaded
-KeepDisguises:
-    EntityDespawn: false
-    PlayerDeath: false
-    PlayerLogout: false
 
 # This controls if a entitys max health is determined by the entity, or by the disguise.
 # Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.

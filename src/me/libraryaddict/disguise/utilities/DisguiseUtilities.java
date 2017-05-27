@@ -1,27 +1,30 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,37 +39,16 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
-import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
     public static final Random random = new Random();
-    /**
-     * This is a list of names which was called by other plugins. As such, don't remove from the gameProfiles as its the duty of
-     * the plugin to do that.
-     */
-    private static HashSet<String> addedByPlugins = new HashSet<>();
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
@@ -77,16 +59,16 @@ public class DisguiseUtilities {
      * a max of a second.
      */
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
-    /**
-     * A hashmap storing the uuid and skin of a playername
-     */
-    private static HashMap<String, WrappedGameProfile> gameProfiles = new HashMap<>();
+    private static HashSet<UUID> savedDisguiseList = new HashSet<>();
+    private static HashSet<String> cachedNames = new HashSet<>();
     private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
     private static PacketContainer spawnChunk;
-    private static HashMap<UUID, String> preDisguiseTeam = new HashMap<UUID, String>();
+    private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
+    private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
+            "plugins/LibsDisguises/SavedDisguises");
 
     static {
         try {
@@ -142,6 +124,10 @@ public class DisguiseUtilities {
         }
     }
 
+    public static boolean hasCacheEntry(String playername) {
+        return cachedNames.contains(playername.toLowerCase());
+    }
+
     public static void createClonedDisguise(Player player, Entity toClone, Boolean[] options) {
         Disguise disguise = DisguiseAPI.getDisguise(player, toClone);
 
@@ -177,8 +163,101 @@ public class DisguiseUtilities {
             player.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
         } else {
             player.sendMessage(
-                    ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please set this in the config");
+                    ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please raise the " +
+                            "maximum cloned disguises, or lower the time they last");
         }
+    }
+
+    private static void saveDisguiseToFile
+
+    public static void saveDisguises(UUID owningEntity, Disguise[] disguise) {
+        try {
+            File disguiseFile = new File(savedDisguises, owningEntity.toString());
+
+            if (disguise == null || disguise.length == 0) {
+                if (savedDisguiseList.contains(owningEntity)) {
+                    disguiseFile.delete();
+                } else {
+                    return;
+                }
+            } else {
+                Disguise[] disguises = new Disguise[disguise.length];
+
+                for (int i = 0; i < disguise.length; i++) {
+                    Disguise dis = disguise[i].clone();
+                    dis.setEntity(null);
+
+                    disguises[i] = dis;
+                }
+
+                FileOutputStream files = new FileOutputStream(disguiseFile);
+                ObjectOutputStream obj = new ObjectOutputStream(files);
+
+                obj.writeObject(disguises);
+
+                savedDisguiseList.add(owningEntity);
+
+                obj.close();
+                files.close();
+            }
+
+            savedDisguises.save(new File(libsDisguises.getDataFolder(), "saveddisguises.yml"));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Disguise[] getSavedDisguises(UUID entityUUID) {
+        return getSavedDisguises(entityUUID, false);
+    }
+
+    public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
+        if (isSavedDisguise(entityUUID))
+            return new Disguise[0];
+
+        String cached = savedDisguises.getString(entityUUID.toString());
+
+        if (cached == null) {
+            cachedNames.remove(entityUUID.toString());
+            return new Disguise[0];
+        }
+
+        try {
+            ObjectInputStream outputStream = new ObjectInputStream(new ByteArrayInputStream(cached.getBytes()));
+
+            Disguise[] toReturn = (Disguise[]) outputStream.readObject();
+
+            if (remove) {
+                removeSavedDisguise(entityUUID);
+            }
+
+            return toReturn;
+        }
+        catch (Exception e) {
+            System.out.println("Error while loading Entity Disguises, malformed config?");
+            e.printStackTrace();
+        }
+
+        return new Disguise[0];
+    }
+
+    public static void removeSavedDisguise(UUID entityUUID) {
+        if (!savedDisguiseList.remove(entityUUID))
+            return;
+
+        savedDisguises.set(entityUUID.toString(), null);
+
+        try {
+            savedDisguises.save(new File(libsDisguises.getDataFolder(), "saveddisguises.yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean isSavedDisguise(UUID entityUUID) {
+        return savedDisguiseList.contains(entityUUID);
     }
 
     public static boolean addClonedDisguise(String key, Disguise disguise) {
@@ -250,8 +329,21 @@ public class DisguiseUtilities {
     }
 
     public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
-        getGameProfiles().put(string, gameProfile);
-        getAddedByPlugins().add(string.toLowerCase());
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            ObjectOutputStream obj = new ObjectOutputStream(bytes);
+            obj.writeObject(new WrappedProfile(gameProfile));
+
+            gameProfileCache.set(string.toLowerCase(), new String(bytes.toByteArray()));
+            cachedNames.add(string.toLowerCase());
+
+            if (DisguiseConfig.isSaveCache()) {
+                gameProfileCache.save(new File(libsDisguises.getDataFolder(), "cache.yml"));
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -388,10 +480,6 @@ public class DisguiseUtilities {
         }
     }
 
-    public static HashSet<String> getAddedByPlugins() {
-        return addedByPlugins;
-    }
-
     public static int getChunkCord(int blockCord) {
         int cord = (int) Math.floor(blockCord / 16D) - 17;
 
@@ -511,11 +599,26 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
-        return gameProfiles.get(playerName.toLowerCase());
-    }
+        if (!cachedNames.contains(playerName.toLowerCase()))
+            return null;
 
-    public static HashMap<String, WrappedGameProfile> getGameProfiles() {
-        return gameProfiles;
+        String cached = gameProfileCache.getString(playerName.toLowerCase());
+
+        if (cached == null) {
+            cachedNames.remove(playerName.toLowerCase());
+            return null;
+        }
+
+        try {
+            ObjectInputStream outputStream = new ObjectInputStream(new ByteArrayInputStream(cached.getBytes()));
+
+            return ((WrappedProfile) outputStream.readObject()).getProfile();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static TargetedDisguise getMainDisguise(UUID entityId) {
@@ -577,18 +680,13 @@ public class DisguiseUtilities {
     public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise) {
         final String nameToFetch = disguise.getSkin() != null ? disguise.getSkin() : disguise.getName();
 
-        final boolean remove = getAddedByPlugins().contains(nameToFetch.toLowerCase());
-
         return getProfileFromMojang(nameToFetch, new LibsProfileLookup() {
 
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
-                if (remove) {
-                    getAddedByPlugins().remove(nameToFetch.toLowerCase());
-                }
-
                 if (DisguiseAPI.isDisguiseInUse(disguise) && (!gameProfile.getName().equals(
-                        disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) || !gameProfile.getProperties().isEmpty())) {
+                        disguise.getSkin() != null ? disguise.getSkin() :
+                                disguise.getName()) || !gameProfile.getProperties().isEmpty())) {
                     disguise.setGameProfile(gameProfile);
 
                     DisguiseUtilities.refreshTrackers(disguise);
@@ -634,37 +732,22 @@ public class DisguiseUtilities {
             boolean contactMojang) {
         final String playerName = origName.toLowerCase();
 
-        if (gameProfiles.containsKey(playerName)) {
-            if (gameProfiles.get(playerName) != null) {
-                return gameProfiles.get(playerName);
-            }
+        if (cachedNames.contains(playerName)) {
+            return getGameProfile(playerName);
         } else if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
-            getAddedByPlugins().add(playerName);
-
-            Player player = Bukkit.getPlayerExact(playerName);
+            final Player player = Bukkit.getPlayerExact(playerName);
 
             if (player != null) {
                 WrappedGameProfile gameProfile = ReflectionManager.getGameProfile(player);
 
                 if (!gameProfile.getProperties().isEmpty()) {
-                    gameProfiles.put(playerName, gameProfile);
+                    addGameProfile(playerName, gameProfile);
 
                     return gameProfile;
                 }
             }
 
-            if (runnable != null && (contactMojang || gameProfiles.containsKey(playerName))) {
-                if (!runnables.containsKey(playerName)) {
-                    runnables.put(playerName, new ArrayList<>());
-                }
-
-                runnables.get(playerName).add(runnable);
-            }
-
-            if (contactMojang) {
-                // Add null so that if this is called again. I already know I'm doing something about it
-                gameProfiles.put(playerName, null);
-
+            if (contactMojang && !runnables.containsKey(playerName)) {
                 Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable() {
                     @Override
                     public void run() {
@@ -678,9 +761,7 @@ public class DisguiseUtilities {
                                         return;
                                     }
 
-                                    if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                        gameProfiles.put(playerName, gameProfile);
-                                    }
+                                    addGameProfile(playerName, gameProfile);
 
                                     if (runnables.containsKey(playerName)) {
                                         for (Object obj : runnables.remove(playerName)) {
@@ -695,16 +776,21 @@ public class DisguiseUtilities {
                             });
                         }
                         catch (Exception e) {
-                            if (gameProfiles.containsKey(playerName) && gameProfiles.get(playerName) == null) {
-                                gameProfiles.remove(playerName);
-                                getAddedByPlugins().remove(playerName);
-                            }
+                            runnables.remove(playerName);
 
                             System.out.print(
                                     "[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: " + e.getMessage());
                         }
                     }
                 });
+
+                if (runnable != null && contactMojang) {
+                    if (!runnables.containsKey(playerName)) {
+                        runnables.put(playerName, new ArrayList<>());
+                    }
+
+                    runnables.get(playerName).add(runnable);
+                }
 
                 return null;
             }
@@ -740,6 +826,16 @@ public class DisguiseUtilities {
 
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
+
+        gameProfileCache = YamlConfiguration.loadConfiguration(new File(disguises.getDataFolder(), "cache.yml"));
+
+        cachedNames.addAll(gameProfileCache.getKeys(false));
+
+        savedDisguises = YamlConfiguration.loadConfiguration(new File(disguises.getDataFolder(), "saveddisguises.yml"));
+
+        for (String key : savedDisguises.getKeys(false)) {
+            savedDisguiseList.add(UUID.fromString(key));
+        }
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
@@ -809,7 +905,7 @@ public class DisguiseUtilities {
                 for (final Object p : trackedPlayers) {
                     Player pl = (Player) ReflectionManager.getBukkitEntity(p);
 
-                    if (!player.equalsIgnoreCase((pl).getName()))
+                    if (pl == null || !player.equalsIgnoreCase((pl).getName()))
                         continue;
 
                     clear.invoke(entityTrackerEntry, p);
@@ -991,7 +1087,17 @@ public class DisguiseUtilities {
     }
 
     public static void removeGameProfile(String string) {
-        gameProfiles.remove(string.toLowerCase());
+        cachedNames.remove(string.toLowerCase());
+        gameProfileCache.set(string.toLowerCase(), null);
+
+        if (DisguiseConfig.isSaveCache()) {
+            try {
+                gameProfileCache.save(new File(libsDisguises.getDataFolder(), "cache.yml"));
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void removeSelfDisguise(Player player) {

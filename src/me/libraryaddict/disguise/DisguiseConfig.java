@@ -58,6 +58,36 @@ public class DisguiseConfig {
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
     private static DisguisePushing disablePushing = DisguisePushing.MODIFY_SCOREBOARD;
+    private static boolean saveCache;
+    private static boolean updatePlayerCache;
+    private static boolean savePlayerDisguises;
+    private static boolean saveEntityDisguises;
+    private static boolean useSQL;
+    private static String ip, database, user, pass, disguiseTable, profileTable;
+
+    public static String getDatabaseIP() {
+        return ip;
+    }
+
+    public static String getDatabase() {
+        return database;
+    }
+
+    public static String getDatabaseUser() {
+        return user;
+    }
+
+    public static String getDatabasePass() {
+        return pass;
+    }
+
+    public static String getDatabaseProfileTable() {
+        return disguiseTable;
+    }
+
+    public static String getDatabaseDisguiseTable() {
+        return profileTable;
+    }
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -69,6 +99,22 @@ public class DisguiseConfig {
         }
 
         return null;
+    }
+
+    public static boolean isSavePlayerDisguises() {
+        return savePlayerDisguises;
+    }
+
+    public static boolean isSaveEntityDisguises() {
+        return saveEntityDisguises;
+    }
+
+    public static void setSavePlayerDisguises(boolean saveDisguises) {
+        savePlayerDisguises = saveDisguises;
+    }
+
+    public static void setSaveEntityDisguises(boolean saveDisguises) {
+        saveEntityDisguises = saveDisguises;
     }
 
     public static DisguisePushing getPushingOption() {
@@ -101,6 +147,22 @@ public class DisguiseConfig {
 
     public static String getUpdateNotificationPermission() {
         return updateNotificationPermission;
+    }
+
+    public static boolean isSaveCache() {
+        return saveCache;
+    }
+
+    public static void setSaveCache(boolean doCache) {
+        saveCache = doCache;
+    }
+
+    public static boolean isUpdatePlayerCache() {
+        return updatePlayerCache;
+    }
+
+    public static void setUpdatePlayerCache(boolean setUpdatePlayerCache) {
+        updatePlayerCache = setUpdatePlayerCache;
     }
 
     public static void initConfig(ConfigurationSection config) {
@@ -144,6 +206,15 @@ public class DisguiseConfig {
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
+        setSaveCache(config.getBoolean("SaveCache"));
+        setUpdatePlayerCache(config.getBoolean("UpdatePlayerCache"));
+        setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
+        setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
+        useSQL = config.getBoolean("SaveData.UseMySQL", false);
+        ip = config.getString("SaveData.IP", "localhost:3306");
+        user = config.getString("SaveData.User", "root");
+        pass = config.getString("SaveData.Password", "password");
+        database
 
         try {
             String option = config.getString("SelfDisguisesScoreboard",
@@ -193,7 +264,8 @@ public class DisguiseConfig {
             }
             catch (DisguiseParseException e) {
                 System.err.println(
-                        "[LibsDisguises] Error while loading custom disguise '" + key + "'" + (e.getMessage() == null ? "" : ": " + e.getMessage()));
+                        "[LibsDisguises] Error while loading custom disguise '" + key + "'" + (e.getMessage() == null ?
+                                "" : ": " + e.getMessage()));
 
                 if (e.getMessage() == null)
                     e.printStackTrace();
@@ -204,7 +276,8 @@ public class DisguiseConfig {
         }
 
         System.out.println(
-                "[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ? "" : "s"));
+                "[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ?
+                        "" : "s"));
     }
 
     public static boolean isAnimationPacketsEnabled() {

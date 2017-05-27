@@ -1,12 +1,17 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
+import com.comphenix.protocol.PacketType.Play.Server;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,30 +19,37 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
-
-public class FlagWatcher {
+public class FlagWatcher implements Serializable {
     private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
     /**
      * These are the entity values I need to add else it could crash them..
      */
     private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
-    private TargetedDisguise disguise;
+    private transient TargetedDisguise disguise;
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;
     private boolean[] modifiedEntityAnimations = new boolean[8];
-    private List<WrappedWatchableObject> watchableObjects;
+    private transient List<WrappedWatchableObject> watchableObjects;
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.writeBoolean(isEntityAnimationsAdded());
+        out.
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        profile = new WrappedGameProfile((UUID) in.readObject(), in.readUTF());
+
+        for (int i = in.readByte(); i > 0; i--) {
+            profile.getProperties().put(in.readUTF(),
+                    new WrappedSignedProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+        }
+    }
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -97,8 +109,7 @@ public class FlagWatcher {
                 }
 
                 value = entityValues.get(id);
-            }
-            else if (backupEntityValues.containsKey(id)) {
+            } else if (backupEntityValues.containsKey(id)) {
                 if (backupEntityValues.get(id) == null) {
                     continue;
                 }
@@ -121,8 +132,7 @@ public class FlagWatcher {
                 if (!isDirty) {
                     watch.setDirtyState(false);
                 }
-            }
-            else {
+            } else {
                 boolean isDirty = watch.getDirtyState();
 
                 watch = ReflectionManager.createWatchable(id, watch.getValue());
@@ -160,8 +170,7 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null
-                && getDisguise().getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -173,19 +182,20 @@ public class FlagWatcher {
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(), disguise);
-                                    }
-                                    catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                            }, 2);
-                        }
-                        else if (newHealth <= 0 && !hasDied) {
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(),
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(),
+                                                        disguise);
+                                            }
+                                            catch (Exception ex) {
+                                                ex.printStackTrace();
+                                            }
+                                        }
+                                    }, 2);
+                        } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }
                     }
@@ -300,11 +310,9 @@ public class FlagWatcher {
 
             if (entityValues.containsKey(i) && entityValues.get(i) != null) {
                 watchable = ReflectionManager.createWatchable(i, entityValues.get(i));
-            }
-            else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
+            } else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
                 watchable = ReflectionManager.createWatchable(i, backupEntityValues.get(i));
-            }
-            else {
+            } else {
                 continue;
             }
 
@@ -330,7 +338,8 @@ public class FlagWatcher {
             Object value = entityValues.get(data.getIndex());
 
             if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == MetaIndex.ENTITY_META) {
-                value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+                value = addEntityAnimations((byte) value,
+                        WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
 
             WrappedWatchableObject watch = ReflectionManager.createWatchable(data.getIndex(), value);
@@ -356,8 +365,7 @@ public class FlagWatcher {
                         temp.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp);
-                    }
-                    else {
+                    } else {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                     }
                 }
@@ -407,8 +415,7 @@ public class FlagWatcher {
 
         if (flag) {
             setData(MetaIndex.ENTITY_META, (byte) (b0 | 1 << byteValue));
-        }
-        else {
+        } else {
             setData(MetaIndex.ENTITY_META, (byte) (b0 & ~(1 << byteValue)));
         }
     }
@@ -453,34 +460,34 @@ public class FlagWatcher {
     }
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this
-                || getDisguise().getEntity() == null)
+        if (!DisguiseAPI.isDisguiseInUse(
+                getDisguise()) || getDisguise().getWatcher() != this || getDisguise().getEntity() == null)
             return;
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
             EntityEquipment equip = ((LivingEntity) getDisguise().getEntity()).getEquipment();
 
             switch (slot) {
-            case HAND:
-                itemStack = equip.getItemInMainHand();
-                break;
-            case OFF_HAND:
-                itemStack = equip.getItemInOffHand();
-                break;
-            case HEAD:
-                itemStack = equip.getHelmet();
-                break;
-            case CHEST:
-                itemStack = equip.getChestplate();
-                break;
-            case LEGS:
-                itemStack = equip.getLeggings();
-                break;
-            case FEET:
-                itemStack = equip.getBoots();
-                break;
-            default:
-                break;
+                case HAND:
+                    itemStack = equip.getItemInMainHand();
+                    break;
+                case OFF_HAND:
+                    itemStack = equip.getItemInOffHand();
+                    break;
+                case HEAD:
+                    itemStack = equip.getHelmet();
+                    break;
+                case CHEST:
+                    itemStack = equip.getChestplate();
+                    break;
+                case LEGS:
+                    itemStack = equip.getLeggings();
+                    break;
+                case FEET:
+                    itemStack = equip.getBoots();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -536,4 +543,7 @@ public class FlagWatcher {
         }
     }
 
+    protected void setDisguise(TargetedDisguise disguise) {
+        this.disguise = disguise;
+    }
 }

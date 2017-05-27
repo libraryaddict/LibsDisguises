@@ -1,14 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.UUID;
-
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -17,16 +8,24 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
+import me.libraryaddict.disguise.utilities.WrappedProfile;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.UUID;
 
 public class PlayerDisguise extends TargetedDisguise {
-    private LibsProfileLookup currentLookup;
-    private WrappedGameProfile gameProfile;
+    private transient LibsProfileLookup currentLookup;
+    private WrappedProfile gameProfile;
     private String playerName;
     private String skinToUse;
     private UUID uuid = UUID.randomUUID();
@@ -66,7 +65,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(gameProfile.getName());
 
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
+        this.gameProfile = new WrappedProfile(
+                ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile));
 
         createDisguise();
     }
@@ -76,7 +76,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(gameProfile.getName());
 
-        this.gameProfile = ReflectionManager.getGameProfile(uuid, gameProfile.getName());
+        this.gameProfile = new WrappedProfile(ReflectionManager.getGameProfile(uuid, gameProfile.getName()));
 
         setSkin(skinToUse);
 
@@ -101,8 +101,9 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid,
-                    getGameProfile().getName(), getGameProfile());
+            disguise.gameProfile = new WrappedProfile(
+                    ReflectionManager.getGameProfileWithThisSkin(disguise.uuid, getGameProfile().getName(),
+                            getGameProfile()));
         } else {
             disguise.setSkin(getSkin());
         }
@@ -127,14 +128,14 @@ public class PlayerDisguise extends TargetedDisguise {
     public WrappedGameProfile getGameProfile() {
         if (gameProfile == null) {
             if (getSkin() != null) {
-                gameProfile = ReflectionManager.getGameProfile(uuid, getName());
+                gameProfile = new WrappedProfile(ReflectionManager.getGameProfile(uuid, getName()));
             } else {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(),
-                        DisguiseUtilities.getProfileFromMojang(this));
+                gameProfile = new WrappedProfile(ReflectionManager.getGameProfileWithThisSkin(uuid, getName(),
+                        DisguiseUtilities.getProfileFromMojang(this)));
             }
         }
 
-        return gameProfile;
+        return gameProfile.getProfile();
     }
 
     public String getName() {
@@ -184,7 +185,8 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public void setGameProfile(WrappedGameProfile gameProfile) {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
+        this.gameProfile = new WrappedProfile(
+                ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile));
     }
 
     @Override
@@ -304,7 +306,8 @@ public class PlayerDisguise extends TargetedDisguise {
         currentLookup = null;
 
         this.skinToUse = gameProfile.getName();
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(), gameProfile);
+        this.gameProfile = new WrappedProfile(
+                ReflectionManager.getGameProfileWithThisSkin(uuid, getName(), gameProfile));
 
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             if (isDisplayedInTab()) {
