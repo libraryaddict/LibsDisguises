@@ -56,6 +56,10 @@ public class LibVersion {
                     if (isPremium())
                         break;
                 }
+                catch (ClassNotFoundException ex) {
+                    if (disguises.getDescription().getVersion().contains("9.3.0-SNAPSHOT"))
+                        thisPluginIsPaidFor = true;
+                }
                 catch (Exception ex) {
                     // Don't print off errors
                 }
