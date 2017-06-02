@@ -1,37 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -39,7 +7,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -49,8 +17,34 @@ import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class DisguiseListener implements Listener {
 
@@ -105,6 +99,23 @@ public class DisguiseListener implements Listener {
                 }
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
             // 20 ticks * 60 seconds * 60 minutes * 6 hours
+        }
+
+        if (!DisguiseConfig.isSaveEntityDisguises())
+            return;
+
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+
+                if (disguises.length <= 0)
+                    continue;
+
+                for (Disguise disguise : disguises) {
+                    disguise.setEntity(entity);
+                    disguise.startDisguise();
+                }
+            }
         }
     }
 
@@ -209,12 +220,48 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
+    public void onChunkUnload(WorldUnloadEvent event) {
+        if (!DisguiseConfig.isSaveEntityDisguises())
+            return;
+
+        for (Entity entity : event.getWorld().getEntities()) {
+            if (entity instanceof Player)
+                continue;
+
+            Disguise[] disguises = DisguiseAPI.getDisguises(entity);
+
+            if (disguises.length <= 0)
+                continue;
+
+            DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
+        }
+    }
+
+    @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         if (!DisguiseConfig.isSaveEntityDisguises())
             return;
 
         for (Entity entity : event.getChunk().getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId());
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+
+            if (disguises.length <= 0)
+                continue;
+
+            for (Disguise disguise : disguises) {
+                disguise.setEntity(entity);
+                disguise.startDisguise();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        if (!DisguiseConfig.isSaveEntityDisguises())
+            return;
+
+        for (Entity entity : event.getWorld().getEntities()) {
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
 
             if (disguises.length <= 0)
                 continue;
@@ -238,7 +285,7 @@ public class DisguiseListener implements Listener {
             chunkMove(p, p.getLocation(), null);
         }
 
-        if (DisguiseConfig.isSaveCache() && DisguiseConfig.isUpdatePlayerCache() && DisguiseUtilities.hasCacheEntry(
+        if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() && DisguiseUtilities.hasGameProfile(
                 p.getName())) {
             WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
 
@@ -248,7 +295,7 @@ public class DisguiseListener implements Listener {
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p.getUniqueId());
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p.getUniqueId(), true);
 
             for (Disguise disguise : disguises) {
                 disguise.setEntity(p);

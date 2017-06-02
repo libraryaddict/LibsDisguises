@@ -5,41 +5,23 @@ NotifyUpdate: true
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
 # However some people may prefer to disable this.
 # Even if you disable this, if there was disguises in the cache already then it will use them
-SaveCache: true
+SaveGameProfiles: true
 
 # This option is useless if you don't enable SaveCache!
 # If a player has been disguised before and their skin saved into the cache
 # When they join the server will automatically update the cache incase they changed their skin
-UpdatePlayersCache: true
+UpdateGameProfiles: true
 
 # Should the server save the disguises so that when they are alive again, they are disguised again
 # Players - Are player disguises saved
 # Entities - Are entities disguises saved
+# If you are using the dev builds, place your premium version of Lib's Disguises.jar inside the LibsDisguises folder
 SaveDisguises:
     Players: false
     Entities: false
 
-# Where does it save the disguises and gameprofiles to
-SaveData:
-  # If this is true, then it saves to mysql. If this is false, then it saves to file
-  # I do not provide help for setting up Mysql or the databases, there are guides online for that
-  UseMySQL: false
-  # What is the IP and Port required to connect
-  IP: 'localhost:3306'
-  User: 'root'
-  Password: 'password'
-  Database: 'LibsDisguises'
-  # What is the table for GameProfiles called? You shouldn't need to touch this
-  GameProfiles: 'GameProfileCache'
-  # What is the table for disguises called?
-  Disguises: 'DisguisesCache'
-
-# This I don't really recommend turning on as it can make a memory leak..
-# These disguises, as normal will not persist after a server restart.
-# There is also no EntityDeath option as entities do not revive after death.
-# The EntityDespawn option is when you leave the chunk the entity is and the chunk is unloaded
+# Does the player keep their disguise after they die?
 KeepDisguises:
-    EntityDespawn: false
     PlayerDeath: false
 
 # How should the plugin handle self disguises scoreboards?

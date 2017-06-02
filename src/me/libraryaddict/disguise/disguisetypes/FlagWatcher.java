@@ -20,11 +20,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class FlagWatcher implements Serializable {
+public class FlagWatcher {
     private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
     /**
      * These are the entity values I need to add else it could crash them..
@@ -36,20 +35,6 @@ public class FlagWatcher implements Serializable {
     private boolean hasDied;
     private boolean[] modifiedEntityAnimations = new boolean[8];
     private transient List<WrappedWatchableObject> watchableObjects;
-
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        out.writeBoolean(isEntityAnimationsAdded());
-        out.
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-        profile = new WrappedGameProfile((UUID) in.readObject(), in.readUTF());
-
-        for (int i = in.readByte(); i > 0; i--) {
-            profile.getProperties().put(in.readUTF(),
-                    new WrappedSignedProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-        }
-    }
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -188,7 +173,7 @@ public class FlagWatcher implements Serializable {
                                         public void run() {
                                             try {
                                                 DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(),
-                                                        disguise);
+                                                        getDisguise());
                                             }
                                             catch (Exception ex) {
                                                 ex.printStackTrace();
@@ -545,5 +530,6 @@ public class FlagWatcher implements Serializable {
 
     protected void setDisguise(TargetedDisguise disguise) {
         this.disguise = disguise;
+        equipment.setFlagWatcher(this);
     }
 }

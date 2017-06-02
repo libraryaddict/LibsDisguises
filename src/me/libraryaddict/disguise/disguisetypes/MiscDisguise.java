@@ -27,9 +27,9 @@ public class MiscDisguise extends TargetedDisguise {
         super(disguiseType);
 
         if (!disguiseType.isMisc()) {
-            throw new InvalidParameterException("Expected a non-living DisguiseType while constructing MiscDisguise. Received "
-                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise")
-                    + " instead");
+            throw new InvalidParameterException(
+                    "Expected a non-living DisguiseType while constructing MiscDisguise. Received " + disguiseType + " instead. Please use " + (
+                            disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") + " instead");
         }
 
         createDisguise();
@@ -37,33 +37,34 @@ public class MiscDisguise extends TargetedDisguise {
         this.id = getType().getTypeId();
         this.data = getType().getDefaultData();
         switch (disguiseType) {
-        // The only disguises which should use a custom data.
-        case PAINTING:
-            ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, id) % Art.values().length]);
-            break;
-        case FALLING_BLOCK:
-            ((FallingBlockWatcher) getWatcher()).setBlock(new ItemStack(Math.max(1, id), 1, (short) Math.max(0, data)));
-            break;
-        case SPLASH_POTION:
-            ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, id));
-            break;
-        case DROPPED_ITEM:
+            // The only disguises which should use a custom data.
+            case PAINTING:
+                ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, id) % Art.values().length]);
+                break;
+            case FALLING_BLOCK:
+                ((FallingBlockWatcher) getWatcher()).setBlock(
+                        new ItemStack(Math.max(1, id), 1, (short) Math.max(0, data)));
+                break;
+            case SPLASH_POTION:
+                ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, id));
+                break;
+            case DROPPED_ITEM:
 
-            if (id > 0) {
-                ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, Math.max(1, data)));
-            }
-            break;
-        case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
-        case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
-        case TIPPED_ARROW:
-        case SPECTRAL_ARROW:
-        case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
-        case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
-        case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
-            this.data = id;
-            break;
-        default:
-            break;
+                if (id > 0) {
+                    ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, Math.max(1, data)));
+                }
+                break;
+            case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
+            case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+            case TIPPED_ARROW:
+            case SPECTRAL_ARROW:
+            case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+            case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
+            case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
+                this.data = id;
+                break;
+            default:
+                break;
         }
     }
 
@@ -99,14 +100,14 @@ public class MiscDisguise extends TargetedDisguise {
      */
     public int getData() {
         switch (getType()) {
-        case FALLING_BLOCK:
-            return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
-        case PAINTING:
-            return ((PaintingWatcher) getWatcher()).getArt().getId();
-        case SPLASH_POTION:
-            return ((SplashPotionWatcher) getWatcher()).getPotionId();
-        default:
-            return data;
+            case FALLING_BLOCK:
+                return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
+            case PAINTING:
+                return ((PaintingWatcher) getWatcher()).getArt().getId();
+            case SPLASH_POTION:
+                return ((SplashPotionWatcher) getWatcher()).getPotionId();
+            default:
+                return data;
         }
     }
 
@@ -161,18 +162,8 @@ public class MiscDisguise extends TargetedDisguise {
     }
 
     @Override
-    public MiscDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
-        return (MiscDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
-    }
-
-    @Override
     public MiscDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (MiscDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
-    }
-
-    @Override
-    public MiscDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
-        return (MiscDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
     @Override
@@ -209,5 +200,4 @@ public class MiscDisguise extends TargetedDisguise {
     public MiscDisguise silentlyRemovePlayer(String playername) {
         return (MiscDisguise) super.silentlyRemovePlayer(playername);
     }
-
 }

@@ -20,9 +20,9 @@ public class MobDisguise extends TargetedDisguise {
         super(disguiseType);
 
         if (!disguiseType.isMob()) {
-            throw new InvalidParameterException("Expected a living DisguiseType while constructing MobDisguise. Received "
-                    + disguiseType + " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise")
-                    + " instead");
+            throw new InvalidParameterException(
+                    "Expected a living DisguiseType while constructing MobDisguise. Received " + disguiseType + " instead. Please use " + (
+                            disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise") + " instead");
         }
 
         this.isAdult = isAdult;
@@ -70,8 +70,7 @@ public class MobDisguise extends TargetedDisguise {
         if (getWatcher() != null) {
             if (getWatcher() instanceof AgeableWatcher) {
                 return ((AgeableWatcher) getWatcher()).isAdult();
-            }
-            else if (getWatcher() instanceof ZombieWatcher) {
+            } else if (getWatcher() instanceof ZombieWatcher) {
                 return ((ZombieWatcher) getWatcher()).isAdult();
             }
             return true;
@@ -120,18 +119,8 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     @Override
-    public MobDisguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
-        return (MobDisguise) super.setKeepDisguiseOnEntityDespawn(keepDisguise);
-    }
-
-    @Override
     public MobDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         return (MobDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
-    }
-
-    @Override
-    public MobDisguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
-        return (MobDisguise) super.setKeepDisguiseOnPlayerLogout(keepDisguise);
     }
 
     @Override

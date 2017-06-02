@@ -38,9 +38,7 @@ public class DisguiseConfig {
     private static boolean hideDisguisedPlayers;
     private static boolean hidingArmor;
     private static boolean hidingHeldItem;
-    private static boolean keepDisguiseEntityDespawn;
     private static boolean keepDisguisePlayerDeath;
-    private static boolean keepDisguisePlayerLogout;
     private static int maxClonedDisguises;
     private static boolean maxHealthIsDisguisedEntity;
     private static boolean miscDisguisesForLivingEnabled;
@@ -62,32 +60,6 @@ public class DisguiseConfig {
     private static boolean updatePlayerCache;
     private static boolean savePlayerDisguises;
     private static boolean saveEntityDisguises;
-    private static boolean useSQL;
-    private static String ip, database, user, pass, disguiseTable, profileTable;
-
-    public static String getDatabaseIP() {
-        return ip;
-    }
-
-    public static String getDatabase() {
-        return database;
-    }
-
-    public static String getDatabaseUser() {
-        return user;
-    }
-
-    public static String getDatabasePass() {
-        return pass;
-    }
-
-    public static String getDatabaseProfileTable() {
-        return disguiseTable;
-    }
-
-    public static String getDatabaseDisguiseTable() {
-        return profileTable;
-    }
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -149,19 +121,19 @@ public class DisguiseConfig {
         return updateNotificationPermission;
     }
 
-    public static boolean isSaveCache() {
+    public static boolean isSaveGameProfiles() {
         return saveCache;
     }
 
-    public static void setSaveCache(boolean doCache) {
+    public static void setSaveGameProfiles(boolean doCache) {
         saveCache = doCache;
     }
 
-    public static boolean isUpdatePlayerCache() {
+    public static boolean isUpdateGameProfiles() {
         return updatePlayerCache;
     }
 
-    public static void setUpdatePlayerCache(boolean setUpdatePlayerCache) {
+    public static void setUpdateGameProfiles(boolean setUpdatePlayerCache) {
         updatePlayerCache = setUpdatePlayerCache;
     }
 
@@ -183,8 +155,6 @@ public class DisguiseConfig {
         setDisguiseBlownOnAttack(config.getBoolean("BlowDisguises"));
         setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&', config.getString("BlownDisguiseMessage")));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
-        setKeepDisguiseOnPlayerLogout(config.getBoolean("KeepDisguises.PlayerLogout"));
-        setKeepDisguiseOnEntityDespawn(config.getBoolean("KeepDisguises.EntityDespawn"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
@@ -206,15 +176,10 @@ public class DisguiseConfig {
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
         setDisabledInvisibility(config.getBoolean("DisableInvisibility"));
-        setSaveCache(config.getBoolean("SaveCache"));
-        setUpdatePlayerCache(config.getBoolean("UpdatePlayerCache"));
-        setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
+        setSaveGameProfiles(config.getBoolean("SaveGameProfiles"));
+        setUpdateGameProfiles(config.getBoolean("UpdateGameProfiles"));
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
-        useSQL = config.getBoolean("SaveData.UseMySQL", false);
-        ip = config.getString("SaveData.IP", "localhost:3306");
-        user = config.getString("SaveData.User", "root");
-        pass = config.getString("SaveData.Password", "password");
-        database
+        setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
 
         try {
             String option = config.getString("SelfDisguisesScoreboard",
@@ -330,16 +295,8 @@ public class DisguiseConfig {
         return hidingHeldItem;
     }
 
-    public static boolean isKeepDisguiseOnEntityDespawn() {
-        return keepDisguiseEntityDespawn;
-    }
-
     public static boolean isKeepDisguiseOnPlayerDeath() {
         return keepDisguisePlayerDeath;
-    }
-
-    public static boolean isKeepDisguiseOnPlayerLogout() {
-        return keepDisguisePlayerLogout;
     }
 
     public static boolean isMaxHealthDeterminedByDisguisedEntity() {
@@ -526,16 +483,8 @@ public class DisguiseConfig {
         }
     }
 
-    public static void setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
-        keepDisguiseEntityDespawn = keepDisguise;
-    }
-
     public static void setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         keepDisguisePlayerDeath = keepDisguise;
-    }
-
-    public static void setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
-        keepDisguisePlayerLogout = keepDisguise;
     }
 
     public static void setMaxClonedDisguises(int newMax) {

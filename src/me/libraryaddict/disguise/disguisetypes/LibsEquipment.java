@@ -7,11 +7,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 
-public class LibsEquipment implements EntityEquipment, Serializable {
+public class LibsEquipment implements EntityEquipment {
     private ItemStack[] equipment = new ItemStack[EquipmentSlot.values().length];
-    private FlagWatcher flagWatcher;
+    private transient FlagWatcher flagWatcher;
 
     public LibsEquipment(FlagWatcher flagWatcher) {
+        this.flagWatcher = flagWatcher;
+    }
+
+    protected void setFlagWatcher(FlagWatcher flagWatcher) {
         this.flagWatcher = flagWatcher;
     }
 
@@ -114,9 +118,7 @@ public class LibsEquipment implements EntityEquipment, Serializable {
 
     @Override
     public ItemStack[] getArmorContents() {
-        return new ItemStack[] {
-                getBoots(), getLeggings(), getChestplate(), getHelmet()
-        };
+        return new ItemStack[]{getBoots(), getLeggings(), getChestplate(), getHelmet()};
     }
 
     @Override
@@ -209,5 +211,4 @@ public class LibsEquipment implements EntityEquipment, Serializable {
     public Entity getHolder() {
         throw new UnsupportedOperationException("This is not supported on a disguise");
     }
-
 }

@@ -31,7 +31,7 @@ public abstract class TargetedDisguise extends Disguise {
         HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS, SHOW_TO_EVERYONE_BUT_THESE_PLAYERS
     }
 
-    private List<String> disguiseViewers = new ArrayList<>();
+    private ArrayList<String> disguiseViewers = new ArrayList<>();
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
 
     public TargetedDisguise addPlayer(Player player) {
@@ -57,8 +57,8 @@ public abstract class TargetedDisguise extends Disguise {
 
                             deleteTab.getPlayerInfoAction().write(0,
                                     canSee(player) ? PlayerInfoAction.REMOVE_PLAYER : PlayerInfoAction.ADD_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0,
-                                    Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                                    new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                             NativeGameMode.SURVIVAL,
                                             WrappedChatComponent.fromText(((Player) getEntity()).getDisplayName()))));
 
@@ -120,8 +120,8 @@ public abstract class TargetedDisguise extends Disguise {
 
                             deleteTab.getPlayerInfoAction().write(0,
                                     canSee(player) ? PlayerInfoAction.ADD_PLAYER : PlayerInfoAction.REMOVE_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0,
-                                    Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                                    new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                             NativeGameMode.SURVIVAL,
                                             WrappedChatComponent.fromText(((Player) getEntity()).getDisplayName()))));
 

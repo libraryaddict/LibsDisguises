@@ -7,24 +7,26 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
+import me.libraryaddict.disguise.utilities.json.*;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -39,11 +41,13 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
-import java.io.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.lang.reflect.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -69,62 +73,22 @@ public class DisguiseUtilities {
     private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
+    private static Gson gson;
 
-    static {
-        try {
-            Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
-            Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
+    public static void saveDisguises() {
+        Iterator<HashSet<TargetedDisguise>> itel = disguisesInUse.values().iterator();
 
-            Object bedChunk = ReflectionManager.getNmsClass("Chunk").getConstructor(
-                    ReflectionManager.getNmsClass("World"), int.class, int.class).newInstance(world, 0, 0);
+        while (itel.hasNext()) {
+            HashSet<TargetedDisguise> list = itel.next();
 
-            Field cSection = bedChunk.getClass().getDeclaredField("sections");
-            cSection.setAccessible(true);
+            if (list.isEmpty())
+                continue;
 
-            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class,
-                    boolean.class).newInstance(0, true);
-
-            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class).invoke(null,
-                    Material.BED_BLOCK.getId());
-
-            Method fromLegacyData = block.getClass().getMethod("fromLegacyData", int.class);
-            Method setType = chunkSection.getClass().getMethod("setType", int.class, int.class, int.class,
-                    ReflectionManager.getNmsClass("IBlockData"));
-            Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
-            Method setEmitted = chunkSection.getClass().getMethod("b", int.class, int.class, int.class, int.class);
-
-            for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
-                int x = 1 + face.getModX();
-
-                int z = 1 + face.getModZ();
-
-                setType.invoke(chunkSection, x, 0, z, fromLegacyData.invoke(block, face.ordinal()));
-
-                setSky.invoke(chunkSection, x, 0, z, 0);
-
-                setEmitted.invoke(chunkSection, x, 0, z, 0);
-            }
-
-            Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
-
-            array[0] = chunkSection;
-
-            cSection.set(bedChunk, array);
-
-            spawnChunk = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.MAP_CHUNK,
-                    bedChunk, 65535).createPacket(bedChunk, 65535);
-
-            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
-            threadField.setAccessible(true);
-
-            mainThread = (Thread) threadField.get(ReflectionManager.getMinecraftServer());
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+            saveDisguises(list.iterator().next().getEntity().getUniqueId(), list.toArray(new Disguise[0]));
         }
     }
 
-    public static boolean hasCacheEntry(String playername) {
+    public static boolean hasGameProfile(String playername) {
         return cachedNames.contains(playername.toLowerCase());
     }
 
@@ -163,14 +127,14 @@ public class DisguiseUtilities {
             player.sendMessage(ChatColor.RED + "Example usage: /disguise " + reference);
         } else {
             player.sendMessage(
-                    ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please raise the " +
-                            "maximum cloned disguises, or lower the time they last");
+                    ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please raise the " + "maximum cloned disguises, or lower the time they last");
         }
     }
 
-    private static void saveDisguiseToFile
-
     public static void saveDisguises(UUID owningEntity, Disguise[] disguise) {
+        if (!LibVersion.isPremium())
+            return;
+
         try {
             File disguiseFile = new File(savedDisguises, owningEntity.toString());
 
@@ -190,18 +154,12 @@ public class DisguiseUtilities {
                     disguises[i] = dis;
                 }
 
-                FileOutputStream files = new FileOutputStream(disguiseFile);
-                ObjectOutputStream obj = new ObjectOutputStream(files);
-
-                obj.writeObject(disguises);
+                PrintWriter writer = new PrintWriter(disguiseFile);
+                writer.write(gson.toJson(disguises));
+                writer.close();
 
                 savedDisguiseList.add(owningEntity);
-
-                obj.close();
-                files.close();
             }
-
-            savedDisguises.save(new File(libsDisguises.getDataFolder(), "saveddisguises.yml"));
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -213,29 +171,29 @@ public class DisguiseUtilities {
     }
 
     public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
-        if (isSavedDisguise(entityUUID))
+        if (!isSavedDisguise(entityUUID) || !LibVersion.isPremium())
             return new Disguise[0];
 
-        String cached = savedDisguises.getString(entityUUID.toString());
+        File disguiseFile = new File(savedDisguises, entityUUID.toString());
 
-        if (cached == null) {
-            cachedNames.remove(entityUUID.toString());
+        if (!disguiseFile.exists()) {
+            savedDisguiseList.remove(entityUUID);
             return new Disguise[0];
         }
 
         try {
-            ObjectInputStream outputStream = new ObjectInputStream(new ByteArrayInputStream(cached.getBytes()));
-
-            Disguise[] toReturn = (Disguise[]) outputStream.readObject();
+            BufferedReader reader = new BufferedReader(new FileReader(disguiseFile));
+            String cached = reader.readLine();
+            reader.close();
 
             if (remove) {
                 removeSavedDisguise(entityUUID);
             }
 
-            return toReturn;
+            return gson.fromJson(cached, Disguise[].class);
         }
         catch (Exception e) {
-            System.out.println("Error while loading Entity Disguises, malformed config?");
+            System.out.println("Malformed disguise for " + entityUUID);
             e.printStackTrace();
         }
 
@@ -246,14 +204,9 @@ public class DisguiseUtilities {
         if (!savedDisguiseList.remove(entityUUID))
             return;
 
-        savedDisguises.set(entityUUID.toString(), null);
+        File disguiseFile = new File(savedDisguises, entityUUID.toString());
 
-        try {
-            savedDisguises.save(new File(libsDisguises.getDataFolder(), "saveddisguises.yml"));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        disguiseFile.delete();
     }
 
     public static boolean isSavedDisguise(UUID entityUUID) {
@@ -330,16 +283,12 @@ public class DisguiseUtilities {
 
     public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
         try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            ObjectOutputStream obj = new ObjectOutputStream(bytes);
-            obj.writeObject(new WrappedProfile(gameProfile));
+            File file = new File(profileCache, string.toLowerCase());
+            PrintWriter writer = new PrintWriter(file);
+            writer.write(gson.toJson(gameProfile));
+            writer.close();
 
-            gameProfileCache.set(string.toLowerCase(), new String(bytes.toByteArray()));
             cachedNames.add(string.toLowerCase());
-
-            if (DisguiseConfig.isSaveCache()) {
-                gameProfileCache.save(new File(libsDisguises.getDataFolder(), "cache.yml"));
-            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -602,17 +551,19 @@ public class DisguiseUtilities {
         if (!cachedNames.contains(playerName.toLowerCase()))
             return null;
 
-        String cached = gameProfileCache.getString(playerName.toLowerCase());
+        File file = new File(profileCache, playerName.toLowerCase());
 
-        if (cached == null) {
+        if (!file.exists()) {
             cachedNames.remove(playerName.toLowerCase());
             return null;
         }
 
         try {
-            ObjectInputStream outputStream = new ObjectInputStream(new ByteArrayInputStream(cached.getBytes()));
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String cached = reader.readLine();
+            reader.close();
 
-            return ((WrappedProfile) outputStream.readObject()).getProfile();
+            return gson.fromJson(cached, WrappedGameProfile.class);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -820,22 +771,84 @@ public class DisguiseUtilities {
         return selfDisguised;
     }
 
-    public static boolean hasGameProfile(String playerName) {
-        return getGameProfile(playerName) != null;
-    }
-
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
 
-        gameProfileCache = YamlConfiguration.loadConfiguration(new File(disguises.getDataFolder(), "cache.yml"));
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
+        gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
+        gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
+        gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
+        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
+        gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
 
-        cachedNames.addAll(gameProfileCache.getKeys(false));
+        gson = gsonBuilder.create();
 
-        savedDisguises = YamlConfiguration.loadConfiguration(new File(disguises.getDataFolder(), "saveddisguises.yml"));
+        if (!profileCache.exists())
+            profileCache.mkdirs();
 
-        for (String key : savedDisguises.getKeys(false)) {
+        if (!savedDisguises.exists())
+            savedDisguises.mkdirs();
+
+        try {
+            Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
+            Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
+
+            Object bedChunk = ReflectionManager.getNmsClass("Chunk").getConstructor(
+                    ReflectionManager.getNmsClass("World"), int.class, int.class).newInstance(world, 0, 0);
+
+            Field cSection = bedChunk.getClass().getDeclaredField("sections");
+            cSection.setAccessible(true);
+
+            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class,
+                    boolean.class).newInstance(0, true);
+
+            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class).invoke(null,
+                    Material.BED_BLOCK.getId());
+
+            Method fromLegacyData = block.getClass().getMethod("fromLegacyData", int.class);
+            Method setType = chunkSection.getClass().getMethod("setType", int.class, int.class, int.class,
+                    ReflectionManager.getNmsClass("IBlockData"));
+            Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
+            Method setEmitted = chunkSection.getClass().getMethod("b", int.class, int.class, int.class, int.class);
+
+            for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
+                int x = 1 + face.getModX();
+
+                int z = 1 + face.getModZ();
+
+                setType.invoke(chunkSection, x, 0, z, fromLegacyData.invoke(block, face.ordinal()));
+
+                setSky.invoke(chunkSection, x, 0, z, 0);
+
+                setEmitted.invoke(chunkSection, x, 0, z, 0);
+            }
+
+            Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
+
+            array[0] = chunkSection;
+
+            cSection.set(bedChunk, array);
+
+            spawnChunk = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.MAP_CHUNK,
+                    bedChunk, 65535).createPacket(bedChunk, 65535);
+
+            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
+            threadField.setAccessible(true);
+
+            mainThread = (Thread) threadField.get(ReflectionManager.getMinecraftServer());
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        cachedNames.addAll(Arrays.asList(profileCache.list()));
+
+        for (String key : savedDisguises.list()) {
             savedDisguiseList.add(UUID.fromString(key));
         }
+
+        LibVersion.check(libsDisguises);
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
@@ -1088,16 +1101,10 @@ public class DisguiseUtilities {
 
     public static void removeGameProfile(String string) {
         cachedNames.remove(string.toLowerCase());
-        gameProfileCache.set(string.toLowerCase(), null);
 
-        if (DisguiseConfig.isSaveCache()) {
-            try {
-                gameProfileCache.save(new File(libsDisguises.getDataFolder(), "cache.yml"));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        File file = new File(profileCache, string.toLowerCase());
+
+        file.delete();
     }
 
     public static void removeSelfDisguise(Player player) {

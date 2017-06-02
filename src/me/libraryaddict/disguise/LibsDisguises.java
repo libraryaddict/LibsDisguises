@@ -134,6 +134,11 @@ public class LibsDisguises extends JavaPlugin {
         }
     }
 
+    @Override
+    public void onDisable() {
+        DisguiseUtilities.saveDisguises();
+    }
+
     private void registerCommand(String commandName, CommandExecutor executioner) {
         PluginCommand command = getCommand(commandName);
 

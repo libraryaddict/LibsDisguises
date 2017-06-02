@@ -33,8 +33,8 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public abstract class Disguise implements Serializable {
-    private transient static List<UUID> viewSelf = new ArrayList<>();
+public abstract class Disguise {
+    private static List<UUID> viewSelf = new ArrayList<>();
 
     /**
      * Returns the list of people who have /disguiseViewSelf toggled on
@@ -51,15 +51,13 @@ public abstract class Disguise implements Serializable {
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
     private boolean hideArmorFromSelf = DisguiseConfig.isHidingArmorFromSelf();
     private boolean hideHeldItemFromSelf = DisguiseConfig.isHidingHeldItemFromSelf();
-    private boolean keepDisguiseEntityDespawn = DisguiseConfig.isKeepDisguiseOnEntityDespawn();
     private boolean keepDisguisePlayerDeath = DisguiseConfig.isKeepDisguiseOnPlayerDeath();
-    private boolean keepDisguisePlayerLogout = DisguiseConfig.isKeepDisguiseOnPlayerLogout();
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private boolean showName;
     private transient BukkitTask task;
-    private transient Runnable velocityRunnable;
+    private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
@@ -93,7 +91,7 @@ public abstract class Disguise implements Serializable {
         if (getWatcher() == null) {
             try {
                 // Construct the FlagWatcher from the stored class
-                setWatcher((FlagWatcher) getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
+                setWatcher(getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -110,7 +108,9 @@ public abstract class Disguise implements Serializable {
                 ((ZombieWatcher) getWatcher()).setBaby(true);
             }
         }
+    }
 
+    private void createRunnable() {
         final boolean alwaysSendVelocity;
 
         switch (getType()) {
@@ -418,16 +418,8 @@ public abstract class Disguise implements Serializable {
         return hideHeldItemFromSelf;
     }
 
-    public boolean isKeepDisguiseOnEntityDespawn() {
-        return this.keepDisguiseEntityDespawn;
-    }
-
     public boolean isKeepDisguiseOnPlayerDeath() {
         return this.keepDisguisePlayerDeath;
-    }
-
-    public boolean isKeepDisguiseOnPlayerLogout() {
-        return this.keepDisguisePlayerLogout;
     }
 
     public boolean isMiscDisguise() {
@@ -450,9 +442,8 @@ public abstract class Disguise implements Serializable {
      * Internal use
      */
     public boolean isRemoveDisguiseOnDeath() {
-        return getEntity() == null || (getEntity() instanceof Player ?
-                (!((Player) getEntity()).isOnline() ? !isKeepDisguiseOnPlayerLogout() :
-                        !isKeepDisguiseOnPlayerDeath()) : (!isKeepDisguiseOnEntityDespawn() || getEntity().isDead()));
+        return getEntity() == null || (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() :
+                getEntity().isDead());
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -651,20 +642,8 @@ public abstract class Disguise implements Serializable {
         playerHiddenFromTab = hidePlayerInTab;
     }
 
-    public Disguise setKeepDisguiseOnEntityDespawn(boolean keepDisguise) {
-        this.keepDisguiseEntityDespawn = keepDisguise;
-
-        return this;
-    }
-
     public Disguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
         this.keepDisguisePlayerDeath = keepDisguise;
-
-        return this;
-    }
-
-    public Disguise setKeepDisguiseOnPlayerLogout(boolean keepDisguise) {
-        this.keepDisguisePlayerLogout = keepDisguise;
 
         return this;
     }
@@ -787,6 +766,10 @@ public abstract class Disguise implements Serializable {
             }
 
             disguiseInUse = true;
+
+            if (velocityRunnable == null) {
+                createRunnable();
+            }
 
             task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
 

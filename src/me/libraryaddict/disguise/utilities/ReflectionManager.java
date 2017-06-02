@@ -861,7 +861,8 @@ public class ReflectionManager {
             }
         } else if (value instanceof ItemStack) {
             return getNmsItem((ItemStack) value);
-        }
+        } else if (value instanceof Double)
+            return ((Double) value).floatValue();
 
         return value;
     }

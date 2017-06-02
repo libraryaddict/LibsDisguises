@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -51,13 +53,13 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v."
+            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v"
                     + Bukkit.getPluginManager().getPlugin("LibsDisguises").getDescription().getVersion()
                     + " by libraryaddict, formerly maintained by Byteflux and NavidK0.\n" + "Use " + ChatColor.GREEN
                     + "/libsdisguises reload" + ChatColor.DARK_GREEN
                     + " to reload the config. All disguises will be blown by doing this.");
 
-            if (!"%%__USER__%%".contains("__USER__")) {
+            if (LibVersion.isPremium()) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
             }
         }
