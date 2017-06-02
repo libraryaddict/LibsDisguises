@@ -12,10 +12,13 @@ SaveGameProfiles: true
 # When they join the server will automatically update the cache incase they changed their skin
 UpdateGameProfiles: true
 
-# Should the server save the disguises so that when they are alive again, they are disguised again
+# THIS IS A PREMIUM ONLY FEATURE. TO USE IT, PURCHASE THE PLUGIN.
+# Saves disguises so that they persist after server shutdown, chunks unload, player logouts and so on.
+# As such, this completely replaces the KeepDisguises aspect which has been removed except for the player death.
 # Players - Are player disguises saved
-# Entities - Are entities disguises saved
+# Entities - Are entities disguises saved (This is everything that's not a player)
 # If you are using the dev builds, place your premium version of Lib's Disguises.jar inside the LibsDisguises folder
+# This will enable premium only features for the dev builds.
 SaveDisguises:
     Players: false
     Entities: false
