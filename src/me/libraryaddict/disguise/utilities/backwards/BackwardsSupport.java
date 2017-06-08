@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.backwards;
 
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.LibsVersion;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.backwards.metadata.Version_1_1;
 
@@ -14,8 +15,10 @@ public class BackwardsSupport {
         try {
             String version = ReflectionManager.getBukkitVersion();
 
-            if (version.equals("v1_11_R1")) {
-                return setupMetadata(Version_1_1.class);
+            if (LibsVersion.isPremium()) {
+                if (version.equals("v1_11_R1")) {
+                    return setupMetadata(Version_1_1.class);
+                }
             }
 
             return setupMetadata(BackwardMethods.class);
