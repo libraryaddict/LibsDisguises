@@ -4,7 +4,7 @@ description: A disguise plugin with various disguises.
 version: ${project.version}
 author: libraryaddict
 authors: [Byteflux, Navid K.]
-softdepend: [ProtocolLib]
+depend: [ProtocolLib]
 commands:
     libsdisguises:
       permission: libsdisguises.seecmd.libsdisguises
