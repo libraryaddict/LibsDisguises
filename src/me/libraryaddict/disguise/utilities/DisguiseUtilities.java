@@ -819,10 +819,6 @@ public class DisguiseUtilities {
                 int z = 1 + face.getModZ();
 
                 setType.invoke(chunkSection, x, 0, z, fromLegacyData.invoke(block, face.ordinal()));
-
-                setSky.invoke(chunkSection, x, 0, z, 0);
-
-                setEmitted.invoke(chunkSection, x, 0, z, 0);
             }
 
             Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
