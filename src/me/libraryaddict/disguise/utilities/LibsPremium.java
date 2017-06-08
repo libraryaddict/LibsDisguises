@@ -10,7 +10,7 @@ import java.net.URLClassLoader;
 /**
  * Created by libraryaddict on 2/06/2017.
  */
-public class LibsVersion {
+public class LibsPremium {
     /**
      * If you're seriously going to modify this to get the premium stuff for free, can you at least not
      * distribute it? You didn't pay for it despite how cheap it is. You spend $8 on a trip to McDonalds
@@ -53,7 +53,7 @@ public class LibsVersion {
 
                 try {
                     ClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()});
-                    Class c = cl.loadClass(LibsVersion.class.getName());
+                    Class c = cl.loadClass(LibsPremium.class.getName());
 
                     Method m = c.getMethod("isPremium");
                     thisPluginIsPaidFor = (Boolean) m.invoke(null);

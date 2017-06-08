@@ -132,7 +132,7 @@ public class DisguiseUtilities {
     }
 
     public static void saveDisguises(UUID owningEntity, Disguise[] disguise) {
-        if (!LibsVersion.isPremium())
+        if (!LibsPremium.isPremium())
             return;
 
         try {
@@ -171,7 +171,7 @@ public class DisguiseUtilities {
     }
 
     public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
-        if (!isSavedDisguise(entityUUID) || !LibsVersion.isPremium())
+        if (!isSavedDisguise(entityUUID) || !LibsPremium.isPremium())
             return new Disguise[0];
 
         File disguiseFile = new File(savedDisguises, entityUUID.toString());
@@ -849,7 +849,7 @@ public class DisguiseUtilities {
             savedDisguiseList.add(UUID.fromString(key));
         }
 
-        LibsVersion.check(libsDisguises);
+        LibsPremium.check(libsDisguises);
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
