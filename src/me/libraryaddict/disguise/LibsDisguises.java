@@ -3,6 +3,9 @@ package me.libraryaddict.disguise;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import org.bukkit.Bukkit;
@@ -322,6 +325,7 @@ public class LibsDisguises extends JavaPlugin {
                         bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
                 WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
+                ArrayList<MetaIndex> indexes = MetaIndex.getFlags(disguiseType.getWatcherClass());
 
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
@@ -335,6 +339,8 @@ public class LibsDisguises extends JavaPlugin {
                         continue;
                     }
 
+                    indexes.remove(flagType);
+
                     if (ReflectionManager.convertInvalidItem(
                             flagType.getDefault()).getClass() != ReflectionManager.convertInvalidItem(
                             watch.getValue()).getClass()) {
@@ -344,6 +350,11 @@ public class LibsDisguises extends JavaPlugin {
                                 "Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName() + " which doesn't match up with " + flagType.getDefault().getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                     }
+                }
+
+                for (MetaIndex index : indexes) {
+                    System.out.println(
+                            disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
                 }
 
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());

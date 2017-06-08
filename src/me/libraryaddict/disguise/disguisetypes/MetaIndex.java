@@ -220,14 +220,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 1,
-            new ItemStack(Material.SPLASH_POTION)); // Yeah, the '1' isn't a bug. No idea why but MC thinks
-    // there's a '0' already.
-
-    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM_BAD = new MetaIndex<>(SplashPotionWatcher.class, 0,
-            new ItemStack(Material.SPLASH_POTION)); // Yeah, the '1' isn't a bug. No
-    // idea why but MC thinks there's a
-    // '0' already.
+    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0,
+            new ItemStack(Material.SPLASH_POTION));
 
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
@@ -438,6 +432,25 @@ public class MetaIndex<Y> {
         return _values;
     }
 
+    public static void addMetaIndexes(MetaIndex... metaIndexes) {
+        _values = Arrays.copyOf(values(), values().length + metaIndexes.length);
+
+        for (int i = values().length - metaIndexes.length, a = 0; i < values().length; i++, a++) {
+            MetaIndex index = metaIndexes[a];
+
+            for (MetaIndex metaIndex : values()) {
+                if (metaIndex.getFlagWatcher() != index.getFlagWatcher() || metaIndex.getIndex() != index.getIndex()) {
+                    continue;
+                }
+
+                System.err.println(
+                        "[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() + " has already registered this! (" + metaIndex.getDefault() + "," + index.getDefault() + ")");
+            }
+
+            values()[i] = metaIndexes[a];
+        }
+    }
+
     public static void setValues() {
         try {
             _values = new MetaIndex[0];
@@ -460,7 +473,10 @@ public class MetaIndex<Y> {
         }
     }
 
-    public static void setMetaIndex(String name, MetaIndex metaIndex) {
+    /**
+     * Returns true if success, false if the field doesn't exist
+     */
+    public static boolean setMetaIndex(String name, MetaIndex metaIndex) {
         try {
             Field field = MetaIndex.class.getField(name);
             MetaIndex index = (MetaIndex) field.get(null);
@@ -468,12 +484,13 @@ public class MetaIndex<Y> {
             field.set(null, metaIndex);
         }
         catch (NoSuchFieldException ex) {
-            System.out.println("The field '" + name + "' doesn't exist in MetaIndex!");
-            Thread.dumpStack();
+            return false;
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        return true;
     }
 
     private Y _defaultValue;
