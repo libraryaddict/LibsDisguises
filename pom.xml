@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>LibsDisguises</groupId>
   <artifactId>LibsDisguises</artifactId>
-  <version>9.3.0-SNAPSHOT</version>
+  <version>9.4.0</version>
 
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -43,12 +43,12 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.12-R0.1-SNAPSHOT</version>
+      <version>1.12-pre6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.12-R0.1-SNAPSHOT</version>
+      <version>1.12-pre6-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
