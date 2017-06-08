@@ -69,6 +69,10 @@ public enum DisguiseSound {
             Sound.ENTITY_HORSE_STEP_WOOD, Sound.ENTITY_HORSE_ARMOR, Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP,
             Sound.ENTITY_HORSE_ANGRY),
 
+    ILLUSIONER("entity.illusion_illager.hurt", null, "entity.illusion_illager.death", "entity.illusion_illager.ambient",
+            "entity.illusion_illager.cast_spell", "entity.illusion_illager" + ".prepare_blindness",
+            "entity.illusion_illager.prepare_mirror", "entity.illusion_illager.mirror_move"),
+
     IRON_GOLEM(Sound.ENTITY_IRONGOLEM_HURT, Sound.ENTITY_IRONGOLEM_STEP, Sound.ENTITY_IRONGOLEM_DEATH,
             Sound.ENTITY_IRONGOLEM_ATTACK),
 
@@ -84,13 +88,28 @@ public enum DisguiseSound {
     OCELOT(Sound.ENTITY_CAT_HURT, Sound.BLOCK_GRASS_STEP, Sound.ENTITY_CAT_HURT, Sound.ENTITY_CAT_AMBIENT,
             Sound.ENTITY_CAT_PURR, Sound.ENTITY_CAT_PURREOW),
 
+    PARROT("entity.parrot.hurt", "entity.parrot.step", "entity.parrot.death", "entity.parrot.ambient",
+            "entity.parrot.eat", "entity.parrot.fly", "entity.parrot.imitate.blaze", "entity.parrot.imitate.creeper",
+            "entity.parrot.imitate.elder_guardian", "entity.parrot.imitate.enderdragon",
+            "entity.parrot.imitate.enderman", "entity.parrot.imitate.endermite",
+            "entity.parrot.imitate.evocation_illager", "entity.parrot.imitate.ghast", "entity.parrot.imitate.husk",
+            "entity.parrot.imitate.illusion_illager", "entity.parrot.imitate.magmacube",
+            "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.shulker", "entity.parrot.imitate.silverfish",
+            "entity.parrot.imitate.skeleton", "entity.parrot.imitate.slime", "entity.parrot.imitate.spider",
+            "entity.parrot.imitate.stray", "entity.parrot.imitate.vex", "entity.parrot.imitate.vindication_illager",
+            "entity.parrot.imitate.witch", "entity.parrot.imitate.wither", "entity.parrot.imitate.wither_skeleton",
+            "entity.parrot.imitate.wolf", "entity.parrot.imitate.zombie", "entity.parrot.imitate.zombie_pigman",
+            "entity.parrot.imitate.zombie_villager"),
+
     PIG(Sound.ENTITY_PIG_HURT, Sound.ENTITY_PIG_STEP, Sound.ENTITY_PIG_DEATH, Sound.ENTITY_PIG_AMBIENT),
 
     PIG_ZOMBIE(Sound.ENTITY_ZOMBIE_PIG_HURT, null, Sound.ENTITY_ZOMBIE_PIG_DEATH, Sound.ENTITY_ZOMBIE_PIG_AMBIENT,
             Sound.ENTITY_ZOMBIE_PIG_ANGRY),
 
     PLAYER(Sound.ENTITY_PLAYER_HURT,
-            new Sound[]{Sound.BLOCK_STONE_STEP, Sound.BLOCK_GRASS_STEP, Sound.BLOCK_ANVIL_STEP, Sound.BLOCK_CLOTH_STEP, Sound.BLOCK_GLASS_STEP, Sound.BLOCK_GRAVEL_STEP, Sound.BLOCK_LADDER_STEP, Sound.BLOCK_METAL_STEP, Sound.BLOCK_SAND_STEP, Sound.BLOCK_SLIME_STEP, Sound.BLOCK_SNOW_STEP, Sound.BLOCK_WOOD_STEP},
+            new Sound[]{Sound.BLOCK_STONE_STEP, Sound.BLOCK_GRASS_STEP, Sound.BLOCK_ANVIL_STEP, Sound.BLOCK_CLOTH_STEP,
+                    Sound.BLOCK_GLASS_STEP, Sound.BLOCK_GRAVEL_STEP, Sound.BLOCK_LADDER_STEP, Sound.BLOCK_METAL_STEP,
+                    Sound.BLOCK_SAND_STEP, Sound.BLOCK_SLIME_STEP, Sound.BLOCK_SNOW_STEP, Sound.BLOCK_WOOD_STEP},
             Sound.ENTITY_PLAYER_DEATH, null),
 
     RABBIT(Sound.ENTITY_RABBIT_HURT, Sound.ENTITY_RABBIT_JUMP, Sound.ENTITY_RABBIT_DEATH, Sound.ENTITY_RABBIT_AMBIENT),

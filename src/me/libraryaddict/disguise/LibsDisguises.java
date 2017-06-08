@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -41,18 +42,6 @@ import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.GuardianWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
@@ -74,15 +63,6 @@ public class LibsDisguises extends JavaPlugin {
             System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated ProtocolLib!");
             System.err.println(
                     "[LibsDisguises] You need to update ProtocolLib, please try this build http://ci.dmulloy2.net/job/ProtocolLib/lastStableBuild/artifact/modules/ProtocolLib/target/ProtocolLib.jar");
-            return;
-        }
-
-        try {
-            ReflectionManager.getNmsClass("EntityEvoker").getName();
-        }
-        catch (Exception ex) {
-            System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated server!");
-            System.err.println("[LibsDisguises] This plugin does not offer backwards support!");
             return;
         }
 
@@ -131,6 +111,7 @@ public class LibsDisguises extends JavaPlugin {
             metrics.start();
         }
         catch (IOException e) {
+            // Don't print error
         }
     }
 
@@ -166,10 +147,11 @@ public class LibsDisguises extends JavaPlugin {
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
+                System.out.println("EntityType for " + disguiseType.name() + " not found");
                 continue;
             }
 
-            Class watcherClass = null;
+            Class watcherClass;
 
             try {
                 switch (disguiseType) {
@@ -205,6 +187,10 @@ public class LibsDisguises extends JavaPlugin {
                     case WITHER_SKELETON:
                     case STRAY:
                         watcherClass = SkeletonWatcher.class;
+                        break;
+                    case ILLUSIONER:
+                    case EVOKER:
+                        watcherClass = IllagerWizardWatcher.class;
                         break;
                     default:
                         watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(
@@ -289,6 +275,10 @@ public class LibsDisguises extends JavaPlugin {
                 case ARROW:
                 case SPECTRAL_ARROW:
                     nmsEntityName = "TippedArrow";
+                    break;
+                case ILLUSIONER:
+                    nmsEntityName = "IllagerIllusioner";
+                    break;
                 default:
                     break;
             }
@@ -354,7 +344,6 @@ public class LibsDisguises extends JavaPlugin {
                         System.err.println(
                                 "Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName() + " which doesn't match up with " + flagType.getDefault().getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
-                        continue;
                     }
                 }
 

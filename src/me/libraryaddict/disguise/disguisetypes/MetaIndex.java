@@ -4,6 +4,8 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import org.bukkit.Color;
@@ -104,7 +106,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> ENTITY_SILENT = new MetaIndex<>(FlagWatcher.class, 4, false);
 
-    public static MetaIndex<Byte> EVOKER_SPELL_TICKS = new MetaIndex<>(EvokerWatcher.class, 0, (byte) 0);
+    public static MetaIndex<Byte> ILLAGER_SPELL_TICKS = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
+
+    public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0,
             BlockPosition.ORIGIN);
@@ -173,6 +177,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> OCELOT_TYPE = new MetaIndex<>(OcelotWatcher.class, 0, 0);
 
+    public static MetaIndex<Integer> PARROT_VARIANT = new MetaIndex<>(ParrotWatcher.class, 0, 0);
+
     public static MetaIndex<Boolean> PIG_SADDLED = new MetaIndex<>(PigWatcher.class, 0, false);
 
     public static MetaIndex<Integer> PIG_UNKNOWN = new MetaIndex<>(PigWatcher.class, 1, 0);
@@ -184,6 +190,12 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> PLAYER_SCORE = new MetaIndex<>(PlayerWatcher.class, 1, 0);
 
     public static MetaIndex<Byte> PLAYER_SKIN = new MetaIndex<>(PlayerWatcher.class, 2, (byte) 127);
+
+    public static MetaIndex<NbtCompound> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4,
+            NbtFactory.ofCompound("None"));
+
+    public static MetaIndex<NbtCompound> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5,
+            NbtFactory.ofCompound("None"));
 
     public static MetaIndex<Boolean> POLAR_BEAR_STANDING = new MetaIndex<>(PolarBearWatcher.class, 0, false);
 
@@ -261,13 +273,55 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> ZOMBIE_VILLAGER_SHAKING = new MetaIndex<>(ZombieVillagerWatcher.class, 0, false);
 
     static {
+        setValues();
+    }
+
+    public static void fillInBlankIndexes() {
+        ArrayList<Entry<Class, ArrayList<MetaIndex>>> list = new ArrayList<>();
+
+        for (MetaIndex index : values()) {
+            Entry<Class, ArrayList<MetaIndex>> entry = null;
+
+            for (Entry e : list) {
+                if (e.getKey() != index.getFlagWatcher())
+                    continue;
+
+                entry = e;
+                break;
+            }
+
+            if (entry == null) {
+                entry = new AbstractMap.SimpleEntry(index.getFlagWatcher(), new ArrayList<MetaIndex>());
+                list.add(entry);
+            }
+
+            entry.getValue().add(index);
+        }
+
+        for (Entry<Class, ArrayList<MetaIndex>> entry : list) {
+            Collections.sort(entry.getValue(), new Comparator<MetaIndex>() {
+                @Override
+                public int compare(MetaIndex o1, MetaIndex o2) {
+                    return o1.getIndex() - o2.getIndex();
+                }
+            });
+
+            for (MetaIndex ind : entry.getValue()) {
+                ind._index = entry.getValue().indexOf(ind);
+            }
+        }
+    }
+
+    public static void orderMetaIndexes() {
         for (MetaIndex flagType : values()) {
             if (flagType.getFlagWatcher() == FlagWatcher.class)
                 continue;
 
             flagType._index += getNoIndexes(flagType.getFlagWatcher().getSuperclass());
         }
+    }
 
+    public static void validateMetadata() {
         // Simple verification for the dev that he's setting up the FlagType's properly.
         // All flag types should be from 0 to <Max Number> with no empty numbers.
         // All flag types should never occur twice.
@@ -384,6 +438,44 @@ public class MetaIndex<Y> {
         return _values;
     }
 
+    public static void setValues() {
+        try {
+            _values = new MetaIndex[0];
+
+            for (Field field : MetaIndex.class.getFields()) {
+                if (field.getType() != MetaIndex.class)
+                    continue;
+
+                MetaIndex index = (MetaIndex) field.get(null);
+
+                if (index == null)
+                    continue;
+
+                _values = Arrays.copyOf(_values, _values.length + 1);
+                _values[_values.length - 1] = index;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setMetaIndex(String name, MetaIndex metaIndex) {
+        try {
+            Field field = MetaIndex.class.getField(name);
+            MetaIndex index = (MetaIndex) field.get(null);
+
+            field.set(null, metaIndex);
+        }
+        catch (NoSuchFieldException ex) {
+            System.out.println("The field '" + name + "' doesn't exist in MetaIndex!");
+            Thread.dumpStack();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private Y _defaultValue;
     private int _index;
     private Class<? extends FlagWatcher> _watcher;
@@ -392,9 +484,6 @@ public class MetaIndex<Y> {
         _index = index;
         _watcher = watcher;
         _defaultValue = defaultValue;
-
-        _values = Arrays.copyOf(_values, _values.length + 1);
-        _values[_values.length - 1] = this;
     }
 
     public Y getDefault() {

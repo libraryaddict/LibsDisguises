@@ -12,7 +12,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -24,6 +23,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
+import me.libraryaddict.disguise.utilities.backwards.BackwardMethods;
+import me.libraryaddict.disguise.utilities.backwards.BackwardsSupport;
 import me.libraryaddict.disguise.utilities.json.*;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -46,8 +47,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -74,6 +73,7 @@ public class DisguiseUtilities {
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
+    private static BackwardMethods methods;
 
     public static void saveDisguises() {
         Iterator<HashSet<TargetedDisguise>> itel = disguisesInUse.values().iterator();
@@ -132,7 +132,7 @@ public class DisguiseUtilities {
     }
 
     public static void saveDisguises(UUID owningEntity, Disguise[] disguise) {
-        if (!LibVersion.isPremium())
+        if (!LibsVersion.isPremium())
             return;
 
         try {
@@ -171,7 +171,7 @@ public class DisguiseUtilities {
     }
 
     public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
-        if (!isSavedDisguise(entityUUID) || !LibVersion.isPremium())
+        if (!isSavedDisguise(entityUUID) || !LibsVersion.isPremium())
             return new Disguise[0];
 
         File disguiseFile = new File(savedDisguises, entityUUID.toString());
@@ -773,6 +773,7 @@ public class DisguiseUtilities {
 
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
+        methods = BackwardsSupport.getMethods();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
@@ -848,7 +849,7 @@ public class DisguiseUtilities {
             savedDisguiseList.add(UUID.fromString(key));
         }
 
-        LibVersion.check(libsDisguises);
+        LibsVersion.check(libsDisguises);
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {

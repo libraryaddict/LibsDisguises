@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.LibVersion;
+import me.libraryaddict.disguise.utilities.LibsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,7 +58,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                     + "/libsdisguises reload" + ChatColor.DARK_GREEN
                     + " to reload the config. All disguises will be blown by doing this.");
 
-            if (LibVersion.isPremium()) {
+            if (LibsVersion.isPremium()) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
             }
         }

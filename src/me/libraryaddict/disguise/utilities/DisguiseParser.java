@@ -10,11 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.Monster;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -23,7 +19,6 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -444,7 +439,7 @@ public class DisguiseParser {
         }
     }
 
-    private static boolean isNumeric(String string) {
+    private static boolean isInteger(String string) {
         try {
             Integer.parseInt(string);
             return true;
@@ -463,7 +458,6 @@ public class DisguiseParser {
      * @param args
      * @param permissionMap
      * @return
-     * @throws DisguiseBaseCommand.DisguiseParseException
      * @throws java.lang.IllegalAccessException
      * @throws java.lang.reflect.InvocationTargetException
      */
@@ -576,13 +570,13 @@ public class DisguiseParser {
                         // If the first arg is a number
                         if (args[1].contains(":")) {
                             String[] split = args[1].split(":");
-                            if (isNumeric(split[1])) {
+                            if (isInteger(split[1])) {
                                 secondArg = split[1];
                             }
                             args[1] = split[0];
                         }
 
-                        if (isNumeric(args[1])) {
+                        if (isInteger(args[1])) {
                             miscId = Integer.parseInt(args[1]);
                         } else {
                             if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
@@ -614,7 +608,7 @@ public class DisguiseParser {
                             }
                             toSkip++;
                             // If they also defined a data value
-                            if (args.length > 2 && secondArg == null && isNumeric(args[2])) {
+                            if (args.length > 2 && secondArg == null && isInteger(args[2])) {
                                 secondArg = args[2];
                                 toSkip++;
                             }
@@ -706,7 +700,7 @@ public class DisguiseParser {
                     if (valueString != null) {
                         if (int.class == param) {
                             // Parse to integer
-                            if (isNumeric(valueString)) {
+                            if (isInteger(valueString)) {
                                 value = Integer.parseInt(valueString);
                             } else {
                                 throw parseToException("number", valueString, methodName);
@@ -806,7 +800,8 @@ public class DisguiseParser {
                             // Parse to potion effect
                             try {
                                 PotionEffectType potionType = PotionEffectType.getByName(valueString.toUpperCase());
-                                if (potionType == null && isNumeric(valueString)) {
+
+                                if (potionType == null && isInteger(valueString)) {
                                     potionType = PotionEffectType.getById(Integer.parseInt(valueString));
                                 }
 
@@ -878,6 +873,8 @@ public class DisguiseParser {
                             catch (Exception ex) {
                                 throw parseToException("three numbers Number,Number,Number", valueString, methodName);
                             }
+                        } else if (param.getName().equals("org.bukkit.entity.Parrot$Variant")) {
+                            value = callValueOf(param, valueString, methodName, "a parrot color");
                         }
                     }
 
@@ -949,7 +946,7 @@ public class DisguiseParser {
 
         int itemId = -1;
 
-        if (isNumeric(split[0])) {
+        if (isInteger(split[0])) {
             itemId = Integer.parseInt(split[0]);
         } else {
             try {
@@ -963,7 +960,7 @@ public class DisguiseParser {
             short itemDura = 0;
 
             if (split.length > 1) {
-                if (isNumeric(split[1])) {
+                if (isInteger(split[1])) {
                     itemDura = Short.parseShort(split[1]);
                 } else {
                     throw parseToException("item ID:Durability combo", string, "%s");

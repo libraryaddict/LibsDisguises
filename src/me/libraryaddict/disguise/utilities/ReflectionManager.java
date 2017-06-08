@@ -1,47 +1,30 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.comphenix.protocol.wrappers.*;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
+import com.google.common.base.Optional;
+import com.google.gson.Gson;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Art;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.entity.Ambient;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.*;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.MinecraftKey;
-import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedSignedProperty;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.google.common.base.Optional;
-import com.google.gson.Gson;
-
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class ReflectionManager {
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
@@ -863,6 +846,8 @@ public class ReflectionManager {
             return getNmsItem((ItemStack) value);
         } else if (value instanceof Double)
             return ((Double) value).floatValue();
+        else if (value instanceof NbtCompound)
+            return ((NbtWrapper)value).getHandle();
 
         return value;
     }

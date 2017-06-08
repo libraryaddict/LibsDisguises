@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.omg.CORBA.UNKNOWN;
 
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
@@ -71,6 +72,8 @@ public enum DisguiseType {
 
     HUSK,
 
+    ILLUSIONER,
+
     IRON_GOLEM,
 
     ITEM_FRAME(71),
@@ -104,6 +107,8 @@ public enum DisguiseType {
     OCELOT,
 
     PAINTING,
+
+    PARROT,
 
     PIG,
 
@@ -212,7 +217,6 @@ public enum DisguiseType {
         DisguiseType disguiseType = getType(entity.getType());
 
         return disguiseType;
-
     }
 
     public static DisguiseType getType(EntityType entityType) {
@@ -235,16 +239,16 @@ public enum DisguiseType {
             int value = ints[i];
 
             switch (i) {
-            case 0:
-                objectId = value;
+                case 0:
+                    objectId = value;
 
-                break;
-            case 1:
-                defaultData = value;
+                    break;
+                case 1:
+                    defaultData = value;
 
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -267,7 +271,7 @@ public enum DisguiseType {
 
     /**
      * The object type send in packets when spawning a misc entity. Otherwise, -1.
-     * 
+     *
      * @return
      */
     public int getObjectId() {
@@ -276,7 +280,7 @@ public enum DisguiseType {
 
     /**
      * The TYPE id of this entity. Different from the Object Id send in spawn packets when spawning miscs.
-     * 
+     *
      * @return
      */
     public int getTypeId() {

@@ -10,7 +10,7 @@ import java.net.URLClassLoader;
 /**
  * Created by libraryaddict on 2/06/2017.
  */
-public class LibVersion {
+public class LibsVersion {
     /**
      * If you're seriously going to modify this to get the premium stuff for free, can you at least not
      * distribute it? You didn't pay for it despite how cheap it is. You spend $8 on a trip to McDonalds
@@ -39,7 +39,12 @@ public class LibVersion {
         thisPluginIsPaidFor = isPremium();
 
         if (!isPremium() && disguises.getDescription().getVersion().contains("SNAPSHOT")) {
-            for (File file : new File("plugins/LibsDisguises/").listFiles()) {
+            File[] files = new File("plugins/LibsDisguises/").listFiles();
+
+            if (files == null)
+                return;
+
+            for (File file : files) {
                 if (!file.isFile())
                     continue;
 
@@ -48,17 +53,13 @@ public class LibVersion {
 
                 try {
                     ClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()});
-                    Class c = cl.loadClass(LibVersion.class.getName());
+                    Class c = cl.loadClass(LibsVersion.class.getName());
 
                     Method m = c.getMethod("isPremium");
                     thisPluginIsPaidFor = (Boolean) m.invoke(null);
 
                     if (isPremium())
                         break;
-                }
-                catch (ClassNotFoundException ex) {
-                    if (disguises.getDescription().getVersion().contains("9.3.0-SNAPSHOT"))
-                        thisPluginIsPaidFor = true;
                 }
                 catch (Exception ex) {
                     // Don't print off errors

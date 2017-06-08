@@ -5,8 +5,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -19,7 +17,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -224,6 +221,9 @@ public class FlagWatcher {
     }
 
     protected <Y> Y getData(MetaIndex<Y> flagType) {
+        if (flagType == null)
+            return null;
+
         if (entityValues.containsKey(flagType.getIndex())) {
             return (Y) entityValues.get(flagType.getIndex());
         }
@@ -244,6 +244,9 @@ public class FlagWatcher {
     }
 
     protected boolean hasValue(MetaIndex no) {
+        if (no == null)
+            return false;
+
         return entityValues.containsKey(no.getIndex());
     }
 
@@ -316,6 +319,9 @@ public class FlagWatcher {
         List<WrappedWatchableObject> list = new ArrayList<>();
 
         for (MetaIndex data : dataValues) {
+            if (data == null)
+                continue;
+
             if (!entityValues.containsKey(data.getIndex()) || entityValues.get(data.getIndex()) == null) {
                 continue;
             }
@@ -370,6 +376,9 @@ public class FlagWatcher {
     }
 
     protected void setBackupValue(MetaIndex no, Object value) {
+        if (no == null)
+            return;
+
         backupEntityValues.put(no.getIndex(), value);
     }
 
@@ -518,6 +527,9 @@ public class FlagWatcher {
     }
 
     protected <Y> void setData(MetaIndex<Y> id, Y value) {
+        if (id == null)
+            return;
+
         if (value == null && id.getDefault() instanceof ItemStack)
             throw new IllegalArgumentException("Cannot use null ItemStacks");
 
