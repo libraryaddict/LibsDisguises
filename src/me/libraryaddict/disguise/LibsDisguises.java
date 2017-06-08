@@ -147,7 +147,6 @@ public class LibsDisguises extends JavaPlugin {
     private void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
-                System.out.println("EntityType for " + disguiseType.name() + " not found");
                 continue;
             }
 
