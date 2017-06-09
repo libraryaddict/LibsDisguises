@@ -135,6 +135,9 @@ public class DisguiseUtilities {
         if (!LibsPremium.isPremium())
             return;
 
+        if (!savedDisguises.exists())
+            savedDisguises.mkdirs();
+
         try {
             File disguiseFile = new File(savedDisguises, owningEntity.toString());
 
@@ -174,6 +177,9 @@ public class DisguiseUtilities {
         if (!isSavedDisguise(entityUUID) || !LibsPremium.isPremium())
             return new Disguise[0];
 
+        if (!savedDisguises.exists())
+            savedDisguises.mkdirs();
+
         File disguiseFile = new File(savedDisguises, entityUUID.toString());
 
         if (!disguiseFile.exists()) {
@@ -203,6 +209,9 @@ public class DisguiseUtilities {
     public static void removeSavedDisguise(UUID entityUUID) {
         if (!savedDisguiseList.remove(entityUUID))
             return;
+
+        if (!savedDisguises.exists())
+            savedDisguises.mkdirs();
 
         File disguiseFile = new File(savedDisguises, entityUUID.toString());
 
@@ -283,6 +292,9 @@ public class DisguiseUtilities {
 
     public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
         try {
+            if (!profileCache.exists())
+                profileCache.mkdirs();
+
             File file = new File(profileCache, string.toLowerCase());
             PrintWriter writer = new PrintWriter(file);
             writer.write(gson.toJson(gameProfile));
@@ -551,6 +563,9 @@ public class DisguiseUtilities {
         if (!cachedNames.contains(playerName.toLowerCase()))
             return null;
 
+        if (!profileCache.exists())
+            profileCache.mkdirs();
+
         File file = new File(profileCache, playerName.toLowerCase());
 
         if (!file.exists()) {
@@ -785,12 +800,6 @@ public class DisguiseUtilities {
 
         gson = gsonBuilder.create();
 
-        if (!profileCache.exists())
-            profileCache.mkdirs();
-
-        if (!savedDisguises.exists())
-            savedDisguises.mkdirs();
-
         try {
             Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
             Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
@@ -838,6 +847,12 @@ public class DisguiseUtilities {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        if (!profileCache.exists())
+            profileCache.mkdirs();
+
+        if (!savedDisguises.exists())
+            savedDisguises.mkdirs();
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
 
@@ -1098,6 +1113,9 @@ public class DisguiseUtilities {
 
     public static void removeGameProfile(String string) {
         cachedNames.remove(string.toLowerCase());
+
+        if (!profileCache.exists())
+            profileCache.mkdirs();
 
         File file = new File(profileCache, string.toLowerCase());
 

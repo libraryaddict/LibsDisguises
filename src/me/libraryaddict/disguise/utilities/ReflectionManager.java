@@ -120,7 +120,7 @@ public class ReflectionManager {
                     Object playerinteractmanager = getNmsClass("PlayerInteractManager").getDeclaredConstructor(
                             getNmsClass("World")).newInstance(world);
 
-                    WrappedGameProfile gameProfile = getGameProfile(null, "Steve");
+                    WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"),
                             getNmsClass("WorldServer"), gameProfile.getHandleType(),
@@ -847,7 +847,7 @@ public class ReflectionManager {
         } else if (value instanceof Double)
             return ((Double) value).floatValue();
         else if (value instanceof NbtCompound)
-            return ((NbtWrapper)value).getHandle();
+            return ((NbtWrapper) value).getHandle();
 
         return value;
     }
