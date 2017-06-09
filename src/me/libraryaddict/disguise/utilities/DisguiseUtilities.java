@@ -76,15 +76,14 @@ public class DisguiseUtilities {
     private static BackwardMethods methods;
 
     public static void saveDisguises() {
-        Iterator<HashSet<TargetedDisguise>> itel = disguisesInUse.values().iterator();
+        for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {
+            for (TargetedDisguise disg : list) {
+                if (disg.getEntity() == null)
+                    continue;
 
-        while (itel.hasNext()) {
-            HashSet<TargetedDisguise> list = itel.next();
-
-            if (list.isEmpty())
-                continue;
-
-            saveDisguises(list.iterator().next().getEntity().getUniqueId(), list.toArray(new Disguise[0]));
+                saveDisguises(disg.getEntity().getUniqueId(), list.toArray(new Disguise[0]));
+                break;
+            }
         }
     }
 
