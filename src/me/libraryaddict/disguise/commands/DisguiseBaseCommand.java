@@ -36,7 +36,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return new ArrayList<String>(new HashSet<String>(list));
     }
 
-    protected ArrayList<String> getAllowedDisguises(HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> hashMap) {
+    protected ArrayList<String> getAllowedDisguises(
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> hashMap) {
         ArrayList<String> allowedDisguises = new ArrayList<>();
 
         for (DisguisePerm type : hashMap.keySet()) {
@@ -52,7 +53,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected String[] getArgs(String[] args) {
-        ArrayList<String> newArgs = new ArrayList<String>();
+        ArrayList<String> newArgs = new ArrayList<>();
 
         for (int i = 0; i < args.length - 1; i++) {
             String s = args[i];
@@ -69,29 +70,21 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     public final String getPermNode() {
         if (this instanceof DisguiseCommand) {
             return "disguise";
-        }
-        else if (this instanceof DisguiseEntityCommand) {
+        } else if (this instanceof DisguiseEntityCommand) {
             return "disguiseentity";
-        }
-        else if (this instanceof DisguisePlayerCommand) {
+        } else if (this instanceof DisguisePlayerCommand) {
             return "disguiseplayer";
-        }
-        else if (this instanceof DisguiseRadiusCommand) {
+        } else if (this instanceof DisguiseRadiusCommand) {
             return "disguiseradius";
-        }
-        else if (this instanceof DisguiseModifyCommand) {
+        } else if (this instanceof DisguiseModifyCommand) {
             return "disguisemodify";
-        }
-        else if (this instanceof DisguiseModifyEntityCommand) {
+        } else if (this instanceof DisguiseModifyEntityCommand) {
             return "disguisemodifyentity";
-        }
-        else if (this instanceof DisguiseModifyPlayerCommand) {
+        } else if (this instanceof DisguiseModifyPlayerCommand) {
             return "disguisemodifyplayer";
-        }
-        else if (this instanceof DisguiseModifyRadiusCommand) {
+        } else if (this instanceof DisguiseModifyRadiusCommand) {
             return "disguisemodifyradius";
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Unknown disguise command, perm node not found");
         }
     }

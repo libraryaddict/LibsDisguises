@@ -51,8 +51,8 @@ public class ReflectionFlagWatchers {
         }
 
         private ParamInfo(String name, String description) {
-            this.name = name;
-            this.description = description;
+            this.name = TranslateType.METHOD_PARAM.get(name, null);
+            this.description = TranslateType.METHOD_PARAM.get(description, null);
         }
 
         public ParamInfo(String className, String name, String description) throws ClassNotFoundException {
@@ -169,6 +169,7 @@ public class ReflectionFlagWatchers {
 
             potionEnums.add(toReadable(effectType.getName()));
         }
+
         String[] materials = new String[Material.values().length];
 
         for (int i = 0; i < Material.values().length; i++) {

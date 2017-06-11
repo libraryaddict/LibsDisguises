@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -45,13 +46,6 @@ import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.DisguiseSound;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.DisguiseValues;
-import me.libraryaddict.disguise.utilities.FakeBoundingBox;
-import me.libraryaddict.disguise.utilities.Metrics;
-import me.libraryaddict.disguise.utilities.PacketsManager;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
@@ -86,6 +80,8 @@ public class LibsDisguises extends JavaPlugin {
         DisguiseConfig.initConfig(getConfig());
 
         PacketsManager.addPacketListeners();
+
+        TranslateFiller.fillConfigs();
 
         listener = new DisguiseListener(this);
 
