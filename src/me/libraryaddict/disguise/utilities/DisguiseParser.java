@@ -194,6 +194,9 @@ public class DisguiseParser {
             return perm;
         }
 
+        if (name.equalsIgnoreCase("p"))
+            return getDisguisePerm("player");
+
         return null;
     }
 
@@ -500,8 +503,6 @@ public class DisguiseParser {
 
             if (customDisguise != null) {
                 disguise = customDisguise.getValue().clone();
-            } else if (args[0].equalsIgnoreCase("p")) {
-                disguisePerm = new DisguisePerm(DisguiseType.PLAYER);
             }
 
             if (disguisePerm == null) {
