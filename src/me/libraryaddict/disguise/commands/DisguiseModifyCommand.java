@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import me.libraryaddict.disguise.utilities.TranslateType;
@@ -27,15 +28,14 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Entity)) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -47,18 +47,19 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise = DisguiseAPI.getDisguise((Player) sender, (Entity) sender);
 
         if (disguise == null) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are not disguised!"));
+            sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
             return true;
         }
 
         if (!map.containsKey(new DisguisePerm(disguise.getType()))) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "No permission to modify your disguise!"));
+            sender.sendMessage(LibsMsg.DMODIFY_NO_PERM.get());
             return true;
         }
 
         try {
-            DisguiseParser.callMethods(sender, disguise,
-                    getPermissions(sender).get(new DisguisePerm(disguise.getType())), new ArrayList<String>(), args);
+            DisguiseParser
+                    .callMethods(sender, disguise, getPermissions(sender).get(new DisguisePerm(disguise.getType())),
+                            new ArrayList<String>(), args);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -72,7 +73,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "Your disguise has been modified!"));
+        sender.sendMessage(LibsMsg.DMODIFY_MODIFIED.get());
 
         return true;
     }
@@ -152,12 +153,9 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
     protected void sendCommandUsage(CommandSender sender,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
-        sender.sendMessage(
-                TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "Modify your own disguise as you wear " + "it!"));
-        sender.sendMessage(
-                TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "/disguisemodify setBaby true setSprinting true"));
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can modify the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3.get());
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3.get());
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
 }

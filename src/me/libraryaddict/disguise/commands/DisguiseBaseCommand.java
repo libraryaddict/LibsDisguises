@@ -33,7 +33,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             itel.remove();
         }
 
-        return new ArrayList<String>(new HashSet<String>(list));
+        return new ArrayList<>(new HashSet<>(list));
     }
 
     protected ArrayList<String> getAllowedDisguises(

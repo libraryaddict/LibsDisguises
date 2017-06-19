@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.commands;
 
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,27 +10,26 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-
 public class UndisguiseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the " + "console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
+
         if (sender.hasPermission("libsdisguises.undisguise")) {
             if (DisguiseAPI.isDisguised((Entity) sender)) {
                 DisguiseAPI.undisguiseToAll((Player) sender);
-                sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are no longer disguised"));
+                sender.sendMessage(LibsMsg.UNDISG.get());
             } else {
-                sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are not disguised!"));
+                sender.sendMessage(LibsMsg.UNDISG_FAIL.get());
             }
         } else {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
         }
+
         return true;
     }
 }

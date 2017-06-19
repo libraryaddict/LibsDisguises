@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     }
 
     protected String[] getArgs(String[] args) {
-        ArrayList<String> newArgs = new ArrayList<String>();
+        ArrayList<String> newArgs = new ArrayList<>();
 
         for (int i = 0; i < args.length - 1; i++) {
             String s = args[i];
@@ -53,8 +54,9 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(
-                    ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + Bukkit.getPluginManager().getPlugin(
-                            "LibsDisguises").getDescription().getVersion() + " by libraryaddict, formerly maintained " + "by Byteflux and NavidK0." + (
+                    ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + Bukkit.getPluginManager()
+                            .getPlugin("LibsDisguises").getDescription()
+                            .getVersion() + " by libraryaddict, formerly maintained " + "by Byteflux and NavidK0." + (
                             sender.hasPermission("libsdisguises.reload") ?
                                     "\nUse " + ChatColor.GREEN + "/libsdisguises " + "reload" + ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this" + "." :
                                     ""));
@@ -66,14 +68,13 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             if (sender.hasPermission("libsdisguises.reload")) {
                 if (args[0].equalsIgnoreCase("reload")) {
                     LibsDisguises.getInstance().reload();
-                    sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.GREEN + "[LibsDisguises] Reloaded config."));
+                    sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
                     return true;
                 } else {
-                    sender.sendMessage(TranslateType.MESSAGE.get(
-                            ChatColor.RED + "[LibsDisguises] Did you mean 'reload'?"));
+                    sender.sendMessage(LibsMsg.LIBS_RELOAD_WRONG.get());
                 }
             } else {
-                sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+                sender.sendMessage(LibsMsg.NO_PERM.get());
             }
         }
         return true;

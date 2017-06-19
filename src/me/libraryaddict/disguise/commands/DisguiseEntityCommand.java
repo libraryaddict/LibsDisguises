@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import me.libraryaddict.disguise.utilities.TranslateType;
@@ -28,13 +29,12 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the " + "console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         if (getPermissions(sender).isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -62,8 +62,8 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
         LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguise);
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.RED + "Right click an entity in the next " + DisguiseConfig.getDisguiseEntityExpire() + " " + "seconds to disguise it as a " + disguise.getType().toReadable() + "!"));
+        sender.sendMessage(
+                LibsMsg.DISG_ENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire(), disguise.getType().toReadable()));
         return true;
     }
 
@@ -135,8 +135,8 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
-                                disguiseType.getWatcherClass())) {
+                        for (Method method : ReflectionFlagWatchers
+                                .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }
                     }
@@ -158,21 +158,18 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "Choose a disguise then right click an entity to disguise it!"));
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can use the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(LibsMsg.DISG_ENT_HELP1.get());
+        sender.sendMessage(LibsMsg.DISG_ENT_HELP2
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         if (allowedDisguises.contains("player")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "/disguiseentity player <Name>"));
+            sender.sendMessage(LibsMsg.DISG_ENT_HELP3.get());
         }
 
-        sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "/disguiseentity <DisguiseType> <Baby>"));
+        sender.sendMessage(LibsMsg.DISG_ENT_HELP4.get());
 
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.DARK_GREEN + "/disguiseentity <Dropped_Item/Falling_Block> <Id> " + "<Durability>"));
+            sender.sendMessage(LibsMsg.DISG_ENT_HELP5.get());
         }
     }
 }

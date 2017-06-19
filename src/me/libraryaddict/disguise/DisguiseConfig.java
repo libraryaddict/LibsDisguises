@@ -26,9 +26,8 @@ public class DisguiseConfig {
     private static boolean collectEnabled;
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
-    private static HashMap<String, Disguise> customDisguises = new HashMap<String, Disguise>();
+    private static HashMap<String, Disguise> customDisguises = new HashMap<>();
     private static boolean disableInvisibility;
-    private static String disguiseBlownMessage;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
     private static boolean displayPlayerDisguisesInTab;
@@ -52,7 +51,6 @@ public class DisguiseConfig {
     private static boolean stopShulkerDisguisesFromMoving;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
-    private static String updateMessage = ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!";
     private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
@@ -65,8 +63,8 @@ public class DisguiseConfig {
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "").equalsIgnoreCase(
-                    disguise))
+            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "")
+                    .equalsIgnoreCase(disguise))
                 continue;
 
             return entry;
@@ -109,10 +107,6 @@ public class DisguiseConfig {
         return customDisguises;
     }
 
-    public static String getDisguiseBlownMessage() {
-        return disguiseBlownMessage;
-    }
-
     public static int getDisguiseCloneExpire() {
         return disguiseCloneExpire;
     }
@@ -123,10 +117,6 @@ public class DisguiseConfig {
 
     public static int getMaxClonedDisguises() {
         return maxClonedDisguises;
-    }
-
-    public static String getUpdateMessage() {
-        return updateMessage;
     }
 
     public static String getUpdateNotificationPermission() {
@@ -165,7 +155,6 @@ public class DisguiseConfig {
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
         setDisguiseBlownOnAttack(config.getBoolean("BlowDisguises"));
-        setDisguiseBlownMessage(ChatColor.translateAlternateColorCodes('&', config.getString("BlownDisguiseMessage")));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
@@ -195,8 +184,8 @@ public class DisguiseConfig {
         setUseTranslations(config.getBoolean("Translations"));
 
         try {
-            String option = config.getString("SelfDisguisesScoreboard",
-                    DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
+            String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name())
+                    .toUpperCase();
 
             if (!option.endsWith("_SCOREBOARD"))
                 option += "_SCOREBOARD";
@@ -204,8 +193,8 @@ public class DisguiseConfig {
             disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            System.out.println("[LibsDisguises] Cannot parse '" + config.getString(
-                    "SelfDisguisesScoreboard") + "' to a valid option for SelfDisguisesTeam");
+            System.out.println("[LibsDisguises] Cannot parse '" + config
+                    .getString("SelfDisguisesScoreboard") + "' to a valid option for SelfDisguisesTeam");
         }
 
         customDisguises.clear();
@@ -233,8 +222,9 @@ public class DisguiseConfig {
             }
 
             try {
-                Disguise disguise = DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), "disguise",
-                        toParse.split(" "), DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+                Disguise disguise = DisguiseParser
+                        .parseDisguise(Bukkit.getConsoleSender(), "disguise", toParse.split(" "),
+                                DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
 
                 customDisguises.put(key, disguise);
 
@@ -429,10 +419,6 @@ public class DisguiseConfig {
         disableInvisibility = disableInvis;
     }
 
-    public static void setDisguiseBlownMessage(String newMessage) {
-        disguiseBlownMessage = newMessage;
-    }
-
     public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
         blowDisguisesOnAttack = blowDisguise;
     }
@@ -565,10 +551,6 @@ public class DisguiseConfig {
 
     public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
         undisguiseSwitchWorlds = isUndisguise;
-    }
-
-    public static void setUpdateMessage(String newMessage) {
-        updateMessage = newMessage;
     }
 
     public static void setUpdateNotificationPermission(String newPermission) {

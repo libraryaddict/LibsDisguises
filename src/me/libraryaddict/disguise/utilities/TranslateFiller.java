@@ -47,5 +47,9 @@ public class TranslateFiller {
                                 "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
             }
         }
+
+        for (LibsMsg msg : LibsMsg.values()) {
+            TranslateType.MESSAGE.get(msg.getRaw());
+        }
     }
 }

@@ -5,9 +5,9 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,7 +28,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -40,9 +40,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         Player player = Bukkit.getPlayer(args[0]);
 
         if (player == null) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Cannot find the player '%s" + "'"),
-                            args[0]));
+            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
             return true;
         }
 
@@ -63,15 +61,12 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             disguise = DisguiseAPI.getDisguise(player);
 
         if (disguise == null) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "The player '%s' is " + "not disguised"),
-                            player.getName()));
+            sender.sendMessage(LibsMsg.DMODPLAYER_NODISGUISE.get(player.getName()));
             return true;
         }
 
         if (!map.containsKey(new DisguisePerm(disguise.getType()))) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "You do not have permission to modify this " + "disguise"));
+            sender.sendMessage(LibsMsg.DMODPLAYER_NOPERM.get());
             return true;
         }
 
@@ -91,8 +86,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        sender.sendMessage(
-                TranslateType.MESSAGE.get(ChatColor.RED + "Modified the disguise of " + player.getName() + "!"));
+        sender.sendMessage(LibsMsg.DMODPLAYER_MODIFIED.get(player.getName()));
 
         return true;
     }
@@ -115,9 +109,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             Player player = Bukkit.getPlayer(args[0]);
 
             if (player == null) {
-                sender.sendMessage(
-                        String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Cannot find the player '%s'"),
-                                args[0]));
+                sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
                 return tabs;
             }
 
@@ -130,9 +122,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
                 disguise = DisguiseAPI.getDisguise(player);
 
             if (disguise == null) {
-                sender.sendMessage(String.format(
-                        TranslateType.MESSAGE.get(ChatColor.RED + "The player '%s' " + "is not disguised"),
-                        player.getName()));
+                sender.sendMessage(LibsMsg.DMODPLAYER_NODISGUISE.get(player.getName()));
                 return tabs;
             }
 
@@ -179,8 +169,8 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
                 if (addMethods) {
                     // If this is a method, add. Else if it can be a param of the previous argument, add.
-                    for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
-                            disguiseType.getWatcherClass())) {
+                    for (Method method : ReflectionFlagWatchers
+                            .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                         tabs.add(method.getName());
                     }
                 }
@@ -198,9 +188,8 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "Modify the disguise of another player!"));
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can modify the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(LibsMsg.DMODPLAYER_HELP1.get());
+        sender.sendMessage(LibsMsg.DMODPLAYER_HELP2
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
 }

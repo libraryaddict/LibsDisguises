@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import me.libraryaddict.disguise.utilities.TranslateType;
@@ -23,13 +24,12 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the " + "console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         if (getPermissions(sender).isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -40,9 +40,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
         LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), args);
 
-        sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                ChatColor.RED + "Right click a disguised entity " + "in the next %s seconds to modify their disguise!"),
-                DisguiseConfig.getDisguiseEntityExpire()));
+        sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;
     }
 
@@ -89,8 +87,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
             if (addMethods) {
                 // If this is a method, add. Else if it can be a param of the previous argument, add.
-                for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
-                        perm.getType().getWatcherClass())) {
+                for (Method method : ReflectionFlagWatchers
+                        .getDisguiseWatcherMethods(perm.getType().getWatcherClass())) {
                     tabs.add(method.getName());
                 }
             }
@@ -110,10 +108,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "Choose the options for a disguise then right click a entity to modify it!"));
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can modify the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(LibsMsg.DMODENT_HELP1.get());
+        sender.sendMessage(LibsMsg.DMODENT_HELP2
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
 }

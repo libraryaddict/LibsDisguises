@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -57,19 +56,18 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
                 if (p != null) {
                     if (DisguiseAPI.isDisguised(p)) {
                         DisguiseAPI.undisguiseToAll(p);
-                        sender.sendMessage(
-                                TranslateType.MESSAGE.get(ChatColor.RED + "The player is no longer disguised"));
+                        sender.sendMessage(LibsMsg.UNDISG_PLAYER.get(p.getName()));
                     } else {
-                        sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "The player is not disguised!"));
+                        sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL.get(p.getName()));
                     }
                 } else {
-                    sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "Player not found"));
+                    sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
                 }
             } else {
-                sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "/undisguiseplayer <Name>"));
+                sender.sendMessage(LibsMsg.UNDISG_PLAYER_HELP.get());
             }
         } else {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
         }
         return true;
     }

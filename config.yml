@@ -111,7 +111,6 @@ MonstersIgnoreDisguises: false
 # Works only for disguised players when attacked by a entity (arrow, monster. etc)
 # This will blow all disguises he has on him
 BlowDisguises: false
-BlownDisguiseMessage: '&cYour disguise was blown!'
 
 #Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
 StopShulkerDisguisesFromMoving: true

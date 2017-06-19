@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -21,8 +22,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
@@ -38,8 +38,8 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
 
             for (int i = player == null ? 0 : 1; i < args.length; i++) {
                 String option = args[i];
-                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip") || StringUtils.startsWithIgnoreCase(option,
-                        "ignoreEnquip")) {
+                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip") || StringUtils
+                        .startsWithIgnoreCase(option, "ignoreEnquip")) {
                     doEquipment = false;
                 } else if (option.equalsIgnoreCase("doSneakSprint")) {
                     doSneak = true;
@@ -49,9 +49,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
                 } else if (option.equalsIgnoreCase("doSprint")) {
                     doSprint = true;
                 } else {
-                    sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                            ChatColor.DARK_RED + "Unknown " + "option '%s" + "' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' 'DoSneak' 'DoSprint'"),
-                            option));
+                    sender.sendMessage(LibsMsg.INVALID_CLONE.get(option));
                     return true;
                 }
             }
@@ -63,12 +61,10 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             } else {
                 LibsDisguises.getInstance().getListener().setDisguiseClone(sender.getName(), options);
 
-                sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                        ChatColor.RED + "Right click a entity in the next %s" + " seconds to grab the disguise reference!"),
-                        DisguiseConfig.getDisguiseCloneExpire()));
+                sender.sendMessage(LibsMsg.CLICK_TIMER.get(DisguiseConfig.getDisguiseCloneExpire()));
             }
         } else {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
         }
 
         return true;
@@ -100,11 +96,8 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
     @Override
     protected void sendCommandUsage(CommandSender sender,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "Right click a entity to get a disguise reference you can pass to other " + "disguise commands!"));
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "Security note: Any references you create will be available to all players " + "able to use disguise references."));
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")"));
+        sender.sendMessage(LibsMsg.CLONE_HELP1.get());
+        sender.sendMessage(LibsMsg.CLONE_HELP2.get());
+        sender.sendMessage(LibsMsg.CLONE_HELP3.get());
     }
 }

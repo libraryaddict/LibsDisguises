@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -29,24 +30,20 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
+
         if (sender.hasPermission("libsdisguises.undisguiseradius")) {
             int radius = maxRadius;
             if (args.length > 0) {
                 if (!isNumeric(args[0])) {
-                    sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                            ChatColor.RED + "Error! " + ChatColor.GREEN + "%s" + ChatColor.RED + " is not a " + "number!"),
-                            args[0]));
+                    sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[0]));
                     return true;
                 }
                 radius = Integer.parseInt(args[0]);
                 if (radius > maxRadius) {
-                    sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                            ChatColor.RED + "Limited radius to %s" + "! Don't want to make too much lag right?"),
-                            maxRadius));
+                    sender.sendMessage(LibsMsg.LIMITED_RADIUS.get(maxRadius));
                     radius = maxRadius;
                 }
             }
@@ -61,11 +58,10 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                     disguisedEntitys++;
                 }
             }
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Successfully undisguised %s entities!"),
-                            disguisedEntitys));
+
+            sender.sendMessage(LibsMsg.UNDISRADIUS.get(disguisedEntitys));
         } else {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
         }
         return true;
     }

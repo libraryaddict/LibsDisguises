@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -56,7 +57,7 @@ public enum TranslateType {
                 if (value == null)
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
                 else
-                    translated.put(key, value);
+                    translated.put(key, ChatColor.translateAlternateColorCodes('&', value));
             }
         }
         catch (Exception e) {
@@ -74,7 +75,7 @@ public enum TranslateType {
 
         translated.put(message, message);
 
-        message = StringEscapeUtils.escapeJava(message);
+        message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = file.exists();
@@ -112,26 +113,24 @@ public enum TranslateType {
         return translated;
     }
 
-    public String get(String message) {
+    public String get(String msg) {
         if (this != TranslateType.MESSAGE)
-            throw new IllegalArgumentException("Can't set no comment for '" + message + "'");
+            throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
 
-        return get(message, null);
+        return get(msg, null);
     }
 
-    public String get(String message, String comment) {
+    public String get(String msg, String comment) {
         if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
-            return message;
-        System.out.println("1");
-
-        String msg = translated.get(message);
-
-        if (msg != null)
             return msg;
-        System.out.println("2");
 
-        save(message, comment);
+        String toReturn = translated.get(msg);
 
-        return message;
+        if (toReturn != null)
+            return toReturn;
+
+        save(msg, comment);
+
+        return msg;
     }
 }

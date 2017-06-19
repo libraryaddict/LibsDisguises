@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import me.libraryaddict.disguise.utilities.TranslateType;
@@ -32,7 +33,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -42,16 +43,14 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (args.length == 1) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "You need to supply a disguise as well as " + "the player"));
+            sender.sendMessage(LibsMsg.DPLAYER_SUPPLY.get());
             return true;
         }
 
         Player player = Bukkit.getPlayer(args[0]);
 
         if (player == null) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Cannot find the player '%s'"), args[0]));
+            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
             return true;
         }
 
@@ -81,8 +80,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "Can't disguise a living entity as a misc disguise. This has been disabled in the" + " config!"));
+            sender.sendMessage(LibsMsg.DISABLED_LIVING_TO_MISC.get());
             return true;
         }
 
@@ -100,13 +98,9 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         DisguiseAPI.disguiseToAll(player, disguise);
 
         if (disguise.isDisguiseInUse()) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Successfully disguised %s as a %s!"),
-                            player.getName(), disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG.get(player.getName(), disguise.getType().toReadable()));
         } else {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Failed to disguise %s as a %s!"),
-                            player.getName(), disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL.get(player.getName(), disguise.getType().toReadable()));
         }
 
         return true;
@@ -175,8 +169,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
-                                disguiseType.getWatcherClass())) {
+                        for (Method method : ReflectionFlagWatchers
+                                .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }
                     }
@@ -195,22 +189,18 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(ChatColor.DARK_GREEN + "Disguise another player!");
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can use the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(LibsMsg.D_HELP1.get());
+        sender.sendMessage(LibsMsg.D_HELP2
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         if (allowedDisguises.contains("player")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> player " + "<Name>"));
+            sender.sendMessage(LibsMsg.D_HELP3.get());
         }
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> " + "<DisguiseType> <Baby>"));
+        sender.sendMessage(LibsMsg.D_HELP4.get());
 
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> <Dropped_Item/Falling_Block> <Id> " + "<Durability>"));
+            sender.sendMessage(LibsMsg.D_HELP5.get());
         }
     }
 }

@@ -5,13 +5,10 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.ClassGetter;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.*;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,15 +41,14 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(
-                    TranslateType.MESSAGE.get(ChatColor.RED + "You may not use this command from the console!"));
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this command."));
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -70,10 +66,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             Collections.sort(classes);
 
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "EntityTypes usable are: %s"),
-                            ChatColor.GREEN + StringUtils.join(classes,
-                                    ChatColor.DARK_GREEN + ", " + ChatColor.GREEN)));
+            sender.sendMessage(LibsMsg.DRADIUS_ENTITIES
+                    .get(ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN)));
             return true;
         }
 
@@ -98,36 +92,30 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 if (type == null) {
-                    sender.sendMessage(
-                            String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Unrecognised " + "EntityType %s"),
-                                    args[0]));
+                    sender.sendMessage(LibsMsg.DRADIUS_UNRECOG.get(args[0]));
                     return true;
                 }
             }
         }
 
         if (args.length == starting + 1) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "You need to supply a disguise as well as the radius" + (starting != 0 ?
-                            " and EntityType" : "")));
+            sender.sendMessage(
+                    (starting == 0 ? LibsMsg.DRADIUS_NEEDOPTIONS : LibsMsg.DRADIUS_NEEDOPTIONS_ENTITY).get());
             return true;
         } else if (args.length < 2) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "You need to supply a radius as well as " + "the disguise"));
+            sender.sendMessage(LibsMsg.DRADIUS_NEEDOPTIONS.get());
             return true;
         }
 
         if (!isNumeric(args[starting])) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "%s is not a number"), args[starting]));
+            sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[starting]));
             return true;
         }
 
         int radius = Integer.parseInt(args[starting]);
 
         if (radius > maxRadius) {
-            sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"), maxRadius));
+            sender.sendMessage(LibsMsg.LIMITED_RADIUS.get(maxRadius));
             radius = maxRadius;
         }
 
@@ -173,7 +161,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             }
 
             if (type != null ? entity.getType() == type : entityClass.isAssignableFrom(entity.getClass())) {
-                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+                if (disguise.isMiscDisguise() && !DisguiseConfig
+                        .isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
                     miscDisguises++;
                     continue;
                 }
@@ -198,17 +187,13 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (disguisedEntitys > 0) {
-            sender.sendMessage(
-                    String.format(TranslateType.MESSAGE.get(ChatColor.RED + "Successfully disguised %s" + " entities!"),
-                            disguisedEntitys));
+            sender.sendMessage(LibsMsg.DISRADIUS.get(disguisedEntitys));
         } else {
-            sender.sendMessage(TranslateType.MESSAGE.get(ChatColor.RED + "Couldn't find any entities to disguise!"));
+            sender.sendMessage(LibsMsg.DISRADIUS_FAIL.get());
         }
 
         if (miscDisguises > 0) {
-            sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                    ChatColor.RED + "Failed to disguise %s entities because the option to disguise a living entity as" + " a non-living has been disabled in the config"),
-                    miscDisguises));
+            sender.sendMessage(LibsMsg.DRADIUS_MISCDISG.get(miscDisguises));
         }
 
         return true;
@@ -299,8 +284,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(
-                                disguiseType.getWatcherClass())) {
+                        for (Method method : ReflectionFlagWatchers
+                                .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }
                     }
@@ -319,31 +304,20 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(String.format(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at %s blocks!"), maxRadius));
-        sender.sendMessage(
-                String.format(TranslateType.MESSAGE.get(ChatColor.DARK_GREEN + "You can use the " + "disguises: %s"),
-                        ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
-
-        String optional = ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")";
+        sender.sendMessage(LibsMsg.DRADIUS_HELP1.get(maxRadius));
+        sender.sendMessage(LibsMsg.DRADIUS_HELP2
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         if (allowedDisguises.contains("player")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    (ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional + "> <Radius> player <Name>").replace(
-                            "<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")));
+            sender.sendMessage(LibsMsg.DRADIUS_HELP3.get());
         }
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                (ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional + "> <Radius> <DisguiseType> <Baby" + optional + ">").replace(
-                        "<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")));
+        sender.sendMessage(LibsMsg.DRADIUS_HELP4.get());
 
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            sender.sendMessage(TranslateType.MESSAGE.get(
-                    (ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + optional + "> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" + optional + ">").replace(
-                            "<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")));
+            sender.sendMessage(LibsMsg.DRADIUS_HELP5.get());
         }
 
-        sender.sendMessage(TranslateType.MESSAGE.get(
-                ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN + "/disguiseradius " + "EntityTypes"));
+        sender.sendMessage(LibsMsg.DRADIUS_HELP6.get());
     }
 }
