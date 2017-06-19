@@ -1,30 +1,23 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-
-import com.mysql.fabric.xmlrpc.base.Param;
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.mojang.authlib.GameProfile;
+import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Llama;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.mojang.authlib.GameProfile;
-
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class ReflectionFlagWatchers {
     public static class ParamInfo {
@@ -151,7 +144,7 @@ public class ReflectionFlagWatchers {
                 "View all the professions you can set on a villager");
         new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 5), "Direction",
                 "View the five directions usable on player setSleeping disguise");
-        new ParamInfo(Rabbit.Type.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
+        new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
 
         try {
@@ -181,8 +174,8 @@ public class ReflectionFlagWatchers {
                 materials) {
             @Override
             public String[] getEnums(String tabComplete) {
-                String beginning = tabComplete.substring(0,
-                        tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
+                String beginning = tabComplete
+                        .substring(0, tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
                 String end = tabComplete.substring(tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
 
                 ArrayList<String> toReturn = new ArrayList<>();
@@ -222,7 +215,7 @@ public class ReflectionFlagWatchers {
     }
 
     public static Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
-        ArrayList<Method> methods = new ArrayList<Method>(Arrays.asList(watcherClass.getMethods()));
+        ArrayList<Method> methods = new ArrayList<>(Arrays.asList(watcherClass.getMethods()));
 
         Iterator<Method> itel = methods.iterator();
 
