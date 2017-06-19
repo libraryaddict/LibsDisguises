@@ -1,40 +1,38 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        for (String node : new String[] {
-                "disguise", "disguiseradius", "disguiseentity", "disguiseplayer"
-        }) {
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permMap = DisguiseParser.getPermissions(sender,
-                    "libsdisguises." + node + ".");
+        for (String node : new String[]{"disguise", "disguiseradius", "disguiseentity", "disguiseplayer"}) {
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permMap = DisguiseParser
+                    .getPermissions(sender, "libsdisguises." + node + ".");
 
             if (!permMap.isEmpty()) {
                 if (args.length == 0) {
                     sendCommandUsage(sender, null);
                     return true;
-                }
-                else {
+                } else {
                     ParamInfo help = null;
 
                     for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
@@ -47,20 +45,25 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     }
 
                     if (help != null) {
-                        sender.sendMessage(ChatColor.RED + help.getName() + ": " + ChatColor.GREEN
-                                + StringUtils.join(help.getEnums(""), ChatColor.RED + ", " + ChatColor.GREEN));
+                        if (help.isEnums()) {
+                            sender.sendMessage(ChatColor.RED + help.getName() + ": " + ChatColor.GREEN + StringUtils
+                                    .join(help.getEnums(""), ChatColor.RED + ", " + ChatColor.GREEN));
+                        } else {
+                            sender.sendMessage(
+                                    ChatColor.RED + help.getName() + ": " + ChatColor.GREEN + help.getDescription());
+                        }
                         return true;
                     }
 
                     DisguisePerm type = DisguiseParser.getDisguisePerm(args[0]);
 
                     if (type == null) {
-                        sender.sendMessage(ChatColor.RED + "Cannot find the disguise " + args[0]);
+                        sender.sendMessage(LibsMsg.DHELP_CANTFIND.get(args[0]));
                         return true;
                     }
 
                     if (!permMap.containsKey(type)) {
-                        sender.sendMessage(ChatColor.RED + "You do not have permission for that disguise!");
+                        sender.sendMessage(LibsMsg.NO_PERM_DISGUISE.get());
                         return true;
                     }
 
@@ -80,8 +83,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                                             allowed = true;
                                             break;
                                         }
-                                    }
-                                    else if (!key.contains(method.getName().toLowerCase())) {
+                                    } else if (!key.contains(method.getName().toLowerCase())) {
                                         allowed = true;
                                         break;
                                     }
@@ -105,13 +107,13 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                             if (declaring == LivingWatcher.class) {
                                 methodColor = ChatColor.AQUA;
-                            }
-                            else if (!(FlagWatcher.class.isAssignableFrom(declaring)) || declaring == FlagWatcher.class) {
+                            } else if (!(FlagWatcher.class
+                                    .isAssignableFrom(declaring)) || declaring == FlagWatcher.class) {
                                 methodColor = ChatColor.GRAY;
                             }
 
-                            String str = method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info.getName()
-                                    + ChatColor.DARK_RED + ")";
+                            String str = method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info
+                                    .getName() + ChatColor.DARK_RED + ")";
 
                             map.put(str, methodColor);
                             methods.add(str);
@@ -131,12 +133,11 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                         methods.add(ChatColor.RED + "No options with permission to use");
                     }
 
-                    sender.sendMessage(ChatColor.DARK_RED + type.toReadable() + " options: "
-                            + StringUtils.join(methods, ChatColor.DARK_RED + ", "));
+                    sender.sendMessage(LibsMsg.DHELP_OPTIONS.get(ChatColor.DARK_RED + type.toReadable(),
+                            StringUtils.join(methods, ChatColor.DARK_RED + ", ")));
 
                     if (ignored > 0) {
-                        sender.sendMessage(ChatColor.RED + "Ignored " + ignored
-                                + " options you do not have permission to use. Add 'show' to view unusable options.");
+                        sender.sendMessage(LibsMsg.NO_PERMS_USE_OPTIONS.get(ignored));
                     }
 
                     return true;
@@ -144,20 +145,18 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
             }
         }
 
-        sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+        sender.sendMessage(LibsMsg.NO_PERM.get());
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        ArrayList<String> tabs = new ArrayList<String>();
+        ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        for (String node : new String[] {
-                "disguise", "disguiseradius", "disguiseentity", "disguiseplayer"
-        }) {
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = DisguiseParser.getPermissions(sender,
-                    "libsdisguises." + node + ".");
+        for (String node : new String[]{"disguise", "disguiseradius", "disguiseentity", "disguiseplayer"}) {
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = DisguiseParser
+                    .getPermissions(sender, "libsdisguises." + node + ".");
 
             if (args.length == 0) {
                 for (DisguisePerm type : perms.keySet()) {
@@ -170,8 +169,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
                     tabs.add(s.getName().replaceAll(" ", ""));
                 }
-            }
-            else if (DisguiseParser.getDisguisePerm(args[0]) == null) {
+            } else if (DisguiseParser.getDisguisePerm(args[0]) == null) {
                 tabs.add("Show");
             }
         }
@@ -183,13 +181,12 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        sender.sendMessage(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN
-                + "- View the options you can set on a disguise. Add 'show' to reveal the options you don't have permission to use");
+    protected void sendCommandUsage(CommandSender sender,
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
+        sender.sendMessage(LibsMsg.DHELP_HELP1.get());
 
         for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
-            sender.sendMessage(ChatColor.RED + "/disguisehelp " + s.getName().replaceAll(" ", "") + ChatColor.GREEN + " - "
-                    + s.getDescription());
+            sender.sendMessage(LibsMsg.DHELP_HELP2.get(s.getName().replaceAll(" ", ""), s.getDescription()));
         }
     }
 }

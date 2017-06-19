@@ -1,10 +1,12 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,22 +15,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         if (getPermissions(sender).isEmpty()) {
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -39,14 +40,13 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
         LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), args);
 
-        sender.sendMessage(ChatColor.RED + "Right click a disguised entity in the next "
-                + DisguiseConfig.getDisguiseEntityExpire() + " seconds to modify their disguise!");
+        sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        ArrayList<String> tabs = new ArrayList<String>();
+        ArrayList<String> tabs = new ArrayList<>();
 
         if (!(sender instanceof Player)) {
             return tabs;
@@ -75,8 +75,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
                         for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
                             tabs.add(e);
                         }
-                    }
-                    else {
+                    } else {
                         if (info.getParamClass() == String.class) {
                             for (Player player : Bukkit.getOnlinePlayers()) {
                                 tabs.add(player.getName());
@@ -88,7 +87,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
             if (addMethods) {
                 // If this is a method, add. Else if it can be a param of the previous argument, add.
-                for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(perm.getType().getWatcherClass())) {
+                for (Method method : ReflectionFlagWatchers
+                        .getDisguiseWatcherMethods(perm.getType().getWatcherClass())) {
                     tabs.add(method.getName());
                 }
             }
@@ -104,12 +104,12 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
      * @param map
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender,
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
-        sender.sendMessage(ChatColor.DARK_GREEN + "Choose the options for a disguise then right click a entity to modify it!");
-        sender.sendMessage(ChatColor.DARK_GREEN + "You can modify the disguises: " + ChatColor.GREEN
-                + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
+        sender.sendMessage(LibsMsg.DMODENT_HELP1.get());
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
-
 }

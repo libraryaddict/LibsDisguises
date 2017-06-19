@@ -1,18 +1,17 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.LibsMsg;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.libraryaddict.disguise.DisguiseAPI;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
@@ -35,7 +34,7 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
     }
 
     protected String[] getArgs(String[] args) {
-        ArrayList<String> newArgs = new ArrayList<String>();
+        ArrayList<String> newArgs = new ArrayList<>();
 
         for (int i = 0; i < args.length - 1; i++) {
             String s = args[i];
@@ -57,29 +56,25 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
                 if (p != null) {
                     if (DisguiseAPI.isDisguised(p)) {
                         DisguiseAPI.undisguiseToAll(p);
-                        sender.sendMessage(ChatColor.RED + "The player is no longer disguised");
+                        sender.sendMessage(LibsMsg.UNDISG_PLAYER.get(p.getName()));
+                    } else {
+                        sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL.get(p.getName()));
                     }
-                    else {
-                        sender.sendMessage(ChatColor.RED + "The player is not disguised!");
-                    }
+                } else {
+                    sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
                 }
-                else {
-                    sender.sendMessage(ChatColor.RED + "Player not found");
-                }
+            } else {
+                sender.sendMessage(LibsMsg.UNDISG_PLAYER_HELP.get());
             }
-            else {
-                sender.sendMessage(ChatColor.RED + "/undisguiseplayer <Name>");
-            }
-        }
-        else {
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+        } else {
+            sender.sendMessage(LibsMsg.NO_PERM.get());
         }
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        ArrayList<String> tabs = new ArrayList<String>();
+        ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
         if (args.length != 0)

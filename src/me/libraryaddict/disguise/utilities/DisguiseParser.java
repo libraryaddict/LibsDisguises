@@ -36,8 +36,8 @@ public class DisguiseParser {
             super();
         }
 
-        public DisguiseParseException(String string) {
-            super(string);
+        public DisguiseParseException(LibsMsg message, String... params) {
+            super(message.get((Object[]) params));
         }
     }
 
@@ -145,9 +145,7 @@ public class DisguiseParser {
             ArrayList<String> usedOptions) throws DisguiseParseException {
 
         if (!passesCheck(sender, optionPermissions, usedOptions)) {
-            throw new DisguiseParseException(
-                    ChatColor.RED + "You do not have permission to use the option " + usedOptions.get(
-                            usedOptions.size() - 1));
+            throw new DisguiseParseException(LibsMsg.D_PARSE_NOPERM, usedOptions.get(usedOptions.size() - 1));
         }
     }
 
@@ -201,7 +199,8 @@ public class DisguiseParser {
     }
 
     public static DisguisePerm[] getDisguisePerms() {
-        DisguisePerm[] perms = new DisguisePerm[DisguiseType.values().length + DisguiseConfig.getCustomDisguises().size()];
+        DisguisePerm[] perms = new DisguisePerm[DisguiseType.values().length + DisguiseConfig.getCustomDisguises()
+                .size()];
         int i = 0;
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
@@ -256,10 +255,6 @@ public class DisguiseParser {
 
     /**
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
-     *
-     * @param sender
-     * @param permissionNode
-     * @return
      */
     public static HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender,
             String permissionNode) {
@@ -456,22 +451,15 @@ public class DisguiseParser {
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
      * disguise has been feed a proper disguisetype.
-     *
-     * @param sender
-     * @param args
-     * @param permissionMap
-     * @return
-     * @throws java.lang.IllegalAccessException
-     * @throws java.lang.reflect.InvocationTargetException
      */
     public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException, IllegalAccessException, InvocationTargetException {
         if (permissionMap.isEmpty()) {
-            throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
+            throw new DisguiseParseException(LibsMsg.NO_PERM);
         }
 
         if (args.length == 0) {
-            throw new DisguiseParseException("No arguments defined");
+            throw new DisguiseParseException(LibsMsg.PARSE_NO_ARGS);
         }
 
         // How many args to skip due to the disugise being constructed
@@ -487,15 +475,14 @@ public class DisguiseParser {
                 disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
 
                 if (disguise == null) {
-                    throw new DisguiseParseException(
-                            ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
+                    throw new DisguiseParseException(LibsMsg.PARSE_NO_REF, args[0]);
                 }
             } else {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "You do not have perimssion to use disguise references!");
+                throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_REF);
             }
 
-            optionPermissions = (permissionMap.containsKey(disguise.getType()) ? permissionMap.get(disguise.getType()) :
+            optionPermissions = (permissionMap.containsKey(new DisguisePerm(disguise.getType())) ?
+                    permissionMap.get(new DisguisePerm(disguise.getType())) :
                     new HashMap<ArrayList<String>, Boolean>());
         } else {
             DisguisePerm disguisePerm = getDisguisePerm(args[0]);
@@ -506,21 +493,19 @@ public class DisguiseParser {
             }
 
             if (disguisePerm == null) {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED + " doesn't exist!");
+                throw new DisguiseParseException(LibsMsg.PARSE_DISG_NO_EXIST, args[0]);
             }
 
             if (disguisePerm.isUnknown()) {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!");
+                throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
             }
 
             if (disguisePerm.getEntityType() == null) {
-                throw new DisguiseParseException(ChatColor.RED + "Error! This disguise couldn't be loaded!");
+                throw new DisguiseParseException(LibsMsg.PARSE_CANT_LOAD);
             }
 
             if (!permissionMap.containsKey(disguisePerm)) {
-                throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this disguise.");
+                throw new DisguiseParseException(LibsMsg.NO_PERM_DISGUISE);
             }
 
             optionPermissions = permissionMap.get(disguisePerm);
@@ -532,12 +517,11 @@ public class DisguiseParser {
                     // If he is doing a player disguise
                     if (args.length == 1) {
                         // He needs to give the player name
-                        throw new DisguiseParseException(ChatColor.RED + "Error! You need to give a player name!");
+                        throw new DisguiseParseException(LibsMsg.PARSE_SUPPLY_PLAYER);
                     } else {
-                        if (!disguiseOptions.isEmpty() && (!disguiseOptions.containsKey(
-                                args[1].toLowerCase()) || !disguiseOptions.get(args[1].toLowerCase()))) {
-                            throw new DisguiseParseException(
-                                    ChatColor.RED + "Error! You don't have permission to use that name!");
+                        if (!disguiseOptions.isEmpty() && (!disguiseOptions
+                                .containsKey(args[1].toLowerCase()) || !disguiseOptions.get(args[1].toLowerCase()))) {
+                            throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
                         }
 
                         args[1] = args[1].replace("\\_", " ");
@@ -580,7 +564,8 @@ public class DisguiseParser {
                         if (isInteger(args[1])) {
                             miscId = Integer.parseInt(args[1]);
                         } else {
-                            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
+                            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm
+                                    .getType() == DisguiseType.DROPPED_ITEM) {
                                 for (Material mat : Material.values()) {
                                     if (mat.name().replace("_", "").equalsIgnoreCase(args[1].replace("_", ""))) {
                                         miscId = mat.getId();
@@ -604,8 +589,8 @@ public class DisguiseParser {
                                 case WITHER_SKULL:
                                     break;
                                 default:
-                                    throw new DisguiseParseException(
-                                            ChatColor.RED + "Error! " + disguisePerm.toReadable() + " doesn't know what to do with " + args[1] + "!");
+                                    throw new DisguiseParseException(LibsMsg.PARSE_TOO_MANY_ARGS,
+                                            disguisePerm.toReadable(), args[1]);
                             }
                             toSkip++;
                             // If they also defined a data value
@@ -614,9 +599,11 @@ public class DisguiseParser {
                                 toSkip++;
                             }
                             if (secondArg != null) {
-                                if (disguisePerm.getType() != DisguiseType.FALLING_BLOCK && disguisePerm.getType() != DisguiseType.DROPPED_ITEM) {
-                                    throw new DisguiseParseException(
-                                            ChatColor.RED + "Error! Only the disguises " + DisguiseType.FALLING_BLOCK.toReadable() + " and " + DisguiseType.DROPPED_ITEM.toReadable() + " uses a second number!");
+                                if (disguisePerm.getType() != DisguiseType.FALLING_BLOCK && disguisePerm
+                                        .getType() != DisguiseType.DROPPED_ITEM) {
+                                    throw new DisguiseParseException(LibsMsg.PARSE_USE_SECOND_NUM,
+                                            DisguiseType.FALLING_BLOCK.toReadable(),
+                                            DisguiseType.DROPPED_ITEM.toReadable());
                                 }
                                 miscData = Integer.parseInt(secondArg);
                             }
@@ -635,8 +622,8 @@ public class DisguiseParser {
                         }
 
                         if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
-                            throw new DisguiseParseException(
-                                    ChatColor.RED + "Error! You do not have permission to use the parameter " + toCheck + " on the " + disguisePerm.toReadable() + " disguise!");
+                            throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, toCheck,
+                                    disguisePerm.toReadable());
                         }
                     }
 
@@ -677,8 +664,9 @@ public class DisguiseParser {
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
-            String methodName = args[i];
-            String valueString = (args.length - 1 == i ? null : args[i + 1]);
+            String methodName = TranslateType.DISGUISE_OPTIONS.reverseGet(args[i]);
+            String valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .reverseGet(args.length - 1 == i ? null : args[i + 1]);
             Method methodToUse = null;
             Object value = null;
             DisguiseParseException storedEx = null;
@@ -749,12 +737,7 @@ public class DisguiseParser {
                             }
                         } else if (param == ItemStack.class) {
                             // Parse to itemstack
-                            try {
-                                value = parseToItemstack(valueString);
-                            }
-                            catch (Exception ex) {
-                                throw new DisguiseParseException(String.format(ex.getMessage(), methodName));
-                            }
+                            value = parseToItemstack(methodName, valueString);
                         } else if (param == ItemStack[].class) {
                             // Parse to itemstack array
                             ItemStack[] items = new ItemStack[4];
@@ -764,7 +747,7 @@ public class DisguiseParser {
                             if (split.length == 4) {
                                 for (int a = 0; a < 4; a++) {
                                     try {
-                                        items[a] = parseToItemstack(split[a]);
+                                        items[a] = parseToItemstack(methodName, split[a]);
                                     }
                                     catch (Exception ex) {
                                         throw parseToException(
@@ -847,8 +830,8 @@ public class DisguiseParser {
                         } else if (param == RabbitType.class) {
                             try {
                                 for (RabbitType type : RabbitType.values()) {
-                                    if (type.name().replace("_", "").equalsIgnoreCase(
-                                            valueString.replace("_", "").replace(" ", ""))) {
+                                    if (type.name().replace("_", "")
+                                            .equalsIgnoreCase(valueString.replace("_", "").replace(" ", ""))) {
                                         value = type;
 
                                         break;
@@ -916,10 +899,10 @@ public class DisguiseParser {
                     throw storedEx;
                 }
 
-                throw new DisguiseParseException(ChatColor.RED + "Cannot find the option " + methodName);
+                throw new DisguiseParseException(LibsMsg.PARSE_OPTION_NA, methodName);
             }
             if (value == null) {
-                throw new DisguiseParseException(ChatColor.RED + "No value was given for the option " + methodName);
+                throw new DisguiseParseException(LibsMsg.PARSE_NO_OPTION_VALUE, methodName);
             }
 
             if (!usedOptions.contains(methodName.toLowerCase())) {
@@ -938,11 +921,10 @@ public class DisguiseParser {
 
     private static DisguiseParseException parseToException(String expectedValue, String receivedInstead,
             String methodName) {
-        return new DisguiseParseException(
-                ChatColor.RED + "Expected " + ChatColor.GREEN + expectedValue + ChatColor.RED + ", received " + ChatColor.GREEN + receivedInstead + ChatColor.RED + " instead for " + ChatColor.GREEN + methodName);
+        return new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED, expectedValue, receivedInstead, methodName);
     }
 
-    private static ItemStack parseToItemstack(String string) throws Exception {
+    private static ItemStack parseToItemstack(String method, String string) throws DisguiseParseException {
         String[] split = string.split(":", -1);
 
         int itemId = -1;
@@ -953,7 +935,7 @@ public class DisguiseParser {
             try {
                 itemId = Material.valueOf(split[0].toUpperCase()).getId();
             }
-            catch (Exception ex) {
+            catch (Exception ignored) {
             }
         }
 
@@ -989,13 +971,13 @@ public class DisguiseParser {
             boolean myPerms = true;
 
             for (String option : usedOptions) {
-                if (!sender.getName().equals("CONSOLE") && option.equalsIgnoreCase(
-                        "setInvisible") && DisguiseConfig.isDisabledInvisibility()) {
+                if (!sender.getName().equals("CONSOLE") && option.equalsIgnoreCase("setInvisible") && DisguiseConfig
+                        .isDisabledInvisibility()) {
                     myPerms = false;
                 }
 
-                if (!(theirPermissions.get(list) && list.contains("*")) && (list.contains(
-                        option) != theirPermissions.get(list))) {
+                if (!(theirPermissions.get(list) && list.contains("*")) && (list.contains(option) != theirPermissions
+                        .get(list))) {
                     myPerms = false;
                     break;
                 }

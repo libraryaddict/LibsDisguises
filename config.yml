@@ -28,6 +28,9 @@ SaveDisguises:
 KeepDisguises:
     PlayerDeath: false
 
+# Should the plugin use translations? Note that a player must see the message before it will appear in translations.yml
+Translations: false
+
 # How should the plugin handle self disguises scoreboards?
 # MODIFY_SCOREBOARD - Modifies the player's current team if possible, otherwise assigns them to a new scoreboard team
 # IGNORE_SCOREBOARD - Doesn't touch scoreboards at all, effectively means that if you didn't disable pushing in their scoreboard team; They will still be pushed around
@@ -108,7 +111,6 @@ MonstersIgnoreDisguises: false
 # Works only for disguised players when attacked by a entity (arrow, monster. etc)
 # This will blow all disguises he has on him
 BlowDisguises: false
-BlownDisguiseMessage: '&cYour disguise was blown!'
 
 #Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
 StopShulkerDisguisesFromMoving: true

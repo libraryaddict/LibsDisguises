@@ -1,10 +1,15 @@
 package me.libraryaddict.disguise.commands;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
+import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,27 +19,23 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Entity)) {
-            sender.sendMessage(ChatColor.RED + "You may not use this command from the console!");
+            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;
         }
 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
 
         if (map.isEmpty()) {
-            sender.sendMessage(ChatColor.RED + "You are forbidden to use this command.");
+            sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
@@ -46,18 +47,19 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise = DisguiseAPI.getDisguise((Player) sender, (Entity) sender);
 
         if (disguise == null) {
-            sender.sendMessage(ChatColor.RED + "You are not disguised!");
+            sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
             return true;
         }
 
         if (!map.containsKey(new DisguisePerm(disguise.getType()))) {
-            sender.sendMessage(ChatColor.RED + "No permission to modify your disguise!");
+            sender.sendMessage(LibsMsg.DMODIFY_NO_PERM.get());
             return true;
         }
 
         try {
-            DisguiseParser.callMethods(sender, disguise, getPermissions(sender).get(new DisguisePerm(disguise.getType())),
-                    new ArrayList<String>(), args);
+            DisguiseParser
+                    .callMethods(sender, disguise, getPermissions(sender).get(new DisguisePerm(disguise.getType())),
+                            new ArrayList<String>(), args);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -71,14 +73,14 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        sender.sendMessage(ChatColor.RED + "Your disguise has been modified!");
+        sender.sendMessage(LibsMsg.DMODIFY_MODIFIED.get());
 
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        ArrayList<String> tabs = new ArrayList<String>();
+        ArrayList<String> tabs = new ArrayList<>();
 
         if (!(sender instanceof Player))
             return tabs;
@@ -94,7 +96,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
 
         DisguisePerm disguiseType = new DisguisePerm(disguise.getType());
 
-        ArrayList<String> usedOptions = new ArrayList<String>();
+        ArrayList<String> usedOptions = new ArrayList<>();
 
         for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
             for (int i = disguiseType.getType() == DisguiseType.PLAYER ? 2 : 1; i < args.length; i++) {
@@ -123,8 +125,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
                         for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
                             tabs.add(e);
                         }
-                    }
-                    else {
+                    } else {
                         if (info.getParamClass() == String.class) {
                             for (Player player : Bukkit.getOnlinePlayers()) {
                                 tabs.add(player.getName());
@@ -149,11 +150,12 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender, HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
+    protected void sendCommandUsage(CommandSender sender,
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
-        sender.sendMessage(ChatColor.DARK_GREEN + "Modify your own disguise as you wear it!");
-        sender.sendMessage(ChatColor.DARK_GREEN + "/disguisemodify setBaby true setSprinting true");
-        sender.sendMessage(ChatColor.DARK_GREEN + "You can modify the disguises: " + ChatColor.GREEN
-                + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN));
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3.get());
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3.get());
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3
+                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
 }
