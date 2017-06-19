@@ -18,7 +18,10 @@ import java.util.Objects;
  * Created by libraryaddict on 10/06/2017.
  */
 public enum TranslateType {
-    DISGUISE("disguises"), MESSAGE("messages"), METHOD_PARAM("disguise_options"), METHOD("disguise_option_parameters");
+    DISGUISE("disguises"),
+    MESSAGE("messages"),
+    METHOD_PARAM("disguise_options"),
+    METHOD("disguise_option_parameters");
     private File file;
     private HashMap<String, String> translated = new HashMap<>();
 
@@ -34,16 +37,20 @@ public enum TranslateType {
         TranslateFiller.fillConfigs();
     }
 
-    private void reload() {
-        if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
-            return;
-
+    public void wipeTranslations() {
         translated.clear();
+    }
+
+    private void reload() {
+        translated.clear();
+
+        if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
+            System.out.println("[LibsDisguises] Loading translations: " + name());
+        }
 
         if (!file.exists())
             return;
 
-        System.out.println("[LibsDisguises] Loading translations: " + name());
         YamlConfiguration config = new YamlConfiguration();
         config.options().pathSeparator(Character.toChars(0)[0]);
 
@@ -68,7 +75,14 @@ public enum TranslateType {
         return file;
     }
 
-    private void save(String message, String comment) {
+    public void save(String msg) {
+        if (this != TranslateType.MESSAGE)
+            throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
+
+        save(msg, null);
+    }
+
+    public void save(String message, String comment) {
         if (translated.containsKey(message))
             return;
 
@@ -86,8 +100,13 @@ public enum TranslateType {
 
             FileWriter writer = new FileWriter(getFile(), true);
 
-            if (!exists)
+            if (!exists) {
                 writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
+
+                if (this == TranslateType.MESSAGE) {
+                    writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
+                }
+            }
 
             writer.write("\n" + (comment != null ? "# " + comment + "\n" :
                     "") + "\"" + message + "\": \"" + message + "\"\n");

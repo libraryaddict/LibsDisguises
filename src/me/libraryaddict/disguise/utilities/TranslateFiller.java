@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
@@ -20,12 +22,18 @@ public class TranslateFiller {
                 continue;
 
             for (String e : info.getEnums("")) {
-                TranslateType.METHOD_PARAM.get(e, "Used as a disguise option for " + info.getName());
+                TranslateType.METHOD_PARAM.save(e, "Used as a disguise option for " + info.getName());
             }
         }
 
         for (DisguiseType type : DisguiseType.values()) {
-            type.toReadable();
+            String[] split = type.name().split("_");
+
+            for (int i = 0; i < split.length; i++) {
+                split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+            }
+
+            TranslateType.DISGUISE.save(StringUtils.join(split, " "), "Name for the " + type.name() + " disguise");
 
             for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(type.getWatcherClass())) {
                 Class para = method.getParameterTypes()[0];
@@ -42,14 +50,20 @@ public class TranslateFiller {
                 else if (className.equals("IllagerWizard"))
                     className = "Illager";
 
-                TranslateType.METHOD.get(method.getName(),
+                TranslateType.METHOD.save(method.getName(),
                         "Found in the disguise options for " + className + " and uses " + (para.isArray() ?
                                 "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
             }
         }
 
         for (LibsMsg msg : LibsMsg.values()) {
-            TranslateType.MESSAGE.get(msg.getRaw());
+            TranslateType.MESSAGE.save(msg.getRaw());
+        }
+
+        if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations()) {
+            for (TranslateType type : TranslateType.values()) {
+                type.wipeTranslations();
+            }
         }
     }
 }
