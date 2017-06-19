@@ -190,7 +190,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(LibsMsg.D_HELP1.get());
-        sender.sendMessage(LibsMsg.D_HELP2
+        sender.sendMessage(LibsMsg.CAN_USE_DISGS
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         if (allowedDisguises.contains("player")) {

@@ -24,7 +24,7 @@ public class UndisguiseCommand implements CommandExecutor {
                 DisguiseAPI.undisguiseToAll((Player) sender);
                 sender.sendMessage(LibsMsg.UNDISG.get());
             } else {
-                sender.sendMessage(LibsMsg.UNDISG_FAIL.get());
+                sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
             }
         } else {
             sender.sendMessage(LibsMsg.NO_PERM.get());

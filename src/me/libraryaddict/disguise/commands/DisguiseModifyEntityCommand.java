@@ -109,7 +109,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(LibsMsg.DMODENT_HELP1.get());
-        sender.sendMessage(LibsMsg.DMODENT_HELP2
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
     }
 }

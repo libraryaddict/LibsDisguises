@@ -297,13 +297,13 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP1.get(maxRadius));
-        sender.sendMessage(LibsMsg.DMODRADIUS_HELP2
+        sender.sendMessage(LibsMsg.DMODIFY_HELP3
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         String optional = ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")";
 
         if (allowedDisguises.contains("player")) {
-            sender.sendMessage(LibsMsg.DMODRADIUS_HELP3.get());
+            sender.sendMessage(LibsMsg.DRADIUS_HELP3.get());
         }
 
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP4.get());

@@ -92,7 +92,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 if (type == null) {
-                    sender.sendMessage(LibsMsg.DRADIUS_UNRECOG.get(args[0]));
+                    sender.sendMessage(LibsMsg.DMODRADIUS_UNRECOGNIZED.get(args[0]));
                     return true;
                 }
             }
@@ -305,7 +305,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> allowedDisguises = getAllowedDisguises(map);
 
         sender.sendMessage(LibsMsg.DRADIUS_HELP1.get(maxRadius));
-        sender.sendMessage(LibsMsg.DRADIUS_HELP2
+        sender.sendMessage(LibsMsg.CAN_USE_DISGS
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
         if (allowedDisguises.contains("player")) {

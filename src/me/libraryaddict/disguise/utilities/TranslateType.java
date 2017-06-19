@@ -24,7 +24,6 @@ public enum TranslateType {
 
     TranslateType(String fileName) {
         file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
-        reload();
     }
 
     public static void reloadTranslations() {
