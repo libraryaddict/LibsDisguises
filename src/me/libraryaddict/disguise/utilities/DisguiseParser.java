@@ -37,7 +37,7 @@ public class DisguiseParser {
         }
 
         public DisguiseParseException(LibsMsg message, String... params) {
-            super(message.get(params));
+            super(message.get((Object[]) params));
         }
     }
 
@@ -255,10 +255,6 @@ public class DisguiseParser {
 
     /**
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
-     *
-     * @param sender
-     * @param permissionNode
-     * @return
      */
     public static HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender,
             String permissionNode) {
@@ -455,13 +451,6 @@ public class DisguiseParser {
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
      * disguise has been feed a proper disguisetype.
-     *
-     * @param sender
-     * @param args
-     * @param permissionMap
-     * @return
-     * @throws java.lang.IllegalAccessException
-     * @throws java.lang.reflect.InvocationTargetException
      */
     public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException, IllegalAccessException, InvocationTargetException {
@@ -675,8 +664,9 @@ public class DisguiseParser {
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
-            String methodName = args[i];
-            String valueString = (args.length - 1 == i ? null : args[i + 1]);
+            String methodName = TranslateType.DISGUISE_OPTIONS.reverseGet(args[i]);
+            String valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .reverseGet(args.length - 1 == i ? null : args[i + 1]);
             Method methodToUse = null;
             Object value = null;
             DisguiseParseException storedEx = null;
@@ -945,7 +935,7 @@ public class DisguiseParser {
             try {
                 itemId = Material.valueOf(split[0].toUpperCase()).getId();
             }
-            catch (Exception ex) {
+            catch (Exception ignored) {
             }
         }
 

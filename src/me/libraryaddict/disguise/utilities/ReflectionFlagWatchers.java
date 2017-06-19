@@ -44,8 +44,8 @@ public class ReflectionFlagWatchers {
         }
 
         private ParamInfo(String name, String description) {
-            this.name = TranslateType.METHOD_PARAM.get(name, null);
-            this.description = TranslateType.METHOD_PARAM.get(description, null);
+            this.name = name;
+            this.description = description;
         }
 
         public ParamInfo(String className, String name, String description) throws ClassNotFoundException {
@@ -81,10 +81,20 @@ public class ReflectionFlagWatchers {
         }
 
         public String getName() {
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .get(getRawName(), "Used as a disguise option for " + getRawName());
+        }
+
+        public String getRawName() {
             return name;
         }
 
         public String getDescription() {
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .get(getRawDescription(), "Used as a disguise option for " + getRawDescription());
+        }
+
+        public String getRawDescription() {
             return description;
         }
 
@@ -143,7 +153,7 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a villager");
         new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 4), "Direction",
-                "View the five directions usable on player setSleeping disguise");
+                "View the four directions usable on player setSleeping disguise");
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
 

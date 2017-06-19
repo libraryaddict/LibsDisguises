@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.*;
@@ -20,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Zombie;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.reflect.FieldAccessException;
@@ -81,7 +78,7 @@ public class LibsDisguises extends JavaPlugin {
 
         PacketsManager.addPacketListeners();
 
-        TranslateType.MESSAGE.name(); // Call the static loader
+        TranslateType.MESSAGES.name(); // Call the static loader
 
         listener = new DisguiseListener(this);
 

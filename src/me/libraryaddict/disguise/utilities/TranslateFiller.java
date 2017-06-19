@@ -21,8 +21,12 @@ public class TranslateFiller {
             if (info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
                 continue;
 
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "Used as a disguise option");
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
+
             for (String e : info.getEnums("")) {
-                TranslateType.METHOD_PARAM.save(e, "Used as a disguise option for " + info.getName());
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());
             }
         }
 
@@ -33,7 +37,7 @@ public class TranslateFiller {
                 split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
             }
 
-            TranslateType.DISGUISE.save(StringUtils.join(split, " "), "Name for the " + type.name() + " disguise");
+            TranslateType.DISGUISES.save(StringUtils.join(split, " "), "Name for the " + type.name() + " disguise");
 
             for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(type.getWatcherClass())) {
                 Class para = method.getParameterTypes()[0];
@@ -50,14 +54,14 @@ public class TranslateFiller {
                 else if (className.equals("IllagerWizard"))
                     className = "Illager";
 
-                TranslateType.METHOD.save(method.getName(),
+                TranslateType.DISGUISE_OPTIONS.save(method.getName(),
                         "Found in the disguise options for " + className + " and uses " + (para.isArray() ?
                                 "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
             }
         }
 
         for (LibsMsg msg : LibsMsg.values()) {
-            TranslateType.MESSAGE.save(msg.getRaw());
+            TranslateType.MESSAGES.save(msg.getRaw());
         }
 
         if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations()) {

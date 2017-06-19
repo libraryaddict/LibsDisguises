@@ -1,9 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 /**
  * Created by libraryaddict on 15/06/2017.
@@ -164,9 +161,9 @@ public enum LibsMsg {
 
     public String get(Object... strings) {
         if (strings.length == 0)
-            return TranslateType.MESSAGE.get(getRaw());
+            return TranslateType.MESSAGES.get(getRaw());
 
-        return String.format(TranslateType.MESSAGE.get(getRaw()), (Object[]) strings);
+        return String.format(TranslateType.MESSAGES.get(getRaw()), (Object[]) strings);
     }
 
     public String toString() {
