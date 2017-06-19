@@ -133,8 +133,6 @@ public class LibsDisguises extends JavaPlugin {
      * Reloads the config with new config options.
      */
     public void reload() {
-        HandlerList.unregisterAll(listener);
-
         reloadConfig();
         DisguiseConfig.initConfig(getConfig());
     }
