@@ -1,11 +1,15 @@
 package me.libraryaddict.disguise.utilities;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,46 +17,80 @@ import java.util.Objects;
  * Created by libraryaddict on 10/06/2017.
  */
 public enum TranslateType {
-    DISGUISE("disguise_names"), MESSAGE("messages"), METHOD_PARAM("option_names"), METHOD("disguise_options");
+    DISGUISE("disguises"), MESSAGE("messages"), METHOD_PARAM("disguise_options"), METHOD("disguise_option_parameters");
     private File file;
-    private YamlConfiguration config;
+    private HashMap<String, String> translated = new HashMap<>();
 
     TranslateType(String fileName) {
-        file = new File("translate", fileName + ".yml");
+        file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
         reload();
     }
 
-    public void reload() {
-        if (!file.exists())
-            file.getParentFile().mkdirs();
-
-        try {
-            file.createNewFile();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+    public static void reloadTranslations() {
+        for (TranslateType type : values()) {
+            type.reload();
         }
 
-        config = YamlConfiguration.loadConfiguration(file);
+        TranslateFiller.fillConfigs();
     }
 
-    private YamlConfiguration getConfig() {
-        return config;
+    private void reload() {
+        if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
+            return;
+
+        translated.clear();
+
+        if (!file.exists())
+            return;
+
+        System.out.println("[LibsDisguises] Loading translations: " + name());
+        YamlConfiguration config = new YamlConfiguration();
+        config.options().pathSeparator(Character.toChars(0)[0]);
+
+        try {
+            config.load(file);
+
+            for (String key : config.getKeys(false)) {
+                String value = config.getString(key);
+
+                if (value == null)
+                    System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
+                else
+                    translated.put(key, value);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private File getFile() {
         return file;
     }
 
-    public void save(String message, String comment) {
-        message = StringEscapeUtils.escapeJson(message);
-
-        if (getConfig().contains(message))
+    private void save(String message, String comment) {
+        if (translated.containsKey(message))
             return;
 
+        translated.put(message, message);
+
+        message = StringEscapeUtils.escapeJava(message);
+
         try {
-            PrintWriter writer = new PrintWriter(getFile());
-            writer.write((comment != null ? "# " + comment + "\n" : "") + message + ": " + message + "\n");
+            boolean exists = file.exists();
+
+            if (!exists) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+            }
+
+            FileWriter writer = new FileWriter(getFile(), true);
+
+            if (!exists)
+                writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
+
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" :
+                    "") + "\"" + message + "\": \"" + message + "\"\n");
 
             writer.close();
         }
@@ -62,10 +100,10 @@ public enum TranslateType {
     }
 
     public String reverseGet(String translated) {
-        translated = StringEscapeUtils.unescapeJson(translated).toLowerCase();
+        translated = translated.toLowerCase();
 
-        for (Map.Entry<String, Object> entry : getConfig().getValues(false).entrySet()) {
-            if (!Objects.equals(entry.getValue().toString().toLowerCase(), translated))
+        for (Map.Entry<String, String> entry : this.translated.entrySet()) {
+            if (!Objects.equals(entry.getValue().toLowerCase(), translated))
                 continue;
 
             return entry.getKey();
@@ -82,10 +120,15 @@ public enum TranslateType {
     }
 
     public String get(String message, String comment) {
-        String msg = getConfig().getString(StringEscapeUtils.escapeJson(message));
+        if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
+            return message;
+        System.out.println("1");
+
+        String msg = translated.get(message);
 
         if (msg != null)
             return msg;
+        System.out.println("2");
 
         save(message, comment);
 

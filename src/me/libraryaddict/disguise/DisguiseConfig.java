@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -60,6 +61,7 @@ public class DisguiseConfig {
     private static boolean updatePlayerCache;
     private static boolean savePlayerDisguises;
     private static boolean saveEntityDisguises;
+    private static boolean useTranslations;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -75,6 +77,16 @@ public class DisguiseConfig {
 
     public static boolean isSavePlayerDisguises() {
         return savePlayerDisguises;
+    }
+
+    public static boolean isUseTranslations() {
+        return useTranslations;
+    }
+
+    public static void setUseTranslations(boolean setUseTranslations) {
+        useTranslations = setUseTranslations;
+
+        TranslateType.reloadTranslations();
     }
 
     public static boolean isSaveEntityDisguises() {
@@ -180,6 +192,7 @@ public class DisguiseConfig {
         setUpdateGameProfiles(config.getBoolean("UpdateGameProfiles"));
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
+        setUseTranslations(config.getBoolean("Translations"));
 
         try {
             String option = config.getString("SelfDisguisesScoreboard",

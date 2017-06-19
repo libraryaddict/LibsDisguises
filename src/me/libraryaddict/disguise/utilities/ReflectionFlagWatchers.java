@@ -149,7 +149,7 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Ocelot.Type.class, "Ocelot Type", "View all the ocelot types you can use for ocelots");
         new ParamInfo(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a villager");
-        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 5), "Direction",
+        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 4), "Direction",
                 "View the five directions usable on player setSleeping disguise");
         new ParamInfo(Rabbit.Type.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
@@ -178,7 +178,7 @@ public class ReflectionFlagWatchers {
 
         new ParamInfo(ItemStack.class, "Item (id:damage)", "An ItemStack compromised of ID:Durability", materials);
 
-        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..)", "Four ItemStacks seperated by an ,",
+        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..)", "Four ItemStacks separated by an ,",
                 materials) {
             @Override
             public String[] getEnums(String tabComplete) {
@@ -203,14 +203,14 @@ public class ReflectionFlagWatchers {
                 potionEnums.toArray(new String[0]));
         new ParamInfo(String.class, "Text", "A line of text");
         new ParamInfo(boolean.class, "True/False", "True or False", new String[]{"true", "false"});
-        new ParamInfo(int.class, "Number", "A whole number, no decimcals");
+        new ParamInfo(int.class, "Number", "A whole number, no decimals");
         new ParamInfo(double.class, "Number", "A number which can have decimals");
         new ParamInfo(float.class, "Number", "A number which can have decimals");
 
         new ParamInfo(Horse.Style.class, "Horse Style", "Horse style which is the patterns on the horse");
-        new ParamInfo(int[].class, "number,number,number...", "Numbers seperated by an ,");
+        new ParamInfo(int[].class, "number,number,number..", "Numbers separated by an ,");
 
-        new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers seperated by an ,");
+        new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers separated by a ,");
         new ParamInfo(GameProfile.class, "GameProfile",
                 "Get the gameprofile here https://sessionserver.mojang.com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
 
@@ -223,7 +223,7 @@ public class ReflectionFlagWatchers {
     }
 
     public static Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
-        ArrayList<Method> methods = new ArrayList<Method>(Arrays.asList(watcherClass.getMethods()));
+        ArrayList<Method> methods = new ArrayList<>(Arrays.asList(watcherClass.getMethods()));
 
         Iterator<Method> itel = methods.iterator();
 

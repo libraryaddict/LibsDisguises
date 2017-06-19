@@ -36,8 +36,8 @@ public class DisguiseParser {
             super();
         }
 
-        public DisguiseParseException(String string) {
-            super(string);
+        public DisguiseParseException(LibsMessages message, String... params) {
+            super(message.get(params));
         }
     }
 
@@ -467,11 +467,12 @@ public class DisguiseParser {
     public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException, IllegalAccessException, InvocationTargetException {
         if (permissionMap.isEmpty()) {
-            throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this command.");
+            throw new DisguiseParseException(
+                    TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use this " + "command."));
         }
 
         if (args.length == 0) {
-            throw new DisguiseParseException("No arguments defined");
+            throw new DisguiseParseException(TranslateType.MESSAGE.get("No arguments defined"));
         }
 
         // How many args to skip due to the disugise being constructed
@@ -487,15 +488,17 @@ public class DisguiseParser {
                 disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
 
                 if (disguise == null) {
-                    throw new DisguiseParseException(
-                            ChatColor.RED + "Cannot find a disguise under the reference " + args[0]);
+                    throw new DisguiseParseException(String.format(
+                            TranslateType.MESSAGE.get(ChatColor.RED + "Cannot find a disguise under the reference %s"),
+                            args[0]));
                 }
             } else {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "You do not have perimssion to use disguise references!");
+                throw new DisguiseParseException(TranslateType.MESSAGE.get(
+                        ChatColor.RED + "You do not have perimssion to use disguise references!"));
             }
 
-            optionPermissions = (permissionMap.containsKey(disguise.getType()) ? permissionMap.get(disguise.getType()) :
+            optionPermissions = (permissionMap.containsKey(new DisguisePerm(disguise.getType())) ?
+                    permissionMap.get(new DisguisePerm(disguise.getType())) :
                     new HashMap<ArrayList<String>, Boolean>());
         } else {
             DisguisePerm disguisePerm = getDisguisePerm(args[0]);
@@ -506,21 +509,24 @@ public class DisguiseParser {
             }
 
             if (disguisePerm == null) {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + args[0] + ChatColor.RED + " doesn't exist!");
+                throw new DisguiseParseException(String.format(TranslateType.MESSAGE.get(
+                        ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + "%s" + ChatColor.RED + " " + "doesn't exist!"),
+                        args[0]));
             }
 
             if (disguisePerm.isUnknown()) {
-                throw new DisguiseParseException(
-                        ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!");
+                throw new DisguiseParseException(TranslateType.MESSAGE.get(
+                        ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!"));
             }
 
             if (disguisePerm.getEntityType() == null) {
-                throw new DisguiseParseException(ChatColor.RED + "Error! This disguise couldn't be loaded!");
+                throw new DisguiseParseException(
+                        TranslateType.MESSAGE.get(ChatColor.RED + "Error! This disguise " + "couldn't be loaded!"));
             }
 
             if (!permissionMap.containsKey(disguisePerm)) {
-                throw new DisguiseParseException(ChatColor.RED + "You are forbidden to use this disguise.");
+                throw new DisguiseParseException(
+                        TranslateType.MESSAGE.get(ChatColor.RED + "You are forbidden to use " + "this disguise."));
             }
 
             optionPermissions = permissionMap.get(disguisePerm);
@@ -532,12 +538,13 @@ public class DisguiseParser {
                     // If he is doing a player disguise
                     if (args.length == 1) {
                         // He needs to give the player name
-                        throw new DisguiseParseException(ChatColor.RED + "Error! You need to give a player name!");
+                        throw new DisguiseParseException(TranslateType.MESSAGE.get(
+                                ChatColor.RED + "Error! You need " + "to give a player name!"));
                     } else {
                         if (!disguiseOptions.isEmpty() && (!disguiseOptions.containsKey(
                                 args[1].toLowerCase()) || !disguiseOptions.get(args[1].toLowerCase()))) {
-                            throw new DisguiseParseException(
-                                    ChatColor.RED + "Error! You don't have permission to use that name!");
+                            throw new DisguiseParseException(TranslateType.MESSAGE.get(
+                                    ChatColor.RED + "Error! You don't have permission to use that name!"));
                         }
 
                         args[1] = args[1].replace("\\_", " ");
@@ -604,8 +611,9 @@ public class DisguiseParser {
                                 case WITHER_SKULL:
                                     break;
                                 default:
-                                    throw new DisguiseParseException(
-                                            ChatColor.RED + "Error! " + disguisePerm.toReadable() + " doesn't know what to do with " + args[1] + "!");
+                                    throw new DisguiseParseException(String.format(TranslateType.MESSAGE.get(
+                                            ChatColor.RED + "Error! %s doesn't know" + " " + "what to do with %s!"),
+                                            disguisePerm.toReadable(), args[1]));
                             }
                             toSkip++;
                             // If they also defined a data value
@@ -615,8 +623,10 @@ public class DisguiseParser {
                             }
                             if (secondArg != null) {
                                 if (disguisePerm.getType() != DisguiseType.FALLING_BLOCK && disguisePerm.getType() != DisguiseType.DROPPED_ITEM) {
-                                    throw new DisguiseParseException(
-                                            ChatColor.RED + "Error! Only the disguises " + DisguiseType.FALLING_BLOCK.toReadable() + " and " + DisguiseType.DROPPED_ITEM.toReadable() + " uses a second number!");
+                                    throw new DisguiseParseException(String.format(TranslateType.MESSAGE.get(
+                                            ChatColor.RED + "Error! Only the disguises " + DisguiseType.FALLING_BLOCK.toReadable() + " and " + DisguiseType.DROPPED_ITEM.toReadable() + " uses a second number!"),
+                                            DisguiseType.FALLING_BLOCK.toReadable(),
+                                            DisguiseType.DROPPED_ITEM.toReadable()));
                                 }
                                 miscData = Integer.parseInt(secondArg);
                             }
@@ -635,8 +645,9 @@ public class DisguiseParser {
                         }
 
                         if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
-                            throw new DisguiseParseException(
-                                    ChatColor.RED + "Error! You do not have permission to use the parameter " + toCheck + " on the " + disguisePerm.toReadable() + " disguise!");
+                            throw new DisguiseParseException(String.format(TranslateType.MESSAGE.get(
+                                    ChatColor.RED + "Error! You do not have permission to use the parameter %s on the" + " %s disguise!"),
+                                    toCheck, disguisePerm.toReadable()));
                         }
                     }
 

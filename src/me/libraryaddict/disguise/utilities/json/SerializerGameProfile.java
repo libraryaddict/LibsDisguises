@@ -13,7 +13,6 @@ public class SerializerGameProfile implements JsonSerializer<WrappedGameProfile>
 
     @Override
     public JsonElement serialize(WrappedGameProfile src, Type typeOfSrc, JsonSerializationContext context) {
-        System.out.println(src.getHandle().toString());
         return context.serialize(src.getHandle(), GameProfile.class);
     }
 

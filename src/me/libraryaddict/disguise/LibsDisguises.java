@@ -81,7 +81,7 @@ public class LibsDisguises extends JavaPlugin {
 
         PacketsManager.addPacketListeners();
 
-        TranslateFiller.fillConfigs();
+        TranslateType.MESSAGE.name(); // Call the static loader
 
         listener = new DisguiseListener(this);
 
