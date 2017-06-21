@@ -81,8 +81,7 @@ public class ReflectionFlagWatchers {
         }
 
         public String getName() {
-            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .get(getRawName(), "Used as a disguise option for " + getRawName());
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(getRawName());
         }
 
         public String getRawName() {
@@ -90,8 +89,7 @@ public class ReflectionFlagWatchers {
         }
 
         public String getDescription() {
-            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .get(getRawDescription(), "Used as a disguise option for " + getRawDescription());
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(getRawDescription());
         }
 
         public String getRawDescription() {

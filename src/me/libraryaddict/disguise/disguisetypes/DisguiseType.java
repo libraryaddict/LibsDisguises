@@ -322,6 +322,6 @@ public enum DisguiseType {
             split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
         }
 
-        return TranslateType.DISGUISES.get(StringUtils.join(split, " "), "Name for the " + name() + " disguise");
+        return TranslateType.DISGUISES.get(StringUtils.join(split, " "));
     }
 }

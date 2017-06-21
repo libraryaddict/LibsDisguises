@@ -44,11 +44,9 @@ public class DisguiseAPI {
 
         if (disguiseType.isMisc()) {
             disguise = new MiscDisguise(disguiseType);
-        }
-        else if (disguiseType.isMob()) {
+        } else if (disguiseType.isMob()) {
             disguise = new MobDisguise(disguiseType);
-        }
-        else {
+        } else {
             disguise = new PlayerDisguise(entity.getName());
         }
 
@@ -60,8 +58,7 @@ public class DisguiseAPI {
 
                 if (effect.getType() == PotionEffectType.INVISIBILITY) {
                     watcher.setInvisible(true);
-                }
-                else if (effect.getType() == PotionEffectType.GLOWING) {
+                } else if (effect.getType() == PotionEffectType.GLOWING) {
                     watcher.setGlowing(true);
                 }
             }
@@ -91,8 +88,9 @@ public class DisguiseAPI {
             }
         }
         for (Method method : entity.getClass().getMethods()) {
-            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName().equals("setSprinting"))
-                    && method.getParameterTypes().length == 0 && method.getReturnType() != void.class) {
+            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName()
+                    .equals("setSprinting")) && method.getParameterTypes().length == 0 && method
+                    .getReturnType() != void.class) {
                 Class methodReturn = method.getReturnType();
 
                 if (methodReturn == float.class || methodReturn == Float.class || methodReturn == Double.class) {
@@ -103,8 +101,8 @@ public class DisguiseAPI {
 
                 if (firstCapitalMethod > 0) {
                     for (Method watcherMethod : watcher.getClass().getMethods()) {
-                        if (!watcherMethod.getName().startsWith("get") && watcherMethod.getReturnType() == void.class
-                                && watcherMethod.getParameterTypes().length == 1) {
+                        if (!watcherMethod.getName().startsWith("get") && watcherMethod
+                                .getReturnType() == void.class && watcherMethod.getParameterTypes().length == 1) {
                             int firstCapitalWatcher = firstCapital(watcherMethod.getName());
 
                             if (firstCapitalWatcher > 0 && method.getName().substring(firstCapitalMethod)
@@ -113,8 +111,7 @@ public class DisguiseAPI {
 
                                 if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
                                     methodParam = double.class;
-                                }
-                                else if (methodParam == AnimalColor.class) {
+                                } else if (methodParam == AnimalColor.class) {
                                     methodParam = DyeColor.class;
                                 }
                                 if (methodReturn == methodParam) {
@@ -128,19 +125,17 @@ public class DisguiseAPI {
                                                         double d = (Double) value;
                                                         value = (float) d;
                                                     }
-                                                }
-                                                else if (toCast == double.class) {
+                                                } else if (toCast == double.class) {
                                                     if (!(value instanceof Double)) {
                                                         float d = (Float) value;
                                                         value = (double) d;
                                                     }
-                                                }
-                                                else if (toCast == AnimalColor.class) {
+                                                } else if (toCast == AnimalColor.class) {
                                                     value = AnimalColor.valueOf(((DyeColor) value).name());
                                                 }
                                             }
-                                            if (value instanceof Boolean && !(Boolean) value
-                                                    && watcherMethod.getDeclaringClass() == FlagWatcher.class) {
+                                            if (value instanceof Boolean && !(Boolean) value && watcherMethod
+                                                    .getDeclaringClass() == FlagWatcher.class) {
                                                 continue;
                                             }
                                         }
@@ -195,8 +190,7 @@ public class DisguiseAPI {
         for (Object obj : playersToNotSeeDisguise) {
             if (obj instanceof String) {
                 ((TargetedDisguise) disguise).addPlayer((String) obj);
-            }
-            else if (obj instanceof Player) {
+            } else if (obj instanceof Player) {
                 ((TargetedDisguise) disguise).addPlayer(((Player) obj).getName());
             }
         }
@@ -275,8 +269,7 @@ public class DisguiseAPI {
         for (Object obj : playersToViewDisguise) {
             if (obj instanceof String) {
                 ((TargetedDisguise) disguise).addPlayer((String) obj);
-            }
-            else if (obj instanceof Player) {
+            } else if (obj instanceof Player) {
                 ((TargetedDisguise) disguise).addPlayer(((Player) obj).getName());
             }
         }
@@ -390,8 +383,8 @@ public class DisguiseAPI {
      * @return
      */
     public static boolean isViewSelfToggled(Entity entity) {
-        return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible()
-                : Disguise.getViewSelf().contains(entity.getUniqueId());
+        return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() :
+                Disguise.getViewSelf().contains(entity.getUniqueId());
     }
 
     /**
@@ -416,16 +409,18 @@ public class DisguiseAPI {
      */
     public static void setViewDisguiseToggled(Entity entity, boolean toggled) {
         if (isDisguised(entity)) {
-            Disguise disguise = getDisguise(entity);
-            disguise.setViewSelfDisguise(toggled);
+            Disguise[] disguises = getDisguises(entity);
+
+            for (Disguise disguise : disguises) {
+                disguise.setViewSelfDisguise(toggled);
+            }
         }
 
         if (toggled) {
             if (!Disguise.getViewSelf().contains(entity.getUniqueId())) {
                 Disguise.getViewSelf().add(entity.getUniqueId());
             }
-        }
-        else {
+        } else {
             Disguise.getViewSelf().remove(entity.getUniqueId());
         }
     }

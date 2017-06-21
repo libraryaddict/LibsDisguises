@@ -86,10 +86,6 @@ public class DisguiseParser {
             return getType().isUnknown();
         }
 
-        public String name() {
-            return permName == null ? getType().name() : permName;
-        }
-
         public String toReadable() {
             return permName == null ? getType().toReadable() : permName;
         }
@@ -169,7 +165,7 @@ public class DisguiseParser {
                         String[] split = lowerPerm.substring(beginning.length()).split("\\.");
 
                         if (split.length > 1) {
-                            if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
+                            if (split[0].replace("_", "").equals(type.toReadable().toLowerCase().replace(" ", ""))) {
                                 for (int i = 1; i < split.length; i++) {
                                     returns.put(split[i], permission.getValue());
                                 }
@@ -186,7 +182,7 @@ public class DisguiseParser {
 
     public static DisguisePerm getDisguisePerm(String name) {
         for (DisguisePerm perm : getDisguisePerms()) {
-            if (!perm.name().equalsIgnoreCase(name) && !perm.name().replace("_", "").equalsIgnoreCase(name))
+            if (!perm.toReadable().equalsIgnoreCase(name) && !perm.toReadable().replace(" ", "").equalsIgnoreCase(name))
                 continue;
 
             return perm;

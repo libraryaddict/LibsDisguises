@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -88,6 +89,8 @@ public enum TranslateType {
         translated.put(message, message);
 
         message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
+        String message1 = StringEscapeUtils.escapeJava(
+                StringUtils.reverse(message).replaceAll("s%", "%s").replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = file.exists();
@@ -108,7 +111,7 @@ public enum TranslateType {
             }
 
             writer.write("\n" + (comment != null ? "# " + comment + "\n" :
-                    "") + "\"" + message + "\": \"" + message + "\"\n");
+                    "") + "\"" + message + "\": \"" + message1 + "\"\n");
 
             writer.close();
         }
@@ -134,23 +137,11 @@ public enum TranslateType {
     }
 
     public String get(String msg) {
-        if (this != TranslateType.MESSAGES)
-            throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
-
-        return get(msg, null);
-    }
-
-    public String get(String msg, String comment) {
         if (msg == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
             return msg;
 
         String toReturn = translated.get(msg);
 
-        if (toReturn != null)
-            return toReturn;
-
-        save(msg, comment);
-
-        return msg;
+        return toReturn == null ? msg : toReturn;
     }
 }

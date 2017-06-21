@@ -15,15 +15,12 @@ public class TranslateFiller {
         // Fill the configs
 
         for (ReflectionFlagWatchers.ParamInfo info : ReflectionFlagWatchers.getParamInfos()) {
-            if (!info.isEnums())
-                continue;
-
-            if (info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
-                continue;
-
             TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "Used as a disguise option");
             TranslateType.DISGUISE_OPTIONS_PARAMETERS
                     .save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
+
+            if (!info.isEnums() || info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
+                continue;
 
             for (String e : info.getEnums("")) {
                 TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());

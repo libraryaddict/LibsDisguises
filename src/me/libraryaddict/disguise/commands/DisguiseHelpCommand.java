@@ -74,7 +74,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                     try {
                         for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(watcher)) {
-                            if (args.length < 2 || !args[1].equalsIgnoreCase("show")) {
+                            if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
                                 boolean allowed = false;
 
                                 for (ArrayList<String> key : permMap.get(type).keySet()) {
@@ -112,7 +112,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                                 methodColor = ChatColor.GRAY;
                             }
 
-                            String str = method.getName() + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info
+                            String str = TranslateType.DISGUISE_OPTIONS
+                                    .get(method.getName()) + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info
                                     .getName() + ChatColor.DARK_RED + ")";
 
                             map.put(str, methodColor);
@@ -130,7 +131,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     }
 
                     if (methods.isEmpty()) {
-                        methods.add(ChatColor.RED + "No options with permission to use");
+                        methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
                     }
 
                     sender.sendMessage(LibsMsg.DHELP_OPTIONS.get(ChatColor.DARK_RED + type.toReadable(),
@@ -170,7 +171,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     tabs.add(s.getName().replaceAll(" ", ""));
                 }
             } else if (DisguiseParser.getDisguisePerm(args[0]) == null) {
-                tabs.add("Show");
+                tabs.add(LibsMsg.DHELP_SHOW.get());
             }
         }
 
