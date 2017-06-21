@@ -89,8 +89,8 @@ public enum TranslateType {
         translated.put(message, message);
 
         message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
-        String message1 = StringEscapeUtils.escapeJava(
-                StringUtils.reverse(message).replaceAll("s%", "%s").replaceAll(ChatColor.COLOR_CHAR + "", "&"));
+     //  String message1 = StringEscapeUtils.escapeJava(
+      //          StringUtils.reverse(message).replaceAll("s%", "%s").replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = file.exists();
@@ -111,7 +111,7 @@ public enum TranslateType {
             }
 
             writer.write("\n" + (comment != null ? "# " + comment + "\n" :
-                    "") + "\"" + message + "\": \"" + message1 + "\"\n");
+                    "") + "\"" + message + "\": \"" + message + "\"\n");
 
             writer.close();
         }
