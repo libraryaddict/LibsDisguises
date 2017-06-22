@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.mojang.authlib.GameProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -27,6 +28,7 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
+import sun.reflect.Reflection;
 
 public class DisguiseParser {
     public static class DisguiseParseException extends Exception {
@@ -86,10 +88,6 @@ public class DisguiseParser {
             return getType().isUnknown();
         }
 
-        public String name() {
-            return permName == null ? getType().name() : permName;
-        }
-
         public String toReadable() {
             return permName == null ? getType().toReadable() : permName;
         }
@@ -129,14 +127,14 @@ public class DisguiseParser {
         }
     }
 
-    private static Object callValueOf(Class<?> param, String valueString, String methodName,
-            String description) throws DisguiseParseException {
+    private static Object callValueOf(Class<?> param, String valueString,
+            String methodName) throws DisguiseParseException {
         Object value;
         try {
             value = param.getMethod("valueOf", String.class).invoke(null, valueString.toUpperCase());
         }
         catch (Exception ex) {
-            throw parseToException(description, valueString, methodName);
+            throw parseToException(param, valueString, methodName);
         }
         return value;
     }
@@ -169,7 +167,7 @@ public class DisguiseParser {
                         String[] split = lowerPerm.substring(beginning.length()).split("\\.");
 
                         if (split.length > 1) {
-                            if (split[0].replace("_", "").equals(type.name().toLowerCase().replace("_", ""))) {
+                            if (split[0].replace("_", "").equals(type.toReadable().toLowerCase().replace(" ", ""))) {
                                 for (int i = 1; i < split.length; i++) {
                                     returns.put(split[i], permission.getValue());
                                 }
@@ -186,14 +184,14 @@ public class DisguiseParser {
 
     public static DisguisePerm getDisguisePerm(String name) {
         for (DisguisePerm perm : getDisguisePerms()) {
-            if (!perm.name().equalsIgnoreCase(name) && !perm.name().replace("_", "").equalsIgnoreCase(name))
+            if (!perm.toReadable().equalsIgnoreCase(name) && !perm.toReadable().replace(" ", "").equalsIgnoreCase(name))
                 continue;
 
             return perm;
         }
 
         if (name.equalsIgnoreCase("p"))
-            return getDisguisePerm("player");
+            return getDisguisePerm(DisguiseType.PLAYER.toReadable());
 
         return null;
     }
@@ -534,10 +532,11 @@ public class DisguiseParser {
                     boolean adult = true;
 
                     if (args.length > 1) {
-                        if (args[1].equalsIgnoreCase("baby") || args[1].equalsIgnoreCase("adult")) {
+                        if (args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("baby")) || args[1]
+                                .equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"))) {
                             usedOptions.add("setbaby");
                             doCheck(sender, optionPermissions, usedOptions);
-                            adult = args[1].equalsIgnoreCase("adult");
+                            adult = args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"));
 
                             toSkip++;
                         }
@@ -664,7 +663,8 @@ public class DisguiseParser {
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
-            String methodName = TranslateType.DISGUISE_OPTIONS.reverseGet(args[i]);
+            String methodNameRaw;
+            String methodName = TranslateType.DISGUISE_OPTIONS.reverseGet(methodNameRaw = args[i]);
             String valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS
                     .reverseGet(args.length - 1 == i ? null : args[i + 1]);
             Method methodToUse = null;
@@ -682,7 +682,7 @@ public class DisguiseParser {
 
                     methodToUse = entry.getKey();
                     c = entry.getValue();
-                    methodName = methodToUse.getName();
+                    methodName = TranslateType.DISGUISE_OPTIONS.reverseGet(methodNameRaw = methodToUse.getName());
                     Class<?>[] types = methodToUse.getParameterTypes();
                     Class param = types[0];
 
@@ -692,14 +692,14 @@ public class DisguiseParser {
                             if (isInteger(valueString)) {
                                 value = Integer.parseInt(valueString);
                             } else {
-                                throw parseToException("number", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (WrappedGameProfile.class == param && valueString.length() > 20) {
                             try {
                                 value = ReflectionManager.parseGameProfile(valueString);
                             }
                             catch (Exception ex) {
-                                throw parseToException("gameprofile", valueString, methodName);
+                                throw parseToException(GameProfile.class, valueString, methodName);
                             }
                         } else if (float.class == param || double.class == param) {
                             // Parse to number
@@ -711,10 +711,10 @@ public class DisguiseParser {
                                     value = (double) obj;
                                 }
                             } else {
-                                throw parseToException("number.0", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == String.class) {
-                            if (methodName.equalsIgnoreCase("setskin") && valueString.length() > 20) {
+                            if (methodNameRaw.equalsIgnoreCase("setskin") && valueString.length() > 20) {
                                 value = valueString;
                             } else {
                                 // Parse to string
@@ -726,18 +726,18 @@ public class DisguiseParser {
                                 value = AnimalColor.valueOf(valueString.toUpperCase());
                             }
                             catch (Exception ex) {
-                                throw parseToException("animal color", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == Llama.Color.class) {
                             try {
                                 value = Llama.Color.valueOf(valueString.toUpperCase());
                             }
                             catch (Exception ex) {
-                                throw parseToException("llama color", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == ItemStack.class) {
                             // Parse to itemstack
-                            value = parseToItemstack(methodName, valueString);
+                            value = parseToItemstack(param, methodName, valueString);
                         } else if (param == ItemStack[].class) {
                             // Parse to itemstack array
                             ItemStack[] items = new ItemStack[4];
@@ -747,39 +747,35 @@ public class DisguiseParser {
                             if (split.length == 4) {
                                 for (int a = 0; a < 4; a++) {
                                     try {
-                                        items[a] = parseToItemstack(methodName, split[a]);
+                                        items[a] = parseToItemstack(param, methodName, split[a]);
                                     }
                                     catch (Exception ex) {
-                                        throw parseToException(
-                                                "item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN + "ID:Data,ID:Data,ID:Data,ID:Data combo",
-                                                valueString, methodName);
+                                        throw parseToException(param, valueString, methodName);
                                     }
                                 }
                             } else {
-                                throw parseToException(
-                                        "item ID,ID,ID,ID" + ChatColor.RED + " or " + ChatColor.GREEN + "ID:Data,ID:Data,ID:Data,ID:Data combo",
-                                        valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
 
                             value = items;
                         } else if (param.getSimpleName().equals("Color")) {
                             // Parse to horse color
-                            value = callValueOf(param, valueString, methodName, "a horse color");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("Style")) {
                             // Parse to horse style
-                            value = callValueOf(param, valueString, methodName, "a horse style");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("Profession")) {
                             // Parse to villager profession
-                            value = callValueOf(param, valueString, methodName, "a villager profession");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("Art")) {
                             // Parse to art type
-                            value = callValueOf(param, valueString, methodName, "a painting art");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("Type")) {
                             // Parse to ocelot type
-                            value = callValueOf(param, valueString, methodName, "a ocelot type");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("TreeSpecies")) {
                             // Parse to ocelot type
-                            value = callValueOf(param, valueString, methodName, "a tree species");
+                            value = callValueOf(param, valueString, methodName);
                         } else if (param == PotionEffectType.class) {
                             // Parse to potion effect
                             try {
@@ -796,7 +792,7 @@ public class DisguiseParser {
                                 value = potionType;
                             }
                             catch (Exception ex) {
-                                throw parseToException("a potioneffect type", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == int[].class) {
                             String[] split = valueString.split(",");
@@ -808,7 +804,7 @@ public class DisguiseParser {
                                     values[b] = Integer.parseInt(split[b]);
                                 }
                                 catch (NumberFormatException ex) {
-                                    throw parseToException("Number,Number,Number...", valueString, methodName);
+                                    throw parseToException(param, valueString, methodName);
                                 }
                             }
 
@@ -824,8 +820,7 @@ public class DisguiseParser {
                                 value = face;
                             }
                             catch (Exception ex) {
-                                throw parseToException("a direction (north, east, south, west, up, down)", valueString,
-                                        methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == RabbitType.class) {
                             try {
@@ -842,8 +837,7 @@ public class DisguiseParser {
                                 }
                             }
                             catch (Exception ex) {
-                                throw parseToException("rabbit type (white, brown, patches...)", valueString,
-                                        methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param == BlockPosition.class) {
                             try {
@@ -855,10 +849,10 @@ public class DisguiseParser {
                                         Integer.parseInt(split[2]));
                             }
                             catch (Exception ex) {
-                                throw parseToException("three numbers Number,Number,Number", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             }
                         } else if (param.getName().equals("org.bukkit.entity.Parrot$Variant")) {
-                            value = callValueOf(param, valueString, methodName, "a parrot color");
+                            value = callValueOf(param, valueString, methodName);
                         }
                     }
 
@@ -866,13 +860,15 @@ public class DisguiseParser {
                         if (valueString == null) {
                             value = true;
                             i--;
-                        } else if (valueString.equalsIgnoreCase("true")) {
+                        } else if (valueString
+                                .equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("true"))) {
                             value = true;
-                        } else if (valueString.equalsIgnoreCase("false")) {
+                        } else if (valueString
+                                .equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("false"))) {
                             value = false;
                         } else {
                             if (getMethod(methods, valueString, 0) == null) {
-                                throw parseToException("true/false", valueString, methodName);
+                                throw parseToException(param, valueString, methodName);
                             } else {
                                 value = true;
                                 i--;
@@ -905,8 +901,8 @@ public class DisguiseParser {
                 throw new DisguiseParseException(LibsMsg.PARSE_NO_OPTION_VALUE, methodName);
             }
 
-            if (!usedOptions.contains(methodName.toLowerCase())) {
-                usedOptions.add(methodName.toLowerCase());
+            if (!usedOptions.contains(methodNameRaw.toLowerCase())) {
+                usedOptions.add(methodNameRaw.toLowerCase());
             }
 
             doCheck(sender, optionPermissions, usedOptions);
@@ -919,12 +915,12 @@ public class DisguiseParser {
         }
     }
 
-    private static DisguiseParseException parseToException(String expectedValue, String receivedInstead,
-            String methodName) {
-        return new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED, expectedValue, receivedInstead, methodName);
+    private static DisguiseParseException parseToException(Class paramType, String receivedInstead, String methodName) {
+        return new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED,
+                ReflectionFlagWatchers.getParamInfo(paramType).getName(), receivedInstead, methodName);
     }
 
-    private static ItemStack parseToItemstack(String method, String string) throws DisguiseParseException {
+    private static ItemStack parseToItemstack(Class param, String method, String string) throws DisguiseParseException {
         String[] split = string.split(":", -1);
 
         int itemId = -1;
@@ -946,16 +942,16 @@ public class DisguiseParser {
                 if (isInteger(split[1])) {
                     itemDura = Short.parseShort(split[1]);
                 } else {
-                    throw parseToException("item ID:Durability combo", string, "%s");
+                    throw parseToException(param, string, "%s");
                 }
             }
 
             return new ItemStack(itemId, 1, itemDura);
         } else {
             if (split.length == 1) {
-                throw parseToException("item ID", string, "%s");
+                throw parseToException(param, string, "%s");
             } else {
-                throw parseToException("item ID:Durability combo", string, "%s");
+                throw parseToException(param, string, "%s");
             }
         }
     }

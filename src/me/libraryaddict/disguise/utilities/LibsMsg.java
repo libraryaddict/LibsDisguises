@@ -55,6 +55,12 @@ public enum LibsMsg {
     DMODPLAYER_NOPERM(ChatColor.RED + "You do not have permission to modify this disguise"),
     DMODRADIUS(ChatColor.RED + "Successfully modified the disguises of %s entities!"),
     DMODRADIUS_HELP1(ChatColor.DARK_GREEN + "Modify the disguises in a radius! Caps at %s blocks!"),
+    DHELP_SHOW("Show"),
+    DHELP_NO_OPTIONS(ChatColor.RED + "No options with permission to use"),
+    DCLONE_EQUIP("ignoreEquip"),
+    DCLONE_SNEAKSPRINT("doSneakSprint"),
+    DCLONE_SNEAK("doSneak"),
+    DCLONE_SPRINT("doSprint"),
     DMODRADIUS_HELP3(
             (ChatColor.DARK_GREEN + "/disguisemodifyradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> player <Name>")
                     .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),

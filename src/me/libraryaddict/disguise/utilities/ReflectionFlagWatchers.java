@@ -81,8 +81,7 @@ public class ReflectionFlagWatchers {
         }
 
         public String getName() {
-            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .get(getRawName(), "Used as a disguise option for " + getRawName());
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(getRawName());
         }
 
         public String getRawName() {
@@ -90,8 +89,7 @@ public class ReflectionFlagWatchers {
         }
 
         public String getDescription() {
-            return TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .get(getRawDescription(), "Used as a disguise option for " + getRawDescription());
+            return TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(getRawDescription());
         }
 
         public String getRawDescription() {
@@ -152,7 +150,8 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Ocelot.Type.class, "Ocelot Type", "View all the ocelot types you can use for ocelots");
         new ParamInfo(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a villager");
-        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 4), "Direction",
+        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 6), "Direction (North, East, South, West, " +
+                "Up, Down)",
                 "View the four directions usable on player setSleeping disguise");
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
@@ -179,9 +178,10 @@ public class ReflectionFlagWatchers {
             materials[i] = Material.values()[i].name();
         }
 
-        new ParamInfo(ItemStack.class, "Item (id:damage)", "An ItemStack compromised of ID:Durability", materials);
+        new ParamInfo(ItemStack.class, "Item (id:damage), damage optional", "An ItemStack compromised of " +
+                "ID:Durability", materials);
 
-        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..)", "Four ItemStacks separated by an ,",
+        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..), damage optional", "Four ItemStacks separated by an ,",
                 materials) {
             @Override
             public String[] getEnums(String tabComplete) {
@@ -207,8 +207,8 @@ public class ReflectionFlagWatchers {
         new ParamInfo(String.class, "Text", "A line of text");
         new ParamInfo(boolean.class, "True/False", "True or False", new String[]{"true", "false"});
         new ParamInfo(int.class, "Number", "A whole number, no decimals");
-        new ParamInfo(double.class, "Number", "A number which can have decimals");
-        new ParamInfo(float.class, "Number", "A number which can have decimals");
+        new ParamInfo(double.class, "Number.0", "A number which can have decimals");
+        new ParamInfo(float.class, "Number.0", "A number which can have decimals");
 
         new ParamInfo(Horse.Style.class, "Horse Style", "Horse style which is the patterns on the horse");
         new ParamInfo(int[].class, "number,number,number..", "Numbers separated by an ,");

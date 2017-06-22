@@ -57,11 +57,12 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("entitytype") || args[0].equalsIgnoreCase("entitytypes")) {
+        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) || args[0]
+                .equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 
             for (Class c : validClasses) {
-                classes.add(c.getSimpleName());
+                classes.add(TranslateType.DISGUISES.get(c.getSimpleName()));
             }
 
             Collections.sort(classes);
@@ -77,7 +78,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         if (!isNumeric(args[0])) {
             for (Class c : validClasses) {
-                if (c.getSimpleName().equalsIgnoreCase(args[0])) {
+                if (TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0])) {
                     entityClass = c;
                     starting = 1;
                     break;
@@ -208,7 +209,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         if (args.length == 0) {
             for (Class<? extends Entity> entityClass : validClasses) {
-                tabs.add(entityClass.getSimpleName());
+                tabs.add(TranslateType.DISGUISES.get(entityClass.getSimpleName()));
             }
 
             return filterTabs(tabs, origArgs);
@@ -218,7 +219,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         if (!isNumeric(args[0])) {
             for (Class c : validClasses) {
-                if (!c.getSimpleName().equalsIgnoreCase(args[0]))
+                if (!TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0]))
                     continue;
 
                 starting = 2;

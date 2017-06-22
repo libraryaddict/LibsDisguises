@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
@@ -15,15 +16,12 @@ public class TranslateFiller {
         // Fill the configs
 
         for (ReflectionFlagWatchers.ParamInfo info : ReflectionFlagWatchers.getParamInfos()) {
-            if (!info.isEnums())
-                continue;
-
-            if (info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
-                continue;
-
             TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "Used as a disguise option");
             TranslateType.DISGUISE_OPTIONS_PARAMETERS
                     .save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
+
+            if (!info.isEnums() || info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
+                continue;
 
             for (String e : info.getEnums("")) {
                 TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());
@@ -59,6 +57,18 @@ public class TranslateFiller {
                                 "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
             }
         }
+
+        TranslateType.DISGUISE_OPTIONS.save("baby", "Used as a shortcut for setBaby when disguising an entity");
+        TranslateType.DISGUISE_OPTIONS.save("adult", "Used as a shortcut for setBaby(false) when disguising an entity");
+
+        for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
+            if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
+                TranslateType.DISGUISES.save(c.getSimpleName(),
+                        "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
+            }
+        }
+
+        TranslateType.DISGUISES.save("EntityType", "Used for the disgiuse radius command to list all entitytypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
             TranslateType.MESSAGES.save(msg.getRaw());

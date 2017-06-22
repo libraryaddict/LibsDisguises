@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -60,7 +61,7 @@ public enum TranslateType {
 
                 if (value == null)
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
-                else
+                else if (!Objects.equals(key, value)) // Don't store useless information
                     translated.put(ChatColor.translateAlternateColorCodes('&', key),
                             ChatColor.translateAlternateColorCodes('&', value));
             }
@@ -134,23 +135,11 @@ public enum TranslateType {
     }
 
     public String get(String msg) {
-        if (this != TranslateType.MESSAGES)
-            throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
-
-        return get(msg, null);
-    }
-
-    public String get(String msg, String comment) {
         if (msg == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
             return msg;
 
         String toReturn = translated.get(msg);
 
-        if (toReturn != null)
-            return toReturn;
-
-        save(msg, comment);
-
-        return msg;
+        return toReturn == null ? msg : toReturn;
     }
 }

@@ -38,15 +38,14 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
 
             for (int i = player == null ? 0 : 1; i < args.length; i++) {
                 String option = args[i];
-                if (StringUtils.startsWithIgnoreCase(option, "ignoreEquip") || StringUtils
-                        .startsWithIgnoreCase(option, "ignoreEnquip")) {
+                if (StringUtils.startsWithIgnoreCase(option, LibsMsg.DCLONE_EQUIP.get())) {
                     doEquipment = false;
-                } else if (option.equalsIgnoreCase("doSneakSprint")) {
+                } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SNEAKSPRINT.get())) {
                     doSneak = true;
                     doSprint = true;
-                } else if (option.equalsIgnoreCase("doSneak")) {
+                } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SNEAK.get())) {
                     doSneak = true;
-                } else if (option.equalsIgnoreCase("doSprint")) {
+                } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SPRINT.get())) {
                     doSprint = true;
                 } else {
                     sender.sendMessage(LibsMsg.INVALID_CLONE.get(option));
@@ -82,10 +81,10 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             }
         }
 
-        tabs.add("ignoreEquip");
-        tabs.add("doSneakSprint");
-        tabs.add("doSneak");
-        tabs.add("doSprint");
+        tabs.add(LibsMsg.DCLONE_EQUIP.get());
+        tabs.add(LibsMsg.DCLONE_SNEAKSPRINT.get());
+        tabs.add(LibsMsg.DCLONE_SNEAK.get());
+        tabs.add(LibsMsg.DCLONE_SPRINT.get());
 
         return filterTabs(tabs, origArgs);
     }
