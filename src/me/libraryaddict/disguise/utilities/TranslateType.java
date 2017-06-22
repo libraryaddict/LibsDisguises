@@ -61,7 +61,7 @@ public enum TranslateType {
 
                 if (value == null)
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
-                else
+                else if (!Objects.equals(key, value)) // Don't store useless information
                     translated.put(ChatColor.translateAlternateColorCodes('&', key),
                             ChatColor.translateAlternateColorCodes('&', value));
             }
@@ -89,8 +89,6 @@ public enum TranslateType {
         translated.put(message, message);
 
         message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
-     //  String message1 = StringEscapeUtils.escapeJava(
-      //          StringUtils.reverse(message).replaceAll("s%", "%s").replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = file.exists();
