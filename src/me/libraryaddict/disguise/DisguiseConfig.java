@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,12 +16,15 @@ import me.libraryaddict.disguise.utilities.PacketsManager;
 
 public class DisguiseConfig {
     public static enum DisguisePushing { // This enum has a really bad name..
-        MODIFY_SCOREBOARD, IGNORE_SCOREBOARD, CREATE_SCOREBOARD;
+        MODIFY_SCOREBOARD,
+        IGNORE_SCOREBOARD,
+        CREATE_SCOREBOARD;
     }
 
     private static boolean animationEnabled;
     private static boolean bedEnabled;
-    private static boolean blowDisguisesOnAttack;
+    private static boolean blowDisguisesWhenAttacking;
+    private static boolean blowDisguisesWhenAttacked;
     private static boolean collectEnabled;
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
@@ -154,7 +156,8 @@ public class DisguiseConfig {
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
-        setDisguiseBlownOnAttack(config.getBoolean("BlowDisguises"));
+        setDisguiseBlownWhenAttacking(config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacking")));
+        setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguisesWhenAttacked"));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
@@ -264,8 +267,12 @@ public class DisguiseConfig {
         return disableInvisibility;
     }
 
-    public static boolean isDisguiseBlownOnAttack() {
-        return blowDisguisesOnAttack;
+    public static boolean isDisguiseBlownWhenAttacking() {
+        return blowDisguisesWhenAttacking;
+    }
+
+    public static boolean isDisguiseBlownWhenAttacked() {
+        return blowDisguisesWhenAttacked;
     }
 
     public static boolean isEntityAnimationsAdded() {
@@ -419,8 +426,12 @@ public class DisguiseConfig {
         disableInvisibility = disableInvis;
     }
 
-    public static void setDisguiseBlownOnAttack(boolean blowDisguise) {
-        blowDisguisesOnAttack = blowDisguise;
+    public static void setDisguiseBlownWhenAttacking(boolean blowDisguise) {
+        blowDisguisesWhenAttacking = blowDisguise;
+    }
+
+    public static void setDisguiseBlownWhenAttacked(boolean blowDisguise) {
+        blowDisguisesWhenAttacked = blowDisguise;
     }
 
     public static void setDisguiseCloneExpire(int newExpires) {

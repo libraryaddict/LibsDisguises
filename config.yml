@@ -106,11 +106,11 @@ ModifyBoundingBox: false
 # They will just ignore you unless provoked.
 MonstersIgnoreDisguises: false
 
-# Sigh. People are going to want this.
-# So lets make your disguise blown if you are attacked..
-# Works only for disguised players when attacked by a entity (arrow, monster. etc)
-# This will blow all disguises he has on him
-BlowDisguises: false
+# This works only for players, disguised monsters and the like will not be undisguised
+# Should the player's disguises be removed if he attacks something?
+BlowDisguisesWhenAttacking: false
+# Should the player's disguises be removed if he's attacked by something?
+BlowDisguisesWhenAttacked: false
 
 #Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
 StopShulkerDisguisesFromMoving: true

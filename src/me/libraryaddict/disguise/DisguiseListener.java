@@ -132,16 +132,16 @@ public class DisguiseListener implements Listener {
         updaterTask.cancel();
     }
 
-    private void checkPlayerCanBlowDisguise(Player entity) {
-        Disguise[] disguises = DisguiseAPI.getDisguises(entity);
+    private void checkPlayerCanBlowDisguise(Player player) {
+        Disguise[] disguises = DisguiseAPI.getDisguises(player);
 
         if (disguises.length > 0) {
-            DisguiseAPI.undisguiseToAll(entity);
+            DisguiseAPI.undisguiseToAll(player);
 
             String blown = LibsMsg.BLOWN_DISGUISE.get();
 
             if (blown.length() > 0) {
-                entity.sendMessage(blown);
+                player.sendMessage(blown);
             }
         }
     }
@@ -195,14 +195,12 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (DisguiseConfig.isDisguiseBlownOnAttack()) {
-            if (event.getEntity() instanceof Player) {
-                checkPlayerCanBlowDisguise((Player) event.getEntity());
-            }
+        if (DisguiseConfig.isDisguiseBlownWhenAttacked() && event.getEntity() instanceof Player) {
+            checkPlayerCanBlowDisguise((Player) event.getEntity());
+        }
 
-            if (event.getDamager() instanceof Player) {
-                checkPlayerCanBlowDisguise((Player) event.getDamager());
-            }
+        if (DisguiseConfig.isDisguiseBlownWhenAttacking() && event.getDamager() instanceof Player) {
+            checkPlayerCanBlowDisguise((Player) event.getDamager());
         }
     }
 

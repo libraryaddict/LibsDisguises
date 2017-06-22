@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.mojang.authlib.GameProfile;
+import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -758,23 +759,23 @@ public class DisguiseParser {
                             }
 
                             value = items;
-                        } else if (param.getSimpleName().equals("Color")) {
+                        } else if (param == Horse.Color.class) {
                             // Parse to horse color
                             value = callValueOf(param, valueString, methodName);
-                        } else if (param.getSimpleName().equals("Style")) {
+                        } else if (param == Horse.Style.class) {
                             // Parse to horse style
                             value = callValueOf(param, valueString, methodName);
-                        } else if (param.getSimpleName().equals("Profession")) {
+                        } else if (param == Villager.Profession.class) {
                             // Parse to villager profession
                             value = callValueOf(param, valueString, methodName);
-                        } else if (param.getSimpleName().equals("Art")) {
+                        } else if (param == Art.class) {
                             // Parse to art type
                             value = callValueOf(param, valueString, methodName);
-                        } else if (param.getSimpleName().equals("Type")) {
+                        } else if (param == Ocelot.Type.class) {
                             // Parse to ocelot type
                             value = callValueOf(param, valueString, methodName);
                         } else if (param.getSimpleName().equals("TreeSpecies")) {
-                            // Parse to ocelot type
+                            // Parse to tree species
                             value = callValueOf(param, valueString, methodName);
                         } else if (param == PotionEffectType.class) {
                             // Parse to potion effect
