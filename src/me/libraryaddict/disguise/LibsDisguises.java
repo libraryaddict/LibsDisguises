@@ -1,48 +1,24 @@
 package me.libraryaddict.disguise;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
+import com.comphenix.protocol.reflect.FieldAccessException;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import me.libraryaddict.disguise.commands.*;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.reflect.FieldAccessException;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-
-import me.libraryaddict.disguise.commands.DisguiseCloneCommand;
-import me.libraryaddict.disguise.commands.DisguiseCommand;
-import me.libraryaddict.disguise.commands.DisguiseEntityCommand;
-import me.libraryaddict.disguise.commands.DisguiseHelpCommand;
-import me.libraryaddict.disguise.commands.DisguiseModifyCommand;
-import me.libraryaddict.disguise.commands.DisguiseModifyEntityCommand;
-import me.libraryaddict.disguise.commands.DisguiseModifyPlayerCommand;
-import me.libraryaddict.disguise.commands.DisguiseModifyRadiusCommand;
-import me.libraryaddict.disguise.commands.DisguisePlayerCommand;
-import me.libraryaddict.disguise.commands.DisguiseRadiusCommand;
-import me.libraryaddict.disguise.commands.DisguiseViewSelfCommand;
-import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
-import me.libraryaddict.disguise.commands.UndisguiseCommand;
-import me.libraryaddict.disguise.commands.UndisguiseEntityCommand;
-import me.libraryaddict.disguise.commands.UndisguisePlayerCommand;
-import me.libraryaddict.disguise.commands.UndisguiseRadiusCommand;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
@@ -50,16 +26,6 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            Class.forName("com.comphenix.protocol.wrappers.Vector3F").getName();
-        }
-        catch (Exception ex) {
-            System.err.println("[LibsDisguises] Lib's Disguises failed to startup, outdated ProtocolLib!");
-            System.err.println(
-                    "[LibsDisguises] You need to update ProtocolLib, please try this build http://ci.dmulloy2.net/job/ProtocolLib/lastStableBuild/artifact/modules/ProtocolLib/target/ProtocolLib.jar");
-            return;
-        }
-
         instance = this;
         saveDefaultConfig();
 
@@ -100,13 +66,114 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("disguisemodifyradius",
                 new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
 
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        }
-        catch (IOException e) {
-            // Don't print error
-        }
+        infectWithMetrics();
+    }
+
+    private void infectWithMetrics() {
+        Metrics metrics = new Metrics(this);
+
+        final String premium = LibsPremium.isPremium() ?
+                getDescription().getVersion().contains("SNAPSHOT") ? "Paid Builds" : "Paid Plugin" : "Free Builds";
+
+        metrics.addCustomChart(new Metrics.SimplePie("premium") {
+            @Override
+            public String getValue() {
+                return premium;
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("translations") {
+            @Override
+            public String getValue() {
+                return LibsPremium.isPremium() && DisguiseConfig.isUseTranslations() ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("custom_disguises") {
+            @Override
+            public String getValue() {
+                HashMap map = DisguiseConfig.getCustomDisguises();
+
+                return map.size() + (map.containsKey("libraryaddict") ? -1 : 0) > 0 ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.MultiLineChart("disguised_entities") {
+            @Override
+            public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
+                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
+                    for (Disguise disg : list) {
+                        if (disg.getEntity() == null || !disg.isDisguiseInUse())
+                            continue;
+
+                        String name = disg.getEntity().getType().name();
+
+                        hashMap.put(name, hashMap.containsKey(name) ? hashMap.get(name) + 1 : 1);
+                    }
+                }
+
+                return hashMap;
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.MultiLineChart("disguises_used") {
+            @Override
+            public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
+                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
+                    for (Disguise disg : list) {
+                        if (disg.getEntity() == null || !disg.isDisguiseInUse())
+                            continue;
+
+                        String name = disg.getType().name();
+
+                        hashMap.put(name, hashMap.containsKey(name) ? hashMap.get(name) + 1 : 1);
+                    }
+                }
+
+                return hashMap;
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("disguised_with_commands") {
+            @Override
+            public String getValue() {
+                return DisguiseUtilities.isCommandsUsed() ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("disguised_with_plugins") {
+            @Override
+            public String getValue() {
+                return DisguiseUtilities.isPluginsUsed() ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("using_disguises") {
+            @Override
+            public String getValue() {
+                return !DisguiseUtilities.getDisguises().isEmpty() ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("self_disguises") {
+            @Override
+            public String getValue() {
+                return DisguiseConfig.isViewDisguises() ? "Yes" : "No";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("spigot") {
+            @Override
+            public String getValue() {
+                try {
+                    Class.forName("org.spigotmc.SpigotConfig");
+                    return "Yes";
+                }
+                catch (Exception ex) {
+                    return "No";
+                }
+            }
+        });
     }
 
     @Override

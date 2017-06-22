@@ -74,6 +74,33 @@ public class DisguiseUtilities {
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
     private static BackwardMethods methods;
+    private static boolean pluginsUsed, commandsUsed;
+    private static long libsDisguisesCalled;
+
+    public static void setPluginsUsed() {
+        if (libsDisguisesCalled > System.currentTimeMillis()) {
+            return;
+        }
+
+        pluginsUsed = true;
+    }
+
+    public static void resetPluginTimer() {
+        libsDisguisesCalled = System.currentTimeMillis() + 100;
+    }
+
+    public static void setCommandsUsed() {
+        resetPluginTimer();
+        commandsUsed = true;
+    }
+
+    public static boolean isPluginsUsed() {
+        return pluginsUsed;
+    }
+
+    public static boolean isCommandsUsed() {
+        return commandsUsed;
+    }
 
     public static void saveDisguises() {
         for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {

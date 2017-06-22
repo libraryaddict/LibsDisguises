@@ -8,10 +8,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
@@ -110,6 +107,8 @@ public class DisguiseListener implements Listener {
 
                 if (disguises.length <= 0)
                     continue;
+
+                DisguiseUtilities.resetPluginTimer();
 
                 for (Disguise disguise : disguises) {
                     disguise.setEntity(entity);
@@ -248,6 +247,8 @@ public class DisguiseListener implements Listener {
             if (disguises.length <= 0)
                 continue;
 
+            DisguiseUtilities.resetPluginTimer();
+
             for (Disguise disguise : disguises) {
                 disguise.setEntity(entity);
                 disguise.startDisguise();
@@ -265,6 +266,8 @@ public class DisguiseListener implements Listener {
 
             if (disguises.length <= 0)
                 continue;
+
+            DisguiseUtilities.resetPluginTimer();
 
             for (Disguise disguise : disguises) {
                 disguise.setEntity(entity);
@@ -297,6 +300,10 @@ public class DisguiseListener implements Listener {
         if (DisguiseConfig.isSavePlayerDisguises()) {
             Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p.getUniqueId(), true);
 
+            if (disguises.length > 0) {
+                DisguiseUtilities.resetPluginTimer();
+            }
+
             for (Disguise disguise : disguises) {
                 disguise.setEntity(p);
                 disguise.startDisguise();
@@ -310,26 +317,6 @@ public class DisguiseListener implements Listener {
 
                 if (!targetedDisguise.canSee(p))
                     continue;
-
-                // Don't need this as we have a packet listener doing that for us
-                /*if (targetedDisguise.isPlayerHiddenInTab() && targetedDisguise.getEntity() instanceof Player) {
-                    try {
-                        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                        Player player = (Player) targetedDisguise.getEntity();
-
-                        addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                        addTab.getPlayerInfoDataLists()
-                                .write(0,
-                                        Arrays.asList(new PlayerInfoData(ReflectionManager.getGameProfile(player), 0,
-                                                NativeGameMode.SURVIVAL,
-                                                WrappedChatComponent.fromText(player.getDisplayName()))));
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, addTab);
-                    }
-                    catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }*/
 
                 if (!(targetedDisguise instanceof PlayerDisguise))
                     continue;

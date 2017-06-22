@@ -33,6 +33,10 @@ public enum TranslateType {
             type.reload();
         }
 
+        if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
+            System.out.println("[LibsDisguises] You must purchase the plugin to use translations!");
+        }
+
         TranslateFiller.fillConfigs();
     }
 

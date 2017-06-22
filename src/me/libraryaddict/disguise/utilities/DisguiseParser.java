@@ -453,6 +453,10 @@ public class DisguiseParser {
      */
     public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException, IllegalAccessException, InvocationTargetException {
+        if (sender instanceof Player) {
+            DisguiseUtilities.setCommandsUsed();
+        }
+
         if (permissionMap.isEmpty()) {
             throw new DisguiseParseException(LibsMsg.NO_PERM);
         }

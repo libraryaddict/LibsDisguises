@@ -15,14 +15,18 @@ public class BackwardsSupport {
     public static BackwardMethods getMethods() {
         try {
             String version = ReflectionManager.getBukkitVersion();
+            Class<? extends BackwardMethods> methods = BackwardMethods.class;
 
-            if (LibsPremium.isPremium()) {
-                if (version.equals("v1_11_R1")) {
-                    return setupMetadata(Version_1_11.class);
-                }
+            if (version.equals("v1_11_R1")) {
+                methods = Version_1_11.class;
             }
 
-            return setupMetadata(BackwardMethods.class);
+            if (!LibsPremium.isPremium() && methods != BackwardMethods.class) {
+                System.out.println("[LibsDisguises] You must purchase the plugin to use backwards compatibility!");
+                methods = BackwardMethods.class;
+            }
+
+            return setupMetadata(methods);
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -71,8 +71,6 @@ public abstract class Disguise {
 
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
-     *
-     * @param newType The disguise
      */
     protected void createDisguise() {
         if (getType().getEntityType() == null) {
@@ -234,7 +232,8 @@ public abstract class Disguise {
 
                         int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
 
-                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ || newFacing != facing) {
+                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc
+                                .getBlockZ() != blockZ || newFacing != facing) {
                             blockX = loc.getBlockX();
                             blockY = loc.getBlockY();
                             blockZ = loc.getBlockZ();
@@ -260,7 +259,8 @@ public abstract class Disguise {
                         // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the
                         // if statement.
                         // But it doesn't seem to do anything wrong..
-                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround())) {
+                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity()
+                                .isOnGround())) {
                             return;
                         }
 
@@ -268,7 +268,8 @@ public abstract class Disguise {
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
 
-                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig.isWitherSkullPacketsEnabled()) {
+                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig
+                                    .isWitherSkullPacketsEnabled()) {
                                 lookPacket = new PacketContainer(Server.ENTITY_LOOK);
 
                                 StructureModifier<Object> mods = lookPacket.getModifier();
@@ -277,8 +278,8 @@ public abstract class Disguise {
 
                                 mods.write(4, PacketsManager.getYaw(getType(), getEntity().getType(),
                                         (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                                mods.write(5,
-                                        PacketsManager.getPitch(getType(), DisguiseType.getType(getEntity().getType()),
+                                mods.write(5, PacketsManager
+                                        .getPitch(getType(), DisguiseType.getType(getEntity().getType()),
                                                 (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
@@ -287,8 +288,8 @@ public abstract class Disguise {
                                     selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
 
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
-                                                selfLookPacket, false);
+                                        ProtocolLibrary.getProtocolManager()
+                                                .sendServerPacket((Player) getEntity(), selfLookPacket, false);
                                     }
                                     catch (InvocationTargetException e) {
                                         e.printStackTrace();
@@ -319,12 +320,12 @@ public abstract class Disguise {
                                             (int) (8000D * (vectorY * ReflectionManager.getPing(player)) * 0.069D));
 
                                     if (lookPacket != null && player != getEntity()) {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, lookPacket,
-                                                false);
+                                        ProtocolLibrary.getProtocolManager()
+                                                .sendServerPacket(player, lookPacket, false);
                                     }
 
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player,
-                                            velocityPacket.shallowClone(), false);
+                                    ProtocolLibrary.getProtocolManager()
+                                            .sendServerPacket(player, velocityPacket.shallowClone(), false);
                                 }
                             }
                             catch (Exception e) {
@@ -348,8 +349,8 @@ public abstract class Disguise {
                                     selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
 
                                     try {
-                                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) getEntity(),
-                                                selfPacket, false);
+                                        ProtocolLibrary.getProtocolManager()
+                                                .sendServerPacket((Player) getEntity(), selfPacket, false);
                                     }
                                     catch (InvocationTargetException e) {
                                         e.printStackTrace();
@@ -683,8 +684,8 @@ public abstract class Disguise {
      */
     private void setupWatcher() {
         ArrayList<MetaIndex> disguiseFlags = MetaIndex.getFlags(getType().getWatcherClass());
-        ArrayList<MetaIndex> entityFlags = MetaIndex.getFlags(
-                DisguiseType.getType(getEntity().getType()).getWatcherClass());
+        ArrayList<MetaIndex> entityFlags = MetaIndex
+                .getFlags(DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
         for (MetaIndex flag : entityFlags) {
             if (disguiseFlags.contains(flag))
@@ -736,7 +737,8 @@ public abstract class Disguise {
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(
-                    newWatcher.getClass().getSimpleName() + " is not a instance of " + getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
+                    newWatcher.getClass().getSimpleName() + " is not a instance of " + getType().getWatcherClass()
+                            .getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
@@ -749,78 +751,47 @@ public abstract class Disguise {
     }
 
     public boolean startDisguise() {
-        if (!isDisguiseInUse()) {
-            if (getEntity() == null) {
-                throw new RuntimeException("No entity is assigned to this disguise!");
-            }
+        if (isDisguiseInUse()) {
+            return false;
+        }
 
-            // Fire a disguise event
-            DisguiseEvent event = new DisguiseEvent(entity, this);
+        if (getEntity() == null) {
+            throw new RuntimeException("No entity is assigned to this disguise!");
+        }
 
-            Bukkit.getPluginManager().callEvent(event);
+        DisguiseUtilities.setPluginsUsed();
 
-            // If they cancelled this disguise event. No idea why.
-            // Just return.
-            if (event.isCancelled()) {
-                return false;
-            }
+        // Fire a disguise event
+        DisguiseEvent event = new DisguiseEvent(entity, this);
 
-            disguiseInUse = true;
+        Bukkit.getPluginManager().
+                callEvent(event);
 
-            if (velocityRunnable == null) {
-                createRunnable();
-            }
+        // If they cancelled this disguise event. No idea why.
+        // Just return.
+        if (event.isCancelled()) {
+            return false;
+        }
 
-            task = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
+        disguiseInUse = true;
 
-            if (this instanceof PlayerDisguise) {
-                PlayerDisguise disguise = (PlayerDisguise) this;
+        if (velocityRunnable == null) {
+            createRunnable();
+        }
 
-                if (disguise.isDisplayedInTab()) {
-                    PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                    addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                    addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                            new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                    WrappedChatComponent.fromText(disguise.getName()))));
+        task = Bukkit.getScheduler().
 
-                    try {
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            if (!((TargetedDisguise) this).canSee(player))
-                                continue;
+                runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
 
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
-                        }
-                    }
-                    catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        if (this instanceof PlayerDisguise) {
+            PlayerDisguise disguise = (PlayerDisguise) this;
 
-            // Stick the disguise in the disguises bin
-            DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
-
-            if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
-                DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-            }
-
-            // Resend the disguised entity's packet
-            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-
-            // If he is a player, then self disguise himself
-            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    DisguiseUtilities.setupFakeDisguise(Disguise.this);
-                }
-            }, 2);
-
-            if (isHidePlayer() && getEntity() instanceof Player) {
+            if (disguise.isDisplayedInTab()) {
                 PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
                 addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                        new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
-                                NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
+                        new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                                WrappedChatComponent.fromText(disguise.getName()))));
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -834,11 +805,48 @@ public abstract class Disguise {
                     e.printStackTrace();
                 }
             }
-
-            return true;
         }
 
-        return false;
+        // Stick the disguise in the disguises bin
+        DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+
+        if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
+            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+        }
+
+        // Resend the disguised entity's packet
+        DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+
+        // If he is a player, then self disguise himself
+        Bukkit.getScheduler().
+                scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
+                    @Override
+                    public void run() {
+                        DisguiseUtilities.setupFakeDisguise(Disguise.this);
+                    }
+                }, 2);
+
+        if (isHidePlayer() && getEntity() instanceof Player) {
+            PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+            addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+            addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                    new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                            NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
+
+            try {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!((TargetedDisguise) this).canSee(player))
+                        continue;
+
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                }
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
     public boolean stopDisguise() {

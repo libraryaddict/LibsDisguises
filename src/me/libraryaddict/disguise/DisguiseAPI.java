@@ -256,6 +256,7 @@ public class DisguiseAPI {
         for (String observer : ((TargetedDisguise) disguise).getObservers()) {
             ((TargetedDisguise) disguise).removePlayer(observer);
         }
+
         disguiseEntity(entity, disguise);
     }
 

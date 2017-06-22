@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -156,7 +157,8 @@ public class DisguiseConfig {
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
-        setDisguiseBlownWhenAttacking(config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacking")));
+        setDisguiseBlownWhenAttacking(
+                config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacking")));
         setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguisesWhenAttacked"));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
@@ -185,6 +187,10 @@ public class DisguiseConfig {
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
         setUseTranslations(config.getBoolean("Translations"));
+
+        if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
+            System.out.println("[LibsDisguises] You must purchase the plugin to use saved disguises!");
+        }
 
         try {
             String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name())
