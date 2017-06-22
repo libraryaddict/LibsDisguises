@@ -159,7 +159,8 @@ public class DisguiseConfig {
         setMonstersIgnoreDisguises(config.getBoolean("MonstersIgnoreDisguises"));
         setDisguiseBlownWhenAttacking(
                 config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacking")));
-        setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguisesWhenAttacked"));
+        setDisguiseBlownWhenAttacked(
+                config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacked")));
         setKeepDisguiseOnPlayerDeath(config.getBoolean("KeepDisguises.PlayerDeath"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
