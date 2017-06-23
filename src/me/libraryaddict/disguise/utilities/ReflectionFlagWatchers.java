@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.mojang.authlib.GameProfile;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import org.apache.commons.lang.StringUtils;
@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Llama;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
@@ -143,18 +142,31 @@ public class ReflectionFlagWatchers {
         new ParamInfo(AnimalColor.class, "Animal Color", "View all the colors you can use for an animal color");
         new ParamInfo(Art.class, "Art", "View all the paintings you can use for a painting disguise");
 
-        new ParamInfo(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color");
+        try {
+            new ParamInfo("org.bukkit.entity.Llama.Color", "Llama Color",
+                    "View all the colors you can use for a llama color");
+        }
+        catch (Exception ex) {
+        }
 
         new ParamInfo(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color");
 
         new ParamInfo(Ocelot.Type.class, "Ocelot Type", "View all the ocelot types you can use for ocelots");
         new ParamInfo(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a villager");
-        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 6), "Direction (North, East, South, West, " +
-                "Up, Down)",
-                "View the four directions usable on player setSleeping disguise");
+        new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 6),
+                "Direction (North, East, South, West, " + "Up, Down)",
+                "View the directions usable on player setSleeping and shulker direction");
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
+
+        try {
+            new ParamInfo("org.bukkit.inventory.MainHand", "Main Hand", "Set the main hand for an entity");
+            new ParamInfo("org.bukkit.entity.Llama.Color", "Llama Color",
+                    "View all the colors you can use for a llama color");
+        }
+        catch (Exception ex) {
+        }
 
         try {
             new ParamInfo("org.bukkit.entity.Parrot$Variant", "Parrot Variant",
@@ -178,11 +190,11 @@ public class ReflectionFlagWatchers {
             materials[i] = Material.values()[i].name();
         }
 
-        new ParamInfo(ItemStack.class, "Item (id:damage), damage optional", "An ItemStack compromised of " +
-                "ID:Durability", materials);
+        new ParamInfo(ItemStack.class, "Item (id:damage), damage optional",
+                "An ItemStack compromised of " + "ID:Durability", materials);
 
-        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..), damage optional", "Four ItemStacks separated by an ,",
-                materials) {
+        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..), damage optional",
+                "Four ItemStacks separated by an ,", materials) {
             @Override
             public String[] getEnums(String tabComplete) {
                 String beginning = tabComplete
@@ -214,7 +226,7 @@ public class ReflectionFlagWatchers {
         new ParamInfo(int[].class, "number,number,number..", "Numbers separated by an ,");
 
         new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers separated by a ,");
-        new ParamInfo(GameProfile.class, "GameProfile",
+        new ParamInfo(WrappedGameProfile.class, "GameProfile",
                 "Get the gameprofile here https://sessionserver.mojang.com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
 
         Collections.sort(paramList, new Comparator<ParamInfo>() {

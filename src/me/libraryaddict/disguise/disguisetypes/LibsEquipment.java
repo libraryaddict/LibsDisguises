@@ -46,22 +46,18 @@ public class LibsEquipment implements EntityEquipment {
         flagWatcher.sendItemStack(slot, item);
     }
 
-    @Override
     public ItemStack getItemInMainHand() {
         return getItem(EquipmentSlot.HAND);
     }
 
-    @Override
     public void setItemInMainHand(ItemStack item) {
         setItem(EquipmentSlot.HAND, item);
     }
 
-    @Override
     public ItemStack getItemInOffHand() {
         return getItem(EquipmentSlot.OFF_HAND);
     }
 
-    @Override
     public void setItemInOffHand(ItemStack item) {
         setItem(EquipmentSlot.OFF_HAND, item);
     }

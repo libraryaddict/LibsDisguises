@@ -704,7 +704,7 @@ public class DisguiseParser {
                                 value = ReflectionManager.parseGameProfile(valueString);
                             }
                             catch (Exception ex) {
-                                throw parseToException(GameProfile.class, valueString, methodName);
+                                throw parseToException(WrappedGameProfile.class, valueString, methodName);
                             }
                         } else if (float.class == param || double.class == param) {
                             // Parse to number
@@ -733,7 +733,7 @@ public class DisguiseParser {
                             catch (Exception ex) {
                                 throw parseToException(param, valueString, methodName);
                             }
-                        } else if (param == Llama.Color.class) {
+                        } else if (param.getName().equals("org.bukkit.entity.Llama$Color")) {
                             try {
                                 value = Llama.Color.valueOf(valueString.toUpperCase());
                             }

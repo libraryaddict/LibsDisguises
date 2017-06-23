@@ -5,15 +5,12 @@ import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -41,8 +38,8 @@ public class ReflectionManager {
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
-                if (method.getReturnType() == float.class && Modifier.isProtected(
-                        method.getModifiers()) && method.getParameterTypes().length == 0) {
+                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers()) && method
+                        .getParameterTypes().length == 0) {
                     Object entity = createEntityInstance("Cow");
 
                     method.setAccessible(true);
@@ -85,9 +82,8 @@ public class ReflectionManager {
         String id = (String) response.get("id");
 
         if (!id.contains("-")) {
-            id = Pattern.compile(
-                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(
-                    id).replaceFirst("$1-$2-$3-$4-$5");
+            id = Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)")
+                    .matcher(id).replaceFirst("$1-$2-$3-$4-$5");
         }
 
         WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.fromString(id), (String) response.get("name"));
@@ -117,28 +113,29 @@ public class ReflectionManager {
                 case "Player":
                     Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
 
-                    Object playerinteractmanager = getNmsClass("PlayerInteractManager").getDeclaredConstructor(
-                            getNmsClass("World")).newInstance(world);
+                    Object playerinteractmanager = getNmsClass("PlayerInteractManager")
+                            .getDeclaredConstructor(getNmsClass("World")).newInstance(world);
 
                     WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"),
-                            getNmsClass("WorldServer"), gameProfile.getHandleType(),
-                            playerinteractmanager.getClass()).newInstance(minecraftServer, world,
-                            gameProfile.getHandle(), playerinteractmanager);
+                    entityObject = entityClass
+                            .getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                                    gameProfile.getHandleType(), playerinteractmanager.getClass())
+                            .newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
                     break;
                 case "EnderPearl":
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"),
-                            getNmsClass("EntityLiving")).newInstance(world, createEntityInstance("Cow"));
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
+                            .newInstance(world, createEntityInstance("Cow"));
                     break;
                 case "Potion":
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE,
-                            Double.TYPE, getNmsClass("ItemStack")).newInstance(world, 0d, 0d, 0d,
-                            getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                    entityObject = entityClass
+                            .getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE,
+                                    getNmsClass("ItemStack"))
+                            .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
                     break;
                 case "FishingHook":
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"),
-                            getNmsClass("EntityHuman")).newInstance(world, createEntityInstance("Player"));
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
+                            .newInstance(world, createEntityInstance("Player"));
                     break;
                 default:
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
@@ -174,9 +171,10 @@ public class ReflectionManager {
 
     public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
         try {
-            return getNmsClass("MobEffect").getDeclaredConstructor(getNmsClass("MobEffectList"), Integer.TYPE,
-                    Integer.TYPE, Boolean.TYPE, Boolean.TYPE).newInstance(getMobEffectList(id), duration, amplification,
-                    ambient, particles);
+            return getNmsClass("MobEffect")
+                    .getDeclaredConstructor(getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE,
+                            Boolean.TYPE)
+                    .newInstance(getMobEffectList(id), duration, amplification, ambient, particles);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -331,8 +329,8 @@ public class ReflectionManager {
 
     public static Object getBlockPosition(int x, int y, int z) {
         try {
-            return getNmsClass("BlockPosition").getDeclaredConstructor(int.class, int.class, int.class).newInstance(x,
-                    y, z);
+            return getNmsClass("BlockPosition").getDeclaredConstructor(int.class, int.class, int.class)
+                    .newInstance(x, y, z);
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -365,13 +363,14 @@ public class ReflectionManager {
 
     public static Object getPlayerInfoData(Object playerInfoPacket, WrappedGameProfile gameProfile) {
         try {
-            Object playerListName = getNmsClass("ChatComponentText").getDeclaredConstructor(String.class).newInstance(
-                    gameProfile.getName());
+            Object playerListName = getNmsClass("ChatComponentText").getDeclaredConstructor(String.class)
+                    .newInstance(gameProfile.getName());
 
-            return getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData").getDeclaredConstructor(
-                    getNmsClass("PacketPlayOutPlayerInfo"), gameProfile.getHandleType(), int.class,
-                    getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent")).newInstance(playerInfoPacket,
-                    gameProfile.getHandle(), 0, getNmsClass("EnumGamemode").getEnumConstants()[1], playerListName);
+            return getNmsClass("PacketPlayOutPlayerInfo$PlayerInfoData")
+                    .getDeclaredConstructor(getNmsClass("PacketPlayOutPlayerInfo"), gameProfile.getHandleType(),
+                            int.class, getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"))
+                    .newInstance(playerInfoPacket, gameProfile.getHandle(), 0,
+                            getNmsClass("EnumGamemode").getEnumConstants()[1], playerListName);
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -555,9 +554,9 @@ public class ReflectionManager {
                 if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
                     Object session = method.invoke(minecraftServer);
 
-                    return WrappedGameProfile.fromHandle(
-                            session.getClass().getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(),
-                                    boolean.class).invoke(session, gameProfile.getHandle(), true));
+                    return WrappedGameProfile.fromHandle(session.getClass()
+                            .getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
+                            .invoke(session, gameProfile.getHandle(), true));
                 }
             }
         }
@@ -592,8 +591,8 @@ public class ReflectionManager {
                     LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
                     profileRepo.getClass().getDeclaredMethod("findProfilesByNames", String[].class, agent.getClass(),
-                            Class.forName("com.mojang.authlib.ProfileLookupCallback")).invoke(profileRepo,
-                            new String[]{playername}, agent, callback);
+                            Class.forName("com.mojang.authlib.ProfileLookupCallback"))
+                            .invoke(profileRepo, new String[]{playername}, agent, callback);
 
                     if (callback.getGameProfile() != null) {
                         return callback.getGameProfile();
@@ -614,9 +613,9 @@ public class ReflectionManager {
         try {
             Location loc = entity.getLocation();
 
-            Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - newBox.getX(),
-                    loc.getY() - newBox.getY(), loc.getZ() - newBox.getZ(), loc.getX() + newBox.getX(),
-                    loc.getY() + newBox.getY(), loc.getZ() + newBox.getZ());
+            Object boundingBox = boundingBoxConstructor
+                    .newInstance(loc.getX() - newBox.getX(), loc.getY() - newBox.getY(), loc.getZ() - newBox.getZ(),
+                            loc.getX() + newBox.getX(), loc.getY() + newBox.getY(), loc.getZ() + newBox.getZ());
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         }
@@ -799,9 +798,8 @@ public class ReflectionManager {
                 BlockPosition pos = (BlockPosition) val;
 
                 try {
-                    return Optional.of(
-                            getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
-                                    pos.getY(), pos.getZ()));
+                    return Optional.of(getNmsConstructor("BlockPosition", int.class, int.class, int.class)
+                            .newInstance(pos.getX(), pos.getY(), pos.getZ()));
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
@@ -818,16 +816,16 @@ public class ReflectionManager {
             Vector3F angle = (Vector3F) value;
 
             try {
-                return getNmsConstructor("Vector3f", float.class, float.class, float.class).newInstance(angle.getX(),
-                        angle.getY(), angle.getZ());
+                return getNmsConstructor("Vector3f", float.class, float.class, float.class)
+                        .newInstance(angle.getX(), angle.getY(), angle.getZ());
             }
             catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else if (value instanceof Direction) {
             try {
-                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class).invoke(null,
-                        ((Direction) value).ordinal());
+                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class)
+                        .invoke(null, ((Direction) value).ordinal());
             }
             catch (Exception ex) {
                 ex.printStackTrace();
@@ -836,8 +834,8 @@ public class ReflectionManager {
             BlockPosition pos = (BlockPosition) value;
 
             try {
-                return getNmsConstructor("BlockPosition", int.class, int.class, int.class).newInstance(pos.getX(),
-                        pos.getY(), pos.getZ());
+                return getNmsConstructor("BlockPosition", int.class, int.class, int.class)
+                        .newInstance(pos.getX(), pos.getY(), pos.getZ());
             }
             catch (Exception ex) {
                 ex.printStackTrace();
@@ -906,7 +904,7 @@ public class ReflectionManager {
         return id + (data << 12);
     }
 
-    public static Pair<Integer, Integer> getFromCombinedId(int combinedId) {
+    public static ImmutablePair<Integer, Integer> getFromCombinedId(int combinedId) {
         int j = combinedId & 4095;
         int k = combinedId >> 12 & 15;
 

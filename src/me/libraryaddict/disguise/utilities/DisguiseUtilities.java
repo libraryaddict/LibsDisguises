@@ -920,8 +920,8 @@ public class DisguiseUtilities {
         try {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
-            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player && disguise.getEntity().getName()
-                    .equalsIgnoreCase(player)) {
+            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player && ((Player) disguise.getEntity())
+                    .getName().equalsIgnoreCase(player)) {
                 removeSelfDisguise((Player) disguise.getEntity());
 
                 if (disguise.isSelfDisguiseVisible()) {
@@ -1178,7 +1178,15 @@ public class DisguiseUtilities {
             // Code to stop player pushing
             Scoreboard scoreboard = player.getScoreboard();
             Team team = originalTeam == null ? null : scoreboard.getTeam(originalTeam);
-            Team ldTeam = scoreboard.getEntryTeam(player.getName());
+            Team ldTeam = null;
+
+            for (Team t : scoreboard.getTeams()) {
+                if (!t.hasEntry(player.getName()))
+                    continue;
+
+                ldTeam = t;
+                break;
+            }
 
             if (ldTeam != null) {
                 if (!ldTeam.getName().equals("LD Pushing") && !ldTeam.getName().endsWith("_LDP")) {
@@ -1276,9 +1284,17 @@ public class DisguiseUtilities {
             if (pOption != DisguisePushing.IGNORE_SCOREBOARD) {
                 // Code to stop player pushing
                 Scoreboard scoreboard = player.getScoreboard();
-                Team prevTeam = scoreboard.getEntryTeam(player.getName());
+                Team prevTeam = null;
                 Team ldTeam = null;
                 String ldTeamName = "LD Pushing";
+
+                for (Team t : scoreboard.getTeams()) {
+                    if (!t.hasEntry(player.getName()))
+                        continue;
+
+                    prevTeam = t;
+                    break;
+                }
 
                 // If the player is in a team already
                 if (prevTeam != null && !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName()

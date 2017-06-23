@@ -60,10 +60,9 @@ public class PlayerWatcher extends LivingWatcher {
     public BlockFace getSleepingDirection() {
         if (sleepingDirection == null) {
             if (this.getDisguise().getEntity() != null && isSleeping()) {
-                this.sleepingDirection = BlockFace
-                        .values()[Math.round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
-            }
-            else {
+                this.sleepingDirection = BlockFace.values()[Math
+                        .round(this.getDisguise().getEntity().getLocation().getYaw() / 90F) & 0x3];
+            } else {
                 return BlockFace.EAST;
             }
         }
@@ -189,8 +188,9 @@ public class PlayerWatcher extends LivingWatcher {
             try {
                 if (isSleeping()) {
                     for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                        PacketContainer[] packets = DisguiseUtilities.getBedPackets(getDisguise().getEntity().getLocation(),
-                                player.getLocation(), (PlayerDisguise) getDisguise());
+                        PacketContainer[] packets = DisguiseUtilities
+                                .getBedPackets(getDisguise().getEntity().getLocation(), player.getLocation(),
+                                        (PlayerDisguise) getDisguise());
 
                         if (getDisguise().getEntity() == player) {
                             for (PacketContainer packet : packets) {
@@ -200,15 +200,13 @@ public class PlayerWatcher extends LivingWatcher {
 
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                             }
-                        }
-                        else {
+                        } else {
                             for (PacketContainer packet : packets) {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     PacketContainer packet = new PacketContainer(Server.ANIMATION);
 
                     StructureModifier<Integer> mods = packet.getIntegers();
@@ -232,10 +230,8 @@ public class PlayerWatcher extends LivingWatcher {
 
         if (flag) {
             setData(MetaIndex.PLAYER_SKIN, (byte) (b0 | 1 << i));
-        }
-        else {
+        } else {
             setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
         }
     }
-
 }

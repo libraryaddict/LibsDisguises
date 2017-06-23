@@ -106,10 +106,6 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> ENTITY_SILENT = new MetaIndex<>(FlagWatcher.class, 4, false);
 
-    public static MetaIndex<Byte> ILLAGER_SPELL_TICKS = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
-
-    public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
-
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0,
             BlockPosition.ORIGIN);
 
@@ -137,6 +133,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1,
             Optional.<UUID>absent());
+
+    public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
+
+    public static MetaIndex<Byte> ILLAGER_SPELL_TICKS = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Byte> INSENTIENT_META = new MetaIndex<>(InsentientWatcher.class, 0, (byte) 0);
 
@@ -220,8 +220,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0,
-            new ItemStack(Material.SPLASH_POTION));
+    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM;
 
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
@@ -267,6 +266,13 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> ZOMBIE_VILLAGER_SHAKING = new MetaIndex<>(ZombieVillagerWatcher.class, 0, false);
 
     static {
+        try {
+            SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0,
+                    new ItemStack(Material.valueOf("SPLASH_POTION")));
+        }
+        catch (Exception ex) {
+            SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.POTION));
+        }
         setValues();
     }
 
@@ -343,8 +349,10 @@ public class MetaIndex<Y> {
                         continue;
 
                     if (found != null) {
-                        System.err.println(
-                                entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" + type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
+                        System.err.println(entry.getKey()
+                                .getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" + type
+                                .getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher()
+                                .getSimpleName() + ")");
                         continue loop;
                     }
 
@@ -369,8 +377,8 @@ public class MetaIndex<Y> {
 
                 MetaIndex index = (MetaIndex) field.get(null);
 
-                toPrint.add(
-                        index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index.getIndex() + " " + index.getDefault().getClass().getSimpleName());
+                toPrint.add(index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index
+                        .getIndex() + " " + index.getDefault().getClass().getSimpleName());
             }
         }
         catch (Exception ex) {
@@ -443,8 +451,10 @@ public class MetaIndex<Y> {
                     continue;
                 }
 
-                System.err.println(
-                        "[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() + " has already registered this! (" + metaIndex.getDefault() + "," + index.getDefault() + ")");
+                System.err.println("[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher()
+                        .getSimpleName() + " at index " + metaIndex
+                        .getIndex() + " has already registered this! (" + metaIndex.getDefault() + "," + index
+                        .getDefault() + ")");
             }
 
             values()[i] = metaIndexes[a];
