@@ -185,7 +185,7 @@ public class DisguiseParser {
 
     public static DisguisePerm getDisguisePerm(String name) {
         for (DisguisePerm perm : getDisguisePerms()) {
-            if (!perm.toReadable().equalsIgnoreCase(name) && !perm.toReadable().replace(" ", "").equalsIgnoreCase(name))
+            if (!perm.toReadable().replaceAll("[ |_]", "").equalsIgnoreCase(name.replaceAll("[ |_]", "")))
                 continue;
 
             return perm;

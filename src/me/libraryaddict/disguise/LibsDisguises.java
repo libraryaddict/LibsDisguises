@@ -174,6 +174,15 @@ public class LibsDisguises extends JavaPlugin {
                 }
             }
         });
+
+        final boolean updates = getConfig().getBoolean("NotifyUpdate");
+
+        metrics.addCustomChart(new Metrics.SimplePie("updates") {
+            @Override
+            public String getValue() {
+                return updates ? "Enabled" : "Disabled";
+            }
+        });
     }
 
     @Override
