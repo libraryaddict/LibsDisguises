@@ -202,6 +202,21 @@ public enum DisguiseSound {
         }
     }
 
+    public static void replace(String oldString, String newString) {
+        for (DisguiseSound sound : DisguiseSound.values()) {
+            if (sound.disguiseSounds.containsKey(oldString)) {
+                sound.disguiseSounds.put(newString, sound.disguiseSounds.get(oldString));
+            }
+
+            for (Entry<Object, Object> entry : sound.disguiseSounds.entrySet()) {
+                if (entry.getValue() == null || !entry.getValue().equals(oldString))
+                    continue;
+
+                entry.setValue(newString);
+            }
+        }
+    }
+
     private void addSound(Object sound, SoundType type) {
         String s;
 

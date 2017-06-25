@@ -2,10 +2,10 @@ package me.libraryaddict.disguise.utilities.backwards;
 
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
 import me.libraryaddict.disguise.utilities.backwards.metadata.Version_1_10;
 import me.libraryaddict.disguise.utilities.backwards.metadata.Version_1_11;
 import me.libraryaddict.disguise.utilities.backwards.metadata.Version_1_9;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,8 +16,7 @@ import java.util.ArrayList;
 public class BackwardsSupport {
     public static BackwardMethods getMethods() {
         try {
-            String version = Bukkit.getVersion();
-            version = version.substring(version.lastIndexOf(" ") + 1, version.length() - 1);
+            String version = ReflectionManager.getMinecraftVersion();
 
             Class<? extends BackwardMethods> methods = BackwardMethods.class;
 
@@ -70,6 +69,7 @@ public class BackwardsSupport {
     private static BackwardMethods setupMetadata(Class<? extends BackwardMethods> backwardsClass) {
         try {
             BackwardMethods backwards = backwardsClass.newInstance();
+
             ArrayList<MetaIndex> newIndexes = new ArrayList<>();
 
             getIndexes(backwardsClass, backwards, newIndexes);
@@ -79,9 +79,11 @@ public class BackwardsSupport {
             MetaIndex.addMetaIndexes(newIndexes.toArray(new MetaIndex[0]));
 
             if (backwards.isOrderedIndexes()) {
-                MetaIndex.fillInBlankIndexes();
+                MetaIndex.eliminateBlankIndexes();
                 MetaIndex.orderMetaIndexes();
             }
+
+            backwards.doReplaceSounds();
 
             return backwards;
         }

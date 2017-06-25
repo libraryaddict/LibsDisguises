@@ -29,7 +29,7 @@ public class LibsDisguises extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
 
-        getLogger().info("Discovered MC version: " + ReflectionManager.getBukkitVersion());
+        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
 
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
             saveResource("disguises.yml", false);
@@ -134,24 +134,41 @@ public class LibsDisguises extends JavaPlugin {
             }
         });
 
-        metrics.addCustomChart(new Metrics.SimplePie("disguised_with_commands") {
+        metrics.addCustomChart(new Metrics.SimplePie("disguised_using") {
             @Override
             public String getValue() {
-                return DisguiseUtilities.isCommandsUsed() ? "Yes" : "No";
+                if (DisguiseUtilities.isPluginsUsed()) {
+                    if (DisguiseUtilities.isCommandsUsed()) {
+                        return "Plugins and Commands";
+                    }
+
+                    return "Plugins";
+                } else if (DisguiseUtilities.isCommandsUsed()) {
+                    return "Commands";
+                }
+
+                return "Unknown";
             }
         });
 
-        metrics.addCustomChart(new Metrics.SimplePie("disguised_with_plugins") {
+        metrics.addCustomChart(new Metrics.SimplePie("active_disguises") {
             @Override
             public String getValue() {
-                return DisguiseUtilities.isPluginsUsed() ? "Yes" : "No";
-            }
-        });
+                int disgs = 0;
 
-        metrics.addCustomChart(new Metrics.SimplePie("using_disguises") {
-            @Override
-            public String getValue() {
-                return !DisguiseUtilities.getDisguises().isEmpty() ? "Yes" : "No";
+                for (HashSet set : DisguiseUtilities.getDisguises().values()) {
+                    disgs += set.size();
+                }
+
+                if (disgs == 0)
+                    return "0";
+                if (disgs <= 5)
+                    return "1 to 5";
+                else if (disgs <= 15)
+                    return "6 to 15";
+                else if (disgs <= 30)
+                    return "16 to 30";
+                return "More than 30";
             }
         });
 

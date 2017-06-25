@@ -276,7 +276,7 @@ public class MetaIndex<Y> {
         setValues();
     }
 
-    public static void fillInBlankIndexes() {
+    public static void eliminateBlankIndexes() {
         ArrayList<Entry<Class, ArrayList<MetaIndex>>> list = new ArrayList<>();
 
         for (MetaIndex index : values()) {

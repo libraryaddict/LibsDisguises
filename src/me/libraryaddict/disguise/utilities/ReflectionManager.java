@@ -850,6 +850,12 @@ public class ReflectionManager {
         return value;
     }
 
+    public static String getMinecraftVersion() {
+        String version = Bukkit.getVersion();
+        version = version.substring(version.lastIndexOf(" ") + 1, version.length() - 1);
+        return version;
+    }
+
     /**
      * This creates a DataWatcherItem usable with WrappedWatchableObject
      *
