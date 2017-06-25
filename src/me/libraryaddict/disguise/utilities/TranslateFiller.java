@@ -69,6 +69,8 @@ public class TranslateFiller {
         }
 
         TranslateType.DISGUISES.save("EntityType", "Used for the disgiuse radius command to list all entitytypes");
+        TranslateType.DISGUISES.save("DisgiseType", "Used for the disgiuse modify radius command to list all " +
+                "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
             TranslateType.MESSAGES.save(msg.getRaw());

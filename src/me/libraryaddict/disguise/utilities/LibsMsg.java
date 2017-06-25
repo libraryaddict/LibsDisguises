@@ -61,24 +61,18 @@ public enum LibsMsg {
     DCLONE_SNEAKSPRINT("doSneakSprint"),
     DCLONE_SNEAK("doSneak"),
     DCLONE_SPRINT("doSprint"),
+    DMODRADIUS_HELP2(
+            (ChatColor.DARK_GREEN + "/disguisemodifyradius <DisguiseType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Disguise Options>")
+                    .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
     DMODRADIUS_HELP3(
-            (ChatColor.DARK_GREEN + "/disguisemodifyradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> player <Name>")
-                    .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
-    DMODRADIUS_HELP4(
-            (ChatColor.DARK_GREEN + "/disguisemodifyradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <DisguiseType> <Baby" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")>")
-                    .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
-    DMODRADIUS_HELP5(
-            (ChatColor.DARK_GREEN + "/disguisemodifyradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")>")
-                    .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
-    DMODRADIUS_HELP6(
-            ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN + "/disguisemodifyradius EntityTypes"),
+            ChatColor.DARK_GREEN + "See the DisguiseType's usable by " + ChatColor.GREEN + "/disguisemodifyradius DisguiseType"),
     DMODRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply the disguise options as well as the radius"),
     DMODRADIUS_NEEDOPTIONS_ENTITY(
             ChatColor.RED + "You need to supply the disguise options as well as the radius and EntityType"),
     DMODRADIUS_NOENTS(ChatColor.RED + "Couldn't find any disguised entities!"),
     DMODRADIUS_NOPERM(ChatColor.RED + "No permission to modify %s disguises!"),
-    DMODRADIUS_UNRECOGNIZED(ChatColor.RED + "Unrecognised EntityType %s"),
-    DMODRADIUS_USABLE(ChatColor.DARK_GREEN + "EntityTypes usable are: %s" + ChatColor.DARK_GREEN + "."),
+    DMODRADIUS_UNRECOGNIZED(ChatColor.RED + "Unrecognised DisguiseType %s"),
+    DMODRADIUS_USABLE(ChatColor.DARK_GREEN + "DisguiseTypes usable are: %s" + ChatColor.DARK_GREEN + "."),
     DPLAYER_SUPPLY(ChatColor.RED + "You need to supply a disguise as well as the player"),
     DRADIUS_ENTITIES(ChatColor.DARK_GREEN + "EntityTypes usable are: %s"),
     DRADIUS_HELP1(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at %s blocks!"),

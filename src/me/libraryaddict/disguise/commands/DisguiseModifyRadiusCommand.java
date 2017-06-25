@@ -24,15 +24,9 @@ import java.util.*;
 
 public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
-    private ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
 
     public DisguiseModifyRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
-        for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
-            if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
-                validClasses.add(c);
-            }
-        }
     }
 
     private Collection<Entity> getNearbyEntities(CommandSender sender, int radius) {
@@ -66,11 +60,12 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("entitytype") || args[0].equalsIgnoreCase("entitytypes")) {
+        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType")) || args[0]
+                .equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 
-            for (Class c : validClasses) {
-                classes.add(c.getSimpleName());
+            for (DisguiseType type : DisguiseType.values()) {
+                classes.add(type.toReadable());
             }
 
             Collections.sort(classes);
@@ -80,30 +75,21 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        Class entityClass = Entity.class;
-        EntityType type = null;
+        DisguiseType baseType = null;
         int starting = 0;
 
         if (!isNumeric(args[0])) {
-            for (Class c : validClasses) {
-                if (c.getSimpleName().equalsIgnoreCase(args[0])) {
-                    entityClass = c;
+            for (DisguiseType t : DisguiseType.values()) {
+                if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
+                    baseType = t;
                     starting = 1;
                     break;
                 }
             }
 
-            if (starting == 0) {
-                try {
-                    type = EntityType.valueOf(args[0].toUpperCase());
-                }
-                catch (Exception ex) {
-                }
-
-                if (type == null) {
-                    sender.sendMessage(LibsMsg.DMODRADIUS_UNRECOGNIZED.get(args[0]));
-                    return true;
-                }
+            if (baseType == null) {
+                sender.sendMessage(LibsMsg.DMODRADIUS_UNRECOGNIZED.get(args[0]));
+                return true;
             }
         }
 
@@ -145,7 +131,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 continue;
             }
 
-            if (type != null ? entity.getType() != type : !entityClass.isAssignableFrom(entity.getClass())) {
+            if (baseType != null && !baseType.name().equalsIgnoreCase(entity.getType().name())) {
                 continue;
             }
 
@@ -200,27 +186,31 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
 
         if (args.length == 0) {
-            for (Class<? extends Entity> entityClass : validClasses) {
-                tabs.add(entityClass.getSimpleName());
+            for (DisguiseType type : DisguiseType.values()) {
+                tabs.add(type.toReadable().replaceAll(" ", "_"));
             }
 
             return filterTabs(tabs, origArgs);
         }
 
-        int starting = 1;
+        int starting = 0;
 
         if (!isNumeric(args[0])) {
-            for (Class c : validClasses) {
-                if (!c.getSimpleName().equalsIgnoreCase(args[0]))
-                    continue;
 
-                starting = 2;
-                break;
+            for (DisguiseType t : DisguiseType.values()) {
+                if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
+                    starting = 2;
+                    break;
+                }
             }
 
             // Not a valid radius
             if (starting == 1 || args.length == 1 || !isNumeric(args[1]))
                 return filterTabs(tabs, origArgs);
+        }
+
+        if (!isNumeric(args[starting])) {
+            return filterTabs(tabs, origArgs);
         }
 
         int radius = Integer.parseInt(args[starting]);
@@ -242,7 +232,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (String arg : args) {
-                    if (!method.getName().equalsIgnoreCase(arg))
+                    if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg))
                         continue;
 
                     usedOptions.add(arg);
@@ -262,9 +252,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                             addMethods = false;
 
                         if (info.isEnums()) {
-                            for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
-                                tabs.add(e);
-                            }
+                            tabs.addAll(Arrays.asList(info.getEnums(origArgs[origArgs.length - 1])));
                         } else {
                             if (info.getParamClass() == String.class) {
                                 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -300,18 +288,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         sender.sendMessage(LibsMsg.DMODIFY_HELP3
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
 
-        String optional = ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")";
-
-        if (allowedDisguises.contains("player")) {
-            sender.sendMessage(LibsMsg.DRADIUS_HELP3.get());
-        }
-
-        sender.sendMessage(LibsMsg.DMODRADIUS_HELP4.get());
-
-        if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            sender.sendMessage(LibsMsg.DMODRADIUS_HELP5.get());
-        }
-
-        sender.sendMessage(LibsMsg.DMODRADIUS_HELP6.get());
+        sender.sendMessage(LibsMsg.DMODRADIUS_HELP2.get());
+        sender.sendMessage(LibsMsg.DMODRADIUS_HELP3.get());
     }
 }

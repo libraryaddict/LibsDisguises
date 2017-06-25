@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -126,9 +127,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                                 addMethods = false;
 
                             if (info.isEnums()) {
-                                for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
-                                    tabs.add(e);
-                                }
+                                tabs.addAll(Arrays.asList(info.getEnums(origArgs[origArgs.length - 1])));
                             } else {
                                 if (info.getParamClass() == String.class) {
                                     for (Player player : Bukkit.getOnlinePlayers()) {

@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -112,19 +113,18 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
             boolean addMethods = true;
 
-            if (args.length > 1) {
+            if (args.length > 0) {
                 String prevArg = args[args.length - 1];
 
                 ParamInfo info = ReflectionFlagWatchers.getParamInfo(disguiseType, prevArg);
 
                 if (info != null) {
-                    if (info.getParamClass() != boolean.class)
+                    if (info.getParamClass() != boolean.class) {
                         addMethods = false;
+                    }
 
                     if (info.isEnums()) {
-                        for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
-                            tabs.add(e);
-                        }
+                        tabs.addAll(Arrays.asList(info.getEnums(origArgs[origArgs.length - 1])));
                     } else {
                         if (info.getParamClass() == String.class) {
                             for (Player player : Bukkit.getOnlinePlayers()) {
