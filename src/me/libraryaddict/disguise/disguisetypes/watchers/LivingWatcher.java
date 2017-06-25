@@ -31,7 +31,8 @@ public class LivingWatcher extends FlagWatcher {
 
     static {
         try {
-            getId = ReflectionManager.getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
+            getId = ReflectionManager
+                    .getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
             Object REGISTRY = ReflectionManager.getNmsField("MobEffectList", "REGISTRY").get(null);
 
             for (Object next : ((Iterable) REGISTRY)) {
@@ -96,7 +97,7 @@ public class LivingWatcher extends FlagWatcher {
         float f4 = 0.0F;
         try {
             for (int localMobEffect : potionEffects) {
-                int n = (Integer) getId.invoke(list.get(localMobEffect));
+                int n = (Integer) getId.invoke(null, list.get(localMobEffect));
                 f1 += (n >> 16 & 0xFF) / 255.0F;
                 f2 += (n >> 8 & 0xFF) / 255.0F;
                 f3 += (n & 0xFF) / 255.0F;
