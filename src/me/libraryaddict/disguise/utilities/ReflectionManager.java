@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
+import com.mojang.authlib.GameProfileRepository;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.*;
@@ -548,9 +549,9 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         try {
-            Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
+            Object minecraftServer = getMinecraftServer();
 
-            for (Method method : getNmsClass("MinecraftServer").getDeclaredMethods()) {
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                 if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
                     Object session = method.invoke(minecraftServer);
 
@@ -580,17 +581,16 @@ public class ReflectionManager {
 
     public static WrappedGameProfile grabProfileAddUUID(String playername) {
         try {
-            Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
+            Object minecraftServer = getMinecraftServer();
 
-            for (Method method : getNmsClass("MinecraftServer").getDeclaredMethods()) {
+            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                 if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
-                    Object profileRepo = method.invoke(minecraftServer);
-
                     Object agent = Class.forName("com.mojang.authlib.Agent").getDeclaredField("MINECRAFT").get(null);
 
                     LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
+                    Object profileRepo = method.invoke(minecraftServer);
 
-                    profileRepo.getClass().getDeclaredMethod("findProfilesByNames", String[].class, agent.getClass(),
+                    method.getReturnType().getMethod("findProfilesByNames", String[].class, agent.getClass(),
                             Class.forName("com.mojang.authlib.ProfileLookupCallback"))
                             .invoke(profileRepo, new String[]{playername}, agent, callback);
 
