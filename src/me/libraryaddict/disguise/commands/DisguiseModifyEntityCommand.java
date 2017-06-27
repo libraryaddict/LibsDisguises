@@ -39,6 +39,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
+        // TODO Validate if any disguises have this arg
+
         LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), args);
 
         sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));

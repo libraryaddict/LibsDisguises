@@ -417,12 +417,12 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onRightClick(PlayerInteractEntityEvent event) {
-        if (!disguiseEntity.containsKey(event.getPlayer().getName()) && !disguiseClone
-                .containsKey(event.getPlayer().getName())) {
+        Player p = event.getPlayer();
+
+        if (!disguiseEntity.containsKey(p.getName()) && !disguiseClone.containsKey(p.getName()) && !disguiseModify
+                .containsKey(p.getName())) {
             return;
         }
-
-        Player p = event.getPlayer();
 
         event.setCancelled(true);
         disguiseRunnable.remove(p.getName()).cancel();
