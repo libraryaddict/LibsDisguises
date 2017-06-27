@@ -152,7 +152,8 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise().getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise()
+                .getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -164,8 +165,8 @@ public class FlagWatcher {
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(),
-                                    new Runnable() {
+                            Bukkit.getScheduler()
+                                    .scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(), new Runnable() {
                                         @Override
                                         public void run() {
                                             try {
@@ -328,7 +329,8 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() && data == MetaIndex.ENTITY_META) {
+            if (isEntityAnimationsAdded() && DisguiseConfig
+                    .isMetadataPacketsEnabled() && data == MetaIndex.ENTITY_META) {
                 value = addEntityAnimations((byte) value,
                         WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
@@ -449,13 +451,11 @@ public class FlagWatcher {
 
     public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
         equipment.setItem(slot, itemStack);
-
-        sendItemStack(slot, itemStack);
     }
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (!DisguiseAPI.isDisguiseInUse(
-                getDisguise()) || getDisguise().getWatcher() != this || getDisguise().getEntity() == null)
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this || getDisguise()
+                .getEntity() == null)
             return;
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
@@ -496,7 +496,6 @@ public class FlagWatcher {
         mods.write(2, itemToSend);
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             }
