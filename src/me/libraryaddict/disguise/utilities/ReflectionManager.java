@@ -77,33 +77,6 @@ public class ReflectionManager {
         entityCountField.setAccessible(true);
     }
 
-    public static WrappedGameProfile parseGameProfile(String toParse) {
-        Map<String, Object> response = new Gson().fromJson(toParse, Map.class);
-
-        String id = (String) response.get("id");
-
-        if (!id.contains("-")) {
-            id = Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)")
-                    .matcher(id).replaceFirst("$1-$2-$3-$4-$5");
-        }
-
-        WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.fromString(id), (String) response.get("name"));
-
-        if (response.containsKey("properties")) {
-            ArrayList<Map<String, String>> properties = (ArrayList) response.get("properties");
-
-            for (Map<String, String> s : properties) {
-                String gName = s.containsKey("name") ? s.get("name") : null;
-                String gValue = s.containsKey("value") ? s.get("value") : null;
-                String gSigned = s.containsKey("signature") ? s.get("signature") : null;
-
-                gameProfile.getProperties().put(gName, new WrappedSignedProperty(gName, gValue, gSigned));
-            }
-        }
-
-        return gameProfile;
-    }
-
     public static Object createEntityInstance(String entityName) {
         try {
             Class<?> entityClass = getNmsClass("Entity" + entityName);

@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
+import me.libraryaddict.disguise.utilities.json.SerializerGameProfile;
 import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -701,7 +703,7 @@ public class DisguiseParser {
                             }
                         } else if (WrappedGameProfile.class == param && valueString.length() > 20) {
                             try {
-                                value = ReflectionManager.parseGameProfile(valueString);
+                                value = DisguiseUtilities.getGson().fromJson(valueString, WrappedGameProfile.class);
                             }
                             catch (Exception ex) {
                                 throw parseToException(WrappedGameProfile.class, valueString, methodName);

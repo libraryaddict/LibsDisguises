@@ -8,11 +8,14 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.json.SerializerGameProfile;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -99,8 +102,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid,
-                    getGameProfile().getName(), getGameProfile());
+            disguise.gameProfile = ReflectionManager
+                    .getGameProfileWithThisSkin(disguise.uuid, getGameProfile().getName(), getGameProfile());
         } else {
             disguise.setSkin(getSkin());
         }
@@ -127,8 +130,8 @@ public class PlayerDisguise extends TargetedDisguise {
             if (getSkin() != null) {
                 gameProfile = ReflectionManager.getGameProfile(uuid, getName());
             } else {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(),
-                        DisguiseUtilities.getProfileFromMojang(this));
+                gameProfile = ReflectionManager
+                        .getGameProfileWithThisSkin(uuid, getName(), DisguiseUtilities.getProfileFromMojang(this));
             }
         }
 
@@ -252,11 +255,11 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise setSkin(String newSkin) {
         if (newSkin != null && newSkin.length() > 50) {
             try {
-                return setSkin(ReflectionManager.parseGameProfile(newSkin));
+                return setSkin(DisguiseUtilities.getGson().fromJson(newSkin, WrappedGameProfile.class));
             }
-            catch (Exception ex) {
-                throw new IllegalArgumentException(
-                        "The skin is too long to be a playername, but cannot be parsed to a GameProfile!");
+            catch (Exception ex) {ex.printStackTrace();
+                throw new IllegalArgumentException(String.format(
+                        "The skin %s is too long to be a playername, but cannot be parsed to a GameProfile!", newSkin));
             }
         }
 
@@ -293,6 +296,9 @@ public class PlayerDisguise extends TargetedDisguise {
 
         this.skinToUse = gameProfile.getName();
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getName(), gameProfile);
+        System.out.println(
+                new GsonBuilder().registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile()).create()
+                        .toJson(gameProfile));
 
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             if (isDisplayedInTab()) {

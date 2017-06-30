@@ -815,6 +815,10 @@ public class DisguiseUtilities {
         return selfDisguised;
     }
 
+    public static Gson getGson() {
+        return gson;
+    }
+
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
         methods = BackwardsSupport.getMethods();
