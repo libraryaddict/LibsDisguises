@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.utilities.json.SerializerGameProfile;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

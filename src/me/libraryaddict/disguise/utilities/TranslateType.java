@@ -126,10 +126,10 @@ public enum TranslateType {
         if (translated == null)
             return null;
 
-        translated = translated.toLowerCase();
+        String lowerCase = translated.toLowerCase();
 
         for (Map.Entry<String, String> entry : this.translated.entrySet()) {
-            if (!Objects.equals(entry.getValue().toLowerCase(), translated))
+            if (!Objects.equals(entry.getValue().toLowerCase(), lowerCase))
                 continue;
 
             return entry.getKey();
