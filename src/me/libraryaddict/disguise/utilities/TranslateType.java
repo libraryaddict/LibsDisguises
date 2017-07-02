@@ -123,8 +123,8 @@ public enum TranslateType {
     }
 
     public String reverseGet(String translated) {
-        if (translated == null)
-            return null;
+        if (translated == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
+            return translated;
 
         String lowerCase = translated.toLowerCase();
 
