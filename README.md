@@ -1,4 +1,4 @@
-LibsDisguises (1.9+)
+LibsDisguises
 =============
 
 One of the worst disguise plugins to hit the market, not only is the programming completely full of bugs, the author doesn't seem to care about the lack of up-to-date documentation.<br>
