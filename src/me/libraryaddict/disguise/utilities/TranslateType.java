@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,9 +36,9 @@ public enum TranslateType {
 
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             System.out.println("[LibsDisguises] You must purchase the plugin to use translations!");
+        } else {
+            TranslateFiller.fillConfigs();
         }
-
-        TranslateFiller.fillConfigs();
     }
 
     public void wipeTranslations() {
@@ -45,10 +46,28 @@ public enum TranslateType {
     }
 
     private void reload() {
-        translated.clear();
+        wipeTranslations();
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             System.out.println("[LibsDisguises] Loading translations: " + name());
+        } else {
+            if (!file.exists()) {
+                try {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+
+                    FileWriter writer = new FileWriter(getFile(), true);
+
+                    write(writer);
+
+                    writer.close();
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            return;
         }
 
         if (!file.exists())
@@ -90,8 +109,6 @@ public enum TranslateType {
         if (translated.containsKey(message))
             return;
 
-        translated.put(message, message);
-
         message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
@@ -105,11 +122,7 @@ public enum TranslateType {
             FileWriter writer = new FileWriter(getFile(), true);
 
             if (!exists) {
-                writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
-
-                if (this == TranslateType.MESSAGES) {
-                    writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
-                }
+                write(writer);
             }
 
             writer.write("\n" + (comment != null ? "# " + comment + "\n" :
@@ -119,6 +132,14 @@ public enum TranslateType {
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void write(FileWriter writer) throws IOException {
+        writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
+
+        if (this == TranslateType.MESSAGES) {
+            writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
         }
     }
 
