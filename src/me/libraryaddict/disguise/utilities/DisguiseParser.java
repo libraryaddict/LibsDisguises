@@ -750,7 +750,7 @@ public class DisguiseParser {
                             // Parse to itemstack array
                             ItemStack[] items = new ItemStack[4];
 
-                            String[] split = valueString.split(",");
+                            String[] split = valueString.split(",", -1);
 
                             if (split.length == 4) {
                                 for (int a = 0; a < 4; a++) {
@@ -933,7 +933,9 @@ public class DisguiseParser {
 
         int itemId = -1;
 
-        if (isInteger(split[0])) {
+        if (split[0].isEmpty() || split[0].equalsIgnoreCase("null")) {
+            return null;
+        } else if (isInteger(split[0])) {
             itemId = Integer.parseInt(split[0]);
         } else {
             try {
