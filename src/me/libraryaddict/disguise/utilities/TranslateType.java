@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,6 +25,7 @@ public enum TranslateType {
 
     private File file;
     private HashMap<String, String> translated = new HashMap<>();
+    private FileWriter writer;
 
     TranslateType(String fileName) {
         file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
@@ -36,8 +38,31 @@ public enum TranslateType {
 
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             System.out.println("[LibsDisguises] You must purchase the plugin to use translations!");
-        } else {
-            TranslateFiller.fillConfigs();
+        }
+
+        TranslateFiller.fillConfigs();
+    }
+
+    protected void removeDuplicates() {
+        Iterator<Map.Entry<String, String>> itel = translated.entrySet().iterator();
+
+        while (itel.hasNext()) {
+            Map.Entry<String, String> entry = itel.next();
+
+            if (!entry.getKey().equals(entry.getValue()))
+                continue;
+
+            itel.remove();
+        }
+
+        try {
+            if (writer != null) {
+                writer.close();
+                writer = null;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -50,43 +75,26 @@ public enum TranslateType {
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             System.out.println("[LibsDisguises] Loading translations: " + name());
-        } else {
-            if (!file.exists()) {
-                try {
-                    file.getParentFile().mkdirs();
-                    file.createNewFile();
-
-                    FileWriter writer = new FileWriter(getFile(), true);
-
-                    write(writer);
-
-                    writer.close();
-                }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            return;
         }
 
-        if (!file.exists())
+        if (!getFile().exists())
             return;
 
         YamlConfiguration config = new YamlConfiguration();
         config.options().pathSeparator(Character.toChars(0)[0]);
 
         try {
-            config.load(file);
+            config.load(getFile());
 
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
 
                 if (value == null)
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
-                else if (!Objects.equals(key, value)) // Don't store useless information
+                else {
                     translated.put(ChatColor.translateAlternateColorCodes('&', key),
                             ChatColor.translateAlternateColorCodes('&', value));
+                }
             }
         }
         catch (Exception e) {
@@ -106,40 +114,40 @@ public enum TranslateType {
     }
 
     public void save(String message, String comment) {
-        if (translated.containsKey(message))
+        if (translated.containsKey(message)) {
             return;
+        }
+
+        translated.put(message, message);
 
         message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
-            boolean exists = file.exists();
+            boolean exists = getFile().exists();
 
             if (!exists) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
+                getFile().getParentFile().mkdirs();
+                getFile().createNewFile();
             }
 
-            FileWriter writer = new FileWriter(getFile(), true);
+            if (writer == null) {
+                writer = new FileWriter(getFile(), true);
 
-            if (!exists) {
-                write(writer);
+                if (!exists) {
+                    writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
+
+                    if (this == TranslateType.MESSAGES) {
+                        writer.write(
+                                "# %s is where text is inserted, look up printf format codes if you're interested\n");
+                    }
+                }
             }
 
             writer.write("\n" + (comment != null ? "# " + comment + "\n" :
                     "") + "\"" + message + "\": \"" + message + "\"\n");
-
-            writer.close();
         }
         catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    private void write(FileWriter writer) throws IOException {
-        writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
-
-        if (this == TranslateType.MESSAGES) {
-            writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
         }
     }
 

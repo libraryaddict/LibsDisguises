@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
@@ -69,17 +68,15 @@ public class TranslateFiller {
         }
 
         TranslateType.DISGUISES.save("EntityType", "Used for the disgiuse radius command to list all entitytypes");
-        TranslateType.DISGUISES.save("DisgiseType", "Used for the disgiuse modify radius command to list all " +
-                "disguisetypes");
+        TranslateType.DISGUISES
+                .save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
             TranslateType.MESSAGES.save(msg.getRaw());
         }
 
-        if (!LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations()) {
-            for (TranslateType type : TranslateType.values()) {
-                type.wipeTranslations();
-            }
+        for (TranslateType type : TranslateType.values()) {
+            type.removeDuplicates();
         }
     }
 }
