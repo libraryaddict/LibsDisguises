@@ -7,7 +7,7 @@ NotifyUpdate: true
 # Even if you disable this, if there was disguises in the cache already then it will use them
 SaveGameProfiles: true
 
-# This option is useless if you don't enable SaveCache!
+# This option is useless if you don't enable SaveGameProfiles!
 # If a player has been disguised before and their skin saved into the cache
 # When they join the server will automatically update the cache incase they changed their skin
 UpdateGameProfiles: true
