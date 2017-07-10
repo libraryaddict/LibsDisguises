@@ -15,6 +15,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -237,7 +238,11 @@ public class ReflectionFlagWatchers {
         });
     }
 
-    public static Method[] getDisguiseWatcherMethods(Class<? extends FlagWatcher> watcherClass) {
+    public static Method[] getDisguiseWatcherMethods(@Nullable Class<? extends FlagWatcher> watcherClass) {
+        if (watcherClass == null) {
+            return new Method[0];
+        }
+
         ArrayList<Method> methods = new ArrayList<>(Arrays.asList(watcherClass.getMethods()));
 
         Iterator<Method> itel = methods.iterator();
