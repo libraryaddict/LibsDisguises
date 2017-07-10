@@ -588,7 +588,7 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
-        if (!cachedNames.contains(playerName.toLowerCase()))
+        if (!hasGameProfile(playerName))
             return null;
 
         if (!profileCache.exists())
@@ -726,7 +726,7 @@ public class DisguiseUtilities {
             boolean contactMojang) {
         final String playerName = origName.toLowerCase();
 
-        if (cachedNames.contains(playerName)) {
+        if (DisguiseConfig.isSaveGameProfiles() && hasGameProfile(playerName)) {
             return getGameProfile(playerName);
         } else if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
             final Player player = Bukkit.getPlayerExact(playerName);
@@ -894,8 +894,6 @@ public class DisguiseUtilities {
         for (String key : savedDisguises.list()) {
             savedDisguiseList.add(UUID.fromString(key));
         }
-
-        LibsPremium.check(libsDisguises);
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
