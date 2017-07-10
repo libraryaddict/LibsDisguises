@@ -449,7 +449,7 @@ public class ReflectionManager {
 
     public static Object getNmsItem(ItemStack itemstack) {
         try {
-            return craftItemClass.getDeclaredMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
+            return craftItemClass.getMethod("asNMSCopy", ItemStack.class).invoke(null, itemstack);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -784,6 +784,13 @@ public class ReflectionManager {
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            } else if (val instanceof ItemStack) {
+                val = getNmsItem((ItemStack) val);
+
+                if (val == null)
+                    return Optional.absent();
+                else
+                    return Optional.of(val);
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
@@ -797,7 +804,7 @@ public class ReflectionManager {
             }
         } else if (value instanceof Direction) {
             try {
-                return (Enum) getNmsMethod("EnumDirection", "fromType1", int.class)
+                return getNmsMethod("EnumDirection", "fromType1", int.class)
                         .invoke(null, ((Direction) value).ordinal());
             }
             catch (Exception ex) {

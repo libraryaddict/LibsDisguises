@@ -735,7 +735,9 @@ public class DisguiseUtilities {
                 WrappedGameProfile gameProfile = ReflectionManager.getGameProfile(player);
 
                 if (!gameProfile.getProperties().isEmpty()) {
-                    addGameProfile(playerName, gameProfile);
+                    if (DisguiseConfig.isSaveGameProfiles()) {
+                        addGameProfile(playerName, gameProfile);
+                    }
 
                     return gameProfile;
                 }
@@ -755,7 +757,9 @@ public class DisguiseUtilities {
                                         return;
                                     }
 
-                                    addGameProfile(playerName, gameProfile);
+                                    if (DisguiseConfig.isSaveGameProfiles()) {
+                                        addGameProfile(playerName, gameProfile);
+                                    }
 
                                     if (runnables.containsKey(playerName)) {
                                         for (Object obj : runnables.remove(playerName)) {
