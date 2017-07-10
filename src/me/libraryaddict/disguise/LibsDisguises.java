@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -27,6 +28,7 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+
         saveDefaultConfig();
 
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
@@ -34,6 +36,8 @@ public class LibsDisguises extends JavaPlugin {
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
             saveResource("disguises.yml", false);
         }
+
+        LibsPremium.check(instance);
 
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
@@ -198,6 +202,27 @@ public class LibsDisguises extends JavaPlugin {
             @Override
             public String getValue() {
                 return updates ? "Enabled" : "Disabled";
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("targeted_disguises") {
+            @Override
+            public String getValue() {
+                Collection<HashSet<TargetedDisguise>> list = DisguiseUtilities.getDisguises().values();
+
+                if (list.isEmpty())
+                    return "Unknown";
+
+                for (HashSet<TargetedDisguise> dList : list) {
+                    for (TargetedDisguise disg : dList) {
+                        if (disg.getObservers().isEmpty())
+                            continue;
+
+                        return "Yes";
+                    }
+                }
+
+                return "No";
             }
         });
     }
@@ -423,13 +448,18 @@ public class LibsDisguises extends JavaPlugin {
 
                     indexes.remove(flagType);
 
-                    if (ReflectionManager.convertInvalidItem(flagType.getDefault()).getClass() != ReflectionManager
-                            .convertInvalidItem(watch.getValue()).getClass()) {
-                        System.err.println("Mismatch of FlagType's for " + disguiseType.name() + "! Index " + watch
+                    Object obj1 = ReflectionManager.convertInvalidItem(flagType.getDefault());
+                    Object obj2 = ReflectionManager.convertInvalidItem(watch.getValue());
+
+                    if (obj1 != obj2 && ((obj1 == null || obj2 == null) || obj1.getClass() != obj2.getClass())) {
+                        System.err.println("Mismatch of " + "FlagType's for " + disguiseType.name() + "! Index " + watch
                                 .getIndex() + " has the wrong classtype!");
-                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue()
-                                .getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass
-                                .getSimpleName() + " which doesn't match up with " + flagType.getDefault().getClass());
+                        System.err.println(
+                                "MetaIndex has the " + "default of " + flagType.getDefault() + " (" + flagType
+                                        .getDefault().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass
+                                        .getSimpleName());
+                        System.err.println("Where the internals is " + watch.getRawValue() + " (" + watch.getRawValue()
+                                .getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                     }
                 }

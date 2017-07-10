@@ -9,6 +9,8 @@ import me.libraryaddict.disguise.utilities.backwards.metadata.Version_1_9;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by libraryaddict on 8/06/2017.
@@ -48,16 +50,22 @@ public class BackwardsSupport {
     }
 
     private static void getIndexes(Class backwardsClass, BackwardMethods backwards,
-            ArrayList<MetaIndex> newIndexes) throws IllegalAccessException {
-        for (Field field : backwardsClass.getFields()) {
+            HashMap<String, MetaIndex> newIndexes) throws IllegalAccessException {
+        for (Field field : backwardsClass.getDeclaredFields()) {
             if (field.getType() != MetaIndex.class)
                 continue;
 
+            field.setAccessible(true);
+
+            if (newIndexes.containsKey(field.getName()))
+                continue;
+
             if (MetaIndex.setMetaIndex(field.getName(), (MetaIndex) field.get(backwards))) {
+                newIndexes.put(field.getName(), MetaIndex.ENTITY_META);
                 continue;
             }
 
-            newIndexes.add((MetaIndex) field.get(backwards));
+            newIndexes.put(field.getName(), (MetaIndex) field.get(backwards));
         }
 
         backwardsClass = backwardsClass.getSuperclass();
@@ -70,13 +78,17 @@ public class BackwardsSupport {
         try {
             BackwardMethods backwards = backwardsClass.newInstance();
 
-            ArrayList<MetaIndex> newIndexes = new ArrayList<>();
+            HashMap<String, MetaIndex> newIndexes = new HashMap<>();
 
             getIndexes(backwardsClass, backwards, newIndexes);
 
             MetaIndex.setValues();
 
-            MetaIndex.addMetaIndexes(newIndexes.toArray(new MetaIndex[0]));
+            HashSet<MetaIndex> indexes = new HashSet<>(newIndexes.values());
+            indexes.remove(MetaIndex.ENTITY_META); // We do the hashmap stuff to prevent multiple versions
+            // registering the same meta index
+
+            MetaIndex.addMetaIndexes(indexes.toArray(new MetaIndex[0]));
 
             if (backwards.isOrderedIndexes()) {
                 MetaIndex.eliminateBlankIndexes();

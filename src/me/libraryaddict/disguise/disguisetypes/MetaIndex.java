@@ -410,11 +410,18 @@ public class MetaIndex<Y> {
         ArrayList<MetaIndex> list = new ArrayList<>();
 
         for (MetaIndex type : values()) {
-            if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
+            if (type == null || !type.getFlagWatcher().isAssignableFrom(watcherClass))
                 continue;
 
             list.add(type);
         }
+
+        Collections.sort(list, new Comparator<MetaIndex>() {
+            @Override
+            public int compare(MetaIndex o1, MetaIndex o2) {
+                return Integer.compare(o1.getIndex(), o2.getIndex());
+            }
+        });
 
         return list;
     }
@@ -446,8 +453,15 @@ public class MetaIndex<Y> {
         for (int i = values().length - metaIndexes.length, a = 0; i < values().length; i++, a++) {
             MetaIndex index = metaIndexes[a];
 
+            ArrayList<MetaIndex> list = getFlags(index.getFlagWatcher());
+
+            for (int b = index.getIndex(); b < list.size(); b++) {
+                list.get(b)._index++;
+            }
+
             for (MetaIndex metaIndex : values()) {
-                if (metaIndex.getFlagWatcher() != index.getFlagWatcher() || metaIndex.getIndex() != index.getIndex()) {
+                if (metaIndex == null || metaIndex.getFlagWatcher() != index.getFlagWatcher() || metaIndex
+                        .getIndex() != index.getIndex()) {
                     continue;
                 }
 
@@ -507,7 +521,7 @@ public class MetaIndex<Y> {
     private int _index;
     private Class<? extends FlagWatcher> _watcher;
 
-    private MetaIndex(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {
+    public MetaIndex(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {
         _index = index;
         _watcher = watcher;
         _defaultValue = defaultValue;
