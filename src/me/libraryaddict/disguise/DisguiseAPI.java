@@ -161,6 +161,11 @@ public class DisguiseAPI {
         if (entity == null || disguise == null) {
             return;
         }
+
+        if (entity instanceof Player) {
+            disguise.setViewSelfDisguise(DisguiseAPI.isViewSelfToggled(entity));
+        }
+
         // The event wasn't cancelled.
         // If the disguise entity isn't the same as the one we are disguising
         if (disguise.getEntity() != entity) {
