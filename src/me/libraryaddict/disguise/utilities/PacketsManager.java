@@ -477,7 +477,7 @@ public class PacketsManager {
             }
         }
 
-        if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise()) {
+        if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise() || disguise.isMobDisguise()) {
             PacketContainer rotateHead = new PacketContainer(Server.ENTITY_HEAD_ROTATION);
             packets.addPacket(rotateHead);
 
