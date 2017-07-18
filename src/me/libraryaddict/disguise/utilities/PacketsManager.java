@@ -442,6 +442,7 @@ public class PacketsManager {
             mods.write(8, (int) (d4 * 8000.0D));
             mods.write(9, yaw);
             mods.write(10, pitch);
+            mods.write(11, yaw);
 
             spawnEntity.getDataWatcherModifier().write(0,
                     createDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher()));
@@ -477,7 +478,7 @@ public class PacketsManager {
             }
         }
 
-        if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise() || disguise.isMobDisguise()) {
+        if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise()) {
             PacketContainer rotateHead = new PacketContainer(Server.ENTITY_HEAD_ROTATION);
             packets.addPacket(rotateHead);
 
