@@ -340,8 +340,8 @@ public class PacketsManager {
             doubles.write(2, spawnAt.getZ());
 
             StructureModifier<Byte> bytes = spawnPlayer.getBytes();
-            bytes.write(0, ((byte) (int) (loc.getYaw() * 256.0F / 360.0F)));
-            bytes.write(1, ((byte) (int) (loc.getPitch() * 256.0F / 360.0F)));
+            bytes.write(0, yaw);
+            bytes.write(1, pitch);
 
             spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
 
@@ -372,8 +372,8 @@ public class PacketsManager {
                 doubles.write(2, loc.getZ());
 
                 bytes = teleportPacket.getBytes();
-                bytes.write(0, ((byte) (int) (loc.getYaw() * 256.0F / 360.0F)));
-                bytes.write(1, ((byte) (int) (loc.getPitch() * 256.0F / 360.0F)));
+                bytes.write(0, yaw);
+                bytes.write(1, pitch);
 
                 packets.addPacket(teleportPacket);
             }
