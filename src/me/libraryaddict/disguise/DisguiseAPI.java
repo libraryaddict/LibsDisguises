@@ -390,7 +390,7 @@ public class DisguiseAPI {
      */
     public static boolean isViewSelfToggled(Entity entity) {
         return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() :
-                Disguise.getViewSelf().contains(entity.getUniqueId());
+                !Disguise.getViewSelf().contains(entity.getUniqueId());
     }
 
     /**
@@ -422,7 +422,7 @@ public class DisguiseAPI {
             }
         }
 
-        if (toggled) {
+        if (!toggled) {
             if (!Disguise.getViewSelf().contains(entity.getUniqueId())) {
                 Disguise.getViewSelf().add(entity.getUniqueId());
             }
