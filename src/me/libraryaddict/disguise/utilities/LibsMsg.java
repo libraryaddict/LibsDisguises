@@ -24,7 +24,10 @@ public enum LibsMsg {
     DHELP_CANTFIND(ChatColor.RED + "Cannot find the disguise %s"),
     DHELP_HELP1(
             ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN + "- View the options you can set on a disguise. Add 'show' to reveal the options you don't have permission to use"),
-    DHELP_HELP2(ChatColor.RED + "/disguisehelp %s" + ChatColor.GREEN + " - %s"),
+    DHELP_HELP2(
+            ChatColor.RED + "/disguisehelp <DisguiseOption> " + ChatColor.GREEN + "- View information about the " +
+                    "disguise options such as 'RabbitType'"),
+    DHELP_HELP3(ChatColor.RED + "/disguisehelp %s" + ChatColor.GREEN + " - %s"),
     DHELP_OPTIONS("%s options: %s"),
     DISABLED_LIVING_TO_MISC(
             ChatColor.RED + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),

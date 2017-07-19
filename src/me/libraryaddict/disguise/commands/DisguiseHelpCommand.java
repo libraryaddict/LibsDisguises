@@ -185,6 +185,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
     protected void sendCommandUsage(CommandSender sender,
             HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
         sender.sendMessage(LibsMsg.DHELP_HELP1.get());
+        sender.sendMessage(LibsMsg.DHELP_HELP2.get());
 
         for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
             sender.sendMessage(LibsMsg.DHELP_HELP2.get(s.getName().replaceAll(" ", ""), s.getDescription()));
