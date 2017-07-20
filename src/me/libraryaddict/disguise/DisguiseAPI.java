@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -34,6 +35,15 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class DisguiseAPI {
+    public static Disguise getCustomDisguise(String disguiseName) {
+        Map.Entry<String, Disguise> entry = DisguiseConfig.getCustomDisguise(disguiseName);
+
+        if (entry == null)
+            return null;
+
+        return entry.getValue();
+    }
+
     public static Disguise constructDisguise(Entity entity) {
         return constructDisguise(entity, true, true, true);
     }
