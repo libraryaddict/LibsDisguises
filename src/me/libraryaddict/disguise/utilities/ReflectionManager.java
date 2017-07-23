@@ -862,10 +862,13 @@ public class ReflectionManager {
         }
 
         if (serializer == null) {
+            if (value.getClass().getSimpleName().equals("NBTTagCompound"))
+                return null; // Handle PaperSpigot's bad coding
+
             throw new IllegalArgumentException("Unable to find Serializer for " + value + (
                     value instanceof Optional && ((Optional) value).isPresent() ?
                             " (" + ((Optional) value).get().getClass().getName() + ")" :
-                            value instanceof Optional || value == null ? "" : value.getClass()
+                            value instanceof Optional || value == null ? "" : " " + value.getClass()
                                     .getName()) + "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
         }
 
