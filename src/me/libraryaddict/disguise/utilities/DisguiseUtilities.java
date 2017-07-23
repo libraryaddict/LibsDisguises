@@ -103,9 +103,16 @@ public class DisguiseUtilities {
     }
 
     public static void saveDisguises() {
+        if (!LibsPremium.isPremium())
+            return;
+
         for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {
             for (TargetedDisguise disg : list) {
                 if (disg.getEntity() == null)
+                    continue;
+
+                if (disg.getEntity() instanceof Player ? DisguiseConfig.isSavePlayerDisguises() :
+                        DisguiseConfig.isSaveEntityDisguises())
                     continue;
 
                 saveDisguises(disg.getEntity().getUniqueId(), list.toArray(new Disguise[0]));
@@ -188,7 +195,7 @@ public class DisguiseUtilities {
                 savedDisguiseList.add(owningEntity);
             }
         }
-        catch (Exception e) {
+        catch (StackOverflowError | Exception e) {
             e.printStackTrace();
         }
     }
@@ -327,8 +334,8 @@ public class DisguiseUtilities {
 
             cachedNames.add(string.toLowerCase());
         }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        catch (StackOverflowError | Exception e) {
+            e.printStackTrace();
         }
     }
 
