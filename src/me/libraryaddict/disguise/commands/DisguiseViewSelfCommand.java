@@ -25,10 +25,10 @@ public class DisguiseViewSelfCommand implements CommandExecutor {
 
         if (DisguiseAPI.isViewSelfToggled(player)) {
             DisguiseAPI.setViewDisguiseToggled(player, false);
-            sender.sendMessage(LibsMsg.VIEW_SELF_ON.get());
+            sender.sendMessage(LibsMsg.VIEW_SELF_OFF.get());
         } else {
             DisguiseAPI.setViewDisguiseToggled(player, true);
-            sender.sendMessage(LibsMsg.VIEW_SELF_OFF.get());
+            sender.sendMessage(LibsMsg.VIEW_SELF_ON.get());
         }
 
         return true;

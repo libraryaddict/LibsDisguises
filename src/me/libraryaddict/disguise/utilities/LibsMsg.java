@@ -149,8 +149,8 @@ public enum LibsMsg {
     UNDISRADIUS(ChatColor.RED + "Successfully undisguised %s entities!"),
     UPDATE_READY(
             ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + ", the new version is " + ChatColor.RED + "%s" + ChatColor.DARK_RED + "!"),
-    VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise on!"),
-    VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise off!");
+    VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
+    VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!");
 
     private String string;
 
