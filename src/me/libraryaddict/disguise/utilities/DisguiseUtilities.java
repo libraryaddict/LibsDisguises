@@ -106,6 +106,11 @@ public class DisguiseUtilities {
         if (!LibsPremium.isPremium())
             return;
 
+        if (!DisguiseConfig.isSaveEntityDisguises() && !DisguiseConfig.isSavePlayerDisguises())
+            return;
+
+        System.out.println("[LibsDisguises] Now saving disguises..");
+
         for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {
             for (TargetedDisguise disg : list) {
                 if (disg.getEntity() == null)
@@ -119,6 +124,8 @@ public class DisguiseUtilities {
                 break;
             }
         }
+
+        System.out.println("[LibsDisguises] Saved disguises.");
     }
 
     public static boolean hasGameProfile(String playername) {
