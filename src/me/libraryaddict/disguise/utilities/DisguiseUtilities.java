@@ -834,6 +834,7 @@ public class DisguiseUtilities {
         gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
         gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
         gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
+        gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
 
         gson = gsonBuilder.create();
 
