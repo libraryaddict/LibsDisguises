@@ -188,9 +188,9 @@ public class DisguiseAPI {
             disguise.setEntity(entity);
         }
 
-        if (Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId())) {
-            disguise.setViewSelfDisguise(true);
-        }
+        disguise.setViewSelfDisguise(
+                Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId()) != DisguiseConfig
+                        .isViewDisguises());
 
         disguise.startDisguise();
     }
@@ -400,7 +400,7 @@ public class DisguiseAPI {
      */
     public static boolean isViewSelfToggled(Entity entity) {
         return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() :
-                !Disguise.getViewSelf().contains(entity.getUniqueId());
+                !Disguise.getViewSelf().contains(entity.getUniqueId()) == DisguiseConfig.isViewDisguises();
     }
 
     /**
@@ -421,18 +421,18 @@ public class DisguiseAPI {
      * Set whether this player can see his own disguise or not.
      *
      * @param entity
-     * @param toggled
+     * @param canSeeSelfDisguises
      */
-    public static void setViewDisguiseToggled(Entity entity, boolean toggled) {
+    public static void setViewDisguiseToggled(Entity entity, boolean canSeeSelfDisguises) {
         if (isDisguised(entity)) {
             Disguise[] disguises = getDisguises(entity);
 
             for (Disguise disguise : disguises) {
-                disguise.setViewSelfDisguise(toggled);
+                disguise.setViewSelfDisguise(canSeeSelfDisguises);
             }
         }
 
-        if (!toggled) {
+        if (!canSeeSelfDisguises == DisguiseConfig.isViewDisguises()) {
             if (!Disguise.getViewSelf().contains(entity.getUniqueId())) {
                 Disguise.getViewSelf().add(entity.getUniqueId());
             }
