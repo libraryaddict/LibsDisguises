@@ -865,7 +865,8 @@ public class ReflectionManager {
             throw new IllegalArgumentException("Unable to find Serializer for " + value + (
                     value instanceof Optional && ((Optional) value).isPresent() ?
                             " (" + ((Optional) value).get().getClass().getName() + ")" :
-                            "") + "! Are you running the latest version of ProtocolLib?");
+                            value instanceof Optional || value == null ? "" : value.getClass()
+                                    .getName()) + "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
