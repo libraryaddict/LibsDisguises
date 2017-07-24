@@ -94,9 +94,10 @@ public enum DisguiseSound {
     PIG_ZOMBIE("entity.zombie_pig.hurt", null, "entity.zombie_pig.death", "entity.zombie_pig.ambient",
             "entity.zombie_pig.angry"),
 
-    PLAYER("entity.player.hurt", "block.stone.step", "block.grass.step", "block.anvil.step", "block.cloth.step",
-            "block.glass.step", "block.gravel.step", "block.ladder.step", "block.metal.step", "block.sand.step",
-            "block.slime.step", "block.snow.step", "block.wood.step", "entity.player.death", null),
+    PLAYER("entity.player.hurt",
+            new String[]{"block.stone.step", "block.grass.step", "block.anvil.step", "block.cloth.step",
+                    "block.glass.step", "block.gravel.step", "block.ladder.step", "block.metal.step", "block.sand.step",
+                    "block.slime.step", "block.snow.step", "block.wood.step"}, "entity.player.death", null),
 
     RABBIT("entity.rabbit.hurt", "entity.rabbit.jump", "entity.rabbit.death", "entity.rabbit.ambient"),
 
