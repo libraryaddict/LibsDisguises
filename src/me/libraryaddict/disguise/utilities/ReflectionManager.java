@@ -889,6 +889,9 @@ public class ReflectionManager {
     public static WrappedWatchableObject createWatchable(int index, Object obj) {
         Object watcherItem = createDataWatcherItem(index, obj);
 
+        if (watcherItem == null)
+            return null;
+
         return new WrappedWatchableObject(watcherItem);
     }
 
