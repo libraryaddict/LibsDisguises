@@ -887,7 +887,9 @@ public class ReflectionManager {
     }
 
     public static WrappedWatchableObject createWatchable(int index, Object obj) {
-        return new WrappedWatchableObject(createDataWatcherItem(index, obj));
+        Object watcherItem = createDataWatcherItem(index, obj);
+
+        return new WrappedWatchableObject(watcherItem);
     }
 
     public static int getCombinedId(int id, int data) {

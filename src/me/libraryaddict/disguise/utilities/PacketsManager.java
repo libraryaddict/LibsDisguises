@@ -1058,7 +1058,8 @@ public class PacketsManager {
                             WrappedWatchableObject watch = ReflectionManager
                                     .createWatchable(0, WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 
-                            list.add(watch);
+                            if (watch != null)
+                                list.add(watch);
 
                             list = disguise.getWatcher().convert(list);
                         } else {
