@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,19 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 
 public class DisguiseAPI {
+    private static int selfDisguiseId;
+
+    static {
+        try {
+            Field field = ReflectionManager.getNmsField("Entity", "entityCount");
+            selfDisguiseId = field.getInt(null);
+            field.set(null, selfDisguiseId + 1);
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Disguise getCustomDisguise(String disguiseName) {
         Map.Entry<String, Disguise> entry = DisguiseConfig.getCustomDisguise(disguiseName);
 
@@ -360,7 +374,7 @@ public class DisguiseAPI {
     }
 
     public static int getSelfDisguiseId() {
-        return -10;
+        return selfDisguiseId;
     }
 
     /**
