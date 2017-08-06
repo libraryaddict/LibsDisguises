@@ -86,7 +86,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                disguise.getWatcher().setCustomName(getDisplayName(sender));
+                disguise.getWatcher().setCustomName(getDisplayName(player));
 
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     disguise.getWatcher().setCustomNameVisible(true);
