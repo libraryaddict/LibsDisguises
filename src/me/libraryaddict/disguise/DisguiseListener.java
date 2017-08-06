@@ -8,7 +8,10 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
@@ -17,7 +20,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -37,6 +39,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -450,7 +453,11 @@ public class DisguiseListener implements Listener {
                 } else {
                     if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                         if (disguise.getWatcher() instanceof LivingWatcher) {
-                            disguise.getWatcher().setCustomName(((Player) entity).getDisplayName());
+                            Team team = ((Player) entity).getScoreboard().getEntryTeam(entity.getName());
+
+                            disguise.getWatcher().setCustomName(
+                                    (team == null ? "" : team.getPrefix()) + entity.getName() + (team == null ? "" :
+                                            team.getSuffix()));
 
                             if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                                 disguise.getWatcher().setCustomNameVisible(true);

@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 /**
  * @author libraryaddict
@@ -34,6 +38,12 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         }
 
         return new ArrayList<>(new HashSet<>(list));
+    }
+
+    protected String getDisplayName(CommandSender player) {
+        Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
+
+        return (team == null ? "" : team.getPrefix()) + player.getName() + (team == null ? "" : team.getSuffix());
     }
 
     protected ArrayList<String> getAllowedDisguises(

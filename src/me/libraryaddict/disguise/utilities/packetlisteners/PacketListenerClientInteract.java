@@ -23,22 +23,17 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 
-public class PacketListenerClientInteract extends PacketAdapter
-{
-    public PacketListenerClientInteract(LibsDisguises plugin)
-    {
+public class PacketListenerClientInteract extends PacketAdapter {
+    public PacketListenerClientInteract(LibsDisguises plugin) {
         super(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY);
     }
 
     @Override
-    public void onPacketReceiving(PacketEvent event)
-    {
-
+    public void onPacketReceiving(PacketEvent event) {
         if (event.isCancelled())
             return;
 
-        try
-        {
+        try {
             Player observer = event.getPlayer();
 
             if (observer.getName().contains("UNKNOWN[")) // If the player is temporary
@@ -48,42 +43,35 @@ public class PacketListenerClientInteract extends PacketAdapter
 
             Entity entity = entityModifer.read(0);
 
-            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow || entity == observer)
-            {
+            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow || entity == observer) {
                 event.setCancelled(true);
             }
 
-            for (ItemStack item : new ItemStack[]
-                {
-                        observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()
-                })
-            {
+            for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                    observer.getInventory().getItemInOffHand()}) {
                 if (item == null || item.getType() != Material.INK_SACK)
                     continue;
 
                 Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
 
-                if (disguise == null || (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF))
+                if (disguise == null || (disguise.getType() != DisguiseType.SHEEP && disguise
+                        .getType() != DisguiseType.WOLF))
                     continue;
 
                 AnimalColor color = AnimalColor.getColor(item.getDurability());
 
-                if (disguise.getType() == DisguiseType.SHEEP)
-                {
+                if (disguise.getType() == DisguiseType.SHEEP) {
                     SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
 
                     watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
-                }
-                else
-                {
+                } else {
                     WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
 
                     watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
                 }
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
