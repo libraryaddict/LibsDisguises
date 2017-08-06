@@ -146,11 +146,11 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public int getArrowsSticking() {
-        return (int) getData(MetaIndex.LIVING_ARROWS);
+        return getData(MetaIndex.LIVING_ARROWS);
     }
 
     public void setArrowsSticking(int arrowsNo) {
-        setData(MetaIndex.LIVING_ARROWS, arrowsNo);
+        setData(MetaIndex.LIVING_ARROWS, Math.max(0, Math.min(127, arrowsNo)));
         sendData(MetaIndex.LIVING_ARROWS);
     }
 
