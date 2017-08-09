@@ -780,7 +780,6 @@ public abstract class Disguise {
         }
 
         task = Bukkit.getScheduler().
-
                 runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
 
         if (this instanceof PlayerDisguise) {

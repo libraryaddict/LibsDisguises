@@ -43,7 +43,7 @@ public class UpdateChecker {
             con.getOutputStream().write(
                     ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=32453").getBytes("UTF-8"));
             String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-            if (version.length() <= 7) {
+            if (version.length() <= 10) {
                 return version;
             }
         }
