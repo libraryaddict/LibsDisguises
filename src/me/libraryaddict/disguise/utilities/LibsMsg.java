@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
 public enum LibsMsg {
     BLOWN_DISGUISE(ChatColor.RED + "Your disguise was blown!"),
     CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises: %s"),
-    CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player '%s'"),
+    CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player/uuid '%s'"),
     CLICK_TIMER(ChatColor.RED + "Right click a entity in the next %s seconds to grab the disguise reference!"),
     CLONE_HELP1(
             ChatColor.DARK_GREEN + "Right click a entity to get a disguise reference you can pass to other disguise commands!"),
@@ -76,7 +76,7 @@ public enum LibsMsg {
     DMODRADIUS_NOPERM(ChatColor.RED + "No permission to modify %s disguises!"),
     DMODRADIUS_UNRECOGNIZED(ChatColor.RED + "Unrecognised DisguiseType %s"),
     DMODRADIUS_USABLE(ChatColor.DARK_GREEN + "DisguiseTypes usable are: %s" + ChatColor.DARK_GREEN + "."),
-    DPLAYER_SUPPLY(ChatColor.RED + "You need to supply a disguise as well as the player"),
+    DPLAYER_SUPPLY(ChatColor.RED + "You need to supply a disguise as well as the player/uuid"),
     DRADIUS_ENTITIES(ChatColor.DARK_GREEN + "EntityTypes usable are: %s"),
     DRADIUS_HELP1(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at %s blocks!"),
     DRADIUS_HELP3(

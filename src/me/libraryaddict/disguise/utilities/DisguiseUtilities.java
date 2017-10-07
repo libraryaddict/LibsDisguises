@@ -1317,7 +1317,7 @@ public class DisguiseUtilities {
                     break;
                 }
 
-                // If the player is in a team already
+                // If the player is in a team already and the team isn't one controlled by Lib's Disguises
                 if (prevTeam != null && !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName()
                         .endsWith("_LDP"))) {
                     // If we're creating a scoreboard

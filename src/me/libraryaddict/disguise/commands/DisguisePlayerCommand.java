@@ -11,20 +11,17 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCompleter {
 
@@ -47,7 +44,17 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        Entity player = Bukkit.getPlayer(args[0]);
+
+        if (player == null) {
+            if (args[0].contains("-")) {
+                try {
+                    player = Bukkit.getEntity(UUID.fromString(args[0]));
+                }
+                catch (Exception ignored) {
+                }
+            }
+        }
 
         if (player == null) {
             sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
@@ -97,9 +104,13 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         DisguiseAPI.disguiseToAll(player, disguise);
 
         if (disguise.isDisguiseInUse()) {
-            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG.get(player.getName(), disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG
+                    .get(player instanceof Player ? player.getName() : DisguiseType.getType(player).toReadable(),
+                            disguise.getType().toReadable()));
         } else {
-            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL.get(player.getName(), disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL
+                    .get(player instanceof Player ? player.getName() : DisguiseType.getType(player).toReadable(),
+                            disguise.getType().toReadable()));
         }
 
         return true;
