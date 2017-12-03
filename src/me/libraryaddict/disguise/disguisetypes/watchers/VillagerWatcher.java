@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.entity.Villager.Profession;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.entity.Villager.Profession;
 
 public class VillagerWatcher extends AgeableWatcher {
 
@@ -19,7 +18,7 @@ public class VillagerWatcher extends AgeableWatcher {
 
     @Deprecated
     public void setProfession(int professionId) {
-        setData(MetaIndex.VILLAGER_PROFESSION, professionId);
+        setData(MetaIndex.VILLAGER_PROFESSION, Math.max(1, Math.min(professionId, Profession.BUTCHER.ordinal()) - 1));
         sendData(MetaIndex.VILLAGER_PROFESSION);
     }
 
