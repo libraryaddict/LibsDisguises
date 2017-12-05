@@ -1,41 +1,30 @@
 package me.libraryaddict.disguise;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.HorseInventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.HorseInventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DisguiseAPI {
+    private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
+
     public static Disguise getCustomDisguise(String disguiseName) {
         Map.Entry<String, Disguise> entry = DisguiseConfig.getCustomDisguise(disguiseName);
 
@@ -99,9 +88,9 @@ public class DisguiseAPI {
             }
         }
         for (Method method : entity.getClass().getMethods()) {
-            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName()
-                    .equals("setSprinting")) && method.getParameterTypes().length == 0 && method
-                    .getReturnType() != void.class) {
+            if ((doSneak || !method.getName().equals("setSneaking")) &&
+                    (doSprint || !method.getName().equals("setSprinting")) && method.getParameterTypes().length == 0 &&
+                    method.getReturnType() != void.class) {
                 Class methodReturn = method.getReturnType();
 
                 if (methodReturn == float.class || methodReturn == Float.class || methodReturn == Double.class) {
@@ -112,15 +101,16 @@ public class DisguiseAPI {
 
                 if (firstCapitalMethod > 0) {
                     for (Method watcherMethod : watcher.getClass().getMethods()) {
-                        if (!watcherMethod.getName().startsWith("get") && watcherMethod
-                                .getReturnType() == void.class && watcherMethod.getParameterTypes().length == 1) {
+                        if (!watcherMethod.getName().startsWith("get") && watcherMethod.getReturnType() == void.class &&
+                                watcherMethod.getParameterTypes().length == 1) {
                             int firstCapitalWatcher = firstCapital(watcherMethod.getName());
 
                             if (firstCapitalWatcher > 0 && method.getName().substring(firstCapitalMethod)
                                     .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
                                 Class methodParam = watcherMethod.getParameterTypes()[0];
 
-                                if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
+                                if (methodParam == float.class || methodParam == Float.class ||
+                                        methodParam == Double.class) {
                                     methodParam = double.class;
                                 } else if (methodParam == AnimalColor.class) {
                                     methodParam = DyeColor.class;
@@ -145,8 +135,8 @@ public class DisguiseAPI {
                                                     value = AnimalColor.valueOf(((DyeColor) value).name());
                                                 }
                                             }
-                                            if (value instanceof Boolean && !(Boolean) value && watcherMethod
-                                                    .getDeclaringClass() == FlagWatcher.class) {
+                                            if (value instanceof Boolean && !(Boolean) value &&
+                                                    watcherMethod.getDeclaringClass() == FlagWatcher.class) {
                                                 continue;
                                             }
                                         }
@@ -189,9 +179,8 @@ public class DisguiseAPI {
             disguise.setEntity(entity);
         }
 
-        disguise.setViewSelfDisguise(
-                Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId()) != DisguiseConfig
-                        .isViewDisguises());
+        disguise.setViewSelfDisguise(Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId()) !=
+                DisguiseConfig.isViewDisguises());
 
         disguise.startDisguise();
     }
@@ -242,17 +231,10 @@ public class DisguiseAPI {
             disguise = disguise.clone();
         }
 
-        try {
-            int id = ReflectionManager.getNmsField("Entity", "entityCount").getInt(null);
-            DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
+        int id = ReflectionManager.getNewEntityId(false);
+        DisguiseUtilities.addFutureDisguise(id, (TargetedDisguise) disguise);
 
-            return id;
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return -1;
+        return id;
     }
 
     /**
@@ -361,7 +343,7 @@ public class DisguiseAPI {
     }
 
     public static int getSelfDisguiseId() {
-        return -10;
+        return selfDisguiseId;
     }
 
     /**
@@ -405,7 +387,8 @@ public class DisguiseAPI {
     }
 
     /**
-     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka removed from
+     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka
+     * removed from
      * the world.
      *
      * @param entity

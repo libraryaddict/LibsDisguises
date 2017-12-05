@@ -8,8 +8,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.google.common.base.Optional;
-import com.google.gson.Gson;
-import com.mojang.authlib.GameProfileRepository;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.*;
@@ -19,10 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class ReflectionManager {
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
@@ -39,8 +34,8 @@ public class ReflectionManager {
     static {
         for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
             try {
-                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers()) && method
-                        .getParameterTypes().length == 0) {
+                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers()) &&
+                        method.getParameterTypes().length == 0) {
                     Object entity = createEntityInstance("Cow");
 
                     method.setAccessible(true);
@@ -75,6 +70,27 @@ public class ReflectionManager {
         entityCountField = getNmsField("Entity", "entityCount");
 
         entityCountField.setAccessible(true);
+    }
+
+    public static int getNewEntityId() {
+        return getNewEntityId(true);
+    }
+
+    public static int getNewEntityId(boolean increment) {
+        try {
+            int id = entityCountField.getInt(null);
+
+            if (increment) {
+                entityCountField.set(null, id + 1);
+            }
+
+            return id;
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 
     public static Object createEntityInstance(String entityName) {
@@ -865,11 +881,11 @@ public class ReflectionManager {
             if (value.getClass().getSimpleName().equals("NBTTagCompound"))
                 return null; // Handle PaperSpigot's bad coding
 
-            throw new IllegalArgumentException("Unable to find Serializer for " + value + (
-                    value instanceof Optional && ((Optional) value).isPresent() ?
+            throw new IllegalArgumentException("Unable to find Serializer for " + value +
+                    (value instanceof Optional && ((Optional) value).isPresent() ?
                             " (" + ((Optional) value).get().getClass().getName() + ")" :
-                            value instanceof Optional || value == null ? "" : " " + value.getClass()
-                                    .getName()) + "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
+                            value instanceof Optional || value == null ? "" : " " + value.getClass().getName()) +
+                    "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
         }
 
         WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
