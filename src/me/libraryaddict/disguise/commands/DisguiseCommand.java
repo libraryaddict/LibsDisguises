@@ -45,7 +45,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), args, getPermissions(sender));
+            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args)), getPermissions(sender));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

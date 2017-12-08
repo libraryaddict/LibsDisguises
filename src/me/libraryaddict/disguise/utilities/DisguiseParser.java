@@ -1,15 +1,9 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import com.google.gson.GsonBuilder;
-import com.mojang.authlib.GameProfile;
-import me.libraryaddict.disguise.utilities.json.SerializerGameProfile;
-import org.apache.commons.lang3.StringUtils;
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.disguisetypes.*;
 import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,19 +14,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.MobDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.RabbitType;
-import sun.reflect.Reflection;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class DisguiseParser {
     public static class DisguiseParseException extends Exception {
@@ -201,8 +187,8 @@ public class DisguiseParser {
     }
 
     public static DisguisePerm[] getDisguisePerms() {
-        DisguisePerm[] perms = new DisguisePerm[DisguiseType.values().length + DisguiseConfig.getCustomDisguises()
-                .size()];
+        DisguisePerm[] perms = new DisguisePerm[DisguiseType.values().length +
+                DisguiseConfig.getCustomDisguises().size()];
         int i = 0;
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
@@ -450,12 +436,21 @@ public class DisguiseParser {
     }
 
     /**
+     * Splits a string while respecting quotes
+     */
+    public static String[] split(String string) {
+        return string.split(" (?=\")|(?<=\")\\s");
+    }
+
+    /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
-     * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this point, the
+     * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this
+     * point, the
      * disguise has been feed a proper disguisetype.
      */
     public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException, IllegalAccessException, InvocationTargetException {
+            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> permissionMap) throws DisguiseParseException,
+            IllegalAccessException, InvocationTargetException {
         if (sender instanceof Player) {
             DisguiseUtilities.setCommandsUsed();
         }
@@ -525,8 +520,8 @@ public class DisguiseParser {
                         // He needs to give the player name
                         throw new DisguiseParseException(LibsMsg.PARSE_SUPPLY_PLAYER);
                     } else {
-                        if (!disguiseOptions.isEmpty() && (!disguiseOptions
-                                .containsKey(args[1].toLowerCase()) || !disguiseOptions.get(args[1].toLowerCase()))) {
+                        if (!disguiseOptions.isEmpty() && (!disguiseOptions.containsKey(args[1].toLowerCase()) ||
+                                !disguiseOptions.get(args[1].toLowerCase()))) {
                             throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
                         }
 
@@ -540,8 +535,8 @@ public class DisguiseParser {
                     boolean adult = true;
 
                     if (args.length > 1) {
-                        if (args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("baby")) || args[1]
-                                .equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"))) {
+                        if (args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("baby")) ||
+                                args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"))) {
                             usedOptions.add("setbaby");
                             doCheck(sender, optionPermissions, usedOptions);
                             adult = args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"));
@@ -571,8 +566,8 @@ public class DisguiseParser {
                         if (isInteger(args[1])) {
                             miscId = Integer.parseInt(args[1]);
                         } else {
-                            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm
-                                    .getType() == DisguiseType.DROPPED_ITEM) {
+                            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK ||
+                                    disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
                                 for (Material mat : Material.values()) {
                                     if (mat.name().replace("_", "").equalsIgnoreCase(args[1].replace("_", ""))) {
                                         miscId = mat.getId();
@@ -606,8 +601,8 @@ public class DisguiseParser {
                                 toSkip++;
                             }
                             if (secondArg != null) {
-                                if (disguisePerm.getType() != DisguiseType.FALLING_BLOCK && disguisePerm
-                                        .getType() != DisguiseType.DROPPED_ITEM) {
+                                if (disguisePerm.getType() != DisguiseType.FALLING_BLOCK &&
+                                        disguisePerm.getType() != DisguiseType.DROPPED_ITEM) {
                                     throw new DisguiseParseException(LibsMsg.PARSE_USE_SECOND_NUM,
                                             DisguiseType.FALLING_BLOCK.toReadable(),
                                             DisguiseType.DROPPED_ITEM.toReadable());
@@ -667,7 +662,8 @@ public class DisguiseParser {
 
     public static void callMethods(CommandSender sender, Disguise disguise,
             HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions,
-            String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, DisguiseParseException {
+            String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            DisguiseParseException {
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {
@@ -977,13 +973,13 @@ public class DisguiseParser {
             boolean myPerms = true;
 
             for (String option : usedOptions) {
-                if (!sender.getName().equals("CONSOLE") && option.equalsIgnoreCase("setInvisible") && DisguiseConfig
-                        .isDisabledInvisibility()) {
+                if (!sender.getName().equals("CONSOLE") && option.equalsIgnoreCase("setInvisible") &&
+                        DisguiseConfig.isDisabledInvisibility()) {
                     myPerms = false;
                 }
 
-                if (!(theirPermissions.get(list) && list.contains("*")) && (list.contains(option) != theirPermissions
-                        .get(list))) {
+                if (!(theirPermissions.get(list) && list.contains("*")) &&
+                        (list.contains(option) != theirPermissions.get(list))) {
                     myPerms = false;
                     break;
                 }

@@ -130,7 +130,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), newArgs, map);
+            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs)), map);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
