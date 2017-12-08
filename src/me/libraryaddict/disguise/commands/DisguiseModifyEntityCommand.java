@@ -2,11 +2,11 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,7 +41,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
         // TODO Validate if any disguises have this arg
 
-        LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), args);
+        LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), DisguiseParser
+                .split(StringUtils.join(args)));
 
         sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;

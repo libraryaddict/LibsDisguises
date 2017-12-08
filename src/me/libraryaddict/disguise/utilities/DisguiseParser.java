@@ -439,7 +439,7 @@ public class DisguiseParser {
      * Splits a string while respecting quotes
      */
     public static String[] split(String string) {
-        return string.split(" (?=\")|(?<=\")\\s");
+        return ChatColor.translateAlternateColorCodes('&', string).split(" (?=\")|(?<=\")\\s");
     }
 
     /**

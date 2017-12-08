@@ -60,7 +60,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         try {
             DisguiseParser
                     .callMethods(sender, disguise, getPermissions(sender).get(new DisguisePerm(disguise.getType())),
-                            new ArrayList<String>(), args);
+                            new ArrayList<String>(), DisguiseParser.split(StringUtils.join(args)));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
