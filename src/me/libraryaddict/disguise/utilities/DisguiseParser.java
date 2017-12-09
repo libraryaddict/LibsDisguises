@@ -17,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -439,7 +440,41 @@ public class DisguiseParser {
      * Splits a string while respecting quotes
      */
     public static String[] split(String string) {
-        return ChatColor.translateAlternateColorCodes('&', string).split(" (?=\")|(?<=\")\\s");
+        String[] strings = ChatColor.translateAlternateColorCodes('&', string).split(" ");
+
+        ArrayList<String> list = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+
+        for (String s : strings) {
+            String a = s.replaceAll("\\\\", "");
+
+            if (builder.length() != 0 || s.startsWith("\"")) {
+                if (builder.length() != 0)
+                    builder.append(' ');
+
+                String append;
+
+                if (s.startsWith("\""))
+                    builder.append(s.substring(1));
+                else if (a.endsWith("\"") && !a.endsWith("\\\""))
+                    builder.append(s.substring(0, s.length() - 1));
+                else
+                    builder.append(s);
+
+                if (a.endsWith("\"") && !a.endsWith("\\\"")) {
+                    list.add(builder.toString());
+                    builder = new StringBuilder();
+                }
+            } else {
+                list.add(s);
+            }
+        }
+
+        if (builder.length() != 0) {
+            list.addAll(Arrays.asList(builder.toString().split(" ")));
+        }
+
+        return list.toArray(new String[list.size()]);
     }
 
     /**
