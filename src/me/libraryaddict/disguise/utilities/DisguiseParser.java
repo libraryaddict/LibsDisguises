@@ -471,7 +471,7 @@ public class DisguiseParser {
         }
 
         if (builder.length() != 0) {
-            list.addAll(Arrays.asList(builder.toString().split(" ")));
+            list.addAll(Arrays.asList(("\"" + builder.toString()).split(" ")));
         }
 
         return list.toArray(new String[list.size()]);
