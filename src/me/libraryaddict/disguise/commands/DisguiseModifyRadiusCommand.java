@@ -149,7 +149,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             try {
                 DisguiseParser.callMethods(sender, disguise, map.get(new DisguisePerm(disguise.getType())),
-                        new ArrayList<String>(), DisguiseParser.split(StringUtils.join(newArgs)));
+                        new ArrayList<String>(), DisguiseParser.split(StringUtils.join(newArgs, " ")));
                 modifiedDisguises++;
             }
             catch (DisguiseParseException ex) {

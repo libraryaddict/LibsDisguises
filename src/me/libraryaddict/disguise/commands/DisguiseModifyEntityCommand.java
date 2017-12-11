@@ -42,7 +42,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
         // TODO Validate if any disguises have this arg
 
         LibsDisguises.getInstance().getListener().setDisguiseModify(sender.getName(), DisguiseParser
-                .split(StringUtils.join(args)));
+                .split(StringUtils.join(args, " ")));
 
         sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;
