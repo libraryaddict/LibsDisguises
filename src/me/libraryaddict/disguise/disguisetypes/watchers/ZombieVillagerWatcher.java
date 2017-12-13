@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.entity.Villager.Profession;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.entity.Villager.Profession;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
 
@@ -17,7 +16,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
 
     /**
      * Is this zombie a villager?
-     * 
+     *
      * @return
      */
     public boolean isVillager() {
@@ -31,32 +30,35 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
 
     /**
      * Only returns a valid value if this zombie is a villager.
-     * 
+     *
      * @return
      */
     public Profession getProfession() {
-        return Profession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)];
+        int ord = getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
+
+        if (ord == 1)
+            return Profession.HUSK;
+
+        return Profession.NORMAL;
     }
 
     /**
      * Sets the profession of this zombie, in turn turning it into a Zombie Villager
-     * 
+     *
      * @param id
      */
     @Deprecated
     public void setProfession(int id) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id);
+        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id % 2);
         sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
     /**
      * Sets the profession of this zombie, in turn turning it into a Zombie Villager
-     * 
+     *
      * @param profession
      */
     public void setProfession(Profession profession) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, profession.ordinal());
-        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
+        setProfession(profession.ordinal());
     }
-
 }
