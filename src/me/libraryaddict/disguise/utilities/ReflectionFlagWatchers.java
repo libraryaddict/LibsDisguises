@@ -153,8 +153,10 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color");
 
         new ParamInfo(Ocelot.Type.class, "Ocelot Type", "View all the ocelot types you can use for ocelots");
-        new ParamInfo(Villager.Profession.class, "Villager Profession",
+        new ParamInfo(VillagerProfession.class, "Villager Profession",
                 "View all the professions you can set on a villager");
+        new ParamInfo(ZombieProfession.class, "Zombie Profession",
+                "View all the professions you can set on a zombie villager");
         new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 6),
                 "Direction (North, East, South, West, " + "Up, Down)",
                 "View the directions usable on player setSleeping and shulker direction");

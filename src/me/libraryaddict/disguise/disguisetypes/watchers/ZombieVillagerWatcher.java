@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.ZombieProfession;
 import org.bukkit.entity.Villager.Profession;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
@@ -42,6 +43,10 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         return Profession.NORMAL;
     }
 
+    public ZombieProfession getZombieProfession() {
+        return ZombieProfession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)];
+    }
+
     /**
      * Sets the profession of this zombie, in turn turning it into a Zombie Villager
      *
@@ -58,7 +63,12 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      *
      * @param profession
      */
+    @Deprecated
     public void setProfession(Profession profession) {
+        setProfession(profession.ordinal());
+    }
+
+    public void setProfession(ZombieProfession profession) {
         setProfession(profession.ordinal());
     }
 }

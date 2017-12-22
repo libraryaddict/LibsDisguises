@@ -251,7 +251,8 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     /**
-     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their sound volume
+     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their
+     * sound volume
      * for mob noises. As well as setting their watcher class and entity size.
      */
     private void registerValues() {
@@ -283,6 +284,8 @@ public class LibsDisguises extends JavaPlugin {
                         watcherClass = SpiderWatcher.class;
                         break;
                     case ZOMBIE_VILLAGER:
+                        watcherClass = ZombieVillagerWatcher.class;
+                        break;
                     case PIG_ZOMBIE:
                     case HUSK:
                         watcherClass = ZombieWatcher.class;
@@ -302,8 +305,9 @@ public class LibsDisguises extends JavaPlugin {
                         watcherClass = IllagerWizardWatcher.class;
                         break;
                     default:
-                        watcherClass = Class.forName("me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(
-                                disguiseType.name()) + "Watcher");
+                        watcherClass = Class.forName(
+                                "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) +
+                                        "Watcher");
                         break;
                 }
             }
@@ -438,10 +442,11 @@ public class LibsDisguises extends JavaPlugin {
                     MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
 
                     if (flagType == null) {
-                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " + watch
-                                .getIndex() + " can't be found!");
-                        System.err.println("Value is " + watch.getRawValue() + " (" + watch.getRawValue()
-                                .getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
+                        System.err.println("Error finding the FlagType for " + disguiseType.name() + "! Index " +
+                                watch.getIndex() + " can't be found!");
+                        System.err.println(
+                                "Value is " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" +
+                                        nmsEntity.getClass() + ") & " + watcherClass.getSimpleName());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                         continue;
                     }
@@ -452,21 +457,21 @@ public class LibsDisguises extends JavaPlugin {
                     Object obj2 = ReflectionManager.convertInvalidItem(watch.getValue());
 
                     if (obj1 != obj2 && ((obj1 == null || obj2 == null) || obj1.getClass() != obj2.getClass())) {
-                        System.err.println("Mismatch of " + "FlagType's for " + disguiseType.name() + "! Index " + watch
-                                .getIndex() + " has the wrong classtype!");
-                        System.err.println(
-                                "MetaIndex has the " + "default of " + flagType.getDefault() + " (" + flagType
-                                        .getDefault().getClass() + ") (" + nmsEntity.getClass() + ") & " + watcherClass
-                                        .getSimpleName());
-                        System.err.println("Where the internals is " + watch.getRawValue() + " (" + watch.getRawValue()
-                                .getClass());
+                        System.err.println("Mismatch of " + "FlagType's for " + disguiseType.name() + "! Index " +
+                                watch.getIndex() + " has the wrong classtype!");
+                        System.err.println("MetaIndex has the " + "default of " + flagType.getDefault() + " (" +
+                                flagType.getDefault().getClass() + ") (" + nmsEntity.getClass() + ") & " +
+                                watcherClass.getSimpleName());
+                        System.err.println("Where the internals is " + watch.getRawValue() + " (" +
+                                watch.getRawValue().getClass());
                         System.err.println("Lib's Disguises will continue to load, but this will not work properly!");
                     }
                 }
 
                 for (MetaIndex index : indexes) {
-                    System.out.println(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher()
-                            .getSimpleName() + " at index " + index.getIndex());
+                    System.out.println(
+                            disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() +
+                                    " at index " + index.getIndex());
                 }
 
                 DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
@@ -495,12 +500,13 @@ public class LibsDisguises extends JavaPlugin {
                 disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
             }
             catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
-                System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " + disguiseType
-                        .name() + "!");
-                System.out
-                        .print("[LibsDisguises] Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
-                System.out
-                        .print("[LibsDisguises] Development builds are available at (ProtocolLib) " + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming.com:8080/job/LibsDisguises%201.9+/");
+                System.out.print("[LibsDisguises] Uh oh! Trouble while making values for the disguise " +
+                        disguiseType.name() + "!");
+                System.out.print("[LibsDisguises] Before reporting this error, " +
+                        "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+                System.out.print("[LibsDisguises] Development builds are available at (ProtocolLib) " +
+                        "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) http://server.o2gaming" +
+                        ".com:8080/job/LibsDisguises%201.9+/");
 
                 ex.printStackTrace();
             }

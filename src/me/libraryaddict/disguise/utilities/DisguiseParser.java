@@ -759,6 +759,20 @@ public class DisguiseParser {
                                 // Parse to string
                                 value = ChatColor.translateAlternateColorCodes('&', valueString);
                             }
+                        } else if (param == ZombieProfession.class) {
+                            try {
+                                value = ZombieProfession.valueOf(valueString.toUpperCase());
+                            }
+                            catch (Exception ex) {
+                                throw parseToException(param, valueString, methodName);
+                            }
+                        } else if (param == VillagerProfession.class) {
+                            try {
+                                value = VillagerProfession.valueOf(valueString.toUpperCase());
+                            }
+                            catch (Exception ex) {
+                                throw parseToException(param, valueString, methodName);
+                            }
                         } else if (param == AnimalColor.class) {
                             // Parse to animal color
                             try {
@@ -802,9 +816,6 @@ public class DisguiseParser {
                             value = callValueOf(param, valueString, methodName);
                         } else if (param == Horse.Style.class) {
                             // Parse to horse style
-                            value = callValueOf(param, valueString, methodName);
-                        } else if (param == Villager.Profession.class) {
-                            // Parse to villager profession
                             value = callValueOf(param, valueString, methodName);
                         } else if (param == Art.class) {
                             // Parse to art type
