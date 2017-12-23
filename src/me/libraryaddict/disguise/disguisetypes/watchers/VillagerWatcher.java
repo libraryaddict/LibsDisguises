@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.VillagerProfession;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.entity.Villager.Profession;
 
@@ -13,13 +12,8 @@ public class VillagerWatcher extends AgeableWatcher {
         setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
     }
 
-    @Deprecated
     public Profession getProfession() {
         return Profession.values()[getData(MetaIndex.VILLAGER_PROFESSION) + 1];
-    }
-
-    public VillagerProfession getVillagerProfession() {
-        return VillagerProfession.values()[getData(MetaIndex.VILLAGER_PROFESSION)];
     }
 
     @Deprecated
@@ -28,12 +22,7 @@ public class VillagerWatcher extends AgeableWatcher {
         sendData(MetaIndex.VILLAGER_PROFESSION);
     }
 
-    public void setProfession(VillagerProfession profession) {
-        setProfession(Math.max(1, Math.min(profession.ordinal(), Profession.BUTCHER.ordinal()) - 1));
-    }
-
-    @Deprecated
     public void setProfession(Profession newProfession) {
-        setProfession(newProfession.ordinal());
+        setProfession(newProfession.ordinal() - 1);
     }
 }

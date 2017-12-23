@@ -759,16 +759,9 @@ public class DisguiseParser {
                                 // Parse to string
                                 value = ChatColor.translateAlternateColorCodes('&', valueString);
                             }
-                        } else if (param == ZombieProfession.class) {
+                        } else if (param == Villager.Profession.class) {
                             try {
-                                value = ZombieProfession.valueOf(valueString.toUpperCase());
-                            }
-                            catch (Exception ex) {
-                                throw parseToException(param, valueString, methodName);
-                            }
-                        } else if (param == VillagerProfession.class) {
-                            try {
-                                value = VillagerProfession.valueOf(valueString.toUpperCase());
+                                value = Villager.Profession.valueOf(valueString.toUpperCase());
                             }
                             catch (Exception ex) {
                                 throw parseToException(param, valueString, methodName);

@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.ZombieProfession;
 import org.bukkit.entity.Villager.Profession;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
@@ -35,16 +34,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * @return
      */
     public Profession getProfession() {
-        int ord = getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
-
-        if (ord == 1)
-            return Profession.HUSK;
-
-        return Profession.NORMAL;
-    }
-
-    public ZombieProfession getZombieProfession() {
-        return ZombieProfession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)];
+        return Profession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION) + 1];
     }
 
     /**
@@ -54,7 +44,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      */
     @Deprecated
     public void setProfession(int id) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id % 2);
+        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id);
         sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
@@ -63,12 +53,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      *
      * @param profession
      */
-    @Deprecated
     public void setProfession(Profession profession) {
-        setProfession(profession.ordinal());
-    }
-
-    public void setProfession(ZombieProfession profession) {
-        setProfession(profession.ordinal());
+        setProfession(profession.ordinal() - 1);
     }
 }
