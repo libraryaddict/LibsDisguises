@@ -530,7 +530,7 @@ public abstract class Disguise {
                         deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
                                 new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                         NativeGameMode.SURVIVAL,
-                                        WrappedChatComponent.fromText(((Player) getEntity()).getPlayerListName()))));
+                                        WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
 
                         try {
                             for (Player player : Bukkit.getOnlinePlayers()) {

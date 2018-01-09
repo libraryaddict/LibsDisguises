@@ -59,7 +59,7 @@ public abstract class TargetedDisguise extends Disguise {
                             deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
                                     new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                             NativeGameMode.SURVIVAL, WrappedChatComponent
-                                            .fromText(((Player) getEntity()).getPlayerListName()))));
+                                            .fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
 
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                         }
@@ -122,7 +122,7 @@ public abstract class TargetedDisguise extends Disguise {
                             deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
                                     new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                                             NativeGameMode.SURVIVAL, WrappedChatComponent
-                                            .fromText(((Player) getEntity()).getPlayerListName()))));
+                                            .fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
 
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                         }

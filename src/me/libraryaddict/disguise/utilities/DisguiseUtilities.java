@@ -26,7 +26,11 @@ import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 import me.libraryaddict.disguise.utilities.backwards.BackwardMethods;
 import me.libraryaddict.disguise.utilities.backwards.BackwardsSupport;
 import me.libraryaddict.disguise.utilities.json.*;
-import org.bukkit.*;
+import org.apache.logging.log4j.util.Strings;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -46,7 +50,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -58,7 +65,8 @@ public class DisguiseUtilities {
      */
     private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<>();
     /**
-     * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only stay in for
+     * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
+     * stay in for
      * a max of a second.
      */
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
@@ -286,8 +294,8 @@ public class DisguiseUtilities {
 
         checkConflicts(disguise, null);
 
-        if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise
-                .isModifyBoundingBox()) {
+        if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
+                disguise.isModifyBoundingBox()) {
             doBoundingBox(disguise);
         }
     }
@@ -347,7 +355,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure that the
+     * If name isn't null. Make sure that the name doesn't see any other disguise. Else if name is null. Make sure
+     * that the
      * observers in the disguise don't see any other disguise.
      */
     public static void checkConflicts(TargetedDisguise disguise, String name) {
@@ -458,9 +467,10 @@ public class DisguiseUtilities {
                 FakeBoundingBox disguiseBox = disguiseValues.getAdultBox();
 
                 if (disguiseValues.getBabyBox() != null) {
-                    if ((disguise.getWatcher() instanceof AgeableWatcher && ((AgeableWatcher) disguise.getWatcher())
-                            .isBaby()) || (disguise.getWatcher() instanceof ZombieWatcher && ((ZombieWatcher) disguise
-                            .getWatcher()).isBaby())) {
+                    if ((disguise.getWatcher() instanceof AgeableWatcher &&
+                            ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
+                            (disguise.getWatcher() instanceof ZombieWatcher &&
+                                    ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
                         disguiseBox = disguiseValues.getBabyBox();
                     }
                 }
@@ -472,8 +482,8 @@ public class DisguiseUtilities {
                 FakeBoundingBox entityBox = entityValues.getAdultBox();
 
                 if (entityValues.getBabyBox() != null) {
-                    if ((entity instanceof Ageable && !((Ageable) entity)
-                            .isAdult()) || (entity instanceof Zombie && ((Zombie) entity).isBaby())) {
+                    if ((entity instanceof Ageable && !((Ageable) entity).isAdult()) ||
+                            (entity instanceof Zombie && ((Zombie) entity).isBaby())) {
                         entityBox = entityValues.getBabyBox();
                     }
                 }
@@ -693,8 +703,8 @@ public class DisguiseUtilities {
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
                 if (DisguiseAPI.isDisguiseInUse(disguise) && (!gameProfile.getName()
-                        .equals(disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) || !gameProfile
-                        .getProperties().isEmpty())) {
+                        .equals(disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) ||
+                        !gameProfile.getProperties().isEmpty())) {
                     disguise.setGameProfile(gameProfile);
 
                     DisguiseUtilities.refreshTrackers(disguise);
@@ -720,7 +730,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does
+     * a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn) {
@@ -728,7 +739,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does
+     * a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, LibsProfileLookup runnableIfCantReturn,
@@ -790,9 +802,8 @@ public class DisguiseUtilities {
                         catch (Exception e) {
                             runnables.remove(playerName);
 
-                            System.out
-                                    .print("[LibsDisguises] Error when fetching " + playerName + "'s uuid from mojang: " + e
-                                            .getMessage());
+                            System.out.print("[LibsDisguises] Error when fetching " + playerName +
+                                    "'s uuid from mojang: " + e.getMessage());
                         }
                     }
                 });
@@ -813,7 +824,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does
+     * a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn) {
@@ -821,7 +833,8 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does a lookup
+     * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does
+     * a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
      */
     public static WrappedGameProfile getProfileFromMojang(String playerName, Runnable runnableIfCantReturn,
@@ -916,9 +929,8 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        return disguise.getEntity() != null && getDisguises()
-                .containsKey(disguise.getEntity().getUniqueId()) && getDisguises()
-                .get(disguise.getEntity().getUniqueId()).contains(disguise);
+        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId()) &&
+                getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise);
     }
 
     /**
@@ -941,8 +953,8 @@ public class DisguiseUtilities {
         try {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
-            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player && ((Player) disguise.getEntity())
-                    .getName().equalsIgnoreCase(player)) {
+            if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player &&
+                    ((Player) disguise.getEntity()).getName().equalsIgnoreCase(player)) {
                 removeSelfDisguise((Player) disguise.getEntity());
 
                 if (disguise.isSelfDisguiseVisible()) {
@@ -1153,8 +1165,8 @@ public class DisguiseUtilities {
                 getDisguises().remove(entityId);
             }
 
-            if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS && disguise
-                    .isModifyBoundingBox()) {
+            if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
+                    disguise.isModifyBoundingBox()) {
                 doBoundingBox(disguise);
             }
 
@@ -1276,8 +1288,8 @@ public class DisguiseUtilities {
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         try {
-            if (!disguise.isDisguiseInUse() || !player.isValid() || !player.isOnline() || !disguise
-                    .isSelfDisguiseVisible() || !disguise.canSee(player)) {
+            if (!disguise.isDisguiseInUse() || !player.isValid() || !player.isOnline() ||
+                    !disguise.isSelfDisguiseVisible() || !disguise.canSee(player)) {
                 return;
             }
 
@@ -1318,8 +1330,8 @@ public class DisguiseUtilities {
                 }
 
                 // If the player is in a team already and the team isn't one controlled by Lib's Disguises
-                if (prevTeam != null && !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName()
-                        .endsWith("_LDP"))) {
+                if (prevTeam != null &&
+                        !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName().endsWith("_LDP"))) {
                     // If we're creating a scoreboard
                     if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
                         // Remember his old team so we can give him it back later
@@ -1407,10 +1419,10 @@ public class DisguiseUtilities {
             // Send the velocity packets
             if (isMoving) {
                 Vector velocity = player.getVelocity();
-                sendSelfPacket(player,
-                        manager.createPacketConstructor(Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
+                sendSelfPacket(player, manager
+                        .createPacketConstructor(Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
                                 velocity.getY(), velocity.getZ())
-                                .createPacket(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ()));
+                        .createPacket(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ()));
             }
 
             // Why the hell would he even need this. Meh.
@@ -1478,6 +1490,10 @@ public class DisguiseUtilities {
         }
     }
 
+    public static String getPlayerListName(Player player) {
+        return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
+    }
+
     public static LibsDisguises getPlugin() {
         return libsDisguises;
     }
@@ -1523,8 +1539,8 @@ public class DisguiseUtilities {
         Entity e = disguise.getEntity();
 
         // If the disguises entity is null, or the disguised entity isn't a player return
-        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) || !getDisguises()
-                .get(e.getUniqueId()).contains(disguise)) {
+        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) ||
+                !getDisguises().get(e.getUniqueId()).contains(disguise)) {
             return;
         }
 
@@ -1539,8 +1555,8 @@ public class DisguiseUtilities {
         DisguiseUtilities.removeSelfDisguise(player);
 
         // If the disguised player can't see himself. Return
-        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player
-                .getVehicle() != null) {
+        if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() ||
+                player.getVehicle() != null) {
             return;
         }
 
