@@ -793,6 +793,7 @@ public class PacketsManager {
                 packetsToListen.add(Server.ENTITY_HEAD_ROTATION);
                 packetsToListen.add(Server.ENTITY_TELEPORT);
                 packetsToListen.add(Server.REL_ENTITY_MOVE);
+                packetsToListen.add(Server.ENTITY_VELOCITY);
             }
 
             // Add equipment packet
@@ -1109,6 +1110,13 @@ public class PacketsManager {
             // If the entity is updating their Facebook status, stop them from showing death
             else if (sentPacket.getType() == Server.ENTITY_STATUS) {
                 if (packets.getPackets().get(0).getBytes().read(0) == (byte) 3) {
+                    packets.clear();
+                }
+            }
+
+            // If the entity is sending velocity and its a falling block
+            else if (sentPacket.getType() == Server.ENTITY_VELOCITY) {
+                if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                     packets.clear();
                 }
             }
