@@ -124,7 +124,7 @@ public enum DisguiseSound {
 
     SQUID("entity.squid.hurt", null, "entity.squid.death", "entity.squid.ambient"),
 
-    UNDEAD_HORSE("entity.zombie_horse.hurt", "block.grass.step", "entity.zombie_horse.death",
+    ZOMBIE_HORSE("entity.zombie_horse.hurt", "block.grass.step", "entity.zombie_horse.death",
             "entity.zombie_horse.ambient", "entity.horse.gallop", "entity.horse.saddle", "entity.donkey.angry",
             "entity.horse.step_wood", "entity.horse.armor", "entity.horse.land", "entity.horse.jump",
             "entity.horse.angry"),
