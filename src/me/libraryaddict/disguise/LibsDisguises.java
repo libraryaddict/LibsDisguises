@@ -37,7 +37,7 @@ public class LibsDisguises extends JavaPlugin {
             saveResource("disguises.yml", false);
         }
 
-        LibsPremium.check(instance);
+        LibsPremium.check(getDescription().getVersion());
 
         PacketsManager.init(this);
         DisguiseUtilities.init(this);

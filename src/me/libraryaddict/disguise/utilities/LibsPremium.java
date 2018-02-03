@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import me.libraryaddict.disguise.LibsDisguises;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -35,10 +33,10 @@ public class LibsPremium {
         return thisPluginIsPaidFor == null ? !"%%__USER__%%".contains("__USER__") : thisPluginIsPaidFor;
     }
 
-    public static void check(LibsDisguises disguises) {
+    public static void check(String version) {
         thisPluginIsPaidFor = isPremium();
 
-        if (!isPremium() && disguises.getDescription().getVersion().contains("SNAPSHOT")) {
+        if (!isPremium() && version.contains("SNAPSHOT")) {
             File[] files = new File("plugins/LibsDisguises/").listFiles();
 
             if (files == null)
@@ -51,8 +49,7 @@ public class LibsPremium {
                 if (!file.getName().endsWith(".jar"))
                     continue;
 
-                try {
-                    ClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()});
+                try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
                     Class c = cl.loadClass(LibsPremium.class.getName());
 
                     Method m = c.getMethod("isPremium");
