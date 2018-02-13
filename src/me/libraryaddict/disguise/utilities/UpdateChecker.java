@@ -37,7 +37,7 @@ public class UpdateChecker {
      */
     private String getSpigotVersion() {
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php").openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL("https://www.spigotmc.org/api/general.php").openConnection();
             con.setDoOutput(true);
             con.setRequestMethod("POST");
             con.getOutputStream().write(
