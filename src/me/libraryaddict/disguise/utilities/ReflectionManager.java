@@ -32,24 +32,32 @@ public class ReflectionManager {
     public static final Field entityCountField;
 
     static {
-        for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
-            try {
-                if (method.getReturnType() == float.class && Modifier.isProtected(method.getModifiers()) &&
-                        method.getParameterTypes().length == 0) {
-                    Object entity = createEntityInstance("Cow");
+        try {
+            Object entity = createEntityInstance("Cow");
 
-                    method.setAccessible(true);
-                    float value = (Float) method.invoke(entity);
+            for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
+                if (method.getReturnType() != float.class)
+                    continue;
 
-                    if (value == 0.4F) {
-                        damageAndIdleSoundMethod = method;
-                        break;
-                    }
-                }
+                if (!Modifier.isProtected(method.getModifiers()))
+                    continue;
+
+                if (method.getParameterTypes().length != 0)
+                    continue;
+
+                method.setAccessible(true);
+
+                float value = (Float) method.invoke(entity);
+
+                if ((float) method.invoke(entity) != 0.4f)
+                    continue;
+
+                damageAndIdleSoundMethod = method;
+                break;
             }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         craftItemClass = getCraftClass("inventory.CraftItemStack");
@@ -559,8 +567,6 @@ public class ReflectionManager {
 
     public static Float getSoundModifier(Object entity) {
         try {
-            damageAndIdleSoundMethod.setAccessible(true);
-
             return (Float) damageAndIdleSoundMethod.invoke(entity);
         }
         catch (Exception ignored) {

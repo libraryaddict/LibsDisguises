@@ -1,14 +1,5 @@
 package me.libraryaddict.disguise.utilities.packetlisteners;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.bukkit.Location;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
-
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -16,7 +7,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -26,6 +16,10 @@ import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.Location;
+import org.bukkit.entity.*;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class PacketListenerSounds extends PacketAdapter {
     /**
@@ -120,15 +114,14 @@ public class PacketListenerSounds extends PacketAdapter {
 
                         try {
                             if (entity instanceof LivingEntity) {
-                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(
-                                        nmsEntity) == ReflectionManager.getNmsField("EntityLiving",
-                                        "maxNoDamageTicks").getInt(nmsEntity);
+                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(nmsEntity) ==
+                                        ReflectionManager.getNmsField("EntityLiving", "maxNoDamageTicks")
+                                                .getInt(nmsEntity);
                             } else {
                                 Class clazz = ReflectionManager.getNmsClass("DamageSource");
 
-                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable",
-                                        clazz).invoke(nmsEntity,
-                                        ReflectionManager.getNmsField(clazz, "GENERIC").get(null));
+                                hasInvun = (Boolean) ReflectionManager.getNmsMethod("Entity", "isInvulnerable", clazz)
+                                        .invoke(nmsEntity, ReflectionManager.getNmsField(clazz, "GENERIC").get(null));
                             }
                         }
                         catch (Exception ex) {
@@ -146,7 +139,8 @@ public class PacketListenerSounds extends PacketAdapter {
                 }
             }
 
-            if (disguise != null && disguise.isSoundsReplaced() && (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
+            if (disguise != null && disguise.isSoundsReplaced() &&
+                    (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
                 String sound = null;
 
                 DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
@@ -162,9 +156,8 @@ public class PacketListenerSounds extends PacketAdapter {
                             int typeId = observer.getWorld().getBlockTypeIdAt((int) Math.floor(soundCords[0] / 8D),
                                     (int) Math.floor(soundCords[1] / 8D), (int) Math.floor(soundCords[2] / 8D));
 
-                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "getId",
-                                    int.class).invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null),
-                                    typeId);
+                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "getId", int.class)
+                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null), typeId);
 
                             if (block != null) {
                                 Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
@@ -184,14 +177,16 @@ public class PacketListenerSounds extends PacketAdapter {
                         mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
 
                         // Time to change the pitch and volume
-                        if (soundType == SoundType.HURT || soundType == SoundType.DEATH || soundType == SoundType.IDLE) {
+                        if (soundType == SoundType.HURT || soundType == SoundType.DEATH ||
+                                soundType == SoundType.IDLE) {
                             // If the volume is the default
                             if (mods.read(5).equals(entitySound.getDamageAndIdleSoundVolume())) {
                                 mods.write(5, dSound.getDamageAndIdleSoundVolume());
                             }
 
                             // Here I assume its the default pitch as I can't calculate if its real.
-                            if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
+                            if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity &&
+                                    ((MobDisguise) disguise).doesDisguiseAge()) {
                                 boolean baby = false;
 
                                 if (disguisedEntity instanceof Zombie) {
@@ -205,33 +200,35 @@ public class PacketListenerSounds extends PacketAdapter {
 
                                     if (baby) {
                                         // If the pitch is not the expected
-                                        if (pitch > 97 || pitch < 111)
+                                        if (pitch < 1.5 || pitch > 1.7)
                                             return;
 
-                                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
+                                        pitch = (DisguiseUtilities.random.nextFloat() -
+                                                DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
                                         // Min = 1.5
                                         // Cap = 97.5
                                         // Max = 1.7
                                         // Cap = 110.5
                                     } else {
                                         // If the pitch is not the expected
-                                        if (pitch >= 63 || pitch <= 76)
+                                        if (pitch < 1 || pitch > 1.2)
                                             return;
 
-                                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+                                        pitch = (DisguiseUtilities.random.nextFloat() -
+                                                DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                                         // Min = 1
                                         // Cap = 63
                                         // Max = 1.2
                                         // Cap = 75.6
                                     }
 
-                                    pitch *= 63;
+                                    /*pitch *= 63;
 
                                     if (pitch < 0)
                                         pitch = 0;
 
                                     if (pitch > 255)
-                                        pitch = 255;
+                                        pitch = 255;*/
 
                                     mods.write(6, pitch);
                                 }
@@ -250,7 +247,8 @@ public class PacketListenerSounds extends PacketAdapter {
 
             Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
 
-            if (disguise != null && !disguise.getType().isPlayer() && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
+            if (disguise != null && !disguise.getType().isPlayer() &&
+                    (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
                 DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
 
                 if (disSound == null)
@@ -278,8 +276,8 @@ public class PacketListenerSounds extends PacketAdapter {
                     soundType = SoundType.HURT;
                 }
 
-                if (disSound.getSound(
-                        soundType) == null || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
+                if (disSound.getSound(soundType) == null ||
+                        (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
                     if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
                         cancelSound = !cancelSound;
 
@@ -311,22 +309,24 @@ public class PacketListenerSounds extends PacketAdapter {
                             float pitch;
 
                             if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) *
+                                        0.2F + 1.5F;
                             } else
-                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) *
+                                        0.2F + 1.0F;
 
                             if (disguise.getType() == DisguiseType.BAT)
-                                pitch *= 95F;
+                                pitch *= 0.95F;
 
-                            pitch *= 63;
+                         /*   pitch *= 63;
 
                             if (pitch < 0)
                                 pitch = 0;
 
                             if (pitch > 255)
-                                pitch = 255;
+                                pitch = 255;*/
 
-                            mods.write(6, (int) pitch);
+                            mods.write(6, pitch);
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
