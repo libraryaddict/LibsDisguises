@@ -29,7 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -74,8 +73,9 @@ public abstract class Disguise {
      */
     protected void createDisguise() {
         if (getType().getEntityType() == null) {
-            throw new RuntimeException(
-                    "DisguiseType " + getType() + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have that entity");
+            throw new RuntimeException("DisguiseType " + getType() +
+                    " was used in a futile attempt to construct a disguise, but this Minecraft version does not have " +
+                    "that entity");
         }
 
         // Get if they are a adult now..
@@ -193,7 +193,8 @@ public abstract class Disguise {
                 if (!getEntity().isValid()) {
                     // If it has been dead for 30+ ticks
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
-                    // The delay is because if it sends the destroy entity packets straight away, then it means no death animation
+                    // The delay is because if it sends the destroy entity packets straight away, then it means no
+                    // death animation
                     // This is probably still a problem for wither and enderdragon deaths.
                     if (deadTicks++ > (getType() == DisguiseType.ENDER_DRAGON ? 200 : 20)) {
                         deadTicks = 0;
@@ -232,8 +233,8 @@ public abstract class Disguise {
 
                         int newFacing = (((int) loc.getYaw() + 720 + 45) / 90) % 4;
 
-                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc
-                                .getBlockZ() != blockZ || newFacing != facing) {
+                        if (loc.getBlockX() != blockX || loc.getBlockY() != blockY || loc.getBlockZ() != blockZ ||
+                                newFacing != facing) {
                             blockX = loc.getBlockX();
                             blockY = loc.getBlockY();
                             blockZ = loc.getBlockZ();
@@ -256,11 +257,12 @@ public abstract class Disguise {
                     if (isVelocitySent() && vectorY != 0 && (alwaysSendVelocity || !getEntity().isOnGround())) {
                         Vector vector = getEntity().getVelocity();
 
-                        // If the entity doesn't have velocity changes already - You know. I really can't wrap my head about the
+                        // If the entity doesn't have velocity changes already - You know. I really can't wrap my
+                        // head about the
                         // if statement.
                         // But it doesn't seem to do anything wrong..
-                        if (vector.getY() != 0 && !(vector.getY() < 0 && alwaysSendVelocity && getEntity()
-                                .isOnGround())) {
+                        if (vector.getY() != 0 &&
+                                !(vector.getY() < 0 && alwaysSendVelocity && getEntity().isOnGround())) {
                             return;
                         }
 
@@ -268,8 +270,8 @@ public abstract class Disguise {
                         if (getType() != DisguiseType.EXPERIENCE_ORB || !getEntity().isOnGround()) {
                             PacketContainer lookPacket = null;
 
-                            if (getType() == DisguiseType.WITHER_SKULL && DisguiseConfig
-                                    .isWitherSkullPacketsEnabled()) {
+                            if (getType() == DisguiseType.WITHER_SKULL &&
+                                    DisguiseConfig.isWitherSkullPacketsEnabled()) {
                                 lookPacket = new PacketContainer(Server.ENTITY_LOOK);
 
                                 StructureModifier<Object> mods = lookPacket.getModifier();
@@ -332,7 +334,8 @@ public abstract class Disguise {
                                 e.printStackTrace();
                             }
                         }
-                        // If we need to send a packet to update the exp position as it likes to gravitate client sided to
+                        // If we need to send a packet to update the exp position as it likes to gravitate client
+                        // sided to
                         // players.
                     }
                     if (getType() == DisguiseType.EXPERIENCE_ORB) {
@@ -395,7 +398,8 @@ public abstract class Disguise {
     }
 
     /**
-     * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to the disguise.
+     * In use doesn't mean that this disguise is active. It means that Lib's Disguises still stores a reference to
+     * the disguise.
      * getEntity() can still return null if this disguise is active after despawn, logout, etc.
      *
      * @return isDisguiseInUse
@@ -443,8 +447,8 @@ public abstract class Disguise {
      * Internal use
      */
     public boolean isRemoveDisguiseOnDeath() {
-        return getEntity() == null || (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() :
-                getEntity().isDead());
+        return getEntity() == null ||
+                (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() : getEntity().isDead());
     }
 
     public boolean isSelfDisguiseSoundsReplaced() {
@@ -488,7 +492,7 @@ public abstract class Disguise {
 
             Bukkit.getPluginManager().callEvent(event);
 
-            if (!event.isCancelled()) {
+            if (!event.isCancelled() || (getEntity() instanceof Player && !((Player) getEntity()).isOnline())) {
                 disguiseInUse = false;
 
                 if (task != null) {
@@ -506,7 +510,7 @@ public abstract class Disguise {
                         if (disguise.isDisplayedInTab()) {
                             PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                             deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                            deleteTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                                     new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
                                             WrappedChatComponent.fromText(disguise.getName()))));
 
@@ -524,20 +528,23 @@ public abstract class Disguise {
                         }
                     }
 
-                    if (isHidePlayer() && getEntity() instanceof Player) {
-                        PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                        deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                        deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
-                                        NativeGameMode.SURVIVAL,
-                                        WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
+                    if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
+                        PlayerInfoData playerInfo = new PlayerInfoData(
+                                ReflectionManager.getGameProfile((Player) getEntity()), 0,
+                                NativeGameMode.SURVIVAL, WrappedChatComponent
+                                .fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())));
+
+                        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+
+                        addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
+                        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
 
                         try {
                             for (Player player : Bukkit.getOnlinePlayers()) {
                                 if (!((TargetedDisguise) this).canSee(player))
                                     continue;
 
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                             }
                         }
                         catch (InvocationTargetException e) {
@@ -598,7 +605,8 @@ public abstract class Disguise {
 
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             throw new RuntimeException(
-                    "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the config to do this");
+                    "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the " +
+                            "config to do this");
         }
 
         this.entity = entity;
@@ -651,8 +659,8 @@ public abstract class Disguise {
 
     public Disguise setModifyBoundingBox(boolean modifyBox) {
         if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-            throw new RuntimeException(
-                    "Cannot modify the bounding box of a disguise which is not TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
+            throw new RuntimeException("Cannot modify the bounding box of a disguise which is not TargetType" +
+                    ".SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
         }
 
         if (isModifyBoundingBox() != modifyBox) {
@@ -679,7 +687,8 @@ public abstract class Disguise {
     }
 
     /**
-     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when sending the
+     * Sets up the FlagWatcher with the entityclass, it creates all the data it needs to prevent conflicts when
+     * sending the
      * datawatcher.
      */
     private void setupWatcher() {
@@ -736,9 +745,8 @@ public abstract class Disguise {
 
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
-            throw new IllegalArgumentException(
-                    newWatcher.getClass().getSimpleName() + " is not a instance of " + getType().getWatcherClass()
-                            .getSimpleName() + " for DisguiseType " + getType().name());
+            throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of " +
+                    getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
@@ -788,7 +796,7 @@ public abstract class Disguise {
             if (disguise.isDisplayedInTab()) {
                 PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
                 addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                         new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
                                 WrappedChatComponent.fromText(disguise.getName()))));
 
@@ -828,7 +836,7 @@ public abstract class Disguise {
         if (isHidePlayer() && getEntity() instanceof Player) {
             PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
             addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-            addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+            addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                     new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0,
                             NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
 

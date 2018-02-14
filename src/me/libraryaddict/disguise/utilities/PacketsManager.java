@@ -1,27 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.bukkit.Art;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -36,24 +14,26 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerClientInteract;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerInventory;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerMain;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerSounds;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerTabList;
-import me.libraryaddict.disguise.utilities.packetlisteners.PacketListenerViewDisguises;
+import me.libraryaddict.disguise.utilities.packetlisteners.*;
+import org.bukkit.Art;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class PacketsManager {
     public static class LibsPackets {
@@ -222,8 +202,8 @@ public class PacketsManager {
 
                 if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
                     builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
-                } else if (DisguiseConfig
-                        .isMaxHealthDeterminedByDisguisedEntity() && disguisedEntity instanceof Damageable) {
+                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity() &&
+                        disguisedEntity instanceof Damageable) {
                     builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
                 } else {
                     builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
@@ -294,22 +274,23 @@ public class PacketsManager {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
 
             String name = playerDisguise.getName();
+            WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
+
             int entityId = disguisedEntity.getEntityId();
 
             // Send player info along with the disguise
             PacketContainer sendTab = new PacketContainer(Server.PLAYER_INFO);
 
-            if (!((PlayerDisguise) disguise).isDisplayedInTab())
+            if (!((PlayerDisguise) disguise).isDisplayedInTab()) {
+                // Add player to the list, necessary to spawn them
+                sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
+
+                List playerList = Collections
+                        .singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), gameProfile));
+                sendTab.getModifier().write(1, playerList);
+
                 packets.addPacket(sendTab);
-
-            // Add player to the list, necessary to spawn them
-            sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
-
-            WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
-            List playerList = new ArrayList();
-
-            playerList.add(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), gameProfile));
-            sendTab.getModifier().write(1, playerList);
+            }
 
             // Spawn the player
             PacketContainer spawnPlayer = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
@@ -453,7 +434,8 @@ public class PacketsManager {
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 data = ReflectionManager.getCombinedId(((MiscDisguise) disguise).getId(), data);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {
-                // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners entity id
+                // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners
+                // entity id
                 data = observer.getEntityId();
             } else if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
@@ -637,8 +619,8 @@ public class PacketsManager {
     public static double getYModifier(Entity entity, Disguise disguise) {
         double yMod = 0;
 
-        if ((disguise.getType() != DisguiseType.PLAYER || !((PlayerWatcher) disguise.getWatcher())
-                .isSleeping()) && entity.getType() == EntityType.DROPPED_ITEM) {
+        if ((disguise.getType() != DisguiseType.PLAYER || !((PlayerWatcher) disguise.getWatcher()).isSleeping()) &&
+                entity.getType() == EntityType.DROPPED_ITEM) {
             yMod -= 0.13;
         }
 
@@ -743,8 +725,8 @@ public class PacketsManager {
                 Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
                 if (disguise != null) {
-                    if (viewDisguisesListenerEnabled && disguise.isSelfDisguiseVisible() && (disguise
-                            .isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                    if (viewDisguisesListenerEnabled && disguise.isSelfDisguiseVisible() &&
+                            (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         player.updateInventory();
                     }
                 }
@@ -838,8 +820,8 @@ public class PacketsManager {
                             DisguiseUtilities.removeSelfDisguise(player);
                         }
 
-                        if (inventoryModifierEnabled && (disguise.isHidingArmorFromSelf() || disguise
-                                .isHidingHeldItemFromSelf())) {
+                        if (inventoryModifierEnabled &&
+                                (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                             player.updateInventory();
                         }
                     }
@@ -849,7 +831,8 @@ public class PacketsManager {
     }
 
     /**
-     * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if its not
+     * Transform the packet magically into the one I have always dreamed off. My true luv!!! This will return null if
+     * its not
      * transformed
      */
     public static LibsPackets transformPacket(PacketContainer sentPacket, Disguise disguise, Player observer,
@@ -907,8 +890,8 @@ public class PacketsManager {
             else if (sentPacket.getType() == Server.ENTITY_METADATA) {
                 packets.clear();
 
-                if (DisguiseConfig.isMetadataPacketsEnabled() && (!cancelMeta.containsKey(disguise) || !cancelMeta
-                        .get(disguise).contains(observer.getUniqueId()))) {
+                if (DisguiseConfig.isMetadataPacketsEnabled() && (!cancelMeta.containsKey(disguise) ||
+                        !cancelMeta.get(disguise).contains(observer.getUniqueId()))) {
                     List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
                             .convert(sentPacket.getWatchableCollectionModifier().read(0));
 
@@ -925,10 +908,11 @@ public class PacketsManager {
             }
 
             // Else if the packet is spawning..
-            else if (sentPacket.getType() == Server.NAMED_ENTITY_SPAWN || sentPacket
-                    .getType() == Server.SPAWN_ENTITY_LIVING || sentPacket
-                    .getType() == Server.SPAWN_ENTITY_EXPERIENCE_ORB || sentPacket
-                    .getType() == Server.SPAWN_ENTITY || sentPacket.getType() == Server.SPAWN_ENTITY_PAINTING) {
+            else if (sentPacket.getType() == Server.NAMED_ENTITY_SPAWN ||
+                    sentPacket.getType() == Server.SPAWN_ENTITY_LIVING ||
+                    sentPacket.getType() == Server.SPAWN_ENTITY_EXPERIENCE_ORB ||
+                    sentPacket.getType() == Server.SPAWN_ENTITY ||
+                    sentPacket.getType() == Server.SPAWN_ENTITY_PAINTING) {
                 packets.clear();
 
                 constructSpawnPackets(observer, packets, entity);
@@ -936,9 +920,9 @@ public class PacketsManager {
 
             // Else if the disguise is attempting to send players a forbidden packet
             else if (sentPacket.getType() == Server.ANIMATION) {
-                if (disguise.getType().isMisc() || (sentPacket.getIntegers().read(1) == 2 && (!disguise.getType()
-                        .isPlayer() || (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher())
-                        .isSleeping())))) {
+                if (disguise.getType().isMisc() || (sentPacket.getIntegers().read(1) == 2 &&
+                        (!disguise.getType().isPlayer() || (DisguiseConfig.isBedPacketsEnabled() &&
+                                ((PlayerWatcher) disguise.getWatcher()).isSleeping())))) {
                     packets.clear();
                 }
             }
@@ -947,8 +931,8 @@ public class PacketsManager {
             else if (sentPacket.getType() == Server.COLLECT) {
                 if (disguise.getType().isMisc()) {
                     packets.clear();
-                } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType()
-                        .isPlayer() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
+                } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType().isPlayer() &&
+                        ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
                     PacketContainer newPacket = new PacketContainer(Server.ANIMATION);
 
                     StructureModifier<Integer> mods = newPacket.getIntegers();
@@ -963,17 +947,18 @@ public class PacketsManager {
             }
 
             // Else if the disguise is moving.
-            else if (sentPacket.getType() == Server.REL_ENTITY_MOVE_LOOK || sentPacket
-                    .getType() == Server.ENTITY_LOOK || sentPacket.getType() == Server.ENTITY_TELEPORT || sentPacket
-                    .getType() == Server.REL_ENTITY_MOVE) {
-                if (disguise.getType() == DisguiseType.RABBIT && (sentPacket
-                        .getType() == Server.REL_ENTITY_MOVE || sentPacket.getType() == Server.REL_ENTITY_MOVE_LOOK)) {
+            else if (sentPacket.getType() == Server.REL_ENTITY_MOVE_LOOK ||
+                    sentPacket.getType() == Server.ENTITY_LOOK || sentPacket.getType() == Server.ENTITY_TELEPORT ||
+                    sentPacket.getType() == Server.REL_ENTITY_MOVE) {
+                if (disguise.getType() == DisguiseType.RABBIT && (sentPacket.getType() == Server.REL_ENTITY_MOVE ||
+                        sentPacket.getType() == Server.REL_ENTITY_MOVE_LOOK)) {
                     // Rabbit robbing...
-                    if (entity.getMetadata("LibsRabbitHop").isEmpty() || System.currentTimeMillis() - entity
-                            .getMetadata("LibsRabbitHop").get(0).asLong() < 100 || System.currentTimeMillis() - entity
-                            .getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
-                        if (entity.getMetadata("LibsRabbitHop").isEmpty() || System.currentTimeMillis() - entity
-                                .getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
+                    if (entity.getMetadata("LibsRabbitHop").isEmpty() ||
+                            System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() < 100 ||
+                            System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
+                        if (entity.getMetadata("LibsRabbitHop").isEmpty() ||
+                                System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() >
+                                        500) {
                             entity.removeMetadata("LibsRabbitHop", libsDisguises);
                             entity.setMetadata("LibsRabbitHop",
                                     new FixedMetadataValue(libsDisguises, System.currentTimeMillis()));
@@ -1005,8 +990,8 @@ public class PacketsManager {
                     bytes.write(0, getYaw(disguise.getType(), entity.getType(), yawValue));
                     bytes.write(1, getPitch(disguise.getType(), DisguiseType.getType(entity.getType()), pitchValue));
 
-                    if (sentPacket.getType() == Server.ENTITY_TELEPORT && disguise
-                            .getType() == DisguiseType.ITEM_FRAME) {
+                    if (sentPacket.getType() == Server.ENTITY_TELEPORT &&
+                            disguise.getType() == DisguiseType.ITEM_FRAME) {
                         StructureModifier<Double> doubles = movePacket.getDoubles();
 
                         Location loc = entity.getLocation();
@@ -1084,7 +1069,8 @@ public class PacketsManager {
                             watcher.setValue((byte) ((byte) watcher.getValue() & ~(1 << 4)));
                         }
 
-                        // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why? Scheduler
+                        // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
+                        // Scheduler
                         // delay.
 
                         PacketContainer packet1 = packets.getPackets().get(0);
@@ -1094,7 +1080,8 @@ public class PacketsManager {
                         packets.addPacket(packetUnblock);
                         packets.addPacket(packet1);
                         packets.addPacket(packetBlock);
-                        // Silly mojang made the right clicking datawatcher value only valid for one use. So I have to reset
+                        // Silly mojang made the right clicking datawatcher value only valid for one use. So I have
+                        // to reset
                         // it.
                     }
                 }

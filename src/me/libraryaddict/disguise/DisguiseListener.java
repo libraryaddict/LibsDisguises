@@ -43,7 +43,7 @@ import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -291,8 +291,8 @@ public class DisguiseListener implements Listener {
             chunkMove(p, p.getLocation(), null);
         }
 
-        if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() && DisguiseUtilities
-                .hasGameProfile(p.getName())) {
+        if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
+                DisguiseUtilities.hasGameProfile(p.getName())) {
             WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
 
             if (!profile.getProperties().isEmpty()) {
@@ -331,7 +331,7 @@ public class DisguiseListener implements Listener {
                         PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
                         addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                        addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
+                        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                                 new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
                                         WrappedChatComponent.fromText(disguise.getGameProfile().getName()))));
 
@@ -354,9 +354,9 @@ public class DisguiseListener implements Listener {
             Location to = event.getTo();
             Location from = event.getFrom();
 
-            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities
-                    .getChunkCord(from.getBlockX()) || DisguiseUtilities
-                    .getChunkCord(to.getBlockZ()) != DisguiseUtilities.getChunkCord(from.getBlockZ())) {
+            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities.getChunkCord(from.getBlockX()) ||
+                    DisguiseUtilities.getChunkCord(to.getBlockZ()) !=
+                            DisguiseUtilities.getChunkCord(from.getBlockZ())) {
                 chunkMove(event.getPlayer(), to, from);
             }
         }
@@ -365,8 +365,8 @@ public class DisguiseListener implements Listener {
             Disguise disguise;
 
             if ((disguise = DisguiseAPI.getDisguise(event.getPlayer())) != null) {
-                if (disguise
-                        .getType() == DisguiseType.SHULKER) { // Stop Shulker disguises from moving their coordinates
+                if (disguise.getType() ==
+                        DisguiseType.SHULKER) { // Stop Shulker disguises from moving their coordinates
                     Location from = event.getFrom();
                     Location to = event.getTo();
 
@@ -422,8 +422,8 @@ public class DisguiseListener implements Listener {
     public void onRightClick(PlayerInteractEntityEvent event) {
         Player p = event.getPlayer();
 
-        if (!disguiseEntity.containsKey(p.getName()) && !disguiseClone.containsKey(p.getName()) && !disguiseModify
-                .containsKey(p.getName())) {
+        if (!disguiseEntity.containsKey(p.getName()) && !disguiseClone.containsKey(p.getName()) &&
+                !disguiseModify.containsKey(p.getName())) {
             return;
         }
 
@@ -447,8 +447,8 @@ public class DisguiseListener implements Listener {
             Disguise disguise = disguiseEntity.remove(p.getName());
 
             if (disguise != null) {
-                if (disguise.isMiscDisguise() && !DisguiseConfig
-                        .isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
+                        entity instanceof LivingEntity) {
                     p.sendMessage(LibsMsg.DISABLED_LIVING_TO_MISC.get());
                 } else {
                     if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
@@ -456,8 +456,8 @@ public class DisguiseListener implements Listener {
                             Team team = ((Player) entity).getScoreboard().getEntryTeam(entity.getName());
 
                             disguise.getWatcher().setCustomName(
-                                    (team == null ? "" : team.getPrefix()) + entity.getName() + (team == null ? "" :
-                                            team.getSuffix()));
+                                    (team == null ? "" : team.getPrefix()) + entity.getName() +
+                                            (team == null ? "" : team.getSuffix()));
 
                             if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                                 disguise.getWatcher().setCustomNameVisible(true);
@@ -561,8 +561,8 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onTarget(EntityTargetEvent event) {
-        if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null && event
-                .getTarget() instanceof Player && DisguiseAPI.isDisguised(event.getTarget())) {
+        if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null &&
+                event.getTarget() instanceof Player && DisguiseAPI.isDisguised(event.getTarget())) {
             switch (event.getReason()) {
                 case TARGET_ATTACKED_ENTITY:
                 case TARGET_ATTACKED_OWNER:
@@ -583,9 +583,9 @@ public class DisguiseListener implements Listener {
         Location from = event.getFrom();
 
         if (DisguiseConfig.isBedPacketsEnabled()) {
-            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities
-                    .getChunkCord(from.getBlockX()) || DisguiseUtilities
-                    .getChunkCord(to.getBlockZ()) != DisguiseUtilities.getChunkCord(from.getBlockZ())) {
+            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities.getChunkCord(from.getBlockX()) ||
+                    DisguiseUtilities.getChunkCord(to.getBlockZ()) !=
+                            DisguiseUtilities.getChunkCord(from.getBlockZ())) {
                 chunkMove(player, null, from);
 
                 Bukkit.getScheduler().runTask(plugin, new Runnable() {
@@ -601,8 +601,8 @@ public class DisguiseListener implements Listener {
             return;
         }
 
-        if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null && to
-                .getWorld() != from.getWorld()) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null &&
+                to.getWorld() != from.getWorld()) {
             for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
                 disguise.removeDisguise();
             }
@@ -611,8 +611,8 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
-        if (event.getEntered() instanceof Player && DisguiseAPI
-                .isDisguised((Player) event.getEntered(), event.getEntered())) {
+        if (event.getEntered() instanceof Player &&
+                DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
             DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
 
             ((Player) event.getEntered()).updateInventory();
