@@ -1,11 +1,9 @@
 package me.libraryaddict.disguise.commands;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseParser;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
@@ -13,7 +11,6 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
 import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +42,9 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args, " ")), getPermissions(sender));
+            disguise = DisguiseParser
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args, " ")),
+                            getPermissions(sender));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -69,7 +68,16 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             }
         }
 
-        DisguiseAPI.disguiseToAll((Player) sender, disguise);
+        disguise.setEntity((Player) sender);
+
+        if (!setViewDisguise(args)) {
+            // They prefer to have the opposite of whatever the view disguises option is
+            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
+                    disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+                disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
+        }
+
+        disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
             sender.sendMessage(LibsMsg.DISGUISED.get(disguise.getType().toReadable()));
@@ -78,6 +86,17 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         }
 
         return true;
+    }
+
+    private boolean setViewDisguise(String[] strings) {
+        for (String string : strings) {
+            if (!string.equalsIgnoreCase("setViewSelfDisguise"))
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

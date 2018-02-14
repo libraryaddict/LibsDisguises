@@ -57,8 +57,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) || args[0]
-                .equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
+        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) ||
+                args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 
             for (Class c : validClasses) {
@@ -130,7 +130,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
+            disguise = DisguiseParser
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -162,8 +163,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             }
 
             if (type != null ? entity.getType() == type : entityClass.isAssignableFrom(entity.getClass())) {
-                if (disguise.isMiscDisguise() && !DisguiseConfig
-                        .isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
+                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
+                        entity instanceof LivingEntity) {
                     miscDisguises++;
                     continue;
                 }
@@ -179,7 +180,17 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                DisguiseAPI.disguiseToAll(entity, disguise);
+                disguise.setEntity(entity);
+
+                if (!setViewDisguise(args)) {
+                    // They prefer to have the opposite of whatever the view disguises option is
+                    if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
+                            disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+                        disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
+                }
+
+                disguise.startDisguise();
+                DisguiseAPI.disguiseEntity(entity, disguise);
 
                 if (disguise.isDisguiseInUse()) {
                     disguisedEntitys++;
@@ -198,6 +209,17 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         return true;
+    }
+
+    private boolean setViewDisguise(String[] strings) {
+        for (String string : strings) {
+            if (!string.equalsIgnoreCase("setViewSelfDisguise"))
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -248,8 +270,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 ArrayList<String> usedOptions = new ArrayList<>();
 
                 for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? starting + 2 :
-                            starting + 1; i < args.length; i++) {
+                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? starting + 2 : starting + 1;
+                         i < args.length; i++) {
                         String arg = args[i];
 
                         if (!method.getName().equalsIgnoreCase(arg))

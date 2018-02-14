@@ -465,7 +465,7 @@ public class DisguiseListener implements Listener {
                         }
                     }
 
-                    DisguiseAPI.disguiseToAll(entity, disguise);
+                    DisguiseAPI.disguiseEntity(entity, disguise);
 
                     String disguiseName;
 

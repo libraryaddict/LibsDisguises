@@ -163,10 +163,6 @@ public class DisguiseAPI {
             return;
         }
 
-        if (entity instanceof Player) {
-            disguise.setViewSelfDisguise(DisguiseAPI.isViewSelfToggled(entity));
-        }
-
         // The event wasn't cancelled.
         // If the disguise entity isn't the same as the one we are disguising
         if (disguise.getEntity() != entity) {
@@ -179,8 +175,9 @@ public class DisguiseAPI {
             disguise.setEntity(entity);
         }
 
-        disguise.setViewSelfDisguise(Disguise.getViewSelf().contains(disguise.getEntity().getUniqueId()) !=
-                DisguiseConfig.isViewDisguises());
+        // They prefer to have the opposite of whatever the view disguises option is
+        if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+            disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
 
         disguise.startDisguise();
     }
@@ -382,8 +379,11 @@ public class DisguiseAPI {
      * @return
      */
     public static boolean isViewSelfToggled(Entity entity) {
-        return isDisguised(entity) ? getDisguise(entity).isSelfDisguiseVisible() :
-                !Disguise.getViewSelf().contains(entity.getUniqueId()) == DisguiseConfig.isViewDisguises();
+        return hasSelfDisguisePreference(entity) != DisguiseConfig.isViewDisguises();
+    }
+
+    public static boolean hasSelfDisguisePreference(Entity entity) {
+        return Disguise.getViewSelf().contains(entity.getUniqueId());
     }
 
     /**
@@ -417,7 +417,7 @@ public class DisguiseAPI {
         }
 
         if (!canSeeSelfDisguises == DisguiseConfig.isViewDisguises()) {
-            if (!Disguise.getViewSelf().contains(entity.getUniqueId())) {
+            if (!hasSelfDisguisePreference(entity)) {
                 Disguise.getViewSelf().add(entity.getUniqueId());
             }
         } else {

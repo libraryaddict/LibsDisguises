@@ -72,7 +72,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
+            disguise = DisguiseParser
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -100,8 +101,16 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
                 }
             }
         }
+        disguise.setEntity(player);
 
-        DisguiseAPI.disguiseToAll(player, disguise);
+        if (!setViewDisguise(args)) {
+            // They prefer to have the opposite of whatever the view disguises option is
+            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
+                    disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+                disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
+        }
+
+        disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG
@@ -114,6 +123,17 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
 
         return true;
+    }
+
+    private boolean setViewDisguise(String[] strings) {
+        for (String string : strings) {
+            if (!string.equalsIgnoreCase("setViewSelfDisguise"))
+                continue;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
