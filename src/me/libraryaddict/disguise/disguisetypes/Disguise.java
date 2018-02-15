@@ -530,6 +530,21 @@ public abstract class Disguise {
                         }
                     }
 
+                    // If this disguise is active
+                    // Remove the disguise from the current disguises.
+                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                        if (getEntity() instanceof Player) {
+                            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                        }
+
+                        // Better refresh the entity to undisguise it
+                        if (getEntity().isValid()) {
+                            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
+                        } else {
+                            DisguiseUtilities.destroyEntity((TargetedDisguise) this);
+                        }
+                    }
+
                     if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
                         PlayerInfoData playerInfo = new PlayerInfoData(
                                 ReflectionManager.getGameProfile((Player) getEntity()), 0,
@@ -551,21 +566,6 @@ public abstract class Disguise {
                         }
                         catch (InvocationTargetException e) {
                             e.printStackTrace();
-                        }
-                    }
-
-                    // If this disguise is active
-                    // Remove the disguise from the current disguises.
-                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
-                        if (getEntity() instanceof Player) {
-                            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                        }
-
-                        // Better refresh the entity to undisguise it
-                        if (getEntity().isValid()) {
-                            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                        } else {
-                            DisguiseUtilities.destroyEntity((TargetedDisguise) this);
                         }
                     }
                 } else {
