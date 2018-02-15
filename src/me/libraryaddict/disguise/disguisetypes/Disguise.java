@@ -190,7 +190,9 @@ public abstract class Disguise {
             @Override
             public void run() {
                 // If entity is no longer valid. Remove it.
-                if (!getEntity().isValid()) {
+                if (getEntity() instanceof Player && !((Player) getEntity()).isOnline())
+                    removeDisguise();
+                else if (!getEntity().isValid()) {
                     // If it has been dead for 30+ ticks
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
                     // The delay is because if it sends the destroy entity packets straight away, then it means no
@@ -531,7 +533,7 @@ public abstract class Disguise {
                     if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
                         PlayerInfoData playerInfo = new PlayerInfoData(
                                 ReflectionManager.getGameProfile((Player) getEntity()), 0,
-                                NativeGameMode.SURVIVAL, WrappedChatComponent
+                                NativeGameMode.fromBukkit(((Player) getEntity()).getGameMode()), WrappedChatComponent
                                 .fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())));
 
                         PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
