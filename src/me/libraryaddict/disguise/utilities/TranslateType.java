@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -89,6 +88,9 @@ public enum TranslateType {
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
 
+                if (Objects.equals(key, value))
+                    continue;
+
                 if (value == null)
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
                 else {
@@ -99,6 +101,10 @@ public enum TranslateType {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
+            System.out.println("[LibsDisguises] Loaded " + translated.size() + " translations for " + name());
         }
     }
 
@@ -143,8 +149,8 @@ public enum TranslateType {
                 }
             }
 
-            writer.write("\n" + (comment != null ? "# " + comment + "\n" :
-                    "") + "\"" + message + "\": \"" + message + "\"\n");
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + message + "\": \"" + message +
+                    "\"\n");
         }
         catch (Exception ex) {
             ex.printStackTrace();
