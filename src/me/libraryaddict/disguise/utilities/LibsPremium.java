@@ -55,8 +55,13 @@ public class LibsPremium {
                     Method m = c.getMethod("isPremium");
                     thisPluginIsPaidFor = (Boolean) m.invoke(null);
 
-                    if (isPremium())
+                    if (isPremium()) {
+                        System.out.println("[LibsDisguises] Found a premium Lib's Disguises jar");
+
                         break;
+                    } else {
+                        System.out.println("[LibsDisguises] You have a non-premium Lib's Disguises jar in the folder!");
+                    }
                 }
                 catch (Exception ex) {
                     // Don't print off errors
