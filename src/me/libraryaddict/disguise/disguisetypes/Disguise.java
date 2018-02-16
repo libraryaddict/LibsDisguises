@@ -203,11 +203,6 @@ public abstract class Disguise {
 
                         if (isRemoveDisguiseOnDeath()) {
                             removeDisguise();
-                        } else {
-                            entity = null;
-                            watcher = getWatcher().clone(disguise);
-                            task.cancel();
-                            task = null;
                         }
                     }
                 } else {
@@ -489,105 +484,105 @@ public abstract class Disguise {
      * @return removeDiguise
      */
     public boolean removeDisguise() {
-        if (disguiseInUse) {
-            UndisguiseEvent event = new UndisguiseEvent(entity, this);
+        if (!isDisguiseInUse())
+            return false;
 
-            Bukkit.getPluginManager().callEvent(event);
+        UndisguiseEvent event = new UndisguiseEvent(entity, this);
 
-            if (!event.isCancelled() || (getEntity() instanceof Player && !((Player) getEntity()).isOnline())) {
-                disguiseInUse = false;
+        Bukkit.getPluginManager().callEvent(event);
 
-                if (task != null) {
-                    task.cancel();
-                    task = null;
+        // If this disguise is not in use, and the entity isnt a player
+        if (event.isCancelled() && (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline()))
+            return false;
+
+        disguiseInUse = false;
+
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+
+        // If this disguise has a entity set
+        if (getEntity() != null) {
+            if (this instanceof PlayerDisguise) {
+                PlayerDisguise disguise = (PlayerDisguise) this;
+
+                if (disguise.isDisplayedInTab()) {
+                    PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                    deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+                    deleteTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
+                            new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
+                                    WrappedChatComponent.fromText(disguise.getName()))));
+
+                    try {
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (!((TargetedDisguise) this).canSee(player) ||
+                                    (!isSelfDisguiseVisible() && getEntity() == player))
+                                continue;
+
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                        }
+                    }
+                    catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // If this disguise is active
+            // Remove the disguise from the current disguises.
+            if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+                if (getEntity() instanceof Player) {
+                    DisguiseUtilities.removeSelfDisguise((Player) getEntity());
                 }
 
-                HashMap<UUID, HashSet<TargetedDisguise>> disguises = DisguiseUtilities.getDisguises();
-
-                // If this disguise has a entity set
-                if (getEntity() != null) {
-                    if (this instanceof PlayerDisguise) {
-                        PlayerDisguise disguise = (PlayerDisguise) this;
-
-                        if (disguise.isDisplayedInTab()) {
-                            PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                            deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-                                    new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                            WrappedChatComponent.fromText(disguise.getName()))));
-
-                            try {
-                                for (Player player : Bukkit.getOnlinePlayers()) {
-                                    if (!((TargetedDisguise) this).canSee(player))
-                                        continue;
-
-                                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
-                                }
-                            }
-                            catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    // If this disguise is active
-                    // Remove the disguise from the current disguises.
-                    if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
-                        if (getEntity() instanceof Player) {
-                            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
-                        }
-
-                        // Better refresh the entity to undisguise it
-                        if (getEntity().isValid()) {
-                            DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
-                        } else {
-                            DisguiseUtilities.destroyEntity((TargetedDisguise) this);
-                        }
-                    }
-
-                    if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
-                        PlayerInfoData playerInfo = new PlayerInfoData(
-                                ReflectionManager.getGameProfile((Player) getEntity()), 0,
-                                NativeGameMode.fromBukkit(((Player) getEntity()).getGameMode()), WrappedChatComponent
-                                .fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())));
-
-                        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-
-                        addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
-
-                        try {
-                            for (Player player : Bukkit.getOnlinePlayers()) {
-                                if (!((TargetedDisguise) this).canSee(player))
-                                    continue;
-
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
-                            }
-                        }
-                        catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                // Better refresh the entity to undisguise it
+                if (getEntity().isValid()) {
+                    DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
                 } else {
-                    // Loop through the disguises because it could be used with a unknown entity id.
-                    HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
+                    DisguiseUtilities.destroyEntity((TargetedDisguise) this);
+                }
+            }
 
-                    Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
+            if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
+                PlayerInfoData playerInfo = new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()),
+                        0, NativeGameMode.fromBukkit(((Player) getEntity()).getGameMode()),
+                        WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())));
 
-                    while (itel.hasNext()) {
-                        int id = itel.next();
+                PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-                        if (future.get(id).remove(this) && future.get(id).isEmpty()) {
-                            itel.remove();
-                        }
+                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
+                addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
+
+                try {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (!((TargetedDisguise) this).canSee(player) ||
+                                (!isSelfDisguiseVisible() && getEntity() == player))
+                            continue;
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                     }
                 }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            // Loop through the disguises because it could be used with a unknown entity id.
+            HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
-                return true;
+            Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
+
+            while (itel.hasNext()) {
+                int id = itel.next();
+
+                if (future.get(id).remove(this) && future.get(id).isEmpty()) {
+                    itel.remove();
+                }
             }
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -804,7 +799,8 @@ public abstract class Disguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player))
+                        if (!((TargetedDisguise) this).canSee(player) ||
+                                (!isSelfDisguiseVisible() && getEntity() == player))
                             continue;
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
@@ -844,7 +840,8 @@ public abstract class Disguise {
 
             try {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player))
+                    if (!((TargetedDisguise) this).canSee(player) ||
+                            (!isSelfDisguiseVisible() && getEntity() == player))
                         continue;
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);

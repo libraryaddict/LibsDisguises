@@ -394,16 +394,9 @@ public class DisguiseListener implements Listener {
         DisguiseUtilities.saveDisguises(player.getUniqueId(), disguises);
     }
 
+
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
-
-        for (Disguise disguise : disguises) {
-            if (disguise.isRemoveDisguiseOnDeath()) {
-                disguise.removeDisguise();
-            }
-        }
-
         if (DisguiseConfig.isBedPacketsEnabled()) {
             final Player player = event.getPlayer();
 
