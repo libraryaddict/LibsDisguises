@@ -13,6 +13,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.EulerAngle;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -759,6 +760,17 @@ public class DisguiseParser {
                                 // Parse to string
                                 value = ChatColor.translateAlternateColorCodes('&', valueString);
                             }
+                        } else if (param == EulerAngle.class) {
+                            String[] split = valueString.split(",");
+
+                            if (split.length != 3)
+                                throw parseToException(param, valueString, methodName);
+
+                            if (!isDouble(split[0]) || !isDouble(split[1]) || !isDouble(split[2]))
+                                throw parseToException(param, valueString, methodName);
+
+                            value = new EulerAngle(Double.parseDouble(split[0]), Double.parseDouble(split[1]),
+                                    Double.parseDouble(split[2]));
                         } else if (param == Villager.Profession.class) {
                             try {
                                 value = Villager.Profession.valueOf(valueString.toUpperCase());

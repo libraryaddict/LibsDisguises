@@ -14,6 +14,7 @@ import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -160,6 +161,7 @@ public class ReflectionFlagWatchers {
                 "View the directions usable on player setSleeping and shulker direction");
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
+        new ParamInfo(EulerAngle.class, "Euler Angle (X,Y,Z)", "Set the X,Y,Z directions on an armorstand");
 
         try {
             new ParamInfo("org.bukkit.inventory.MainHand", "Main Hand", "Set the main hand for an entity");
@@ -228,7 +230,8 @@ public class ReflectionFlagWatchers {
 
         new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers separated by a ,");
         new ParamInfo(WrappedGameProfile.class, "GameProfile",
-                "Get the gameprofile here https://sessionserver.mojang.com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
+                "Get the gameprofile here https://sessionserver.mojang" +
+                        ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
 
         Collections.sort(paramList, new Comparator<ParamInfo>() {
             @Override
