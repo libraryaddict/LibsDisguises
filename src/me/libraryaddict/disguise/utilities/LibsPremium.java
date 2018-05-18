@@ -9,6 +9,8 @@ import java.net.URLClassLoader;
  * Created by libraryaddict on 2/06/2017.
  */
 public class LibsPremium {
+    // I believe I was tired and frustrated when I wrote this, but leaving it in because it's an entertaining read.
+
     /**
      * If you're seriously going to modify this to get the premium stuff for free, can you at least not
      * distribute it? You didn't pay for it despite how cheap it is. You spend $8 on a trip to McDonalds
