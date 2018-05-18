@@ -1357,14 +1357,6 @@ public class DisguiseUtilities {
                     ldTeam = scoreboard.registerNewTeam(ldTeamName);
                 }
 
-                if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
-                    ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-                }
-
-                if (ldTeam.canSeeFriendlyInvisibles()) {
-                    ldTeam.setCanSeeFriendlyInvisibles(false);
-                }
-
                 if (!ldTeam.hasEntry(player.getName()))
                     ldTeam.addEntry(player.getName());
 
@@ -1378,6 +1370,15 @@ public class DisguiseUtilities {
                     for (Option option : Team.Option.values()) {
                         ldTeam.setOption(option, prevTeam.getOption(option));
                     }
+                }
+
+                if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER &&
+                        DisguiseConfig.isModifyCollisions()) {
+                    ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+                }
+
+                if (ldTeam.canSeeFriendlyInvisibles() && DisguiseConfig.isModifySeeFriendlyInvisibles()) {
+                    ldTeam.setCanSeeFriendlyInvisibles(false);
                 }
             }
 

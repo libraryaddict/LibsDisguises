@@ -1,19 +1,18 @@
 package me.libraryaddict.disguise;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.PacketsManager;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.PacketsManager;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class DisguiseConfig {
     public static enum DisguisePushing { // This enum has a really bad name..
@@ -63,17 +62,35 @@ public class DisguiseConfig {
     private static boolean savePlayerDisguises;
     private static boolean saveEntityDisguises;
     private static boolean useTranslations;
+    private static boolean modifyCollisions;
+    private static boolean modifySeeFriendlyInvisibles;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(disguise) && !entry.getKey().replaceAll("_", "")
-                    .equalsIgnoreCase(disguise))
+            if (!entry.getKey().equalsIgnoreCase(disguise) &&
+                    !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
                 continue;
 
             return entry;
         }
 
         return null;
+    }
+
+    public static boolean isModifyCollisions() {
+        return modifyCollisions;
+    }
+
+    public static boolean isModifySeeFriendlyInvisibles() {
+        return modifySeeFriendlyInvisibles;
+    }
+
+    public static void setModifyCollisions(boolean isModifyCollisions) {
+        modifyCollisions = isModifyCollisions;
+    }
+
+    public static void setModifySeeFriendlyInvisibles(boolean isModifySeeFriendlyInvisibles) {
+        modifySeeFriendlyInvisibles = isModifySeeFriendlyInvisibles;
     }
 
     public static boolean isSavePlayerDisguises() {
@@ -188,6 +205,8 @@ public class DisguiseConfig {
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
         setUseTranslations(config.getBoolean("Translations"));
+        setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
+        setModifySeeFriendlyInvisibles(config.getBoolean("Scoreboard.SeeFriendlyInvisibles"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             System.out.println("[LibsDisguises] You must purchase the plugin to use saved disguises!");
@@ -203,8 +222,8 @@ public class DisguiseConfig {
             disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            System.out.println("[LibsDisguises] Cannot parse '" + config
-                    .getString("SelfDisguisesScoreboard") + "' to a valid option for SelfDisguisesTeam");
+            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
+                    "' to a valid option for SelfDisguisesTeam");
         }
 
         customDisguises.clear();
@@ -241,9 +260,8 @@ public class DisguiseConfig {
                 System.out.println("[LibsDisguises] Loaded custom disguise " + key);
             }
             catch (DisguiseParseException e) {
-                System.err.println(
-                        "[LibsDisguises] Error while loading custom disguise '" + key + "'" + (e.getMessage() == null ?
-                                "" : ": " + e.getMessage()));
+                System.err.println("[LibsDisguises] Error while loading custom disguise '" + key + "'" +
+                        (e.getMessage() == null ? "" : ": " + e.getMessage()));
 
                 if (e.getMessage() == null)
                     e.printStackTrace();
@@ -253,9 +271,8 @@ public class DisguiseConfig {
             }
         }
 
-        System.out.println(
-                "[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ?
-                        "" : "s"));
+        System.out.println("[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" +
+                (customDisguises.size() == 1 ? "" : "s"));
     }
 
     public static boolean isAnimationPacketsEnabled() {
@@ -299,14 +316,16 @@ public class DisguiseConfig {
     }
 
     /**
-     * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor floating around
+     * Is the plugin modifying the inventory packets so that players when self disguised, do not see their armor
+     * floating around
      */
     public static boolean isHidingArmorFromSelf() {
         return hidingArmor;
     }
 
     /**
-     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
+     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing
+     * self disguise
      */
     public static boolean isHidingHeldItemFromSelf() {
         return hidingHeldItem;
@@ -490,7 +509,8 @@ public class DisguiseConfig {
     }
 
     /**
-     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing self disguise
+     * Does the plugin appear to remove the item they are holding, to prevent a floating sword when they are viewing
+     * self disguise
      */
     public static void setHideHeldItemFromSelf(boolean hideHelditem) {
         if (hidingHeldItem != hideHelditem) {

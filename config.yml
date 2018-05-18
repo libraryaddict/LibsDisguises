@@ -39,6 +39,13 @@ Translations: false
 # CREATE_SCOREBOARD - Creates a new team which copies the attributes of their previous scoreboard team which they are then assigned to. This means they keep nametag color and other options.
 SelfDisguisesScoreboard: MODIFY_SCOREBOARD
 
+# More options incase you want to disable a specific setting of the scoreboard
+Scoreboard:
+  # Should it modify the scoreboard to turn collisions off?
+  Collisions: true
+  # Should it modify the scoreboard teams to disable seeing friendly invisibles?
+  SeeFriendlyInvisibles: true
+
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'
 
