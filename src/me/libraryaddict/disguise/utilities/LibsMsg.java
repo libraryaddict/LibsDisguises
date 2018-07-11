@@ -141,7 +141,7 @@ public enum LibsMsg {
     PARSE_NO_PERM_NAME(ChatColor.RED + "Error! You don't have permission to use that name!"),
     PARSE_NO_PERM_PARAM(
             ChatColor.RED + "Error! You do not have permission to use the parameter %s on the %s disguise!"),
-    PARSE_NO_PERM_REF(ChatColor.RED + "You do not have perimssion to use disguise references!"),
+    PARSE_NO_PERM_REF(ChatColor.RED + "You do not have permission to use disguise references!"),
     PARSE_NO_REF(ChatColor.RED + "Cannot find a disguise under the reference %s"),
     PARSE_OPTION_NA(ChatColor.RED + "Cannot find the option %s"),
     PARSE_SUPPLY_PLAYER(ChatColor.RED + "Error! You need to give a player name!"),
