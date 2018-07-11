@@ -104,7 +104,7 @@ public class DisguiseConfig {
     public static void setUseTranslations(boolean setUseTranslations) {
         useTranslations = setUseTranslations;
 
-        TranslateType.reloadTranslations();
+        TranslateType.refreshTranslations();
     }
 
     public static boolean isSaveEntityDisguises() {

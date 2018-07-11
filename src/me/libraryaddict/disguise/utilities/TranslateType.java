@@ -8,8 +8,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,16 +23,16 @@ public enum TranslateType {
     DISGUISE_OPTIONS_PARAMETERS("disguise_option_parameters");
 
     private File file;
-    private HashMap<String, String> translated = new HashMap<>();
+    private LinkedHashMap<String, String> translated = new LinkedHashMap<>();
     private FileWriter writer;
 
     TranslateType(String fileName) {
         file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
     }
 
-    public static void reloadTranslations() {
+    public static void refreshTranslations() {
         for (TranslateType type : values()) {
-            type.reload();
+            type.loadTranslations();
         }
 
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
@@ -42,7 +42,10 @@ public enum TranslateType {
         TranslateFiller.fillConfigs();
     }
 
-    protected void removeDuplicates() {
+    protected void saveTranslations() {
+        // First remove translations which are not different from each other. We don't need to store messages that
+        // were not translated.
+
         Iterator<Map.Entry<String, String>> itel = translated.entrySet().iterator();
 
         while (itel.hasNext()) {
@@ -53,6 +56,8 @@ public enum TranslateType {
 
             itel.remove();
         }
+
+        // Close the writer
 
         try {
             if (writer != null) {
@@ -65,37 +70,51 @@ public enum TranslateType {
         }
     }
 
-    public void wipeTranslations() {
+    private void loadTranslations() {
         translated.clear();
-    }
-
-    private void reload() {
-        wipeTranslations();
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             System.out.println("[LibsDisguises] Loading translations: " + name());
         }
 
-        if (!getFile().exists())
+        if (!getFile().exists()) {
+            System.out.println("[LibsDisguises] Translations for " + name() + " missing! Skipping...");
             return;
+        }
 
         YamlConfiguration config = new YamlConfiguration();
         config.options().pathSeparator(Character.toChars(0)[0]);
 
         try {
             config.load(getFile());
+            int dupes = 0;
 
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
 
-                if (Objects.equals(key, value))
-                    continue;
-
-                if (value == null)
+                if (value == null) {
                     System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
-                else {
-                    translated.put(ChatColor.translateAlternateColorCodes('&', key),
-                            ChatColor.translateAlternateColorCodes('&', value));
+                } else {
+                    String newKey = ChatColor.translateAlternateColorCodes('&', key);
+
+                    if (translated.containsKey(newKey)) {
+                        if (dupes++ < 5) {
+                            System.out.println(
+                                    "[LibsDisguises] Alert! Duplicate translation entry for " + key + " in " + name() +
+                                            " translations!");
+                            continue;
+                        } else {
+                            System.out.println(
+                                    "[LibsDisguises] Too many duplicated keys! It's likely that this file was mildly " +
+                                            "corrupted by a previous bug!");
+                            System.out.println(
+                                    "[LibsDisguises] Delete the file, or you can remove every line after the first " +
+                                            "duplicate message!");
+                            break;
+                        }
+                    }
+
+                    translated.put(newKey, ChatColor.translateAlternateColorCodes('&', value));
                 }
             }
         }
@@ -126,7 +145,7 @@ public enum TranslateType {
 
         translated.put(message, message);
 
-        message = StringEscapeUtils.escapeJava(message.replaceAll(ChatColor.COLOR_CHAR + "", "&"));
+        message = StringEscapeUtils.escapeJava(message.replace(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = getFile().exists();

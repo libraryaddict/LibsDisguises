@@ -8,14 +8,11 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
-import me.libraryaddict.disguise.utilities.json.SerializerGameProfile;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -82,6 +79,10 @@ public class PlayerDisguise extends TargetedDisguise {
         setSkin(skinToUse);
 
         createDisguise();
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     @Override

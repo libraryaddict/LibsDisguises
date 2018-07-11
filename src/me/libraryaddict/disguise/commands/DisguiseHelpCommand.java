@@ -46,12 +46,12 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                     if (help != null) {
                         if (help.isEnums()) {
-                            sender.sendMessage(ChatColor.RED + help.getName() + ": " + ChatColor.GREEN + StringUtils
-                                    .join(help.getEnums(""), ChatColor.RED + ", " + ChatColor.GREEN));
+                            sender.sendMessage(LibsMsg.DHELP_HELP4.get(help.getName(),
+                                    StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get())));
                         } else {
-                            sender.sendMessage(
-                                    ChatColor.RED + help.getName() + ": " + ChatColor.GREEN + help.getDescription());
+                            sender.sendMessage(LibsMsg.DHELP_HELP5.get(help.getName(), help.getDescription()));
                         }
+
                         return true;
                     }
 
@@ -107,14 +107,14 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                             if (declaring == LivingWatcher.class) {
                                 methodColor = ChatColor.AQUA;
-                            } else if (!(FlagWatcher.class
-                                    .isAssignableFrom(declaring)) || declaring == FlagWatcher.class) {
+                            } else if (!(FlagWatcher.class.isAssignableFrom(declaring)) ||
+                                    declaring == FlagWatcher.class) {
                                 methodColor = ChatColor.GRAY;
                             }
 
-                            String str = TranslateType.DISGUISE_OPTIONS
-                                    .get(method.getName()) + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info
-                                    .getName() + ChatColor.DARK_RED + ")";
+                            String str =
+                                    TranslateType.DISGUISE_OPTIONS.get(method.getName()) + ChatColor.DARK_RED + "(" +
+                                            ChatColor.GREEN + info.getName() + ChatColor.DARK_RED + ")";
 
                             map.put(str, methodColor);
                             methods.add(str);

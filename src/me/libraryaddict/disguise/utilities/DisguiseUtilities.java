@@ -410,7 +410,6 @@ public class DisguiseUtilities {
                             // This here is a paradox.
                             // If fed a name. I can do this.
                             // But the rest of the time.. Its going to conflict.
-                            // The below is debug output. Most people wouldn't care for it.
 
                             disguiseItel.remove();
                             d.removeDisguise();

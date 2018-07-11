@@ -52,8 +52,8 @@ public class TranslateFiller {
                     className = "Illager";
 
                 TranslateType.DISGUISE_OPTIONS.save(method.getName(),
-                        "Found in the disguise options for " + className + " and uses " + (para.isArray() ?
-                                "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
+                        "Found in the disguise options for " + className + " and uses " +
+                                (para.isArray() ? "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
             }
         }
 
@@ -72,11 +72,11 @@ public class TranslateFiller {
                 .save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
-            TranslateType.MESSAGES.save(msg.getRaw());
+            TranslateType.MESSAGES.save(msg.getRaw(), "Reference: " + msg.name());
         }
 
         for (TranslateType type : TranslateType.values()) {
-            type.removeDuplicates();
+            type.saveTranslations();
         }
     }
 }
