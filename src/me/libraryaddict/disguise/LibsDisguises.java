@@ -172,7 +172,14 @@ public class LibsDisguises extends JavaPlugin {
                     return "6 to 15";
                 else if (disgs <= 30)
                     return "16 to 30";
-                return "More than 30";
+                else if (disgs <= 60)
+                    return "30 to 60";
+                else if (disgs <= 100)
+                    return "60 to 100";
+                else if (disgs <= 200)
+                    return "100 to 200";
+
+                return "More than 200";
             }
         });
 
