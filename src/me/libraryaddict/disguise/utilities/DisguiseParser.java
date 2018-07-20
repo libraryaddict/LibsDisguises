@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -994,16 +995,33 @@ public class DisguiseParser {
 
         if (itemId != -1) {
             short itemDura = 0;
+            int amount = 1;
+            boolean enchanted = false;
 
-            if (split.length > 1) {
-                if (isInteger(split[1])) {
-                    itemDura = Short.parseShort(split[1]);
+            for (int i = 1; i < split.length; i++) {
+                String s = split[i];
+
+                if (!enchanted &&
+                        (s.equalsIgnoreCase("glow") || s.equalsIgnoreCase("glowing") || s.equalsIgnoreCase("enchant") ||
+                                s.equalsIgnoreCase("enchanted"))) {
+                    enchanted = true;
+                } else if (isInteger(s)) {
+                    if (i == (enchanted ? 2 : 1)) {
+                        itemDura = Short.parseShort(s);
+                    } else if (i == (enchanted ? 3 : 2)) {
+                        amount = Integer.parseInt(s);
+                    } else {
+                        throw parseToException(param, string, "%s");
+                    }
                 } else {
                     throw parseToException(param, string, "%s");
                 }
             }
 
-            return new ItemStack(itemId, 1, itemDura);
+            ItemStack itemStack = new ItemStack(itemId, amount, itemDura);
+            itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+
+            return itemStack;
         } else {
             if (split.length == 1) {
                 throw parseToException(param, string, "%s");
