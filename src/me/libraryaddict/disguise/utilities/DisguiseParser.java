@@ -1019,7 +1019,10 @@ public class DisguiseParser {
             }
 
             ItemStack itemStack = new ItemStack(itemId, amount, itemDura);
-            itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+
+            if (enchanted) {
+                itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            }
 
             return itemStack;
         } else {
