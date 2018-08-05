@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.UUID;
-
-import com.google.common.base.Optional;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public abstract class AbstractHorseWatcher extends AgeableWatcher {
     public AbstractHorseWatcher(Disguise disguise) {

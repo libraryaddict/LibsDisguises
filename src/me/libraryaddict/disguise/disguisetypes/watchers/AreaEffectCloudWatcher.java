@@ -1,8 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.Particle;
 
 /**
  * @author Navid
@@ -27,10 +28,6 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         return getData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    public int getParticleId() {
-        return getData(MetaIndex.AREA_EFFECT_PARTICLE);
-    }
-
     public void setRadius(float radius) {
         if (radius > 30)
             radius = 30;
@@ -49,8 +46,12 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    public void setParticleId(int particleId) {
-        setData(MetaIndex.AREA_EFFECT_PARTICLE, particleId);
+    public void setParticleType(Particle particle) {
+        setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
         sendData(MetaIndex.AREA_EFFECT_PARTICLE);
+    }
+
+    public Particle getParticleType() {
+        return getData(MetaIndex.AREA_EFFECT_PARTICLE);
     }
 }

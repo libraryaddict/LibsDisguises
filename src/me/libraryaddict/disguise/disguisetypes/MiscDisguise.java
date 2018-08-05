@@ -1,16 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
-
-import org.bukkit.Art;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
+import org.bukkit.Art;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.security.InvalidParameterException;
 
 public class MiscDisguise extends TargetedDisguise {
     private int id = -1, data = 0;
@@ -18,6 +18,18 @@ public class MiscDisguise extends TargetedDisguise {
     public MiscDisguise(DisguiseType disguiseType) {
         this(disguiseType, -1, disguiseType.getDefaultData());
     }
+
+    public MiscDisguise(Material material, int data) {
+        super(DisguiseType.DROPPED_ITEM);
+
+        apply(0, 0, new ItemStack(material, 1, (short) data));
+    }
+
+    public MiscDisguise(ItemStack itemStack) {
+        super(DisguiseType.DROPPED_ITEM);
+
+        apply(0, 0, itemStack);
+}
 
     public MiscDisguise(DisguiseType disguiseType, int id) {
         this(disguiseType, id, disguiseType.getDefaultData());
@@ -28,34 +40,37 @@ public class MiscDisguise extends TargetedDisguise {
 
         if (!disguiseType.isMisc()) {
             throw new InvalidParameterException(
-                    "Expected a non-living DisguiseType while constructing MiscDisguise. Received " + disguiseType + " instead. Please use " + (
-                            disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") + " instead");
+                    "Expected a non-living DisguiseType while constructing MiscDisguise. Received " + disguiseType +
+                            " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") +
+                            " instead");
         }
 
+        apply(id, data, new ItemStack(Material.STONE));
+    }
+
+    private void apply(int id, int data, ItemStack itemStack) {
         createDisguise();
 
         this.id = getType().getTypeId();
         this.data = getType().getDefaultData();
-        switch (disguiseType) {
+
+        switch (getType()) {
             // The only disguises which should use a custom data.
             case PAINTING:
                 ((PaintingWatcher) getWatcher()).setArt(Art.values()[Math.max(0, id) % Art.values().length]);
                 break;
             case FALLING_BLOCK:
-                ((FallingBlockWatcher) getWatcher()).setBlock(
-                        new ItemStack(Math.max(1, id), 1, (short) Math.max(0, data)));
+                ((FallingBlockWatcher) getWatcher()).setBlock(itemStack);
                 break;
             case SPLASH_POTION:
                 ((SplashPotionWatcher) getWatcher()).setPotionId(Math.max(0, id));
                 break;
             case DROPPED_ITEM:
-
-                if (id > 0) {
-                    ((DroppedItemWatcher) getWatcher()).setItemStack(new ItemStack(id, Math.max(1, data)));
-                }
+                ((DroppedItemWatcher) getWatcher()).setItemStack(itemStack);
                 break;
             case FISHING_HOOK: // Entity ID of whoever is holding fishing rod
-            case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving through his body?"
+            case ARROW: // Entity ID of shooter. Used for "Is he on this scoreboard team and do I render it moving
+                // through his body?"
             case TIPPED_ARROW:
             case SPECTRAL_ARROW:
             case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
@@ -116,8 +131,9 @@ public class MiscDisguise extends TargetedDisguise {
      */
     public int getId() {
         if (getType() == DisguiseType.FALLING_BLOCK) {
-            return ((FallingBlockWatcher) getWatcher()).getBlock().getTypeId();
+            return ((FallingBlockWatcher) getWatcher()).getBlock().getType().ordinal();
         }
+
         return id;
     }
 

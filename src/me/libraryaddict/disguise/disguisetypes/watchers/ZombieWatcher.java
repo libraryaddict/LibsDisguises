@@ -39,4 +39,12 @@ public class ZombieWatcher extends InsentientWatcher {
         sendData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
+    public boolean isConverting() {
+        return getData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
+    }
+
+    public void setConverting(boolean converting) {
+        setData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
+        sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
+    }
 }

@@ -129,3 +129,5 @@ permissions:
       description: See the /disguisemodifyradius command in tab-completion
     libsdisguises.seecmd.disguisemodifyentity:
       description: See the /disguisemodifyentity command in tab-completion
+
+api-version: 1.13

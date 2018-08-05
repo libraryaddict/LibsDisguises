@@ -181,7 +181,8 @@ public enum DisguiseType {
     ZOMBIE_VILLAGER;
 
     static {
-        // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older versions of MC.
+        // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older
+        // versions of MC.
         // Without erroring up everything.
 
         for (DisguiseType type : values()) {
@@ -191,7 +192,8 @@ public enum DisguiseType {
                 String name;
 
                 /*   switch (type) {
-                // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it from being..
+                // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it
+                from being..
                 // Usable.
                 case ITEM_FRAME:
                     break;
@@ -231,6 +233,7 @@ public enum DisguiseType {
     private EntityType entityType;
 
     private int objectId = -1, defaultData = 0;
+    private int typeId;
 
     private Class<? extends FlagWatcher> watcherClass;
 
@@ -284,7 +287,11 @@ public enum DisguiseType {
      * @return
      */
     public int getTypeId() {
-        return (int) getEntityType().getTypeId();
+        return typeId;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public Class<? extends FlagWatcher> getWatcherClass() {

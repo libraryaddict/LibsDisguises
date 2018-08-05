@@ -501,11 +501,8 @@ public class PacketsManager {
                 if (watchableObject.getValue() == null)
                     continue;
 
-                if (Registry.get(watchableObject.getValue().getClass()) == null)
-                    continue;
-
-                WrappedDataWatcherObject obj = new WrappedDataWatcherObject(watchableObject.getIndex(),
-                        Registry.get(watchableObject.getValue().getClass()));
+                WrappedDataWatcherObject obj = ReflectionManager
+                        .createDataWatcherObject(watchableObject.getIndex(), watchableObject.getValue());
 
                 newWatcher.setObject(obj, watchableObject.getValue());
             }

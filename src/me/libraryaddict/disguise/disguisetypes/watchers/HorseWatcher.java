@@ -26,11 +26,11 @@ public class HorseWatcher extends AbstractHorseWatcher {
 
         switch (horseValue) {
         case 1:
-            return new ItemStack(Material.IRON_BARDING);
+            return new ItemStack(Material.IRON_HORSE_ARMOR);
         case 2:
-            return new ItemStack(Material.GOLD_BARDING);
+            return new ItemStack(Material.GOLDEN_HORSE_ARMOR);
         case 3:
-            return new ItemStack(Material.DIAMOND_BARDING);
+            return new ItemStack(Material.DIAMOND_HORSE_ARMOR);
         default:
             break;
         }
@@ -67,13 +67,13 @@ public class HorseWatcher extends AbstractHorseWatcher {
         if (item != null) {
             Material mat = item.getType();
 
-            if (mat == Material.IRON_BARDING) {
+            if (mat == Material.IRON_HORSE_ARMOR) {
                 value = 1;
             }
-            else if (mat == Material.GOLD_BARDING) {
+            else if (mat == Material.GOLDEN_HORSE_ARMOR) {
                 value = 2;
             }
-            else if (mat == Material.DIAMOND_BARDING) {
+            else if (mat == Material.DIAMOND_HORSE_ARMOR) {
                 value = 3;
             }
         }

@@ -23,8 +23,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
-import me.libraryaddict.disguise.utilities.backwards.BackwardMethods;
-import me.libraryaddict.disguise.utilities.backwards.BackwardsSupport;
 import me.libraryaddict.disguise.utilities.json.*;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
@@ -50,10 +48,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -81,7 +76,6 @@ public class DisguiseUtilities {
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
-    private static BackwardMethods methods;
     private static boolean pluginsUsed, commandsUsed;
     private static long libsDisguisesCalled;
 
@@ -851,7 +845,6 @@ public class DisguiseUtilities {
 
     public static void init(LibsDisguises disguises) {
         libsDisguises = disguises;
-        methods = BackwardsSupport.getMethods();
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
@@ -867,21 +860,43 @@ public class DisguiseUtilities {
         try {
             Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
             Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
+            Class chunkClass = ReflectionManager.getNmsClass("Chunk");
+            Object bedChunk = null;
 
-            Object bedChunk = ReflectionManager.getNmsClass("Chunk")
-                    .getConstructor(ReflectionManager.getNmsClass("World"), int.class, int.class)
-                    .newInstance(world, 0, 0);
+            for (Constructor constructor : chunkClass.getConstructors()) {
+                if (constructor.getParameterTypes().length != 8)
+                    continue;
 
-            Field cSection = bedChunk.getClass().getDeclaredField("sections");
+                bedChunk = constructor
+                        .newInstance(world, 0, 0, Array.newInstance(ReflectionManager.getNmsClass("BiomeBase"), 0),
+                                null, null, null, 0L);
+                break;
+            }
+
+            if (bedChunk == null) {
+                throw new IllegalStateException("[LibsDisguises] Cannot find constructor to create world chunk");
+            }
+
+            Field cSection = chunkClass.getDeclaredField("sections");
             cSection.setAccessible(true);
 
             Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class, boolean.class)
                     .newInstance(0, true);
 
-            Object block = ReflectionManager.getNmsClass("Block").getMethod("getById", int.class)
-                    .invoke(null, Material.BED_BLOCK.getId());
+            Class blockClass = ReflectionManager.getNmsClass("Block");
 
-            Method fromLegacyData = block.getClass().getMethod("fromLegacyData", int.class);
+            Object block = blockClass.getMethod("getByName", String.class).invoke(null, "white_bed");
+            Object blockData = ReflectionManager.getNmsMethod(blockClass, "getBlockData").invoke(block);
+            Method method = null;
+
+            for (Method method1 : blockData.getClass().getMethods()) {
+                if (!method1.getName().equals("set") || method1.getParameterTypes().length != 2)
+                    continue;
+
+                method = method1;
+                break;
+            }
+
             Method setType = chunkSection.getClass()
                     .getMethod("setType", int.class, int.class, int.class, ReflectionManager.getNmsClass("IBlockData"));
             Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
@@ -889,10 +904,12 @@ public class DisguiseUtilities {
 
             for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
                 int x = 1 + face.getModX();
-
                 int z = 1 + face.getModZ();
 
-                setType.invoke(chunkSection, x, 0, z, fromLegacyData.invoke(block, face.ordinal()));
+                Object data = method.invoke(blockData, block.getClass().getField("FACING").get(null),
+                        ReflectionManager.getEnumDirection(face.ordinal()));
+
+                setType.invoke(chunkSection, x, 0, z, data);
             }
 
             Object[] array = (Object[]) Array.newInstance(chunkSection.getClass(), 16);
@@ -1018,9 +1035,7 @@ public class DisguiseUtilities {
         }
         catch (
 
-                Exception ex)
-
-        {
+                Exception ex) {
             ex.printStackTrace();
         }
     }

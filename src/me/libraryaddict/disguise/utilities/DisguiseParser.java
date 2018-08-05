@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.disguisetypes.*;
 import org.bukkit.Art;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 public class DisguiseParser {
     public static class DisguiseParseException extends Exception {
@@ -110,13 +112,7 @@ public class DisguiseParser {
             if (disguiseType != other.disguiseType)
                 return false;
 
-            if (permName == null) {
-                if (other.permName != null)
-                    return false;
-            } else if (!permName.equals(other.permName))
-                return false;
-
-            return true;
+            return Objects.equals(permName, other.permName);
         }
     }
 
@@ -585,6 +581,7 @@ public class DisguiseParser {
                     disguise = new MobDisguise(disguisePerm.getType(), adult);
                 } else if (disguisePerm.isMisc()) {
                     // Its a misc, we are going to use the MiscDisguise constructor.
+                    ItemStack itemStack = new ItemStack(Material.STONE);
                     int miscId = -1;
                     int miscData = -1;
                     String secondArg = null;
@@ -607,6 +604,7 @@ public class DisguiseParser {
                                     disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
                                 for (Material mat : Material.values()) {
                                     if (mat.name().replace("_", "").equalsIgnoreCase(args[1].replace("_", ""))) {
+                                        itemStack = new ItemStack(mat);
                                         miscId = mat.getId();
                                         break;
                                     }
@@ -681,8 +679,13 @@ public class DisguiseParser {
                             doCheck(sender, optionPermissions, usedOptions);
                         }
                     }
+
                     // Construct the disguise
-                    disguise = new MiscDisguise(disguisePerm.getType(), miscId, miscData);
+                    if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
+                        disguise = new MiscDisguise(itemStack);
+                    } else {
+                        disguise = new MiscDisguise(disguisePerm.getType(), miscId, miscData);
+                    }
                 }
             }
         }
@@ -888,6 +891,7 @@ public class DisguiseParser {
                                         break;
                                     }
                                 }
+
                                 if (value == null) {
                                     throw new Exception();
                                 }
@@ -907,8 +911,26 @@ public class DisguiseParser {
                             catch (Exception ex) {
                                 throw parseToException(param, valueString, methodName);
                             }
-                        } else if (param.getName().equals("org.bukkit.entity.Parrot$Variant")) {
+                        } else if (param == Parrot.Variant.class) {
                             value = callValueOf(param, valueString, methodName);
+                        } else if (param == Particle.class) {
+                            try {
+                                for (Particle type : Particle.values()) {
+                                    if (type.name().replace("_", "")
+                                            .equalsIgnoreCase(valueString.replace("_", "").replace(" ", ""))) {
+                                        value = type;
+
+                                        break;
+                                    }
+                                }
+
+                                if (value == null) {
+                                    throw new Exception();
+                                }
+                            }
+                            catch (Exception ex) {
+                                throw parseToException(param, valueString, methodName);
+                            }
                         }
                     }
 
@@ -979,21 +1001,13 @@ public class DisguiseParser {
     private static ItemStack parseToItemstack(Class param, String method, String string) throws DisguiseParseException {
         String[] split = string.split(":", -1);
 
-        int itemId = -1;
-
         if (split[0].isEmpty() || split[0].equalsIgnoreCase("null")) {
             return null;
-        } else if (isInteger(split[0])) {
-            itemId = Integer.parseInt(split[0]);
-        } else {
-            try {
-                itemId = Material.valueOf(split[0].toUpperCase()).getId();
-            }
-            catch (Exception ignored) {
-            }
         }
 
-        if (itemId != -1) {
+        Material material = Material.getMaterial(split[0]);
+
+        if (material != null) {
             short itemDura = 0;
             int amount = 1;
             boolean enchanted = false;
@@ -1018,7 +1032,7 @@ public class DisguiseParser {
                 }
             }
 
-            ItemStack itemStack = new ItemStack(itemId, amount, itemDura);
+            ItemStack itemStack = new ItemStack(material, amount, itemDura);
 
             if (enchanted) {
                 itemStack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);

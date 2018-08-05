@@ -7,12 +7,12 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.TreeSpecies;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 
@@ -47,10 +47,6 @@ public class ReflectionFlagWatchers {
         private ParamInfo(String name, String description) {
             this.name = name;
             this.description = description;
-        }
-
-        public ParamInfo(String className, String name, String description) throws ClassNotFoundException {
-            this(Class.forName(className), name, description);
         }
 
         public ParamInfo(Class paramClass, Enum[] enums, String name, String description) {
@@ -143,14 +139,6 @@ public class ReflectionFlagWatchers {
     static {
         new ParamInfo(AnimalColor.class, "Animal Color", "View all the colors you can use for an animal color");
         new ParamInfo(Art.class, "Art", "View all the paintings you can use for a painting disguise");
-
-        try {
-            new ParamInfo("org.bukkit.entity.Llama.Color", "Llama Color",
-                    "View all the colors you can use for a llama color");
-        }
-        catch (Exception ex) {
-        }
-
         new ParamInfo(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color");
 
         new ParamInfo(Ocelot.Type.class, "Ocelot Type", "View all the ocelot types you can use for ocelots");
@@ -162,21 +150,10 @@ public class ReflectionFlagWatchers {
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
         new ParamInfo(EulerAngle.class, "Euler Angle (X,Y,Z)", "Set the X,Y,Z directions on an armorstand");
-
-        try {
-            new ParamInfo("org.bukkit.inventory.MainHand", "Main Hand", "Set the main hand for an entity");
-            new ParamInfo("org.bukkit.entity.Llama.Color", "Llama Color",
-                    "View all the colors you can use for a llama color");
-        }
-        catch (Exception ex) {
-        }
-
-        try {
-            new ParamInfo("org.bukkit.entity.Parrot$Variant", "Parrot Variant",
-                    "View the different colors a parrot can be");
-        }
-        catch (ClassNotFoundException ex) {// Dont handle
-        }
+        new ParamInfo(MainHand.class, "Main Hand", "Set the main hand for an entity");
+        new ParamInfo(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color");
+        new ParamInfo(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be");
+        new ParamInfo(Particle.class, "Particle", "The different particles of Minecraft");
 
         ArrayList<String> potionEnums = new ArrayList<>();
 
@@ -229,9 +206,8 @@ public class ReflectionFlagWatchers {
         new ParamInfo(int[].class, "number,number,number..", "Numbers separated by an ,");
 
         new ParamInfo(BlockPosition.class, "Block Position (num,num,num)", "Three numbers separated by a ,");
-        new ParamInfo(WrappedGameProfile.class, "GameProfile",
-                "Get the gameprofile here https://sessionserver.mojang" +
-                        ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
+        new ParamInfo(WrappedGameProfile.class, "GameProfile", "Get the gameprofile here https://sessionserver.mojang" +
+                ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false");
 
         Collections.sort(paramList, new Comparator<ParamInfo>() {
             @Override

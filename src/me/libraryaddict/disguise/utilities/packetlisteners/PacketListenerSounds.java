@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -153,14 +154,14 @@ public class PacketListenerSounds extends PacketAdapter {
                 } else {
                     if (sound.equals("step.grass")) {
                         try {
-                            int typeId = observer.getWorld().getBlockTypeIdAt((int) Math.floor(soundCords[0] / 8D),
+                            Block block = observer.getWorld().getBlockAt((int) Math.floor(soundCords[0] / 8D),
                                     (int) Math.floor(soundCords[1] / 8D), (int) Math.floor(soundCords[2] / 8D));
 
-                            Object block = ReflectionManager.getNmsMethod("RegistryMaterials", "getId", int.class)
-                                    .invoke(ReflectionManager.getNmsField("Block", "REGISTRY").get(null), typeId);
-
                             if (block != null) {
-                                Object step = ReflectionManager.getNmsField("Block", "stepSound").get(block);
+                                Object nmsBlock = ReflectionManager.getCraftMethod("block.CraftBlock", "getNMSBlock")
+                                        .invoke(block);
+
+                                Object step = ReflectionManager.getNmsMethod("Block", "getStepSound").invoke(nmsBlock);
 
                                 mods.write(0, ReflectionManager.getNmsMethod(step.getClass(), "d").invoke(step));
                                 mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));

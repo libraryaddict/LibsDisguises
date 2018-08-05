@@ -1,56 +1,43 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+public class MinecartWatcher extends FlagWatcher {
 
-public class MinecartWatcher extends FlagWatcher
-{
-
-    public MinecartWatcher(Disguise disguise)
-    {
+    public MinecartWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public ItemStack getBlockInCart()
-    {
-        int id = (int) getData(MetaIndex.MINECART_BLOCK) & 0xffff;
-        int data = (int) getData(MetaIndex.MINECART_BLOCK) >> 16;
-
-        return new ItemStack(id, 1, (short) data);
+    public ItemStack getBlockInCart() {
+        return ReflectionManager.getItemStackByCombinedId(getData(MetaIndex.MINECART_BLOCK));
     }
 
-    public int getBlockYOffset()
-    {
-        return (int) getData(MetaIndex.MINECART_BLOCK_Y);
+    public int getBlockYOffset() {
+        return getData(MetaIndex.MINECART_BLOCK_Y);
     }
 
-    public boolean isViewBlockInCart()
-    {
-        return (boolean) getData(MetaIndex.MINECART_BLOCK_VISIBLE);
+    public boolean isViewBlockInCart() {
+        return getData(MetaIndex.MINECART_BLOCK_VISIBLE);
     }
 
-    public void setBlockInCart(ItemStack item)
-    {
-        int id = item.getTypeId();
-        int data = item.getDurability();
+    public void setBlockInCart(ItemStack item) {
+        setData(MetaIndex.MINECART_BLOCK, ReflectionManager.getCombinedIdByItemStack(item));
+        setData(MetaIndex.MINECART_BLOCK_VISIBLE, item != null && item.getType() != Material.AIR);
 
-        setData(MetaIndex.MINECART_BLOCK, id & 0xffff | data << 16);
-        setData(MetaIndex.MINECART_BLOCK_VISIBLE, true); // Show block
-
-        sendData(MetaIndex.MINECART_BLOCK);
+        sendData(MetaIndex.MINECART_BLOCK, MetaIndex.MINECART_BLOCK_VISIBLE);
     }
 
-    public void setBlockOffset(int i)
-    {
+    public void setBlockOffset(int i) {
         setData(MetaIndex.MINECART_BLOCK_Y, i);
         sendData(MetaIndex.MINECART_BLOCK_Y);
     }
 
-    public void setViewBlockInCart(boolean viewBlock)
-    {
+    public void setViewBlockInCart(boolean viewBlock) {
         setData(MetaIndex.MINECART_BLOCK_VISIBLE, viewBlock);
         sendData(MetaIndex.MINECART_BLOCK_VISIBLE);
     }

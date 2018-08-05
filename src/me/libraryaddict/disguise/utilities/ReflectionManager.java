@@ -5,11 +5,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
-import com.google.common.base.Optional;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -17,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.*;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ReflectionManager {
@@ -780,7 +778,7 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object convertInvalidItem(Object value) {
+    public static Object convertInvalidMeta(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
 
@@ -810,7 +808,7 @@ public class ReflectionManager {
                 val = getNmsItem((ItemStack) val);
 
                 if (val == null)
-                    return Optional.absent();
+                    return Optional.empty();
                 else
                     return Optional.of(val);
             }
@@ -844,12 +842,26 @@ public class ReflectionManager {
             }
         } else if (value instanceof ItemStack) {
             return getNmsItem((ItemStack) value);
-        } else if (value instanceof Double)
+        } else if (value instanceof Double) {
             return ((Double) value).floatValue();
-        else if (value instanceof NbtCompound)
+        } else if (value instanceof NbtWrapper) {
             return ((NbtWrapper) value).getHandle();
+        } else if (value instanceof Particle) {
+            return getParticleType((Particle) value);
+        }
 
         return value;
+    }
+
+    private static Object getParticleType(Particle particle) {
+        try {
+            return getCraftClass("CraftParticle").getMethod("toNMS", Particle.class).invoke(null, particle);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static String getMinecraftVersion() {
@@ -858,18 +870,11 @@ public class ReflectionManager {
         return version;
     }
 
-    /**
-     * This creates a DataWatcherItem usable with WrappedWatchableObject
-     *
-     * @param id
-     * @param value
-     * @return
-     */
-    private static Object createDataWatcherItem(int id, Object value) {
+    public static WrappedDataWatcherObject createDataWatcherObject(int id, Object value) {
         if (value == null)
             return null;
 
-        value = convertInvalidItem(value);
+        value = convertInvalidMeta(value);
 
         Serializer serializer;
 
@@ -880,7 +885,8 @@ public class ReflectionManager {
                     getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass("IBlockData") : opt.get().getClass() :
                     UUID.class), true);
         } else {
-            serializer = Registry.get(value.getClass());
+            serializer = Registry.get(getNmsClass("ParticleParam").isInstance(value) ? getNmsClass("ParticleParam") :
+                    value.getClass());
         }
 
         if (serializer == null) {
@@ -894,18 +900,51 @@ public class ReflectionManager {
                     "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
         }
 
-        WrappedDataWatcherObject watcherObject = new WrappedDataWatcherObject(id, serializer);
+        return new WrappedDataWatcherObject(id, serializer);
+    }
+
+    /**
+     * This creates a DataWatcherItem usable with WrappedWatchableObject
+     *
+     * @param id
+     * @param value
+     * @return
+     */
+    public static Object createDataWatcherItem(int id, Object value) {
+        WrappedDataWatcherObject watcherObject = createDataWatcherObject(id, value);
 
         Constructor construct = getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
 
         try {
-            return construct.newInstance(watcherObject.getHandle(), value);
+            return construct.newInstance(watcherObject.getHandle(), convertInvalidMeta(value));
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    public static int getEntityType(Object nmsEntity) {
+        try {
+            Class classType = getNmsClass("EntityTypes");
+
+            for (Method m : getNmsClass("Entity").getMethods()) {
+                if (m.getReturnType() != classType) {
+                    continue;
+                }
+
+                Object entityType = m.invoke(nmsEntity);
+                Object registry = classType.getField("REGISTRY").get(null);
+
+                return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityType);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return 0;
     }
 
     public static WrappedWatchableObject createWatchable(int index, Object obj) {
@@ -921,11 +960,41 @@ public class ReflectionManager {
         return id + (data << 12);
     }
 
-    public static ImmutablePair<Integer, Integer> getFromCombinedId(int combinedId) {
-        int j = combinedId & 4095;
-        int k = combinedId >> 12 & 15;
+    public static int getCombinedIdByItemStack(ItemStack itemStack) {
+        try {
+            Object nmsItem = getNmsItem(itemStack);
+            Object item = getNmsMethod("ItemStack", "getItem").invoke(nmsItem);
+            Class blockClass = getNmsClass("Block");
 
-        return new ImmutablePair<>(j, k);
+            Object nmsBlock = getNmsMethod(blockClass, "asBlock", getNmsClass("Item")).invoke(null, item);
+
+            return (int) getNmsMethod(blockClass, "getBlockData").invoke(nmsBlock);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public static ItemStack getItemStackByCombinedId(int id) {
+        try {
+            Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
+            Object iBlockData = idMethod.invoke(null, id);
+            Class iBlockClass = getNmsClass("IBlockData");
+
+            Method getBlock = getNmsMethod(iBlockClass, "getBlock");
+            Object block = getBlock.invoke(iBlockData);
+
+            Method getItem = getNmsMethod("Block", "t", iBlockClass);
+
+            return getBukkitItem(getItem.invoke(block, iBlockData));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Object getWorldServer(World w) {

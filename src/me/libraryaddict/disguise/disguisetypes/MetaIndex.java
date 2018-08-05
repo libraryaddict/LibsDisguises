@@ -1,15 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import com.google.common.base.Optional;
+import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
@@ -27,11 +26,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> AREA_EFFECT_IGNORE_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 2,
             false);
 
-    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3, 0);
-
-    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_PARAM_1 = new MetaIndex<>(AreaEffectCloudWatcher.class, 4, 0);
-
-    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_PARAM_2 = new MetaIndex<>(AreaEffectCloudWatcher.class, 5, 0);
+    public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class,
+            3, Particle.SPELL_MOB);
 
     public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 0, 0F);
 
@@ -73,6 +69,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> BOAT_TYPE = new MetaIndex<>(BoatWatcher.class, 3, 0);
 
+    public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
+
     public static MetaIndex<Boolean> CREEPER_IGNITED = new MetaIndex<>(CreeperWatcher.class, 2, false);
 
     public static MetaIndex<Boolean> CREEPER_POWERED = new MetaIndex<>(CreeperWatcher.class, 1, false);
@@ -83,7 +81,7 @@ public class MetaIndex<Y> {
             new ItemStack(Material.STONE));
 
     public static MetaIndex<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new MetaIndex<>(EnderCrystalWatcher.class, 0,
-            Optional.<BlockPosition>absent());
+            Optional.empty());
 
     public static MetaIndex<Boolean> ENDER_CRYSTAL_PLATE = new MetaIndex<>(EnderCrystalWatcher.class, 1, false);
 
@@ -92,11 +90,12 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> ENDERMAN_AGRESSIVE = new MetaIndex<>(EndermanWatcher.class, 1, false);
 
     public static MetaIndex<Optional<WrappedBlockData>> ENDERMAN_ITEM = new MetaIndex<>(EndermanWatcher.class, 0,
-            Optional.<WrappedBlockData>absent());
+            Optional.empty());
 
     public static MetaIndex<Integer> ENTITY_AIR_TICKS = new MetaIndex<>(FlagWatcher.class, 1, 0);
 
-    public static MetaIndex<String> ENTITY_CUSTOM_NAME = new MetaIndex<>(FlagWatcher.class, 2, "");
+    public static MetaIndex<Optional<WrappedChatComponent>> ENTITY_CUSTOM_NAME = new MetaIndex<>(FlagWatcher.class, 2,
+            Optional.empty());
 
     public static MetaIndex<Boolean> ENTITY_CUSTOM_NAME_VISIBLE = new MetaIndex<>(FlagWatcher.class, 3, false);
 
@@ -132,7 +131,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> HORSE_META = new MetaIndex<>(AbstractHorseWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1,
-            Optional.<UUID>absent());
+            Optional.empty());
 
     public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
 
@@ -181,7 +180,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> PIG_SADDLED = new MetaIndex<>(PigWatcher.class, 0, false);
 
-    public static MetaIndex<Integer> PIG_UNKNOWN = new MetaIndex<>(PigWatcher.class, 1, 0);
+    public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
 
     public static MetaIndex<Float> PLAYER_ABSORPTION = new MetaIndex<>(PlayerWatcher.class, 0, 0F);
 
@@ -191,11 +190,11 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> PLAYER_SKIN = new MetaIndex<>(PlayerWatcher.class, 2, (byte) 127);
 
-    public static MetaIndex<NbtCompound> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4,
-            NbtFactory.ofCompound("None"));
+    public static MetaIndex<NbtBase> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4,
+            NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
 
-    public static MetaIndex<NbtCompound> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5,
-            NbtFactory.ofCompound("None"));
+    public static MetaIndex<NbtBase> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5,
+            NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
 
     public static MetaIndex<Boolean> POLAR_BEAR_STANDING = new MetaIndex<>(PolarBearWatcher.class, 0, false);
 
@@ -204,7 +203,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> SHEEP_WOOL = new MetaIndex<>(SheepWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<BlockPosition>> SHULKER_ATTACHED = new MetaIndex<>(ShulkerWatcher.class, 1,
-            Optional.<BlockPosition>absent());
+            Optional.empty());
 
     public static MetaIndex<Byte> SHULKER_COLOR = new MetaIndex<>(ShulkerWatcher.class, 3, (byte) 10);
 
@@ -225,7 +224,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1,
-            Optional.<UUID>absent());
+            Optional.empty());
 
     public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(ArrowWatcher.class, 1, Color.WHITE.asRGB());
 
@@ -259,6 +258,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> ZOMBIE_BABY = new MetaIndex<>(ZombieWatcher.class, 0, false);
 
+    public static MetaIndex<Boolean> ZOMBIE_CONVERTING_DROWNED = new MetaIndex<>(ZombieWatcher.class, 3, false);
+
     public static MetaIndex<Integer> ZOMBIE_PLACEHOLDER = new MetaIndex<>(ZombieWatcher.class, 1, 0);
 
     public static MetaIndex<Integer> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1, 0);
@@ -273,10 +274,13 @@ public class MetaIndex<Y> {
         catch (Exception ex) {
             SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.POTION));
         }
+
         setValues();
+        orderMetaIndexes();
     }
 
-    public static void eliminateBlankIndexes() {
+    @Deprecated
+    private static void eliminateBlankIndexes() {
         ArrayList<Entry<Class, ArrayList<MetaIndex>>> list = new ArrayList<>();
 
         for (MetaIndex index : values()) {
@@ -292,6 +296,7 @@ public class MetaIndex<Y> {
 
             if (entry == null) {
                 entry = new AbstractMap.SimpleEntry(index.getFlagWatcher(), new ArrayList<MetaIndex>());
+
                 list.add(entry);
             }
 
@@ -299,12 +304,7 @@ public class MetaIndex<Y> {
         }
 
         for (Entry<Class, ArrayList<MetaIndex>> entry : list) {
-            Collections.sort(entry.getValue(), new Comparator<MetaIndex>() {
-                @Override
-                public int compare(MetaIndex o1, MetaIndex o2) {
-                    return o1.getIndex() - o2.getIndex();
-                }
-            });
+            entry.getValue().sort(Comparator.comparingInt(MetaIndex::getIndex));
 
             for (MetaIndex ind : entry.getValue()) {
                 ind._index = entry.getValue().indexOf(ind);
@@ -312,7 +312,7 @@ public class MetaIndex<Y> {
         }
     }
 
-    public static void orderMetaIndexes() {
+    private static void orderMetaIndexes() {
         for (MetaIndex flagType : values()) {
             if (flagType.getFlagWatcher() == FlagWatcher.class)
                 continue;
@@ -349,10 +349,10 @@ public class MetaIndex<Y> {
                         continue;
 
                     if (found != null) {
-                        System.err.println(entry.getKey()
-                                .getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" + type
-                                .getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher()
-                                .getSimpleName() + ")");
+                        System.err.println(
+                                entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " +
+                                        i + " (" + type.getFlagWatcher().getSimpleName() + ", " +
+                                        found.getFlagWatcher().getSimpleName() + ")");
                         continue loop;
                     }
 
@@ -377,15 +377,16 @@ public class MetaIndex<Y> {
 
                 MetaIndex index = (MetaIndex) field.get(null);
 
-                toPrint.add(index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index
-                        .getIndex() + " " + index.getDefault().getClass().getSimpleName());
+                toPrint.add(
+                        index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index.getIndex() + " " +
+                                index.getDefault().getClass().getSimpleName());
             }
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        Collections.sort(toPrint, String.CASE_INSENSITIVE_ORDER);
+        toPrint.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : toPrint) {
             System.out.println(s);
@@ -416,12 +417,7 @@ public class MetaIndex<Y> {
             list.add(type);
         }
 
-        Collections.sort(list, new Comparator<MetaIndex>() {
-            @Override
-            public int compare(MetaIndex o1, MetaIndex o2) {
-                return Integer.compare(o1.getIndex(), o2.getIndex());
-            }
-        });
+        list.sort(Comparator.comparingInt(MetaIndex::getIndex));
 
         return list;
     }
@@ -460,15 +456,15 @@ public class MetaIndex<Y> {
             }
 
             for (MetaIndex metaIndex : values()) {
-                if (metaIndex == null || metaIndex.getFlagWatcher() != index.getFlagWatcher() || metaIndex
-                        .getIndex() != index.getIndex()) {
+                if (metaIndex == null || metaIndex.getFlagWatcher() != index.getFlagWatcher() ||
+                        metaIndex.getIndex() != index.getIndex()) {
                     continue;
                 }
 
-                System.err.println("[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher()
-                        .getSimpleName() + " at index " + metaIndex
-                        .getIndex() + " has already registered this! (" + metaIndex.getDefault() + "," + index
-                        .getDefault() + ")");
+                System.err.println(
+                        "[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " +
+                                metaIndex.getIndex() + " has already registered this! (" + metaIndex.getDefault() +
+                                "," + index.getDefault() + ")");
             }
 
             values()[i] = metaIndexes[a];

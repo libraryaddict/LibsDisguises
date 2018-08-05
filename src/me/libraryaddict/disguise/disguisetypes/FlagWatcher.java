@@ -4,12 +4,17 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.ComponentConverter;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.google.common.base.Strings;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -152,8 +157,8 @@ public class FlagWatcher {
             }
         }
         // Here we check for if there is a health packet that says they died.
-        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null && getDisguise()
-                .getEntity() instanceof Player) {
+        if (getDisguise().isSelfDisguiseVisible() && getDisguise().getEntity() != null &&
+                getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == 6) {
@@ -194,7 +199,15 @@ public class FlagWatcher {
     }
 
     public String getCustomName() {
-        return (String) getData(MetaIndex.ENTITY_CUSTOM_NAME);
+        Optional<WrappedChatComponent> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
+
+        if (optional.isPresent()) {
+            BaseComponent[] base = ComponentConverter.fromWrapper(optional.get());
+
+            return TextComponent.toLegacyText(base);
+        }
+
+        return null;
     }
 
     protected TargetedDisguise getDisguise() {
@@ -329,8 +342,8 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig
-                    .isMetadataPacketsEnabled() && data == MetaIndex.ENTITY_META) {
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() &&
+                    data == MetaIndex.ENTITY_META) {
                 value = addEntityAnimations((byte) value,
                         WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
@@ -391,11 +404,16 @@ public class FlagWatcher {
     }
 
     public void setCustomName(String name) {
-        if (name != null && name.length() > 64) {
-            name = name.substring(0, 64);
+        if (Strings.isNullOrEmpty(name)) {
+            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.<WrappedChatComponent>empty());
+        } else {
+            if (name.length() > 64) {
+                name = name.substring(0, 64);
+            }
+
+            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
         }
 
-        setData(MetaIndex.ENTITY_CUSTOM_NAME, name);
         sendData(MetaIndex.ENTITY_CUSTOM_NAME);
     }
 
@@ -454,8 +472,8 @@ public class FlagWatcher {
     }
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this || getDisguise()
-                .getEntity() == null)
+        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this ||
+                getDisguise().getEntity() == null)
             return;
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {

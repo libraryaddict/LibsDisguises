@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.TreeSpecies;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.TreeSpecies;
 
 public class BoatWatcher extends FlagWatcher {
     public BoatWatcher(Disguise disguise) {
@@ -45,8 +44,16 @@ public class BoatWatcher extends FlagWatcher {
         sendData(MetaIndex.BOAT_TYPE);
     }
 
+    public void setBoatShake(int number) {
+        setData(MetaIndex.BOAT_SHAKE, number);
+        sendData(MetaIndex.BOAT_SHAKE);
+    }
+
+    public int getBoatShake() {
+        return getData(MetaIndex.BOAT_SHAKE);
+    }
+
     public TreeSpecies getBoatType() {
         return TreeSpecies.getByData(getData(MetaIndex.BOAT_TYPE).byteValue());
     }
-
 }

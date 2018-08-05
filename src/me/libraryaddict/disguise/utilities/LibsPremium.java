@@ -38,7 +38,7 @@ public class LibsPremium {
     public static void check(String version) {
         thisPluginIsPaidFor = isPremium();
 
-        if (!isPremium() && version.contains("SNAPSHOT")) {
+        if (!isPremium()) {
             File[] files = new File("plugins/LibsDisguises/").listFiles();
 
             if (files == null)
@@ -58,7 +58,7 @@ public class LibsPremium {
                     thisPluginIsPaidFor = (Boolean) m.invoke(null);
 
                     if (isPremium()) {
-                        System.out.println("[LibsDisguises] Found a premium Lib's Disguises jar");
+                        System.out.println("[LibsDisguises] Found a premium Lib's Disguises jar, premium enabled!");
 
                         break;
                     } else {
