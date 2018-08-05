@@ -881,9 +881,24 @@ public class ReflectionManager {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
 
-            serializer = Registry.get((opt.isPresent() ?
-                    getNmsClass("IBlockData").isInstance(opt.get()) ? getNmsClass("IBlockData") : opt.get().getClass() :
-                    UUID.class), true);
+            if (opt.isPresent()) {
+                Object val = opt.get();
+                Class cl;
+                Class iBlockData = getNmsClass("IBlockData");
+                Class iChat = getNmsClass("IChatBaseComponent");
+
+                if (iBlockData.isInstance(val)) {
+                    cl = iBlockData;
+                } else if (iChat.isInstance(val)) {
+                    cl = iChat;
+                } else {
+                    cl = val.getClass();
+                }
+
+                serializer = Registry.get(cl, true);
+            } else {
+                serializer = Registry.get(UUID.class, true);
+            }
         } else {
             serializer = Registry.get(getNmsClass("ParticleParam").isInstance(value) ? getNmsClass("ParticleParam") :
                     value.getClass());
