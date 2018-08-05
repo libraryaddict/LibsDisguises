@@ -811,6 +811,8 @@ public class ReflectionManager {
                     return Optional.empty();
                 else
                     return Optional.of(val);
+            } else if (val instanceof WrappedChatComponent) {
+                return Optional.of(((WrappedChatComponent) val).getHandle());
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
