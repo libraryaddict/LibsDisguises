@@ -4,10 +4,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
-import org.bukkit.Art;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -624,6 +621,7 @@ public class DisguiseParser {
                                 case SMALL_FIREBALL:
                                 case FIREBALL:
                                 case WITHER_SKULL:
+                                case TRIDENT:
                                     break;
                                 default:
                                     throw new DisguiseParseException(LibsMsg.PARSE_TOO_MANY_ARGS,
@@ -793,6 +791,20 @@ public class DisguiseParser {
                         } else if (param.getName().equals("org.bukkit.entity.Llama$Color")) {
                             try {
                                 value = Llama.Color.valueOf(valueString.toUpperCase());
+                            }
+                            catch (Exception ex) {
+                                throw parseToException(param, valueString, methodName);
+                            }
+                        } else if (param == TropicalFish.Pattern.class) {
+                            try {
+                                value = TropicalFish.Pattern.valueOf(valueString.toUpperCase());
+                            }
+                            catch (Exception ex) {
+                                throw parseToException(param, valueString, methodName);
+                            }
+                        } else if (param == DyeColor.class) {
+                            try {
+                                value = DyeColor.valueOf(valueString.toUpperCase());
                             }
                             catch (Exception ex) {
                                 throw parseToException(param, valueString, methodName);

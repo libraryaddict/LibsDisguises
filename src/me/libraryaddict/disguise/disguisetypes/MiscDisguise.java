@@ -76,6 +76,7 @@ public class MiscDisguise extends TargetedDisguise {
             case SMALL_FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
             case FIREBALL: // Unknown. Uses entity id of shooter. 0 if no shooter
             case WITHER_SKULL: // Unknown. Uses entity id of shooter. 0 if no shooter
+            case TRIDENT: // Unknown. Uses 1 + (entityId of target, or shooter)
                 this.data = id;
                 break;
             default:

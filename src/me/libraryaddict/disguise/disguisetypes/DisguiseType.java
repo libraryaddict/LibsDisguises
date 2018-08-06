@@ -22,13 +22,19 @@ public enum DisguiseType {
 
     CHICKEN,
 
+    COD,
+
     COW,
 
     CREEPER,
 
+    DOLPHIN,
+
     DONKEY,
 
     DRAGON_FIREBALL(93),
+
+    DROWNED,
 
     DROPPED_ITEM(2, 1),
 
@@ -110,6 +116,8 @@ public enum DisguiseType {
 
     PARROT,
 
+    PHANTOM,
+
     PIG,
 
     PIG_ZOMBIE,
@@ -120,7 +128,11 @@ public enum DisguiseType {
 
     PRIMED_TNT(50),
 
+    PUFFERFISH,
+
     RABBIT,
+
+    SALMON,
 
     SHEEP,
 
@@ -156,6 +168,12 @@ public enum DisguiseType {
 
     TIPPED_ARROW(60),
 
+    TRIDENT(94, 0),
+
+    TROPICAL_FISH,
+
+    TURTLE,
+
     ZOMBIE_HORSE,
 
     UNKNOWN,
@@ -181,37 +199,10 @@ public enum DisguiseType {
     ZOMBIE_VILLAGER;
 
     static {
-        // We set the entity type in this so that we can safely ignore disguisetypes which don't exist in older
-        // versions of MC.
-        // Without erroring up everything.
-
         for (DisguiseType type : values()) {
+            String name = type.name();
 
-            try {
-                DisguiseType toUse = type;
-                String name;
-
-                /*   switch (type) {
-                // Disguise item frame isn't supported. So we don't give it a entity type which should prevent it
-                from being..
-                // Usable.
-                case ITEM_FRAME:
-                    break;
-                case ZOMBIE_VILLAGER:
-                case HUSK:
-                    toUse = DisguiseType.ZOMBIE;
-                    break;
-                default:
-                    break;
-                }*/
-
-                name = toUse.name();
-
-                type.setEntityType(EntityType.valueOf(name));
-            }
-            catch (Throwable ex) {
-                // This version of Spigot doesn't have the disguise.
-            }
+            type.setEntityType(EntityType.valueOf(name));
         }
     }
 

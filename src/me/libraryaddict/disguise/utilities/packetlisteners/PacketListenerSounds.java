@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
@@ -28,9 +29,12 @@ public class PacketListenerSounds extends PacketAdapter {
      * "I can't separate the sounds from the sounds the player heard, and the sounds of the entity tracker heard"
      */
     private static boolean cancelSound;
+    private Object stepSoundEffect;
 
     public PacketListenerSounds(LibsDisguises plugin) {
         super(plugin, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT, Server.ENTITY_STATUS);
+
+        stepSoundEffect = ReflectionManager.getCraftSound(Sound.BLOCK_GRASS_STEP);
     }
 
     @Override
@@ -69,7 +73,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
             Disguise disguise = null;
 
-            String soundEffect = ReflectionManager.convertSoundEffectToString(mods.read(0));
+            Object soundEffectObj = mods.read(0);
             Entity[] entities = observer.getWorld().getChunkAt(chunkX, chunkZ).getEntities();
 
             for (Entity entity : entities) {
@@ -129,7 +133,7 @@ public class PacketListenerSounds extends PacketAdapter {
                             ex.printStackTrace();
                         }
 
-                        soundType = entitySound.getType(soundEffect, !hasInvun);
+                        soundType = entitySound.getType(soundEffectObj, !hasInvun);
                     }
 
                     if (soundType != null) {
@@ -142,12 +146,13 @@ public class PacketListenerSounds extends PacketAdapter {
 
             if (disguise != null && disguise.isSoundsReplaced() &&
                     (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
-                String sound = null;
+                Object sound = null;
 
-                DisguiseSound dSound = DisguiseSound.getType(disguise.getType().name());
+                DisguiseSound disguiseSound = DisguiseSound.getType(disguise.getType().name());
 
-                if (dSound != null)
-                    sound = dSound.getSound(soundType);
+                if (disguiseSound != null) {
+                    sound = disguiseSound.getSound(soundType);
+                }
 
                 if (sound == null) {
                     event.setCancelled(true);
@@ -174,7 +179,7 @@ public class PacketListenerSounds extends PacketAdapter {
                         // someone is
                         // sending fake sounds. In which case. Why cancel it.
                     } else {
-                        mods.write(0, ReflectionManager.getCraftSoundEffect(sound));
+                        mods.write(0, sound);
                         mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
 
                         // Time to change the pitch and volume
@@ -182,7 +187,7 @@ public class PacketListenerSounds extends PacketAdapter {
                                 soundType == SoundType.IDLE) {
                             // If the volume is the default
                             if (mods.read(5).equals(entitySound.getDamageAndIdleSoundVolume())) {
-                                mods.write(5, dSound.getDamageAndIdleSoundVolume());
+                                mods.write(5, disguiseSound.getDamageAndIdleSoundVolume());
                             }
 
                             // Here I assume its the default pitch as I can't calculate if its real.
@@ -289,7 +294,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     disSound = DisguiseSound.getType(disguise.getType().name());
 
                     if (disSound != null) {
-                        String sound = disSound.getSound(soundType);
+                        Object sound = disSound.getSound(soundType);
 
                         if (sound != null) {
                             Location loc = entity.getLocation();
@@ -298,9 +303,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
                             mods = packet.getModifier();
 
-                            Object craftSoundEffect = ReflectionManager.getCraftSoundEffect(sound);
-
-                            mods.write(0, craftSoundEffect);
+                            mods.write(0, sound);
                             mods.write(1, ReflectionManager.getSoundCategory(disguise.getType())); // Meh
                             mods.write(2, (int) (loc.getX() * 8D));
                             mods.write(3, (int) (loc.getY() * 8D));

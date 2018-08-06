@@ -1,19 +1,15 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.Color;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.Color;
 
 /**
  * @author Navid
  */
-public class TippedArrowWatcher extends ArrowWatcher
-{
-
-    public TippedArrowWatcher(Disguise disguise)
-    {
+public class TippedArrowWatcher extends ArrowWatcher {
+    public TippedArrowWatcher(Disguise disguise) {
         super(disguise);
 
         int r = DisguiseUtilities.random.nextInt(256);
@@ -23,14 +19,12 @@ public class TippedArrowWatcher extends ArrowWatcher
         setColor(Color.fromRGB(r, g, b));
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         int color = (int) getData(MetaIndex.TIPPED_ARROW_COLOR);
         return Color.fromRGB(color);
     }
 
-    public void setColor(Color color)
-    {
+    public void setColor(Color color) {
         setData(MetaIndex.TIPPED_ARROW_COLOR, color.asRGB());
         sendData(MetaIndex.TIPPED_ARROW_COLOR);
     }

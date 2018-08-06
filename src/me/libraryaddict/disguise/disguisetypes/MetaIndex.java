@@ -1,7 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.wrappers.*;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
@@ -26,8 +29,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> AREA_EFFECT_IGNORE_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 2,
             false);
 
-    public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class,
-            3, Particle.SPELL_MOB);
+    public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
+            Particle.SPELL_MOB);
 
     public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 0, 0F);
 
@@ -77,6 +80,13 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> CREEPER_STATE = new MetaIndex<>(CreeperWatcher.class, 0, -1);
 
+    public static MetaIndex<BlockPosition> DOLPHIN_TREASURE_POS = new MetaIndex<>(DolphinWatcher.class, 0,
+            BlockPosition.ORIGIN);
+
+    public static MetaIndex<Boolean> DOLPHIN_HAS_FISH = new MetaIndex<>(DolphinWatcher.class, 1, false);
+
+    public static MetaIndex<Integer> DOLPHIN_BREATH = new MetaIndex<>(DolphinWatcher.class, 2, 2400);
+
     public static MetaIndex<ItemStack> DROPPED_ITEM = new MetaIndex<>(DroppedItemWatcher.class, 0,
             new ItemStack(Material.STONE));
 
@@ -110,6 +120,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<ItemStack> FIREWORK_ITEM = new MetaIndex<>(FireworkWatcher.class, 0,
             new ItemStack(Material.AIR));
+
+    public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
     public static MetaIndex<Integer> FIREWORK_ATTACHED_ENTITY = new MetaIndex<>(FireworkWatcher.class, 1, 0);
 
@@ -174,9 +186,18 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> MINECART_SHAKING_POWER = new MetaIndex<>(MinecartWatcher.class, 0, 0);
 
+    public static MetaIndex<String> MINECART_COMMAND_STRING = new MetaIndex<>(MinecartCommandWatcher.class, 0, "");
+
+    public static MetaIndex<WrappedChatComponent> MINECART_COMMAND_LAST_OUTPUT = new MetaIndex<>(
+            MinecartCommandWatcher.class, 1, WrappedChatComponent.fromText(""));
+
+    public static MetaIndex<Boolean> MINECART_FURANCE_FUELED = new MetaIndex<>(MinecartFurnaceWatcher.class, 0, false);
+
     public static MetaIndex<Integer> OCELOT_TYPE = new MetaIndex<>(OcelotWatcher.class, 0, 0);
 
     public static MetaIndex<Integer> PARROT_VARIANT = new MetaIndex<>(ParrotWatcher.class, 0, 0);
+
+    public static MetaIndex<Integer> PHANTOM_SIZE = new MetaIndex<>(PhantomWatcher.class, 0, 0);
 
     public static MetaIndex<Boolean> PIG_SADDLED = new MetaIndex<>(PigWatcher.class, 0, false);
 
@@ -197,6 +218,8 @@ public class MetaIndex<Y> {
             NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
 
     public static MetaIndex<Boolean> POLAR_BEAR_STANDING = new MetaIndex<>(PolarBearWatcher.class, 0, false);
+
+    public static MetaIndex<Integer> PUFFERFISH_PUFF_STATE = new MetaIndex<>(PufferFishWatcher.class, 0, 0);
 
     public static MetaIndex<Integer> RABBIT_TYPE = new MetaIndex<>(RabbitWatcher.class, 0, 0);
 
@@ -226,15 +249,32 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1,
             Optional.empty());
 
-    public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(ArrowWatcher.class, 1, Color.WHITE.asRGB());
+    public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(TippedArrowWatcher.class, 0,
+            Color.WHITE.asRGB());
 
     public static MetaIndex<Integer> TNT_FUSE_TICKS = new MetaIndex<>(TNTWatcher.class, 0, Integer.MAX_VALUE);
+
+    public static MetaIndex<Byte> TRIDENT_ENCHANTS = new MetaIndex<>(TridentWatcher.class, 0, (byte) 0);
+
+    public static MetaIndex<Integer> TROPICAL_FISH_VARIANT = new MetaIndex<>(TropicalFishWatcher.class, 0, 0);
+
+    public static MetaIndex<BlockPosition> TURTLE_HOME_POSITION = new MetaIndex<>(TurtleWatcher.class, 0,
+            BlockPosition.ORIGIN);
+
+    public static MetaIndex<Boolean> TURTLE_HAS_EGG = new MetaIndex<>(TurtleWatcher.class, 1, false);
+
+    public static MetaIndex<Boolean> TURTLE_UNKNOWN_3 = new MetaIndex<>(TurtleWatcher.class, 2, false);
+
+    public static MetaIndex<BlockPosition> TURTLE_TRAVEL_POSITION = new MetaIndex<>(TurtleWatcher.class, 3,
+            BlockPosition.ORIGIN);
+
+    public static MetaIndex<Boolean> TURTLE_UNKNOWN_1 = new MetaIndex<>(TurtleWatcher.class, 4, false);
+
+    public static MetaIndex<Boolean> TURTLE_UNKNOWN_2 = new MetaIndex<>(TurtleWatcher.class, 5, false);
 
     public static MetaIndex<Byte> VEX_ANGRY = new MetaIndex<>(VexWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Integer> VILLAGER_PROFESSION = new MetaIndex<>(VillagerWatcher.class, 0, 0);
-
-    public static MetaIndex<Byte> VINDICATOR_JOHNNY = new MetaIndex<>(VindicatorWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Boolean> WITCH_AGGRESSIVE = new MetaIndex<>(WitchWatcher.class, 0, false);
 

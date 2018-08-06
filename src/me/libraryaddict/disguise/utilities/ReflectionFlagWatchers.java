@@ -5,10 +5,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Art;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.TreeSpecies;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -145,7 +142,7 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a Zombie and Normal Villager");
         new ParamInfo(BlockFace.class, Arrays.copyOf(BlockFace.values(), 6),
-                "Direction (North, East, South, West, " + "Up, Down)",
+                "Direction (North, East, South, West, Up, Down)",
                 "View the directions usable on player setSleeping and shulker direction");
         new ParamInfo(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into");
         new ParamInfo(TreeSpecies.class, "Tree Species", "View the different types of tree species");
@@ -154,6 +151,8 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color");
         new ParamInfo(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be");
         new ParamInfo(Particle.class, "Particle", "The different particles of Minecraft");
+        new ParamInfo(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish");
+        new ParamInfo(DyeColor.class, "DyeColor", "Dye colors of many different colors");
 
         ArrayList<String> potionEnums = new ArrayList<>();
 
@@ -170,10 +169,11 @@ public class ReflectionFlagWatchers {
             materials[i] = Material.values()[i].name();
         }
 
-        new ParamInfo(ItemStack.class, "Item (id:damage), damage optional",
-                "An ItemStack compromised of " + "ID:Durability", materials);
+        new ParamInfo(ItemStack.class, "Item (Material:Damage:Amount:Glow), only Material required",
+                "An ItemStack compromised of Material:Durability", materials);
 
-        new ParamInfo(ItemStack[].class, "Four ItemStacks (id:damage,id:damage..), damage optional",
+        new ParamInfo(ItemStack[].class,
+                "Four ItemStacks (Material:Damage:Amount:Glow,Material:Damage:Amount:Glow..), only Material required",
                 "Four ItemStacks separated by an ,", materials) {
             @Override
             public String[] getEnums(String tabComplete) {

@@ -1,39 +1,14 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.util.HashMap;
-
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+
+import java.util.HashMap;
 
 public class DisguiseValues {
 
     private static HashMap<DisguiseType, DisguiseValues> values = new HashMap<>();
 
     public static DisguiseValues getDisguiseValues(DisguiseType type) {
-        switch (type) {
-        case DONKEY:
-        case MULE:
-        case ZOMBIE_HORSE:
-        case SKELETON_HORSE:
-            type = DisguiseType.HORSE;
-            break;
-        case MINECART_CHEST:
-        case MINECART_COMMAND:
-        case MINECART_FURNACE:
-        case MINECART_HOPPER:
-        case MINECART_TNT:
-        case MINECART_MOB_SPAWNER:
-            type = DisguiseType.MINECART;
-            break;
-        case WITHER_SKELETON:
-        case STRAY:
-            type = DisguiseType.SKELETON;
-            break;
-        case ZOMBIE_VILLAGER:
-            type = DisguiseType.ZOMBIE;
-            break;
-        default:
-            break;
-        }
         return values.get(type);
     }
 

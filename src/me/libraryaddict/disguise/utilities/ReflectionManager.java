@@ -278,9 +278,10 @@ public class ReflectionManager {
         return getCraftConstructor(getCraftClass(className), parameters);
     }
 
-    public static String getCraftSound(Sound sound) {
+    public static Object getCraftSound(Sound sound) {
         try {
-            return (String) getCraftClass("CraftSound").getMethod("getSound", Sound.class).invoke(null, sound);
+            return getCraftClass("CraftSound").getMethod("getSoundEffect", String.class)
+                    .invoke(null, getSoundString(sound));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -418,6 +419,16 @@ public class ReflectionManager {
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Class getNmsClassIgnoreErrors(String className) {
+        try {
+            return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
+        }
+        catch (Exception ignored) {
         }
 
         return null;
@@ -618,22 +629,16 @@ public class ReflectionManager {
     }
 
     public static Enum getSoundCategory(String category) {
-        Method method = getNmsMethod("SoundCategory", "a", String.class);
-
         try {
-            Enum invoke = (Enum) method.invoke(null, category.toLowerCase());
+            Method method = getNmsMethod("SoundCategory", "a");
 
-            if (invoke == null) {
-                Class<?> clazz = getNmsClass("SoundCategory");
-                Enum[] enums = clazz != null ? (Enum[]) clazz.getEnumConstants() : null;
-
-                for (Enum anEnum : enums != null ? enums : new Enum[0]) {
-                    if (anEnum.name().equals(category.toUpperCase()))
-                        return anEnum;
+            for (Enum anEnum : (Enum[]) getNmsClass("SoundCategory").getEnumConstants()) {
+                if (!category.equals(method.invoke(anEnum))) {
+                    continue;
                 }
-            }
 
-            return invoke;
+                return anEnum;
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -747,29 +752,9 @@ public class ReflectionManager {
         }
     }
 
-    /**
-     * Necessary for 1.9
-     *
-     * @return
-     */
-    public static String convertSoundEffectToString(Object soundEffect) {
+    public static Object getSoundString(Sound sound) {
         try {
-            Field f_getMinecraftKey = getNmsField("SoundEffect", "b");
-            f_getMinecraftKey.setAccessible(true);
-            MinecraftKey key = MinecraftKey.fromHandle(f_getMinecraftKey.get(soundEffect));
-
-            return key.getKey();
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static Object getCraftSoundEffect(String sound) {
-        try {
-            return getCraftMethod("CraftSound", "getSoundEffect", String.class).invoke(null, sound);
+            return getCraftMethod("CraftSound", "getSound", Sound.class).invoke(null, sound);
         }
         catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
@@ -944,15 +929,16 @@ public class ReflectionManager {
 
     public static int getEntityType(Object nmsEntity) {
         try {
-            Class classType = getNmsClass("EntityTypes");
+            Field entityTypesField = null;
 
-            for (Method m : getNmsClass("Entity").getMethods()) {
-                if (m.getReturnType() != classType) {
+            for (Method method : getNmsClass("Entity").getMethods()) {
+                if (!method.getReturnType().getSimpleName().equals("EntityTypes"))
                     continue;
-                }
 
-                Object entityType = m.invoke(nmsEntity);
-                Object registry = classType.getField("REGISTRY").get(null);
+                Object entityType = method.invoke(nmsEntity);
+                Class typesClass = getNmsClass("EntityTypes");
+
+                Object registry = typesClass.getField("REGISTRY").get(null);
 
                 return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityType);
             }
@@ -961,7 +947,7 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
 
-        return 0;
+        throw new IllegalStateException("Failed to find EntityType for " + nmsEntity.getClass().getSimpleName());
     }
 
     public static WrappedWatchableObject createWatchable(int index, Object obj) {

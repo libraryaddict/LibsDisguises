@@ -1,0 +1,109 @@
+package me.libraryaddict.disguise.disguisetypes.watchers;
+
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.DyeColor;
+import org.bukkit.entity.TropicalFish;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * Created by libraryaddict on 6/08/2018.
+ */
+public class TropicalFishWatcher extends FishWatcher {
+    private enum CraftPattern {
+        KOB("KOB", 0, 0, false),
+        SUNSTREAK("SUNSTREAK", 1, 1, false),
+        SNOOPER("SNOOPER", 2, 2, false),
+        DASHER("DASHER", 3, 3, false),
+        BRINELY("BRINELY", 4, 4, false),
+        SPOTTY("SPOTTY", 5, 5, false),
+        FLOPPER("FLOPPER", 6, 0, true),
+        STRIPEY("STRIPEY", 7, 1, true),
+        GLITTER("GLITTER", 8, 2, true),
+        BLOCKFISH("BLOCKFISH", 9, 3, true),
+        BETTY("BETTY", 10, 4, true),
+        CLAYFISH("CLAYFISH", 11, 5, true);
+
+        private final int variant;
+        private final boolean large;
+        private static final Map<Integer, TropicalFish.Pattern> BY_DATA;
+
+        static {
+            BY_DATA = new HashMap<>();
+            CraftPattern[] values;
+            for (int length = (values = values()).length, i = 0; i < length; ++i) {
+                final CraftPattern type = values[i];
+                CraftPattern.BY_DATA.put(type.getDataValue(), TropicalFish.Pattern.values()[type.ordinal()]);
+            }
+        }
+
+        static TropicalFish.Pattern fromData(final int data) {
+            return CraftPattern.BY_DATA.get(data);
+        }
+
+        CraftPattern(final String s, final int n, final int variant, final boolean large) {
+            this.variant = variant;
+            this.large = large;
+        }
+
+        public int getDataValue() {
+            return this.variant << 8 | (this.large ? 1 : 0);
+        }
+    }
+
+    public TropicalFishWatcher(Disguise disguise) {
+        super(disguise);
+
+        Random random = new Random();
+
+        int n = random.nextInt(2);
+        int n2 = random.nextInt(6);
+        int n3 = random.nextInt(15);
+        int n4 = random.nextInt(15);
+
+        this.setVariant(n | n2 << 8 | n3 << 16 | n4 << 24);
+    }
+
+    public DyeColor getPatternColor() {
+        return DyeColor.getByWoolData((byte) (getVariant() >> 24 & 0xFF));
+    }
+
+    public void setPatternColor(DyeColor dyeColor) {
+        setVariant(getData(dyeColor, getBodyColor(), getPattern()));
+    }
+
+    private int getData(final DyeColor patternColor, final DyeColor bodyColor, final TropicalFish.Pattern type) {
+        return patternColor.getWoolData() << 24 | bodyColor.getWoolData() << 16 |
+                CraftPattern.values()[type.ordinal()].getDataValue();
+    }
+
+    public DyeColor getBodyColor() {
+        return DyeColor.getByWoolData((byte) (getVariant() >> 16 & 0xFF));
+    }
+
+    public void setBodyColor(DyeColor dyeColor) {
+        setVariant(getData(dyeColor, dyeColor, getPattern()));
+    }
+
+    public TropicalFish.Pattern getPattern() {
+        return CraftPattern.fromData(getVariant() & 0xFFFF);
+    }
+
+    public void setPattern(TropicalFish.Pattern pattern) {
+        setVariant(getData(getPatternColor(), getBodyColor(), pattern));
+    }
+
+    @Deprecated
+    public int getVariant() {
+        return getData(MetaIndex.TROPICAL_FISH_VARIANT);
+    }
+
+    @Deprecated
+    public void setVariant(int variant) {
+        setData(MetaIndex.TROPICAL_FISH_VARIANT, variant);
+        sendData(MetaIndex.TROPICAL_FISH_VARIANT);
+    }
+}

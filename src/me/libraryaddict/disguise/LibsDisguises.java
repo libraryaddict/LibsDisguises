@@ -7,6 +7,8 @@ import me.libraryaddict.disguise.commands.*;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.*;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -284,6 +287,13 @@ public class LibsDisguises extends JavaPlugin {
 
             try {
                 switch (disguiseType) {
+                    case ARROW:
+                        watcherClass = TippedArrowWatcher.class;
+                        break;
+                    case COD:
+                    case SALMON:
+                        watcherClass = FishWatcher.class;
+                        break;
                     case SPECTRAL_ARROW:
                         watcherClass = ArrowWatcher.class;
                         break;
@@ -291,8 +301,6 @@ public class LibsDisguises extends JavaPlugin {
                         watcherClass = TNTWatcher.class;
                         break;
                     case MINECART_CHEST:
-                    case MINECART_COMMAND:
-                    case MINECART_FURNACE:
                     case MINECART_HOPPER:
                     case MINECART_MOB_SPAWNER:
                     case MINECART_TNT:
@@ -302,11 +310,9 @@ public class LibsDisguises extends JavaPlugin {
                     case CAVE_SPIDER:
                         watcherClass = SpiderWatcher.class;
                         break;
-                    case ZOMBIE_VILLAGER:
-                        watcherClass = ZombieVillagerWatcher.class;
-                        break;
                     case PIG_ZOMBIE:
                     case HUSK:
+                    case DROWNED:
                         watcherClass = ZombieWatcher.class;
                         break;
                     case MAGMA_CUBE:
@@ -322,6 +328,9 @@ public class LibsDisguises extends JavaPlugin {
                     case ILLUSIONER:
                     case EVOKER:
                         watcherClass = IllagerWizardWatcher.class;
+                        break;
+                    case PUFFERFISH:
+                        watcherClass = PufferFishWatcher.class;
                         break;
                     default:
                         watcherClass = Class.forName(
@@ -343,6 +352,8 @@ public class LibsDisguises extends JavaPlugin {
                         watcherClass = InsentientWatcher.class;
                     } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
                         watcherClass = LivingWatcher.class;
+                    } else if (Fish.class.isAssignableFrom(entityClass)) {
+                        watcherClass = FishWatcher.class;
                     } else {
                         watcherClass = FlagWatcher.class;
                     }
@@ -363,60 +374,87 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             String nmsEntityName = toReadable(disguiseType.name());
+            Class nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
 
-            switch (disguiseType) {
-                case WITHER_SKELETON:
-                case ZOMBIE_VILLAGER:
-                case DONKEY:
-                case MULE:
-                case ZOMBIE_HORSE:
-                case SKELETON_HORSE:
-                case STRAY:
-                case HUSK:
-                    continue;
-                case PRIMED_TNT:
-                    nmsEntityName = "TNTPrimed";
-                    break;
-                case MINECART_TNT:
-                    nmsEntityName = "MinecartTNT";
-                    break;
-                case MINECART:
-                    nmsEntityName = "MinecartRideable";
-                    break;
-                case FIREWORK:
-                    nmsEntityName = "Fireworks";
-                    break;
-                case SPLASH_POTION:
-                    nmsEntityName = "Potion";
-                    break;
-                case GIANT:
-                    nmsEntityName = "GiantZombie";
-                    break;
-                case DROPPED_ITEM:
-                    nmsEntityName = "Item";
-                    break;
-                case FIREBALL:
-                    nmsEntityName = "LargeFireball";
-                    break;
-                case LEASH_HITCH:
-                    nmsEntityName = "Leash";
-                    break;
-                case ELDER_GUARDIAN:
-                    nmsEntityName = "Guardian";
-                    break;
-                case ARROW:
-                case SPECTRAL_ARROW:
-                    nmsEntityName = "TippedArrow";
-                    break;
-                case ILLUSIONER:
-                    nmsEntityName = "IllagerIllusioner";
-                    break;
-                default:
-                    break;
+            if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
+                String[] split = splitReadable(disguiseType.name());
+                ArrayUtils.reverse(split);
+
+                nmsEntityName = StringUtils.join(split);
+                nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+
+                if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
+                    nmsEntityName = null;
+                }
+            }
+
+            if (nmsEntityName == null) {
+                switch (disguiseType) {
+                    case DONKEY:
+                        nmsEntityName = "HorseDonkey";
+                        break;
+                    case ARROW:
+                        nmsEntityName = "TippedArrow";
+                        break;
+                    case DROPPED_ITEM:
+                        nmsEntityName = "Item";
+                        break;
+                    case FIREBALL:
+                        nmsEntityName = "LargeFireball";
+                        break;
+                    case FIREWORK:
+                        nmsEntityName = "Fireworks";
+                        break;
+                    case GIANT:
+                        nmsEntityName = "GiantZombie";
+                        break;
+                    case HUSK:
+                        nmsEntityName = "ZombieHusk";
+                        break;
+                    case ILLUSIONER:
+                        nmsEntityName = "IllagerIllusioner";
+                        break;
+                    case LEASH_HITCH:
+                        nmsEntityName = "Leash";
+                        break;
+                    case MINECART:
+                        nmsEntityName = "MinecartRideable";
+                        break;
+                    case MINECART_COMMAND:
+                        nmsEntityName = "MinecartCommandBlock";
+                        break;
+                    case MINECART_TNT:
+                        nmsEntityName = "MinecartTNT";
+                        break;
+                    case MULE:
+                        nmsEntityName = "HorseMule";
+                        break;
+                    case PRIMED_TNT:
+                        nmsEntityName = "TNTPrimed";
+                        break;
+                    case PUFFERFISH:
+                        nmsEntityName = "PufferFish";
+                        break;
+                    case SPLASH_POTION:
+                        nmsEntityName = "Potion";
+                        break;
+                    case STRAY:
+                        nmsEntityName = "SkeletonStray";
+                        break;
+                    case TRIDENT:
+                        nmsEntityName = "ThrownTrident";
+                        break;
+                    default:
+                        break;
+                }
+
+                if (nmsEntityName != null) {
+                    nmsClass = ReflectionManager.getNmsClass("Entity" + nmsEntityName);
+                }
             }
 
             try {
-                if (nmsEntityName.equalsIgnoreCase("Unknown")) {
+                if (disguiseType == DisguiseType.UNKNOWN) {
                     DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
 
                     disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
@@ -430,17 +468,21 @@ public class LibsDisguises extends JavaPlugin {
                     continue;
                 }
 
+                if (nmsEntityName == null) {
+                    getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
+                    continue;
+                }
+
                 Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
 
                 if (nmsEntity == null) {
                     getLogger().warning("Entity not found! (" + nmsEntityName + ")");
-
                     continue;
                 }
 
                 disguiseType.setTypeId(ReflectionManager.getEntityType(nmsEntity));
-
                 Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
+
                 int entitySize = 0;
 
                 for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
@@ -532,14 +574,18 @@ public class LibsDisguises extends JavaPlugin {
         }
     }
 
-    private String toReadable(String string) {
-        StringBuilder builder = new StringBuilder();
+    private String[] splitReadable(String string) {
+        String[] split = string.split("_");
 
-        for (String s : string.split("_")) {
-            builder.append(s.substring(0, 1)).append(s.substring(1).toLowerCase());
+        for (int i = 0; i < split.length; i++) {
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
         }
 
-        return builder.toString();
+        return split;
+    }
+
+    private String toReadable(String string) {
+        return StringUtils.join(splitReadable(string));
     }
 
     public DisguiseListener getListener() {
