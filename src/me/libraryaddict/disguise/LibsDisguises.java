@@ -52,6 +52,11 @@ public class LibsDisguises extends JavaPlugin {
                                 "Lib's Disguises plugin folder");
                 return;
             }
+        } else {
+            System.out.println(
+                    "[LibsDisguises] You're using the wrong version of Lib's Disguises for your server! This is " +
+                            "intended for 1.13!");
+            return;
         }
 
         PacketsManager.init(this);
