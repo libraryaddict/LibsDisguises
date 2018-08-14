@@ -432,7 +432,7 @@ public class MetaIndex<Y> {
         toPrint.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : toPrint) {
-            System.out.println(s);
+           DisguiseUtilities.getLogger().info(s);
         }
     }
 

@@ -48,11 +48,13 @@ public class LibsDisguises extends JavaPlugin {
                 getLogger().severe("This will be released free two weeks after all bugs have been fixed!");
                 getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
                         "Lib's Disguises plugin folder");
+                getPluginLoader().disablePlugin(this);
                 return;
             }
         } else {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
                     "intended for 1.13!");
+            getPluginLoader().disablePlugin(this);
             return;
         }
 
