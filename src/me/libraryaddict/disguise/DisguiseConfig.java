@@ -1,11 +1,8 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
+import me.libraryaddict.disguise.utilities.*;
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.PacketsManager;
-import me.libraryaddict.disguise.utilities.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -209,7 +206,7 @@ public class DisguiseConfig {
         setModifySeeFriendlyInvisibles(config.getBoolean("Scoreboard.SeeFriendlyInvisibles"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
-            System.out.println("[LibsDisguises] You must purchase the plugin to use saved disguises!");
+            DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
         }
 
         try {
@@ -222,10 +219,29 @@ public class DisguiseConfig {
             disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            System.out.println("[LibsDisguises] Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
+            DisguiseUtilities.getLogger().info("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
                     "' to a valid option for SelfDisguisesTeam");
         }
 
+        loadCustomDisguises();
+
+        int missingConfigs = 0;
+
+        for (String key : config.getDefaultSection().getKeys(true)) {
+            if (config.contains(key, true)) {
+                continue;
+            }
+
+            missingConfigs++;
+        }
+
+        if (missingConfigs > 0) {
+            DisguiseUtilities.getLogger().warning(
+                    "Your config is missing " + missingConfigs + " options! Please consider regenerating your config!");
+        }
+    }
+
+    static void loadCustomDisguises() {
         customDisguises.clear();
 
         File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
@@ -241,12 +257,14 @@ public class DisguiseConfig {
             return;
         }
 
+        int failedCustomDisguises = 0;
+
         for (String key : section.getKeys(false)) {
             String toParse = section.getString(key);
 
             if (getCustomDisguise(toParse) != null) {
-                System.err.println(
-                        "[LibsDisguises] Cannot create the custom disguise '" + key + "' as there is a name conflict!");
+                DisguiseUtilities.getLogger()
+                        .severe("Cannot create the custom disguise '" + key + "' as there is a name conflict!");
                 continue;
             }
 
@@ -257,21 +275,27 @@ public class DisguiseConfig {
 
                 customDisguises.put(key, disguise);
 
-                System.out.println("[LibsDisguises] Loaded custom disguise " + key);
+                DisguiseUtilities.getLogger().info("Loaded custom disguise " + key);
             }
             catch (DisguiseParseException e) {
-                System.err.println("[LibsDisguises] Error while loading custom disguise '" + key + "'" +
+                DisguiseUtilities.getLogger().severe("Error while loading custom disguise '" + key + "'" +
                         (e.getMessage() == null ? "" : ": " + e.getMessage()));
 
                 if (e.getMessage() == null)
                     e.printStackTrace();
+
+                failedCustomDisguises++;
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        System.out.println("[LibsDisguises] Loaded " + customDisguises.size() + " custom disguise" +
+        if (failedCustomDisguises > 0) {
+            DisguiseUtilities.getLogger().severe("Failed to load " + failedCustomDisguises + " custom disguises");
+        }
+
+        DisguiseUtilities.getLogger().info("Loaded " + customDisguises.size() + " custom disguise" +
                 (customDisguises.size() == 1 ? "" : "s"));
     }
 

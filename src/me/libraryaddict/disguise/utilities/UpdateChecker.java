@@ -37,19 +37,22 @@ public class UpdateChecker {
      */
     private String getSpigotVersion() {
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL("https://www.spigotmc.org/api/general.php").openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL("https://www.spigotmc.org/api/general.php")
+                    .openConnection();
             con.setDoOutput(true);
             con.setRequestMethod("POST");
-            con.getOutputStream().write(
-                    ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=32453").getBytes("UTF-8"));
+            con.getOutputStream()
+                    .write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=32453")
+                            .getBytes("UTF-8"));
             String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
             if (version.length() <= 10) {
                 return version;
             }
         }
         catch (Exception ex) {
-            System.out.print("[LibsDisguises] Failed to check for a update on spigot.");
+            DisguiseUtilities.getLogger().warning("Failed to check for a update on spigot.");
         }
+
         return null;
     }
 

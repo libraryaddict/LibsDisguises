@@ -175,7 +175,7 @@ public enum LibsMsg {
 
     public String get(Object... strings) {
         if (StringUtils.countMatches(getRaw(), "%s") != strings.length) {
-            System.out.println("[LibsDisguises] Mismatch in messages, incorrect parameters supplied for " + name() +
+            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
                     ". Please inform plugin author.");
         }
 

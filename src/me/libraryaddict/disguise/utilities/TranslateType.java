@@ -36,7 +36,7 @@ public enum TranslateType {
         }
 
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            System.out.println("[LibsDisguises] You must purchase the plugin to use translations!");
+            DisguiseUtilities.getLogger().severe("You must purchase the plugin to use translations!");
         }
 
         TranslateFiller.fillConfigs();
@@ -74,11 +74,11 @@ public enum TranslateType {
         translated.clear();
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            System.out.println("[LibsDisguises] Loading translations: " + name());
+            DisguiseUtilities.getLogger().info("Loading translations: " + name());
         }
 
         if (!getFile().exists()) {
-            System.out.println("[LibsDisguises] Translations for " + name() + " missing! Skipping...");
+            DisguiseUtilities.getLogger().info("Translations for " + name() + " missing! Skipping...");
             return;
         }
 
@@ -93,22 +93,23 @@ public enum TranslateType {
                 String value = config.getString(key);
 
                 if (value == null) {
-                    System.err.println("Translation for " + name() + " has a null value for the key '" + key + "'");
+                    DisguiseUtilities.getLogger()
+                            .severe("Translation for " + name() + " has a null value for the key '" + key + "'");
                 } else {
                     String newKey = ChatColor.translateAlternateColorCodes('&', key);
 
                     if (translated.containsKey(newKey)) {
                         if (dupes++ < 5) {
-                            System.out.println(
-                                    "[LibsDisguises] Alert! Duplicate translation entry for " + key + " in " + name() +
+                            DisguiseUtilities.getLogger()
+                                    .severe("Alert! Duplicate translation entry for " + key + " in " + name() +
                                             " translations!");
                             continue;
                         } else {
-                            System.out.println(
-                                    "[LibsDisguises] Too many duplicated keys! It's likely that this file was mildly " +
+                            DisguiseUtilities.getLogger()
+                                    .severe("Too many duplicated keys! It's likely that this file was mildly " +
                                             "corrupted by a previous bug!");
-                            System.out.println(
-                                    "[LibsDisguises] Delete the file, or you can remove every line after the first " +
+                            DisguiseUtilities.getLogger()
+                                    .severe("Delete the file, or you can remove every line after the first " +
                                             "duplicate message!");
                             break;
                         }
@@ -123,7 +124,7 @@ public enum TranslateType {
         }
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            System.out.println("[LibsDisguises] Loaded " + translated.size() + " translations for " + name());
+            DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name());
         }
     }
 

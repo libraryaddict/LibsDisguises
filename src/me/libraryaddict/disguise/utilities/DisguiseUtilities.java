@@ -50,6 +50,7 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
@@ -111,7 +112,7 @@ public class DisguiseUtilities {
         if (!DisguiseConfig.isSaveEntityDisguises() && !DisguiseConfig.isSavePlayerDisguises())
             return;
 
-        System.out.println("[LibsDisguises] Now saving disguises..");
+        getLogger().info("Now saving disguises..");
 
         for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {
             for (TargetedDisguise disg : list) {
@@ -127,7 +128,7 @@ public class DisguiseUtilities {
             }
         }
 
-        System.out.println("[LibsDisguises] Saved disguises.");
+        getLogger().info("Saved disguises.");
     }
 
     public static boolean hasGameProfile(String playername) {
@@ -239,7 +240,7 @@ public class DisguiseUtilities {
             return gson.fromJson(cached, Disguise[].class);
         }
         catch (Exception e) {
-            System.out.println("Malformed disguise for " + entityUUID);
+            getLogger().severe("Malformed disguise for " + entityUUID);
             e.printStackTrace();
         }
 
@@ -795,8 +796,8 @@ public class DisguiseUtilities {
                         catch (Exception e) {
                             runnables.remove(playerName);
 
-                            System.out.print("[LibsDisguises] Error when fetching " + playerName +
-                                    "'s uuid from mojang: " + e.getMessage());
+                            getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " +
+                                    e.getMessage());
                         }
                     }
                 });
@@ -1511,6 +1512,10 @@ public class DisguiseUtilities {
 
     public static LibsDisguises getPlugin() {
         return libsDisguises;
+    }
+
+    public static Logger getLogger() {
+        return getPlugin().getLogger();
     }
 
     /**

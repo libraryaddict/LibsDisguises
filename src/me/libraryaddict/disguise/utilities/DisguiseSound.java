@@ -276,7 +276,7 @@ public enum DisguiseSound {
         Object soundEffect = ReflectionManager.getCraftSound(sound);
 
         if (disguiseSounds.containsKey(soundEffect)) {
-            System.out.println("Already doing " + sound);
+            DisguiseUtilities.getLogger().severe("Already doing " + sound);
         }
 
         disguiseSounds.put(soundEffect, type);

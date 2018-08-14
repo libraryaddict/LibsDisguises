@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -389,10 +390,10 @@ public class MetaIndex<Y> {
                         continue;
 
                     if (found != null) {
-                        System.err.println(
-                                entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " +
-                                        i + " (" + type.getFlagWatcher().getSimpleName() + ", " +
-                                        found.getFlagWatcher().getSimpleName() + ")");
+                        DisguiseUtilities.getLogger().severe(entry.getKey().getSimpleName() +
+                                " has multiple FlagType's registered for the index " + i + " (" +
+                                type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() +
+                                ")");
                         continue loop;
                     }
 
@@ -402,11 +403,13 @@ public class MetaIndex<Y> {
                 if (found != null)
                     continue;
 
-                System.err.println(entry.getKey().getSimpleName() + " has no FlagType registered for the index " + i);
+                DisguiseUtilities.getLogger()
+                        .severe(entry.getKey().getSimpleName() + " has no FlagType registered for the index " + i);
             }
         }
     }
 
+    @Deprecated
     public static void printMetadata() {
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -501,8 +504,8 @@ public class MetaIndex<Y> {
                     continue;
                 }
 
-                System.err.println(
-                        "[LibsDisguises] MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " +
+                DisguiseUtilities.getLogger()
+                        .severe("MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " +
                                 metaIndex.getIndex() + " has already registered this! (" + metaIndex.getDefault() +
                                 "," + index.getDefault() + ")");
             }

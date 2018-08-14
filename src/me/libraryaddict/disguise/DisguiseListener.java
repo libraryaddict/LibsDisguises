@@ -94,8 +94,8 @@ public class DisguiseListener implements Listener {
                         });
                     }
                     catch (Exception ex) {
-                        System.out.print(String
-                                .format("[LibsDisguises] Failed to check for update: %s", ex.getMessage()));
+                        DisguiseUtilities.getLogger().warning(String
+                                .format("Failed to check for update: %s", ex.getMessage()));
                     }
                 }
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours

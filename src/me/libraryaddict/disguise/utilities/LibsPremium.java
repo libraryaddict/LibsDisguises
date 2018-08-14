@@ -58,11 +58,12 @@ public class LibsPremium {
                     thisPluginIsPaidFor = (Boolean) m.invoke(null);
 
                     if (isPremium()) {
-                        System.out.println("[LibsDisguises] Found a premium Lib's Disguises jar, premium enabled!");
+                        DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar, premium enabled!");
 
                         break;
                     } else {
-                        System.out.println("[LibsDisguises] You have a non-premium Lib's Disguises jar in the folder!");
+                        DisguiseUtilities.getLogger()
+                                .warning("You have a non-premium Lib's Disguises jar (" + file.getName() + ") in the folder!");
                     }
                 }
                 catch (Exception ex) {
