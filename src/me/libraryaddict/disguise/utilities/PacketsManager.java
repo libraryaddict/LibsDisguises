@@ -515,33 +515,22 @@ public class PacketsManager {
     }
 
     public static byte getPitch(DisguiseType disguiseType, DisguiseType entityType, byte value) {
+        return getPitch(disguiseType, getPitch(entityType, value));
+    }
+
+    private static byte getPitch(DisguiseType disguiseType, byte value) {
         switch (disguiseType) {
             case MINECART:
             case MINECART_CHEST:
-            case MINECART_COMMAND:
             case MINECART_FURNACE:
             case MINECART_HOPPER:
             case MINECART_MOB_SPAWNER:
             case MINECART_TNT:
-                value = (byte) -value;
-                break;
+            case PHANTOM:
+                return (byte) -value;
             default:
-                break;
+                return value;
         }
-        switch (entityType) {
-            case MINECART:
-            case MINECART_CHEST:
-            case MINECART_FURNACE:
-            case MINECART_HOPPER:
-            case MINECART_MOB_SPAWNER:
-            case MINECART_TNT:
-                value = (byte) -value;
-                break;
-            default:
-                break;
-        }
-
-        return value;
     }
 
     /**
