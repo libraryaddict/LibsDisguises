@@ -32,8 +32,6 @@ public class LibsDisguises extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        saveDefaultConfig();
-
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
 
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
@@ -63,7 +61,7 @@ public class LibsDisguises extends JavaPlugin {
 
         registerValues();
 
-        DisguiseConfig.initConfig(getConfig());
+        DisguiseConfig.loadConfig();
 
         PacketsManager.addPacketListeners();
 
@@ -256,6 +254,10 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            DisguiseUtilities.removeSelfDisguiseScoreboard(player);
+        }
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {
@@ -271,9 +273,9 @@ public class LibsDisguises extends JavaPlugin {
     /**
      * Reloads the config with new config options.
      */
+    @Deprecated
     public void reload() {
-        reloadConfig();
-        DisguiseConfig.initConfig(getConfig());
+        DisguiseConfig.loadConfig();
     }
 
     /**

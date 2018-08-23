@@ -7,7 +7,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -94,8 +93,8 @@ public class DisguiseListener implements Listener {
                         });
                     }
                     catch (Exception ex) {
-                        DisguiseUtilities.getLogger().warning(String
-                                .format("Failed to check for update: %s", ex.getMessage()));
+                        DisguiseUtilities.getLogger()
+                                .warning(String.format("Failed to check for update: %s", ex.getMessage()));
                     }
                 }
             }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
@@ -382,10 +381,12 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
+        DisguiseUtilities.removeSelfDisguiseScoreboard(player);
+
         if (!DisguiseConfig.isSavePlayerDisguises())
             return;
-
-        Player player = event.getPlayer();
 
         Disguise[] disguises = DisguiseAPI.getDisguises(player);
 
@@ -394,7 +395,6 @@ public class DisguiseListener implements Listener {
 
         DisguiseUtilities.saveDisguises(player.getUniqueId(), disguises);
     }
-
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {

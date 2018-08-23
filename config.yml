@@ -44,7 +44,10 @@ Scoreboard:
   # Should it modify the scoreboard to turn collisions off?
   Collisions: true
   # Should it modify the scoreboard teams to disable seeing friendly invisibles?
-  SeeFriendlyInvisibles: true
+  DisableFriendlyInvisibles: true
+  # Should the scoreboard warn you if it detects a potential conflict?
+  # If self disguises are disabled, or the scoreboard is using IGNORE_SCOREBOARD then this does nothing.
+  WarnConflict: true
 
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'

@@ -68,12 +68,12 @@ public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     private static HashSet<UUID> savedDisguiseList = new HashSet<>();
     private static HashSet<String> cachedNames = new HashSet<>();
-    private static LibsDisguises libsDisguises;
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
     private static PacketContainer spawnChunk;
     private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
+    private static HashMap<UUID, String> disguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
@@ -329,7 +329,7 @@ public class DisguiseUtilities {
             }
         };
 
-        runnable.runTaskLater(libsDisguises, 20);
+        runnable.runTaskLater(LibsDisguises.getInstance(), 20);
     }
 
     public static void addGameProfile(String string, WrappedGameProfile gameProfile) {
@@ -764,13 +764,13 @@ public class DisguiseUtilities {
             }
 
             if (contactMojang && !runnables.containsKey(playerName)) {
-                Bukkit.getScheduler().runTaskAsynchronously(libsDisguises, new Runnable() {
+                Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), new Runnable() {
                     @Override
                     public void run() {
                         try {
                             final WrappedGameProfile gameProfile = lookupGameProfile(origName);
 
-                            Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
+                            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), new Runnable() {
                                 @Override
                                 public void run() {
                                     if (gameProfile.getProperties().isEmpty()) {
@@ -845,8 +845,6 @@ public class DisguiseUtilities {
     }
 
     public static void init(LibsDisguises disguises) {
-        libsDisguises = disguises;
-
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
@@ -971,7 +969,7 @@ public class DisguiseUtilities {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
             if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player &&
-                    ((Player) disguise.getEntity()).getName().equalsIgnoreCase(player)) {
+                    disguise.getEntity().getName().equalsIgnoreCase(player)) {
                 removeSelfDisguise((Player) disguise.getEntity());
 
                 if (disguise.isSelfDisguiseVisible()) {
@@ -980,15 +978,12 @@ public class DisguiseUtilities {
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                        }
-                        catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                    try {
+                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }, 2);
             } else {
@@ -1018,16 +1013,12 @@ public class DisguiseUtilities {
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                updatePlayer.invoke(entityTrackerEntry, p);
-                            }
-                            catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                        try {
+                            updatePlayer.invoke(entityTrackerEntry, p);
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
                         }
                     }, 2);
                     break;
@@ -1074,15 +1065,12 @@ public class DisguiseUtilities {
 
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        updatePlayer.invoke(entityTrackerEntry, p);
-                                    }
-                                    catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                                try {
+                                    updatePlayer.invoke(entityTrackerEntry, p);
+                                }
+                                catch (Exception ex) {
+                                    ex.printStackTrace();
                                 }
                             }, 2);
                         }
@@ -1116,15 +1104,12 @@ public class DisguiseUtilities {
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
-                        }
-                        catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                    try {
+                        DisguiseUtilities.sendSelfDisguise((Player) disguise.getEntity(), disguise);
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }, 2);
             }
@@ -1151,16 +1136,12 @@ public class DisguiseUtilities {
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
 
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(libsDisguises, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                try {
-                                    updatePlayer.invoke(entityTrackerEntry, p);
-                                }
-                                catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                            try {
+                                updatePlayer.invoke(entityTrackerEntry, p);
+                            }
+                            catch (Exception ex) {
+                                ex.printStackTrace();
                             }
                         }, 2);
                     }
@@ -1220,39 +1201,7 @@ public class DisguiseUtilities {
             ex.printStackTrace();
         }
 
-        String originalTeam = preDisguiseTeam.remove(player.getUniqueId());
-
-        if (DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE_SCOREBOARD) {
-            // Code to stop player pushing
-            Scoreboard scoreboard = player.getScoreboard();
-            Team team = originalTeam == null ? null : scoreboard.getTeam(originalTeam);
-            Team ldTeam = null;
-
-            for (Team t : scoreboard.getTeams()) {
-                if (!t.hasEntry(player.getName()))
-                    continue;
-
-                ldTeam = t;
-                break;
-            }
-
-            if (ldTeam != null) {
-                if (!ldTeam.getName().equals("LD Pushing") && !ldTeam.getName().endsWith("_LDP")) {
-                    // Its not a team assigned by me
-                    ldTeam = null;
-                }
-            }
-
-            if (team != null) {
-                team.addEntry(player.getName());
-            } else if (ldTeam != null) {
-                ldTeam.removeEntry(player.getName());
-            }
-
-            if (ldTeam != null && ldTeam.getEntries().isEmpty()) {
-                ldTeam.unregister();
-            }
-        }
+        removeSelfDisguiseScoreboard(player);
 
         // player.spigot().setCollidesWithEntities(true);
         // Finish up
@@ -1295,6 +1244,129 @@ public class DisguiseUtilities {
         player.updateInventory();
     }
 
+    public static void removeSelfDisguiseScoreboard(Player player) {
+        String originalTeam = preDisguiseTeam.remove(player.getUniqueId());
+        String teamDisguise = disguiseTeam.remove(player.getUniqueId());
+
+        if (teamDisguise != null && DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE_SCOREBOARD) {
+            // Code replace them back onto their original scoreboard team
+            Scoreboard scoreboard = player.getScoreboard();
+            Team team = originalTeam == null ? null : scoreboard.getTeam(originalTeam);
+            Team ldTeam = null;
+
+            for (Team t : scoreboard.getTeams()) {
+                if (!t.hasEntry(player.getName()))
+                    continue;
+
+                ldTeam = t;
+                break;
+            }
+
+            if (DisguiseConfig.isWarnScoreboardConflict()) {
+                if (ldTeam == null || !ldTeam.getName().equals(teamDisguise)) {
+                    getLogger().warning("Scoreboard conflict, the self disguise player was not on the expected team!");
+                } else {
+                    OptionStatus collisions = ldTeam.getOption(Option.COLLISION_RULE);
+
+                    if (collisions != OptionStatus.NEVER && collisions != OptionStatus.FOR_OTHER_TEAMS) {
+                        getLogger().warning(
+                                "Scoreboard conflict, the collisions for a self disguise player team has been " +
+                                        "unexpectedly modifed!");
+                    }
+                }
+            }
+
+            if (ldTeam != null) {
+                if (!ldTeam.getName().equals("LD_Pushing") && !ldTeam.getName().endsWith("_LDP")) {
+                    // Its not a team assigned by Lib's Disguises
+                    ldTeam = null;
+                }
+            }
+
+            if (team != null) {
+                team.addEntry(player.getName());
+            } else if (ldTeam != null) {
+                ldTeam.removeEntry(player.getName());
+            }
+
+            if (ldTeam != null && ldTeam.getEntries().isEmpty()) {
+                ldTeam.unregister();
+            }
+        }
+    }
+
+    public static void setupSelfDisguiseScoreboard(Player player) {
+        DisguisePushing pOption = DisguiseConfig.getPushingOption();
+
+        if (pOption != DisguisePushing.IGNORE_SCOREBOARD) {
+            // Code to stop player pushing
+            Scoreboard scoreboard = player.getScoreboard();
+            Team prevTeam = null;
+            Team ldTeam = null;
+            String ldTeamName = "LD_Pushing";
+
+            for (Team t : scoreboard.getTeams()) {
+                if (!t.hasEntry(player.getName()))
+                    continue;
+
+                prevTeam = t;
+                break;
+            }
+
+            // If the player is in a team already and the team isn't one controlled by Lib's Disguises
+            if (prevTeam != null && !(prevTeam.getName().equals("LD_Pushing") || prevTeam.getName().endsWith("_LDP"))) {
+                // If we're creating a scoreboard
+                if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
+                    // Remember his old team so we can give him it back later
+                    preDisguiseTeam.put(player.getUniqueId(), prevTeam.getName());
+                } else {
+                    // We're modifying the scoreboard
+                    ldTeam = prevTeam;
+                }
+            } else {
+                prevTeam = null;
+            }
+
+            // If we are creating a new scoreboard because the current one must not be modified
+            if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
+                // If they have a team, we'll reuse that name. Otherwise go for another name
+                ldTeamName = (prevTeam == null ? "No Team" : prevTeam.getName());
+
+                // Give the teamname a custom name
+                ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
+            }
+
+            if (ldTeam == null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
+                ldTeam = scoreboard.registerNewTeam(ldTeamName);
+            }
+
+            disguiseTeam.put(player.getUniqueId(), ldTeam.getName());
+
+            if (!ldTeam.hasEntry(player.getName()))
+                ldTeam.addEntry(player.getName());
+
+            if (pOption == DisguisePushing.CREATE_SCOREBOARD && prevTeam != null) {
+                ldTeam.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
+                ldTeam.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
+                ldTeam.setDisplayName(prevTeam.getDisplayName());
+                ldTeam.setPrefix(prevTeam.getPrefix());
+                ldTeam.setSuffix(prevTeam.getSuffix());
+
+                for (Option option : Team.Option.values()) {
+                    ldTeam.setOption(option, prevTeam.getOption(option));
+                }
+            }
+
+            if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER && DisguiseConfig.isModifyCollisions()) {
+                ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            }
+
+            if (ldTeam.canSeeFriendlyInvisibles() && DisguiseConfig.isDisableFriendlyInvisibles()) {
+                ldTeam.setCanSeeFriendlyInvisibles(false);
+            }
+        }
+    }
+
     /**
      * Sends the self disguise to the player
      */
@@ -1315,87 +1387,16 @@ public class DisguiseUtilities {
                 // If it is, then this method will be run again in one tick. Which is when it should be constructed.
                 // Else its going to run in a infinite loop hue hue hue..
                 // At least until this disguise is discarded
-                Bukkit.getScheduler().runTask(libsDisguises, new Runnable() {
-                    @Override
-                    public void run() {
-                        if (DisguiseAPI.getDisguise(player, player) == disguise) {
-                            sendSelfDisguise(player, disguise);
-                        }
+                Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
+                    if (DisguiseAPI.getDisguise(player, player) == disguise) {
+                        sendSelfDisguise(player, disguise);
                     }
                 });
 
                 return;
             }
 
-            DisguisePushing pOption = DisguiseConfig.getPushingOption();
-
-            if (pOption != DisguisePushing.IGNORE_SCOREBOARD) {
-                // Code to stop player pushing
-                Scoreboard scoreboard = player.getScoreboard();
-                Team prevTeam = null;
-                Team ldTeam = null;
-                String ldTeamName = "LD Pushing";
-
-                for (Team t : scoreboard.getTeams()) {
-                    if (!t.hasEntry(player.getName()))
-                        continue;
-
-                    prevTeam = t;
-                    break;
-                }
-
-                // If the player is in a team already and the team isn't one controlled by Lib's Disguises
-                if (prevTeam != null &&
-                        !(prevTeam.getName().equals("LD Pushing") || prevTeam.getName().endsWith("_LDP"))) {
-                    // If we're creating a scoreboard
-                    if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
-                        // Remember his old team so we can give him it back later
-                        preDisguiseTeam.put(player.getUniqueId(), prevTeam.getName());
-                    } else {
-                        // We're modifying the scoreboard
-                        ldTeam = prevTeam;
-                    }
-                } else {
-                    prevTeam = null;
-                }
-
-                // If we are creating a new scoreboard because the current one must not be modified
-                if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
-                    // If they have a team, we'll reuse that name. Otherwise go for another name
-                    ldTeamName = (prevTeam == null ? "No Team" : prevTeam.getName());
-
-                    // Give the teamname a custom name
-                    ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
-                }
-
-                if (ldTeam == null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
-                    ldTeam = scoreboard.registerNewTeam(ldTeamName);
-                }
-
-                if (!ldTeam.hasEntry(player.getName()))
-                    ldTeam.addEntry(player.getName());
-
-                if (pOption == DisguisePushing.CREATE_SCOREBOARD && prevTeam != null) {
-                    ldTeam.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
-                    ldTeam.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
-                    ldTeam.setDisplayName(prevTeam.getDisplayName());
-                    ldTeam.setPrefix(prevTeam.getPrefix());
-                    ldTeam.setSuffix(prevTeam.getSuffix());
-
-                    for (Option option : Team.Option.values()) {
-                        ldTeam.setOption(option, prevTeam.getOption(option));
-                    }
-                }
-
-                if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER &&
-                        DisguiseConfig.isModifyCollisions()) {
-                    ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-                }
-
-                if (ldTeam.canSeeFriendlyInvisibles() && DisguiseConfig.isModifySeeFriendlyInvisibles()) {
-                    ldTeam.setCanSeeFriendlyInvisibles(false);
-                }
-            }
+            setupSelfDisguiseScoreboard(player);
 
             // Add himself to his own entity tracker
             Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
@@ -1510,12 +1511,8 @@ public class DisguiseUtilities {
         return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
     }
 
-    public static LibsDisguises getPlugin() {
-        return libsDisguises;
-    }
-
     public static Logger getLogger() {
-        return getPlugin().getLogger();
+        return LibsDisguises.getInstance().getLogger();
     }
 
     /**
@@ -1559,7 +1556,7 @@ public class DisguiseUtilities {
         Entity e = disguise.getEntity();
 
         // If the disguises entity is null, or the disguised entity isn't a player return
-        if (e == null || !(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) ||
+        if (!(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) ||
                 !getDisguises().get(e.getUniqueId()).contains(disguise)) {
             return;
         }

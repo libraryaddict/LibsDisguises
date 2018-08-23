@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Strings;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -164,23 +165,20 @@ public class FlagWatcher {
                 if (watch.getIndex() == 6) {
                     Object value = watch.getValue();
 
-                    if (value != null && value instanceof Float) {
+                    if (value instanceof Float) {
                         float newHealth = (Float) value;
 
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
                             Bukkit.getScheduler()
-                                    .scheduleSyncDelayedTask(DisguiseUtilities.getPlugin(), new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(),
-                                                        getDisguise());
-                                            }
-                                            catch (Exception ex) {
-                                                ex.printStackTrace();
-                                            }
+                                    .scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                                        try {
+                                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(),
+                                                    getDisguise());
+                                        }
+                                        catch (Exception ex) {
+                                            ex.printStackTrace();
                                         }
                                     }, 2);
                         } else if (newHealth <= 0 && !hasDied) {
@@ -308,7 +306,7 @@ public class FlagWatcher {
         watchableObjects = new ArrayList<>();
 
         for (int i = 0; i <= 31; i++) {
-            WrappedWatchableObject watchable = null;
+            WrappedWatchableObject watchable;
 
             if (entityValues.containsKey(i) && entityValues.get(i) != null) {
                 watchable = ReflectionManager.createWatchable(i, entityValues.get(i));
@@ -405,7 +403,7 @@ public class FlagWatcher {
 
     public void setCustomName(String name) {
         if (Strings.isNullOrEmpty(name)) {
-            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.<WrappedChatComponent>empty());
+            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
         } else {
             if (name.length() > 64) {
                 name = name.substring(0, 64);
@@ -425,7 +423,7 @@ public class FlagWatcher {
     private void setEntityFlag(int byteValue, boolean flag) {
         modifiedEntityAnimations[byteValue] = true;
 
-        byte b0 = (byte) getData(MetaIndex.ENTITY_META);
+        byte b0 = getData(MetaIndex.ENTITY_META);
 
         if (flag) {
             setData(MetaIndex.ENTITY_META, (byte) (b0 | 1 << byteValue));

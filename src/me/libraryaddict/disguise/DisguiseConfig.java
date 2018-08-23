@@ -60,7 +60,8 @@ public class DisguiseConfig {
     private static boolean saveEntityDisguises;
     private static boolean useTranslations;
     private static boolean modifyCollisions;
-    private static boolean modifySeeFriendlyInvisibles;
+    private static boolean disableFriendlyInvisibles;
+    private static boolean warnScoreboardConflict;
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -74,20 +75,28 @@ public class DisguiseConfig {
         return null;
     }
 
+    public static boolean isWarnScoreboardConflict() {
+        return warnScoreboardConflict;
+    }
+
+    public static void setWarnScoreboardConflict(boolean warnConflict) {
+        warnScoreboardConflict = warnConflict;
+    }
+
     public static boolean isModifyCollisions() {
         return modifyCollisions;
     }
 
-    public static boolean isModifySeeFriendlyInvisibles() {
-        return modifySeeFriendlyInvisibles;
+    public static boolean isDisableFriendlyInvisibles() {
+        return disableFriendlyInvisibles;
     }
 
     public static void setModifyCollisions(boolean isModifyCollisions) {
         modifyCollisions = isModifyCollisions;
     }
 
-    public static void setModifySeeFriendlyInvisibles(boolean isModifySeeFriendlyInvisibles) {
-        modifySeeFriendlyInvisibles = isModifySeeFriendlyInvisibles;
+    public static void setDisableFriendlyInvisibles(boolean isDisableFriendlyInvisibles) {
+        disableFriendlyInvisibles = isDisableFriendlyInvisibles;
     }
 
     public static boolean isSavePlayerDisguises() {
@@ -156,7 +165,15 @@ public class DisguiseConfig {
         updatePlayerCache = setUpdatePlayerCache;
     }
 
-    public static void initConfig(ConfigurationSection config) {
+    public static void loadConfig() {
+        // Always save the default config
+        LibsDisguises.getInstance().saveDefaultConfig();
+        // Redundant for the first load, however other plugins may call loadConfig() at a later stage where we
+        // definitely want to reload it.
+        LibsDisguises.getInstance().reloadConfig();
+
+        ConfigurationSection config = LibsDisguises.getInstance().getConfig();
+
         setSoundsEnabled(config.getBoolean("DisguiseSounds"));
         setVelocitySent(config.getBoolean("SendVelocity"));
         setViewDisguises(
@@ -203,7 +220,8 @@ public class DisguiseConfig {
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
         setUseTranslations(config.getBoolean("Translations"));
         setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
-        setModifySeeFriendlyInvisibles(config.getBoolean("Scoreboard.SeeFriendlyInvisibles"));
+        setDisableFriendlyInvisibles(config.getBoolean("Scoreboard.DisableFriendlyInvisibles"));
+        setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
