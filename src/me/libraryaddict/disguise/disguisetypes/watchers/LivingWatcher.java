@@ -1,71 +1,38 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
-
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
-
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
+import org.bukkit.Color;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class LivingWatcher extends FlagWatcher {
-    static Map<Integer, Object> list = new HashMap<>();
-    static Method getId;
-
-    static {
-        try {
-            getId = ReflectionManager
-                    .getNmsMethod("MobEffectList", "getId", ReflectionManager.getNmsClass("MobEffectList"));
-            Object REGISTRY = ReflectionManager.getNmsField("MobEffectList", "REGISTRY").get(null);
-
-            for (Object next : ((Iterable) REGISTRY)) {
-                int id = (int) getId.invoke(null, next);
-                list.put(id, next);
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private double maxHealth;
     private boolean maxHealthSet;
-    private HashSet<Integer> potionEffects = new HashSet<>();
+    private HashSet<String> potionEffects = new HashSet<>();
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public void addPotionEffect(PotionEffectType potionEffect) {
-        if (!hasPotionEffect(potionEffect)) {
-            removePotionEffect(potionEffect);
-            potionEffects.add(potionEffect.getId());
-
-            sendPotionEffects();
-        }
-    }
-
     @Override
     public LivingWatcher clone(Disguise disguise) {
         LivingWatcher clone = (LivingWatcher) super.clone(disguise);
-        clone.potionEffects = (HashSet<Integer>) potionEffects.clone();
+        clone.potionEffects = (HashSet<String>) potionEffects.clone();
         clone.maxHealth = maxHealth;
         clone.maxHealthSet = maxHealthSet;
 
@@ -73,7 +40,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public float getHealth() {
-        return (float) getData(MetaIndex.LIVING_HEALTH);
+        return getData(MetaIndex.LIVING_HEALTH);
     }
 
     public double getMaxHealth() {
@@ -81,53 +48,75 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     public boolean isPotionParticlesAmbient() {
-        return (boolean) getData(MetaIndex.LIVING_POTION_AMBIENT);
+        return getData(MetaIndex.LIVING_POTION_AMBIENT);
+    }
+
+    public Color getParticlesColor() {
+        int color = getData(MetaIndex.LIVING_POTIONS);
+        return Color.fromRGB(color);
+    }
+
+    public void setParticlesColor(Color color) {
+        potionEffects.clear();
+
+        setData(MetaIndex.LIVING_POTIONS, color.asRGB());
+        sendData(MetaIndex.LIVING_POTIONS);
     }
 
     private int getPotions() {
-        int m = 3694022;
-
         if (potionEffects.isEmpty()) {
-            return m;
+            return 0;
         }
 
-        float f1 = 0.0F;
-        float f2 = 0.0F;
-        float f3 = 0.0F;
-        float f4 = 0.0F;
-        try {
-            for (int localMobEffect : potionEffects) {
-                int n = (Integer) getId.invoke(null, list.get(localMobEffect));
-                f1 += (n >> 16 & 0xFF) / 255.0F;
-                f2 += (n >> 8 & 0xFF) / 255.0F;
-                f3 += (n & 0xFF) / 255.0F;
-                f4 += 1.0F;
+        ArrayList<Color> colors = new ArrayList<>();
+
+        for (String typeId : potionEffects) {
+            PotionEffectType type = PotionEffectType.getByName(typeId);
+
+            if (type == null) {
+                continue;
             }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+
+            Color color = type.getColor();
+
+            if (color == null) {
+                continue;
+            }
+
+            colors.add(color);
         }
 
-        f1 = f1 / f4 * 255.0F;
-        f2 = f2 / f4 * 255.0F;
-        f3 = f3 / f4 * 255.0F;
+        if (colors.isEmpty()) {
+            return 0;
+        }
 
-        return (int) f1 << 16 | (int) f2 << 8 | (int) f3;
+        Color color = colors.remove(0);
+
+        return color.mixColors(colors.toArray(new Color[0])).asRGB();
     }
 
     public boolean hasPotionEffect(PotionEffectType type) {
-        return potionEffects.contains(type.getId());
+        return potionEffects.contains(type.getName());
     }
 
     public boolean isMaxHealthSet() {
         return maxHealthSet;
     }
 
-    public void removePotionEffect(PotionEffectType type) {
-        if (potionEffects.contains(type.getId())) {
-            potionEffects.remove(type.getId());
-            sendPotionEffects();
+    public void addPotionEffect(PotionEffectType potionEffect) {
+        if (!hasPotionEffect(potionEffect)) {
+            potionEffects.add(potionEffect.getName());
         }
+
+        sendPotionEffects();
+    }
+
+    public void removePotionEffect(PotionEffectType potionEffect) {
+        if (hasPotionEffect(potionEffect)) {
+            potionEffects.remove(potionEffect.getId());
+        }
+
+        sendPotionEffects();
     }
 
     public void setPotionParticlesAmbient(boolean particles) {

@@ -33,7 +33,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
             Particle.SPELL_MOB);
 
-    public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 0, 0F);
+    public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 0, 3F);
 
     public static MetaIndex<Vector3F> ARMORSTAND_BODY = new MetaIndex<>(ArmorStandWatcher.class, 2,
             new Vector3F(0, 0, 0));
@@ -42,28 +42,30 @@ public class MetaIndex<Y> {
             new Vector3F(0, 0, 0));
 
     public static MetaIndex<Vector3F> ARMORSTAND_LEFT_ARM = new MetaIndex<>(ArmorStandWatcher.class, 3,
-            new Vector3F(0, 0, 0));
+            new Vector3F(-10, 0, -10));
 
     public static MetaIndex<Vector3F> ARMORSTAND_LEFT_LEG = new MetaIndex<>(ArmorStandWatcher.class, 5,
-            new Vector3F(0, 0, 0));
+            new Vector3F(-1, 0, -1));
 
     public static MetaIndex<Byte> ARMORSTAND_META = new MetaIndex<>(ArmorStandWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Vector3F> ARMORSTAND_RIGHT_ARM = new MetaIndex<>(ArmorStandWatcher.class, 4,
-            new Vector3F(0, 0, 0));
+            new Vector3F(-15, 0, 10));
 
     public static MetaIndex<Vector3F> ARMORSTAND_RIGHT_LEG = new MetaIndex<>(ArmorStandWatcher.class, 6,
-            new Vector3F(0, 0, 0));
+            new Vector3F(1, 0, 1));
 
     public static MetaIndex<Byte> ARROW_CRITICAL = new MetaIndex<>(ArrowWatcher.class, 0, (byte) 0);
+
+    public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
     public static MetaIndex<Byte> BAT_HANGING = new MetaIndex<>(BatWatcher.class, 0, (byte) 1);
 
     public static MetaIndex<Byte> BLAZE_BLAZING = new MetaIndex<>(BlazeWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<Float> BOAT_DAMAGE = new MetaIndex<>(BoatWatcher.class, 2, 40F);
+    public static MetaIndex<Float> BOAT_DAMAGE = new MetaIndex<>(BoatWatcher.class, 2, 0F);
 
-    public static MetaIndex<Integer> BOAT_DIRECTION = new MetaIndex<>(BoatWatcher.class, 1, 0);
+    public static MetaIndex<Integer> BOAT_DIRECTION = new MetaIndex<>(BoatWatcher.class, 1, 1);
 
     public static MetaIndex<Integer> BOAT_LAST_HIT = new MetaIndex<>(BoatWatcher.class, 0, 0);
 
@@ -89,21 +91,21 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> DOLPHIN_BREATH = new MetaIndex<>(DolphinWatcher.class, 2, 2400);
 
     public static MetaIndex<ItemStack> DROPPED_ITEM = new MetaIndex<>(DroppedItemWatcher.class, 0,
-            new ItemStack(Material.STONE));
+            new ItemStack(Material.AIR));
 
     public static MetaIndex<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new MetaIndex<>(EnderCrystalWatcher.class, 0,
             Optional.empty());
 
-    public static MetaIndex<Boolean> ENDER_CRYSTAL_PLATE = new MetaIndex<>(EnderCrystalWatcher.class, 1, false);
+    public static MetaIndex<Boolean> ENDER_CRYSTAL_PLATE = new MetaIndex<>(EnderCrystalWatcher.class, 1, true);
 
-    public static MetaIndex<Integer> ENDERD_RAGON_PHASE = new MetaIndex<>(EnderDragonWatcher.class, 0, 0);
+    public static MetaIndex<Integer> ENDER_DRAGON_PHASE = new MetaIndex<>(EnderDragonWatcher.class, 0, 10);
 
     public static MetaIndex<Boolean> ENDERMAN_AGRESSIVE = new MetaIndex<>(EndermanWatcher.class, 1, false);
 
     public static MetaIndex<Optional<WrappedBlockData>> ENDERMAN_ITEM = new MetaIndex<>(EndermanWatcher.class, 0,
             Optional.empty());
 
-    public static MetaIndex<Integer> ENTITY_AIR_TICKS = new MetaIndex<>(FlagWatcher.class, 1, 0);
+    public static MetaIndex<Integer> ENTITY_AIR_TICKS = new MetaIndex<>(FlagWatcher.class, 1, 300);
 
     public static MetaIndex<Optional<WrappedChatComponent>> ENTITY_CUSTOM_NAME = new MetaIndex<>(FlagWatcher.class, 2,
             Optional.empty());
@@ -120,7 +122,7 @@ public class MetaIndex<Y> {
             BlockPosition.ORIGIN);
 
     public static MetaIndex<ItemStack> FIREWORK_ITEM = new MetaIndex<>(FireworkWatcher.class, 0,
-            new ItemStack(Material.AIR));
+            new ItemStack(Material.FIREWORK_ROCKET));
 
     public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
@@ -169,9 +171,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> LIVING_POTIONS = new MetaIndex<>(LivingWatcher.class, 2, 0);
 
-    public static MetaIndex<Integer> LLAMA_CARPET = new MetaIndex<>(LlamaWatcher.class, 1, 0);
+    public static MetaIndex<Integer> LLAMA_CARPET = new MetaIndex<>(LlamaWatcher.class, 1, -1);
 
-    public static MetaIndex<Integer> LLAMA_COLOR = new MetaIndex<>(LlamaWatcher.class, 2, -1);
+    public static MetaIndex<Integer> LLAMA_COLOR = new MetaIndex<>(LlamaWatcher.class, 2, 0);
 
     public static MetaIndex<Integer> LLAMA_STRENGTH = new MetaIndex<>(LlamaWatcher.class, 0, 0);
 
@@ -179,7 +181,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> MINECART_BLOCK_VISIBLE = new MetaIndex<>(MinecartWatcher.class, 5, false);
 
-    public static MetaIndex<Integer> MINECART_BLOCK_Y = new MetaIndex<>(MinecartWatcher.class, 4, 0);
+    public static MetaIndex<Integer> MINECART_BLOCK_Y = new MetaIndex<>(MinecartWatcher.class, 4, 6);
 
     public static MetaIndex<Integer> MINECART_SHAKING_DIRECTION = new MetaIndex<>(MinecartWatcher.class, 1, 1);
 
@@ -229,7 +231,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<BlockPosition>> SHULKER_ATTACHED = new MetaIndex<>(ShulkerWatcher.class, 1,
             Optional.empty());
 
-    public static MetaIndex<Byte> SHULKER_COLOR = new MetaIndex<>(ShulkerWatcher.class, 3, (byte) 10);
+    public static MetaIndex<Byte> SHULKER_COLOR = new MetaIndex<>(ShulkerWatcher.class, 3, (byte) 16);
 
     public static MetaIndex<Direction> SHULKER_FACING = new MetaIndex<>(ShulkerWatcher.class, 0, Direction.DOWN);
 
@@ -237,21 +239,21 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> SKELETON_SWING_ARMS = new MetaIndex<>(SkeletonWatcher.class, 0, false);
 
-    public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<>(SlimeWatcher.class, 0, 0);
+    public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<>(SlimeWatcher.class, 0, 1);
 
     public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<>(SnowmanWatcher.class, 0, (byte) 16);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM;
+    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0,
+            new ItemStack(Material.SPLASH_POTION));
 
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1,
             Optional.empty());
 
-    public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(TippedArrowWatcher.class, 0,
-            Color.WHITE.asRGB());
+    public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(TippedArrowWatcher.class, 0, -1);
 
     public static MetaIndex<Integer> TNT_FUSE_TICKS = new MetaIndex<>(TNTWatcher.class, 0, Integer.MAX_VALUE);
 
@@ -293,7 +295,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 2, 14);
 
-    public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 0F);
+    public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 1F);
 
     public static MetaIndex<Boolean> ZOMBIE_AGGRESSIVE = new MetaIndex<>(ZombieWatcher.class, 2, false);
 
@@ -308,14 +310,6 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> ZOMBIE_VILLAGER_SHAKING = new MetaIndex<>(ZombieVillagerWatcher.class, 0, false);
 
     static {
-        try {
-            SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0,
-                    new ItemStack(Material.valueOf("SPLASH_POTION")));
-        }
-        catch (Exception ex) {
-            SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.POTION));
-        }
-
         setValues();
         orderMetaIndexes();
     }
@@ -432,7 +426,7 @@ public class MetaIndex<Y> {
         toPrint.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : toPrint) {
-           DisguiseUtilities.getLogger().info(s);
+            DisguiseUtilities.getLogger().info(s);
         }
     }
 
@@ -484,6 +478,24 @@ public class MetaIndex<Y> {
 
     public static MetaIndex[] values() {
         return _values;
+    }
+
+    @Deprecated
+    public static String getName(MetaIndex metaIndex) {
+        try {
+            for (Field field : MetaIndex.class.getFields()) {
+                if (field.get(null) != metaIndex) {
+                    continue;
+                }
+
+                return field.getName();
+            }
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void addMetaIndexes(MetaIndex... metaIndexes) {

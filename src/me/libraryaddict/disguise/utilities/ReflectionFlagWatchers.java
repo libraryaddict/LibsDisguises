@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -153,6 +154,25 @@ public class ReflectionFlagWatchers {
         new ParamInfo(Particle.class, "Particle", "The different particles of Minecraft");
         new ParamInfo(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish");
         new ParamInfo(DyeColor.class, "DyeColor", "Dye colors of many different colors");
+
+        try {
+            ArrayList<String> colors = new ArrayList<>();
+            Class cl = Class.forName("org.bukkit.Color");
+
+            for (Field field : cl.getFields()) {
+                if (field.getType() != cl) {
+                    continue;
+                }
+
+                colors.add(field.getName());
+            }
+
+            new ParamInfo(Color.class, "Color", "Colors that can also be defined through RGB",
+                    colors.toArray(new String[0]));
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         ArrayList<String> potionEnums = new ArrayList<>();
 

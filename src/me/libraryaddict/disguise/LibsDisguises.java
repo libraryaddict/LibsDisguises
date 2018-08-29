@@ -453,10 +453,6 @@ public class LibsDisguises extends JavaPlugin {
                     default:
                         break;
                 }
-
-                if (nmsEntityName != null) {
-                    nmsClass = ReflectionManager.getNmsClass("Entity" + nmsEntityName);
-                }
             }
 
             try {
@@ -506,6 +502,7 @@ public class LibsDisguises extends JavaPlugin {
 
                 WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
                 ArrayList<MetaIndex> indexes = MetaIndex.getFlags(disguiseType.getWatcherClass());
+                boolean loggedName = false;
 
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
                     MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
@@ -522,14 +519,25 @@ public class LibsDisguises extends JavaPlugin {
                     Object ourValue = ReflectionManager.convertInvalidMeta(flagType.getDefault());
                     Object nmsValue = ReflectionManager.convertInvalidMeta(watch.getValue());
 
-                    if (ourValue != nmsValue &&
-                            ((ourValue == null || nmsValue == null) || ourValue.getClass() != nmsValue.getClass())) {
-                        getLogger().severe("[MetaIndex mismatch for " + disguiseType + "! Index: " + watch.getIndex());
-                        getLogger().severe("MetaIndex: " + flagType.getDefault() + " (" +
-                                flagType.getDefault().getClass() + ") (" + nmsEntity.getClass() + ") & " +
-                                watcherClass.getSimpleName());
+                    if (ourValue.getClass() != nmsValue.getClass()) {
+                        if (!loggedName) {
+                            getLogger().severe(StringUtils.repeat("=", 20));
+                            getLogger().severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " +
+                                    nmsEntityName);
+                            loggedName = true;
+                        }
+
+                        getLogger().severe(StringUtils.repeat("-", 20));
+                        getLogger().severe("Index: " + watch.getIndex() + " | " +
+                                flagType.getFlagWatcher().getSimpleName() + " | " + MetaIndex.getName(flagType));
+                        Object flagDefault = flagType.getDefault();
+
+                        getLogger().severe("LibsDisguises: " + flagDefault + " (" + flagDefault.getClass() + ")");
+                        getLogger().severe("LibsDisguises Converted: " + ourValue + " (" + ourValue.getClass() + ")");
                         getLogger().severe("Minecraft: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() +
                                 ")");
+                        getLogger().severe("Minecraft Converted: " + nmsValue + " (" + nmsValue.getClass() + ")");
+                        getLogger().severe(StringUtils.repeat("-", 20));
                     }
                 }
 

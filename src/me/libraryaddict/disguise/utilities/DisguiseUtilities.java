@@ -857,8 +857,7 @@ public class DisguiseUtilities {
         gson = gsonBuilder.create();
 
         try {
-            Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
-            Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
+            Object world = ReflectionManager.getWorldServer(Bukkit.getWorlds().get(0));
             Class chunkClass = ReflectionManager.getNmsClass("Chunk");
             Object bedChunk = null;
 
@@ -883,8 +882,10 @@ public class DisguiseUtilities {
                     .newInstance(0, true);
 
             Class blockClass = ReflectionManager.getNmsClass("Block");
+            Object REGISTRY = ReflectionManager.getNmsField("IRegistry", "BLOCK").get(null);
+            Object minecraftKey = ReflectionManager.createMinecraftKey("white_bed");
 
-            Object block = blockClass.getMethod("getByName", String.class).invoke(null, "white_bed");
+            Object block = REGISTRY.getClass().getMethod("get", minecraftKey.getClass()).invoke(REGISTRY, minecraftKey);
             Object blockData = ReflectionManager.getNmsMethod(blockClass, "getBlockData").invoke(block);
             Method method = null;
 

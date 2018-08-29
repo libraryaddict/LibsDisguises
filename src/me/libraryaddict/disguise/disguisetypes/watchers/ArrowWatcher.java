@@ -10,7 +10,7 @@ public class ArrowWatcher extends FlagWatcher {
     }
 
     public boolean isCritical() {
-        return (byte) getData(MetaIndex.ARROW_CRITICAL) == 1;
+        return getData(MetaIndex.ARROW_CRITICAL) == 1;
     }
 
     public void setCritical(boolean critical) {

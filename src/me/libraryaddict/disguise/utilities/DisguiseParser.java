@@ -17,10 +17,12 @@ import org.bukkit.util.EulerAngle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DisguiseParser {
     public static class DisguiseParseException extends Exception {
@@ -435,41 +437,15 @@ public class DisguiseParser {
      * Splits a string while respecting quotes
      */
     public static String[] split(String string) {
-        String[] strings = ChatColor.translateAlternateColorCodes('&', string).split(" ");
+        Matcher matcher = Pattern.compile("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\"(?=\\s|$))|\\S+").matcher(string);
 
-        ArrayList<String> list = new ArrayList<>();
-        StringBuilder builder = new StringBuilder();
+        List<String> list = new ArrayList<>();
 
-        for (String s : strings) {
-            String a = s.replaceAll("\\\\", "");
-
-            if (builder.length() != 0 || s.startsWith("\"")) {
-                if (builder.length() != 0)
-                    builder.append(' ');
-
-                String append;
-
-                if (s.startsWith("\""))
-                    builder.append(s.substring(1));
-                else if (a.endsWith("\"") && !a.endsWith("\\\""))
-                    builder.append(s.substring(0, s.length() - 1));
-                else
-                    builder.append(s);
-
-                if (a.endsWith("\"") && !a.endsWith("\\\"")) {
-                    list.add(builder.toString());
-                    builder = new StringBuilder();
-                }
-            } else {
-                list.add(s);
-            }
+        while (matcher.find()) {
+            list.add(matcher.group());
         }
 
-        if (builder.length() != 0) {
-            list.addAll(Arrays.asList(("\"" + builder.toString()).split(" ")));
-        }
-
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
     /**
@@ -844,6 +820,29 @@ public class DisguiseParser {
                         } else if (param == Ocelot.Type.class) {
                             // Parse to ocelot type
                             value = callValueOf(param, valueString, methodName);
+                        } else if (param == Color.class) {
+                            Class cl = Class.forName("org.bukkit.Color");
+
+                            try {
+                                value = cl.getField(valueString.toUpperCase()).get(null);
+                            }
+                            catch (Exception ex) {
+                                try {
+                                    String[] split = valueString.split(",");
+
+                                    if (split.length == 1) {
+                                        value = Color.fromRGB(Integer.parseInt(split[0]));
+                                    } else if (split.length == 3) {
+                                        value = Color.fromRGB(Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                                                Integer.parseInt(split[2]));
+                                    } else {
+                                        throw new Exception();
+                                    }
+                                }
+                                catch (Exception ex2) {
+                                    throw parseToException(param, valueString, methodName);
+                                }
+                            }
                         } else if (param.getSimpleName().equals("TreeSpecies")) {
                             // Parse to tree species
                             value = callValueOf(param, valueString, methodName);
@@ -915,7 +914,9 @@ public class DisguiseParser {
                             try {
                                 String[] split = valueString.split(",");
 
-                                assert split.length == 3;
+                                if (split.length != 3) {
+                                    throw new Exception();
+                                }
 
                                 value = new BlockPosition(Integer.parseInt(split[0]), Integer.parseInt(split[1]),
                                         Integer.parseInt(split[2]));

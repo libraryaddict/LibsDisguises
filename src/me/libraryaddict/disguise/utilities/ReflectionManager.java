@@ -927,6 +927,16 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object createMinecraftKey(String name) {
+        try{
+            return getNmsClass("MinecraftKey").getConstructor(String.class).newInstance(name);
+        }catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static int getEntityType(Object nmsEntity) {
         try {
             Field entityTypesField = null;
@@ -936,9 +946,9 @@ public class ReflectionManager {
                     continue;
 
                 Object entityType = method.invoke(nmsEntity);
-                Class typesClass = getNmsClass("EntityTypes");
+                Class typesClass = getNmsClass("IRegistry");
 
-                Object registry = typesClass.getField("REGISTRY").get(null);
+                Object registry = typesClass.getField("ENTITY_TYPE").get(null);
 
                 return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityType);
             }
