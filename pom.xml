@@ -6,20 +6,20 @@
     <version>9.6.0-SNAPSHOT</version>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <defaultGoal>clean install</defaultGoal>
-        <directory>target</directory>
         <finalName>LibsDisguises</finalName>
 
         <resources>
             <resource>
-                <targetPath>.</targetPath>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>*</include>
+                </includes>
+            </resource>
+            <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>plugin.yml</include>
-                    <include>config.yml</include>
-                    <include>disguises.yml</include>
                     <include>README.md</include>
                 </includes>
             </resource>
