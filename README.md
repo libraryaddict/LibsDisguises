@@ -1,13 +1,13 @@
-LibsDisguises
+Libs Disguises
 =============
 
-One of the best disguise plugins on the market, the plugin offers an astounding amount of features unique to the way it implements its use of disguises!
+One of the best disguise plugins available, this plugin offers an astounding amount of features due to the unique way it implements its use of disguises!
 
 The commonly accepted method of disguising is turning a pig into a cow, but this takes it a step further and allows you to turn that pig, into a dropped piece of diamond armor!
 
-You can modify each disguise to your own liking through use of commands or the API with full tab completion support and the best part is. All of that is free!
+You can modify each disguise to your own liking through use of the API or commands with full tab completion support and the best part is; All of this is free!
 
-There are a few features which you need to pay for, but none of it is needed to enjoy the plugin to its fullest! For further details, read the plugin's description on SpigotMC.
+There are a few features which you need to pay for, but none of it is needed to enjoy the plugin to its fullest! For further details, read the plugin's description on SpigotMC. You are required to sign in, but you do not need to purchase the plugin.
 
 
 Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
