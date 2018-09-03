@@ -842,7 +842,16 @@ public class ReflectionManager {
 
     private static Object getParticleType(Particle particle) {
         try {
-            return getCraftClass("CraftParticle").getMethod("toNMS", Particle.class).invoke(null, particle);
+            Class craftParticle = getCraftClass("CraftParticle");
+            Field mcKeyField = craftParticle.getDeclaredField("minecraftKey");
+            mcKeyField.setAccessible(true);
+            Object mcKey = mcKeyField.get(Enum.valueOf(craftParticle, particle.name()));
+
+            Class typesClass = getNmsClass("IRegistry");
+
+            Object registry = typesClass.getField("PARTICLE_TYPE").get(null);
+
+            return registry.getClass().getMethod("get", mcKey.getClass()).invoke(registry, mcKey);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -928,9 +937,10 @@ public class ReflectionManager {
     }
 
     public static Object createMinecraftKey(String name) {
-        try{
+        try {
             return getNmsClass("MinecraftKey").getConstructor(String.class).newInstance(name);
-        }catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
 
