@@ -683,7 +683,6 @@ public class DisguiseParser {
                     break;
                 }
                 catch (Exception ignored) {
-                    ignored.printStackTrace();
                     parseException = new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED,
                             paramInfo.getDescriptiveName(), list.isEmpty() ? null : list.get(0),
                             TranslateType.DISGUISE_OPTIONS.reverseGet(method.getName()));
