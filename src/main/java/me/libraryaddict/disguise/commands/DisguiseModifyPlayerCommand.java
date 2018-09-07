@@ -2,12 +2,12 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -130,7 +130,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
             ArrayList<String> usedOptions = new ArrayList<>();
 
-            for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (int i = 1; i < args.length; i++) {
                     String arg = args[i];
 
@@ -147,21 +147,18 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
                 if (args.length > 1) {
                     String prevArg = args[args.length - 1];
 
-                    ParamInfo info = ReflectionFlagWatchers.getParamInfo(disguiseType, prevArg);
+                    ParamInfo info = ParamInfoManager.getParamInfo(disguiseType, prevArg);
 
                     if (info != null) {
-                        if (info.getParamClass() != boolean.class)
+                        if (!info.isParam(boolean.class)) {
                             addMethods = false;
+                        }
 
-                        if (info.isEnums()) {
-                            for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
-                                tabs.add(e);
-                            }
-                        } else {
-                            if (info.getParamClass() == String.class) {
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    tabs.add(p.getName());
-                                }
+                        if (info.hasValues()) {
+                            tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
+                        } else if (info.isParam(String.class)) {
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                tabs.add(p.getName());
                             }
                         }
                     }
@@ -169,8 +166,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
                 if (addMethods) {
                     // If this is a method, add. Else if it can be a param of the previous argument, add.
-                    for (Method method : ReflectionFlagWatchers
-                            .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+                    for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                         tabs.add(method.getName());
                     }
                 }

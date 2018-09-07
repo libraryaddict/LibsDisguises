@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.utilities;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
 
@@ -14,16 +15,29 @@ public class TranslateFiller {
     public static void fillConfigs() {
         // Fill the configs
 
-        for (ReflectionFlagWatchers.ParamInfo info : ReflectionFlagWatchers.getParamInfos()) {
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "Used as a disguise option");
+        for (ParamInfo info : ParamInfoManager.getParamInfos()) {
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
+
+            if (!info.getRawName().equals(info.getRawDescriptiveName())) {
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                        .save(info.getRawDescriptiveName(), "A disguise option descriptive name");
+            }
+
             TranslateType.DISGUISE_OPTIONS_PARAMETERS
                     .save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
 
-            if (!info.isEnums() || info.getParamClass() == ItemStack.class || info.getParamClass() == ItemStack[].class)
-                continue;
+            if (info.canTranslateValues()) {
+                for (String e : info.getValues().keySet()) {
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                            .save(e, "Used for the disguise option " + info.getRawName());
+                }
+            }
 
-            for (String e : info.getEnums("")) {
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());
+            if (info.getOtherValues() != null) {
+                for (String e : info.getOtherValues()) {
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                            .save(e, "Used for the disguise option " + info.getRawName());
+                }
             }
         }
 
@@ -36,7 +50,7 @@ public class TranslateFiller {
 
             TranslateType.DISGUISES.save(StringUtils.join(split, " "), "Name for the " + type.name() + " disguise");
 
-            for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(type.getWatcherClass())) {
+            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass())) {
                 Class para = method.getParameterTypes()[0];
                 String className = method.getDeclaringClass().getSimpleName().replace("Watcher", "");
 

@@ -5,10 +5,14 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.*;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.ClassGetter;
+import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +27,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
@@ -269,7 +276,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             } else {
                 ArrayList<String> usedOptions = new ArrayList<>();
 
-                for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+                for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                     for (int i = disguiseType.getType() == DisguiseType.PLAYER ? starting + 2 : starting + 1;
                          i < args.length; i++) {
                         String arg = args[i];
@@ -287,19 +294,18 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                     if (args.length > 1 + starting) {
                         String prevArg = args[args.length - 1];
 
-                        ParamInfo info = ReflectionFlagWatchers.getParamInfo(disguiseType, prevArg);
+                        ParamInfo info = ParamInfoManager.getParamInfo(disguiseType, prevArg);
 
                         if (info != null) {
-                            if (info.getParamClass() != boolean.class)
+                            if (!info.isParam(boolean.class)) {
                                 addMethods = false;
+                            }
 
-                            if (info.isEnums()) {
-                                tabs.addAll(Arrays.asList(info.getEnums(origArgs[origArgs.length - 1])));
-                            } else {
-                                if (info.getParamClass() == String.class) {
-                                    for (Player player : Bukkit.getOnlinePlayers()) {
-                                        tabs.add(player.getName());
-                                    }
+                            if (info.hasValues()) {
+                                tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
+                            } else if (info.isParam(String.class)) {
+                                for (Player player : Bukkit.getOnlinePlayers()) {
+                                    tabs.add(player.getName());
                                 }
                             }
                         }
@@ -307,7 +313,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers
+                        for (Method method : ParamInfoManager
                                 .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }

@@ -3,10 +3,13 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.*;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
+import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,7 +19,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
@@ -60,8 +62,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType")) || args[0]
-                .equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType") + "s")) {
+        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType")) ||
+                args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("DisguiseType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 
             for (DisguiseType type : DisguiseType.values()) {
@@ -230,7 +232,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             DisguiseType disguiseType = disguise.getType();
 
-            for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (String arg : args) {
                     if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg))
                         continue;
@@ -245,19 +247,18 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 if (args.length > 1 + starting) {
                     String prevArg = args[args.length - 1];
 
-                    ParamInfo info = ReflectionFlagWatchers.getParamInfo(disguiseType, prevArg);
+                    ParamInfo info = ParamInfoManager.getParamInfo(disguiseType, prevArg);
 
                     if (info != null) {
-                        if (info.getParamClass() != boolean.class)
+                        if (!info.isParam(boolean.class)) {
                             addMethods = false;
+                        }
 
-                        if (info.isEnums()) {
-                            tabs.addAll(Arrays.asList(info.getEnums(origArgs[origArgs.length - 1])));
-                        } else {
-                            if (info.getParamClass() == String.class) {
-                                for (Player player : Bukkit.getOnlinePlayers()) {
-                                    tabs.add(player.getName());
-                                }
+                        if (info.hasValues()) {
+                            tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
+                        } else if (info.isParam(String.class)) {
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+                                tabs.add(player.getName());
                             }
                         }
                     }
@@ -265,8 +266,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
                 if (addMethods) {
                     // If this is a method, add. Else if it can be a param of the previous argument, add.
-                    for (Method method : ReflectionFlagWatchers
-                            .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+                    for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                         tabs.add(method.getName());
                     }
                 }

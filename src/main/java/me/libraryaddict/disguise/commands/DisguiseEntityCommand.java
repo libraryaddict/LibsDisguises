@@ -4,13 +4,12 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
-import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,7 +45,9 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args, " ")), getPermissions(sender));
+            disguise = DisguiseParser
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args, " ")),
+                            getPermissions(sender));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -96,7 +97,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             } else {
                 ArrayList<String> usedOptions = new ArrayList<>();
 
-                for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+                for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                     for (int i = disguiseType.getType() == DisguiseType.PLAYER ? 2 : 1; i < args.length; i++) {
                         String arg = args[i];
 
@@ -113,21 +114,18 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
                     if (args.length > 1) {
                         String prevArg = args[args.length - 1];
 
-                        ParamInfo info = ReflectionFlagWatchers.getParamInfo(disguiseType, prevArg);
+                        ParamInfo info = ParamInfoManager.getParamInfo(disguiseType, prevArg);
 
                         if (info != null) {
-                            if (info.getParamClass() != boolean.class)
+                            if (!info.isParam(boolean.class)) {
                                 addMethods = false;
+                            }
 
-                            if (info.isEnums()) {
-                                for (String e : info.getEnums(origArgs[origArgs.length - 1])) {
-                                    tabs.add(e);
-                                }
-                            } else {
-                                if (info.getParamClass() == String.class) {
-                                    for (Player player : Bukkit.getOnlinePlayers()) {
-                                        tabs.add(player.getName());
-                                    }
+                            if (info.hasValues()) {
+                                tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
+                            } else if (info.isParam(String.class)) {
+                                for (Player player : Bukkit.getOnlinePlayers()) {
+                                    tabs.add(player.getName());
                                 }
                             }
                         }
@@ -135,7 +133,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
                     if (addMethods) {
                         // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ReflectionFlagWatchers
+                        for (Method method : ParamInfoManager
                                 .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                             tabs.add(method.getName());
                         }

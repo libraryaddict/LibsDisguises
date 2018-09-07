@@ -1,13 +1,11 @@
 package me.libraryaddict.disguise.commands;
 
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseParser;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers;
-import me.libraryaddict.disguise.utilities.ReflectionFlagWatchers.ParamInfo;
 import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,7 +14,6 @@ import org.bukkit.command.TabCompleter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,7 +32,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 } else {
                     ParamInfo help = null;
 
-                    for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
+                    for (ParamInfo s : ParamInfoManager.getParamInfos()) {
                         String name = s.getName().replaceAll(" ", "");
 
                         if (args[0].equalsIgnoreCase(name) || args[0].equalsIgnoreCase(name + "s")) {
@@ -45,11 +42,16 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     }
 
                     if (help != null) {
-                        if (help.isEnums()) {
+                        if (help.hasValues() && help.canTranslateValues()) {
                             sender.sendMessage(LibsMsg.DHELP_HELP4.get(help.getName(),
                                     StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get())));
                         } else {
-                            sender.sendMessage(LibsMsg.DHELP_HELP5.get(help.getName(), help.getDescription()));
+                            if (!help.getName().equals(help.getDescriptiveName())) {
+                                sender.sendMessage(LibsMsg.DHELP_HELP6
+                                        .get(help.getName(), help.getDescriptiveName(), help.getDescription()));
+                            } else {
+                                sender.sendMessage(LibsMsg.DHELP_HELP5.get(help.getName(), help.getDescription()));
+                            }
                         }
 
                         return true;
@@ -68,12 +70,11 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     }
 
                     ArrayList<String> methods = new ArrayList<>();
-                    HashMap<String, ChatColor> map = new HashMap<>();
                     Class watcher = type.getWatcherClass();
                     int ignored = 0;
 
                     try {
-                        for (Method method : ReflectionFlagWatchers.getDisguiseWatcherMethods(watcher)) {
+                        for (Method method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
                             if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
                                 boolean allowed = false;
 
@@ -96,19 +97,14 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                             }
 
                             Class c = method.getParameterTypes()[0];
-                            ParamInfo info = ReflectionFlagWatchers.getParamInfo(c);
+                            ParamInfo info = ParamInfoManager.getParamInfo(c);
 
-                            if (info == null)
-                                continue;
-
+                            int value = ParamInfoManager.getValue(method);
                             ChatColor methodColor = ChatColor.YELLOW;
 
-                            Class<?> declaring = method.getDeclaringClass();
-
-                            if (declaring == LivingWatcher.class) {
+                            if (value == 1) {
                                 methodColor = ChatColor.AQUA;
-                            } else if (!(FlagWatcher.class.isAssignableFrom(declaring)) ||
-                                    declaring == FlagWatcher.class) {
+                            } else if (value == 2) {
                                 methodColor = ChatColor.GRAY;
                             }
 
@@ -116,18 +112,11 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                                     TranslateType.DISGUISE_OPTIONS.get(method.getName()) + ChatColor.DARK_RED + "(" +
                                             ChatColor.GREEN + info.getName() + ChatColor.DARK_RED + ")";
 
-                            map.put(str, methodColor);
-                            methods.add(str);
+                            methods.add(methodColor + str);
                         }
                     }
                     catch (Exception ex) {
                         ex.printStackTrace();
-                    }
-
-                    Collections.sort(methods, String.CASE_INSENSITIVE_ORDER);
-
-                    for (int i = 0; i < methods.size(); i++) {
-                        methods.set(i, map.get(methods.get(i)) + methods.get(i));
                     }
 
                     if (methods.isEmpty()) {
@@ -167,7 +156,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     tabs.add(type.toReadable().replaceAll(" ", "_"));
                 }
 
-                for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
+                for (ParamInfo s : ParamInfoManager.getParamInfos()) {
                     tabs.add(s.getName().replaceAll(" ", ""));
                 }
             } else if (DisguiseParser.getDisguisePerm(args[0]) == null) {
@@ -187,8 +176,10 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
         sender.sendMessage(LibsMsg.DHELP_HELP1.get());
         sender.sendMessage(LibsMsg.DHELP_HELP2.get());
 
-        for (ParamInfo s : ReflectionFlagWatchers.getParamInfos()) {
-            sender.sendMessage(LibsMsg.DHELP_HELP3.get(s.getName().replaceAll(" ", ""), s.getDescription()));
+        for (ParamInfo s : ParamInfoManager.getParamInfos()) {
+            sender.sendMessage(LibsMsg.DHELP_HELP3.get(s.getName().replaceAll(" ", "") +
+                            (!s.getName().equals(s.getDescriptiveName()) ? " ~ " + s.getDescriptiveName() : ""),
+                    s.getDescription()));
         }
     }
 }

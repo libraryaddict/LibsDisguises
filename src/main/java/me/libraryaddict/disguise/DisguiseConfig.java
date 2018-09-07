@@ -1,8 +1,12 @@
 package me.libraryaddict.disguise;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.*;
-import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.PacketsManager;
+import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
