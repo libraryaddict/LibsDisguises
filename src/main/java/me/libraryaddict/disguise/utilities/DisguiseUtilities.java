@@ -860,14 +860,23 @@ public class DisguiseUtilities {
             Object world = ReflectionManager.getWorldServer(Bukkit.getWorlds().get(0));
             Class chunkClass = ReflectionManager.getNmsClass("Chunk");
             Object bedChunk = null;
+            Object[] biomes = (Object[]) Array.newInstance(ReflectionManager.getNmsClass("BiomeBase"), 256);
+
+            Class registry = ReflectionManager.getNmsClass("IRegistry");
+            Field biomeRegistry = ReflectionManager.getNmsField(registry, "BIOME");
+            Iterator itel = ((Iterator) registry.getMethod("iterator").invoke(biomeRegistry.get(null)));
+
+            for (int i = 0; i < biomes.length && itel.hasNext(); i++) {
+                while (itel.hasNext()) {
+                    biomes[i] = itel.next();
+                }
+            }
 
             for (Constructor constructor : chunkClass.getConstructors()) {
                 if (constructor.getParameterTypes().length != 8)
                     continue;
 
-                bedChunk = constructor
-                        .newInstance(world, 0, 0, Array.newInstance(ReflectionManager.getNmsClass("BiomeBase"), 0),
-                                null, null, null, 0L);
+                bedChunk = constructor.newInstance(world, 0, 0, biomes, null, null, null, 0L);
                 break;
             }
 

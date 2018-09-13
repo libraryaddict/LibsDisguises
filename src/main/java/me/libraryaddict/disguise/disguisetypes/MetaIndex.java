@@ -22,47 +22,98 @@ import java.util.Map.Entry;
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
 
+    /**
+     * True if entity is a baby
+     */
     public static MetaIndex<Boolean> AGEABLE_BABY = new MetaIndex<>(AgeableWatcher.class, 0, false);
 
+    /**
+     * The color of the Area Effect Cloud as RGB integer
+     */
     public static MetaIndex<Integer> AREA_EFFECT_CLOUD_COLOR = new MetaIndex<>(AreaEffectCloudWatcher.class, 1,
             Color.BLACK.asRGB());
 
+    /**
+     * Ignore radius and show effect as single point, not area
+     */
     public static MetaIndex<Boolean> AREA_EFFECT_IGNORE_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 2,
             false);
 
+    /**
+     * The type of particle to display
+     */
     public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
             Particle.SPELL_MOB);
 
+    /**
+     * The size of the area
+     */
     public static MetaIndex<Float> AREA_EFFECT_RADIUS = new MetaIndex<>(AreaEffectCloudWatcher.class, 0, 3F);
 
+    /**
+     * Armorstand body eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_BODY = new MetaIndex<>(ArmorStandWatcher.class, 2,
             new Vector3F(0, 0, 0));
 
+    /**
+     * Armorstand head eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_HEAD = new MetaIndex<>(ArmorStandWatcher.class, 1,
             new Vector3F(0, 0, 0));
 
+    /**
+     * Armorstand left arm eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_LEFT_ARM = new MetaIndex<>(ArmorStandWatcher.class, 3,
             new Vector3F(-10, 0, -10));
 
+    /**
+     * Armorstand left leg eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_LEFT_LEG = new MetaIndex<>(ArmorStandWatcher.class, 5,
             new Vector3F(-1, 0, -1));
 
+    /**
+     * Armorstand metadata
+     */
     public static MetaIndex<Byte> ARMORSTAND_META = new MetaIndex<>(ArmorStandWatcher.class, 0, (byte) 0);
 
+    /**
+     * Armorstand right arm eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_RIGHT_ARM = new MetaIndex<>(ArmorStandWatcher.class, 4,
             new Vector3F(-15, 0, 10));
 
+    /**
+     * Armorstand right leg eular vector
+     */
     public static MetaIndex<Vector3F> ARMORSTAND_RIGHT_LEG = new MetaIndex<>(ArmorStandWatcher.class, 6,
             new Vector3F(1, 0, 1));
 
+    /**
+     * If the arrow is a critical strike
+     */
     public static MetaIndex<Byte> ARROW_CRITICAL = new MetaIndex<>(ArrowWatcher.class, 0, (byte) 0);
 
+    /**
+     * The shooter of the arrow, no visible effect if set
+     */
     public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
+    /**
+     * If the bat is hanging, false/true state
+     */
     public static MetaIndex<Byte> BAT_HANGING = new MetaIndex<>(BatWatcher.class, 0, (byte) 1);
 
+    /**
+     * If the blaze is ignited, false/true state
+     */
     public static MetaIndex<Byte> BLAZE_BLAZING = new MetaIndex<>(BlazeWatcher.class, 0, (byte) 0);
 
+    /**
+     * How damaged the boat is
+     */
     public static MetaIndex<Float> BOAT_DAMAGE = new MetaIndex<>(BoatWatcher.class, 2, 0F);
 
     public static MetaIndex<Integer> BOAT_DIRECTION = new MetaIndex<>(BoatWatcher.class, 1, 1);
@@ -73,49 +124,96 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> BOAT_RIGHT_PADDLING = new MetaIndex<>(BoatWatcher.class, 4, false);
 
+    /**
+     * The type of the boat, birch, pine, oak, etc.
+     */
     public static MetaIndex<Integer> BOAT_TYPE = new MetaIndex<>(BoatWatcher.class, 3, 0);
 
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
 
+    /**
+     * If creeper is ignited, about to blow up
+     */
     public static MetaIndex<Boolean> CREEPER_IGNITED = new MetaIndex<>(CreeperWatcher.class, 2, false);
 
+    /**
+     * If creeper has glowing aura, struck by lightning
+     */
     public static MetaIndex<Boolean> CREEPER_POWERED = new MetaIndex<>(CreeperWatcher.class, 1, false);
 
+    /**
+     * No visible effect
+     */
     public static MetaIndex<Integer> CREEPER_STATE = new MetaIndex<>(CreeperWatcher.class, 0, -1);
 
+    /**
+     * No visible effect
+     */
     public static MetaIndex<BlockPosition> DOLPHIN_TREASURE_POS = new MetaIndex<>(DolphinWatcher.class, 0,
             BlockPosition.ORIGIN);
-
+    /**
+     * No visible effect
+     */
     public static MetaIndex<Boolean> DOLPHIN_HAS_FISH = new MetaIndex<>(DolphinWatcher.class, 1, false);
 
+    /**
+     * No visible effect
+     */
     public static MetaIndex<Integer> DOLPHIN_BREATH = new MetaIndex<>(DolphinWatcher.class, 2, 2400);
 
+    /**
+     * The itemstack of the dropped item, must be set
+     */
     public static MetaIndex<ItemStack> DROPPED_ITEM = new MetaIndex<>(DroppedItemWatcher.class, 0,
             new ItemStack(Material.AIR));
 
     public static MetaIndex<Optional<BlockPosition>> ENDER_CRYSTAL_BEAM = new MetaIndex<>(EnderCrystalWatcher.class, 0,
             Optional.empty());
 
+    /**
+     * If the ender crystal has a plate
+     */
     public static MetaIndex<Boolean> ENDER_CRYSTAL_PLATE = new MetaIndex<>(EnderCrystalWatcher.class, 1, true);
 
     public static MetaIndex<Integer> ENDER_DRAGON_PHASE = new MetaIndex<>(EnderDragonWatcher.class, 0, 10);
 
+    /**
+     * If the enderman is screaming
+     */
     public static MetaIndex<Boolean> ENDERMAN_AGRESSIVE = new MetaIndex<>(EndermanWatcher.class, 1, false);
 
+    /**
+     * What block the enderman is holding
+     */
     public static MetaIndex<Optional<WrappedBlockData>> ENDERMAN_ITEM = new MetaIndex<>(EndermanWatcher.class, 0,
             Optional.empty());
 
     public static MetaIndex<Integer> ENTITY_AIR_TICKS = new MetaIndex<>(FlagWatcher.class, 1, 300);
 
+    /**
+     * The custom name of the entity, empty if not set
+     */
     public static MetaIndex<Optional<WrappedChatComponent>> ENTITY_CUSTOM_NAME = new MetaIndex<>(FlagWatcher.class, 2,
             Optional.empty());
 
+    /**
+     * If custom name should always be visible even when not looked at
+     */
     public static MetaIndex<Boolean> ENTITY_CUSTOM_NAME_VISIBLE = new MetaIndex<>(FlagWatcher.class, 3, false);
 
+    /**
+     * A bit shifted byte indicating several flags on the entity, sprinting, burning, sneaking, etc
+     */
     public static MetaIndex<Byte> ENTITY_META = new MetaIndex<>(FlagWatcher.class, 0, (byte) 0);
 
+    /**
+     * If entity is effected by gravity, some visial effects
+     */
     public static MetaIndex<Boolean> ENTITY_NO_GRAVITY = new MetaIndex<>(FlagWatcher.class, 5, false);
 
+    /**
+     * If entity can make sounds, no noticable effects
+     */
     public static MetaIndex<Boolean> ENTITY_SILENT = new MetaIndex<>(FlagWatcher.class, 4, false);
 
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0,
@@ -130,21 +228,45 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> FISHING_HOOK_HOOKED = new MetaIndex<>(FishingHookWatcher.class, 0, 0);
 
+    /**
+     * Changes the face of the ghast
+     */
     public static MetaIndex<Boolean> GHAST_AGRESSIVE = new MetaIndex<>(GhastWatcher.class, 0, false);
 
+    /**
+     * Switch between the guardian spikes enabled/disabled
+     */
     public static MetaIndex<Boolean> GUARDIAN_RETRACT_SPIKES = new MetaIndex<>(GuardianWatcher.class, 0, false);
 
+    /**
+     * Play a guardian beam between guardian and target entity id
+     */
     public static MetaIndex<Integer> GUARDIAN_TARGET = new MetaIndex<>(GuardianWatcher.class, 1, 0);
 
+    /**
+     * What type of armor the horse has
+     */
     public static MetaIndex<Integer> HORSE_ARMOR = new MetaIndex<>(HorseWatcher.class, 1, 0);
 
+    /**
+     * If horse has chest, set for donkey
+     */
     public static MetaIndex<Boolean> HORSE_CHESTED_CARRYING_CHEST = new MetaIndex<>(ChestedHorseWatcher.class, 0,
             false);
 
+    /**
+     * Color of the horse, uses enum not RGB
+     */
     public static MetaIndex<Integer> HORSE_COLOR = new MetaIndex<>(HorseWatcher.class, 0, 0);
 
+    /**
+     * Sets several bit shifted flags, grazing, rearing, etc
+     */
     public static MetaIndex<Byte> HORSE_META = new MetaIndex<>(AbstractHorseWatcher.class, 0, (byte) 0);
 
+    /**
+     * Owner of the horse, no visual effect
+     */
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1,
             Optional.empty());
 
@@ -156,31 +278,67 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> IRON_GOLEM_PLAYER_CREATED = new MetaIndex<>(IronGolemWatcher.class, 0, (byte) 0);
 
+    /**
+     * The itemstack inside the itemframe
+     */
     public static MetaIndex<ItemStack> ITEMFRAME_ITEM = new MetaIndex<>(ItemFrameWatcher.class, 0,
             new ItemStack(Material.AIR));
 
+    /**
+     * The itemstack rotation inside the itemframe
+     */
     public static MetaIndex<Integer> ITEMFRAME_ROTATION = new MetaIndex<>(ItemFrameWatcher.class, 1, 0);
 
+    /**
+     * How many arrows sticking out of the living entity, currently used on player
+     */
     public static MetaIndex<Integer> LIVING_ARROWS = new MetaIndex<>(LivingWatcher.class, 4, 0);
 
+    /**
+     * The main hand of the living entity
+     */
     public static MetaIndex<Byte> LIVING_HAND = new MetaIndex<>(LivingWatcher.class, 0, (byte) 0);
 
+    /**
+     * How much health the living entity has, generally only visible on bosses due to their health bar
+     */
     public static MetaIndex<Float> LIVING_HEALTH = new MetaIndex<>(LivingWatcher.class, 1, 1F);
 
+    /**
+     * If the potion effect particles should be faded
+     */
     public static MetaIndex<Boolean> LIVING_POTION_AMBIENT = new MetaIndex<>(LivingWatcher.class, 3, false);
 
+    /**
+     * The RGB color of the potion particles, 0 if not set
+     */
     public static MetaIndex<Integer> LIVING_POTIONS = new MetaIndex<>(LivingWatcher.class, 2, 0);
 
+    /**
+     * If there is no carpet, -1. Otherwise it's a color enum value
+     */
     public static MetaIndex<Integer> LLAMA_CARPET = new MetaIndex<>(LlamaWatcher.class, 1, -1);
 
+    /**
+     * The color of the llama, color enum value
+     */
     public static MetaIndex<Integer> LLAMA_COLOR = new MetaIndex<>(LlamaWatcher.class, 2, 0);
 
     public static MetaIndex<Integer> LLAMA_STRENGTH = new MetaIndex<>(LlamaWatcher.class, 0, 0);
 
+    /**
+     * The block id:data combined id, 0 if no block
+     */
     public static MetaIndex<Integer> MINECART_BLOCK = new MetaIndex<>(MinecartWatcher.class, 3, 0);
 
+    /**
+     * If there is a block inside the minecart
+     */
     public static MetaIndex<Boolean> MINECART_BLOCK_VISIBLE = new MetaIndex<>(MinecartWatcher.class, 5, false);
 
+    /**
+     * How much gap there should be between minecart and block, 6 by default
+     */
     public static MetaIndex<Integer> MINECART_BLOCK_Y = new MetaIndex<>(MinecartWatcher.class, 4, 6);
 
     public static MetaIndex<Integer> MINECART_SHAKING_DIRECTION = new MetaIndex<>(MinecartWatcher.class, 1, 1);
@@ -189,11 +347,17 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> MINECART_SHAKING_POWER = new MetaIndex<>(MinecartWatcher.class, 0, 0);
 
+    /**
+     * The command run if the minecraft is a command minecart block
+     */
     public static MetaIndex<String> MINECART_COMMAND_STRING = new MetaIndex<>(MinecartCommandWatcher.class, 0, "");
 
     public static MetaIndex<WrappedChatComponent> MINECART_COMMAND_LAST_OUTPUT = new MetaIndex<>(
             MinecartCommandWatcher.class, 1, WrappedChatComponent.fromText(""));
 
+    /**
+     * If the minecart furnace is fueled and burning
+     */
     public static MetaIndex<Boolean> MINECART_FURANCE_FUELED = new MetaIndex<>(MinecartFurnaceWatcher.class, 0, false);
 
     public static MetaIndex<Integer> OCELOT_TYPE = new MetaIndex<>(OcelotWatcher.class, 0, 0);
@@ -204,6 +368,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> PIG_SADDLED = new MetaIndex<>(PigWatcher.class, 0, false);
 
+    /**
+     * If pig runs faster, no visible effect
+     */
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
 
     public static MetaIndex<Float> PLAYER_ABSORPTION = new MetaIndex<>(PlayerWatcher.class, 0, 0F);
@@ -307,6 +474,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1, 0);
 
+    /**
+     * Shown for villager conversion
+     */
     public static MetaIndex<Boolean> ZOMBIE_VILLAGER_SHAKING = new MetaIndex<>(ZombieVillagerWatcher.class, 0, false);
 
     static {
@@ -356,10 +526,12 @@ public class MetaIndex<Y> {
         }
     }
 
+    /**
+     * Simple verification for the dev that he's setting up the FlagType's properly.
+     * All flag types should be from 0 to <Max Number> with no empty numbers.
+     * All flag types should never occur twice.
+     */
     public static void validateMetadata() {
-        // Simple verification for the dev that he's setting up the FlagType's properly.
-        // All flag types should be from 0 to <Max Number> with no empty numbers.
-        // All flag types should never occur twice.
 
         HashMap<Class, Integer> maxValues = new HashMap<>();
 
@@ -403,6 +575,9 @@ public class MetaIndex<Y> {
         }
     }
 
+    /**
+     * Used for debugging purposes, prints off the registered MetaIndexes
+     */
     @Deprecated
     public static void printMetadata() {
         ArrayList<String> toPrint = new ArrayList<>();
@@ -430,7 +605,12 @@ public class MetaIndex<Y> {
         }
     }
 
-    public static MetaIndex getFlag(Class<? extends FlagWatcher> watcherClass, int flagNo) {
+    /**
+     * @param watcherClass - A FlagWatcher class
+     * @param flagNo - The meta index number
+     * @return The MetaIndex which corresponds to that FlagWatcher at that index
+     */
+    public static MetaIndex getMetaIndex(Class<? extends FlagWatcher> watcherClass, int flagNo) {
         for (MetaIndex type : values()) {
             if (type.getIndex() != flagNo)
                 continue;
@@ -444,7 +624,11 @@ public class MetaIndex<Y> {
         return null;
     }
 
-    public static ArrayList<MetaIndex> getFlags(Class<? extends FlagWatcher> watcherClass) {
+    /**
+     * @param watcherClass - A flagwatcher class
+     * @return ArrayList<MetaIndex> registered to that FlagWatcher
+     */
+    public static ArrayList<MetaIndex> getMetaIndexes(Class<? extends FlagWatcher> watcherClass) {
         ArrayList<MetaIndex> list = new ArrayList<>();
 
         for (MetaIndex type : values()) {
@@ -476,10 +660,18 @@ public class MetaIndex<Y> {
         return found;
     }
 
+    /**
+     * Get all the MetaIndex's registered
+     *
+     * @return MetaIndex[]
+     */
     public static MetaIndex[] values() {
         return _values;
     }
 
+    /**
+     * Get the field name of a registered MetaIndex
+     */
     @Deprecated
     public static String getName(MetaIndex metaIndex) {
         try {
@@ -498,13 +690,18 @@ public class MetaIndex<Y> {
         return null;
     }
 
+    /**
+     * Add @metaIndexes to the existing MetaIndexes, was intended for backwards support
+     *
+     * @param metaIndexes
+     */
     public static void addMetaIndexes(MetaIndex... metaIndexes) {
         _values = Arrays.copyOf(values(), values().length + metaIndexes.length);
 
         for (int i = values().length - metaIndexes.length, a = 0; i < values().length; i++, a++) {
             MetaIndex index = metaIndexes[a];
 
-            ArrayList<MetaIndex> list = getFlags(index.getFlagWatcher());
+            ArrayList<MetaIndex> list = getMetaIndexes(index.getFlagWatcher());
 
             for (int b = index.getIndex(); b < list.size(); b++) {
                 list.get(b)._index++;
@@ -526,6 +723,9 @@ public class MetaIndex<Y> {
         }
     }
 
+    /**
+     * Resets the metaindex array and regenerates it from the fields
+     */
     public static void setValues() {
         try {
             _values = new MetaIndex[0];
@@ -549,7 +749,7 @@ public class MetaIndex<Y> {
     }
 
     /**
-     * Returns true if success, false if the field doesn't exist
+     * Returns true if field was replaced, false if the field doesn't exist or exception occured
      */
     public static boolean setMetaIndex(String name, MetaIndex metaIndex) {
         try {
@@ -557,15 +757,15 @@ public class MetaIndex<Y> {
             MetaIndex index = (MetaIndex) field.get(null);
 
             field.set(null, metaIndex);
+            return true;
         }
-        catch (NoSuchFieldException ex) {
-            return false;
+        catch (NoSuchFieldException ignored) {
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        return true;
+        return false;
     }
 
     private Y _defaultValue;

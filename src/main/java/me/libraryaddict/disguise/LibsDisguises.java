@@ -501,11 +501,11 @@ public class LibsDisguises extends JavaPlugin {
                         bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
                 WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
-                ArrayList<MetaIndex> indexes = MetaIndex.getFlags(disguiseType.getWatcherClass());
+                ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
                 boolean loggedName = false;
 
                 for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
-                    MetaIndex flagType = MetaIndex.getFlag(watcherClass, watch.getIndex());
+                    MetaIndex flagType = MetaIndex.getMetaIndex(watcherClass, watch.getIndex());
 
                     if (flagType == null) {
                         getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + watch.getIndex());

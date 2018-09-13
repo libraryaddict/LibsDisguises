@@ -15,18 +15,38 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         return getData(MetaIndex.HORSE_OWNER);
     }
 
+    /**
+     * If the horse has a chest
+     *
+     * @return Does horse have chest
+     */
     public boolean hasChest() {
         return isHorseFlag(8);
     }
 
+    /**
+     * If the horse can be breeded, no visible effect
+     *
+     * @return Is horse breedable
+     */
     public boolean isBreedable() {
         return isHorseFlag(16);
     }
 
+    /**
+     * If the horse is grazing
+     *
+     * @return Is horse grazing
+     */
     public boolean isGrazing() {
         return isHorseFlag(32);
     }
 
+    /**
+     * If the horse has it's mouth open
+     *
+     * @return Horse has mouth open
+     */
     public boolean isMouthOpen() {
         return isHorseFlag(128);
     }

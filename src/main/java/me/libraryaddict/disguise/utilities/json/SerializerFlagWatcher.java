@@ -48,7 +48,7 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
             if (!(entry.getValue() instanceof Double))
                 continue;
 
-            MetaIndex index = MetaIndex.getFlag(flagWatcher, entry.getKey());
+            MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
 
             Object def = index.getDefault();
 
