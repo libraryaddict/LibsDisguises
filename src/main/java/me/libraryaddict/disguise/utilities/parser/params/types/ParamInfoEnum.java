@@ -13,15 +13,15 @@ public class ParamInfoEnum extends ParamInfo {
     }
 
     public ParamInfoEnum(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
-        super(paramClass, name, valueType, description);
+        super(paramClass, name, valueType, description, possibleValues);
     }
 
     public ParamInfoEnum(Class paramClass, String name, String description, Enum[] possibleValues) {
-        super(paramClass, name, name, description);
+        super(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfoEnum(Class paramClass, String name, String description, String[] possibleValues) {
-        super(paramClass, name, name, description);
+    public ParamInfoEnum(Class paramClass, String name, String description, Map<String,Object> possibleValues) {
+        super(paramClass, name, name, description, possibleValues);
     }
 
     @Override

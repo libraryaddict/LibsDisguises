@@ -33,7 +33,7 @@ public abstract class ParamInfo {
     }
 
     public ParamInfo(Class paramClass, String name, String description, Enum[] possibleValues) {
-        this(paramClass, name, name, description);
+        this(paramClass, name, name, description, possibleValues);
     }
 
     public ParamInfo(Class paramClass, String name, String descriptiveName, String description, Enum[] possibleValues) {
@@ -46,19 +46,16 @@ public abstract class ParamInfo {
         }
     }
 
-    public ParamInfo(Class paramClass, String name, String description, String[] possibleValues) {
-        this(paramClass, name, name, description);
+    public ParamInfo(Class paramClass, String name, String description, Map<String,Object> possibleValues) {
+        this(paramClass, name, name, description, possibleValues);
     }
 
     public ParamInfo(Class paramClass, String name, String descriptiveName, String description,
-            String[] possibleValues) {
+            Map<String,Object> possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
         this.possibleValues = new HashMap<>();
-
-        for (String value : possibleValues) {
-            getValues().put(value, value);
-        }
+        this.possibleValues.putAll(possibleValues);
     }
 
     public boolean canTranslateValues() {

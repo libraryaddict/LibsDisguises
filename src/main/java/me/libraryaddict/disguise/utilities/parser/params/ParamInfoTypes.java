@@ -17,9 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 7/09/2018.
@@ -65,7 +63,7 @@ public class ParamInfoTypes {
         // Register custom types
         paramInfos.add(new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)",
                 "Set the X,Y,Z directions on an armorstand"));
-        paramInfos.add(new ParamInfoEnum(Color.class, "Color", "Colors that can also be defined through RGB",
+        paramInfos.add(new ParamInfoColor(Color.class, "Color", "Colors that can also be defined through RGB",
                 getColors()));
         paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items",
                 getMaterials()));
@@ -74,7 +72,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
                 "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)",
                 "Four ItemStacks separated by a comma", getMaterials()));
-        paramInfos.add(new ParamInfoPotionType(PotionEffectType.class, "Potion Effect",
+        paramInfos.add(new ParamInfoEnum(PotionEffectType.class, "Potion Effect",
                 "View all the potion effects you can add", getPotions()));
 
         paramInfos.add(new ParamInfoBlockPosition(BlockPosition.class, "Block Position", "Block Position (num,num,num)",
@@ -84,7 +82,11 @@ public class ParamInfoTypes {
                         ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
 
         // Register base types
-        paramInfos.add(new ParamInfoBoolean("Boolean", "True/False", "True or False", new String[]{"true", "false"}));
+        Map<String, Object> booleanMap = new HashMap<>();
+        booleanMap.put("true", true);
+        booleanMap.put("false", false);
+
+        paramInfos.add(new ParamInfoBoolean("Boolean", "True/False", "True or False", booleanMap));
         paramInfos.add(new ParamInfoString(String.class, "Text", "A line of text"));
         paramInfos.add(new ParamInfoInteger("Number", "A whole number without decimals"));
         paramInfos.add(new ParamInfoFloat("Number.0", "A number which can have decimal places"));
@@ -93,9 +95,9 @@ public class ParamInfoTypes {
         return paramInfos;
     }
 
-    private String[] getColors() {
+    private Map<String, Object> getColors() {
         try {
-            List<String> colors = new ArrayList<>();
+            Map<String, Object> map = new HashMap<>();
             Class cl = Class.forName("org.bukkit.Color");
 
             for (Field field : cl.getFields()) {
@@ -103,12 +105,12 @@ public class ParamInfoTypes {
                     continue;
                 }
 
-                colors.add(field.getName());
+                map.put(field.getName(), field.get(null));
             }
 
-            return colors.toArray(new String[0]);
+            return map;
         }
-        catch (ClassNotFoundException e) {
+        catch (ClassNotFoundException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -137,17 +139,17 @@ public class ParamInfoTypes {
         return list.toArray(new Material[0]);
     }
 
-    private String[] getPotions() {
-        List<String> potionEnums = new ArrayList<>();
+    private Map<String, Object> getPotions() {
+        Map<String, Object> map = new HashMap<>();
 
         for (PotionEffectType effectType : PotionEffectType.values()) {
             if (effectType == null)
                 continue;
 
-            potionEnums.add(toReadable(effectType.getName()));
+            map.put(toReadable(effectType.getName()), effectType);
         }
 
-        return potionEnums.toArray(new String[0]);
+        return map;
     }
 
     private String toReadable(String string) {

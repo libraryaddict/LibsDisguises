@@ -43,7 +43,7 @@ public class LibsDisguises extends JavaPlugin {
         if (ReflectionManager.getMinecraftVersion().startsWith("1.13")) {
             if (!LibsPremium.isPremium()) {
                 getLogger().severe("You must purchase the plugin to use 1.13!");
-                getLogger().severe("This will be released free two weeks after all bugs have been fixed!");
+                getLogger().severe("This will be released two weeks after Spigot is stable!");
                 getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
                         "Lib's Disguises plugin folder");
                 getPluginLoader().disablePlugin(this);
