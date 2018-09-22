@@ -60,7 +60,7 @@ public enum DisguiseType {
 
     EXPERIENCE_ORB,
 
-    FALLING_BLOCK(70, 1),
+    FALLING_BLOCK(70),
 
     FIREBALL(63),
 

@@ -19,22 +19,26 @@ public class MiscDisguise extends TargetedDisguise {
         this(disguiseType, -1, disguiseType.getDefaultData());
     }
 
-    public MiscDisguise(Material material, int data) {
-        super(DisguiseType.DROPPED_ITEM);
-
-        apply(0, 0, new ItemStack(material, 1, (short) data));
+    public MiscDisguise(DisguiseType disguiseType, Material material, int data) {
+        this(disguiseType, new ItemStack(material, 1, (short) data));
     }
 
-    public MiscDisguise(ItemStack itemStack) {
-        super(DisguiseType.DROPPED_ITEM);
+    public MiscDisguise(DisguiseType disguiseType, ItemStack itemStack) {
+        super(disguiseType);
 
-        apply(0, 0, itemStack);
-}
+        if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
+            throw new IllegalArgumentException(
+                    "This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
+        }
+
+        apply(0, itemStack);
+    }
 
     public MiscDisguise(DisguiseType disguiseType, int id) {
         this(disguiseType, id, disguiseType.getDefaultData());
     }
 
+    @Deprecated
     public MiscDisguise(DisguiseType disguiseType, int id, int data) {
         super(disguiseType);
 
@@ -45,10 +49,10 @@ public class MiscDisguise extends TargetedDisguise {
                             " instead");
         }
 
-        apply(id, data, new ItemStack(Material.STONE));
+        apply(id, new ItemStack(Material.STONE));
     }
 
-    private void apply(int id, int data, ItemStack itemStack) {
+    private void apply(int id, ItemStack itemStack) {
         createDisguise();
 
         this.id = getType().getTypeId();

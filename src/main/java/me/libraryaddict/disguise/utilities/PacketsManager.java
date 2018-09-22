@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.packetlisteners.*;
@@ -432,7 +433,9 @@ public class PacketsManager {
             int data = ((MiscDisguise) disguise).getData();
 
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                data = ReflectionManager.getCombinedId(((MiscDisguise) disguise).getId(), data);
+                ItemStack block = ((FallingBlockWatcher) disguise.getWatcher()).getBlock();
+
+                data = ReflectionManager.getCombinedIdByItemStack(block);
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners
                 // entity id
@@ -447,6 +450,16 @@ public class PacketsManager {
                     .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, objectId, data)
                     .createPacket(nmsEntity, objectId, data);
             packets.addPacket(spawnEntity);
+
+            // If it's not the same type, then highly likely they have different velocity settings which we'd want to
+            // cancel
+            if (DisguiseType.getType(disguisedEntity) != disguise.getType()) {
+                StructureModifier<Integer> ints = spawnEntity.getIntegers();
+
+                ints.write(1, 0);
+                ints.write(2, 0);
+                ints.write(3, 0);
+            }
 
             spawnEntity.getModifier().write(8, pitch);
             spawnEntity.getModifier().write(9, yaw);
@@ -1089,7 +1102,8 @@ public class PacketsManager {
 
             // If the entity is sending velocity and its a falling block
             else if (sentPacket.getType() == Server.ENTITY_VELOCITY) {
-                if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
+                // If the disguise is a misc and the disguised is not the same type
+                if (disguise.getType().isMisc() && DisguiseType.getType(entity) != disguise.getType()) {
                     packets.clear();
                 }
             }

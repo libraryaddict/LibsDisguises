@@ -112,15 +112,7 @@ public abstract class Disguise {
         final boolean alwaysSendVelocity;
 
         switch (getType()) {
-            case EGG:
-            case ENDER_PEARL:
-            case BAT:
             case EXPERIENCE_ORB:
-            case FIREBALL:
-            case SMALL_FIREBALL:
-            case SNOWBALL:
-            case SPLASH_POTION:
-            case THROWN_EXP_BOTTLE:
             case WITHER_SKULL:
             case FIREWORK:
                 alwaysSendVelocity = true;
@@ -130,54 +122,20 @@ public abstract class Disguise {
                 break;
         }
 
-        double velocitySpeed = 0.0005;
+        final Double vectorY;
 
         switch (getType()) {
             case FIREWORK:
-                velocitySpeed = -0.040;
-                break;
             case WITHER_SKULL:
-                velocitySpeed = 0.000001D;
-                break;
-            case ARROW:
-            case TIPPED_ARROW:
-            case SPECTRAL_ARROW:
-            case BOAT:
-            case ENDER_CRYSTAL:
-            case ENDER_DRAGON:
-            case GHAST:
-            case ITEM_FRAME:
-            case MINECART:
-            case MINECART_CHEST:
-            case MINECART_COMMAND:
-            case MINECART_FURNACE:
-            case MINECART_HOPPER:
-            case MINECART_MOB_SPAWNER:
-            case MINECART_TNT:
-            case PAINTING:
-            case PLAYER:
-            case SQUID:
-                velocitySpeed = 0;
-                break;
-            case DROPPED_ITEM:
-            case PRIMED_TNT:
-            case WITHER:
-            case FALLING_BLOCK:
-                velocitySpeed = 0.04;
+                vectorY = 0.000001D;
                 break;
             case EXPERIENCE_ORB:
-                velocitySpeed = 0.0221;
-                break;
-            case SPIDER:
-            case BAT:
-            case CAVE_SPIDER:
-                velocitySpeed = 0.004;
+                vectorY = 0.0221;
                 break;
             default:
+                vectorY = null;
                 break;
         }
-
-        final double vectorY = velocitySpeed;
 
         final TargetedDisguise disguise = (TargetedDisguise) this;
 
@@ -190,9 +148,9 @@ public abstract class Disguise {
             @Override
             public void run() {
                 // If entity is no longer valid. Remove it.
-                if (getEntity() instanceof Player && !((Player) getEntity()).isOnline())
+                if (getEntity() instanceof Player && !((Player) getEntity()).isOnline()) {
                     removeDisguise();
-                else if (!getEntity().isValid()) {
+                } else if (!getEntity().isValid()) {
                     // If it has been dead for 30+ ticks
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
                     // The delay is because if it sends the destroy entity packets straight away, then it means no
@@ -251,7 +209,7 @@ public abstract class Disguise {
 
                     // If the vectorY isn't 0. Cos if it is. Then it doesn't want to send any vectors.
                     // If this disguise has velocity sending enabled and the entity is flying.
-                    if (isVelocitySent() && vectorY != 0 && (alwaysSendVelocity || !getEntity().isOnGround())) {
+                    if (isVelocitySent() && vectorY != null && (alwaysSendVelocity || !getEntity().isOnGround())) {
                         Vector vector = getEntity().getVelocity();
 
                         // If the entity doesn't have velocity changes already - You know. I really can't wrap my

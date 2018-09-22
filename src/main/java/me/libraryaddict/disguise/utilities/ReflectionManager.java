@@ -833,31 +833,11 @@ public class ReflectionManager {
             return ((Double) value).floatValue();
         } else if (value instanceof NbtWrapper) {
             return ((NbtWrapper) value).getHandle();
-        } else if (value instanceof Particle) {
-            return getParticleType((Particle) value);
+        } else if (value instanceof WrappedParticle) {
+            return ((WrappedParticle) value).getHandle();
         }
 
         return value;
-    }
-
-    private static Object getParticleType(Particle particle) {
-        try {
-            Class craftParticle = getCraftClass("CraftParticle");
-            Field mcKeyField = craftParticle.getDeclaredField("minecraftKey");
-            mcKeyField.setAccessible(true);
-            Object mcKey = mcKeyField.get(Enum.valueOf(craftParticle, particle.name()));
-
-            Class typesClass = getNmsClass("IRegistry");
-
-            Object registry = typesClass.getField("PARTICLE_TYPE").get(null);
-
-            return registry.getClass().getMethod("get", mcKey.getClass()).invoke(registry, mcKey);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     public static String getMinecraftVersion() {
@@ -979,10 +959,6 @@ public class ReflectionManager {
         return new WrappedWatchableObject(watcherItem);
     }
 
-    public static int getCombinedId(int id, int data) {
-        return id + (data << 12);
-    }
-
     public static int getCombinedIdByItemStack(ItemStack itemStack) {
         try {
             Object nmsItem = getNmsItem(itemStack);
@@ -991,7 +967,9 @@ public class ReflectionManager {
 
             Object nmsBlock = getNmsMethod(blockClass, "asBlock", getNmsClass("Item")).invoke(null, item);
 
-            return (int) getNmsMethod(blockClass, "getBlockData").invoke(nmsBlock);
+            Object iBlockData = getNmsMethod(blockClass, "getBlockData").invoke(nmsBlock);
+
+            return (int) getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData")).invoke(null, iBlockData);
         }
         catch (Exception ex) {
             ex.printStackTrace();
