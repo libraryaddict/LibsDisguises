@@ -137,6 +137,13 @@ public enum LibsMsg {
     PARSE_EXPECTED_RECEIVED(
             ChatColor.RED + "Expected " + ChatColor.GREEN + "%s" + ChatColor.RED + ", received " + ChatColor.GREEN +
                     "%s" + ChatColor.RED + " instead for " + ChatColor.GREEN + "%s"),
+    PARSE_PARTICLE_BLOCK(ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material" + ChatColor.RED + ", received " +
+            ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
+    PARSE_PARTICLE_ITEM(ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material,Amount?,Glow?" + ChatColor.RED +
+            ", received " + ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
+    PARSE_PARTICLE_REDSTONE(
+            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Color,Size.0?" + ChatColor.RED + ", received " +
+                    ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
     PARSE_NO_ARGS("No arguments defined"),
     PARSE_NO_OPTION_VALUE(ChatColor.RED + "No value was given for the option %s"),
     PARSE_NO_PERM_NAME(ChatColor.RED + "Error! You don't have permission to use that name!"),

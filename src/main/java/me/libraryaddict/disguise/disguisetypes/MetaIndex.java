@@ -1,10 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.Vector3F;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
@@ -42,8 +39,8 @@ public class MetaIndex<Y> {
     /**
      * The type of particle to display
      */
-    public static MetaIndex<Particle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
-            Particle.SPELL_MOB);
+    public static MetaIndex<WrappedParticle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
+            WrappedParticle.create(Particle.SPELL_MOB, null));
 
     /**
      * The size of the area
@@ -607,7 +604,7 @@ public class MetaIndex<Y> {
 
     /**
      * @param watcherClass - A FlagWatcher class
-     * @param flagNo - The meta index number
+     * @param flagNo       - The meta index number
      * @return The MetaIndex which corresponds to that FlagWatcher at that index
      */
     public static MetaIndex getMetaIndex(Class<? extends FlagWatcher> watcherClass, int flagNo) {

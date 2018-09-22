@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.parser.params;
 
 import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,9 +75,9 @@ public abstract class ParamInfo {
         return false;
     }
 
-    protected abstract Object fromString(String string);
+    protected abstract Object fromString(String string) throws DisguiseParseException;
 
-    public Object fromString(List<String> arguments) {
+    public Object fromString(List<String> arguments) throws DisguiseParseException {
         // Don't consume a string immediately, if it errors we need to check other param types
         String string = arguments.get(0);
 

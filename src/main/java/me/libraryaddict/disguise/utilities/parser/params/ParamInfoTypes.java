@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser.params;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
@@ -54,7 +55,8 @@ public class ParamInfoTypes {
                 "View all the colors you can use for a llama color"));
         paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant",
                 "View the different colors a parrot can be"));
-        paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
+        paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle", "The different particles of Minecraft",
+                Particle.values(), getMaterials()));
         paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
         paramInfos.add(new ParamInfoEnum(DyeColor.class, "DyeColor", "Dye colors of many different colors"));
         paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style",
@@ -67,8 +69,8 @@ public class ParamInfoTypes {
                 getColors()));
         paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items",
                 getMaterials()));
-        paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack", "ItemStack (Material:Amount?:Glow?)",
-                "An ItemStack compromised of Material:Amount:Glow, only requires Material", getMaterials()));
+        paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
+                "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials()));
         paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
                 "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)",
                 "Four ItemStacks separated by a comma", getMaterials()));
@@ -121,6 +123,10 @@ public class ParamInfoTypes {
         List<Material> list = new ArrayList<>();
 
         for (Material material : Material.values()) {
+            if (material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR) {
+                continue;
+            }
+
             try {
                 Field field = Material.class.getField(material.name());
 

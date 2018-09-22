@@ -615,8 +615,9 @@ public class DisguiseParser {
                     }
 
                     // Construct the disguise
-                    if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
-                        disguise = new MiscDisguise(itemStack);
+                    if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM ||
+                            disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
+                        disguise = new MiscDisguise(disguisePerm.getType(), itemStack);
                     } else {
                         disguise = new MiscDisguise(disguisePerm.getType(), miscId, miscData);
                     }
@@ -681,6 +682,9 @@ public class DisguiseParser {
                     methodToUse = method;
                     // We've found a method which will accept a valid value, break
                     break;
+                }
+                catch (DisguiseParseException ex) {
+                    parseException = ex;
                 }
                 catch (Exception ignored) {
                     parseException = new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED,

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser.params.types;
 
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class ParamInfoEnum extends ParamInfo {
     }
 
     @Override
-    protected Object fromString(String string) {
+    protected Object fromString(String string) throws DisguiseParseException {
         string = string.replace("_", "");
 
         for (Map.Entry<String, Object> entry : getValues().entrySet()) {

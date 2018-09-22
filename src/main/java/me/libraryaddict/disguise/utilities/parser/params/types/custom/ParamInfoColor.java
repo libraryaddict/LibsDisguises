@@ -9,16 +9,23 @@ import java.util.Map;
  * Created by libraryaddict on 19/09/2018.
  */
 public class ParamInfoColor extends ParamInfoEnum {
+    private static Map<String, Object> staticColors;
+
     public ParamInfoColor(Class paramClass, String name, String description, Map<String, Object> possibleValues) {
         super(paramClass, name, description, possibleValues);
+
+        staticColors = possibleValues;
     }
 
-    @Override
-    protected Object fromString(String string) {
-        Object enumValue = super.fromString(string);
+    protected static Color parseToColor(String string) {
+        string = string.replace("_", "");
 
-        if (enumValue != null) {
-            return enumValue;
+        for (Map.Entry<String, Object> entry : staticColors.entrySet()) {
+            if (!entry.getKey().replace("_", "").equalsIgnoreCase(string)) {
+                continue;
+            }
+
+            return (Color) entry.getValue();
         }
 
         String[] split = string.split(",");
@@ -30,5 +37,10 @@ public class ParamInfoColor extends ParamInfoEnum {
         }
 
         return null;
+    }
+
+    @Override
+    protected Object fromString(String string) {
+        return parseToColor(string);
     }
 }

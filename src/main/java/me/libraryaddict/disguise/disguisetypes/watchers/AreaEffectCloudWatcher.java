@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -49,12 +50,24 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    public void setParticleType(Particle particle) {
+    public void setParticle(WrappedParticle particle) {
         setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
         sendData(MetaIndex.AREA_EFFECT_PARTICLE);
     }
 
-    public Particle getParticleType() {
+    public void setParticle(Particle particle) {
+        setParticle(WrappedParticle.create(particle, null));
+    }
+
+    public <T> void setParticle(Particle particle, T particleData) {
+        setParticle(WrappedParticle.create(particle, particleData));
+    }
+
+    public WrappedParticle getParticle() {
         return getData(MetaIndex.AREA_EFFECT_PARTICLE);
+    }
+
+    public Particle getParticleType() {
+        return getParticle().getParticle();
     }
 }

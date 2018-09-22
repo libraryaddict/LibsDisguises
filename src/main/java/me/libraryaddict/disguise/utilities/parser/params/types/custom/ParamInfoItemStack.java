@@ -32,9 +32,11 @@ public class ParamInfoItemStack extends ParamInfoEnum {
         return parseToItemstack(string);
     }
 
-    protected ItemStack parseToItemstack(String string) {
-        String[] split = string.split(":", -1);
+    protected static ItemStack parseToItemstack(String string) {
+        return parseToItemstack(string.split("[:,]")); // Split on colon or comma
+    }
 
+    protected static ItemStack parseToItemstack(String[] split) {
         if (split[0].isEmpty() || split[0].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("null"))) {
             return null;
         }
