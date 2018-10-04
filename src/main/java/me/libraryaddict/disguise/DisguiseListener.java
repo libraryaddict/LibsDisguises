@@ -18,7 +18,7 @@ import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

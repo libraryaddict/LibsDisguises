@@ -1,18 +1,13 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser.DisguisePerm;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+
+import java.util.*;
 
 /**
  * @author libraryaddict
