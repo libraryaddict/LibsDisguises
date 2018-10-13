@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.events;
 
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import me.libraryaddict.disguise.disguisetypes.Disguise;
 
 public class UndisguiseEvent extends Event implements Cancellable {
 
@@ -18,10 +17,12 @@ public class UndisguiseEvent extends Event implements Cancellable {
     private Disguise disguise;
     private Entity disguised;
     private boolean isCancelled;
+    private boolean isBeingReplaced;
 
-    public UndisguiseEvent(Entity entity, Disguise disguise) {
+    public UndisguiseEvent(Entity entity, Disguise disguise, boolean beingReplaced) {
         this.disguised = entity;
         this.disguise = disguise;
+        this.isBeingReplaced = beingReplaced;
     }
 
     public Disguise getDisguise() {
@@ -40,6 +41,10 @@ public class UndisguiseEvent extends Event implements Cancellable {
     @Override
     public boolean isCancelled() {
         return isCancelled;
+    }
+
+    public boolean isBeingReplaced() {
+        return isBeingReplaced;
     }
 
     @Override

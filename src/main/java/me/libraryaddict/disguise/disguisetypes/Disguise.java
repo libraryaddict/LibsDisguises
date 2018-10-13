@@ -442,10 +442,20 @@ public abstract class Disguise {
      * @return removeDiguise
      */
     public boolean removeDisguise() {
+        return removeDisguise(false);
+    }
+
+    /**
+     * Removes the disguise and undisguises the entity if it's using this disguise.
+     *
+     * @param disguiseBeingReplaced If the entity's disguise is being replaced with another
+     * @return
+     */
+    public boolean removeDisguise(boolean disguiseBeingReplaced) {
         if (!isDisguiseInUse())
             return false;
 
-        UndisguiseEvent event = new UndisguiseEvent(entity, this);
+        UndisguiseEvent event = new UndisguiseEvent(entity, this, disguiseBeingReplaced);
 
         Bukkit.getPluginManager().callEvent(event);
 

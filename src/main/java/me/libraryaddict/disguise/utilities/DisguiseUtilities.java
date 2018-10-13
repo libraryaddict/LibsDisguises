@@ -407,7 +407,7 @@ public class DisguiseUtilities {
                             // But the rest of the time.. Its going to conflict.
 
                             disguiseItel.remove();
-                            d.removeDisguise();
+                            d.removeDisguise(true);
                         }
                     }
                 }
