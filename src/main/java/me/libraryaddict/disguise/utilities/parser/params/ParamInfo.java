@@ -47,12 +47,12 @@ public abstract class ParamInfo {
         }
     }
 
-    public ParamInfo(Class paramClass, String name, String description, Map<String,Object> possibleValues) {
+    public ParamInfo(Class paramClass, String name, String description, Map<String, Object> possibleValues) {
         this(paramClass, name, name, description, possibleValues);
     }
 
     public ParamInfo(Class paramClass, String name, String descriptiveName, String description,
-            Map<String,Object> possibleValues) {
+            Map<String, Object> possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
         this.possibleValues = new HashMap<>();
@@ -82,6 +82,11 @@ public abstract class ParamInfo {
         String string = arguments.get(0);
 
         Object value = fromString(string);
+
+        // Throw error if null wasn't expected
+        if (value == null && !canReturnNull()) {
+            throw new IllegalArgumentException();
+        }
 
         arguments.remove(0);
 
