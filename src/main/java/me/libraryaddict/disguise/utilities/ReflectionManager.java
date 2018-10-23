@@ -187,31 +187,33 @@ public class ReflectionManager {
             int stage = 0;
 
             for (Field field : boundingBox.getClass().getDeclaredFields()) {
-                if (field.getType().getSimpleName().equals("double")) {
-                    stage++;
+                if (!field.getType().getSimpleName().equals("double")) {
+                    continue;
+                }
 
-                    switch (stage) {
-                        case 1:
-                            x -= field.getDouble(boundingBox);
-                            break;
-                        case 2:
-                            y -= field.getDouble(boundingBox);
-                            break;
-                        case 3:
-                            z -= field.getDouble(boundingBox);
-                            break;
-                        case 4:
-                            x += field.getDouble(boundingBox);
-                            break;
-                        case 5:
-                            y += field.getDouble(boundingBox);
-                            break;
-                        case 6:
-                            z += field.getDouble(boundingBox);
-                            break;
-                        default:
-                            throw new Exception("Error while setting the bounding box, more doubles than I thought??");
-                    }
+                stage++;
+
+                switch (stage) {
+                    case 1:
+                        x -= field.getDouble(boundingBox);
+                        break;
+                    case 2:
+                        y -= field.getDouble(boundingBox);
+                        break;
+                    case 3:
+                        z -= field.getDouble(boundingBox);
+                        break;
+                    case 4:
+                        x += field.getDouble(boundingBox);
+                        break;
+                    case 5:
+                        y += field.getDouble(boundingBox);
+                        break;
+                    case 6:
+                        z += field.getDouble(boundingBox);
+                        break;
+                    default:
+                        throw new Exception("Error while setting the bounding box, more doubles than I thought??");
                 }
             }
 
@@ -618,8 +620,9 @@ public class ReflectionManager {
             Location loc = entity.getLocation();
 
             Object boundingBox = boundingBoxConstructor
-                    .newInstance(loc.getX() - newBox.getX(), loc.getY() - newBox.getY(), loc.getZ() - newBox.getZ(),
-                            loc.getX() + newBox.getX(), loc.getY() + newBox.getY(), loc.getZ() + newBox.getZ());
+                    .newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
+                            loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(),
+                            loc.getZ() + (newBox.getZ() / 2));
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         }

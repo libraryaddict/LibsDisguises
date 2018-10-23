@@ -455,35 +455,37 @@ public class DisguiseUtilities {
     public static void doBoundingBox(TargetedDisguise disguise) {
         Entity entity = disguise.getEntity();
 
-        if (entity != null) {
-            if (isDisguiseInUse(disguise)) {
-                DisguiseValues disguiseValues = DisguiseValues.getDisguiseValues(disguise.getType());
-                FakeBoundingBox disguiseBox = disguiseValues.getAdultBox();
+        if (entity == null) {
+            return;
+        }
 
-                if (disguiseValues.getBabyBox() != null) {
-                    if ((disguise.getWatcher() instanceof AgeableWatcher &&
-                            ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
-                            (disguise.getWatcher() instanceof ZombieWatcher &&
-                                    ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
-                        disguiseBox = disguiseValues.getBabyBox();
-                    }
+        if (isDisguiseInUse(disguise)) {
+            DisguiseValues disguiseValues = DisguiseValues.getDisguiseValues(disguise.getType());
+            FakeBoundingBox disguiseBox = disguiseValues.getAdultBox();
+
+            if (disguiseValues.getBabyBox() != null) {
+                if ((disguise.getWatcher() instanceof AgeableWatcher &&
+                        ((AgeableWatcher) disguise.getWatcher()).isBaby()) ||
+                        (disguise.getWatcher() instanceof ZombieWatcher &&
+                                ((ZombieWatcher) disguise.getWatcher()).isBaby())) {
+                    disguiseBox = disguiseValues.getBabyBox();
                 }
-
-                ReflectionManager.setBoundingBox(entity, disguiseBox);
-            } else {
-                DisguiseValues entityValues = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
-
-                FakeBoundingBox entityBox = entityValues.getAdultBox();
-
-                if (entityValues.getBabyBox() != null) {
-                    if ((entity instanceof Ageable && !((Ageable) entity).isAdult()) ||
-                            (entity instanceof Zombie && ((Zombie) entity).isBaby())) {
-                        entityBox = entityValues.getBabyBox();
-                    }
-                }
-
-                ReflectionManager.setBoundingBox(entity, entityBox);
             }
+
+            ReflectionManager.setBoundingBox(entity, disguiseBox);
+        } else {
+            DisguiseValues entityValues = DisguiseValues.getDisguiseValues(DisguiseType.getType(entity.getType()));
+
+            FakeBoundingBox entityBox = entityValues.getAdultBox();
+
+            if (entityValues.getBabyBox() != null) {
+                if ((entity instanceof Ageable && !((Ageable) entity).isAdult()) ||
+                        (entity instanceof Zombie && ((Zombie) entity).isBaby())) {
+                    entityBox = entityValues.getBabyBox();
+                }
+            }
+
+            ReflectionManager.setBoundingBox(entity, entityBox);
         }
     }
 
