@@ -15,6 +15,11 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
     }
 
     @Override
+    public boolean canReturnNull() {
+        return false;
+    }
+
+    @Override
     public Set<String> getEnums(String tabComplete) {
         String beginning = tabComplete.substring(0, tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
         String end = tabComplete.substring(tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
