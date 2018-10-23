@@ -13,8 +13,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,16 +43,22 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
             for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
                     observer.getInventory().getItemInOffHand()}) {
-                if (item == null || item.getType() != Material.INK_SAC)
+                if (item == null) {
                     continue;
+                }
+
+                AnimalColor color = AnimalColor.getColorByMaterial(item.getType());
+
+                if (color == null) {
+                    continue;
+                }
 
                 Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
 
                 if (disguise == null ||
-                        (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF))
+                        (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF)) {
                     continue;
-
-                AnimalColor color = AnimalColor.getColor(item.getDurability());
+                }
 
                 if (disguise.getType() == DisguiseType.SHEEP) {
                     SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();

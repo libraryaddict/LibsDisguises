@@ -52,7 +52,11 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setColor(AnimalColor color) {
-        setData(MetaIndex.SHULKER_COLOR, (byte) color.getId());
+        setData(MetaIndex.SHULKER_COLOR, color.getDyeColor().getWoolData());
         sendData(MetaIndex.SHULKER_COLOR);
+    }
+
+    public AnimalColor getColor() {
+        return AnimalColor.getColorByWool(getData(MetaIndex.SHULKER_COLOR));
     }
 }

@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.DyeColor;
-
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.DyeColor;
 
 public class SheepWatcher extends AgeableWatcher {
 
@@ -13,7 +12,7 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public AnimalColor getColor() {
-        return AnimalColor.getColor(((int) getData(MetaIndex.SHEEP_WOOL) & 15));
+        return AnimalColor.getColorByWool(((int) getData(MetaIndex.SHEEP_WOOL) & 15));
     }
 
     public boolean isSheared() {
@@ -21,7 +20,7 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public void setColor(AnimalColor color) {
-        setColor(DyeColor.getByWoolData((byte) color.getId()));
+        setColor(color.getDyeColor());
     }
 
     public void setColor(DyeColor color) {

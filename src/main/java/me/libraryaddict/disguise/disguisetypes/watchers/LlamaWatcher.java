@@ -1,10 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.entity.Llama;
-
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.DyeColor;
+import org.bukkit.entity.Llama;
 
 public class LlamaWatcher extends ChestedHorseWatcher {
 
@@ -21,13 +21,17 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
     }
 
-    public void setCarpet(AnimalColor color) {
-        setData(MetaIndex.LLAMA_CARPET, color.getId());
+    public void setCarpet(DyeColor dyeColor) {
+        setData(MetaIndex.LLAMA_CARPET, (int) dyeColor.getWoolData());
         sendData(MetaIndex.LLAMA_CARPET);
     }
 
+    public void setCarpet(AnimalColor color) {
+        setCarpet(color.getDyeColor());
+    }
+
     public AnimalColor getCarpet() {
-        return AnimalColor.getColor(getData(MetaIndex.LLAMA_CARPET));
+        return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET));
     }
 
     public void setStrength(int strength) {
@@ -38,5 +42,4 @@ public class LlamaWatcher extends ChestedHorseWatcher {
     public int getStrength() {
         return getData(MetaIndex.LLAMA_STRENGTH);
     }
-
 }

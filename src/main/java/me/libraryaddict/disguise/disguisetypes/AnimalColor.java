@@ -1,35 +1,87 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-public enum AnimalColor
-{
-    BLACK(15), BLUE(11), BROWN(12), CYAN(9), GRAY(7), GREEN(13), LIGHT_BLUE(3), LIME(5), MAGENTA(2), ORANGE(1), PINK(6), PURPLE(
-            10), RED(14), SILVER(8), WHITE(0), YELLOW(4);
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
 
-    public static AnimalColor getColor(int nmsId)
-    {
-        for (AnimalColor color : values())
-        {
-            if (color.getId() == nmsId)
-            {
-                return color;
+public enum AnimalColor {
+    BLACK(DyeColor.BLACK, Material.INK_SAC),
+    BLUE(DyeColor.BLUE, Material.LAPIS_LAZULI),
+    BROWN(DyeColor.BROWN, Material.COCOA_BEANS),
+    CYAN(DyeColor.CYAN, Material.CYAN_DYE),
+    GRAY(DyeColor.GRAY, Material.GRAY_DYE),
+    GREEN(DyeColor.GREEN, Material.CACTUS_GREEN),
+    LIGHT_BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_DYE),
+    LIME(DyeColor.LIME, Material.LIME_DYE),
+    MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_DYE),
+    ORANGE(DyeColor.ORANGE, Material.ORANGE_DYE),
+    PINK(DyeColor.PINK, Material.PINK_DYE),
+    PURPLE(DyeColor.PURPLE, Material.PURPLE_DYE),
+    RED(DyeColor.RED, Material.ROSE_RED),
+    LIGHT_GRAY(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_DYE),
+    WHITE(DyeColor.WHITE, Material.BONE_MEAL),
+    YELLOW(DyeColor.YELLOW, Material.DANDELION_YELLOW);
+
+    public static AnimalColor getColorByWool(int woolId) {
+        for (AnimalColor color : values()) {
+            if (woolId != color.getDyeColor().getWoolData()) {
+                continue;
             }
+
+            return color;
         }
 
         return null;
     }
 
-    private int value;
+    public static AnimalColor getColorByMaterial(Material material) {
+        for (AnimalColor color : values()) {
+            if (color.getDyeMaterial() != material) {
+                continue;
+            }
 
-    AnimalColor(int newValue)
-    {
-        value = newValue;
+            return color;
+        }
+
+        return null;
     }
 
-    /**
-     * The color ID as defined by nms internals.
-     */
-    public int getId()
-    {
-        return value;
+    public static AnimalColor getColorByDye(int dyeId) {
+        for (AnimalColor color : values()) {
+            if (dyeId != color.getDyeColor().getDyeData()) {
+                continue;
+            }
+
+            return color;
+        }
+
+        return null;
+    }
+
+    public static AnimalColor getColor(DyeColor dyeColor) {
+        for (AnimalColor color : values()) {
+            if (dyeColor != color.getDyeColor()) {
+                continue;
+            }
+
+            return color;
+        }
+
+        return null;
+    }
+
+    private DyeColor dyeColor;
+    private Material material;
+
+    AnimalColor(DyeColor color, Material material) {
+        dyeColor = color;
+        this.material = material;
+    }
+
+    public Material getDyeMaterial() {
+        return material;
+    }
+
+    public DyeColor getDyeColor() {
+        return dyeColor;
     }
 }
