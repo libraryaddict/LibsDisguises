@@ -6,10 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -22,7 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,15 +26,15 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        DisguisePermissions permissions = getPermissions(sender);
 
-        if (map.isEmpty()) {
+        if (!permissions.hasPermissions()) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
         if (args.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
@@ -68,7 +64,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
 
         if (newArgs.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
@@ -76,7 +72,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         try {
             disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")),
+                            permissions);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -144,7 +141,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        DisguisePermissions perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -176,7 +173,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
+                if (perms.isAllowedDisguise(disguiseType, usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 2) {
@@ -217,9 +214,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
+    protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.D_HELP1.get());
         sender.sendMessage(LibsMsg.CAN_USE_DISGS

@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -42,7 +43,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -529,17 +530,16 @@ public class DisguiseListener implements Listener {
                 return;
             }
 
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = DisguiseParser
-                    .getPermissions(p, "libsdisguises.disguiseentitymodify.");
+            DisguisePermissions perms = DisguiseParser.getPermissions(p, "disguiseentitymodify");
+            DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
 
-            if (!perms.containsKey(new DisguisePerm(disguise.getType()))) {
+            if (!perms.isAllowedDisguise(disguisePerm, Arrays.asList(options))) {
                 p.sendMessage(LibsMsg.DMODPLAYER_NOPERM.get());
                 return;
             }
 
             try {
-                DisguiseParser.callMethods(p, disguise, perms.get(new DisguisePerm(disguise.getType())),
-                        new ArrayList<String>(), options);
+                DisguiseParser.callMethods(p, disguise, perms, disguisePerm, Arrays.asList(options), options);
                 p.sendMessage(LibsMsg.LISTENER_MODIFIED_DISG.get());
             }
             catch (DisguiseParseException ex) {

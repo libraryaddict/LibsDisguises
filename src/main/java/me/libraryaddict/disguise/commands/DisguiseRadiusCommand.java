@@ -8,10 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.ClassGetter;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -29,7 +26,6 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
@@ -52,15 +48,15 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        DisguisePermissions permissions = getPermissions(sender);
 
-        if (map.isEmpty()) {
+        if (!permissions.hasPermissions()) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
         if (args.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
@@ -83,7 +79,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         EntityType type = null;
         int starting = 0;
 
-        if (!isNumeric(args[0])) {
+        if (!isInteger(args[0])) {
             for (Class c : validClasses) {
                 if (TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0])) {
                     entityClass = c;
@@ -115,7 +111,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (!isNumeric(args[starting])) {
+        if (!isInteger(args[starting])) {
             sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[starting]));
             return true;
         }
@@ -132,13 +128,14 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         if (newArgs.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
         try {
             disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")), map);
+                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")),
+                            permissions);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -234,7 +231,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        DisguisePermissions perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (Class<? extends Entity> entityClass : validClasses) {
@@ -246,7 +243,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         int starting = 1;
 
-        if (!isNumeric(args[0])) {
+        if (!isInteger(args[0])) {
             for (Class c : validClasses) {
                 if (!TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0]))
                     continue;
@@ -256,7 +253,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             }
 
             // Not a valid radius
-            if (starting == 1 || args.length == 1 || !isNumeric(args[1]))
+            if (starting == 1 || args.length == 1 || !isInteger(args[1]))
                 return filterTabs(tabs, origArgs);
         }
 
@@ -288,7 +285,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
+                if (perms.isAllowedDisguise(disguiseType, usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 1 + starting) {
@@ -329,9 +326,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
+    protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DRADIUS_HELP1.get(maxRadius));
         sender.sendMessage(LibsMsg.CAN_USE_DISGS

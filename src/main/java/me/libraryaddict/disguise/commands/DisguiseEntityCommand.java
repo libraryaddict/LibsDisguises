@@ -5,10 +5,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -32,7 +29,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (getPermissions(sender).isEmpty()) {
+        if (!getPermissions(sender).hasPermissions()) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
@@ -78,7 +75,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        DisguisePermissions perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (String type : getAllowedDisguises(perms)) {
@@ -108,7 +105,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
+                if (perms.isAllowedDisguise(disguiseType, usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 1) {
@@ -147,14 +144,10 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
     /**
      * Send the player the information
-     *
-     * @param sender
-     * @param map
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
+    protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DISG_ENT_HELP1.get());
         sender.sendMessage(LibsMsg.CAN_USE_DISGS

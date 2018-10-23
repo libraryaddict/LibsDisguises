@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +14,22 @@ import java.util.*;
  * @author libraryaddict
  */
 public abstract class DisguiseBaseCommand implements CommandExecutor {
+    private static final Map<Class<? extends DisguiseBaseCommand>, String> disguiseCommands;
+
+    static {
+        HashMap<Class<? extends DisguiseBaseCommand>, String> map = new HashMap<>();
+
+        map.put(DisguiseCommand.class, "Disguise");
+        map.put(DisguiseEntityCommand.class, "DisguiseEntity");
+        map.put(DisguisePlayerCommand.class, "DisguisePlayer");
+        map.put(DisguiseRadiusCommand.class, "DisguiseRadius");
+        map.put(DisguiseModifyCommand.class, "DisguiseModify");
+        map.put(DisguiseModifyEntityCommand.class, "DisguiseModifyEntity");
+        map.put(DisguiseModifyPlayerCommand.class, "DisguiseModifyPlayer");
+        map.put(DisguiseModifyRadiusCommand.class, "DisguiseModifyRadius");
+
+        disguiseCommands = map;
+    }
 
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
         if (origArgs.length == 0)
@@ -39,18 +56,15 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return (team == null ? "" : team.getPrefix()) + player.getName() + (team == null ? "" : team.getSuffix());
     }
 
-    protected ArrayList<String> getAllowedDisguises(
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> hashMap) {
+    protected ArrayList<String> getAllowedDisguises(DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = new ArrayList<>();
 
-        for (DisguisePerm type : hashMap.keySet()) {
+        for (DisguisePerm type : permissions.getAllowed()) {
             if (type.isUnknown())
                 continue;
 
             allowedDisguises.add(type.toReadable().replaceAll(" ", "_"));
         }
-
-        Collections.sort(allowedDisguises, String.CASE_INSENSITIVE_ORDER);
 
         return allowedDisguises;
     }
@@ -70,33 +84,25 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return newArgs.toArray(new String[0]);
     }
 
+    protected static final Map<Class<? extends DisguiseBaseCommand>, String> getCommandNames() {
+        return disguiseCommands;
+    }
+
     public final String getPermNode() {
-        if (this instanceof DisguiseCommand) {
-            return "disguise";
-        } else if (this instanceof DisguiseEntityCommand) {
-            return "disguiseentity";
-        } else if (this instanceof DisguisePlayerCommand) {
-            return "disguiseplayer";
-        } else if (this instanceof DisguiseRadiusCommand) {
-            return "disguiseradius";
-        } else if (this instanceof DisguiseModifyCommand) {
-            return "disguisemodify";
-        } else if (this instanceof DisguiseModifyEntityCommand) {
-            return "disguisemodifyentity";
-        } else if (this instanceof DisguiseModifyPlayerCommand) {
-            return "disguisemodifyplayer";
-        } else if (this instanceof DisguiseModifyRadiusCommand) {
-            return "disguisemodifyradius";
-        } else {
+        String name = getCommandNames().get(this.getClass());
+
+        if (name == null) {
             throw new UnsupportedOperationException("Unknown disguise command, perm node not found");
         }
+
+        return name;
     }
 
-    protected HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> getPermissions(CommandSender sender) {
-        return DisguiseParser.getPermissions(sender, "libsdisguises." + getPermNode() + ".");
+    protected DisguisePermissions getPermissions(CommandSender sender) {
+        return DisguiseParser.getPermissions(sender, getPermNode());
     }
 
-    protected boolean isNumeric(String string) {
+    protected boolean isInteger(String string) {
         try {
             Integer.parseInt(string);
             return true;
@@ -106,11 +112,5 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         }
     }
 
-    public boolean passesCheck(CommandSender sender, HashMap<ArrayList<String>, Boolean> theirPermissions,
-            ArrayList<String> usedOptions) {
-        return DisguiseParser.passesCheck(sender, theirPermissions, usedOptions);
-    }
-
-    protected abstract void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map);
+    protected abstract void sendCommandUsage(CommandSender sender, DisguisePermissions disguisePermissions);
 }

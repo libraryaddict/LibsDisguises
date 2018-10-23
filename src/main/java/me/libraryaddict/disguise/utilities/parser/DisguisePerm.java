@@ -85,4 +85,9 @@ public class DisguisePerm {
 
         return Objects.equals(permName, other.permName);
     }
+
+    @Override
+    public String toString() {
+        return "DisguisePerm{" + "disguiseType=" + disguiseType + ", permName='" + permName + '\'' + '}';
+    }
 }

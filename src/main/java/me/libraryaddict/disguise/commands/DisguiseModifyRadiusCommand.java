@@ -5,10 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -22,7 +19,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
@@ -50,15 +50,15 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map = getPermissions(sender);
+        DisguisePermissions permissions = getPermissions(sender);
 
-        if (map.isEmpty()) {
+        if (!permissions.hasPermissions()) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
         }
 
         if (args.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
@@ -80,7 +80,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         DisguiseType baseType = null;
         int starting = 0;
 
-        if (!isNumeric(args[0])) {
+        if (!isInteger(args[0])) {
             for (DisguiseType t : DisguiseType.values()) {
                 if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
                     baseType = t;
@@ -104,7 +104,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        if (!isNumeric(args[starting])) {
+        if (!isInteger(args[starting])) {
             sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[starting]));
             return true;
         }
@@ -120,7 +120,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         System.arraycopy(args, starting + 1, newArgs, 0, newArgs.length);
 
         if (newArgs.length == 0) {
-            sendCommandUsage(sender, map);
+            sendCommandUsage(sender, permissions);
             return true;
         }
 
@@ -144,14 +144,16 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             else
                 disguise = DisguiseAPI.getDisguise(entity);
 
-            if (!map.containsKey(new DisguisePerm(disguise.getType()))) {
+            DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
+
+            if (!permissions.isAllowedDisguise(disguisePerm)) {
                 noPermission++;
                 continue;
             }
 
             try {
-                DisguiseParser.callMethods(sender, disguise, map.get(new DisguisePerm(disguise.getType())),
-                        new ArrayList<String>(), DisguiseParser.split(StringUtils.join(newArgs, " ")));
+                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
+                        DisguiseParser.split(StringUtils.join(newArgs, " ")));
                 modifiedDisguises++;
             }
             catch (DisguiseParseException ex) {
@@ -185,7 +187,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        DisguisePermissions perms = getPermissions(sender);
 
         if (args.length == 0) {
             for (DisguiseType type : DisguiseType.values()) {
@@ -197,7 +199,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         int starting = 0;
 
-        if (!isNumeric(args[0])) {
+        if (!isInteger(args[0])) {
 
             for (DisguiseType t : DisguiseType.values()) {
                 if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
@@ -207,11 +209,11 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             // Not a valid radius
-            if (starting == 1 || args.length == 1 || !isNumeric(args[1]))
+            if (starting == 1 || args.length == 1 || !isInteger(args[1]))
                 return filterTabs(tabs, origArgs);
         }
 
-        if (!isNumeric(args[starting])) {
+        if (!isInteger(args[starting])) {
             return filterTabs(tabs, origArgs);
         }
 
@@ -241,7 +243,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 }
             }
 
-            if (passesCheck(sender, perms.get(new DisguisePerm(disguiseType)), usedOptions)) {
+            if (perms.isAllowedDisguise(new DisguisePerm(disguiseType), usedOptions)) {
                 boolean addMethods = true;
 
                 if (args.length > 1 + starting) {
@@ -280,9 +282,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
+    protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP1.get(maxRadius));
         sender.sendMessage(LibsMsg.DMODIFY_HELP3

@@ -6,10 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -22,7 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter {
@@ -103,7 +99,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> perms = getPermissions(sender);
+        DisguisePermissions perms = getPermissions(sender);
 
         if (args.length == 0) {
             tabs.addAll(getAllowedDisguises(perms));
@@ -132,7 +128,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
                     }
                 }
 
-                if (passesCheck(sender, perms.get(disguiseType), usedOptions)) {
+                if (perms.isAllowedDisguise(disguiseType, usedOptions)) {
                     boolean addMethods = true;
 
                     if (args.length > 1) {
@@ -173,9 +169,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
      * Send the player the information
      */
     @Override
-    protected void sendCommandUsage(CommandSender sender,
-            HashMap<DisguisePerm, HashMap<ArrayList<String>, Boolean>> map) {
-        ArrayList<String> allowedDisguises = getAllowedDisguises(map);
+    protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
+        ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
         sender.sendMessage(LibsMsg.DISG_HELP1.get());
         sender.sendMessage(LibsMsg.CAN_USE_DISGS
                 .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
