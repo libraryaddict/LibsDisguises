@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
@@ -55,7 +56,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
 
         try {
             DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
-                    DisguiseParser.split(StringUtils.join(args, " ")));
+                    DisguiseUtilities.split(StringUtils.join(args, " ")));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

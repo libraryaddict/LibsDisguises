@@ -17,8 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DisguiseParser {
     private static void doCheck(CommandSender sender, DisguisePermissions permissions, DisguisePerm disguisePerm,
@@ -120,21 +118,6 @@ public class DisguiseParser {
         catch (Exception ex) {
             return false;
         }
-    }
-
-    /**
-     * Splits a string while respecting quotes
-     */
-    public static String[] split(String string) {
-        Matcher matcher = Pattern.compile("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\"(?=\\s|$))|\\S+").matcher(string);
-
-        List<String> list = new ArrayList<>();
-
-        while (matcher.find()) {
-            list.add(matcher.group());
-        }
-
-        return list.toArray(new String[0]);
     }
 
     /**

@@ -292,7 +292,7 @@ public class DisguiseConfig {
 
             try {
                 Disguise disguise = DisguiseParser
-                        .parseDisguise(Bukkit.getConsoleSender(), "disguise", DisguiseParser.split(toParse),
+                        .parseDisguise(Bukkit.getConsoleSender(), "disguise", DisguiseUtilities.split(toParse),
                                 DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
 
                 customDisguises.put(key, disguise);

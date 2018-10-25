@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
@@ -43,7 +44,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
         // TODO Validate if any disguises have this arg
 
         LibsDisguises.getInstance().getListener()
-                .setDisguiseModify(sender.getName(), DisguiseParser.split(StringUtils.join(args, " ")));
+                .setDisguiseModify(sender.getName(), DisguiseUtilities.split(StringUtils.join(args, " ")));
 
         sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;

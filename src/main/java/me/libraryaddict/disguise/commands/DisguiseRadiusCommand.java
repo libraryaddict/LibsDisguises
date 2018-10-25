@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.ClassGetter;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.*;
@@ -134,7 +135,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         try {
             disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(newArgs, " ")),
+                    .parseDisguise(sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")),
                             permissions);
         }
         catch (DisguiseParseException ex) {

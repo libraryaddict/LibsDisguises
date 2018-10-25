@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
@@ -38,7 +39,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
         try {
             disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseParser.split(StringUtils.join(args, " ")),
+                    .parseDisguise(sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")),
                             getPermissions(sender));
         }
         catch (DisguiseParseException ex) {

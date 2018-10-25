@@ -51,6 +51,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
@@ -1377,6 +1378,99 @@ public class DisguiseUtilities {
                 ldTeam.setCanSeeFriendlyInvisibles(false);
             }
         }
+    }
+
+    /**
+     * Splits a string while respecting quotes.
+     * <p>
+     * Re
+     */
+    /*public static String[] split(String string) {
+        Matcher matcher = Pattern.compile("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\"(?=\\s|$))|\\S+").matcher(string);
+
+        List<String> list = new ArrayList<>();
+
+        while (matcher.find()) {
+            String match = matcher.group();
+
+            // If the match was quoted, then remove quotes and escapes
+            if (match.matches("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\")")) {
+                // Replace the match by removing first and last quote
+                // Then remove escaped slashes from the trailing with regex
+                match = match.substring(1, match.length() - 1).replaceAll("\\\\\\\\(?=(\\\\\\\\)*$)", "\\");
+            }
+
+            list.add(matcher.group());
+        }
+
+        return list.toArray(new String[0]);
+    }*/
+    public static String[] split(String string) {
+        // Regex where we first match any character that isn't a slash, if it is a slash then it must not have more
+        // slashes until it hits the quote
+        // If any slashes before the quote, they must be escaped. That is, two of them.
+        // Must end with a quote
+        Pattern endsWithQuote = Pattern.compile("^([^\\\\]|\\\\(?!\\\\*\"$))*(\\\\\\\\)*\"$");
+        // Matches \"message quote, and
+        Pattern removeSlashes = Pattern.compile("^\\\\(\")|\\\\(?:(\\\\)(?=\\\\*\"$)|(\")$)");
+
+        List<String> list = new ArrayList<>();
+        String[] split = string.split(" ");
+        String[] unescapedSplit = new String[split.length];
+
+        loop:
+        for (int i = 0; i < split.length; i++) {
+            // If the word starts with a quote
+            if (split[i].startsWith("\"")) {
+                // Look for a word with an ending quote
+                for (int a = i; a < split.length; a++) {
+                    // If it's the same word, but only one possible quote
+                    if (a == i && split[i].length() == 1) {
+                        continue;
+                    }
+
+                    // Does not end with a valid quote
+                    if (!endsWithQuote.matcher(split[a]).matches()) {
+                        continue;
+                    }
+
+                    // Found a sentence, build it
+                    StringBuilder builder = new StringBuilder();
+
+                    for (int b = i; b <= a; b++) {
+                        Matcher matcher = removeSlashes.matcher(split[b]);
+
+                        // Remove any escapes for escaped quotes
+                        String word = matcher.replaceAll("$1$2$3");
+
+                        // If this is the beginning or end of a quote
+                        if (b == i || b == a) {
+                            // Remove the quote
+                            word = word.substring(b == i ? 1 : 0, word.length() - (b == a ? 1 : 0));
+                        }
+
+                        if (b > i) {
+                            builder.append(" ");
+                        }
+
+                        builder.append(word);
+                    }
+
+                    list.add(builder.toString());
+                    i = a;
+                    continue loop;
+                }
+            }
+
+            // Remove escapes if there, and add as a single word
+            Matcher matcher = removeSlashes.matcher(split[i]);
+
+            String word = matcher.replaceAll("$1$2$3");
+
+            list.add(word);
+        }
+
+        return list.toArray(new String[0]);
     }
 
     /**
