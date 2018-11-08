@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.lang.reflect.*;
+import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -384,7 +386,7 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
         try {
-            return new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(), playerName);
+            return new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(), playerName);
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -399,8 +401,7 @@ public class ReflectionManager {
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName,
             WrappedGameProfile profileWithSkin) {
         try {
-            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : UUID.randomUUID(),
-                    playerName);
+            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(), playerName);
 
             if (profileWithSkin != null) {
                 gameProfile.getProperties().putAll(profileWithSkin.getProperties());
@@ -413,6 +414,32 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    /**
+     * Used for generating a UUID with a custom version instead of the default 4. Workaround for China's NetEase servers
+     */
+    private static UUID getRandomUUID() {
+        UUID uuid = UUID.randomUUID();
+
+        if (DisguiseConfig.getUUIDGeneratedVersion() == 4) {
+            return uuid;
+        }
+
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+
+        bb.put(6, (byte) (bb.get(6) & 0x0f));  // clear version
+        bb.put(6, (byte) (bb.get(6) | DisguiseConfig.getUUIDGeneratedVersion()));  // set to version X (Default 4)
+
+        bb.position(0);
+
+        long firstLong = bb.getLong();
+        long secondLong = bb.getLong();
+
+        return new UUID(firstLong, secondLong);
     }
 
     public static Class getNmsClass(String className) {

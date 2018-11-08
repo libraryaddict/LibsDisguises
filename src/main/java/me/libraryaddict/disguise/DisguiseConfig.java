@@ -68,6 +68,15 @@ public class DisguiseConfig {
     private static boolean warnScoreboardConflict;
     private static boolean explicitDisguisePermissions;
     private static boolean disableCommands;
+    private static int uuidGeneratedVersion;
+
+    public static int getUUIDGeneratedVersion() {
+        return uuidGeneratedVersion;
+    }
+
+    public static void setUUIDGeneratedVersion(int uuidVersion) {
+        uuidGeneratedVersion = uuidVersion;
+    }
 
     /**
      * No setter provided as this cannot be changed after startup
@@ -245,6 +254,7 @@ public class DisguiseConfig {
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
         disableCommands = config.getBoolean("DisableCommands");
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplictDisguises"));
+        setUUIDGeneratedVersion(config.getInt("UUIDVersion"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
