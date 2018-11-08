@@ -189,12 +189,10 @@ public class DisguisePermissions {
         Map<String, Boolean> permissions = new HashMap<>();
 
         // If the command sender is OP, then this will work even as the below code doesn't
-        for (String perm : new String[]{permissionNode + "*", "libsdisguises.*.*"}) {
-            if (!sender.hasPermission(perm)) {
-                continue;
-            }
-
-            permissions.put(perm, true);
+        // libsdisguises.[command].[disguise].[options]
+        // They can use all commands, all disguises, all options
+        if (sender.hasPermission("libsdisguises.*.*.*")) {
+            permissions.put("libsdisguises.*.*.*", true);
         }
 
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
@@ -294,8 +292,9 @@ public class DisguisePermissions {
                         disabled = false;
                     }
 
-                    // If the child disguise does not have any options defined, give them wildcard by default
-                    if (parsedPermission.options.isEmpty()) {
+                    // If the child disguise does not have any options defined, give them wildcard by default if
+                    // config allows
+                    if (parsedPermission.options.isEmpty() && !DisguiseConfig.isExplictDisguisePermissions()) {
                         storage.wildcardAllow = true;
                         // If this disguise has options defined, unless wildcard was explictly given then remove it
                     } else if (!storage.permittedOptions.contains("*")) {

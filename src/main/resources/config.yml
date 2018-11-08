@@ -1,5 +1,22 @@
-# Shall I notify people of a LibsDisguises update?
-NotifyUpdate: true
+Permissions:
+  # By default "libsdisguises.disguise.cow" will allow all options for cow disguise unless another permission has
+  # defined otherwise.
+  # If given "libsdisguises.disguise.animals.setburning" then "libsdisguises.disguise.cow" they will still be able to
+  # use other options like "setbaby". This was provided for backwards compatibility.
+  # By turning this from 'false' to 'true' the plugin will no longer give them the options unless the player was
+  # explicitly granted it. Even if by wildcard. The above example means they can only use "setburning"
+
+  # To summerize, "libsdisguises.disguise.cow" will no longer let them do any options on the cow disguise unless it
+  # was added to their permissions
+
+  # You can read more about permissions here: https://www.spigotmc.org/wiki/lib-s-disguises-setting-up-permissions/
+  # The permission used to check OPs who may not have permissions defined, is "libsdisguises.*.*.*" which you can
+  # negate with your permissions plugin
+  ExplicitDisguises: false
+
+# Disables commands with the exception of /libsdisguises. Useful if you don't want the plugin to be used by anything
+#  but a plugin
+DisableCommands: false
 
 # The disguise plugin stores all GameProfiles inside a file called 'cache.yml'
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
@@ -48,6 +65,9 @@ Scoreboard:
   # Should the scoreboard warn you if it detects a potential conflict?
   # If self disguises are disabled, or the scoreboard is using IGNORE_SCOREBOARD then this does nothing.
   WarnConflict: true
+
+# Shall I notify those with the correct permission when there's a LibsDisguises update?
+NotifyUpdate: true
 
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'

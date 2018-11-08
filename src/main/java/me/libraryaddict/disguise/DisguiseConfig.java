@@ -66,6 +66,23 @@ public class DisguiseConfig {
     private static boolean modifyCollisions;
     private static boolean disableFriendlyInvisibles;
     private static boolean warnScoreboardConflict;
+    private static boolean explicitDisguisePermissions;
+    private static boolean disableCommands;
+
+    /**
+     * No setter provided as this cannot be changed after startup
+     */
+    public static boolean isDisableCommands() {
+        return disableCommands;
+    }
+
+    public static boolean isExplicitDisguisePermissions() {
+        return explicitDisguisePermissions;
+    }
+
+    public static void setExplicitDisguisePermissions(boolean explictDisguisePermission) {
+        explicitDisguisePermissions = explictDisguisePermission;
+    }
 
     public static Entry<String, Disguise> getCustomDisguise(String disguise) {
         for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
@@ -226,6 +243,8 @@ public class DisguiseConfig {
         setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));
         setDisableFriendlyInvisibles(config.getBoolean("Scoreboard.DisableFriendlyInvisibles"));
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
+        disableCommands = config.getBoolean("DisableCommands");
+        setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplictDisguises"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

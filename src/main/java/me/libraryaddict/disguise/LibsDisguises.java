@@ -69,23 +69,25 @@ public class LibsDisguises extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(listener, this);
 
-        registerCommand("disguise", new DisguiseCommand());
-        registerCommand("undisguise", new UndisguiseCommand());
-        registerCommand("disguiseplayer", new DisguisePlayerCommand());
-        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
-        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
-        registerCommand("disguiseentity", new DisguiseEntityCommand());
-        registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
-        registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
-        registerCommand("disguisehelp", new DisguiseHelpCommand());
-        registerCommand("disguiseclone", new DisguiseCloneCommand());
-        registerCommand("libsdisguises", new LibsDisguisesCommand());
-        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-        registerCommand("disguisemodify", new DisguiseModifyCommand());
-        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
-        registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
-        registerCommand("disguisemodifyradius",
-                new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+        if (!DisguiseConfig.isDisableCommands()) {
+            registerCommand("disguise", new DisguiseCommand());
+            registerCommand("undisguise", new UndisguiseCommand());
+            registerCommand("disguiseplayer", new DisguisePlayerCommand());
+            registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+            registerCommand("undisguiseentity", new UndisguiseEntityCommand());
+            registerCommand("disguiseentity", new DisguiseEntityCommand());
+            registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+            registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
+            registerCommand("disguisehelp", new DisguiseHelpCommand());
+            registerCommand("disguiseclone", new DisguiseCloneCommand());
+            registerCommand("libsdisguises", new LibsDisguisesCommand());
+            registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+            registerCommand("disguisemodify", new DisguiseModifyCommand());
+            registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
+            registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+            registerCommand("disguisemodifyradius",
+                    new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+        }
 
         infectWithMetrics();
     }
@@ -230,8 +232,17 @@ public class LibsDisguises extends JavaPlugin {
         });
 
         metrics.addCustomChart(new Metrics.SimplePie("targeted_disguises") {
+            /**
+             * Store value just to minimize amount of times it's called, and to persist even when not using anymore
+             */
+            private boolean targetedDisguises;
+
             @Override
             public String getValue() {
+                if (targetedDisguises) {
+                    return "Yes";
+                }
+
                 Collection<HashSet<TargetedDisguise>> list = DisguiseUtilities.getDisguises().values();
 
                 if (list.isEmpty())
@@ -242,6 +253,7 @@ public class LibsDisguises extends JavaPlugin {
                         if (disg.getObservers().isEmpty())
                             continue;
 
+                        targetedDisguises = true;
                         return "Yes";
                     }
                 }
