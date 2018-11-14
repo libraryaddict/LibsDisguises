@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -211,6 +212,57 @@ public class DisguisePermissionsTest {
 
         Assert.assertFalse("The disguise should not be allowed even with options",
                 permissions.isAllowedDisguise(firework, Arrays.asList("setBaby", "setBurning")));
+    }
+
+    @Test
+    public void testExplictPermissions() {
+        DisguiseConfig.setExplicitDisguisePermissions(true);
+
+        DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.animal",
+                "libsdisguises.disguise.zombie", "libsdisguises.disguise.skeleton.*",
+                "libsdisguises.disguise.wither.setburning", "libsdisguises.disguise.silverfish.-setburning");
+
+        Assert.assertTrue("The cow disguise should be usable",
+                permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow")));
+
+        Assert.assertFalse("The cow disguise should not be able to use setBurning", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow"), Collections.singletonList("setBurning")));
+
+        Assert.assertTrue("The zombie disguise should be usable",
+                permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Zombie")));
+
+        Assert.assertFalse("The zombie disguise should not be able to use setBurning", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Zombie"), Collections.singletonList("setBurning")));
+
+        Assert.assertTrue("The skeleton disguise should be usable",
+                permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Skeleton")));
+
+        Assert.assertTrue("The skeleton disguise should be able to use setBurning", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Skeleton"),
+                        Collections.singletonList("setBurning")));
+
+        Assert.assertTrue("The wither disguise should be usable",
+                permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Wither")));
+
+        Assert.assertTrue("The wither disguise should be able to use setBurning", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Wither"), Collections.singletonList("setBurning")));
+
+        Assert.assertFalse("The wither disguise should not be able to use setSprinting", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Wither"),
+                        Collections.singletonList("setSprinting")));
+
+        Assert.assertTrue("The silverfish disguise should be usable",
+                permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish")));
+
+        Assert.assertFalse("The silverfish disguise should not be able to use setBurning", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish"),
+                        Collections.singletonList("setBurning")));
+
+        Assert.assertTrue("The silverfish disguise should be able to use setSprinting", permissions
+                .isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish"),
+                        Collections.singletonList("setSprinting")));
+
+        DisguiseConfig.setExplicitDisguisePermissions(false);
     }
 
     private DisguisePermissions createPermissions(String commandName, boolean isOp, String... perms) {
