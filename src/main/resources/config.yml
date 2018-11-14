@@ -6,7 +6,7 @@ Permissions:
   # By turning this from 'false' to 'true' the plugin will no longer give them the options unless the player was
   # explicitly granted it. Even if by wildcard. The above example means they can only use "setburning"
 
-  # To summerize, "libsdisguises.disguise.cow" will no longer let them do any options on the cow disguise unless it
+  # To summarize, "libsdisguises.disguise.cow" will no longer let them do any options on the cow disguise unless it
   # was added to their permissions
 
   # You can read more about permissions here: https://www.spigotmc.org/wiki/lib-s-disguises-setting-up-permissions/
