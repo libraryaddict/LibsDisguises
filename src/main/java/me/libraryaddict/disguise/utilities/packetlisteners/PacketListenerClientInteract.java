@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PacketListenerClientInteract extends PacketAdapter {
     public PacketListenerClientInteract(LibsDisguises plugin) {
@@ -69,7 +70,12 @@ public class PacketListenerClientInteract extends PacketAdapter {
                 DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
                         interactType == EnumWrappers.EntityUseAction.ATTACK);
 
-                Bukkit.getPluginManager().callEvent(selfEvent);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.getPluginManager().callEvent(selfEvent);
+                    }
+                }.runTask(LibsDisguises.getInstance());
             }
         }
 
