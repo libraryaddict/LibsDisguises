@@ -24,6 +24,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
 import me.libraryaddict.disguise.utilities.json.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -216,11 +217,13 @@ public class DisguiseUtilities {
     }
 
     public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
-        if (!isSavedDisguise(entityUUID) || !LibsPremium.isPremium())
+        if (!isSavedDisguise(entityUUID) || !LibsPremium.isPremium()) {
             return new Disguise[0];
+        }
 
-        if (!savedDisguises.exists())
+        if (!savedDisguises.exists()) {
             savedDisguises.mkdirs();
+        }
 
         File disguiseFile = new File(savedDisguises, entityUUID.toString());
 
@@ -230,15 +233,19 @@ public class DisguiseUtilities {
         }
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(disguiseFile));
-            String cached = reader.readLine();
-            reader.close();
+            String cached = FileUtils.readFileToString(disguiseFile, "UTF-8");
 
             if (remove) {
                 removeSavedDisguise(entityUUID);
             }
 
-            return gson.fromJson(cached, Disguise[].class);
+            Disguise[] disguises = gson.fromJson(cached, Disguise[].class);
+
+            if (disguises == null) {
+                return new Disguise[0];
+            }
+
+            return disguises;
         }
         catch (Exception e) {
             getLogger().severe("Malformed disguise for " + entityUUID);
