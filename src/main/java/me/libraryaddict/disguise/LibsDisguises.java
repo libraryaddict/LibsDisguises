@@ -209,6 +209,14 @@ public class LibsDisguises extends JavaPlugin {
             }
         });
 
+
+        metrics.addCustomChart(new Metrics.SimplePie("commands") {
+            @Override
+            public String getValue() {
+                return DisguiseConfig.isDisableCommands() ? "Enabled" : "Disabled";
+            }
+        });
+
         metrics.addCustomChart(new Metrics.SimplePie("spigot") {
             @Override
             public String getValue() {
