@@ -601,6 +601,34 @@ public class DisguiseListener implements Listener {
                 disguise.removeDisguise();
             }
         }
+
+        if (DisguiseAPI.isSelfDisguised(player)) {
+            Disguise disguise = DisguiseAPI.getDisguise(player, player);
+
+            // If further than 64 blocks, resend the self disguise
+            if (disguise != null && disguise.isSelfDisguiseVisible() && from.distanceSquared(to) > 4096) {
+                // Send a packet to destroy the fake entity so that we can resend it without glitches
+                PacketContainer packet = DisguiseUtilities.getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
+
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (event.isCancelled() || !disguise.isDisguiseInUse()) {
+                            return;
+                        }
+
+                        DisguiseUtilities.sendSelfDisguise(player, (TargetedDisguise) disguise);
+                    }
+                }.runTaskLater(LibsDisguises.getInstance(), 4);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
