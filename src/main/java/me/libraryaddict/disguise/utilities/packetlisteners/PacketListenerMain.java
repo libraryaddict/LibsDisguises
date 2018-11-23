@@ -66,7 +66,7 @@ public class PacketListenerMain extends PacketAdapter {
             return;
         }
 
-        packets.setPacketType(event.getPacketType());
+        packets.setSpawnPacketCheck(event.getPacketType());
 
         event.setCancelled(true);
 

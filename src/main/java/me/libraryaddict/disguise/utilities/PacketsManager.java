@@ -60,7 +60,7 @@ public class PacketsManager {
             return disguise;
         }
 
-        public void setPacketType(PacketType type) {
+        public void setSpawnPacketCheck(PacketType type) {
             isSpawnPacket = type.name().contains("SPAWN") && type.name().contains("ENTITY");
         }
 
@@ -78,7 +78,7 @@ public class PacketsManager {
 
         public void addDelayedPacket(PacketContainer packet, int ticksDelayed) {
             if (!delayedPackets.containsKey(ticksDelayed))
-                delayedPackets.put(ticksDelayed, new ArrayList<PacketContainer>());
+                delayedPackets.put(ticksDelayed, new ArrayList<>());
 
             delayedPackets.get(ticksDelayed).add(packet);
         }
@@ -681,7 +681,7 @@ public class PacketsManager {
         soundsListener = new PacketListenerSounds(libsDisguises);
 
         // Self disguise (/vsd) listener
-        viewDisguisesListener = new PacketListenerViewDisguises(libsDisguises);
+        viewDisguisesListener = new PacketListenerViewSelfDisguise(libsDisguises);
 
         inventoryListener = new PacketListenerInventory(libsDisguises);
     }
@@ -951,13 +951,19 @@ public class PacketsManager {
                     sentPacket.getType() == Server.REL_ENTITY_MOVE) {
                 if (disguise.getType() == DisguiseType.RABBIT && (sentPacket.getType() == Server.REL_ENTITY_MOVE ||
                         sentPacket.getType() == Server.REL_ENTITY_MOVE_LOOK)) {
-                    // Rabbit robbing...
-                    if (entity.getMetadata("LibsRabbitHop").isEmpty() ||
-                            System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() < 100 ||
-                            System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() > 500) {
-                        if (entity.getMetadata("LibsRabbitHop").isEmpty() ||
-                                System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong() >
-                                        500) {
+                    // When did the rabbit disguise last hop
+                    long lastHop = 999999;
+
+                    // If hop meta exists, set the last hop time
+                    if (!entity.getMetadata("LibsRabbitHop").isEmpty()) {
+                        // Last hop was 3 minutes ago, so subtract current time with the last hop time and get 3
+                        // minutes ago in milliseconds
+                        lastHop = System.currentTimeMillis() - entity.getMetadata("LibsRabbitHop").get(0).asLong();
+                    }
+
+                    // If last hop was less than 0.1 or more than 0.5 seconds ago
+                    if (lastHop < 100 || lastHop > 500) {
+                        if (lastHop > 500) {
                             entity.removeMetadata("LibsRabbitHop", libsDisguises);
                             entity.setMetadata("LibsRabbitHop",
                                     new FixedMetadataValue(libsDisguises, System.currentTimeMillis()));

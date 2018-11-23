@@ -1268,122 +1268,131 @@ public class DisguiseUtilities {
         String originalTeam = preDisguiseTeam.remove(player.getUniqueId());
         String teamDisguise = disguiseTeam.remove(player.getUniqueId());
 
-        if (teamDisguise != null && DisguiseConfig.getPushingOption() != DisguisePushing.IGNORE_SCOREBOARD) {
-            // Code replace them back onto their original scoreboard team
-            Scoreboard scoreboard = player.getScoreboard();
-            Team team = originalTeam == null ? null : scoreboard.getTeam(originalTeam);
-            Team ldTeam = null;
+        if (teamDisguise == null || DisguiseConfig.getPushingOption() == DisguisePushing.IGNORE_SCOREBOARD) {
+            return;
+        }
 
-            for (Team t : scoreboard.getTeams()) {
-                if (!t.hasEntry(player.getName()))
-                    continue;
+        // Code replace them back onto their original scoreboard team
+        Scoreboard scoreboard = player.getScoreboard();
+        Team team = originalTeam == null ? null : scoreboard.getTeam(originalTeam);
+        Team ldTeam = null;
 
-                ldTeam = t;
-                break;
-            }
+        for (Team t : scoreboard.getTeams()) {
+            if (!t.hasEntry(player.getName()))
+                continue;
 
-            if (DisguiseConfig.isWarnScoreboardConflict()) {
-                if (ldTeam == null || !ldTeam.getName().equals(teamDisguise)) {
-                    getLogger().warning("Scoreboard conflict, the self disguise player was not on the expected team!");
-                } else {
-                    OptionStatus collisions = ldTeam.getOption(Option.COLLISION_RULE);
+            ldTeam = t;
+            break;
+        }
 
-                    if (collisions != OptionStatus.NEVER && collisions != OptionStatus.FOR_OTHER_TEAMS) {
-                        getLogger().warning(
-                                "Scoreboard conflict, the collisions for a self disguise player team has been " +
-                                        "unexpectedly modifed!");
-                    }
+        if (DisguiseConfig.isWarnScoreboardConflict()) {
+            if (ldTeam == null || !ldTeam.getName().equals(teamDisguise)) {
+                getLogger().warning("Scoreboard conflict, the self disguise player was not on the expected team!");
+            } else {
+                OptionStatus collisions = ldTeam.getOption(Option.COLLISION_RULE);
+
+                if (collisions != OptionStatus.NEVER && collisions != OptionStatus.FOR_OTHER_TEAMS) {
+                    getLogger().warning(
+                            "Scoreboard conflict, the collisions for a self disguise player team has been " +
+                                    "unexpectedly modifed!");
                 }
             }
+        }
 
-            if (ldTeam != null) {
-                if (!ldTeam.getName().equals("LD_Pushing") && !ldTeam.getName().endsWith("_LDP")) {
-                    // Its not a team assigned by Lib's Disguises
-                    ldTeam = null;
-                }
+        if (ldTeam != null) {
+            if (!ldTeam.getName().equals("LD_Pushing") && !ldTeam.getName().endsWith("_LDP")) {
+                // Its not a team assigned by Lib's Disguises
+                ldTeam = null;
             }
+        }
 
-            if (team != null) {
-                team.addEntry(player.getName());
-            } else if (ldTeam != null) {
-                ldTeam.removeEntry(player.getName());
-            }
+        if (team != null) {
+            team.addEntry(player.getName());
+        } else if (ldTeam != null) {
+            ldTeam.removeEntry(player.getName());
+        }
 
-            if (ldTeam != null && ldTeam.getEntries().isEmpty()) {
-                ldTeam.unregister();
-            }
+        if (ldTeam != null && ldTeam.getEntries().isEmpty()) {
+            ldTeam.unregister();
         }
     }
 
     public static void setupSelfDisguiseScoreboard(Player player) {
+        // They're already in a disguise team
+        if (disguiseTeam.containsKey(player.getUniqueId())) {
+            return;
+        }
+
         DisguisePushing pOption = DisguiseConfig.getPushingOption();
 
-        if (pOption != DisguisePushing.IGNORE_SCOREBOARD) {
-            // Code to stop player pushing
-            Scoreboard scoreboard = player.getScoreboard();
-            Team prevTeam = null;
-            Team ldTeam = null;
-            String ldTeamName = "LD_Pushing";
+        if (pOption == DisguisePushing.IGNORE_SCOREBOARD) {
+            return;
+        }
 
-            for (Team t : scoreboard.getTeams()) {
-                if (!t.hasEntry(player.getName()))
-                    continue;
+        // Code to stop player pushing
+        Scoreboard scoreboard = player.getScoreboard();
+        Team prevTeam = null;
+        Team ldTeam = null;
+        String ldTeamName = "LD_Pushing";
 
-                prevTeam = t;
-                break;
-            }
+        for (Team t : scoreboard.getTeams()) {
+            if (!t.hasEntry(player.getName()))
+                continue;
 
-            // If the player is in a team already and the team isn't one controlled by Lib's Disguises
-            if (prevTeam != null && !(prevTeam.getName().equals("LD_Pushing") || prevTeam.getName().endsWith("_LDP"))) {
-                // If we're creating a scoreboard
-                if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
-                    // Remember his old team so we can give him it back later
-                    preDisguiseTeam.put(player.getUniqueId(), prevTeam.getName());
-                } else {
-                    // We're modifying the scoreboard
-                    ldTeam = prevTeam;
-                }
-            } else {
-                prevTeam = null;
-            }
+            prevTeam = t;
+            break;
+        }
 
-            // If we are creating a new scoreboard because the current one must not be modified
+        // If the player is in a team already and the team isn't one controlled by Lib's Disguises
+        if (prevTeam != null && !(prevTeam.getName().equals("LD_Pushing") || prevTeam.getName().endsWith("_LDP"))) {
+            // If we're creating a scoreboard
             if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
-                // If they have a team, we'll reuse that name. Otherwise go for another name
-                ldTeamName = (prevTeam == null ? "No Team" : prevTeam.getName());
-
-                // Give the teamname a custom name
-                ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
+                // Remember his old team so we can give him it back later
+                preDisguiseTeam.put(player.getUniqueId(), prevTeam.getName());
+            } else {
+                // We're modifying the scoreboard
+                ldTeam = prevTeam;
             }
+        } else {
+            prevTeam = null;
+        }
 
-            if (ldTeam == null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
-                ldTeam = scoreboard.registerNewTeam(ldTeamName);
+        // If we are creating a new scoreboard because the current one must not be modified
+        if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
+            // If they have a team, we'll reuse that name. Otherwise go for another name
+            ldTeamName = (prevTeam == null ? "No Team" : prevTeam.getName());
+
+            // Give the teamname a custom name
+            ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
+        }
+
+        if (ldTeam == null && (ldTeam = scoreboard.getTeam(ldTeamName)) == null) {
+            ldTeam = scoreboard.registerNewTeam(ldTeamName);
+        }
+
+        disguiseTeam.put(player.getUniqueId(), ldTeam.getName());
+
+        if (!ldTeam.hasEntry(player.getName()))
+            ldTeam.addEntry(player.getName());
+
+        if (pOption == DisguisePushing.CREATE_SCOREBOARD && prevTeam != null) {
+            ldTeam.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
+            ldTeam.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
+            ldTeam.setDisplayName(prevTeam.getDisplayName());
+            ldTeam.setPrefix(prevTeam.getPrefix());
+            ldTeam.setSuffix(prevTeam.getSuffix());
+
+            for (Option option : Team.Option.values()) {
+                ldTeam.setOption(option, prevTeam.getOption(option));
             }
+        }
 
-            disguiseTeam.put(player.getUniqueId(), ldTeam.getName());
+        if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER && DisguiseConfig.isModifyCollisions()) {
+            ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+        }
 
-            if (!ldTeam.hasEntry(player.getName()))
-                ldTeam.addEntry(player.getName());
-
-            if (pOption == DisguisePushing.CREATE_SCOREBOARD && prevTeam != null) {
-                ldTeam.setAllowFriendlyFire(prevTeam.allowFriendlyFire());
-                ldTeam.setCanSeeFriendlyInvisibles(prevTeam.canSeeFriendlyInvisibles());
-                ldTeam.setDisplayName(prevTeam.getDisplayName());
-                ldTeam.setPrefix(prevTeam.getPrefix());
-                ldTeam.setSuffix(prevTeam.getSuffix());
-
-                for (Option option : Team.Option.values()) {
-                    ldTeam.setOption(option, prevTeam.getOption(option));
-                }
-            }
-
-            if (ldTeam.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER && DisguiseConfig.isModifyCollisions()) {
-                ldTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-            }
-
-            if (ldTeam.canSeeFriendlyInvisibles() && DisguiseConfig.isDisableFriendlyInvisibles()) {
-                ldTeam.setCanSeeFriendlyInvisibles(false);
-            }
+        if (ldTeam.canSeeFriendlyInvisibles() && DisguiseConfig.isDisableFriendlyInvisibles()) {
+            ldTeam.setCanSeeFriendlyInvisibles(false);
         }
     }
 
@@ -1645,7 +1654,7 @@ public class DisguiseUtilities {
             if (transformed.isUnhandled())
                 transformed.addPacket(packet);
 
-            transformed.setPacketType(packet.getType());
+            transformed.setSpawnPacketCheck(packet.getType());
 
             for (PacketContainer p : transformed.getPackets()) {
                 p = p.deepClone();
@@ -1668,7 +1677,7 @@ public class DisguiseUtilities {
     public static void setupFakeDisguise(final Disguise disguise) {
         Entity e = disguise.getEntity();
 
-        // If the disguises entity is null, or the disguised entity isn't a player return
+        // If the disguises entity is null, or the disguised entity isn't a player; return
         if (!(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) ||
                 !getDisguises().get(e.getUniqueId()).contains(disguise)) {
             return;
