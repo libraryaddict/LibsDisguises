@@ -109,7 +109,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             transformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
-                event.setPacket(packet.deepClone());
+                event.setPacket(packet = packet.deepClone());
 
                 for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
                     if (watch.getIndex() == 0) {
