@@ -18,7 +18,7 @@ Permissions:
 #  but a plugin
 DisableCommands: false
 
-# The disguise plugin stores all GameProfiles inside a file called 'cache.yml'
+# The disguise plugin stores all GameProfiles inside a folder called "GameProfiles" as a local cache
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
 # However some people may prefer to disable this.
 # Even if you disable this, if there was disguises in the cache already then it will use them
