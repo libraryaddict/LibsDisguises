@@ -82,6 +82,7 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
         JsonObject obj = (JsonObject) context.serialize(src);
 
         obj.addProperty("flagType", src.getClass().getName());
+
         try {
             Method method = FlagWatcher.class.getDeclaredMethod("getDisguise");
             method.setAccessible(true);
