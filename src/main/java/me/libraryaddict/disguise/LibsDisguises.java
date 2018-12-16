@@ -103,7 +103,7 @@ public class LibsDisguises extends JavaPlugin {
         String version = getDescription().getVersion();
 
         // If a release build, attach build number
-        if (!isReleaseBuild() && LibsPremium.isPremium()) {
+        if (!isReleaseBuild() || !LibsPremium.isPremium()) {
             version += "-";
 
             // 9.7.0-SNAPSHOT-b30
