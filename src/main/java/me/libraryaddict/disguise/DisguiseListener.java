@@ -96,7 +96,7 @@ public class DisguiseListener implements Listener {
         }
 
         // If build number is null, or not a number. Then we can't check snapshots regardless
-        if (plugin.getBuildNo() == null || !plugin.getBuildNo().matches("[0-9]+")) {
+        if (!plugin.isNumberedBuild()) {
             return true;
         }
 

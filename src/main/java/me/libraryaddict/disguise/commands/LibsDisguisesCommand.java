@@ -57,7 +57,13 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             String version = disguises.getDescription().getVersion();
 
             if (!disguises.isReleaseBuild()) {
-                version += "-b" + disguises.getBuildNo();
+                version += "-";
+
+                if (disguises.isNumberedBuild()) {
+                    version += "b";
+                }
+
+                version += disguises.getBuildNo();
             }
 
             sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + version +

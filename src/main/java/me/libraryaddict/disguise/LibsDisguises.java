@@ -43,8 +43,7 @@ public class LibsDisguises extends JavaPlugin {
 
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
 
-        boolean hashBuild = getBuildNo() != null && getBuildNo().matches("[0-9]+");
-        getLogger().info("Jenkins Build: " + (hashBuild ? "#" : "") + getBuildNo());
+        getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
         LibsPremium.check(getDescription().getVersion());
 
@@ -116,8 +115,15 @@ public class LibsDisguises extends JavaPlugin {
 
         // If a release build, attach build number
         if (!isReleaseBuild()) {
+            version += "-";
+
             // 9.7.0-SNAPSHOT-b30
-            version += "-b" + getBuildNo();
+            if (isNumberedBuild()) {
+                version += "b";
+            }
+            // else 9.7.0-SNAPSHOT-unknown
+
+            version += getBuildNo();
         }
 
         Metrics metrics = new Metrics(this, version);
@@ -312,6 +318,10 @@ public class LibsDisguises extends JavaPlugin {
 
     public String getBuildNo() {
         return buildNumber;
+    }
+
+    public boolean isNumberedBuild() {
+        return getBuildNo() != null && getBuildNo().matches("[0-9]+");
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {
