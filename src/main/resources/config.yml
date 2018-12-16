@@ -72,6 +72,12 @@ NotifyUpdate: true
 # Whats the permission to get the notification?
 Permission: 'libsdisguises.update'
 
+# Where should the plugin check for updates?
+# SAME_BUILDS - Will check snapshots if you're not using a release build
+# RELEASES - Only check for actual releases
+# SNAPSHOTS - Only check for new snapshots
+UpdatesBranch: SAME_BUILDS
+
 # Whats the max size allowed for command disguiseradius
 DisguiseRadiusMax: 50
 

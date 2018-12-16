@@ -8,12 +8,17 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.*;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -78,6 +83,20 @@ public class ReflectionManager {
         entityCountField = getNmsField("Entity", "entityCount");
 
         entityCountField.setAccessible(true);
+    }
+
+    public static YamlConfiguration getPluginYaml(ClassLoader loader) {
+        try (InputStream stream = loader.getResourceAsStream("plugin.yml")) {
+            YamlConfiguration config = new YamlConfiguration();
+            config.loadFromString(IOUtils.toString(stream, "UTF-8"));
+
+            return config;
+        }
+        catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static int getNewEntityId() {

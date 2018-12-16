@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -47,60 +48,23 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 public class DisguiseListener implements Listener {
-
     private String currentVersion;
     private HashMap<String, Boolean[]> disguiseClone = new HashMap<>();
     private HashMap<String, Disguise> disguiseEntity = new HashMap<>();
     private HashMap<String, String[]> disguiseModify = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private String latestVersion;
+    private LibsMsg updateMessage;
     private LibsDisguises plugin;
     private BukkitTask updaterTask;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
 
-        if (plugin.getConfig().getBoolean("NotifyUpdate")) {
-            currentVersion = plugin.getDescription().getVersion();
-
-            updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        UpdateChecker updateChecker = new UpdateChecker();
-                        updateChecker.checkUpdate("v" + currentVersion);
-
-                        latestVersion = updateChecker.getLatestVersion();
-
-                        if (latestVersion == null) {
-                            return;
-                        }
-
-                        latestVersion = "v" + latestVersion;
-
-                        Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    if (!p.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
-                                        continue;
-                                    }
-
-                                    p.sendMessage(LibsMsg.UPDATE_READY.get(currentVersion, latestVersion));
-                                }
-                            }
-                        });
-                    }
-                    catch (Exception ex) {
-                        DisguiseUtilities.getLogger()
-                                .warning(String.format("Failed to check for update: %s", ex.getMessage()));
-                    }
-                }
-            }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
-            // 20 ticks * 60 seconds * 60 minutes * 6 hours
-        }
+        runUpdateScheduler();
 
         if (!DisguiseConfig.isSaveEntityDisguises())
             return;
@@ -120,6 +84,90 @@ public class DisguiseListener implements Listener {
                 }
             }
         }
+    }
+
+    private boolean isCheckReleases() {
+        if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.RELEASES) {
+            return true;
+        }
+
+        if (DisguiseConfig.getUpdatesBranch() == DisguiseConfig.UpdatesBranch.SAME_BUILDS && plugin.isReleaseBuild()) {
+            return true;
+        }
+
+        // If build number is null, or not a number. Then we can't check snapshots regardless
+        if (plugin.getBuildNo() == null || !plugin.getBuildNo().matches("[0-9]+")) {
+            return true;
+        }
+
+        // Check snapshots
+        return false;
+    }
+
+    private void runUpdateScheduler() {
+        if (!plugin.getConfig().getBoolean("NotifyUpdate")) {
+            return;
+        }
+
+        updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    UpdateChecker updateChecker = new UpdateChecker("32453");
+                    boolean checkReleases = isCheckReleases();
+
+                    if (checkReleases) {
+                        currentVersion = plugin.getDescription().getVersion();
+                        updateChecker.checkOfficialUpdate(currentVersion);
+                        String version = updateChecker.getLatestVersion();
+
+                        if (version == null) {
+                            return;
+                        }
+
+                        latestVersion = version;
+                        updateMessage = LibsMsg.UPDATE_READY;
+                    } else {
+                        updateChecker.checkSnapshotUpdate(Integer.parseInt(plugin.getBuildNo()));
+
+                        if (updateChecker.getLatestSnapshot() <= 0) {
+                            return;
+                        }
+
+                        currentVersion = plugin.getBuildNo();
+                        latestVersion = "" + updateChecker.getLatestSnapshot();
+                        updateMessage = LibsMsg.UPDATE_READY_SNAPSHOT;
+                    }
+
+                    Bukkit.getScheduler().runTask(plugin, new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyUpdate(Bukkit.getConsoleSender());
+
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                notifyUpdate(p);
+                            }
+                        }
+                    });
+                }
+                catch (Exception ex) {
+                    DisguiseUtilities.getLogger()
+                            .warning(String.format("Failed to check for update: %s", ex.getMessage()));
+                }
+            }
+        }, 0, (20 * TimeUnit.HOURS.toSeconds(6))); // Check every 6 hours
+    }
+
+    private void notifyUpdate(CommandSender player) {
+        if (!player.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
+            return;
+        }
+
+        if (latestVersion == null) {
+            return;
+        }
+
+        player.sendMessage(updateMessage.get(currentVersion, latestVersion));
     }
 
     public void cleanup() {
@@ -284,9 +332,7 @@ public class DisguiseListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
 
-        if (latestVersion != null && p.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
-            p.sendMessage(LibsMsg.UPDATE_READY.get(currentVersion, latestVersion));
-        }
+        notifyUpdate(p);
 
         if (DisguiseConfig.isBedPacketsEnabled()) {
             chunkMove(p, p.getLocation(), null);

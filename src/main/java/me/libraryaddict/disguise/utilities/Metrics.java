@@ -31,8 +31,8 @@ public class Metrics {
         final String examplePackage = new String(
                 new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
         // We want to make sure nobody just copy & pastes the example and use the wrong package names
-        if (Metrics.class.getPackage().getName().equals(defaultPackage) || Metrics.class.getPackage().getName()
-                .equals(examplePackage)) {
+        if (Metrics.class.getPackage().getName().equals(defaultPackage) ||
+                Metrics.class.getPackage().getName().equals(examplePackage)) {
             throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
         }
     }
@@ -51,6 +51,8 @@ public class Metrics {
 
     // The plugin
     private final JavaPlugin plugin;
+    // The plugin version
+    private final String version;
 
     // A list with all custom charts
     private final List<CustomChart> charts = new ArrayList<>();
@@ -60,11 +62,13 @@ public class Metrics {
      *
      * @param plugin The plugin which stats should be submitted.
      */
-    public Metrics(JavaPlugin plugin) {
+    public Metrics(JavaPlugin plugin, String version) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null!");
         }
+
         this.plugin = plugin;
+        this.version = version;
 
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
@@ -83,8 +87,11 @@ public class Metrics {
 
             // Inform the server owners about bStats
             config.options()
-                    .header("bStats collects some data for plugin authors like how many servers are using their plugins.\n" + "To honor their work, you should not disable it.\n" + "This has nearly no effect on the server performance!\n" + "Check out https://bStats.org/ to learn more :)")
-                    .copyDefaults(true);
+                    .header("bStats collects some data for plugin authors like how many servers are using their " +
+                            "plugins.\n" +
+                            "To honor their work, you should not disable it.\n" +
+                            "This has nearly no effect on the server performance!\n" +
+                            "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
             try {
                 config.save(configFile);
             }
@@ -140,8 +147,10 @@ public class Metrics {
                     timer.cancel();
                     return;
                 }
-                // Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit scheduler
-                // Don't be afraid! The connection to the bStats server is still async, only the stats collection is sync ;)
+                // Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit
+                // scheduler
+                // Don't be afraid! The connection to the bStats server is still async, only the stats collection is
+                // sync ;)
                 Bukkit.getScheduler().runTask(plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -165,10 +174,9 @@ public class Metrics {
         JSONObject data = new JSONObject();
 
         String pluginName = plugin.getDescription().getName();
-        String pluginVersion = plugin.getDescription().getVersion();
 
         data.put("pluginName", pluginName); // Append the name of the plugin
-        data.put("pluginVersion", pluginVersion); // Append the version of the plugin
+        data.put("pluginVersion", version); // Append the version of the plugin
         JSONArray customCharts = new JSONArray();
         for (CustomChart customChart : charts) {
             // Add the data of the custom charts

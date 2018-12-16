@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,23 +28,32 @@ import java.util.HashSet;
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
+    private String buildNumber;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
-
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
             saveResource("disguises.yml", false);
         }
+
+        YamlConfiguration pluginYml = ReflectionManager.getPluginYaml(getClassLoader());
+        buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
+
+        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
+
+        boolean hashBuild = getBuildNo() != null && getBuildNo().matches("[0-9]+");
+        getLogger().info("Jenkins Build: " + (hashBuild ? "#" : "") + getBuildNo());
 
         LibsPremium.check(getDescription().getVersion());
 
         if (ReflectionManager.getMinecraftVersion().startsWith("1.13")) {
             if (!LibsPremium.isPremium()) {
                 getLogger().severe("You must purchase the plugin to use 1.13!");
-                getLogger().severe("This will be released in just a few days, or you can buy it now for 50% off with all premium-only features included!");
+                getLogger()
+                        .severe("This will be released in just a few days, or you can buy it now for 50% off with all" +
+                                " premium-only features included!");
                 getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
                         "Lib's Disguises plugin folder");
                 getPluginLoader().disablePlugin(this);
@@ -92,8 +102,25 @@ public class LibsDisguises extends JavaPlugin {
         infectWithMetrics();
     }
 
+    @Override
+    public void onDisable() {
+        DisguiseUtilities.saveDisguises();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            DisguiseUtilities.removeSelfDisguiseScoreboard(player);
+        }
+    }
+
     private void infectWithMetrics() {
-        Metrics metrics = new Metrics(this);
+        String version = getDescription().getVersion();
+
+        // If a release build, attach build number
+        if (!isReleaseBuild()) {
+            // 9.7.0-SNAPSHOT-b30
+            version += "-b" + getBuildNo();
+        }
+
+        Metrics metrics = new Metrics(this, version);
 
         final String premium = LibsPremium.isPremium() ?
                 getDescription().getVersion().contains("SNAPSHOT") ? "Paid Builds" : "Paid Plugin" : "Free Builds";
@@ -209,7 +236,6 @@ public class LibsDisguises extends JavaPlugin {
             }
         });
 
-
         metrics.addCustomChart(new Metrics.SimplePie("commands") {
             @Override
             public String getValue() {
@@ -238,6 +264,15 @@ public class LibsDisguises extends JavaPlugin {
                 return updates ? "Enabled" : "Disabled";
             }
         });
+
+        if (getBuildNo() != null) {
+            metrics.addCustomChart(new Metrics.SimplePie("build_number") {
+                @Override
+                public String getValue() {
+                    return getBuildNo();
+                }
+            });
+        }
 
         metrics.addCustomChart(new Metrics.SimplePie("targeted_disguises") {
             /**
@@ -271,13 +306,12 @@ public class LibsDisguises extends JavaPlugin {
         });
     }
 
-    @Override
-    public void onDisable() {
-        DisguiseUtilities.saveDisguises();
+    public boolean isReleaseBuild() {
+        return !getDescription().getVersion().contains("-SNAPSHOT");
+    }
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            DisguiseUtilities.removeSelfDisguiseScoreboard(player);
-        }
+    public String getBuildNo() {
+        return buildNumber;
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {

@@ -22,6 +22,12 @@ public class DisguiseConfig {
         CREATE_SCOREBOARD;
     }
 
+    public enum UpdatesBranch {
+        SAME_BUILDS,
+        SNAPSHOTS,
+        RELEASES
+    }
+
     private static boolean animationEnabled;
     private static boolean bedEnabled;
     private static boolean blowDisguisesWhenAttacking;
@@ -69,6 +75,15 @@ public class DisguiseConfig {
     private static boolean explicitDisguisePermissions;
     private static boolean disableCommands;
     private static int uuidGeneratedVersion;
+    private static UpdatesBranch updatesBranch = UpdatesBranch.SAME_BUILDS;
+
+    public static UpdatesBranch getUpdatesBranch() {
+        return updatesBranch;
+    }
+
+    public static void setUpdatesBranch(UpdatesBranch newBranch) {
+        updatesBranch = newBranch;
+    }
 
     public static int getUUIDGeneratedVersion() {
         return uuidGeneratedVersion;
@@ -261,6 +276,14 @@ public class DisguiseConfig {
         }
 
         try {
+            setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase()));
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") +
+                    "' to a valid option for UpdatesBranch");
+        }
+
+        try {
             String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name())
                     .toUpperCase();
 
@@ -270,7 +293,7 @@ public class DisguiseConfig {
             disablePushing = DisguisePushing.valueOf(option);
         }
         catch (Exception ex) {
-            DisguiseUtilities.getLogger().info("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
+            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
                     "' to a valid option for SelfDisguisesTeam");
         }
 

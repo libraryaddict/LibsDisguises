@@ -2,9 +2,11 @@ name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
 description: A disguise plugin with various disguises.
 version: ${project.version}
+build-number: ${build.number}
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 depend: [ProtocolLib]
+api-version: 1.13
 commands:
     libsdisguises:
       permission: libsdisguises.seecmd.libsdisguises
@@ -129,5 +131,3 @@ permissions:
       description: See the /disguisemodifyradius command in tab-completion
     libsdisguises.seecmd.disguisemodifyentity:
       description: See the /disguisemodifyentity command in tab-completion
-
-api-version: 1.13
