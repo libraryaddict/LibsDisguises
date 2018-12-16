@@ -47,18 +47,7 @@ public class LibsDisguises extends JavaPlugin {
 
         LibsPremium.check(getDescription().getVersion());
 
-        if (ReflectionManager.getMinecraftVersion().startsWith("1.13")) {
-            if (!LibsPremium.isPremium()) {
-                getLogger().severe("You must purchase the plugin to use 1.13!");
-                getLogger()
-                        .severe("This will be released in just a few days, or you can buy it now for 50% off with all" +
-                                " premium-only features included!");
-                getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
-                        "Lib's Disguises plugin folder");
-                getPluginLoader().disablePlugin(this);
-                return;
-            }
-        } else {
+        if (!ReflectionManager.getMinecraftVersion().startsWith("1.13")) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
                     "intended for 1.13!");
             getPluginLoader().disablePlugin(this);
