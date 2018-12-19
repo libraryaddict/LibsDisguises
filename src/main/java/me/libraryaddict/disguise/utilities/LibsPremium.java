@@ -57,7 +57,12 @@ public class LibsPremium {
                                         ") in the folder!");
                     }
                 }
+                catch (ClassNotFoundException ex) {
+                    DisguiseUtilities.getLogger()
+                            .warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() + ")");
+                }
                 catch (Exception ex) {
+                    DisguiseUtilities.getLogger().warning("Error while trying to handle the file " + file.getName());
                     ex.printStackTrace();
                     // Don't print off errors
                 }
