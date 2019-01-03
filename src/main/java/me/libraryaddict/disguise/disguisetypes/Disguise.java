@@ -19,8 +19,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.PacketsManager;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -233,11 +232,10 @@ public abstract class Disguise {
                                 lookPacket.getIntegers().write(0, getEntity().getEntityId());
                                 Location loc = getEntity().getLocation();
 
-                                mods.write(4, PacketsManager.getYaw(getType(), getEntity().getType(),
+                                mods.write(4, DisguiseUtilities.getYaw(getType(), getEntity().getType(),
                                         (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                                mods.write(5, PacketsManager
-                                        .getPitch(getType(), DisguiseType.getType(getEntity().getType()),
-                                                (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
+                                mods.write(5, DisguiseUtilities.getPitch(getType(), getEntity().getType(),
+                                        (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
                                 if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
                                     PacketContainer selfLookPacket = lookPacket.shallowClone();

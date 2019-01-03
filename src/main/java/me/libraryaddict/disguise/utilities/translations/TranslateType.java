@@ -1,6 +1,8 @@
-package me.libraryaddict.disguise.utilities;
+package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;

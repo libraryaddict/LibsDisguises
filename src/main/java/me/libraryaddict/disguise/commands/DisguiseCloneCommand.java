@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;

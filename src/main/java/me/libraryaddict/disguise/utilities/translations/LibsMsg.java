@@ -1,5 +1,6 @@
-package me.libraryaddict.disguise.utilities;
+package me.libraryaddict.disguise.utilities.translations;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
 

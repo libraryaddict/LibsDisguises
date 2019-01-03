@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
-import me.libraryaddict.disguise.utilities.LibsMsg;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 
 /**
  * Created by libraryaddict on 7/09/2018.

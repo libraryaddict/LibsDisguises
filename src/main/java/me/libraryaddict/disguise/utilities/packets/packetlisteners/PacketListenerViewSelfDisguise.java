@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.packetlisteners;
+package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
@@ -12,9 +12,9 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.PacketsManager;
-import me.libraryaddict.disguise.utilities.PacketsManager.LibsPackets;
-import me.libraryaddict.disguise.utilities.ReflectionManager;
+import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -67,7 +67,8 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             }
 
             // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-            LibsPackets transformed = PacketsManager.transformPacket(packet, disguise, observer, observer);
+            LibsPackets transformed = PacketsManager.getPacketsHandler()
+                    .transformPacket(packet, disguise, observer, observer);
 
             if (transformed.isUnhandled()) {
                 transformed.getPackets().add(packet);

@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser.params;
 
-import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 
 import java.util.HashMap;

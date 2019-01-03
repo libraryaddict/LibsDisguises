@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities;
+package me.libraryaddict.disguise.utilities.metrics;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

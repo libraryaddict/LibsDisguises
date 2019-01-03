@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser.params.types.custom;
 
-import me.libraryaddict.disguise.utilities.TranslateType;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
