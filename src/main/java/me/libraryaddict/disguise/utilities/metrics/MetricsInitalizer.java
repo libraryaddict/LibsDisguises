@@ -15,6 +15,10 @@ import java.util.HashSet;
  * Created by libraryaddict on 3/01/2019.
  */
 public class MetricsInitalizer {
+    public MetricsInitalizer() {
+        infectWithMetrics();
+    }
+
     private void infectWithMetrics() {
         LibsDisguises plugin = LibsDisguises.getInstance();
 
