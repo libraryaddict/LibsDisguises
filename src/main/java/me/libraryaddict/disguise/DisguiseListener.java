@@ -14,12 +14,12 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -406,6 +406,21 @@ public class DisguiseListener implements Listener {
                             DisguiseUtilities.getChunkCord(from.getBlockZ())) {
                 chunkMove(event.getPlayer(), to, from);
             }
+        }
+
+        // If the bounding boxes are modified and the player moved more than a little
+        // The runnable in Disguise also calls it, so we should ignore smaller movements
+        if (DisguiseConfig.isModifyBoundingBox() && event.getFrom().distanceSquared(event.getTo()) > 0.2) {
+            // Only fetching one disguise as we cannot modify the bounding box of multiple disguises
+            Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+
+            // If disguise doesn't exist, or doesn't modify bounding box
+            if (disguise == null || !disguise.isModifyBoundingBox()) {
+                return;
+            }
+
+            // Modify bounding box
+            DisguiseUtilities.doBoundingBox((TargetedDisguise) disguise);
         }
 
         if (DisguiseConfig.isStopShulkerDisguisesFromMoving()) {
