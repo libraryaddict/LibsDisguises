@@ -3,9 +3,9 @@ package me.libraryaddict.disguise.utilities.parser;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -121,6 +121,26 @@ public class DisguiseParser {
     }
 
     /**
+     * Returns true if the string is found in the map, or it's not a whitelisted setup
+     *
+     * Returns if command user can access the disguise creation permission type
+     */
+    private static boolean hasPermissionOption(HashMap<String, Boolean> disguiseOptions, String string) {
+        // If no permissions were defined, return true
+        if (disguiseOptions.isEmpty()) {
+            return true;
+        }
+
+        // If they were explictly defined, can just return the value
+        if (disguiseOptions.containsKey(string)) {
+            return disguiseOptions.get(string);
+        }
+
+        // If there is at least one whitelisted value, then they needed the whitelist to use it
+        return disguiseOptions.containsValue(true);
+    }
+
+    /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this
      * point, the
@@ -206,8 +226,8 @@ public class DisguiseParser {
                         // He needs to give the player name
                         throw new DisguiseParseException(LibsMsg.PARSE_SUPPLY_PLAYER);
                     } else {
-                        if (!disguiseOptions.isEmpty() && (!disguiseOptions.containsKey(args[1].toLowerCase()) ||
-                                !disguiseOptions.get(args[1].toLowerCase()))) {
+                        // If they can't use this name, throw error
+                        if (!hasPermissionOption(disguiseOptions, args[1].toLowerCase())) {
                             throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
                         }
 
@@ -258,13 +278,9 @@ public class DisguiseParser {
 
                                 itemStack = new ItemStack(material);
 
-                                if (!disguiseOptions.isEmpty()) {
-                                    String toCheck = "" + itemStack.getType().name();
-
-                                    if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
-                                        throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, toCheck,
-                                                disguisePerm.toReadable());
-                                    }
+                                if (!hasPermissionOption(disguiseOptions, itemStack.getType().name().toLowerCase())) {
+                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM,
+                                            itemStack.getType().name(), disguisePerm.toReadable());
                                 }
 
                                 toSkip++;
@@ -286,13 +302,9 @@ public class DisguiseParser {
                                 miscId = Integer.parseInt(args[1]);
                                 toSkip++;
 
-                                if (!disguiseOptions.isEmpty()) {
-                                    String toCheck = "" + miscId;
-
-                                    if (!disguiseOptions.containsKey(toCheck) || !disguiseOptions.get(toCheck)) {
-                                        throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, toCheck,
-                                                disguisePerm.toReadable());
-                                    }
+                                if (!hasPermissionOption(disguiseOptions, miscId + "")) {
+                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, miscId + "",
+                                            disguisePerm.toReadable());
                                 }
 
                                 if (disguisePerm.getType() == DisguiseType.PAINTING) {
