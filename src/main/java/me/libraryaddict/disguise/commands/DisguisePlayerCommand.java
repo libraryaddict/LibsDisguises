@@ -44,19 +44,19 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        Entity player = Bukkit.getPlayer(args[0]);
+        Entity entity = Bukkit.getPlayer(args[0]);
 
-        if (player == null) {
+        if (entity == null) {
             if (args[0].contains("-")) {
                 try {
-                    player = Bukkit.getEntity(UUID.fromString(args[0]));
+                    entity = Bukkit.getEntity(UUID.fromString(args[0]));
                 }
                 catch (Exception ignored) {
                 }
             }
         }
 
-        if (player == null) {
+        if (entity == null) {
             sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
             return true;
         }
@@ -95,14 +95,14 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                disguise.getWatcher().setCustomName(getDisplayName(player));
+                disguise.getWatcher().setCustomName(getDisplayName(entity));
 
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     disguise.getWatcher().setCustomNameVisible(true);
                 }
             }
         }
-        disguise.setEntity(player);
+        disguise.setEntity(entity);
 
         if (!setViewDisguise(args)) {
             // They prefer to have the opposite of whatever the view disguises option is
@@ -115,11 +115,11 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (disguise.isDisguiseInUse()) {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG
-                    .get(player instanceof Player ? player.getName() : DisguiseType.getType(player).toReadable(),
+                    .get(entity instanceof Player ? entity.getName() : DisguiseType.getType(entity).toReadable(),
                             disguise.getType().toReadable()));
         } else {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL
-                    .get(player instanceof Player ? player.getName() : DisguiseType.getType(player).toReadable(),
+                    .get(entity instanceof Player ? entity.getName() : DisguiseType.getType(entity).toReadable(),
                             disguise.getType().toReadable()));
         }
 

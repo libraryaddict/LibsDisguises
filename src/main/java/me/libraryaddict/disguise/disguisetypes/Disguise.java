@@ -257,18 +257,24 @@ public abstract class Disguise {
 
                                 StructureModifier<Integer> mods = velocityPacket.getIntegers();
 
+                                // Write entity ID
+                                mods.write(0, getEntity().getEntityId());
                                 mods.write(1, (int) (vector.getX() * 8000));
                                 mods.write(3, (int) (vector.getZ() * 8000));
 
                                 for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                                    PacketContainer tempVelocityPacket = velocityPacket.shallowClone();
+                                    mods = tempVelocityPacket.getIntegers();
+
+                                    // If the viewing player is the disguised player
                                     if (getEntity() == player) {
+                                        // If not using self disguise, continue
                                         if (!isSelfDisguiseVisible()) {
                                             continue;
                                         }
 
+                                        // Write self disguise ID
                                         mods.write(0, DisguiseAPI.getSelfDisguiseId());
-                                    } else {
-                                        mods.write(0, getEntity().getEntityId());
                                     }
 
                                     mods.write(2,
@@ -280,7 +286,7 @@ public abstract class Disguise {
                                     }
 
                                     ProtocolLibrary.getProtocolManager()
-                                            .sendServerPacket(player, velocityPacket.shallowClone(), false);
+                                            .sendServerPacket(player, tempVelocityPacket, false);
                                 }
                             }
                             catch (Exception e) {

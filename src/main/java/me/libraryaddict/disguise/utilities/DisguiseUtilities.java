@@ -81,6 +81,25 @@ public class DisguiseUtilities {
     private static Gson gson;
     private static boolean pluginsUsed, commandsUsed;
     private static long libsDisguisesCalled;
+    /**
+     * Keeps track of what tick this occured
+     */
+    private static long velocityTime;
+    private static int velocityID;
+
+    public static void setPlayerVelocity(Player player) {
+        velocityID = player.getEntityId();
+        velocityTime = player.getWorld().getTime();
+    }
+
+    /**
+     * Returns if this velocity is due to a PlayerVelocityEvent
+     */
+    public static boolean isPlayerVelocity(Player player) {
+        // Be generous with how many ticks they have until they jump, the server could be lagging and the player
+        // would effectively have anti-knockback
+        return player.getEntityId() == velocityID && (player.getWorld().getTime() - velocityTime) < 3;
+    }
 
     public static void setPluginsUsed() {
         if (libsDisguisesCalled > System.currentTimeMillis()) {
