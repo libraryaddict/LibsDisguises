@@ -53,7 +53,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     protected String getDisplayName(CommandSender player) {
         Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
 
-        return (team == null ? "" : team.getPrefix()) + player.getName() + (team == null ? "" : team.getSuffix());
+        return (team == null ? "" : team.getColor() + team.getPrefix()) + player.getName() +
+                (team == null ? "" : team.getSuffix());
     }
 
     protected ArrayList<String> getAllowedDisguises(DisguisePermissions permissions) {
