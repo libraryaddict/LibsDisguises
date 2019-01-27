@@ -268,7 +268,7 @@ public class DisguiseConfig {
         setDisableFriendlyInvisibles(config.getBoolean("Scoreboard.DisableFriendlyInvisibles"));
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
         disableCommands = config.getBoolean("DisableCommands");
-        setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplictDisguises"));
+        setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
         setUUIDGeneratedVersion(config.getInt("UUIDVersion"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
