@@ -1380,7 +1380,7 @@ public class DisguiseUtilities {
         // If we are creating a new scoreboard because the current one must not be modified
         if (pOption == DisguisePushing.CREATE_SCOREBOARD) {
             // If they have a team, we'll reuse that name. Otherwise go for another name
-            ldTeamName = (prevTeam == null ? "No Team" : prevTeam.getName());
+            ldTeamName = (prevTeam == null ? "NoTeam" : prevTeam.getName());
 
             // Give the teamname a custom name
             ldTeamName = ldTeamName.substring(0, Math.min(12, ldTeamName.length())) + "_LDP";
