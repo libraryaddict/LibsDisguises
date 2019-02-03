@@ -186,6 +186,13 @@ HideDisguisedPlayersFromTab: false
 # Always show player disguises in tab? The names will continue to appear in tab until the disguise is removed.
 ShowPlayerDisguisesInTab: false
 
+# On player disguise, a fake player is added to tablist so the skin can load properly.
+# If the viewer sees the player disguise but there's no tablist name, they won't see a skin.
+# 2 seconds is normally long enough to load the skin properly, but sometimes the server needs longer
+# This is in ticks, there are 20 ticks in every second. 40 ticks = 2 seconds. 200 ticks = 10 seconds.
+# This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
+PlayerDisguisesTablistExpires: 40
+
 # Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
 DisableInvisibility: false
 

@@ -289,7 +289,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             deleteTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
 
             if (!((PlayerDisguise) disguise).isDisplayedInTab()) {
-                packets.addDelayedPacket(deleteTab, 40);
+                packets.addDelayedPacket(deleteTab, DisguiseConfig.getPlayerDisguisesTablistExpires());
             }
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();

@@ -4,9 +4,9 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -76,6 +76,15 @@ public class DisguiseConfig {
     private static boolean disableCommands;
     private static int uuidGeneratedVersion;
     private static UpdatesBranch updatesBranch = UpdatesBranch.SAME_BUILDS;
+    private static int playerDisguisesTablistExpires;
+
+    public static int getPlayerDisguisesTablistExpires() {
+        return playerDisguisesTablistExpires;
+    }
+
+    public static void setPlayerDisguisesTablistExpires(int playerDisguisesTablistExpiresTicks) {
+        playerDisguisesTablistExpires = playerDisguisesTablistExpiresTicks;
+    }
 
     public static UpdatesBranch getUpdatesBranch() {
         return updatesBranch;
@@ -270,6 +279,7 @@ public class DisguiseConfig {
         disableCommands = config.getBoolean("DisableCommands");
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
         setUUIDGeneratedVersion(config.getInt("UUIDVersion"));
+        setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpires"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
@@ -279,8 +289,8 @@ public class DisguiseConfig {
             setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase()));
         }
         catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") +
-                    "' to a valid option for UpdatesBranch");
+            DisguiseUtilities.getLogger().warning(
+                    "Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
         }
 
         try {
