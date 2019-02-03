@@ -4,10 +4,10 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -261,6 +261,11 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                             tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
                         } else if (info.isParam(String.class)) {
                             for (Player player : Bukkit.getOnlinePlayers()) {
+                                // If command user cannot see player online, don't tab-complete name
+                                if (sender instanceof Player && !((Player) sender).canSee(player)) {
+                                    continue;
+                                }
+
                                 tabs.add(player.getName());
                             }
                         }

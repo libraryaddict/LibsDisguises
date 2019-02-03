@@ -3,8 +3,8 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -74,6 +74,11 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
 
         if (args.length == 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // If command user cannot see player online, don't tab-complete name
+                if (sender instanceof Player && !((Player) sender).canSee(player)) {
+                    continue;
+                }
+
                 tabs.add(player.getName());
             }
         }

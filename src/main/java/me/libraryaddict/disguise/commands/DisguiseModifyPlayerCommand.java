@@ -103,6 +103,11 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
         if (args.length == 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {
+                // If command user cannot see player online, don't tab-complete name
+                if (sender instanceof Player && !((Player) sender).canSee(player)) {
+                    continue;
+                }
+
                 tabs.add(player.getName());
             }
         } else {
@@ -158,6 +163,11 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
                             tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
                         } else if (info.isParam(String.class)) {
                             for (Player p : Bukkit.getOnlinePlayers()) {
+                                // If command user cannot see player online, don't tab-complete name
+                                if (sender instanceof Player && !((Player) sender).canSee(p)) {
+                                    continue;
+                                }
+
                                 tabs.add(p.getName());
                             }
                         }

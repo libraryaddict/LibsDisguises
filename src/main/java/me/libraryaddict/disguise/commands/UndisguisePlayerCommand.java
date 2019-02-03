@@ -99,6 +99,11 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
             return filterTabs(tabs, origArgs);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
+            // If command user cannot see player online, don't tab-complete name
+            if (sender instanceof Player && !((Player) sender).canSee(player)) {
+                continue;
+            }
+
             tabs.add(player.getName());
         }
 
