@@ -79,7 +79,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
 
             for (PacketContainer newPacket : transformed.getPackets()) {
                 if (newPacket.getType() != Server.PLAYER_INFO) {
-                    if (newPacket.equals(packet)) {
+                    if (newPacket == packet) {
                         newPacket = newPacket.shallowClone();
                     }
 
