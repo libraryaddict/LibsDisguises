@@ -668,7 +668,7 @@ public class DisguiseListener implements Listener {
             }
         }
 
-        if (DisguiseAPI.isSelfDisguised(player)) {
+        if (DisguiseAPI.isSelfDisguised(player) && to.getWorld() == from.getWorld()) {
             Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
             // If further than 64 blocks, resend the self disguise
