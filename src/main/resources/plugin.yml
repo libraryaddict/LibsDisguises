@@ -2,6 +2,7 @@ name: LibsDisguises
 main: me.libraryaddict.disguise.LibsDisguises
 description: A disguise plugin with various disguises.
 version: ${project.version}
+build-date: ${timestamp}
 build-number: ${build.number}
 author: libraryaddict
 authors: [Byteflux, Navid K.]

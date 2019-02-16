@@ -8,7 +8,9 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
-import me.libraryaddict.disguise.utilities.*;
+import me.libraryaddict.disguise.utilities.DisguiseSound;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
@@ -48,6 +50,8 @@ public class LibsDisguises extends JavaPlugin {
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
 
         getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
+
+        getLogger().info("Build Date: " + pluginYml.getString("build-date"));
 
         LibsPremium.check(getDescription().getVersion());
 
