@@ -9,10 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -72,21 +69,30 @@ public class LibsPackets {
     }
 
     public void sendDelayed(final Player observer) {
-        for (final Map.Entry<Integer, ArrayList<PacketContainer>> entry : delayedPackets.entrySet()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
-                public void run() {
-                    try {
-                        for (PacketContainer packet : entry.getValue()) {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                        }
-                    }
-                    catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+        Iterator<Map.Entry<Integer, ArrayList<PacketContainer>>> itel = delayedPackets.entrySet().iterator();
+        Optional<Integer> largestTick = delayedPackets.keySet().stream().max(Integer::compare);
 
-                    if (isSpawnPacket) {
-                        PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
+        if (!largestTick.isPresent()) {
+            return;
+        }
+
+        while (itel.hasNext()) {
+            Map.Entry<Integer, ArrayList<PacketContainer>> entry = itel.next();
+            // If this is the last delayed packet
+            final boolean isRemoveCancel = isSpawnPacket && largestTick.get().equals(entry.getKey());
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                try {
+                    for (PacketContainer packet : entry.getValue()) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                     }
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+                if (isRemoveCancel) {
+                    PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
                 }
             }, entry.getKey());
         }
