@@ -129,7 +129,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
         ArrayList<String> tabs = new ArrayList<>();
-        String[] args = getArgs(origArgs);
+        String[] args = getPreviousArgs(origArgs);
 
         for (String node : getCommandNames().values()) {
             DisguisePermissions perms = DisguiseParser.getPermissions(sender, node);

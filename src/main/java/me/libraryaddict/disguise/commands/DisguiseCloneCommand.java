@@ -70,7 +70,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
         ArrayList<String> tabs = new ArrayList<>();
 
-        String[] args = getArgs(origArgs);
+        String[] args = getPreviousArgs(origArgs);
 
         if (args.length == 0) {
             for (Player player : Bukkit.getOnlinePlayers()) {

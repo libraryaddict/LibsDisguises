@@ -3,16 +3,15 @@ package me.libraryaddict.disguise.commands;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.parser.*;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
@@ -24,7 +23,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -230,7 +228,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
         ArrayList<String> tabs = new ArrayList<>();
-        String[] args = getArgs(origArgs);
+        String[] args = getPreviousArgs(origArgs);
 
         DisguisePermissions perms = getPermissions(sender);
 
@@ -258,77 +256,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 return filterTabs(tabs, origArgs);
         }
 
-        if (args.length == starting) {
-            tabs.addAll(getAllowedDisguises(perms));
-        } else {
-
-            DisguisePerm disguiseType = DisguiseParser.getDisguisePerm(args[starting]);
-
-            if (disguiseType == null)
-                return filterTabs(tabs, origArgs);
-
-            if (args.length == 1 + starting && disguiseType.getType() == DisguiseType.PLAYER) {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    // If command user cannot see player online, don't tab-complete name
-                    if (sender instanceof Player && !((Player) sender).canSee(player)) {
-                        continue;
-                    }
-
-                    tabs.add(player.getName());
-                }
-            } else {
-                ArrayList<String> usedOptions = new ArrayList<>();
-
-                for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                    for (int i = disguiseType.getType() == DisguiseType.PLAYER ? starting + 2 : starting + 1;
-                         i < args.length; i++) {
-                        String arg = args[i];
-
-                        if (!method.getName().equalsIgnoreCase(arg))
-                            continue;
-
-                        usedOptions.add(arg);
-                    }
-                }
-
-                if (perms.isAllowedDisguise(disguiseType, usedOptions)) {
-                    boolean addMethods = true;
-
-                    if (args.length > 1 + starting) {
-                        String prevArg = args[args.length - 1];
-
-                        ParamInfo info = ParamInfoManager.getParamInfo(disguiseType, prevArg);
-
-                        if (info != null) {
-                            if (!info.isParam(boolean.class)) {
-                                addMethods = false;
-                            }
-
-                            if (info.hasValues()) {
-                                tabs.addAll(info.getEnums(origArgs[origArgs.length - 1]));
-                            } else if (info.isParam(String.class)) {
-                                for (Player player : Bukkit.getOnlinePlayers()) {
-                                    // If command user cannot see player online, don't tab-complete name
-                                    if (sender instanceof Player && !((Player) sender).canSee(player)) {
-                                        continue;
-                                    }
-
-                                    tabs.add(player.getName());
-                                }
-                            }
-                        }
-                    }
-
-                    if (addMethods) {
-                        // If this is a method, add. Else if it can be a param of the previous argument, add.
-                        for (Method method : ParamInfoManager
-                                .getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-                            tabs.add(method.getName());
-                        }
-                    }
-                }
-            }
-        }
+        tabs.addAll(getTabDisguiseTypes(sender, perms, args, starting, getCurrentArg(origArgs)));
 
         return filterTabs(tabs, origArgs);
     }

@@ -12,6 +12,7 @@ import java.util.Objects;
 public class DisguisePerm {
     private DisguiseType disguiseType;
     private String permName;
+    private boolean customDisguise;
 
     public DisguisePerm(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -20,6 +21,11 @@ public class DisguisePerm {
     public DisguisePerm(DisguiseType disguiseType, String disguisePerm) {
         this.disguiseType = disguiseType;
         permName = disguisePerm;
+        customDisguise = true;
+    }
+
+    public boolean isCustomDisguise() {
+        return customDisguise;
     }
 
     public Class getEntityClass() {
