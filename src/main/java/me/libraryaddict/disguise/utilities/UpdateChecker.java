@@ -108,9 +108,9 @@ public class UpdateChecker {
     }
 
     private boolean isNewerVersion(String currentVersion, String newVersion) {
-        // Remove 'v' from string, split by decimal points
-        String[] cSplit = currentVersion.replace("v", "").split("\\.");
-        String[] nSplit = newVersion.replace("v", "").split("\\.");
+        // Remove 'v' and '-SNAPSHOT' from string, split by decimal points
+        String[] cSplit = currentVersion.replaceAll("(v)|(-SNAPSHOT)", "").split("\\.");
+        String[] nSplit = newVersion.replaceAll("(v)|(-SNAPSHOT)", "").split("\\.");
 
         // Iterate over the versions from left to right
         for (int i = 0; i < Math.max(cSplit.length, nSplit.length); i++) {
