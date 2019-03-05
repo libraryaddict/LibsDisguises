@@ -37,12 +37,12 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        Disguise disguise;
+        String[] disguiseArgs = DisguiseUtilities.split(StringUtils.join(args, " "));
+        Disguise testDisguise;
 
         try {
-            disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")),
-                            getPermissions(sender));
+            testDisguise = DisguiseParser
+                    .parseTestDisguise(sender, getPermNode(), disguiseArgs, getPermissions(sender));
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -56,10 +56,10 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguise);
+        LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguiseArgs);
 
-        sender.sendMessage(
-                LibsMsg.DISG_ENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire(), disguise.getType().toReadable()));
+        sender.sendMessage(LibsMsg.DISG_ENT_CLICK
+                .get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getType().toReadable()));
         return true;
     }
 

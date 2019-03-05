@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,7 +36,7 @@ public class DisguiseConfig {
     private static boolean collectEnabled;
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
-    private static HashMap<String, Disguise> customDisguises = new HashMap<>();
+    private static HashMap<DisguisePerm, String> customDisguises = new HashMap<>();
     private static boolean disableInvisibility;
     private static int disguiseCloneExpire;
     private static int disguiseEntityExpire;
@@ -117,10 +118,11 @@ public class DisguiseConfig {
         explicitDisguisePermissions = explictDisguisePermission;
     }
 
-    public static Entry<String, Disguise> getCustomDisguise(String disguise) {
-        for (Entry<String, Disguise> entry : customDisguises.entrySet()) {
-            if (!entry.getKey().equalsIgnoreCase(disguise) &&
-                    !entry.getKey().replaceAll("_", "").equalsIgnoreCase(disguise))
+    public static Entry<DisguisePerm, String> getCustomDisguise(String disguise) {
+        for (Entry<DisguisePerm, String> entry : customDisguises.entrySet()) {
+            String name = entry.getKey().toReadable();
+
+            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise))
                 continue;
 
             return entry;
@@ -183,7 +185,7 @@ public class DisguiseConfig {
         return disablePushing;
     }
 
-    public static HashMap<String, Disguise> getCustomDisguises() {
+    public static HashMap<DisguisePerm, String> getCustomDisguises() {
         return customDisguises;
     }
 
@@ -353,11 +355,27 @@ public class DisguiseConfig {
             }
 
             try {
+                String[] disguiseArgs = DisguiseUtilities.split(toParse);
+
+                for (int i = 0; i < disguiseArgs.length; i++) {
+                    String arg = disguiseArgs[i];
+
+                    // If argument is for the command user name
+                    if (arg.equals("%player%")) {
+                        disguiseArgs[i] = "libraryaddict";
+                    } else if (arg.equals("%skin%")) { // If argument is for the command user skin
+                        disguiseArgs[i] = "{\"id\":\"a149f81bf7844f8987c554afdd4db533\",\"name\":\"libraryaddict\"," +
+                                "\"properties\":[]}";
+                    }
+                }
+
                 Disguise disguise = DisguiseParser
-                        .parseDisguise(Bukkit.getConsoleSender(), "disguise", DisguiseUtilities.split(toParse),
+                        .parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,
                                 DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
 
-                customDisguises.put(key, disguise);
+                DisguisePerm perm = new DisguisePerm(disguise.getType(), key);
+
+                customDisguises.put(perm, toParse);
 
                 DisguiseUtilities.getLogger().info("Loaded custom disguise " + key);
             }

@@ -53,9 +53,14 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
+        String[] options = DisguiseUtilities.split(StringUtils.join(args, " "));
+
+        options = DisguiseParser
+                .parsePlaceholders(options, sender.getName(), DisguiseParser.getSkin(sender), sender.getName(),
+                        DisguiseParser.getSkin(sender));
+
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
-                    DisguiseUtilities.split(StringUtils.join(args, " ")));
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

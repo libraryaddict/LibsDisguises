@@ -44,19 +44,19 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        Entity entity = Bukkit.getPlayer(args[0]);
+        Entity entityTarget = Bukkit.getPlayer(args[0]);
 
-        if (entity == null) {
+        if (entityTarget == null) {
             if (args[0].contains("-")) {
                 try {
-                    entity = Bukkit.getEntity(UUID.fromString(args[0]));
+                    entityTarget = Bukkit.getEntity(UUID.fromString(args[0]));
                 }
                 catch (Exception ignored) {
                 }
             }
         }
 
-        if (entity == null) {
+        if (entityTarget == null) {
             sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
             return true;
         }
@@ -72,9 +72,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")),
-                            permissions);
+            disguise = DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(),
+                    DisguiseUtilities.split(StringUtils.join(newArgs, " ")), permissions);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -95,14 +94,15 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
-                disguise.getWatcher().setCustomName(getDisplayName(entity));
+                disguise.getWatcher().setCustomName(getDisplayName(entityTarget));
 
                 if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                     disguise.getWatcher().setCustomNameVisible(true);
                 }
             }
         }
-        disguise.setEntity(entity);
+
+        disguise.setEntity(entityTarget);
 
         if (!setViewDisguise(args)) {
             // They prefer to have the opposite of whatever the view disguises option is
@@ -114,13 +114,12 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
-            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG
-                    .get(entity instanceof Player ? entity.getName() : DisguiseType.getType(entity).toReadable(),
-                            disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG.get(entityTarget instanceof Player ? entityTarget.getName() :
+                    DisguiseType.getType(entityTarget).toReadable(), disguise.getType().toReadable()));
         } else {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL
-                    .get(entity instanceof Player ? entity.getName() : DisguiseType.getType(entity).toReadable(),
-                            disguise.getType().toReadable()));
+                    .get(entityTarget instanceof Player ? entityTarget.getName() :
+                            DisguiseType.getType(entityTarget).toReadable(), disguise.getType().toReadable()));
         }
 
         return true;

@@ -44,16 +44,13 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class DisguiseListener implements Listener {
     private String currentVersion;
     private HashMap<String, Boolean[]> disguiseClone = new HashMap<>();
-    private HashMap<String, Disguise> disguiseEntity = new HashMap<>();
+    private HashMap<String, String[]> disguiseEntity = new HashMap<>();
     private HashMap<String, String[]> disguiseModify = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private String latestVersion;
@@ -173,10 +170,6 @@ public class DisguiseListener implements Listener {
     public void cleanup() {
         for (BukkitRunnable r : disguiseRunnable.values()) {
             r.cancel();
-        }
-
-        for (Disguise d : disguiseEntity.values()) {
-            d.removeDisguise();
         }
 
         disguiseClone.clear();
@@ -505,9 +498,27 @@ public class DisguiseListener implements Listener {
 
             DisguiseUtilities.createClonedDisguise(p, entity, options);
         } else if (disguiseEntity.containsKey(p.getName())) {
-            Disguise disguise = disguiseEntity.remove(p.getName());
+            String[] disguiseArgs = disguiseEntity.remove(p.getName());
 
-            if (disguise != null) {
+            if (disguiseArgs != null) {
+                Disguise disguise;
+
+                try {
+                    disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs,
+                            DisguiseParser.getPermissions(p, "disguiseentity"));
+                }
+                catch (DisguiseParseException e) {
+                    if (e.getMessage() != null) {
+                        p.sendMessage(e.getMessage());
+                    }
+
+                    return;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+
                 if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
                         entity instanceof LivingEntity) {
                     p.sendMessage(LibsMsg.DISABLED_LIVING_TO_MISC.get());
@@ -596,6 +607,10 @@ public class DisguiseListener implements Listener {
                 return;
             }
 
+            options = DisguiseParser
+                    .parsePlaceholders(options, p.getName(), DisguiseParser.getSkin(p), DisguiseParser.getName(entity),
+                            DisguiseParser.getSkin(entity));
+
             DisguisePermissions perms = DisguiseParser.getPermissions(p, "disguiseentitymodify");
             DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
 
@@ -605,7 +620,8 @@ public class DisguiseListener implements Listener {
             }
 
             try {
-                DisguiseParser.callMethods(p, disguise, perms, disguisePerm, Arrays.asList(options), options);
+                DisguiseParser.callMethods(p, disguise, perms, disguisePerm, new ArrayList<>(Arrays.asList(options)),
+                        options);
                 p.sendMessage(LibsMsg.LISTENER_MODIFIED_DISG.get());
             }
             catch (DisguiseParseException ex) {
@@ -779,7 +795,7 @@ public class DisguiseListener implements Listener {
         disguiseClone.put(player, options);
     }
 
-    public void setDisguiseEntity(final String player, Disguise disguise) {
+    public void setDisguiseEntity(final String player, String[] disguise) {
         if (disguiseRunnable.containsKey(player)) {
             BukkitRunnable run = disguiseRunnable.remove(player);
             run.cancel();

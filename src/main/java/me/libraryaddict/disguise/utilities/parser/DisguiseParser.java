@@ -1,14 +1,17 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -86,8 +89,8 @@ public class DisguiseParser {
             perms[i++] = new DisguisePerm(disguiseType);
         }
 
-        for (Entry<String, Disguise> entry : DisguiseConfig.getCustomDisguises().entrySet()) {
-            perms[i++] = new DisguisePerm(entry.getValue().getType(), entry.getKey());
+        for (Entry<DisguisePerm, String> entry : DisguiseConfig.getCustomDisguises().entrySet()) {
+            perms[i++] = entry.getKey();
         }
 
         return perms;
@@ -122,7 +125,7 @@ public class DisguiseParser {
 
     /**
      * Returns true if the string is found in the map, or it's not a whitelisted setup
-     *
+     * <p>
      * Returns if command user can access the disguise creation permission type
      */
     private static boolean hasPermissionOption(HashMap<String, Boolean> disguiseOptions, String string) {
@@ -140,13 +143,101 @@ public class DisguiseParser {
         return disguiseOptions.containsValue(true);
     }
 
+    public static String getName(Entity entity) {
+        if (entity == null) {
+            return "??";
+        }
+
+        if (entity instanceof Player) {
+            return entity.getName();
+        }
+
+        if (entity.getCustomName() != null && entity.getCustomName().length() > 0) {
+            return entity.getCustomName();
+        }
+
+        return entity.getName();
+    }
+
+    public static String getSkin(CommandSender entity) {
+        if (entity == null) {
+            return "??";
+        }
+
+        if (entity instanceof Player) {
+            WrappedGameProfile gameProfile = ReflectionManager.getGameProfile((Player) entity);
+
+            if (gameProfile != null) {
+
+                return DisguiseUtilities.getGson().toJson(gameProfile);
+            }
+        }
+
+        return "{}";
+    }
+
+    public static String[] parsePlaceholders(String[] args, String userName, String userSkin, String targetName,
+            String targetSkin) {
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+
+            if (arg.contains("%user-name%")) {
+                arg = arg.replace("%user-name%", userName);
+            }
+
+            if (arg.contains("%user-skin%")) {
+                arg = arg.replace("%user-skin%", userSkin);
+            }
+
+            if (arg.contains("%target-name%")) {
+                arg = arg.replace("%target-name%", targetName);
+            }
+
+            if (arg.contains("%target-skin%")) {
+                arg = arg.replace("%target-skin%", targetSkin);
+            }
+
+            args[i] = arg;
+        }
+
+        return args;
+    }
+
+    /**
+     * Experimentally parses the arguments to test if this is a valid disguise
+     *
+     * @param sender
+     * @param permNode
+     * @param args
+     * @param permissions
+     * @return
+     * @throws DisguiseParseException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    public static Disguise parseTestDisguise(CommandSender sender, String permNode, String[] args,
+            DisguisePermissions permissions) throws DisguiseParseException, IllegalAccessException,
+            InvocationTargetException {
+
+        // Clone array so original array isn't modified
+        args = Arrays.copyOf(args, args.length);
+
+        String skin = "{\"id\":\"a149f81bf7844f8987c554afdd4db533\",\"name\":\"libraryaddict\"," + "\"properties\":[]}";
+        // Fill in fake data
+        args = parsePlaceholders(args, "libraryaddict", skin, "libraryaddict", skin);
+
+        // Parse disguise
+        return parseDisguise(sender, null, permNode, args, permissions);
+    }
+
     /**
      * Returns the disguise if it all parsed correctly. Returns a exception with a complete message if it didn't. The
      * commandsender is purely used for checking permissions. Would defeat the purpose otherwise. To reach this
      * point, the
      * disguise has been feed a proper disguisetype.
      */
-    public static Disguise parseDisguise(CommandSender sender, String permNode, String[] args,
+    public static Disguise parseDisguise(CommandSender sender, Entity target, String permNode, String[] args,
             DisguisePermissions permissions) throws DisguiseParseException, IllegalAccessException,
             InvocationTargetException {
         if (sender instanceof Player) {
@@ -195,11 +286,13 @@ public class DisguiseParser {
             }
         } else {
             disguisePerm = getDisguisePerm(args[0]);
-            Entry<String, Disguise> customDisguise = DisguiseConfig.getCustomDisguise(args[0]);
+            Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getCustomDisguise(args[0]);
 
             if (customDisguise != null) {
-                disguise = customDisguise.getValue().clone();
+                args = DisguiseUtilities.split(customDisguise.getValue());
             }
+
+            args = parsePlaceholders(args, sender.getName(), getSkin(sender), getName(target), getSkin(target));
 
             if (disguisePerm == null) {
                 throw new DisguiseParseException(LibsMsg.PARSE_DISG_NO_EXIST, args[0]);

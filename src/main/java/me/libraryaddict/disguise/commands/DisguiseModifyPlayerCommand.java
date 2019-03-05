@@ -14,10 +14,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements TabCompleter {
 
@@ -35,9 +37,19 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        Entity entityTarget = Bukkit.getPlayer(args[0]);
 
-        if (player == null) {
+        if (entityTarget == null) {
+            if (args[0].contains("-")) {
+                try {
+                    entityTarget = Bukkit.getEntity(UUID.fromString(args[0]));
+                }
+                catch (Exception ignored) {
+                }
+            }
+        }
+
+        if (entityTarget == null) {
             sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
             return true;
         }
@@ -53,13 +65,13 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         Disguise disguise = null;
 
         if (sender instanceof Player)
-            disguise = DisguiseAPI.getDisguise((Player) sender, player);
+            disguise = DisguiseAPI.getDisguise((Player) sender, entityTarget);
 
         if (disguise == null)
-            disguise = DisguiseAPI.getDisguise(player);
+            disguise = DisguiseAPI.getDisguise(entityTarget);
 
         if (disguise == null) {
-            sender.sendMessage(LibsMsg.DMODPLAYER_NODISGUISE.get(player.getName()));
+            sender.sendMessage(LibsMsg.DMODPLAYER_NODISGUISE.get(entityTarget.getName()));
             return true;
         }
 
@@ -70,9 +82,15 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
+        String[] options = DisguiseUtilities.split(StringUtils.join(newArgs, " "));
+
+        options = DisguiseParser
+                .parsePlaceholders(options, sender.getName(), DisguiseParser.getSkin(sender), DisguiseParser.getName(entityTarget),
+                        DisguiseParser.getSkin(entityTarget));
+
         try {
             DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
-                    DisguiseUtilities.split(StringUtils.join(newArgs, " ")));
+                    options);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
@@ -86,7 +104,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        sender.sendMessage(LibsMsg.DMODPLAYER_MODIFIED.get(player.getName()));
+        sender.sendMessage(LibsMsg.DMODPLAYER_MODIFIED.get(entityTarget.getName()));
 
         return true;
     }

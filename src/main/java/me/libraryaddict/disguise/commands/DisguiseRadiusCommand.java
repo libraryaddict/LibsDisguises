@@ -124,55 +124,47 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         String[] newArgs = new String[args.length - (starting + 1)];
         System.arraycopy(args, starting + 1, newArgs, 0, newArgs.length);
-        Disguise disguise;
 
         if (newArgs.length == 0) {
             sendCommandUsage(sender, permissions);
             return true;
         }
 
+        String[] disguiseArgs = DisguiseUtilities.split(StringUtils.join(newArgs, " "));
+
         try {
-            disguise = DisguiseParser
-                    .parseDisguise(sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")),
-                            permissions);
-        }
-        catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
+
+            Disguise testDisguise = DisguiseParser.parseTestDisguise(sender, getPermNode(), disguiseArgs, permissions);
+
+            // Time to use it!
+            int disguisedEntitys = 0;
+            int miscDisguises = 0;
+
+            Location center;
+
+            if (sender instanceof Player) {
+                center = ((Player) sender).getLocation();
+            } else {
+                center = ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
             }
 
-            return true;
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return true;
-        }
+            for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
+                if (entity == sender) {
+                    continue;
+                }
 
-        // Time to use it!
-        int disguisedEntitys = 0;
-        int miscDisguises = 0;
+                if (type != null ? entity.getType() != type : !entityClass.isAssignableFrom(entity.getClass())) {
+                    continue;
+                }
 
-        Location center;
-
-        if (sender instanceof Player) {
-            center = ((Player) sender).getLocation();
-        } else {
-            center = ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
-        }
-
-        for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
-            if (entity == sender) {
-                continue;
-            }
-
-            if (type != null ? entity.getType() == type : entityClass.isAssignableFrom(entity.getClass())) {
-                if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
+                if (testDisguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
                         entity instanceof LivingEntity) {
                     miscDisguises++;
                     continue;
                 }
 
-                disguise = disguise.clone();
+                Disguise disguise = DisguiseParser
+                        .parseDisguise(sender, entity, getPermNode(), disguiseArgs, permissions);
 
                 if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
@@ -193,22 +185,29 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 disguise.startDisguise();
-                DisguiseAPI.disguiseEntity(entity, disguise);
 
                 if (disguise.isDisguiseInUse()) {
                     disguisedEntitys++;
                 }
             }
-        }
 
-        if (disguisedEntitys > 0) {
-            sender.sendMessage(LibsMsg.DISRADIUS.get(disguisedEntitys));
-        } else {
-            sender.sendMessage(LibsMsg.DISRADIUS_FAIL.get());
-        }
+            if (disguisedEntitys > 0) {
+                sender.sendMessage(LibsMsg.DISRADIUS.get(disguisedEntitys));
+            } else {
+                sender.sendMessage(LibsMsg.DISRADIUS_FAIL.get());
+            }
 
-        if (miscDisguises > 0) {
-            sender.sendMessage(LibsMsg.DRADIUS_MISCDISG.get(miscDisguises));
+            if (miscDisguises > 0) {
+                sender.sendMessage(LibsMsg.DRADIUS_MISCDISG.get(miscDisguises));
+            }
+        }
+        catch (DisguiseParseException ex) {
+            if (ex.getMessage() != null) {
+                sender.sendMessage(ex.getMessage());
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return true;

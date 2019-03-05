@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -25,8 +26,8 @@ import java.util.Map;
 public class DisguiseAPI {
     private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
 
-    public static Disguise getCustomDisguise(String disguiseName) {
-        Map.Entry<String, Disguise> entry = DisguiseConfig.getCustomDisguise(disguiseName);
+    public static String getCustomDisguise(String disguiseName) {
+        Map.Entry<DisguisePerm, String> entry = DisguiseConfig.getCustomDisguise(disguiseName);
 
         if (entry == null)
             return null;

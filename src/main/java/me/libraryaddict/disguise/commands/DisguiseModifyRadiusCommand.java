@@ -18,10 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
@@ -127,6 +124,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         int modifiedDisguises = 0;
         int noPermission = 0;
 
+        String[] disguiseArgs = DisguiseUtilities.split(StringUtils.join(newArgs, " "));
+
         for (Entity entity : getNearbyEntities(sender, radius)) {
             if (entity == sender) {
                 continue;
@@ -150,9 +149,12 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 continue;
             }
 
+            String[] tempArgs = Arrays.copyOf(disguiseArgs, disguiseArgs.length);
+            tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender.getName(), DisguiseParser.getSkin(sender),
+                    DisguiseParser.getName(entity), DisguiseParser.getSkin(entity));
+
             try {
-                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
-                        DisguiseUtilities.split(StringUtils.join(newArgs, " ")));
+                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs);
                 modifiedDisguises++;
             }
             catch (DisguiseParseException ex) {
