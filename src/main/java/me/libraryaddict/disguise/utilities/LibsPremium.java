@@ -238,6 +238,10 @@ public class LibsPremium {
      * Add a naughty message for the invalid user ids
      */
     private static String getSanitizedUser(String userID) {
+        if (userID == null) {
+            return "N/A";
+        }
+
         if (!userID.matches("[0-9]+")) {
             return String.format("... %s? Am I reading this right?", userID);
         }
