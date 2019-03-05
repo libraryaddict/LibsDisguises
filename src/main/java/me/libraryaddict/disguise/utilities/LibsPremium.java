@@ -94,6 +94,32 @@ public class LibsPremium {
         return thisPluginIsPaidFor == null ? !getUserID().contains("__USER__") : thisPluginIsPaidFor;
     }
 
+    /**
+     * Checks if the premiumVersion can work on the current version
+     */
+    private static boolean isValidVersion(String currentVersion, String premiumVersion) {
+        currentVersion = currentVersion.replaceAll("(v)|(-SNAPSHOT)", "");
+
+        // Premium version must be using an accepted versioning system
+        if (!premiumVersion.matches("[0-9]+(\\.[0-9]+)+")) {
+            return false;
+        }
+
+        // If current version is not a number version, then the premium version cannot be checked
+        if (!currentVersion.matches("[0-9]+(\\.[0-9]+)+")) {
+            // Return true as the rest of the version check cannot be used
+            return true;
+        }
+
+        // Split by decimal points
+        String[] cSplit = currentVersion.split("\\.");
+        String[] nSplit = premiumVersion.split("\\.");
+
+        // Comparing major versions
+        // Current version must be the same, or lower than premium version
+        return cSplit[0].compareTo(nSplit[0]) <= 0;
+    }
+
     private static PluginInformation getInformation(File file) throws Exception {
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
@@ -148,7 +174,7 @@ public class LibsPremium {
         }
     }
 
-    private static void doSecondaryCheck() {
+    private static void doSecondaryCheck(String version) {
         File[] files = new File("plugins/LibsDisguises/").listFiles();
 
         if (files == null)
@@ -183,10 +209,19 @@ public class LibsPremium {
                     plugin.getBuildDate());
 
             if (plugin.isPremium()) {
+                if (!isValidVersion(version, plugin.getVersion())) {
+                    DisguiseUtilities.getLogger().warning(
+                            "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
+                                    ") in the LibsDisguises folder! For security purposes, please replace this with a" +
+                                    " new " +
+                                    "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
+                    continue;
+                }
+
                 thisPluginIsPaidFor = true;
                 // Found a premium Lib's Disguises jar (v5.2.6, build #40, created 16/02/2019)
-                DisguiseUtilities.getLogger()
-                        .info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
+                DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
+                DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
 
                 break;
             } else {
@@ -199,11 +234,24 @@ public class LibsPremium {
         }
     }
 
+    /**
+     * Add a naughty message for the invalid user ids
+     */
+    private static String getSanitizedUser(String userID) {
+        if (!userID.matches("[0-9]+")) {
+            return String.format("... %s? Am I reading this right?", userID);
+        }
+
+        return userID;
+    }
+
     public static void check(String version) {
         thisPluginIsPaidFor = isPremium();
 
         if (!isPremium()) {
-            doSecondaryCheck();
+            doSecondaryCheck(version);
+        } else {
+            DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
         }
 
         if (isPremium()) {
