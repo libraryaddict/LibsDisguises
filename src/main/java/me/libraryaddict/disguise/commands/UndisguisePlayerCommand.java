@@ -53,40 +53,42 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (sender.hasPermission("libsdisguises.undisguiseplayer")) {
-            if (args.length > 0) {
-                Entity p = Bukkit.getPlayer(args[0]);
-
-                if (p == null) {
-                    if (p == null) {
-                        if (args[0].contains("-")) {
-                            try {
-                                p = Bukkit.getEntity(UUID.fromString(args[0]));
-                            }
-                            catch (Exception ignored) {
-                            }
-                        }
-                    }
-                }
-
-                if (p != null) {
-                    if (DisguiseAPI.isDisguised(p)) {
-                        DisguiseAPI.undisguiseToAll(p);
-                        sender.sendMessage(LibsMsg.UNDISG_PLAYER
-                                .get(p instanceof Player ? p.getName() : DisguiseType.getType(p).toReadable()));
-                    } else {
-                        sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL
-                                .get(p instanceof Player ? p.getName() : DisguiseType.getType(p).toReadable()));
-                    }
-                } else {
-                    sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
-                }
-            } else {
-                sender.sendMessage(LibsMsg.UNDISG_PLAYER_HELP.get());
-            }
-        } else {
+        if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
+            return true;
         }
+
+        if (args.length == 0) {
+            sender.sendMessage(LibsMsg.UNDISG_PLAYER_HELP.get());
+            return true;
+        }
+
+        Entity entityTarget = Bukkit.getPlayer(args[0]);
+
+        if (entityTarget == null) {
+            if (args[0].contains("-")) {
+                try {
+                    entityTarget = Bukkit.getEntity(UUID.fromString(args[0]));
+                }
+                catch (Exception ignored) {
+                }
+            }
+        }
+
+        if (entityTarget == null) {
+            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
+            return true;
+        }
+
+        if (DisguiseAPI.isDisguised(entityTarget)) {
+            DisguiseAPI.undisguiseToAll(entityTarget);
+            sender.sendMessage(LibsMsg.UNDISG_PLAYER
+                    .get(entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable()));
+        } else {
+            sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL
+                    .get(entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable()));
+        }
+
         return true;
     }
 
