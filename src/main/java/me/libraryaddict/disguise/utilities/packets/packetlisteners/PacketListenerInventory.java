@@ -62,7 +62,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                        if (item != null && item.getType() != Material.AIR) {
+                        if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
                             PacketContainer packet = new PacketContainer(Server.SET_SLOT);
 
                             StructureModifier<Object> mods = packet.getModifier();
@@ -185,7 +185,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     clickedItem = player.getItemOnCursor();
                 }
 
-                if (clickedItem != null && clickedItem.getType() != Material.AIR) {
+                if (clickedItem != null && clickedItem.getType() != Material.AIR && clickedItem.getType() != Material.ELYTRA) {
                     // If the slot is a armor slot
                     if (slot >= 5 && slot <= 8) {
                         if (disguise.isHidingArmorFromSelf()) {
@@ -272,7 +272,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                     org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                    if (item != null && item.getType() != Material.AIR) {
+                    if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
                         event.setPacket(event.getPacket().shallowClone());
 
                         event.getPacket().getModifier().write(2,
@@ -312,7 +312,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                        if (item != null && item.getType() != Material.AIR) {
+                        if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
                             items.set(slot, new ItemStack(Material.AIR));
                         }
                     }
