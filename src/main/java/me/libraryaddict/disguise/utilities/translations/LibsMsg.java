@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
  */
 public enum LibsMsg {
     BLOWN_DISGUISE(ChatColor.RED + "Your disguise was blown!"),
+    EXPIRED_DISGUISE(ChatColor.RED + "Your disguise has expired!"),
     CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises: %s"),
     CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player/uuid '%s'"),
     CLICK_TIMER(ChatColor.RED + "Right click a entity in the next %s seconds to grab the disguise reference!"),
@@ -155,6 +156,9 @@ public enum LibsMsg {
     PARSE_OPTION_NA(ChatColor.RED + "Cannot find the option %s"),
     PARSE_SUPPLY_PLAYER(ChatColor.RED + "Error! You need to give a player name!"),
     PARSE_TOO_MANY_ARGS(ChatColor.RED + "Error! %s doesn't know what to do with %s!"),
+    PARSE_INVALID_TIME(ChatColor.RED + "Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
+    PARSE_INVALID_TIME_SEQUENCE(
+            ChatColor.RED + "Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
     PARSE_USE_SECOND_NUM(ChatColor.RED + "Error! Only the disguises %s and %s uses a second number!"),
     REF_TOO_MANY(ChatColor.RED +
             "Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or " +
@@ -170,9 +174,9 @@ public enum LibsMsg {
             "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
             ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "!"),
     UPDATE_READY_SNAPSHOT(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
-            "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "#%s" +
-            ChatColor.DARK_RED + ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" +
-            ChatColor.RED + "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/"),
+            "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "#%s" + ChatColor.DARK_RED +
+            ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" + ChatColor.RED +
+            "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
     VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!");
 
@@ -201,5 +205,4 @@ public enum LibsMsg {
 
     public String toString() {
         throw new RuntimeException("Dont call this");
-    }
-}
+    }}

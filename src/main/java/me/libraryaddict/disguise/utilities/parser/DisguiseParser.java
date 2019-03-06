@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 public class DisguiseParser {
     private static void doCheck(CommandSender sender, DisguisePermissions permissions, DisguisePerm disguisePerm,
@@ -202,6 +203,43 @@ public class DisguiseParser {
         }
 
         return args;
+    }
+
+    public static long parseStringToTime(String string) throws DisguiseParseException {
+        string = string.toLowerCase();
+
+        if (!string.matches("([0-9]+[a-z]+)+")) {
+            throw new DisguiseParseException(LibsMsg.PARSE_INVALID_TIME_SEQUENCE, string);
+        }
+
+        String[] split = string.split("((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))");
+
+        long time = 0;
+
+        for (int i = 0; i < split.length; i += 2) {
+            String t = split[i + 1];
+            long v = Long.parseLong(split[i]);
+
+            if (t.equals("s") || t.equals("sec") || t.equals("secs") || t.equals("seconds")) {
+                time += v;
+            } else if (t.equals("m") || t.equals("min") || t.equals("minute") || t.equals("minutes")) {
+                time += TimeUnit.MINUTES.toSeconds(v);
+            } else if (t.equals("h") || t.equals("hour") || t.equals("hours")) {
+                time += TimeUnit.HOURS.toSeconds(v);
+            } else if (t.equals("d") || t.equals("day") || t.equals("days")) {
+                time += TimeUnit.DAYS.toSeconds(v);
+            } else if (t.equals("w") || t.equals("week") || t.equals("weeks")) {
+                time += TimeUnit.DAYS.toSeconds(v) * 7;
+            } else if (t.equals("mon") || t.equals("month") || t.equals("months")) {
+                time += TimeUnit.DAYS.toSeconds(v) * 31;
+            } else if (t.equals("y") || t.equals("year") || t.equals("years")) {
+                time += TimeUnit.DAYS.toSeconds(v) * 365;
+            } else {
+                throw new DisguiseParseException(LibsMsg.PARSE_INVALID_TIME, t);
+            }
+        }
+
+        return time;
     }
 
     /**

@@ -135,8 +135,10 @@ NameAboveHeadAlwaysVisible: true
 # If you turn this to true, arrows will act like they hit the disguise in the right place!
 # So someone disguised as a enderdragon will easily get shot down by arrows!
 # This WILL conflict with NoCheatPlus. Other plugins may also get problems.
-# This shouldn't really be enabled for players as it also interferes with their movement because the server thinks the player is larger than he really is.
-# That makes the player unable to approach this building because the server thinks he is trying to glitch inside blocks.
+# This shouldn't really be enabled for players as it also interferes with their movement because the server thinks
+# the player is larger than they really are.
+# That makes the player unable to approach this building because the server thinks they are trying to glitch inside
+# blocks.
 # This feature is highly experimental and is guaranteed to cause problems for players who are disguised
 ModifyBoundingBox: false
 
@@ -146,9 +148,12 @@ ModifyBoundingBox: false
 MonstersIgnoreDisguises: false
 
 # This works only for players, disguised monsters and the like will not be undisguised
-# Should the player's disguises be removed if he attacks something?
+# Should the player's disguises be removed if they attacks something?
+# Blown Disguise message can be changed in translations
+# Message can be hidden with an empty translation
 BlowDisguisesWhenAttacking: false
-# Should the player's disguises be removed if he's attacked by something?
+
+# Should the player's disguises be removed if they're attacked by something?
 BlowDisguisesWhenAttacked: false
 
 #Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
@@ -164,7 +169,7 @@ DisguiseCloneSize: 3
 
 # This controls if a entity's max health is determined by the entity, or by the disguise.
 # Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
-# Else it will be 1/20 of the boss bar when he is full health.
+# Else it will be 1/20 of the boss bar when they are full health.
 # Setting this in LivingWatcher overrides both values.
 MaxHealthDeterminedByEntity: true
 
@@ -195,6 +200,12 @@ PlayerDisguisesTablistExpires: 40
 
 # Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
 DisableInvisibility: false
+
+# Disguises have a 'setExpires' option which removes the disguise after a set amount of time
+# By default, this is set to false which means it expires 9 minutes afterwards, even if they logged off.
+# If true, it means they will experience the full 9 minutes, even if they log on for just a minute per day
+# Expired message can be hidden with an empty translation message
+DynamicExpiry: false
 
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.

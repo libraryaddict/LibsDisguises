@@ -82,6 +82,9 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoGameProfile(WrappedGameProfile.class, "GameProfile",
                 "Get the gameprofile here https://sessionserver.mojang" +
                         ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
+        paramInfos.add(new ParamInfoTime(long.class, "Expiry Time",
+                "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
+                        "etc. 30m20secs = 30 minutes, 20 seconds"));
 
         // Register base types
         Map<String, Object> booleanMap = new HashMap<>();

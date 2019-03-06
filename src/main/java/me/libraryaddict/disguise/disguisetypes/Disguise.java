@@ -20,6 +20,7 @@ import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -59,6 +60,10 @@ public abstract class Disguise {
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
     private FlagWatcher watcher;
+    /**
+     * If set, how long before disguise expires
+     */
+    private long disguiseExpires;
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -107,6 +112,23 @@ public abstract class Disguise {
         }
     }
 
+    public boolean isDisguiseExpired() {
+        return DisguiseConfig.isDynamicExpiry() ? disguiseExpires == 1 :
+                disguiseExpires > 0 && disguiseExpires < System.currentTimeMillis();
+    }
+
+    public long getExpires() {
+        return disguiseExpires;
+    }
+
+    public void setExpires(long timeToExpire) {
+        disguiseExpires = timeToExpire;
+
+        if (isDisguiseExpired()) {
+            removeDisguise();
+        }
+    }
+
     private void createRunnable() {
         final boolean alwaysSendVelocity;
 
@@ -149,6 +171,15 @@ public abstract class Disguise {
                 // If entity is no longer valid. Remove it.
                 if (getEntity() instanceof Player && !((Player) getEntity()).isOnline()) {
                     removeDisguise();
+                } else if (disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? --disguiseExpires == 1 :
+                        disguiseExpires < System.currentTimeMillis())) { // If disguise expired
+                    removeDisguise();
+
+                    String expired = LibsMsg.EXPIRED_DISGUISE.get();
+
+                    if (getEntity() instanceof Player && expired.length() > 0) {
+                        getEntity().sendMessage(expired);
+                    }
                 } else if (!getEntity().isValid()) {
                     // If it has been dead for 30+ ticks
                     // This is to ensure that this disguise isn't removed while clients think its the real entity
@@ -728,12 +759,12 @@ public abstract class Disguise {
     }
 
     public boolean startDisguise() {
-        if (isDisguiseInUse()) {
+        if (isDisguiseInUse() || isDisguiseExpired()) {
             return false;
         }
 
         if (getEntity() == null) {
-            throw new RuntimeException("No entity is assigned to this disguise!");
+            throw new IllegalStateException("No entity is assigned to this disguise!");
         }
 
         DisguiseUtilities.setPluginsUsed();
@@ -741,8 +772,7 @@ public abstract class Disguise {
         // Fire a disguise event
         DisguiseEvent event = new DisguiseEvent(entity, this);
 
-        Bukkit.getPluginManager().
-                callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
 
         // If they cancelled this disguise event. No idea why.
         // Just return.
