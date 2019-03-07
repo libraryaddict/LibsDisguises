@@ -209,7 +209,7 @@ public class LibsPremium {
                     plugin.getBuildDate());
 
             if (plugin.isPremium()) {
-                if (!isValidVersion(version, plugin.getVersion())) {
+                if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null) {
                     DisguiseUtilities.getLogger().warning(
                             "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
                                     ") in the LibsDisguises folder! For security purposes, please replace this with a" +
