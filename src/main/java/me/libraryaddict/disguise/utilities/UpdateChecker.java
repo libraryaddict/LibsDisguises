@@ -10,7 +10,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class UpdateChecker {
     private final String resourceID;
@@ -120,6 +119,20 @@ public class UpdateChecker {
             } else if (nSplit.length <= i) {
                 // If the new version doesn't have the next version, then it's older
                 return false;
+            }
+
+            // If both strings are numerical
+            if (cSplit[i].matches("[0-9]+") && nSplit[i].matches("[0-9]+")) {
+                int cInt = Integer.parseInt(cSplit[i]);
+                int nInt = Integer.parseInt(nSplit[i]);
+
+                // Same version
+                if (cInt == nInt) {
+                    continue;
+                }
+
+                // Return if current version is inferior to new version
+                return cInt < nInt;
             }
 
             // String compare the versions, should perform the same as an int compare
