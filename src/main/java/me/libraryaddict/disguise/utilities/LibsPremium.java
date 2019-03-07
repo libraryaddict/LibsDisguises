@@ -112,12 +112,12 @@ public class LibsPremium {
         }
 
         // Split by decimal points
-        String[] cSplit = currentVersion.split("\\.");
-        String[] nSplit = premiumVersion.split("\\.");
+        String[] currentSplit = currentVersion.split("\\.");
+        String[] premSplit = premiumVersion.split("\\.");
 
         // Comparing major versions
         // Current version must be the same, or lower than premium version
-        return cSplit[0].compareTo(nSplit[0]) <= 0;
+        return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
     }
 
     private static PluginInformation getInformation(File file) throws Exception {
