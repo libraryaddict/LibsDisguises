@@ -316,7 +316,7 @@ public class DisguiseConfig {
         }
         catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
-                    "' to a valid option for SelfDisguisesTeam");
+                    "' to a valid option for SelfDisguisesScoreboard");
         }
 
         loadCustomDisguises();
