@@ -24,6 +24,7 @@ public class MetricsInitalizer {
 
         String version = plugin.getDescription().getVersion();
 
+        /*
         // If a release build, attach build number
         if (!plugin.isReleaseBuild() || !LibsPremium.isPremium()) {
             version += "-";
@@ -35,7 +36,7 @@ public class MetricsInitalizer {
             // else 9.7.0-SNAPSHOT-unknown
 
             version += plugin.getBuildNo();
-        }
+        }*/
 
         Metrics metrics = new Metrics(plugin, version);
         final String premiumType;
