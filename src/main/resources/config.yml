@@ -133,6 +133,7 @@ NameAboveHeadAlwaysVisible: true
 
 # This modifies the bounding box, This is stuff like can a arrow hit them.
 # If you turn this to true, arrows will act like they hit the disguise in the right place!
+# Clients will not see any difference in the hitboxes they are attacking, this is a server-sided calculation!
 # So someone disguised as a enderdragon will easily get shot down by arrows!
 # This WILL conflict with NoCheatPlus. Other plugins may also get problems.
 # This shouldn't really be enabled for players as it also interferes with their movement because the server thinks
