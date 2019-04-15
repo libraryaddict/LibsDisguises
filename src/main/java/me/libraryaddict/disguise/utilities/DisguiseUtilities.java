@@ -880,7 +880,7 @@ public class DisguiseUtilities {
         gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
         gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
         gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
-        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerChatComponent());
+        gsonBuilder.registerTypeAdapter(WrappedChatComponent.class, new SerializerChatComponent());
         gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
         gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
 
