@@ -203,7 +203,6 @@ public class LibsPremium {
                 ex.printStackTrace();
                 continue;
             }
-            PacketType.Play.Server.VEHICLE_MOVE
 
             // Format into a string
             // v5.2.6, build #40, created 16/02/2019
