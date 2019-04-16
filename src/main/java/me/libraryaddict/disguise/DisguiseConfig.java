@@ -9,10 +9,13 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -125,6 +128,28 @@ public class DisguiseConfig {
 
     public static void setExplicitDisguisePermissions(boolean explictDisguisePermission) {
         explicitDisguisePermissions = explictDisguisePermission;
+    }
+
+    public static Entry<DisguisePerm, Disguise> getParsedCustomDisguise(
+            String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        Entry<DisguisePerm, String> entry = getCustomDisguise(disguise);
+
+        return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(entry.getValue()));
+    }
+
+    public static Entry<DisguisePerm, Disguise> getParsedCustomDisguise(Entity target,
+            String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        Entry<DisguisePerm, String> entry = getCustomDisguise(disguise);
+
+        return new HashMap.SimpleEntry(entry.getKey(),
+                DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), target, entry.getValue()));
+    }
+
+    public static Entry<DisguisePerm, Disguise> getParsedCustomDisguise(CommandSender invoker, Entity target,
+            String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        Entry<DisguisePerm, String> entry = getCustomDisguise(disguise);
+
+        return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(invoker, target, entry.getValue()));
     }
 
     public static Entry<DisguisePerm, String> getCustomDisguise(String disguise) {
@@ -366,18 +391,6 @@ public class DisguiseConfig {
 
             try {
                 String[] disguiseArgs = DisguiseUtilities.split(toParse);
-
-                for (int i = 0; i < disguiseArgs.length; i++) {
-                    String arg = disguiseArgs[i];
-
-                    // If argument is for the command user name
-                    if (arg.equals("%player%")) {
-                        disguiseArgs[i] = "libraryaddict";
-                    } else if (arg.equals("%skin%")) { // If argument is for the command user skin
-                        disguiseArgs[i] = "{\"id\":\"a149f81bf7844f8987c554afdd4db533\",\"name\":\"libraryaddict\"," +
-                                "\"properties\":[]}";
-                    }
-                }
 
                 Disguise disguise = DisguiseParser
                         .parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,

@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -267,6 +268,17 @@ public class DisguiseParser {
 
         // Parse disguise
         return parseDisguise(sender, null, permNode, args, permissions);
+    }
+
+    public static Disguise parseDisguise(
+            String disguise) throws IllegalAccessException, InvocationTargetException, DisguiseParseException {
+        return parseDisguise(Bukkit.getConsoleSender(), null, disguise);
+    }
+
+    public static Disguise parseDisguise(CommandSender sender, Entity target,
+            String disguise) throws IllegalAccessException, InvocationTargetException, DisguiseParseException {
+        return parseDisguise(sender, target, "disguise", DisguiseUtilities.split(disguise),
+                new DisguisePermissions(Bukkit.getConsoleSender(), "disguise"));
     }
 
     /**
