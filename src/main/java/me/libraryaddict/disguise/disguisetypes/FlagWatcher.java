@@ -171,16 +171,15 @@ public class FlagWatcher {
                         if (newHealth > 0 && hasDied) {
                             hasDied = false;
 
-                            Bukkit.getScheduler()
-                                    .scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                                        try {
-                                            DisguiseUtilities.sendSelfDisguise((Player) getDisguise().getEntity(),
-                                                    getDisguise());
-                                        }
-                                        catch (Exception ex) {
-                                            ex.printStackTrace();
-                                        }
-                                    }, 2);
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                                try {
+                                    DisguiseUtilities
+                                            .sendSelfDisguise((Player) getDisguise().getEntity(), getDisguise());
+                                }
+                                catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }, 2);
                         } else if (newHealth <= 0 && !hasDied) {
                             hasDied = true;
                         }
