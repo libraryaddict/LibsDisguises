@@ -140,8 +140,8 @@ public class DisguiseUtilities {
                 if (disg.getEntity() == null)
                     continue;
 
-                if (disg.getEntity() instanceof Player ? DisguiseConfig.isSavePlayerDisguises() :
-                        DisguiseConfig.isSaveEntityDisguises())
+                if (disg.getEntity() instanceof Player ? !DisguiseConfig.isSavePlayerDisguises() :
+                        !DisguiseConfig.isSaveEntityDisguises())
                     continue;
 
                 saveDisguises(disg.getEntity().getUniqueId(), list.toArray(new Disguise[0]));
