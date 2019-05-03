@@ -123,7 +123,7 @@ public class ArmorStandWatcher extends LivingWatcher
 
     public void setMarker(boolean isMarker)
     {
-        setArmorStandFlag(10, isMarker);
+        setArmorStandFlag(16, isMarker);
         sendData(MetaIndex.ARMORSTAND_META);
     }
 
