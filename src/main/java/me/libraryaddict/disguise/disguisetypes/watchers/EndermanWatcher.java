@@ -32,10 +32,6 @@ public class EndermanWatcher extends InsentientWatcher {
     }
 
     public void setItemInMainHand(Material type) {
-        setItemInMainHand(type, 0);
-    }
-
-    public void setItemInMainHand(Material type, int data) {
         Optional<WrappedBlockData> optional;
 
         if (type == null)
@@ -44,6 +40,11 @@ public class EndermanWatcher extends InsentientWatcher {
             optional = Optional.of(WrappedBlockData.createData(type));
 
         setData(MetaIndex.ENDERMAN_ITEM, optional);
+    }
+
+    @Deprecated
+    public void setItemInMainHand(Material type, int data) {
+        setItemInMainHand(type);
     }
 
     public boolean isAggressive() {
