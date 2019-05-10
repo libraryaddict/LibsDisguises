@@ -20,10 +20,7 @@ public class EndermanWatcher extends InsentientWatcher {
 
         if (value.isPresent()) {
             WrappedBlockData pair = value.get();
-            Material id = pair.getType();
-            int data = pair.getData();
-
-            return new ItemStack(id, 1, (short) data);
+            return new ItemStack(pair.getType(), 1);
         } else {
             return null;
         }
@@ -31,22 +28,23 @@ public class EndermanWatcher extends InsentientWatcher {
 
     @Override
     public void setItemInMainHand(ItemStack itemstack) {
-        setItemInMainHand(itemstack.getType(), itemstack.getDurability());
+        setItemInMainHand(itemstack.getType());
     }
 
     public void setItemInMainHand(Material type) {
-        setItemInMainHand(type, 0);
-    }
-
-    public void setItemInMainHand(Material type, int data) {
         Optional<WrappedBlockData> optional;
 
         if (type == null)
             optional = Optional.empty();
         else
-            optional = Optional.of(WrappedBlockData.createData(type, data));
+            optional = Optional.of(WrappedBlockData.createData(type));
 
         setData(MetaIndex.ENDERMAN_ITEM, optional);
+    }
+
+    @Deprecated
+    public void setItemInMainHand(Material type, int data) {
+        setItemInMainHand(type);
     }
 
     public boolean isAggressive() {
