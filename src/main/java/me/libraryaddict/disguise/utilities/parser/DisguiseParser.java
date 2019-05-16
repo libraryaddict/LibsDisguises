@@ -336,7 +336,7 @@ public class DisguiseParser {
             }
         } else {
             disguisePerm = getDisguisePerm(args[0]);
-            Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getCustomDisguise(args[0]);
+            Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
 
             if (customDisguise != null) {
                 args = DisguiseUtilities.split(customDisguise.getValue());
