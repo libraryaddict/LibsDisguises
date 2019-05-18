@@ -18,6 +18,8 @@ public enum DisguiseType {
 
     BOAT(1),
 
+    CAT,
+
     CAVE_SPIDER,
 
     CHICKEN,
@@ -68,6 +70,8 @@ public enum DisguiseType {
 
     FISHING_HOOK(90),
 
+    FOX,
+
     GHAST,
 
     GIANT,
@@ -114,6 +118,8 @@ public enum DisguiseType {
 
     PAINTING,
 
+    PANDA,
+
     PARROT,
 
     PHANTOM,
@@ -121,6 +127,8 @@ public enum DisguiseType {
     PIG,
 
     PIG_ZOMBIE,
+
+    PILLAGER,
 
     PLAYER,
 
@@ -131,6 +139,8 @@ public enum DisguiseType {
     PUFFERFISH,
 
     RABBIT,
+
+    RAVAGER,
 
     SALMON,
 
@@ -166,9 +176,9 @@ public enum DisguiseType {
 
     THROWN_EXP_BOTTLE(75),
 
-    TIPPED_ARROW(60),
-
     TRIDENT(94, 0),
+
+    TRADER_LLAMA,
 
     TROPICAL_FISH,
 
@@ -184,6 +194,8 @@ public enum DisguiseType {
 
     VINDICATOR,
 
+    WANDERING_TRADER,
+
     WITCH,
 
     WITHER,
@@ -198,14 +210,6 @@ public enum DisguiseType {
 
     ZOMBIE_VILLAGER;
 
-    static {
-        for (DisguiseType type : values()) {
-            String name = type.name();
-
-            type.setEntityType(EntityType.valueOf(name));
-        }
-    }
-
     public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());
 
@@ -213,12 +217,15 @@ public enum DisguiseType {
     }
 
     public static DisguiseType getType(EntityType entityType) {
-        try {
-            return valueOf(entityType.name().toUpperCase());
+        for (DisguiseType type : values()) {
+            if (type.getEntityType() != entityType) {
+                continue;
+            }
+
+            return type;
         }
-        catch (Throwable ex) {
-            return DisguiseType.UNKNOWN;
-        }
+
+        return DisguiseType.UNKNOWN;
     }
 
     private EntityType entityType;
@@ -245,6 +252,8 @@ public enum DisguiseType {
                     break;
             }
         }
+
+        setEntityType(EntityType.valueOf(name()));
     }
 
     public int getDefaultData() {

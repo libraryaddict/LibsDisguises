@@ -51,6 +51,7 @@ public class WolfWatcher extends TameableWatcher {
         setTameableFlag(2, angry);
     }
 
+    @Deprecated
     public void setCollarColor(AnimalColor color) {
         setCollarColor(color.getDyeColor());
     }

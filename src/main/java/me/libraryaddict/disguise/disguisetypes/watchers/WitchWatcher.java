@@ -6,23 +6,18 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 /**
  * @author Navid
  */
-public class WitchWatcher extends InsentientWatcher
-{
+public class WitchWatcher extends RaiderWatcher {
 
-    public WitchWatcher(Disguise disguise)
-    {
+    public WitchWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public boolean isAggressive()
-    {
-        return (boolean) getData(MetaIndex.WITCH_AGGRESSIVE);
+    public boolean isAggressive() {
+        return getData(MetaIndex.WITCH_AGGRESSIVE);
     }
 
-    public void setAggressive(boolean aggressive)
-    {
+    public void setAggressive(boolean aggressive) {
         setData(MetaIndex.WITCH_AGGRESSIVE, aggressive);
         sendData(MetaIndex.WITCH_AGGRESSIVE);
     }
-
 }

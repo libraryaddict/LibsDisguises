@@ -16,8 +16,8 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -55,9 +55,18 @@ public class LibsDisguises extends JavaPlugin {
 
         LibsPremium.check(getDescription().getVersion());
 
-        if (!ReflectionManager.getMinecraftVersion().startsWith("1.13")) {
+        if (!LibsPremium.isPremium()) {
+            getLogger().severe("You must purchase the plugin to use support for 1.14!");
+            getLogger().severe("This will be released free once the plugin is stable!");
+            getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
+                    "Lib's Disguises plugin folder");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
+
+        if (!ReflectionManager.getMinecraftVersion().startsWith("1.14")) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
-                    "intended for 1.13!");
+                    "intended for 1.14!");
             getPluginLoader().disablePlugin(this);
             return;
         }
@@ -311,6 +320,12 @@ public class LibsDisguises extends JavaPlugin {
                     case TRIDENT:
                         nmsEntityName = "ThrownTrident";
                         break;
+                    case WANDERING_TRADER:
+                        nmsEntityName = "VillagerTrader";
+                        break;
+                    case TRADER_LLAMA:
+                        nmsEntityName = "LLamaTrader"; // Interesting capitalization
+                        break;
                     default:
                         break;
                 }
@@ -336,14 +351,15 @@ public class LibsDisguises extends JavaPlugin {
                     continue;
                 }
 
-                Object nmsEntity = ReflectionManager.createEntityInstance(nmsEntityName);
+                Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType, nmsEntityName);
 
                 if (nmsEntity == null) {
                     getLogger().warning("Entity not found! (" + nmsEntityName + ")");
                     continue;
                 }
 
-                disguiseType.setTypeId(ReflectionManager.getEntityType(nmsEntity));
+                disguiseType.setTypeId(ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
+
                 Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
 
                 int entitySize = 0;
@@ -431,7 +447,7 @@ public class LibsDisguises extends JavaPlugin {
                     disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
                 }
 
-                disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
+                //disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
             }
             catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
                 getLogger().severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");

@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
+import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.parser.params.types.base.*;
@@ -31,15 +32,13 @@ public class ParamInfoTypes {
         List<ParamInfo> paramInfos = new ArrayList<>();
 
         // Register enum types
-        paramInfos.add(new ParamInfoEnum(AnimalColor.class, "Animal Color",
-                "View all the colors you can use for an animal color"));
+        //paramInfos.add(new ParamInfoEnum(AnimalColor.class, "Animal Color",
+        //        "View all the colors you can use for an animal color"));
         paramInfos
                 .add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise"));
         paramInfos.add(new ParamInfoEnum(Horse.Color.class, "Horse Color",
                 "View all the colors you can use for a horses color"));
 
-        paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type",
-                "View all the ocelot types you can use for ocelots"));
         paramInfos.add(new ParamInfoEnum(Villager.Profession.class, "Villager Profession",
                 "View all the professions you can set on a Zombie and Normal Villager"));
         paramInfos.add(new ParamInfoEnum(BlockFace.class, "Direction", "Direction (North, East, South, West, Up, Down)",
@@ -61,6 +60,12 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoEnum(DyeColor.class, "DyeColor", "Dye colors of many different colors"));
         paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style",
                 "Horse style which is the patterns on the horse"));
+        paramInfos.add(new ParamInfoEnum(EntityPose.class, "EntityPose", "The pose the entity should strike"));
+        paramInfos.add(new ParamInfoEnum(Cat.Type.class, "Cat Type", "The type of cat"));
+        paramInfos.add(new ParamInfoEnum(Fox.Type.class, "Fox Type", "The type of fox"));
+        paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
+        paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant",
+                "The different variants for mushroom cows"));
 
         // Register custom types
         paramInfos.add(new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)",

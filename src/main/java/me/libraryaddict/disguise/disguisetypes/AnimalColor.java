@@ -9,17 +9,17 @@ public enum AnimalColor {
     BROWN(DyeColor.BROWN, Material.COCOA_BEANS),
     CYAN(DyeColor.CYAN, Material.CYAN_DYE),
     GRAY(DyeColor.GRAY, Material.GRAY_DYE),
-    GREEN(DyeColor.GREEN, Material.CACTUS_GREEN),
+    GREEN(DyeColor.GREEN, Material.GREEN_DYE),
     LIGHT_BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_DYE),
     LIME(DyeColor.LIME, Material.LIME_DYE),
     MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_DYE),
     ORANGE(DyeColor.ORANGE, Material.ORANGE_DYE),
     PINK(DyeColor.PINK, Material.PINK_DYE),
     PURPLE(DyeColor.PURPLE, Material.PURPLE_DYE),
-    RED(DyeColor.RED, Material.ROSE_RED),
+    RED(DyeColor.RED, Material.RED_DYE),
     LIGHT_GRAY(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_DYE),
     WHITE(DyeColor.WHITE, Material.BONE_MEAL),
-    YELLOW(DyeColor.YELLOW, Material.DANDELION_YELLOW);
+    YELLOW(DyeColor.YELLOW, Material.YELLOW_DYE);
 
     public static AnimalColor getColorByWool(int woolId) {
         for (AnimalColor color : values()) {

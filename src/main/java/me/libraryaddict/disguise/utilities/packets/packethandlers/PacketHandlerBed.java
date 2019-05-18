@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class PacketHandlerBed implements IPacketHandler {
     @Override
     public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.BED};
+        return new PacketType[]{};
     }
 
     @Override

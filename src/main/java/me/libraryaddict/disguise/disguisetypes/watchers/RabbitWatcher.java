@@ -16,7 +16,7 @@ public class RabbitWatcher extends AgeableWatcher
 
     public RabbitType getType()
     {
-        return RabbitType.getType((int) getData(MetaIndex.RABBIT_TYPE));
+        return RabbitType.getType(getData(MetaIndex.RABBIT_TYPE));
     }
 
     public void setType(RabbitType type)

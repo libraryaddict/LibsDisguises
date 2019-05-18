@@ -240,15 +240,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(spawnPlayer);
 
-            if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                PacketContainer[] bedPackets = DisguiseUtilities.getBedPackets(
-                        loc.clone().subtract(0, DisguiseUtilities.getYModifier(disguisedEntity, disguise), 0),
-                        observer.getLocation(), ((PlayerDisguise) disguise));
-
-                for (PacketContainer packet : bedPackets) {
-                    packets.addPacket(packet);
-                }
-            } else if (!selfDisguise) {
+            if (!selfDisguise) {
                 // Teleport the player back to where he's supposed to be
                 PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 
@@ -336,7 +328,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
                             disguise.getWatcher()));
         } else if (disguise.getType().isMisc()) {
-            int objectId = disguise.getType().getObjectId();
             int data = ((MiscDisguise) disguise).getData();
 
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
@@ -351,11 +342,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 data = ((((int) loc.getYaw() % 360) + 720 + 45) / 90) % 4;
             }
 
-            Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
+            Object entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
+
+            Object[] params = new Object[]{disguisedEntity.getEntityId(), disguisedEntity.getUniqueId(), loc.getX(),
+                    loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw(), entityType, data,
+                    ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
             PacketContainer spawnEntity = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, objectId, data)
-                    .createPacket(nmsEntity, objectId, data);
+                    .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, params).createPacket(params);
             packets.addPacket(spawnEntity);
 
             // If it's not the same type, then highly likely they have different velocity settings which we'd want to

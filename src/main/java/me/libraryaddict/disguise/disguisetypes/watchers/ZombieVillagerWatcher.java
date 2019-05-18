@@ -2,12 +2,18 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.VillagerData;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+
+import java.util.Random;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
 
     public ZombieVillagerWatcher(Disguise disguise) {
         super(disguise);
+
+        setProfession(Profession.values()[new Random().nextInt(Profession.values().length)]);
     }
 
     public boolean isShaking() {
@@ -20,7 +26,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
      * @return
      */
     public boolean isVillager() {
-        return ((int) getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION)) != 0;
+        return getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION).getProfession() != Profession.NONE;
     }
 
     public void setShaking(boolean shaking) {
@@ -28,32 +34,36 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         sendData(MetaIndex.ZOMBIE_VILLAGER_SHAKING);
     }
 
-    /**
-     * Only returns a valid value if this zombie is a villager.
-     *
-     * @return
-     */
+    public VillagerData getVillagerData() {
+        return getData(MetaIndex.VILLAGER_DATA);
+    }
+
+    public void setVillagerData(VillagerData villagerData) {
+        setData(MetaIndex.VILLAGER_DATA, villagerData);
+        sendData(MetaIndex.VILLAGER_DATA);
+    }
+
     public Profession getProfession() {
-        return Profession.values()[getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION) + 1];
+        return getVillagerData().getProfession();
     }
 
-    /**
-     * Sets the profession of this zombie, in turn turning it into a Zombie Villager
-     *
-     * @param id
-     */
-    @Deprecated
-    public void setProfession(int id) {
-        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, id);
-        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
+    public Villager.Type getType() {
+        return getVillagerData().getType();
     }
 
-    /**
-     * Sets the profession of this zombie, in turn turning it into a Zombie Villager
-     *
-     * @param profession
-     */
+    public int getLevel() {
+        return getVillagerData().getLevel();
+    }
+
     public void setProfession(Profession profession) {
-        setProfession(profession.ordinal() - 1);
+        setVillagerData(new VillagerData(getType(), profession, getLevel()));
+    }
+
+    public void setType(Villager.Type type) {
+        setVillagerData(new VillagerData(type, getProfession(), getLevel()));
+    }
+
+    public void setLevel(int level) {
+        setVillagerData(new VillagerData(getType(), getProfession(), getLevel()));
     }
 }

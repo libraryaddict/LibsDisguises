@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.google.gson.Gson;
-import org.apache.commons.io.IOUtils;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;

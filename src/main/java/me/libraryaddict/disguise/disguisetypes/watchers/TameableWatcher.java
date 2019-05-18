@@ -30,12 +30,12 @@ public class TameableWatcher extends AgeableWatcher
 
     protected boolean isTameableFlag(int no)
     {
-        return ((byte) getData(MetaIndex.TAMEABLE_META) & no) != 0;
+        return (getData(MetaIndex.TAMEABLE_META) & no) != 0;
     }
 
     protected void setTameableFlag(int no, boolean flag)
     {
-        byte value = (byte) getData(MetaIndex.TAMEABLE_META);
+        byte value = getData(MetaIndex.TAMEABLE_META);
 
         if (flag)
         {

@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.DyeColor;
 import org.bukkit.block.BlockFace;
 
 import java.util.Optional;
@@ -51,8 +52,18 @@ public class ShulkerWatcher extends InsentientWatcher {
         sendData(MetaIndex.SHULKER_PEEKING);
     }
 
+    @Deprecated
     public void setColor(AnimalColor color) {
         setData(MetaIndex.SHULKER_COLOR, color.getDyeColor().getWoolData());
+        sendData(MetaIndex.SHULKER_COLOR);
+    }
+
+    public void setColor(DyeColor newColor) {
+        if (newColor == getColor().getDyeColor()) {
+            return;
+        }
+
+        setData(MetaIndex.SHULKER_COLOR, newColor.getWoolData());
         sendData(MetaIndex.SHULKER_COLOR);
     }
 

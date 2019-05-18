@@ -214,9 +214,6 @@ PacketsEnabled:
   # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
   # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
   Animation: true
-  # Disabling this means that you can't use the setSleeping option on a player disguise. Also you will crash anyone watching when you try to sleep in a bed if disguised as a non-player
-  # This also sends a chunk packet at key positions
-  Bed: true
   # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
   # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
   Collect: true

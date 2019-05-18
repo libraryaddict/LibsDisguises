@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.comphenix.protocol.PacketType;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -235,9 +236,6 @@ public class LibsPremium {
         }
     }
 
-    /**
-     * Add a naughty message for the invalid user ids
-     */
     private static String getSanitizedUser(String userID) {
         if (userID == null) {
             return "N/A";
@@ -247,13 +245,19 @@ public class LibsPremium {
             return String.format("... %s? Am I reading this right?", userID);
         }
 
-        return userID;
+        int total = 0;
+
+        for (char c : userID.toCharArray()) {
+            total += Character.getNumericValue(c);
+        }
+
+        return String.format("%s(%s)", userID, total);
     }
 
     public static void check(String version) {
         thisPluginIsPaidFor = isPremium();
 
-        if (!isPremium()) {
+        if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {
             doSecondaryCheck(version);
         } else {
             DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(getUserID()));

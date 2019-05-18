@@ -26,6 +26,7 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         sendData(MetaIndex.LLAMA_CARPET);
     }
 
+    @Deprecated
     public void setCarpet(AnimalColor color) {
         setCarpet(color.getDyeColor());
     }

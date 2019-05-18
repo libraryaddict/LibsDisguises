@@ -17,10 +17,6 @@ public class ZombieWatcher extends InsentientWatcher {
         return getData(MetaIndex.ZOMBIE_BABY);
     }
 
-    public boolean isAggressive() {
-        return (boolean) getData(MetaIndex.ZOMBIE_AGGRESSIVE);
-    }
-
     public void setAdult() {
         setBaby(false);
     }
@@ -32,11 +28,6 @@ public class ZombieWatcher extends InsentientWatcher {
     public void setBaby(boolean baby) {
         setData(MetaIndex.ZOMBIE_BABY, baby);
         sendData(MetaIndex.ZOMBIE_BABY);
-    }
-
-    public void setAggressive(boolean handsup) {
-        setData(MetaIndex.ZOMBIE_AGGRESSIVE, handsup);
-        sendData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
     public boolean isConverting() {

@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class DisguiseConfig {
-    public static enum DisguisePushing { // This enum has a really bad name..
+    public enum DisguisePushing { // This enum has a really bad name..
         MODIFY_SCOREBOARD,
         IGNORE_SCOREBOARD,
-        CREATE_SCOREBOARD;
+        CREATE_SCOREBOARD
     }
 
     public enum UpdatesBranch {
@@ -33,7 +33,6 @@ public class DisguiseConfig {
     }
 
     private static boolean animationEnabled;
-    private static boolean bedEnabled;
     private static boolean blowDisguisesWhenAttacking;
     private static boolean blowDisguisesWhenAttacked;
     private static boolean collectEnabled;
@@ -307,7 +306,6 @@ public class DisguiseConfig {
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setAnimationPacketsEnabled(config.getBoolean("PacketsEnabled.Animation"));
-        setBedPacketsEnabled(config.getBoolean("PacketsEnabled.Bed"));
         setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
         setCollectPacketsEnabled(config.getBoolean("PacketsEnabled.Collect"));
         setMetadataPacketsEnabled(config.getBoolean("PacketsEnabled.Metadata"));
@@ -445,10 +443,6 @@ public class DisguiseConfig {
 
     public static boolean isAnimationPacketsEnabled() {
         return animationEnabled;
-    }
-
-    public static boolean isBedPacketsEnabled() {
-        return bedEnabled;
     }
 
     public static boolean isCollectPacketsEnabled() {
@@ -595,14 +589,6 @@ public class DisguiseConfig {
     public static void setAnimationPacketsEnabled(boolean enabled) {
         if (enabled != isAnimationPacketsEnabled()) {
             animationEnabled = enabled;
-
-            PacketsManager.setupMainPacketsListener();
-        }
-    }
-
-    public static void setBedPacketsEnabled(boolean enabled) {
-        if (enabled != isBedPacketsEnabled()) {
-            bedEnabled = enabled;
 
             PacketsManager.setupMainPacketsListener();
         }

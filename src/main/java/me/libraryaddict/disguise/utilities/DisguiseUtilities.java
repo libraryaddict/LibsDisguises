@@ -27,13 +27,13 @@ import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -559,13 +559,13 @@ public class DisguiseUtilities {
         int entity = disguise.getEntity().getEntityId();
         PlayerWatcher watcher = disguise.getWatcher();
 
-        PacketContainer setBed = new PacketContainer(Server.BED);
+        //PacketContainer setBed = new PacketContainer(Server.BED);
 
         int bX = (getChunkCord(playerLocation.getBlockX()) * 16) + 1 + watcher.getSleepingDirection().getModX();
         int bZ = (getChunkCord(playerLocation.getBlockZ()) * 16) + 1 + watcher.getSleepingDirection().getModZ();
 
-        setBed.getIntegers().write(0, entity);
-        setBed.getBlockPositionModifier().write(0, new BlockPosition(bX, 0, bZ));
+        // setBed.getIntegers().write(0, entity);
+        // setBed.getBlockPositionModifier().write(0, new BlockPosition(bX, 0, bZ));
 
         PacketContainer teleport = new PacketContainer(Server.ENTITY_TELEPORT);
 
@@ -577,7 +577,7 @@ public class DisguiseUtilities {
         doubles.write(1, DisguiseUtilities.getYModifier(disguise.getEntity(), disguise) + sleepingLocation.getY());
         doubles.write(2, sleepingLocation.getZ());
 
-        return new PacketContainer[]{setBed, teleport};
+        return new PacketContainer[]{teleport};
     }
 
     public static Disguise getClonedDisguise(String key) {
@@ -903,10 +903,13 @@ public class DisguiseUtilities {
             }
 
             for (Constructor constructor : chunkClass.getConstructors()) {
-                if (constructor.getParameterTypes().length != 8)
+                if (constructor.getParameterTypes().length != 9)
                     continue;
 
-                bedChunk = constructor.newInstance(world, 0, 0, biomes, null, null, null, 0L);
+                Object cords = ReflectionManager.getNmsConstructor("ChunkCoordIntPair", int.class, int.class)
+                        .newInstance(0, 0);
+
+                bedChunk = constructor.newInstance(world, cords, biomes, null, null, null, 0L, null, null);
                 break;
             }
 
@@ -917,8 +920,8 @@ public class DisguiseUtilities {
             Field cSection = chunkClass.getDeclaredField("sections");
             cSection.setAccessible(true);
 
-            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class, boolean.class)
-                    .newInstance(0, true);
+            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class)
+                    .newInstance(0);
 
             Class blockClass = ReflectionManager.getNmsClass("Block");
             Object REGISTRY = ReflectionManager.getNmsField("IRegistry", "BLOCK").get(null);
@@ -938,8 +941,6 @@ public class DisguiseUtilities {
 
             Method setType = chunkSection.getClass()
                     .getMethod("setType", int.class, int.class, int.class, ReflectionManager.getNmsClass("IBlockData"));
-            Method setSky = chunkSection.getClass().getMethod("a", int.class, int.class, int.class, int.class);
-            Method setEmitted = chunkSection.getClass().getMethod("b", int.class, int.class, int.class, int.class);
 
             for (BlockFace face : new BlockFace[]{BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH}) {
                 int x = 1 + face.getModX();
@@ -961,7 +962,7 @@ public class DisguiseUtilities {
                     .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, 65535)
                     .createPacket(bedChunk, 65535);
 
-            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
+            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "serverThread");
             threadField.setAccessible(true);
 
             mainThread = (Thread) threadField.get(ReflectionManager.getMinecraftServer());
@@ -1036,10 +1037,10 @@ public class DisguiseUtilities {
                         .get(entityTrackerEntry);
 
                 Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
 
-                final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
+                final Method updatePlayer = ReflectionManager
+                        .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
@@ -1090,10 +1091,10 @@ public class DisguiseUtilities {
                             .get(entityTrackerEntry);
 
                     Method clear = ReflectionManager
-                            .getNmsMethod("EntityTrackerEntry", "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                            .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
 
-                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                            ReflectionManager.getNmsClass("EntityPlayer"));
+                    final Method updatePlayer = ReflectionManager
+                            .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
 
                     trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                     // ConcurrentModificationException
@@ -1161,10 +1162,10 @@ public class DisguiseUtilities {
                         .get(entityTrackerEntry);
 
                 final Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
 
-                final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", "updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
+                final Method updatePlayer = ReflectionManager
+                        .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
 
@@ -1567,7 +1568,7 @@ public class DisguiseUtilities {
             boolean isMoving = false;
 
             try {
-                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField("isMoving");
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField("q");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             }
@@ -1630,10 +1631,10 @@ public class DisguiseUtilities {
 
             // If the disguised is sleeping for w/e reason
             if (player.isSleeping()) {
-                sendSelfPacket(player,
+            /*    sendSelfPacket(player,
                         manager.createPacketConstructor(Server.BED, player, ReflectionManager.getBlockPosition(0, 0, 0))
                                 .createPacket(player, ReflectionManager
-                                        .getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())));
+                                        .getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())));*/
             }
 
             // Resend any active potion effects
@@ -1811,7 +1812,6 @@ public class DisguiseUtilities {
             case WITHER_SKULL:
                 return (byte) (value - 128);
             case ARROW:
-            case TIPPED_ARROW:
             case SPECTRAL_ARROW:
                 return (byte) -value;
             case PAINTING:
@@ -1832,8 +1832,7 @@ public class DisguiseUtilities {
     public static double getYModifier(Entity entity, Disguise disguise) {
         double yMod = 0;
 
-        if ((disguise.getType() != DisguiseType.PLAYER || !((PlayerWatcher) disguise.getWatcher()).isSleeping()) &&
-                entity.getType() == EntityType.DROPPED_ITEM) {
+        if (disguise.getType() != DisguiseType.PLAYER && entity.getType() == EntityType.DROPPED_ITEM) {
             yMod -= 0.13;
         }
 
@@ -1859,7 +1858,7 @@ public class DisguiseUtilities {
                     default:
                         return yMod + 0.4;
                 }
-            case TIPPED_ARROW:
+            case ARROW:
             case SPECTRAL_ARROW:
             case BOAT:
             case EGG:
@@ -1873,12 +1872,6 @@ public class DisguiseUtilities {
             case THROWN_EXP_BOTTLE:
             case WITHER_SKULL:
                 return yMod + 0.7;
-            case PLAYER:
-                if (DisguiseConfig.isBedPacketsEnabled() && ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-                    return yMod + 0.35;
-                }
-
-                break;
             case DROPPED_ITEM:
                 return yMod + 0.13;
             default:

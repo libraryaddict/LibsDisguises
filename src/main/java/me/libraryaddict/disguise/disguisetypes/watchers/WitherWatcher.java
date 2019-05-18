@@ -17,12 +17,12 @@ public class WitherWatcher extends InsentientWatcher
 
     /**
      * Returns the amount of time this Wither is invulnerable for
-     * 
+     *
      * @return
      */
     public int getInvulnerability()
     {
-        return (int) getData(MetaIndex.WITHER_INVUL);
+        return getData(MetaIndex.WITHER_INVUL);
     }
 
     public int[] getTargets()

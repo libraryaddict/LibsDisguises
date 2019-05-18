@@ -18,24 +18,7 @@ public class HorseWatcher extends AbstractHorseWatcher {
     }
 
     public Color getColor() {
-        return Color.values()[((Integer) getData(MetaIndex.HORSE_COLOR) & 0xFF)];
-    }
-
-    public ItemStack getHorseArmor() {
-        int horseValue = getHorseArmorAsInt();
-
-        switch (horseValue) {
-        case 1:
-            return new ItemStack(Material.IRON_HORSE_ARMOR);
-        case 2:
-            return new ItemStack(Material.GOLDEN_HORSE_ARMOR);
-        case 3:
-            return new ItemStack(Material.DIAMOND_HORSE_ARMOR);
-        default:
-            break;
-        }
-
-        return null;
+        return Color.values()[(getData(MetaIndex.HORSE_COLOR) & 0xFF)];
     }
 
     public Style getStyle() {
@@ -47,38 +30,8 @@ public class HorseWatcher extends AbstractHorseWatcher {
         sendData(MetaIndex.HORSE_COLOR);
     }
 
-    protected int getHorseArmorAsInt() {
-        return getData(MetaIndex.HORSE_ARMOR);
-    }
-
-    protected void setHorseArmor(int armor) {
-        setData(MetaIndex.HORSE_ARMOR, armor);
-        sendData(MetaIndex.HORSE_ARMOR);
-    }
-
     public void setStyle(Style style) {
         setData(MetaIndex.HORSE_COLOR, getColor().ordinal() & 0xFF | style.ordinal() << 8);
         sendData(MetaIndex.HORSE_COLOR);
     }
-
-    public void setHorseArmor(ItemStack item) {
-        int value = 0;
-
-        if (item != null) {
-            Material mat = item.getType();
-
-            if (mat == Material.IRON_HORSE_ARMOR) {
-                value = 1;
-            }
-            else if (mat == Material.GOLDEN_HORSE_ARMOR) {
-                value = 2;
-            }
-            else if (mat == Material.DIAMOND_HORSE_ARMOR) {
-                value = 3;
-            }
-        }
-
-        setHorseArmor(value);
-    }
-
 }

@@ -136,11 +136,6 @@ public class PacketsManager {
                 packetsToListen.add(Server.UPDATE_ATTRIBUTES);
             }
 
-            // The bed packet.
-            if (DisguiseConfig.isBedPacketsEnabled()) {
-                packetsToListen.add(Server.BED);
-            }
-
             // Add movement packets
             if (DisguiseConfig.isMovementPacketsEnabled()) {
                 packetsToListen.add(Server.ENTITY_LOOK);

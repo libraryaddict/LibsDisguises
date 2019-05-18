@@ -17,4 +17,13 @@ public class ArrowWatcher extends FlagWatcher {
         setData(MetaIndex.ARROW_CRITICAL, (byte) (critical ? 1 : 0));
         sendData(MetaIndex.ARROW_CRITICAL);
     }
+
+    public void setPierceLevel(int pierceLevel) {
+        setData(MetaIndex.ARROW_PIERCE_LEVEL, (byte) pierceLevel);
+        sendData(MetaIndex.ARROW_PIERCE_LEVEL);
+    }
+
+    public int getPierceLevel() {
+        return getData(MetaIndex.ARROW_PIERCE_LEVEL);
+    }
 }

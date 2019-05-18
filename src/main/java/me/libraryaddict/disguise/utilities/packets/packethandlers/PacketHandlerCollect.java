@@ -25,18 +25,6 @@ public class PacketHandlerCollect implements IPacketHandler {
             Entity entity) {
         if (disguise.getType().isMisc()) {
             packets.clear();
-        } else if (DisguiseConfig.isBedPacketsEnabled() && disguise.getType().isPlayer() &&
-                ((PlayerWatcher) disguise.getWatcher()).isSleeping()) {
-            PacketContainer newPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
-
-            StructureModifier<Integer> mods = newPacket.getIntegers();
-            mods.write(0, disguise.getEntity().getEntityId());
-            mods.write(1, 3);
-
-            packets.clear();
-
-            packets.addPacket(newPacket);
-            packets.addPacket(sentPacket);
         }
     }
 }

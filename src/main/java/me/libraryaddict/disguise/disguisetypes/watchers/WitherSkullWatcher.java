@@ -14,7 +14,7 @@ public class WitherSkullWatcher extends FlagWatcher
 
     public boolean isBlue()
     {
-        return (boolean) getData(MetaIndex.WITHER_SKULL_BLUE);
+        return getData(MetaIndex.WITHER_SKULL_BLUE);
     }
 
     public void setBlue(boolean blue)

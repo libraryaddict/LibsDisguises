@@ -7,6 +7,8 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
+import java.util.OptionalInt;
+
 public class FireworkWatcher extends FlagWatcher {
     public FireworkWatcher(Disguise disguise) {
         super(disguise);
@@ -17,7 +19,16 @@ public class FireworkWatcher extends FlagWatcher {
             return new ItemStack(Material.AIR);
         }
 
-        return (ItemStack) getData(MetaIndex.FIREWORK_ITEM);
+        return getData(MetaIndex.FIREWORK_ITEM);
+    }
+
+    public boolean isShotAtAngle() {
+        return getData(MetaIndex.FIREWORK_SHOT_AT_ANGLE);
+    }
+
+    public void setShotAtAngle(boolean shotAtAngle) {
+        setData(MetaIndex.FIREWORK_SHOT_AT_ANGLE, shotAtAngle);
+        sendData(MetaIndex.FIREWORK_SHOT_AT_ANGLE);
     }
 
     public void setFirework(ItemStack newItem) {
@@ -32,12 +43,12 @@ public class FireworkWatcher extends FlagWatcher {
         sendData(MetaIndex.FIREWORK_ITEM);
     }
 
-    public void setAttachedEntity(int entityId) {
+    public void setAttachedEntity(OptionalInt entityId) {
         setData(MetaIndex.FIREWORK_ATTACHED_ENTITY, entityId);
         sendData(MetaIndex.FIREWORK_ATTACHED_ENTITY);
     }
 
-    public int getAttachedEntity() {
+    public OptionalInt getAttachedEntity() {
         return getData(MetaIndex.FIREWORK_ATTACHED_ENTITY);
     }
 }

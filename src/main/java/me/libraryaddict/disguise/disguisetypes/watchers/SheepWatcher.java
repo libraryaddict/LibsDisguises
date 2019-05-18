@@ -19,6 +19,7 @@ public class SheepWatcher extends AgeableWatcher {
         return (getData(MetaIndex.SHEEP_WOOL) & 16) != 0;
     }
 
+    @Deprecated
     public void setColor(AnimalColor color) {
         setColor(color.getDyeColor());
     }

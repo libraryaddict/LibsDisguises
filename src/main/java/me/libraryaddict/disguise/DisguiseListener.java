@@ -93,12 +93,9 @@ public class DisguiseListener implements Listener {
         }
 
         // If build number is null, or not a number. Then we can't check snapshots regardless
-        if (!plugin.isNumberedBuild()) {
-            return true;
-        }
+        return !plugin.isNumberedBuild();
 
         // Check snapshots
-        return false;
     }
 
     private void runUpdateScheduler() {
@@ -187,53 +184,6 @@ public class DisguiseListener implements Listener {
             if (blown.length() > 0) {
                 player.sendMessage(blown);
             }
-        }
-    }
-
-    private void chunkMove(Player player, Location newLoc, Location oldLoc) {
-        try {
-            // Resend the bed chunks
-            for (PacketContainer packet : DisguiseUtilities.getBedChunkPacket(newLoc, oldLoc)) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-            }
-
-            if (newLoc != null) {
-                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
-                    for (TargetedDisguise disguise : list) {
-                        if (disguise.getEntity() == null)
-                            continue;
-
-                        if (!disguise.isPlayerDisguise())
-                            continue;
-
-                        if (!disguise.canSee(player))
-                            continue;
-
-                        if (!((PlayerDisguise) disguise).getWatcher().isSleeping())
-                            continue;
-
-                        if (!DisguiseUtilities.getPerverts(disguise).contains(player))
-                            continue;
-
-                        PacketContainer[] packets = DisguiseUtilities.getBedPackets(
-                                disguise.getEntity() == player ? newLoc : disguise.getEntity().getLocation(), newLoc,
-                                (PlayerDisguise) disguise);
-
-                        if (disguise.getEntity() == player) {
-                            for (PacketContainer packet : packets) {
-                                packet.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                            }
-                        }
-
-                        for (PacketContainer packet : packets) {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                        }
-                    }
-                }
-            }
-        }
-        catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
     }
 
@@ -332,10 +282,6 @@ public class DisguiseListener implements Listener {
 
         notifyUpdate(p);
 
-        if (DisguiseConfig.isBedPacketsEnabled()) {
-            chunkMove(p, p.getLocation(), null);
-        }
-
         if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
                 DisguiseUtilities.hasGameProfile(p.getName())) {
             WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
@@ -395,17 +341,6 @@ public class DisguiseListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
-        if (DisguiseConfig.isBedPacketsEnabled()) {
-            Location to = event.getTo();
-            Location from = event.getFrom();
-
-            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities.getChunkCord(from.getBlockX()) ||
-                    DisguiseUtilities.getChunkCord(to.getBlockZ()) !=
-                            DisguiseUtilities.getChunkCord(from.getBlockZ())) {
-                chunkMove(event.getPlayer(), to, from);
-            }
-        }
-
         // If the bounding boxes are modified and the player moved more than a little
         // The runnable in Disguise also calls it, so we should ignore smaller movements
         if (DisguiseConfig.isModifyBoundingBox() && event.getFrom().distanceSquared(event.getTo()) > 0.2) {
@@ -454,22 +389,6 @@ public class DisguiseListener implements Listener {
             return;
 
         DisguiseUtilities.saveDisguises(player.getUniqueId(), disguises);
-    }
-
-    @EventHandler
-    public void onRespawn(PlayerRespawnEvent event) {
-        if (DisguiseConfig.isBedPacketsEnabled()) {
-            final Player player = event.getPlayer();
-
-            chunkMove(event.getPlayer(), null, player.getLocation());
-
-            Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    chunkMove(player, player.getLocation(), null);
-                }
-            });
-        }
     }
 
     @EventHandler
@@ -658,21 +577,6 @@ public class DisguiseListener implements Listener {
         Location to = event.getTo();
         Location from = event.getFrom();
 
-        if (DisguiseConfig.isBedPacketsEnabled()) {
-            if (DisguiseUtilities.getChunkCord(to.getBlockX()) != DisguiseUtilities.getChunkCord(from.getBlockX()) ||
-                    DisguiseUtilities.getChunkCord(to.getBlockZ()) !=
-                            DisguiseUtilities.getChunkCord(from.getBlockZ())) {
-                chunkMove(player, null, from);
-
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        chunkMove(player, player.getLocation(), null);
-                    }
-                });
-            }
-        }
-
         if (!DisguiseAPI.isDisguised(player)) {
             return;
         }
@@ -743,10 +647,6 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onWorldSwitch(final PlayerChangedWorldEvent event) {
-        if (DisguiseConfig.isBedPacketsEnabled()) {
-            chunkMove(event.getPlayer(), event.getPlayer().getLocation(), null);
-        }
-
         if (!DisguiseAPI.isDisguised(event.getPlayer())) {
             return;
         }

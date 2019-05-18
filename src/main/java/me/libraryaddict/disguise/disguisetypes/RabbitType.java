@@ -15,7 +15,7 @@ public enum RabbitType {
 
     private int type;
 
-    private RabbitType(int type) {
+    RabbitType(int type) {
         this.type = type;
     }
 

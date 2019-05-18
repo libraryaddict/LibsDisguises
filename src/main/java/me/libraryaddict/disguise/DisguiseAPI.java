@@ -93,9 +93,6 @@ public class DisguiseAPI {
                 if (saddle != null && saddle.getType() == Material.SADDLE) {
                     ((AbstractHorseWatcher) watcher).setSaddled(true);
                 }
-
-                if (watcher instanceof HorseWatcher)
-                    ((HorseWatcher) watcher).setHorseArmor(horseInventory.getArmor());
             }
         }
         for (Method method : entity.getClass().getMethods()) {
@@ -217,7 +214,7 @@ public class DisguiseAPI {
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Player... playersToNotSeeDisguise) {
-        disguiseIgnorePlayers(entity, disguise, (Collection) Arrays.asList(playersToNotSeeDisguise));
+        disguiseIgnorePlayers(entity, disguise, Arrays.asList(playersToNotSeeDisguise));
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, String... playersToNotSeeDisguise) {
@@ -290,7 +287,7 @@ public class DisguiseAPI {
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, Player... playersToViewDisguise) {
-        disguiseToPlayers(entity, disguise, (Collection) Arrays.asList(playersToViewDisguise));
+        disguiseToPlayers(entity, disguise, Arrays.asList(playersToViewDisguise));
     }
 
     public static void disguiseToPlayers(Entity entity, Disguise disguise, String... playersToViewDisguise) {

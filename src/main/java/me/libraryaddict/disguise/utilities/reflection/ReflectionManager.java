@@ -1,21 +1,32 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.cloning.AggregateCloner;
 import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
+import com.mojang.datafixers.Dynamic;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import org.apache.commons.io.IOUtils;
+import me.libraryaddict.disguise.disguisetypes.EntityPose;
+import me.libraryaddict.disguise.disguisetypes.VillagerData;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import net.minecraft.server.v1_14_R1.IRegistry;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
+import org.bukkit.craftbukkit.v1_14_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,22 +34,24 @@ import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager {
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static final Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
-    private static final Field entitiesField;
     private static final Constructor<?> boundingBoxConstructor;
     private static final Method setBoundingBoxMethod;
-    private static final Method ihmGet;
     private static final Field pingField;
-    private static final Field trackerField;
     public static final Field entityCountField;
+    private static final Field chunkMapField;
+    private static final Field chunkProviderField;
+    private static final Field entityTrackerField;
+    private static final Field trackedEntitiesField;
 
     static {
         try {
-            Object entity = createEntityInstance("Cow");
+            Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
             for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
                 if (method.getReturnType() != float.class)
@@ -69,11 +82,10 @@ public class ReflectionManager {
 
         pingField = getNmsField("EntityPlayer", "ping");
 
-        trackerField = getNmsField("WorldServer", "tracker");
-
-        entitiesField = getNmsField("EntityTracker", "trackedEntities");
-
-        ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+        chunkProviderField = getNmsField("World", "chunkProvider");
+        chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
+        trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
+        entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
 
         boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class,
                 double.class, double.class, double.class);
@@ -105,10 +117,14 @@ public class ReflectionManager {
 
     public static int getNewEntityId(boolean increment) {
         try {
-            int id = entityCountField.getInt(null);
+            AtomicInteger entityCount = (AtomicInteger) entityCountField.get(null);
+
+            int id;
 
             if (increment) {
-                entityCountField.set(null, id + 1);
+                id = entityCount.getAndIncrement();
+            } else {
+                id = entityCount.get();
             }
 
             return id;
@@ -120,7 +136,7 @@ public class ReflectionManager {
         return -1;
     }
 
-    public static Object createEntityInstance(String entityName) {
+    public static Object createEntityInstance(DisguiseType disguiseType, String entityName) {
         try {
             Class<?> entityClass = getNmsClass("Entity" + entityName);
             Object entityObject;
@@ -131,7 +147,7 @@ public class ReflectionManager {
                     Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
 
                     Object playerinteractmanager = getNmsClass("PlayerInteractManager")
-                            .getDeclaredConstructor(getNmsClass("World")).newInstance(world);
+                            .getDeclaredConstructor(getNmsClass("WorldServer")).newInstance(world);
 
                     WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
@@ -142,26 +158,25 @@ public class ReflectionManager {
                     break;
                 case "EnderPearl":
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
-                            .newInstance(world, createEntityInstance("Cow"));
-                    break;
-                case "Potion":
-                    entityObject = entityClass
-                            .getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE,
-                                    getNmsClass("ItemStack"))
-                            .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                            .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
                     break;
                 case "FishingHook":
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
-                            .newInstance(world, createEntityInstance("Player"));
+                    entityObject = entityClass
+                            .getDeclaredConstructor(getNmsClass("EntityHuman"), getNmsClass("World"), int.class,
+                                    int.class)
+                            .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
                     break;
                 default:
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityTypes"), getNmsClass("World"))
+                            .newInstance(getEntityType(disguiseType.getEntityType()), world);
                     break;
             }
 
             return entityObject;
         }
         catch (Exception e) {
+            DisguiseUtilities.getLogger()
+                    .warning("Error while attempting to create entity instance for " + disguiseType.name());
             e.printStackTrace();
         }
 
@@ -315,10 +330,17 @@ public class ReflectionManager {
 
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
         Object world = getWorldServer(target.getWorld());
-        Object tracker = trackerField.get(world);
-        Object trackedEntities = entitiesField.get(tracker);
+        Object chunkProvider = chunkProviderField.get(world);
+        Object chunkMap = chunkMapField.get(chunkProvider);
+        Int2ObjectMap trackedEntities = (Int2ObjectMap) trackedEntitiesField.get(chunkMap);
 
-        return ihmGet.invoke(trackedEntities, target.getEntityId());
+        Object entityTracker = trackedEntities.get(target.getEntityId());
+
+        if (entityTracker == null) {
+            return null;
+        }
+
+        return entityTrackerField.get(entityTracker);
     }
 
     public static Object getMinecraftServer() {
@@ -588,11 +610,13 @@ public class ReflectionManager {
 
     public static float[] getSize(Entity entity) {
         try {
-            float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
-            float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
+            Object size = getNmsField("Entity", "size").get(getNmsEntity(entity));
 
-            float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
-            return new float[]{length, width, height};
+            //float length = getNmsField("EntitySize", "length").getFloat(size);
+            float width = getNmsField("EntitySize", "width").getFloat(size);
+            float height = getNmsField("Entity", "headHeight").getFloat(getNmsEntity(entity));
+
+            return new float[]{width, height};
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -884,9 +908,62 @@ public class ReflectionManager {
             return ((NbtWrapper) value).getHandle();
         } else if (value instanceof WrappedParticle) {
             return ((WrappedParticle) value).getHandle();
+        } else if (value instanceof EntityPose) {
+            return getNmsEntityPose((EntityPose) value);
+        } else if (value instanceof VillagerData) {
+            return getNmsVillagerData((VillagerData) value);
         }
 
         return value;
+    }
+
+    public static Object getNmsVillagerData(VillagerData data) {
+        Object type = getVillagerType(data.getType());
+        Object profession = getVillagerProfession(data.getProfession());
+
+        try {
+            return getNmsConstructor("VillagerData", getNmsClass("VillagerType"), profession.getClass(), int.class)
+                    .newInstance(type, profession, data.getLevel());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Object getVillagerType(Villager.Type type) {
+        try {
+            Object villagerType = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
+
+            Method toMinecraft = getCraftMethod("util.CraftNamespacedKey", "toMinecraft", NamespacedKey.class);
+            Object mcKey = toMinecraft.invoke(null, type.getKey());
+            Method getField = getNmsMethod("RegistryBlocks", "get", mcKey.getClass());
+
+            return getField.invoke(villagerType, mcKey);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Object getVillagerProfession(Villager.Profession profession) {
+        try {
+            Object villagerProfession = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
+
+            Method toMinecraft = getCraftMethod("util.CraftNamespacedKey", "toMinecraft", NamespacedKey.class);
+            Object mcKey = toMinecraft.invoke(null, profession.getKey());
+            Method getField = getNmsMethod("RegistryBlocks", "get", mcKey.getClass());
+
+            return getField.invoke(villagerProfession, mcKey);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static String getMinecraftVersion() {
@@ -976,27 +1053,57 @@ public class ReflectionManager {
         return null;
     }
 
-    public static int getEntityType(Object nmsEntity) {
+    public static Object getVec3D(Vector vector) {
         try {
-            Field entityTypesField = null;
+            Constructor c = getNmsConstructor("Vec3D", double.class, double.class, double.class);
 
-            for (Method method : getNmsClass("Entity").getMethods()) {
-                if (!method.getReturnType().getSimpleName().equals("EntityTypes"))
-                    continue;
-
-                Object entityType = method.invoke(nmsEntity);
-                Class typesClass = getNmsClass("IRegistry");
-
-                Object registry = typesClass.getField("ENTITY_TYPE").get(null);
-
-                return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityType);
-            }
+            return c.newInstance(vector.getX(), vector.getY(), vector.getZ());
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        throw new IllegalStateException("Failed to find EntityType for " + nmsEntity.getClass().getSimpleName());
+        return null;
+    }
+
+    public static Object getEntityType(EntityType entityType) {
+        try {
+            Method entityTypes = getNmsMethod("EntityTypes", "a", String.class);
+
+            Optional<Object> entityObj = (Optional<Object>) entityTypes.invoke(null, entityType.getName());
+
+            return entityObj.orElse(null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static int getEntityTypeId(EntityType entityType) {
+        try {
+            Object entityTypes = getEntityType(entityType);
+
+            Class typesClass = getNmsClass("IRegistry");
+
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+
+            return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        throw new IllegalStateException("Failed to find EntityType id for " + entityType);
+    }
+
+    public static Object getNmsEntityPose(EntityPose entityPose) {
+        return Enum.valueOf(getNmsClass("EntityPose"), entityPose.name());
+    }
+
+    public static EntityPose getEntityPose(Object nmsEntityPose) {
+        return EntityPose.valueOf(((Enum) nmsEntityPose).name());
     }
 
     public static WrappedWatchableObject createWatchable(int index, Object obj) {

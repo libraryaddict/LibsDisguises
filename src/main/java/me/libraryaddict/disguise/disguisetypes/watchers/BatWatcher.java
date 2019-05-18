@@ -15,7 +15,7 @@ public class BatWatcher extends InsentientWatcher
 
     public boolean isHanging()
     {
-        return ((byte) getData(MetaIndex.BAT_HANGING)) == 1;
+        return getData(MetaIndex.BAT_HANGING) == 1;
     }
 
     public void setHanging(boolean hanging)

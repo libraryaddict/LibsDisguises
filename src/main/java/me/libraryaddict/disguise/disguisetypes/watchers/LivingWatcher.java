@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -19,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 public class LivingWatcher extends FlagWatcher {
     private double maxHealth;
@@ -37,6 +39,23 @@ public class LivingWatcher extends FlagWatcher {
         clone.maxHealthSet = maxHealthSet;
 
         return clone;
+    }
+
+    public void setBedPosition(BlockPosition blockPosition) {
+        Optional<BlockPosition> optional;
+
+        if (blockPosition != null) {
+            optional = Optional.of(blockPosition);
+        } else {
+            optional = Optional.empty();
+        }
+
+        setData(MetaIndex.LIVING_BED_POSITION, optional);
+        sendData(MetaIndex.LIVING_BED_POSITION);
+    }
+
+    public BlockPosition getBedPosition() {
+        return getData(MetaIndex.LIVING_BED_POSITION).orElse(null);
     }
 
     public float getHealth() {

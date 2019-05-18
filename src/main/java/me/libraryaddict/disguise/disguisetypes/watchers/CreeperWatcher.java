@@ -13,12 +13,12 @@ public class CreeperWatcher extends InsentientWatcher
 
     public boolean isIgnited()
     {
-        return (boolean) getData(MetaIndex.CREEPER_IGNITED);
+        return getData(MetaIndex.CREEPER_IGNITED);
     }
 
     public boolean isPowered()
     {
-        return (boolean) getData(MetaIndex.CREEPER_POWERED);
+        return getData(MetaIndex.CREEPER_POWERED);
     }
 
     public void setIgnited(boolean ignited)

@@ -1,9 +1,10 @@
-package me.libraryaddict.disguise.utilities.parser;
+package me.libraryaddict.disguise.utilities.parser.params;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfoTypes;
 import org.bukkit.ChatColor;

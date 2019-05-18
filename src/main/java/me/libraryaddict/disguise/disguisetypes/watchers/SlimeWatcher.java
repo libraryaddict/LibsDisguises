@@ -12,7 +12,7 @@ public class SlimeWatcher extends InsentientWatcher {
     }
 
     public int getSize() {
-        return (int) getData(MetaIndex.SLIME_SIZE);
+        return getData(MetaIndex.SLIME_SIZE);
     }
 
     public void setSize(int size) {

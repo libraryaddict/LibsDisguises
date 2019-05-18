@@ -14,16 +14,16 @@ public class GuardianWatcher extends InsentientWatcher {
 
     /**
      * Is this guardian targetting someone?
-     * 
+     *
      * @return
      */
     public boolean isTarget() {
-        return ((int) getData(MetaIndex.GUARDIAN_TARGET)) != 0;
+        return getData(MetaIndex.GUARDIAN_TARGET) != 0;
     }
 
     /**
      * Shoot a beam at the given entityId.
-     * 
+     *
      * @param entityId
      */
     public void setTarget(int entityId) {
@@ -37,7 +37,7 @@ public class GuardianWatcher extends InsentientWatcher {
 
     /**
      * Shoot a beam at the given player name.
-     * 
+     *
      * @param playername
      */
     public void setTarget(String playername) {

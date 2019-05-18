@@ -191,6 +191,15 @@ public class FlagWatcher {
         return newList;
     }
 
+    public EntityPose getEntityPose() {
+        return getData(MetaIndex.ENTITY_POSE);
+    }
+
+    public void setEntityPose(EntityPose entityPose) {
+        setData(MetaIndex.ENTITY_POSE, entityPose);
+        sendData(MetaIndex.ENTITY_POSE);
+    }
+
     public ItemStack[] getArmor() {
         return getEquipment().getArmorContents();
     }

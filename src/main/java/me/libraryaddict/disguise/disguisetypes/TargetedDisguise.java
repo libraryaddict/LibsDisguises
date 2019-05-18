@@ -156,9 +156,7 @@ public abstract class TargetedDisguise extends Disguise {
     }
 
     public TargetedDisguise silentlyRemovePlayer(String playername) {
-        if (disguiseViewers.contains(playername)) {
-            disguiseViewers.remove(playername);
-        }
+        disguiseViewers.remove(playername);
 
         return this;
     }

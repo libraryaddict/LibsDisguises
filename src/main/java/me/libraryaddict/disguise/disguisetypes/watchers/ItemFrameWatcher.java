@@ -17,7 +17,7 @@ public class ItemFrameWatcher extends FlagWatcher {
             return new ItemStack(Material.AIR);
         }
 
-        return (ItemStack) getData(MetaIndex.ITEMFRAME_ITEM);
+        return getData(MetaIndex.ITEMFRAME_ITEM);
     }
 
     public int getRotation() {

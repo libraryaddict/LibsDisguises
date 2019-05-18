@@ -36,10 +36,6 @@ public class DisguiseValues {
         return babyBox;
     }
 
-    public float[] getEntitySize() {
-        return entitySize;
-    }
-
     public double getMaxHealth() {
         return maxHealth;
     }
@@ -54,9 +50,5 @@ public class DisguiseValues {
 
     public void setBabyBox(FakeBoundingBox newBox) {
         babyBox = newBox;
-    }
-
-    public void setEntitySize(float[] size) {
-        this.entitySize = size;
     }
 }

@@ -6,13 +6,9 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.properties.PropertyMap;
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import org.bukkit.inventory.ItemStack;
-import sun.reflect.generics.tree.BaseType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -67,23 +63,30 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
         HashMap<Integer, Object> map = (HashMap<Integer, Object>) field.get(watcher);
 
         for (Map.Entry<Integer, Object> entry : map.entrySet()) {
-            if (!(entry.getValue() instanceof Double))
-                continue;
+            if (entry.getValue() instanceof Double) {
+                MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
 
-            MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
+                Object def = index.getDefault();
 
-            Object def = index.getDefault();
+                if (def instanceof Long)
+                    entry.setValue(((Double) entry.getValue()).longValue());
+                else if (def instanceof Float)
+                    entry.setValue(((Double) entry.getValue()).floatValue());
+                else if (def instanceof Integer)
+                    entry.setValue(((Double) entry.getValue()).intValue());
+                else if (def instanceof Short)
+                    entry.setValue(((Double) entry.getValue()).shortValue());
+                else if (def instanceof Byte)
+                    entry.setValue(((Double) entry.getValue()).byteValue());
+            } else if (entry.getValue() instanceof Map) {
+                MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
 
-            if (def instanceof Long)
-                entry.setValue(((Double) entry.getValue()).longValue());
-            else if (def instanceof Float)
-                entry.setValue(((Double) entry.getValue()).floatValue());
-            else if (def instanceof Integer)
-                entry.setValue(((Double) entry.getValue()).intValue());
-            else if (def instanceof Short)
-                entry.setValue(((Double) entry.getValue()).shortValue());
-            else if (def instanceof Byte)
-                entry.setValue(((Double) entry.getValue()).byteValue());
+                if (!(index.getDefault() instanceof VillagerData)) {
+                    continue;
+                }
+
+                entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()),VillagerData.class));
+            }
         }
     }
 

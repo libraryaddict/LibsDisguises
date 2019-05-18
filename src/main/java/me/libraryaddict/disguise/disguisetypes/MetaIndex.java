@@ -10,6 +10,8 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
@@ -98,6 +100,8 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
+    public static MetaIndex<Byte> ARROW_PIERCE_LEVEL = new MetaIndex<>(ArrowWatcher.class, 2, (byte) 0);
+
     /**
      * If the bat is hanging, false/true state
      */
@@ -127,6 +131,14 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> BOAT_TYPE = new MetaIndex<>(BoatWatcher.class, 3, 0);
 
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
+
+    public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
+
+    public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
+
+    public static MetaIndex<Boolean> CAT_LOOKING_UP = new MetaIndex<>(CatWatcher.class, 2, false);
+
+    public static MetaIndex<Integer> CAT_COLLAR = new MetaIndex<>(CatWatcher.class, 3, AnimalColor.RED.ordinal());
 
     /**
      * If creeper is ignited, about to blow up
@@ -174,6 +186,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> ENDER_DRAGON_PHASE = new MetaIndex<>(EnderDragonWatcher.class, 0, 10);
 
+    public static MetaIndex<ItemStack> ENDER_SIGNAL_ITEM = new MetaIndex<>(EnderSignalWatcher.class, 0,
+            new ItemStack(Material.AIR));
+
     /**
      * If the enderman is screaming
      */
@@ -213,17 +228,39 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Boolean> ENTITY_SILENT = new MetaIndex<>(FlagWatcher.class, 4, false);
 
+    /**
+     * If entity can make sounds, no noticable effects
+     */
+    public static MetaIndex<EntityPose> ENTITY_POSE = new MetaIndex<>(FlagWatcher.class, 6, EntityPose.STANDING);
+
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0,
             BlockPosition.ORIGIN);
+
+    public static MetaIndex<ItemStack> FIREBALL_ITEM = new MetaIndex<>(FireballWatcher.class, 0,
+            new ItemStack(Material.AIR));
 
     public static MetaIndex<ItemStack> FIREWORK_ITEM = new MetaIndex<>(FireworkWatcher.class, 0,
             new ItemStack(Material.FIREWORK_ROCKET));
 
     public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
-    public static MetaIndex<Integer> FIREWORK_ATTACHED_ENTITY = new MetaIndex<>(FireworkWatcher.class, 1, 0);
+    public static MetaIndex<OptionalInt> FIREWORK_ATTACHED_ENTITY = new MetaIndex<>(FireworkWatcher.class, 1,
+            OptionalInt.empty());
+
+    public static MetaIndex<Boolean> FIREWORK_SHOT_AT_ANGLE = new MetaIndex<>(FireworkWatcher.class, 2, false);
 
     public static MetaIndex<Integer> FISHING_HOOK_HOOKED = new MetaIndex<>(FishingHookWatcher.class, 0, 0);
+
+    /**
+     * The type of fox, its coloring
+     */
+    public static MetaIndex<Integer> FOX_TYPE = new MetaIndex<>(FoxWatcher.class, 0, 0);
+
+    public static MetaIndex<Byte> FOX_META = new MetaIndex<>(FoxWatcher.class, 1, (byte) 0);
+
+    public static MetaIndex<Optional<UUID>> FOX_TRUSTED_1 = new MetaIndex<>(FoxWatcher.class, 2, Optional.empty());
+
+    public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
     /**
      * Changes the face of the ghast
@@ -239,11 +276,6 @@ public class MetaIndex<Y> {
      * Play a guardian beam between guardian and target entity id
      */
     public static MetaIndex<Integer> GUARDIAN_TARGET = new MetaIndex<>(GuardianWatcher.class, 1, 0);
-
-    /**
-     * What type of armor the horse has
-     */
-    public static MetaIndex<Integer> HORSE_ARMOR = new MetaIndex<>(HorseWatcher.class, 1, 0);
 
     /**
      * If horse has chest, set for donkey
@@ -267,9 +299,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1,
             Optional.empty());
 
-    public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
-
-    public static MetaIndex<Byte> ILLAGER_SPELL_TICKS = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
+    public static MetaIndex<Byte> ILLAGER_SPELL = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Byte> INSENTIENT_META = new MetaIndex<>(InsentientWatcher.class, 0, (byte) 0);
 
@@ -310,6 +340,9 @@ public class MetaIndex<Y> {
      * The RGB color of the potion particles, 0 if not set
      */
     public static MetaIndex<Integer> LIVING_POTIONS = new MetaIndex<>(LivingWatcher.class, 2, 0);
+
+    public static MetaIndex<Optional<BlockPosition>> LIVING_BED_POSITION = new MetaIndex<>(LivingWatcher.class, 5,
+            Optional.empty());
 
     /**
      * If there is no carpet, -1. Otherwise it's a color enum value
@@ -357,7 +390,22 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Boolean> MINECART_FURANCE_FUELED = new MetaIndex<>(MinecartFurnaceWatcher.class, 0, false);
 
-    public static MetaIndex<Integer> OCELOT_TYPE = new MetaIndex<>(OcelotWatcher.class, 0, 0);
+    public static MetaIndex<String> MUSHROOM_COW_TYPE = new MetaIndex<>(MushroomCowWatcher.class, 0,
+            MushroomCow.Variant.RED.name().toLowerCase());
+
+    public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
+
+    public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);
+
+    public static MetaIndex<Integer> PANDA_UNKNOWN_1 = new MetaIndex<>(PandaWatcher.class, 1, 0);
+
+    public static MetaIndex<Integer> PANDA_UNKNOWN_2 = new MetaIndex<>(PandaWatcher.class, 2, 0);
+
+    public static MetaIndex<Byte> PANDA_MAIN_GENE = new MetaIndex<>(PandaWatcher.class, 3, (byte) 0);
+
+    public static MetaIndex<Byte> PANDA_HIDDEN_GENE = new MetaIndex<>(PandaWatcher.class, 4, (byte) 0);
+
+    public static MetaIndex<Byte> PANDA_META = new MetaIndex<>(PandaWatcher.class, 5, (byte) 0);
 
     public static MetaIndex<Integer> PARROT_VARIANT = new MetaIndex<>(ParrotWatcher.class, 0, 0);
 
@@ -369,6 +417,8 @@ public class MetaIndex<Y> {
      * If pig runs faster, no visible effect
      */
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
+
+    public static MetaIndex<Boolean> PILLAGER_AIMING_BOW = new MetaIndex<>(PillagerWatcher.class, 0, false);
 
     public static MetaIndex<Float> PLAYER_ABSORPTION = new MetaIndex<>(PlayerWatcher.class, 0, 0F);
 
@@ -390,6 +440,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> RABBIT_TYPE = new MetaIndex<>(RabbitWatcher.class, 0, 0);
 
+    public static MetaIndex<Boolean> RAIDER_CASTING_SPELL = new MetaIndex<>(RaiderWatcher.class, 0, false);
+
     public static MetaIndex<Byte> SHEEP_WOOL = new MetaIndex<>(SheepWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<BlockPosition>> SHULKER_ATTACHED = new MetaIndex<>(ShulkerWatcher.class, 1,
@@ -400,8 +452,6 @@ public class MetaIndex<Y> {
     public static MetaIndex<Direction> SHULKER_FACING = new MetaIndex<>(ShulkerWatcher.class, 0, Direction.DOWN);
 
     public static MetaIndex<Byte> SHULKER_PEEKING = new MetaIndex<>(ShulkerWatcher.class, 2, (byte) 0);
-
-    public static MetaIndex<Boolean> SKELETON_SWING_ARMS = new MetaIndex<>(SkeletonWatcher.class, 0, false);
 
     public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<>(SlimeWatcher.class, 0, 1);
 
@@ -416,6 +466,9 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1,
             Optional.empty());
+
+    public static MetaIndex<ItemStack> THROWABLE_ITEM = new MetaIndex<>(ThrowableWatcher.class, 0,
+            new ItemStack(Material.AIR));
 
     public static MetaIndex<Integer> TIPPED_ARROW_COLOR = new MetaIndex<>(TippedArrowWatcher.class, 0, -1);
 
@@ -441,7 +494,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> VEX_ANGRY = new MetaIndex<>(VexWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<Integer> VILLAGER_PROFESSION = new MetaIndex<>(VillagerWatcher.class, 0, 0);
+    public static MetaIndex<Integer> ABSTRACT_VILLAGER_ANGRY = new MetaIndex<>(AbstractVillagerWatcher.class, 0, 0);
+
+    public static MetaIndex<VillagerData> VILLAGER_DATA = new MetaIndex<>(VillagerWatcher.class, 0,
+            new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1));
 
     public static MetaIndex<Boolean> WITCH_AGGRESSIVE = new MetaIndex<>(WitchWatcher.class, 0, false);
 
@@ -461,15 +517,14 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 1F);
 
-    public static MetaIndex<Boolean> ZOMBIE_AGGRESSIVE = new MetaIndex<>(ZombieWatcher.class, 2, false);
-
     public static MetaIndex<Boolean> ZOMBIE_BABY = new MetaIndex<>(ZombieWatcher.class, 0, false);
 
-    public static MetaIndex<Boolean> ZOMBIE_CONVERTING_DROWNED = new MetaIndex<>(ZombieWatcher.class, 3, false);
+    public static MetaIndex<Boolean> ZOMBIE_CONVERTING_DROWNED = new MetaIndex<>(ZombieWatcher.class, 2, false);
 
     public static MetaIndex<Integer> ZOMBIE_PLACEHOLDER = new MetaIndex<>(ZombieWatcher.class, 1, 0);
 
-    public static MetaIndex<Integer> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1, 0);
+    public static MetaIndex<VillagerData> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1,
+            new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1));
 
     /**
      * Shown for villager conversion
