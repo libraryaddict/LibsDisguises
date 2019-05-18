@@ -26,13 +26,23 @@ import java.util.Map;
 public class DisguiseAPI {
     private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
 
-    public static String getCustomDisguise(String disguiseName) {
+    public static String getRawCustomDisguise(String disguiseName) {
         Map.Entry<DisguisePerm, String> entry = DisguiseConfig.getRawCustomDisguise(disguiseName);
 
         if (entry == null)
             return null;
 
         return entry.getValue();
+    }
+
+    public static Disguise getCustomDisguise(String disguiseName) {
+        Map.Entry<DisguisePerm, Disguise> disguise = DisguiseConfig.getCustomDisguise(disguiseName);
+
+        if (disguise == null) {
+            return null;
+        }
+
+        return disguise.getValue();
     }
 
     public static Disguise constructDisguise(Entity entity) {
