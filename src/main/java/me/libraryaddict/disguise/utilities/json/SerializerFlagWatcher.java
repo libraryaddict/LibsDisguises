@@ -4,10 +4,12 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
@@ -61,11 +63,12 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
         Field field = FlagWatcher.class.getDeclaredField(name);
         field.setAccessible(true);
         HashMap<Integer, Object> map = (HashMap<Integer, Object>) field.get(watcher);
+        int count = 0;
 
         for (Map.Entry<Integer, Object> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Double) {
-                MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
+            MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
 
+            if (entry.getValue() instanceof Double) {
                 Object def = index.getDefault();
 
                 if (def instanceof Long)
@@ -78,15 +81,24 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
                     entry.setValue(((Double) entry.getValue()).shortValue());
                 else if (def instanceof Byte)
                     entry.setValue(((Double) entry.getValue()).byteValue());
-            } else if (entry.getValue() instanceof Map) {
-                MetaIndex index = MetaIndex.getMetaIndex(flagWatcher, entry.getKey());
-
+            } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
+                // If the default value is not VillagerData
                 if (!(index.getDefault() instanceof VillagerData)) {
                     continue;
                 }
 
-                entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()),VillagerData.class));
+                entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()), VillagerData.class));
             }
+
+            // If the deserialized class is not the same class type as the default
+            if (!index.getDefault().getClass().isInstance(entry.getValue())) {
+                entry.setValue(index.getDefault());
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            DisguiseUtilities.getLogger().info("Fixed " + count + " incorrect disguise flags on saved disguise");
         }
     }
 

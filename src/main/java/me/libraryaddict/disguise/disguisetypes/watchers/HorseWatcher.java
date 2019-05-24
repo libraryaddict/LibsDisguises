@@ -34,4 +34,12 @@ public class HorseWatcher extends AbstractHorseWatcher {
         setData(MetaIndex.HORSE_COLOR, getColor().ordinal() & 0xFF | style.ordinal() << 8);
         sendData(MetaIndex.HORSE_COLOR);
     }
+
+    public void setHorseArmor(ItemStack item) {
+        getEquipment().setChestplate(item);
+    }
+
+    public ItemStack getHorseArmor() {
+        return getEquipment().getChestplate();
+    }
 }
