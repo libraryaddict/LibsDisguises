@@ -1826,6 +1826,18 @@ public class DisguiseUtilities {
         }
     }
 
+    public static Entity getEntity(World world, int entityId) {
+        for (Entity e : world.getEntities()) {
+            if (e.getEntityId() != entityId) {
+                continue;
+            }
+
+            return e;
+        }
+
+        return null;
+    }
+
     /**
      * Get the Y level to add to the disguise for realism.
      */

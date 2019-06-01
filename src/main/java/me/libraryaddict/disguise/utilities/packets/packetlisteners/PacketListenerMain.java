@@ -11,6 +11,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.EntityPose;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import org.bukkit.entity.Entity;
@@ -35,13 +37,15 @@ public class PacketListenerMain extends PacketAdapter {
             return;
 
         // First get the entity, the one sending this packet
-        StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
 
-        org.bukkit.entity.Entity entity = entityModifer.read((Server.COLLECT == event.getPacketType() ? 1 : 0));
+        int entityId = event.getPacket().getIntegers().read(Server.COLLECT == event.getPacketType() ? 1 : 0);
+
+        Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), entityId);
 
         // If the entity is the same as the sender. Don't disguise!
         // Prevents problems and there is no advantage to be gained.
-        if (entity == observer)
+        // Or if they are null and there's no disguise
+        if (entity == observer || entity == null)
             return;
 
         final Disguise disguise = DisguiseAPI.getDisguise(observer, entity);

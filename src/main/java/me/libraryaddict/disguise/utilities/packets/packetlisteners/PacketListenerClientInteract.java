@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -40,9 +41,11 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
         PacketContainer packet = event.getPacket();
 
-        StructureModifier<Entity> entityModifer = packet.getEntityModifier(observer.getWorld());
+        Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), packet.getIntegers().read(0));
 
-        Entity entity = entityModifer.read(0);
+        if (entity == null) {
+            return;
+        }
 
         if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow ||
                 entity == observer) {
