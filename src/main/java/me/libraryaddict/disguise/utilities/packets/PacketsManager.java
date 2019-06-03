@@ -77,9 +77,10 @@ public class PacketsManager {
             soundsListenerEnabled = enabled;
 
             if (soundsListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(soundsListener)
+                        .syncStart();
             } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(soundsListener);
             }
         }
     }
