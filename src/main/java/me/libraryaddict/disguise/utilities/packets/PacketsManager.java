@@ -176,10 +176,10 @@ public class PacketsManager {
             viewDisguisesListenerEnabled = enabled;
 
             if (viewDisguisesListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(mainListener)
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(viewDisguisesListener)
                         .syncStart();
             } else {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(mainListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(viewDisguisesListener);
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
