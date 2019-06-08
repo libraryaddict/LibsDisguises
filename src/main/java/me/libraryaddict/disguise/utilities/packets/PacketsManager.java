@@ -35,8 +35,7 @@ public class PacketsManager {
         clientInteractEntityListener = new PacketListenerClientInteract(libsDisguises);
         PacketListener tabListListener = new PacketListenerTabList(libsDisguises);
 
-        ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(clientInteractEntityListener)
-                .syncStart();
+        ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
         ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(tabListListener).syncStart();
 
         // Now I call this and the main listener is registered!
@@ -91,10 +90,9 @@ public class PacketsManager {
             inventoryModifierEnabled = enabled;
 
             if (inventoryModifierEnabled) {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(inventoryListener)
-                        .syncStart();
+                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
             } else {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(inventoryListener);
+                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
