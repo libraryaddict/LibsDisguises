@@ -1826,6 +1826,47 @@ public class DisguiseUtilities {
         }
     }
 
+    public static Disguise getDisguise(Player observer, int entityId) {
+        // If the entity ID is the same as self disguises id, then it needs to be set to the observers id
+        if (entityId == DisguiseAPI.getSelfDisguiseId()) {
+            entityId = observer.getEntityId();
+        }
+
+        // TODO Needs to be thread safe, not thread safe atm due to testing
+
+        if (getFutureDisguises().containsKey(entityId)) {
+            HashSet<TargetedDisguise> hashSet = getFutureDisguises().get(entityId);
+
+            for (TargetedDisguise dis : hashSet) {
+                if (!dis.canSee(observer) || !dis.isDisguiseInUse()) {
+                    continue;
+                }
+
+                return dis;
+            }
+        }
+
+        for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {
+            for (TargetedDisguise dis : disguises) {
+                if (dis.getEntity() == null || !dis.isDisguiseInUse()) {
+                    continue;
+                }
+
+                if (dis.getEntity().getEntityId() != entityId) {
+                    continue;
+                }
+
+                if (!dis.canSee(observer)) {
+                    continue;
+                }
+
+                return dis;
+            }
+        }
+
+        return null;
+    }
+
     public static Entity getEntity(World world, int entityId) {
         for (Entity e : world.getEntities()) {
             if (e.getEntityId() != entityId) {

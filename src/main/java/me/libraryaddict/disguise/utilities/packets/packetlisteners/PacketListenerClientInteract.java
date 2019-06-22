@@ -41,47 +41,54 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
         PacketContainer packet = event.getPacket();
 
-        Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), packet.getIntegers().read(0));
+        final Disguise disguise = DisguiseUtilities.getDisguise(event.getPlayer(), packet.getIntegers().read(0));
 
-        if (entity == null) {
+        if (disguise == null) {
             return;
         }
 
-        if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow ||
-                entity == observer) {
-            event.setCancelled(true);
-        } else if (packet.getIntegers().read(0) == DisguiseAPI.getSelfDisguiseId()) {
+        if (disguise.getEntity() == observer) {
             // If it's a self-interact
             event.setCancelled(true);
 
-            Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
+            // The type of interact, we don't care the difference with "Interact_At" however as it's not
+            // useful
+            // for self disguises
+            EnumWrappers.EntityUseAction interactType = packet.getEntityUseActions().read(0);
+            final EquipmentSlot handUsed;
 
-            if (disguise != null) {
-                // The type of interact, we don't care the difference with "Interact_At" however as it's not useful
-                // for self disguises
-                EnumWrappers.EntityUseAction interactType = packet.getEntityUseActions().read(0);
-                EquipmentSlot handUsed = EquipmentSlot.HAND;
+            // Attack has a null hand, which throws an error if you attempt to fetch
+            // If the hand used wasn't their main hand
+            if (interactType != EnumWrappers.EntityUseAction.ATTACK &&
+                    packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+                handUsed = EquipmentSlot.OFF_HAND;
+            } else {
+                handUsed = EquipmentSlot.HAND;
+            }
 
-                // Attack has a null hand, which throws an error if you attempt to fetch
-                if (interactType != EnumWrappers.EntityUseAction.ATTACK) {
-                    // If the hand used wasn't their main hand
-                    if (packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
-                        handUsed = EquipmentSlot.OFF_HAND;
-                    }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Fire self interact event
+                    DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
+                            interactType == EnumWrappers.EntityUseAction.ATTACK);
+
+                    Bukkit.getPluginManager().callEvent(selfEvent);
                 }
+            }.runTask(LibsDisguises.getInstance());
+        } else {
+            Entity entity = disguise.getEntity();
 
-                DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
-                        interactType == EnumWrappers.EntityUseAction.ATTACK);
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        Bukkit.getPluginManager().callEvent(selfEvent);
-                    }
-                }.runTask(LibsDisguises.getInstance());
+            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
+                event.setCancelled(true);
             }
         }
 
+        if (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF) {
+            return;
+        }
+
+        // If this is something the player can dye the disguise with
         for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
                 observer.getInventory().getItemInOffHand()}) {
             if (item == null) {
@@ -91,13 +98,6 @@ public class PacketListenerClientInteract extends PacketAdapter {
             AnimalColor color = AnimalColor.getColorByMaterial(item.getType());
 
             if (color == null) {
-                continue;
-            }
-
-            Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-
-            if (disguise == null ||
-                    (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF)) {
                 continue;
             }
 

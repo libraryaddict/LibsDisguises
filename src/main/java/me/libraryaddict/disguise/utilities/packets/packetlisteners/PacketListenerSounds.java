@@ -249,13 +249,13 @@ public class PacketListenerSounds extends PacketAdapter {
             }
 
             // It made a damage animation
-            Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), event.getPacket().getIntegers().read(0));
+            Disguise disguise = DisguiseUtilities.getDisguise(observer, event.getPacket().getIntegers().read(0));
 
-            if (entity == null) {
+            if (disguise == null) {
                 return;
             }
 
-            Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
+            Entity entity = disguise.getEntity();
 
             if (disguise != null && !disguise.getType().isPlayer() &&
                     (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
