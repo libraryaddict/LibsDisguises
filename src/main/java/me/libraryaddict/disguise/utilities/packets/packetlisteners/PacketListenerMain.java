@@ -40,23 +40,20 @@ public class PacketListenerMain extends PacketAdapter {
 
         int entityId = event.getPacket().getIntegers().read(Server.COLLECT == event.getPacketType() ? 1 : 0);
 
-        Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), entityId);
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
         // If the entity is the same as the sender. Don't disguise!
         // Prevents problems and there is no advantage to be gained.
         // Or if they are null and there's no disguise
-        if (entity == observer || entity == null)
+        if (disguise == null || disguise.getEntity() == observer) {
             return;
-
-        final Disguise disguise = DisguiseAPI.getDisguise(observer, entity);
-
-        if (disguise == null)
-            return;
+        }
 
         LibsPackets packets;
 
         try {
-            packets = PacketsManager.getPacketsHandler().transformPacket(event.getPacket(), disguise, observer, entity);
+            packets = PacketsManager.getPacketsHandler()
+                    .transformPacket(event.getPacket(), disguise, observer, disguise.getEntity());
         }
         catch (Exception ex) {
             ex.printStackTrace();
