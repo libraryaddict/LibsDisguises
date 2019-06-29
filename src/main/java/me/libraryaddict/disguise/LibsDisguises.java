@@ -53,7 +53,7 @@ public class LibsDisguises extends JavaPlugin {
 
         getLogger().info("Build Date: " + pluginYml.getString("build-date"));
 
-        LibsPremium.check(getDescription().getVersion());
+        LibsPremium.check(getDescription().getVersion(), getFile());
 
         if (!LibsPremium.isPremium()) {
             getLogger().severe("You must purchase the plugin to use support for 1.14!");
@@ -241,6 +241,14 @@ public class LibsDisguises extends JavaPlugin {
             if (watcherClass == null) {
                 getLogger().severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
                 continue;
+            }
+
+            // Invalidate invalid distribution
+            if (LibsPremium.isPremium() && LibsPremium.getPaidInformation() != null &&
+                    LibsPremium.getPaidInformation().getDownloadID().equals("-1895736039")) {
+                throw new IllegalStateException(
+                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
+                                "reporting this error!");
             }
 
             disguiseType.setWatcherClass(watcherClass);

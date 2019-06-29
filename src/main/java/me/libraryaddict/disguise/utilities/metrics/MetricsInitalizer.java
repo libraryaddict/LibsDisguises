@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,7 +43,22 @@ public class MetricsInitalizer {
         final String premiumType;
 
         if (LibsPremium.isPremium()) {
-            if (plugin.isReleaseBuild()) {
+            PluginInformation info = LibsPremium.getPaidInformation();
+
+            if (info == null) {
+                info = LibsPremium.getPluginInformation();
+            }
+
+            boolean customPremium = !info.getUserID().matches("[0-9]+") || info.getUserID().equals("1") ||
+                    !LibsPremium.getResourceID().equals("32453") || !info.getDownloadID().matches("-?[0-9]+");
+
+            if (customPremium) {
+                if (plugin.isReleaseBuild() && LibsPremium.getPaidInformation() == null) {
+                    premiumType = "Custom Plugin";
+                } else {
+                    premiumType = "Custom Builds";
+                }
+            } else if (plugin.isReleaseBuild()) {
                 premiumType = "Paid Plugin";
             } else {
                 premiumType = "Paid Builds";
