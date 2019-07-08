@@ -50,7 +50,7 @@ public class MetricsInitalizer {
             }
 
             boolean customPremium = !info.getUserID().matches("[0-9]+") || info.getUserID().equals("1") ||
-                    !LibsPremium.getResourceID().equals("32453") || !info.getDownloadID().matches("-?[0-9]+");
+                    !info.getResourceID().equals("32453") || !info.getDownloadID().matches("-?[0-9]+");
 
             if (customPremium) {
                 if (plugin.isReleaseBuild() && LibsPremium.getPaidInformation() == null) {
