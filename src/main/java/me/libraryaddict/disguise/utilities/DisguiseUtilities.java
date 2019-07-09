@@ -28,10 +28,7 @@ import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.logging.log4j.util.Strings;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.*;
@@ -920,8 +917,7 @@ public class DisguiseUtilities {
             Field cSection = chunkClass.getDeclaredField("sections");
             cSection.setAccessible(true);
 
-            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class)
-                    .newInstance(0);
+            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class).newInstance(0);
 
             Class blockClass = ReflectionManager.getNmsClass("Block");
             Object REGISTRY = ReflectionManager.getNmsField("IRegistry", "BLOCK").get(null);
@@ -1036,8 +1032,7 @@ public class DisguiseUtilities {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
                         .get(entityTrackerEntry);
 
-                Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager
                         .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
@@ -1733,6 +1728,44 @@ public class DisguiseUtilities {
         }
     }
 
+    public static WrappedDataWatcher.Serializer getSerializer(MetaIndex index) {
+        if (index.getSerializer() != null) {
+            return index.getSerializer();
+        }
+
+        if (index.getDefault() instanceof Optional) {
+            for (Field f : MetaIndex.class.getFields()) {
+                try {
+                    if (f.get(null) != index) {
+                        continue;
+                    }
+                }
+                catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                Type type = f.getGenericType();
+                Type opt = ((ParameterizedType) type).getActualTypeArguments()[0];
+
+                if (opt instanceof ParameterizedType) {
+                    Type val = ((ParameterizedType) opt).getActualTypeArguments()[0];
+
+                    return WrappedDataWatcher.Registry.get(ReflectionManager.getNmsClass((Class) val), true);
+                }
+            }
+        } else {
+            return WrappedDataWatcher.Registry.get(ReflectionManager.getNmsClass(index.getDefault().getClass()));
+        }
+
+        Object value = index.getDefault();
+
+        throw new IllegalArgumentException("Unable to find Serializer for " + value +
+                (value instanceof Optional && ((Optional) value).isPresent() ?
+                        " (" + ((Optional) value).get().getClass().getName() + ")" :
+                        value instanceof Optional || value == null ? "" : " " + value.getClass().getName()) +
+                "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
+    }
+
     /**
      * Create a new datawatcher but with the 'correct' values
      */
@@ -1753,7 +1786,8 @@ public class DisguiseUtilities {
                     continue;
 
                 WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager
-                        .createDataWatcherObject(watchableObject.getIndex(), watchableObject.getValue());
+                        .createDataWatcherObject(MetaIndex.getMetaIndex(disguiseWatcher, watchableObject.getIndex()),
+                                watchableObject.getValue());
 
                 newWatcher.setObject(obj, watchableObject.getValue());
             }

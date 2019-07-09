@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -56,7 +57,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
                 if (DisguiseConfig.isMetadataPacketsEnabled()) {
                     WrappedWatchableObject watch = ReflectionManager
-                            .createWatchable(0, WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
+                            .createWatchable(MetaIndex.ENTITY_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 
                     if (watch != null)
                         list.add(watch);

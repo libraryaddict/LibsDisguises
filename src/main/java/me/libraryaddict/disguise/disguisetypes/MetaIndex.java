@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -658,6 +659,15 @@ public class MetaIndex<Y> {
     }
 
     /**
+     * @param watcher - A FlagWatcher class
+     * @param flagNo  - The meta index number
+     * @return The MetaIndex which corresponds to that FlagWatcher at that index
+     */
+    public static MetaIndex getMetaIndex(FlagWatcher watcher, int flagNo) {
+        return getMetaIndex(watcher.getClass(), flagNo);
+    }
+
+    /**
      * @param watcherClass - A FlagWatcher class
      * @param flagNo       - The meta index number
      * @return The MetaIndex which corresponds to that FlagWatcher at that index
@@ -793,6 +803,8 @@ public class MetaIndex<Y> {
 
                 _values = Arrays.copyOf(_values, _values.length + 1);
                 _values[_values.length - 1] = index;
+
+                index.serializer = DisguiseUtilities.getSerializer(index);
             }
         }
         catch (Exception e) {
@@ -823,6 +835,7 @@ public class MetaIndex<Y> {
     private Y _defaultValue;
     private int _index;
     private Class<? extends FlagWatcher> _watcher;
+    private WrappedDataWatcher.Serializer serializer;
 
     public MetaIndex(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {
         _index = index;
@@ -832,6 +845,13 @@ public class MetaIndex<Y> {
 
     public Y getDefault() {
         return _defaultValue;
+    }
+
+    /**
+     * Used for serializing values to a packet stream
+     */
+    public WrappedDataWatcher.Serializer getSerializer() {
+        return serializer;
     }
 
     public Class<? extends FlagWatcher> getFlagWatcher() {

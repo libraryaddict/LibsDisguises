@@ -13,6 +13,7 @@ import com.mojang.datafixers.Dynamic;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.VillagerData;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.minecraft.server.v1_14_R1.IRegistry;
@@ -26,6 +27,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.io.IOException;
@@ -836,6 +838,32 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Class getNmsClass(Class cl) {
+        if (VillagerData.class.isAssignableFrom(cl)) {
+            return getNmsClass("VillagerData");
+        } else if (BlockPosition.class.isAssignableFrom(cl)) {
+            return getNmsClass("BlockPosition");
+        } else if (WrappedBlockData.class.isAssignableFrom(cl)) {
+            return getNmsClass("IBlockData");
+        } else if (ItemStack.class.isAssignableFrom(cl)) {
+            return getNmsClass("ItemStack");
+        } else if (WrappedChatComponent.class.isAssignableFrom(cl)) {
+            return getNmsClass("IChatBaseComponent");
+        } else if (Vector3F.class.isAssignableFrom(cl)) {
+            return getNmsClass("Vector3f");
+        } else if (Direction.class.isAssignableFrom(cl)) {
+            return getNmsClass("EnumDirection");
+        } else if (WrappedParticle.class.isAssignableFrom(cl)) {
+            return getNmsClass("ParticleParam");
+        } else if (EntityPose.class.isAssignableFrom(cl)) {
+            return getNmsClass("EntityPose");
+        } else if (NbtWrapper.class.isAssignableFrom(cl)) {
+            return getNmsClass("NBTTagCompound");
+        }
+
+        return cl;
+    }
+
     public static Object convertInvalidMeta(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
@@ -972,52 +1000,13 @@ public class ReflectionManager {
         return version;
     }
 
-    public static WrappedDataWatcherObject createDataWatcherObject(int id, Object value) {
+    public static WrappedDataWatcherObject createDataWatcherObject(MetaIndex index, Object value) {
         if (value == null)
             return null;
 
         value = convertInvalidMeta(value);
 
-        Serializer serializer;
-
-        if (value instanceof Optional) {
-            Optional opt = (Optional) value;
-
-            if (opt.isPresent()) {
-                Object val = opt.get();
-                Class cl;
-                Class iBlockData = getNmsClass("IBlockData");
-                Class iChat = getNmsClass("IChatBaseComponent");
-
-                if (iBlockData.isInstance(val)) {
-                    cl = iBlockData;
-                } else if (iChat.isInstance(val)) {
-                    cl = iChat;
-                } else {
-                    cl = val.getClass();
-                }
-
-                serializer = Registry.get(cl, true);
-            } else {
-                serializer = Registry.get(UUID.class, true);
-            }
-        } else {
-            serializer = Registry.get(getNmsClass("ParticleParam").isInstance(value) ? getNmsClass("ParticleParam") :
-                    value.getClass());
-        }
-
-        if (serializer == null) {
-            if (value.getClass().getSimpleName().equals("NBTTagCompound"))
-                return null; // Handle PaperSpigot's bad coding
-
-            throw new IllegalArgumentException("Unable to find Serializer for " + value +
-                    (value instanceof Optional && ((Optional) value).isPresent() ?
-                            " (" + ((Optional) value).get().getClass().getName() + ")" :
-                            value instanceof Optional || value == null ? "" : " " + value.getClass().getName()) +
-                    "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
-        }
-
-        return new WrappedDataWatcherObject(id, serializer);
+        return new WrappedDataWatcherObject(index.getIndex(), index.getSerializer());
     }
 
     /**
@@ -1027,7 +1016,7 @@ public class ReflectionManager {
      * @param value
      * @return
      */
-    public static Object createDataWatcherItem(int id, Object value) {
+    public static Object createDataWatcherItem(MetaIndex id, Object value) {
         WrappedDataWatcherObject watcherObject = createDataWatcherObject(id, value);
 
         Constructor construct = getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
@@ -1106,7 +1095,7 @@ public class ReflectionManager {
         return EntityPose.valueOf(((Enum) nmsEntityPose).name());
     }
 
-    public static WrappedWatchableObject createWatchable(int index, Object obj) {
+    public static WrappedWatchableObject createWatchable(MetaIndex index, Object obj) {
         Object watcherItem = createDataWatcherItem(index, obj);
 
         if (watcherItem == null)

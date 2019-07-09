@@ -12,6 +12,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
@@ -140,7 +141,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 if (observer.isSprinting())
                     b = (byte) (b | 1 << 3);
 
-                WrappedWatchableObject watch = ReflectionManager.createWatchable(0, b);
+                WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META, b);
 
                 if (watch != null)
                     watchableList.add(watch);
