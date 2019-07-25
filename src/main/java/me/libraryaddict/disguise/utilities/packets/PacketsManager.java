@@ -77,10 +77,9 @@ public class PacketsManager {
             soundsListenerEnabled = enabled;
 
             if (soundsListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(soundsListener)
-                        .syncStart();
+                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
             } else {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(soundsListener);
+                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
             }
         }
     }
@@ -92,7 +91,7 @@ public class PacketsManager {
             if (inventoryModifierEnabled) {
                 ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
             } else {
-                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
+                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListener);
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {

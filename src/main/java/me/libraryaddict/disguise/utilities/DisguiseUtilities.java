@@ -917,7 +917,8 @@ public class DisguiseUtilities {
             Field cSection = chunkClass.getDeclaredField("sections");
             cSection.setAccessible(true);
 
-            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class).newInstance(0);
+            Object chunkSection = ReflectionManager.getNmsClass("ChunkSection").getConstructor(int.class)
+                    .newInstance(0);
 
             Class blockClass = ReflectionManager.getNmsClass("Block");
             Object REGISTRY = ReflectionManager.getNmsField("IRegistry", "BLOCK").get(null);
@@ -1032,7 +1033,8 @@ public class DisguiseUtilities {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
                         .get(entityTrackerEntry);
 
-                Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method clear = ReflectionManager
+                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager
                         .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
@@ -1336,6 +1338,10 @@ public class DisguiseUtilities {
     public static void setupSelfDisguiseScoreboard(Player player) {
         // They're already in a disguise team
         if (disguiseTeam.containsKey(player.getUniqueId())) {
+            return;
+        }
+
+        if (LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().isLegit()) {
             return;
         }
 

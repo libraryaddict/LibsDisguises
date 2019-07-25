@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -112,7 +113,10 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             transformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
-                event.setPacket(packet = packet.deepClone());
+                if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
+                        LibsPremium.getPluginInformation().getBuildNumber().matches("[0-9]+")) {
+                    event.setPacket(packet = packet.deepClone());
+                }
 
                 for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
                     if (watch.getIndex() == 0) {
