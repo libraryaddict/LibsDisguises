@@ -41,7 +41,6 @@ public class FlagWatcher {
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
-        this.setData(MetaIndex.ENTITY_AIR_TICKS, 0);
         equipment = new LibsEquipment(this);
     }
 
