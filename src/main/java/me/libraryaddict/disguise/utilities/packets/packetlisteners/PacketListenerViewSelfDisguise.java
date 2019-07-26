@@ -114,7 +114,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
                 if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
-                        LibsPremium.getPluginInformation().getBuildNumber().matches("[0-9]+")) {
+                        LibsPremium.getPluginInformation().getBuildNumber().matches("#[0-9]+")) {
                     event.setPacket(packet = packet.deepClone());
                 }
 
