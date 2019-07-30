@@ -12,16 +12,19 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 
 public class PacketListenerSounds extends PacketAdapter {
     /**
@@ -59,27 +62,27 @@ public class PacketListenerSounds extends PacketAdapter {
         if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
             SoundType soundType = null;
 
-            int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
-
-            int chunkX = (int) Math.floor((soundCords[0] / 8D) / 16D);
-            int chunkZ = (int) Math.floor((soundCords[2] / 8D) / 16D);
-
-            if (!observer.getWorld().isChunkLoaded(chunkX, chunkZ)) {
-                return;
-            }
-
             Entity disguisedEntity = null;
             DisguiseSound entitySound = null;
+            Object soundEffectObj = mods.read(0);
 
             Disguise disguise = null;
 
-            Object soundEffectObj = mods.read(0);
-            Entity[] entities = observer.getWorld().getChunkAt(chunkX, chunkZ).getEntities();
+            int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
 
-            for (Entity entity : entities) {
-                Disguise entityDisguise = DisguiseAPI.getDisguise(observer, entity);
+            loop:
+            for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                for (TargetedDisguise entityDisguise : disguises) {
+                    Entity entity = entityDisguise.getEntity();
 
-                if (entityDisguise != null) {
+                    if (entity.getWorld() != observer.getWorld()) {
+                        continue;
+                    }
+
+                    if (!entityDisguise.canSee(observer)) {
+                        continue;
+                    }
+
                     Location loc = entity.getLocation();
 
                     int[] entCords = new int[]{(int) (loc.getX() * 8), (int) (loc.getY() * 8), (int) (loc.getZ() * 8)};
@@ -139,7 +142,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     if (soundType != null) {
                         disguise = entityDisguise;
                         disguisedEntity = entity;
-                        break;
+                        break loop;
                     }
                 }
             }
