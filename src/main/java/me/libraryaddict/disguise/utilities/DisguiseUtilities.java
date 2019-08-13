@@ -1132,13 +1132,14 @@ public class DisguiseUtilities {
             return;
         }
 
-        PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
                 removeSelfDisguise((Player) disguise.getEntity());
 
                 selfDisguised.add(disguise.getEntity().getUniqueId());
+
+                PacketContainer destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
 
@@ -1165,6 +1166,7 @@ public class DisguiseUtilities {
                         .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
+                PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
                 for (final Object p : trackedPlayers) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
@@ -1256,8 +1258,7 @@ public class DisguiseUtilities {
 
                 // If the tracker exists. Remove himself from his tracker
                 if (isHashSet(trackedPlayersObj)) {
-                    ((Set<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                            .get(entityTrackerEntry)).remove(ReflectionManager.getNmsEntity(player));
+                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getNmsEntity(player));
                 } else {
                     ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
                             .get(entityTrackerEntry)).remove(ReflectionManager.getNmsEntity(player));
@@ -1548,8 +1549,7 @@ public class DisguiseUtilities {
 
             // Check for code differences in PaperSpigot vs Spigot
             if (isHashSet(trackedPlayersObj)) {
-                ((Set<Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry)).add(ReflectionManager.getNmsEntity(player));
+                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getNmsEntity(player));
             } else {
                 ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
                         .get(entityTrackerEntry)).put(ReflectionManager.getNmsEntity(player), true);
