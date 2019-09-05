@@ -711,6 +711,10 @@ public abstract class Disguise {
         }
 
         getWatcher().setNoGravity(true);
+
+        if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
+            getWatcher().setCustomName("");
+        }
     }
 
     public Disguise setVelocitySent(boolean sendVelocity) {
