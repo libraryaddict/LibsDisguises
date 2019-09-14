@@ -2,21 +2,23 @@ package me.libraryaddict.disguise.utilities.json;
 
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.disguisetypes.*;
-import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by libraryaddict on 1/06/2017.
@@ -83,11 +85,31 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
                     entry.setValue(((Double) entry.getValue()).byteValue());
             } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
                 // If the default value is not VillagerData
-                if (!(index.getDefault() instanceof VillagerData)) {
-                    continue;
-                }
+                if (index.getDefault() instanceof VillagerData) {
+                    entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()), VillagerData.class));
+                } else if (index.getDefault() instanceof Optional) {
 
-                entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()), VillagerData.class));
+                    for (Field f : MetaIndex.class.getFields()) {
+                        try {
+                            if (f.get(null) != index) {
+                                continue;
+                            }
+                        }
+                        catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+
+                        Type type = f.getGenericType();
+                        Type opt = ((ParameterizedType) type).getActualTypeArguments()[0];
+
+                        if (opt instanceof ParameterizedType) {
+                            Type val = ((ParameterizedType) opt).getActualTypeArguments()[0];
+
+                            entry.setValue(Optional.of(
+                                    gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")), val)));
+                        }
+                    }
+                }
             }
 
             // If the deserialized class is not the same class type as the default
