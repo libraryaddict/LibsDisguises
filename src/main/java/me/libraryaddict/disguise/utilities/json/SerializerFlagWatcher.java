@@ -105,8 +105,17 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
                         if (opt instanceof ParameterizedType) {
                             Type val = ((ParameterizedType) opt).getActualTypeArguments()[0];
 
-                            entry.setValue(Optional.of(
-                                    gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")), val)));
+                            Optional value;
+
+                            if (((LinkedTreeMap) entry.getValue()).isEmpty()) {
+                                value = Optional.empty();
+                            } else {
+                                value = Optional
+                                        .of(gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")),
+                                                val));
+                            }
+
+                            entry.setValue(value);
                         }
                     }
                 }
