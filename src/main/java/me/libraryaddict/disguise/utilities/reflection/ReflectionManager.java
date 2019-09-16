@@ -940,6 +940,8 @@ public class ReflectionManager {
             return getNmsEntityPose((EntityPose) value);
         } else if (value instanceof VillagerData) {
             return getNmsVillagerData((VillagerData) value);
+        } else if (value instanceof WrappedChatComponent) {
+            return ((WrappedChatComponent) value).getHandle();
         }
 
         return value;
