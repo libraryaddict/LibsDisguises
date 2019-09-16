@@ -35,12 +35,12 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
     }
 
     public VillagerData getVillagerData() {
-        return getData(MetaIndex.VILLAGER_DATA);
+        return getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
     public void setVillagerData(VillagerData villagerData) {
-        setData(MetaIndex.VILLAGER_DATA, villagerData);
-        sendData(MetaIndex.VILLAGER_DATA);
+        setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, villagerData);
+        sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
     public Profession getProfession() {

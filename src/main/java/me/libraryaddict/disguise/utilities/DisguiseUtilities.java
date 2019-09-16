@@ -1132,7 +1132,6 @@ public class DisguiseUtilities {
             return;
         }
 
-
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
                 removeSelfDisguise((Player) disguise.getEntity());
@@ -1791,9 +1790,10 @@ public class DisguiseUtilities {
                 if (watchableObject.getValue() == null)
                     continue;
 
+                MetaIndex metaIndex = MetaIndex.getMetaIndex(disguiseWatcher, watchableObject.getIndex());
+
                 WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager
-                        .createDataWatcherObject(MetaIndex.getMetaIndex(disguiseWatcher, watchableObject.getIndex()),
-                                watchableObject.getValue());
+                        .createDataWatcherObject(metaIndex, watchableObject.getValue());
 
                 newWatcher.setObject(obj, watchableObject.getValue());
             }

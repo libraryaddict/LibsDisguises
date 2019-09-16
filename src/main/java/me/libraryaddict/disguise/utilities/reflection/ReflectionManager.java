@@ -1004,8 +1004,6 @@ public class ReflectionManager {
         if (value == null)
             return null;
 
-        value = convertInvalidMeta(value);
-
         return new WrappedDataWatcherObject(index.getIndex(), index.getSerializer());
     }
 
