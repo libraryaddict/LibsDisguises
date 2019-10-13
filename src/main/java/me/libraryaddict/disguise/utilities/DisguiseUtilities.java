@@ -83,6 +83,7 @@ public class DisguiseUtilities {
      */
     private static long velocityTime;
     private static int velocityID;
+    private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
 
     public static void setPlayerVelocity(Player player) {
         velocityID = player.getEntityId();
@@ -1720,7 +1721,6 @@ public class DisguiseUtilities {
             return;
         }
 
-        // player.spigot().setCollidesWithEntities(false);
         // Finish up
         selfDisguised.add(player.getUniqueId());
 

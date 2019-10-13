@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -82,6 +83,10 @@ public class LibsPackets {
             final boolean isRemoveCancel = isSpawnPacket && largestTick.get().equals(entry.getKey());
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                if (isRemoveCancel) {
+                    PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
+                }
+
                 try {
                     for (PacketContainer packet : entry.getValue()) {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
@@ -89,10 +94,6 @@ public class LibsPackets {
                 }
                 catch (InvocationTargetException e) {
                     e.printStackTrace();
-                }
-
-                if (isRemoveCancel) {
-                    PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
                 }
             }, entry.getKey());
         }

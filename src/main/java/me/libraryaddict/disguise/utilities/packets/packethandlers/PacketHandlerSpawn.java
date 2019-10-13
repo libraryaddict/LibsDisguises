@@ -27,6 +27,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -69,36 +70,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         if (disguise.getEntity() == null) {
             disguise.setEntity(disguisedEntity);
-        }
-
-        // This sends the armor packets so that the player isn't naked.
-        // Please note it only sends the packets that wouldn't be sent normally
-        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
-            for (EquipmentSlot slot : EquipmentSlot.values()) {
-                ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
-
-                if (itemstack == null || itemstack.getType() == Material.AIR) {
-                    continue;
-                }
-
-                if (disguisedEntity instanceof LivingEntity) {
-                    ItemStack item = ReflectionManager.getEquipment(slot, disguisedEntity);
-
-                    if (item != null && item.getType() != Material.AIR) {
-                        continue;
-                    }
-                }
-
-                PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-
-                StructureModifier<Object> mods = packet.getModifier();
-
-                mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-                mods.write(2, ReflectionManager.getNmsItem(itemstack));
-
-                packets.addDelayedPacket(packet);
-            }
         }
 
         if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
@@ -257,10 +228,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 bytes.write(0, yaw);
                 bytes.write(1, pitch);
 
-                packets.addPacket(teleportPacket);
-            }
+                packets.addDelayedPacket(teleportPacket, 3);
 
-            if (!selfDisguise) {
                 // Send a metadata packet
                 PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
@@ -397,6 +366,50 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(1, (byte) 4);
 
             packets.addPacket(newPacket);
+        }
+
+        boolean requiresArmor =
+                (disguise.isPlayerDisguise() && disguisedEntity != observer) && disguisedEntity instanceof LivingEntity;
+        // This sends the armor packets so that the player isn't naked.
+        if (DisguiseConfig.isEquipmentPacketsEnabled() || requiresArmor) {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack itemstack = disguise.getWatcher().getItemStack(slot);
+                ItemStack entityItem;
+
+                if (itemstack == null || itemstack.getType() == Material.AIR) {
+                    if (requiresArmor) {
+                        itemstack = ReflectionManager.getEquipment(slot, disguisedEntity);
+
+                        if (itemstack == null || itemstack.getType() == Material.AIR) {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
+                if (!requiresArmor && disguisedEntity instanceof LivingEntity) {
+                    ItemStack item = ReflectionManager.getEquipment(slot, disguisedEntity);
+
+                    if (item != null && item.getType() != Material.AIR) {
+                        continue;
+                    }
+                }
+
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+
+                StructureModifier<Object> mods = packet.getModifier();
+
+                mods.write(0, disguisedEntity.getEntityId());
+                mods.write(1, ReflectionManager.createEnumItemSlot(slot));
+                mods.write(2, ReflectionManager.getNmsItem(itemstack));
+
+                if (requiresArmor) {
+                    packets.addDelayedPacket(packet, 3);
+                } else {
+                    packets.addDelayedPacket(packet);
+                }
+            }
         }
     }
 }

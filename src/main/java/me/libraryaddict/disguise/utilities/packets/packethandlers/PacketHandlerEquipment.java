@@ -7,8 +7,10 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -23,6 +25,12 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerEquipment implements IPacketHandler {
+    private PacketsHandler packetsHandler;
+
+    public PacketHandlerEquipment(PacketsHandler packetsHandler) {
+        this.packetsHandler = packetsHandler;
+    }
+
     @Override
     public PacketType[] getHandledPackets() {
         return new PacketType[]{PacketType.Play.Server.ENTITY_EQUIPMENT};
@@ -31,6 +39,11 @@ public class PacketHandlerEquipment implements IPacketHandler {
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
+        if (packetsHandler.isCancelMeta(disguise, observer)) {
+            packets.clear();
+            return;
+        }
+
         // Else if the disguise is updating equipment
 
         EquipmentSlot slot = ReflectionManager.createEquipmentSlot(packets.getPackets().get(0).getModifier().read(1));
@@ -56,8 +69,8 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 List<WrappedWatchableObject> list = new ArrayList<>();
 
                 if (DisguiseConfig.isMetadataPacketsEnabled()) {
-                    WrappedWatchableObject watch = ReflectionManager
-                            .createWatchable(MetaIndex.ENTITY_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
+                    WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META,
+                            WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 
                     if (watch != null)
                         list.add(watch);

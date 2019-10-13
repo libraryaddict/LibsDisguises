@@ -31,7 +31,7 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerBed());
         packetHandlers.add(new PacketHandlerCollect());
         packetHandlers.add(new PacketHandlerEntityStatus());
-        packetHandlers.add(new PacketHandlerEquipment());
+        packetHandlers.add(new PacketHandlerEquipment(this));
         packetHandlers.add(new PacketHandlerHeadRotation());
         packetHandlers.add(new PacketHandlerMetadata(this));
         packetHandlers.add(new PacketHandlerMovement());
