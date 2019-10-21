@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -93,7 +94,7 @@ public class MetricsInitalizer {
         metrics.addCustomChart(new Metrics.MultiLineChart("disguised_entities") {
             @Override
             public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
-                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
+                for (Set<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
                     for (Disguise disg : list) {
                         if (disg.getEntity() == null || !disg.isDisguiseInUse())
                             continue;
@@ -111,7 +112,7 @@ public class MetricsInitalizer {
         metrics.addCustomChart(new Metrics.MultiLineChart("disguises_used") {
             @Override
             public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
-                for (HashSet<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
+                for (Set<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
                     for (Disguise disg : list) {
                         if (disg.getEntity() == null || !disg.isDisguiseInUse())
                             continue;
@@ -148,7 +149,7 @@ public class MetricsInitalizer {
             public String getValue() {
                 int disgs = 0;
 
-                for (HashSet set : DisguiseUtilities.getDisguises().values()) {
+                for (Set set : DisguiseUtilities.getDisguises().values()) {
                     disgs += set.size();
                 }
 
@@ -231,12 +232,12 @@ public class MetricsInitalizer {
                     return "Yes";
                 }
 
-                Collection<HashSet<TargetedDisguise>> list = DisguiseUtilities.getDisguises().values();
+                Collection<Set<TargetedDisguise>> list = DisguiseUtilities.getDisguises().values();
 
                 if (list.isEmpty())
                     return "Unknown";
 
-                for (HashSet<TargetedDisguise> dList : list) {
+                for (Set<TargetedDisguise> dList : list) {
                     for (TargetedDisguise disg : dList) {
                         if (disg.getObservers().isEmpty())
                             continue;

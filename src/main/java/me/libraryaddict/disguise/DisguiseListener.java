@@ -304,7 +304,7 @@ public class DisguiseListener implements Listener {
             }
         }
 
-        for (HashSet<TargetedDisguise> disguiseList : DisguiseUtilities.getDisguises().values()) {
+        for (Set<TargetedDisguise> disguiseList : DisguiseUtilities.getDisguises().values()) {
             for (TargetedDisguise targetedDisguise : disguiseList) {
                 if (targetedDisguise.getEntity() == null)
                     continue;

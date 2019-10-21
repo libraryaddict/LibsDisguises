@@ -7,7 +7,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -17,14 +16,13 @@ import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
+import java.util.Set;
 
 public class PacketListenerSounds extends PacketAdapter {
     /**
@@ -71,7 +69,7 @@ public class PacketListenerSounds extends PacketAdapter {
             int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
 
             loop:
-            for (HashSet<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                 for (TargetedDisguise entityDisguise : disguises) {
                     Entity entity = entityDisguise.getEntity();
 

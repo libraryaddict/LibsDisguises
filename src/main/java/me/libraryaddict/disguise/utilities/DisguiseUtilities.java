@@ -7,6 +7,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.*;
+import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
@@ -48,6 +49,7 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +60,7 @@ public class DisguiseUtilities {
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
-    private static HashMap<UUID, HashSet<TargetedDisguise>> disguisesInUse = new HashMap<>();
+    private static Map<UUID, Set<TargetedDisguise>> disguisesInUse = new ConcurrentHashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
@@ -133,7 +135,7 @@ public class DisguiseUtilities {
 
         getLogger().info("Now saving disguises..");
 
-        for (HashSet<TargetedDisguise> list : disguisesInUse.values()) {
+        for (Set<TargetedDisguise> list : getDisguises().values()) {
             for (TargetedDisguise disg : list) {
                 if (disg.getEntity() == null)
                     continue;
@@ -307,7 +309,7 @@ public class DisguiseUtilities {
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
-            getDisguises().put(entityId, new HashSet<TargetedDisguise>());
+            getDisguises().put(entityId, Collections.synchronizedSet(new HashSet<>()));
         }
 
         getDisguises().get(entityId).add(disguise);
@@ -614,13 +616,13 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static HashMap<UUID, HashSet<TargetedDisguise>> getDisguises() {
+    public static Map<UUID, Set<TargetedDisguise>> getDisguises() {
         return disguisesInUse;
     }
 
     public static TargetedDisguise[] getDisguises(UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
-            HashSet<TargetedDisguise> disguises = getDisguises().get(entityId);
+            Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
             return disguises.toArray(new TargetedDisguise[disguises.size()]);
         }
@@ -1872,8 +1874,6 @@ public class DisguiseUtilities {
             entityId = observer.getEntityId();
         }
 
-        // TODO Needs to be thread safe, not thread safe atm due to testing
-
         if (getFutureDisguises().containsKey(entityId)) {
             HashSet<TargetedDisguise> hashSet = getFutureDisguises().get(entityId);
 
@@ -1886,7 +1886,7 @@ public class DisguiseUtilities {
             }
         }
 
-        for (HashSet<TargetedDisguise> disguises : getDisguises().values()) {
+        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
             for (TargetedDisguise dis : disguises) {
                 if (dis.getEntity() == null || !dis.isDisguiseInUse()) {
                     continue;
