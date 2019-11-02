@@ -1,39 +1,31 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.cloning.AggregateCloner;
 import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
-import com.mojang.datafixers.Dynamic;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.VillagerData;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import net.minecraft.server.v1_14_R1.IRegistry;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
-import org.bukkit.craftbukkit.v1_14_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -334,7 +326,7 @@ public class ReflectionManager {
         Object world = getWorldServer(target.getWorld());
         Object chunkProvider = chunkProviderField.get(world);
         Object chunkMap = chunkMapField.get(chunkProvider);
-        Int2ObjectMap trackedEntities = (Int2ObjectMap) trackedEntitiesField.get(chunkMap);
+        Map trackedEntities = (Map) trackedEntitiesField.get(chunkMap);
 
         Object entityTracker = trackedEntities.get(target.getEntityId());
 
