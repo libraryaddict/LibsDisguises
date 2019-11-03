@@ -41,7 +41,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             return null;
         }
 
-        Material material = Material.getMaterial(split[0]);
+        Material material = Material.getMaterial(split[0].toUpperCase());
 
         if (material == null) {
             throw new IllegalArgumentException();
