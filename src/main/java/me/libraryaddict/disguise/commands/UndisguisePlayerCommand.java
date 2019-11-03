@@ -2,8 +2,10 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -53,6 +55,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (sender instanceof Player &&
+                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED + "Please purchase Lib's Disguises to enable player commands");
+            return true;
+        }
+
         if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {
             sender.sendMessage(LibsMsg.NO_PERM.get());
             return true;
@@ -82,11 +90,11 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
             DisguiseAPI.undisguiseToAll(entityTarget);
-            sender.sendMessage(LibsMsg.UNDISG_PLAYER
-                    .get(entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable()));
+            sender.sendMessage(LibsMsg.UNDISG_PLAYER.get(entityTarget instanceof Player ? entityTarget.getName() :
+                    DisguiseType.getType(entityTarget).toReadable()));
         } else {
-            sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL
-                    .get(entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable()));
+            sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL.get(entityTarget instanceof Player ? entityTarget.getName() :
+                    DisguiseType.getType(entityTarget).toReadable()));
         }
 
         return true;

@@ -1,7 +1,9 @@
 package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,12 @@ public class UndisguiseCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (sender instanceof Player &&
+                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED + "Please purchase Lib's Disguises to enable player commands");
+            return true;
+        }
+
         if (sender.getName().equals("CONSOLE")) {
             sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;

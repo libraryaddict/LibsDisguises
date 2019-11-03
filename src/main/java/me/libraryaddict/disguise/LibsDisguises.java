@@ -56,17 +56,14 @@ public class LibsDisguises extends JavaPlugin {
         LibsPremium.check(getDescription().getVersion(), getFile());
 
         if (!LibsPremium.isPremium()) {
-            getLogger().severe("You must purchase the plugin to use support for 1.14!");
-            getLogger().severe("This will be released free once the plugin is stable!");
-            getLogger().severe("If you've already purchased the plugin, place the purchased jar inside the " +
-                    "Lib's Disguises plugin folder");
-            getPluginLoader().disablePlugin(this);
-            return;
+            getLogger()
+                    .info("You are running the free version, commands limited to non-players (Console, Command " +
+                            "Blocks)");
         }
 
-        if (!ReflectionManager.getMinecraftVersion().startsWith("1.14")) {
+        if (!ReflectionManager.getMinecraftVersion().startsWith("1.14.4")) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
-                    "intended for 1.14!");
+                    "intended for 1.14.4!");
             getPluginLoader().disablePlugin(this);
             return;
         }

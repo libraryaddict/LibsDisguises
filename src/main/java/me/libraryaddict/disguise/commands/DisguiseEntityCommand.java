@@ -22,6 +22,10 @@ import java.util.List;
 public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (isNotPremium(sender)) {
+            return true;
+        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(LibsMsg.NO_CONSOLE.get());
             return true;

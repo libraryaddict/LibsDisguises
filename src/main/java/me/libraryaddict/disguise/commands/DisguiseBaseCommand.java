@@ -1,12 +1,15 @@
 package me.libraryaddict.disguise.commands;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,6 +37,16 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         map.put(DisguiseModifyRadiusCommand.class, "DisguiseModifyRadius");
 
         disguiseCommands = map;
+    }
+
+    protected boolean isNotPremium(CommandSender sender) {
+        if (sender instanceof Player &&
+                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED + "Please purchase Lib's Disguises to enable player commands");
+            return true;
+        }
+
+        return false;
     }
 
     protected List<String> getTabDisguiseTypes(CommandSender sender, DisguisePermissions perms, String[] allArgs,
