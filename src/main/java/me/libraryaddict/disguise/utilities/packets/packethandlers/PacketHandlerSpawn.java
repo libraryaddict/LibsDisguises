@@ -244,7 +244,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 // Add a delay to remove the entry from 'cancelMeta'
 
-                packets.addDelayedPacket(metaPacket, 4);
+                packets.addDelayedPacket(metaPacket, 7);
             }
 
             // Remove player from the list
@@ -405,7 +405,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 mods.write(2, ReflectionManager.getNmsItem(itemstack));
 
                 if (requiresArmor) {
-                    packets.addDelayedPacket(packet, 3);
+                    packets.addDelayedPacket(packet, 7);
                 } else {
                     packets.addDelayedPacket(packet);
                 }
