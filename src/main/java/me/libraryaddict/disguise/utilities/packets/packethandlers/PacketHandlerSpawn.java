@@ -303,11 +303,21 @@ public class PacketHandlerSpawn implements IPacketHandler {
                             disguise.getWatcher()));
         } else if (disguise.getType().isMisc()) {
             int data = ((MiscDisguise) disguise).getData();
+            double x = loc.getX();
+            double y = loc.getY();
+            double z = loc.getZ();
 
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 ItemStack block = ((FallingBlockWatcher) disguise.getWatcher()).getBlock();
 
                 data = ReflectionManager.getCombinedIdByItemStack(block);
+
+                if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
+                    // Center the block
+                    x = loc.getBlockX() + 0.5;
+                    y = loc.getBlockY();
+                    z = loc.getBlockZ() + 0.5;
+                }
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {
                 // If the MiscDisguise data isn't set. Then no entity id was provided, so default to the owners
                 // entity id
@@ -318,8 +328,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             Object entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
 
-            Object[] params = new Object[]{disguisedEntity.getEntityId(), disguisedEntity.getUniqueId(), loc.getX(),
-                    loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw(), entityType, data,
+            Object[] params = new Object[]{disguisedEntity.getEntityId(), disguisedEntity.getUniqueId(), x, y, z,
+                    loc.getPitch(), loc.getYaw(), entityType, data,
                     ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
             PacketContainer spawnEntity = ProtocolLibrary.getProtocolManager()
