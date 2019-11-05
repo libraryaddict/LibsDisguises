@@ -86,6 +86,8 @@ public class ParamInfoManager {
                 itel.remove();
             } else if (method.getName().equals("removePotionEffect")) {
                 itel.remove();
+            } else if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
+                itel.remove();
             }
         }
 
