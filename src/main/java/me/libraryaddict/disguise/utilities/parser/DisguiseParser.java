@@ -45,7 +45,7 @@ public class DisguiseParser {
             case DROPPED_ITEM:
                 HashMap<String, Boolean> returns = new HashMap<>();
 
-                String beginning = "libsdisguises.options." + permNode + ".";
+                String beginning = "libsdisguises.options." + permNode.toLowerCase() + ".";
 
                 for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
                     String lowerPerm = permission.getPermission().toLowerCase();
@@ -143,7 +143,7 @@ public class DisguiseParser {
         }
 
         // If there is at least one whitelisted value, then they needed the whitelist to use it
-        return disguiseOptions.containsValue(true);
+        return !disguiseOptions.containsValue(true);
     }
 
     public static String getName(Entity entity) {
