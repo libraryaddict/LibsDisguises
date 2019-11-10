@@ -86,7 +86,7 @@ public class DisguiseUtilities {
     private static long velocityTime;
     private static int velocityID;
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
-    private static boolean runningPaper = Bukkit.getServer().getBukkitVersion().contains("Paper");
+    private static boolean runningPaper;
 
     public static void setPlayerVelocity(Player player) {
         velocityID = player.getEntityId();
@@ -859,6 +859,8 @@ public class DisguiseUtilities {
     }
 
     public static void init(LibsDisguises disguises) {
+        runningPaper = Bukkit.getServer().getBukkitVersion().contains("Paper");
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
