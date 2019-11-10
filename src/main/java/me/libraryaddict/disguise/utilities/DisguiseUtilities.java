@@ -859,7 +859,12 @@ public class DisguiseUtilities {
     }
 
     public static void init(LibsDisguises disguises) {
-        runningPaper = Bukkit.getServer().getBukkitVersion().contains("Paper");
+        try {
+            runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
+        }
+        catch (Exception ex) {
+
+        }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
