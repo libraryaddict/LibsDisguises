@@ -1249,7 +1249,7 @@ public class DisguiseUtilities {
             if (entityTrackerEntry != null) {
 
                 // If the tracker exists. Remove himself from his tracker
-                if (runningPaper) {
+                if (!runningPaper) {
                     Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
                             .get(entityTrackerEntry);
 
@@ -1539,7 +1539,7 @@ public class DisguiseUtilities {
             setupSelfDisguiseScoreboard(player);
 
             // Check for code differences in PaperSpigot vs Spigot
-            if (runningPaper) {
+            if (!runningPaper) {
                 // Add himself to his own entity tracker
                 Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
                         .get(entityTrackerEntry);
