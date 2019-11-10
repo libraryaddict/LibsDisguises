@@ -86,6 +86,7 @@ public class DisguiseUtilities {
     private static long velocityTime;
     private static int velocityID;
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
+    private static boolean runningPaper = Bukkit.getServer().getBukkitVersion().contains("Paper");
 
     public static void setPlayerVelocity(Player player) {
         velocityID = player.getEntityId();
@@ -737,22 +738,6 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Pass in a set, check if it's a hashset. If it's not, return false. If you pass in something else, you failed.
-     *
-     * @param obj
-     * @return
-     */
-    private static boolean isHashSet(Object obj) {
-        if (obj instanceof HashSet)
-            return true; // It's Spigot/Bukkit
-
-        if (obj instanceof Set)
-            return false; // It's PaperSpigot/SportsBukkit
-
-        throw new IllegalArgumentException("Object passed was not either a hashset or set!");
-    }
-
-    /**
      * Thread safe to use. This returns a GameProfile. And if its GameProfile doesn't have a skin blob. Then it does
      * a lookup
      * using schedulers. The runnable is run once the GameProfile has been successfully dealt with
@@ -1255,11 +1240,12 @@ public class DisguiseUtilities {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
 
             if (entityTrackerEntry != null) {
-                Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                        .get(entityTrackerEntry);
 
                 // If the tracker exists. Remove himself from his tracker
-                if (isHashSet(trackedPlayersObj)) {
+                if (runningPaper) {
+                    Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                            .get(entityTrackerEntry);
+
                     ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getNmsEntity(player));
                 } else {
                     ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
@@ -1545,12 +1531,12 @@ public class DisguiseUtilities {
 
             setupSelfDisguiseScoreboard(player);
 
-            // Add himself to his own entity tracker
-            Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
-                    .get(entityTrackerEntry);
-
             // Check for code differences in PaperSpigot vs Spigot
-            if (isHashSet(trackedPlayersObj)) {
+            if (runningPaper) {
+                // Add himself to his own entity tracker
+                Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers")
+                        .get(entityTrackerEntry);
+
                 ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getNmsEntity(player));
             } else {
                 ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
