@@ -59,11 +59,21 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         setVillagerData(new VillagerData(getType(), profession, getLevel()));
     }
 
+    @Deprecated
     public void setType(Villager.Type type) {
         setVillagerData(new VillagerData(type, getProfession(), getLevel()));
     }
 
+    @Deprecated
     public void setLevel(int level) {
         setVillagerData(new VillagerData(getType(), getProfession(), getLevel()));
+    }
+
+    public Villager.Type getBiome() {
+        return getType();
+    }
+
+    public void setBiome(Villager.Type type) {
+        setType(type);
     }
 }

@@ -40,7 +40,9 @@ public class ParamInfoTypes {
                 "View all the colors you can use for a horses color"));
 
         paramInfos.add(new ParamInfoEnum(Villager.Profession.class, "Villager Profession",
-                "View all the professions you can set on a Zombie and Normal Villager"));
+                "View all the professions you can set on a Villager and Zombie Villager"));
+        paramInfos.add(new ParamInfoEnum(Villager.Type.class, "Villager Biome",
+                "View all the biomes you can set on a Villager and Zombie Villager"));
         paramInfos.add(new ParamInfoEnum(BlockFace.class, "Direction", "Direction (North, East, South, West, Up, Down)",
                 "View the directions usable on player setSleeping and shulker direction",
                 Arrays.copyOf(BlockFace.values(), 6)));

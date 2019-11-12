@@ -28,8 +28,17 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         return getVillagerData().getProfession();
     }
 
+    @Deprecated
     public Villager.Type getType() {
         return getVillagerData().getType();
+    }
+
+    public Villager.Type getBiome() {
+        return getType();
+    }
+
+    public void setBiome(Villager.Type type) {
+        setType(type);
     }
 
     public int getLevel() {
@@ -40,6 +49,7 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         setVillagerData(new VillagerData(getType(), profession, getLevel()));
     }
 
+    @Deprecated
     public void setType(Villager.Type type) {
         setVillagerData(new VillagerData(type, getProfession(), getLevel()));
     }

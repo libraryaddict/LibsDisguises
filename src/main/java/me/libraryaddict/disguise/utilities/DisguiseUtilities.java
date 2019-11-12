@@ -1546,8 +1546,10 @@ public class DisguiseUtilities {
 
                 ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getNmsEntity(player));
             } else {
-                ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap")
-                        .get(entityTrackerEntry)).put(ReflectionManager.getNmsEntity(player), true);
+                Field field = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+                Object nmsEntity = ReflectionManager.getNmsEntity(player);
+                Map<Object, Object> map = ((Map<Object, Object>) field.get(entityTrackerEntry));
+                map.put(nmsEntity, true);
             }
 
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
