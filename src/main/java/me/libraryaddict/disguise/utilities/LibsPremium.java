@@ -197,9 +197,9 @@ public class LibsPremium {
             if (plugin.isPremium()) {
                 if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null ||
                         plugin.getDownloadID() == null || plugin.getUserID().equals("666666") ||
-                        plugin.getParsedBuildDate().before(getPluginInformation().getParsedBuildDate()) ||
-                        plugin.getParsedBuildDate().after(new Date(
-                                getPluginInformation().getParsedBuildDate().getTime() +
+                        plugin.getParsedBuildDate().after(getPluginInformation().getParsedBuildDate()) ||
+                        plugin.getParsedBuildDate().before(new Date(
+                                getPluginInformation().getParsedBuildDate().getTime() -
                                         TimeUnit.DAYS.toMillis(365 * 2)))) {
                     DisguiseUtilities.getLogger().warning(
                             "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
