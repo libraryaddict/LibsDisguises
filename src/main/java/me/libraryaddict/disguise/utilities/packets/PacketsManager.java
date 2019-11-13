@@ -35,7 +35,8 @@ public class PacketsManager {
         clientInteractEntityListener = new PacketListenerClientInteract(libsDisguises);
         PacketListener tabListListener = new PacketListenerTabList(libsDisguises);
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
+        ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(clientInteractEntityListener)
+                .syncStart();
         ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
 
         // Now I call this and the main listener is registered!
