@@ -2,6 +2,9 @@ package me.libraryaddict.disguise.utilities.plugin;
 
 import me.libraryaddict.disguise.utilities.LibsPremium;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by libraryaddict on 20/06/2019.
  */
@@ -51,6 +54,16 @@ public class PluginInformation {
 
     public String getBuildDate() {
         return buildDate;
+    }
+
+    public Date getParsedBuildDate() {
+        try {
+            return new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(getBuildDate());
+        }
+        catch (Exception ex) {
+        }
+
+        return null;
     }
 
     public boolean isLegit() {

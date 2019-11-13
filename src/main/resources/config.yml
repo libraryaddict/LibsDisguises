@@ -16,6 +16,7 @@ Permissions:
 
 # Disables commands with the exception of /libsdisguises. Useful if you don't want the plugin to be used by anything
 #  but a plugin
+# Useful if you didn't purchase the plugin.
 DisableCommands: false
 
 # The disguise plugin stores all GameProfiles inside a folder called "GameProfiles" as a local cache
