@@ -120,6 +120,11 @@ AddEntityAnimations: true
 DyeableSheep: false
 DyeableWolf: false
 DyeableCat: false
+# Can a player interact with a llama with carpet to set or change their carpet color?
+CarpetableLlama: false
+# Can a player interact with a non-saddled horse of any type, to give it a saddle?
+# This does not change what you can ride or control!
+SaddleableHorse: false
 
 # This is only called into action when the disguise is constructed using the commands.
 # And when the disguise supports that. This will not be used at all for plugins constructing the disguises for instance.

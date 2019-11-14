@@ -14,16 +14,15 @@ import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
-import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Wool;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class PacketListenerClientInteract extends PacketAdapter {
@@ -86,11 +85,84 @@ public class PacketListenerClientInteract extends PacketAdapter {
             }
         }
 
-        if (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF &&
-                disguise.getType() != DisguiseType.CAT) {
-            return;
-        }
+        switch (disguise.getType()) {
+            case CAT:
+            case WOLF:
+            case SHEEP:
+                doDyeable(observer, disguise);
+                break;
+            case MULE:
+            case DONKEY:
+            case HORSE:
+            case ZOMBIE_HORSE:
+            case SKELETON_HORSE:
+                if (DisguiseConfig.isHorseSaddleable()) {
+                    doSaddleable(observer, disguise);
+                }
 
+                break;
+            case LLAMA:
+            case TRADER_LLAMA:
+                if (DisguiseConfig.isLlamaCarpetable()) {
+                    doCarpetable(observer, disguise);
+                }
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void doSaddleable(Player observer, Disguise disguise) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // If this is something the player can dye the disguise with
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                        observer.getInventory().getItemInOffHand()}) {
+
+                    if (item == null || item.getType() != Material.SADDLE) {
+                        continue;
+                    }
+
+                    AbstractHorseWatcher watcher = (TraderLlamaWatcher) disguise.getWatcher();
+
+                    watcher.setSaddled(true);
+                    break;
+                }
+            }
+        }.runTask(LibsDisguises.getInstance());
+    }
+
+    private void doCarpetable(Player observer, Disguise disguise) {
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // If this is something the player can dye the disguise with
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                        observer.getInventory().getItemInOffHand()}) {
+                    if (item == null || !item.getType().name().endsWith("_CARPET")) {
+                        continue;
+                    }
+
+                    AnimalColor color = AnimalColor.getColorByWool(item.getType());
+
+                    if (color == null) {
+                        continue;
+                    }
+
+                    LlamaWatcher llamaWatcher = (LlamaWatcher) disguise.getWatcher();
+
+                    llamaWatcher.setSaddled(true);
+                    llamaWatcher.setCarpet(color);
+                    break;
+                }
+            }
+        }.runTask(LibsDisguises.getInstance());
+    }
+
+    private void doDyeable(Player observer, Disguise disguise) {
         new BukkitRunnable() {
             @Override
             public void run() {

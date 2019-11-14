@@ -33,6 +33,24 @@ public enum AnimalColor {
         return null;
     }
 
+    public static AnimalColor getColorByWool(Material carpet) {
+        if (carpet == null || (!carpet.name().endsWith("_WOOL") && !carpet.name().endsWith("_CARPET"))) {
+            return null;
+        }
+
+        String name = carpet.name().replace("_CARPET", "").replace("_WOOL", "");
+
+        for (AnimalColor color : AnimalColor.values()) {
+            if (!color.name().equals(name)) {
+                continue;
+            }
+
+            return color;
+        }
+
+        return null;
+    }
+
     public static AnimalColor getColorByMaterial(Material material) {
         for (AnimalColor color : values()) {
             if (color.getDyeMaterial() != material) {

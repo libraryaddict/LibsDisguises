@@ -39,6 +39,8 @@ public class DisguiseConfig {
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
     private static boolean colorizeCat;
+    private static boolean saddleableHorse;
+    private static boolean carpetableLlama;
     private static HashMap<DisguisePerm, String> customDisguises = new HashMap<>();
     private static boolean disableInvisibility;
     private static int disguiseCloneExpire;
@@ -317,6 +319,8 @@ public class DisguiseConfig {
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setCatDyeable(config.getBoolean("DyeableCat"));
+        setHorseSaddleable(config.getBoolean("SaddleableHorse"));
+        setLlamaCarpetable(config.getBoolean("CarpetableLlama"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateNotificationPermission(config.getString("Permission"));
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
@@ -778,6 +782,22 @@ public class DisguiseConfig {
 
     public static boolean isCatDyeable() {
         return colorizeCat;
+    }
+
+    public static void setHorseSaddleable(boolean saddle) {
+        saddleableHorse = saddle;
+    }
+
+    public static boolean isHorseSaddleable() {
+        return saddleableHorse;
+    }
+
+    public static void setLlamaCarpetable(boolean carpet) {
+        carpetableLlama = carpet;
+    }
+
+    public static boolean isLlamaCarpetable() {
+        return carpetableLlama;
     }
 
     private DisguiseConfig() {
