@@ -125,7 +125,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
                         continue;
                     }
 
-                    AbstractHorseWatcher watcher = (TraderLlamaWatcher) disguise.getWatcher();
+                    AbstractHorseWatcher watcher = (AbstractHorseWatcher) disguise.getWatcher();
 
                     watcher.setSaddled(true);
                     break;
