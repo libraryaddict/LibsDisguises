@@ -38,6 +38,7 @@ public class DisguiseConfig {
     private static boolean collectEnabled;
     private static boolean colorizeSheep;
     private static boolean colorizeWolf;
+    private static boolean colorizeCat;
     private static HashMap<DisguisePerm, String> customDisguises = new HashMap<>();
     private static boolean disableInvisibility;
     private static int disguiseCloneExpire;
@@ -315,6 +316,7 @@ public class DisguiseConfig {
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
+        setCatDyeable(config.getBoolean("DyeableCat"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateNotificationPermission(config.getString("Permission"));
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
@@ -768,6 +770,14 @@ public class DisguiseConfig {
 
     public static void setWolfDyeable(boolean color) {
         colorizeWolf = color;
+    }
+
+    public static void setCatDyeable(boolean color) {
+        colorizeCat = color;
+    }
+
+    public static boolean isCatDyeable() {
+        return colorizeCat;
     }
 
     private DisguiseConfig() {

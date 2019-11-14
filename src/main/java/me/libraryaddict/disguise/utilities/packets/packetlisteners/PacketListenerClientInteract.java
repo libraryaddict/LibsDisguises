@@ -14,6 +14,8 @@ import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WolfWatcher;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
@@ -84,32 +86,45 @@ public class PacketListenerClientInteract extends PacketAdapter {
             }
         }
 
-        if (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF) {
+        if (disguise.getType() != DisguiseType.SHEEP && disguise.getType() != DisguiseType.WOLF &&
+                disguise.getType() != DisguiseType.CAT) {
             return;
         }
 
-        // If this is something the player can dye the disguise with
-        for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                observer.getInventory().getItemInOffHand()}) {
-            if (item == null) {
-                continue;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // If this is something the player can dye the disguise with
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                        observer.getInventory().getItemInOffHand()}) {
+                    if (item == null) {
+                        continue;
+                    }
+
+                    AnimalColor color = AnimalColor.getColorByMaterial(item.getType());
+
+                    if (color == null) {
+                        continue;
+                    }
+
+                    if (disguise.getType() == DisguiseType.SHEEP) {
+                        SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
+
+                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
+                        break;
+                    } else if (disguise.getType() == DisguiseType.WOLF) {
+                        WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
+
+                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
+                        break;
+                    } else if (disguise.getType() == DisguiseType.CAT) {
+                        CatWatcher watcher = (CatWatcher) disguise.getWatcher();
+
+                        watcher.setCollarColor(DisguiseConfig.isCatDyeable() ? color : watcher.getCollarColor());
+                        break;
+                    }
+                }
             }
-
-            AnimalColor color = AnimalColor.getColorByMaterial(item.getType());
-
-            if (color == null) {
-                continue;
-            }
-
-            if (disguise.getType() == DisguiseType.SHEEP) {
-                SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
-
-                watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
-            } else {
-                WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
-
-                watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
-            }
-        }
+        }.runTask(LibsDisguises.getInstance());
     }
 }
