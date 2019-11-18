@@ -40,12 +40,13 @@ public class PacketHandlerEquipment implements IPacketHandler {
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
         if (packetsHandler.isCancelMeta(disguise, observer)) {
+            packets.clear();
+
             PacketContainer equipPacket = sentPacket.shallowClone();
 
             packets.addPacket(equipPacket);
 
-            equipPacket.getModifier()
-                    .write(2, ReflectionManager.getNmsItem(new ItemStack(Material.AIR)));
+            equipPacket.getModifier().write(2, ReflectionManager.getNmsItem(new ItemStack(Material.AIR)));
             return;
         }
 
