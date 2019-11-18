@@ -1594,7 +1594,7 @@ public class DisguiseUtilities {
                                 .createPacket(0, player.getPassenger(), player));
             }
 
-            /*sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
+            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
                     ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
                     ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
                     .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
@@ -1623,7 +1623,7 @@ public class DisguiseUtilities {
                     ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
                     ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
                     .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.OFF_HAND),
-                            ReflectionManager.getNmsItem(player.getInventory().getItemInOffHand())));*/
+                            ReflectionManager.getNmsItem(player.getInventory().getItemInOffHand())));
 
             Location loc = player.getLocation();
 
