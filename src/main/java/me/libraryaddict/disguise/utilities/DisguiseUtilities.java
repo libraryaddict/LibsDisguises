@@ -972,7 +972,12 @@ public class DisguiseUtilities {
         cachedNames.addAll(Arrays.asList(profileCache.list()));
 
         for (String key : savedDisguises.list()) {
-            savedDisguiseList.add(UUID.fromString(key));
+            try {
+                savedDisguiseList.add(UUID.fromString(key));
+            }
+            catch (Exception ex) {
+                getLogger().warning("The file '" + key + "' does not belong in " + savedDisguises.getAbsolutePath());
+            }
         }
     }
 
