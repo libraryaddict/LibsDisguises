@@ -56,8 +56,8 @@ public class LibsDisguises extends JavaPlugin {
         LibsPremium.check(getDescription().getVersion(), getFile());
 
         if (!LibsPremium.isPremium()) {
-            getLogger().info("You are running the free version, commands limited to non-players (Console, Command " +
-                    "Blocks)");
+            getLogger().info("You are running the free version, commands limited to non-players and operators. (Console, Command " +
+                    "Blocks, Admins)");
         }
 
         if (!ReflectionManager.getMinecraftVersion().startsWith("1.14.4")) {
