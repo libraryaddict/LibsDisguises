@@ -95,10 +95,10 @@ public class LibsPremium {
 
         // Comparing major versions
         // Current version must be the same, or lower than premium version
-        // return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
+         return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
 
         // Snapshot must be of current version
-        return premiumVersion.equals(currentVersion);
+        //return premiumVersion.equals(currentVersion);
     }
 
     private static PluginInformation getInformation(File file) throws Exception {
