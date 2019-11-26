@@ -380,7 +380,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         // If armor must be sent because its currently not displayed and would've been sent normally
         boolean delayedArmor =
-                (disguise.isPlayerDisguise() && disguisedEntity != observer) && disguisedEntity instanceof LivingEntity;
+                DisguiseConfig.isPlayerHideArmor() && (disguise.isPlayerDisguise() && disguisedEntity != observer) &&
+                        disguisedEntity instanceof LivingEntity;
         // This sends the armor packets so that the player isn't naked.
         if (DisguiseConfig.isEquipmentPacketsEnabled() || delayedArmor) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {

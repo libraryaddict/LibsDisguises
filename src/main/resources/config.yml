@@ -215,6 +215,11 @@ DisableInvisibility: false
 # Expired message can be hidden with an empty translation message
 DynamicExpiry: false
 
+# Some players have issues with conflicting plugins where disguised entities will show the wrong armor
+# This should be left alone unless you're trying to solve this issue. Such as MM and stone blocks.
+# When true, the plugin will hide player disguises armor to prevent a minor visual bug for half a second
+PlayerHideArmor: true
+
 # This will help performance, especially with CPU
 # Due to safety reasons, self disguises can never have their packets disabled.
 PacketsEnabled:

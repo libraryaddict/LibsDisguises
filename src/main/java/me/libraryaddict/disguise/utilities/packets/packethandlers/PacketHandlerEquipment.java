@@ -39,7 +39,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
-        if (packetsHandler.isCancelMeta(disguise, observer)) {
+        if (DisguiseConfig.isPlayerHideArmor() && packetsHandler.isCancelMeta(disguise, observer)) {
             packets.clear();
 
             PacketContainer equipPacket = sentPacket.shallowClone();
