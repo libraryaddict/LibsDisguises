@@ -59,6 +59,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         packets.clear();
 
+        if (disguise.getType() == DisguiseType.UNKNOWN) {
+            return;
+        }
+
         constructSpawnPackets(observer, packets, entity);
     }
 

@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.packets;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -72,6 +73,10 @@ public class PacketsHandler {
      */
     public LibsPackets transformPacket(PacketContainer sentPacket, Disguise disguise, Player observer, Entity entity) {
         LibsPackets packets = new LibsPackets(disguise);
+
+        if (disguise.getType() == DisguiseType.UNKNOWN) {
+            return packets;
+        }
 
         try {
             packets.addPacket(sentPacket);
