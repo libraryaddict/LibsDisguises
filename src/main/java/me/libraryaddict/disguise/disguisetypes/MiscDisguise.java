@@ -34,6 +34,17 @@ public class MiscDisguise extends TargetedDisguise {
         apply(0, itemStack);
     }
 
+    public MiscDisguise(DisguiseType disguiseType, Material material) {
+        super(disguiseType);
+
+        if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
+            throw new IllegalArgumentException(
+                    "This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
+        }
+
+        apply(0, new ItemStack(material));
+    }
+
     public MiscDisguise(DisguiseType disguiseType, int id) {
         this(disguiseType, id, disguiseType.getDefaultData());
     }
