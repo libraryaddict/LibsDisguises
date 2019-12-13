@@ -67,6 +67,6 @@ public class PluginInformation {
     }
 
     public boolean isLegit() {
-        return getUserID().matches("[0-9]+") && getResourceID().equals("32453") && getDownloadID().matches("-?[0-9]+");
+        return getUserID().matches("[0-9]+") && !getUserID().equals("12345") && getResourceID().equals("32453") && getDownloadID().matches("-?[0-9]+");
     }
 }

@@ -130,6 +130,7 @@ public enum LibsMsg {
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
     NO_PERMS_USE_OPTIONS(ChatColor.RED +
             "Ignored %s options you do not have permission to use. Add 'show' to view unusable options."),
+    OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),
     NOT_DISGUISED(ChatColor.RED + "You are not disguised!"),
     NOT_NUMBER(ChatColor.RED + "Error! %s is not a number"),
     PARSE_CANT_DISG_UNKNOWN(ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!"),
@@ -157,8 +158,7 @@ public enum LibsMsg {
     PARSE_SUPPLY_PLAYER(ChatColor.RED + "Error! You need to give a player name!"),
     PARSE_TOO_MANY_ARGS(ChatColor.RED + "Error! %s doesn't know what to do with %s!"),
     PARSE_INVALID_TIME(ChatColor.RED + "Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
-    PARSE_INVALID_TIME_SEQUENCE(
-            ChatColor.RED + "Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
+    PARSE_INVALID_TIME_SEQUENCE(ChatColor.RED + "Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
     PARSE_USE_SECOND_NUM(ChatColor.RED + "Error! Only the disguises %s and %s uses a second number!"),
     REF_TOO_MANY(ChatColor.RED +
             "Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or " +
@@ -205,4 +205,5 @@ public enum LibsMsg {
 
     public String toString() {
         throw new RuntimeException("Dont call this");
-    }}
+    }
+}
