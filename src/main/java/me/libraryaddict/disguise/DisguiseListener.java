@@ -556,18 +556,30 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onTarget(EntityTargetEvent event) {
-        if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() != null &&
-                event.getTarget() instanceof Player && DisguiseAPI.isDisguised(event.getTarget())) {
-            switch (event.getReason()) {
-                case TARGET_ATTACKED_ENTITY:
-                case TARGET_ATTACKED_OWNER:
-                case OWNER_ATTACKED_TARGET:
-                case CUSTOM:
-                    break;
-                default:
-                    event.setCancelled(true);
-                    break;
-            }
+        if (event.getTarget() == null) {
+            return;
+        }
+
+        switch (event.getReason()) {
+            case TARGET_ATTACKED_ENTITY:
+            case TARGET_ATTACKED_OWNER:
+            case OWNER_ATTACKED_TARGET:
+            case CUSTOM:
+                return;
+            default:
+                break;
+        }
+
+        Disguise disguise = DisguiseAPI.getDisguise(event.getTarget());
+
+        if (disguise == null) {
+            return;
+        }
+
+        if (disguise.isMobsIgnoreDisguise()) {
+            event.setCancelled(true);
+        } else if (DisguiseConfig.isMonstersIgnoreDisguises() && event.getTarget() instanceof Player) {
+            event.setCancelled(true);
         }
     }
 

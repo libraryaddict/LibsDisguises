@@ -54,6 +54,7 @@ public abstract class Disguise {
     private boolean modifyBoundingBox = DisguiseConfig.isModifyBoundingBox();
     private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
+    private boolean mobsIgnoreDisguise;
     private boolean showName;
     private transient BukkitTask task;
     private Runnable velocityRunnable;
@@ -863,5 +864,13 @@ public abstract class Disguise {
 
     public boolean stopDisguise() {
         return removeDisguise();
+    }
+
+    public boolean isMobsIgnoreDisguise() {
+        return mobsIgnoreDisguise;
+    }
+
+    public void setMobsIgnoreDisguise(boolean mobsIgnoreDisguise) {
+        this.mobsIgnoreDisguise = mobsIgnoreDisguise;
     }
 }
