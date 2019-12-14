@@ -55,4 +55,9 @@ public class EndermanWatcher extends InsentientWatcher {
         setData(MetaIndex.ENDERMAN_AGRESSIVE, isAggressive);
         sendData(MetaIndex.ENDERMAN_AGRESSIVE);
     }
+
+    public void setUnknown(boolean bo) {
+        setData(MetaIndex.ENDERMAN_UNKNOWN, bo);
+        sendData(MetaIndex.ENDERMAN_UNKNOWN);
+    }
 }

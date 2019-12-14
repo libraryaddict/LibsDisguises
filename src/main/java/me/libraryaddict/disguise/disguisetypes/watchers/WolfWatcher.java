@@ -15,25 +15,6 @@ public class WolfWatcher extends TameableWatcher {
         return AnimalColor.getColorByWool(getData(MetaIndex.WOLF_COLLAR));
     }
 
-    /**
-     * Used for tail rotation.
-     *
-     * @return
-     */
-    public float getDamageTaken() {
-        return getData(MetaIndex.WOLF_DAMAGE);
-    }
-
-    /**
-     * Used for tail rotation.
-     *
-     * @param damage
-     */
-    public void setDamageTaken(float damage) {
-        setData(MetaIndex.WOLF_DAMAGE, damage);
-        sendData(MetaIndex.WOLF_DAMAGE);
-    }
-
     public boolean isBegging() {
         return getData(MetaIndex.WOLF_BEGGING);
     }

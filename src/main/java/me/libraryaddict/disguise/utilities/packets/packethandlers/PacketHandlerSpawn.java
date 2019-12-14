@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -209,13 +210,17 @@ public class PacketHandlerSpawn implements IPacketHandler {
             bytes.write(0, yaw);
             bytes.write(1, pitch);
 
-            spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
-
             // Make him invisible
             newWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(MetaIndex.ENTITY_META.getIndex(),
                     WrappedDataWatcher.Registry.get(Byte.class)), (byte) 32);
 
             packets.addPacket(spawnPlayer);
+
+            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, newWatcher, true)
+                    .createPacket(entityId, newWatcher, true);
+
+            packets.addPacket(metaPacket);
 
             if (!selfDisguise) {
                 // Teleport the player back to where he's supposed to be
@@ -235,7 +240,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 packets.addDelayedPacket(teleportPacket, 3);
 
                 // Send a metadata packet
-                PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
                 newWatcher = DisguiseUtilities
                         .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
@@ -302,9 +307,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(10, pitch);
             mods.write(11, yaw);
 
-            spawnEntity.getDataWatcherModifier().write(0, DisguiseUtilities
+            WrappedDataWatcher newWatcher = DisguiseUtilities
                     .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
-                            disguise.getWatcher()));
+                            disguise.getWatcher());
+
+            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, disguisedEntity.getEntityId(),
+                            newWatcher, true).createPacket(disguisedEntity.getEntityId(), newWatcher, true);
+
+            packets.addPacket(metaPacket);
         } else if (disguise.getType().isMisc()) {
             int data = ((MiscDisguise) disguise).getData();
             double x = loc.getX();

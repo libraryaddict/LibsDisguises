@@ -60,7 +60,7 @@ public class LibsDisguises extends JavaPlugin {
                     "Blocks, Admins)");
         }
 
-        if (!ReflectionManager.getMinecraftVersion().startsWith("1.14.4")) {
+        if (!ReflectionManager.getMinecraftVersion().startsWith("1.15")) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
                     "intended for 1.14.4!");
             getPluginLoader().disablePlugin(this);
