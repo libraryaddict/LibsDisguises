@@ -252,4 +252,3 @@ PacketsEnabled:
 # Added to support a Chinese Minecraft Server which uses their own skin server unless the UUID is not version 4.
 # Changing this from 4 to say, 3. Means their server will fetch skins from Mojang instead.
 UUIDVersion: 4
-#  %%__USER__%%
