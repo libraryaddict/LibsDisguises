@@ -95,7 +95,7 @@ public class LibsPremium {
 
         // Comparing major versions
         // Current version must be the same, or lower than premium version
-         return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
+        return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
 
         // Snapshot must be of current version
         //return premiumVersion.equals(currentVersion);
@@ -196,11 +196,7 @@ public class LibsPremium {
 
             if (plugin.isPremium()) {
                 if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null ||
-                        plugin.getDownloadID() == null || plugin.getUserID().equals("666666") ||
-                        plugin.getParsedBuildDate().after(getPluginInformation().getParsedBuildDate()) ||
-                        plugin.getParsedBuildDate().before(new Date(
-                                getPluginInformation().getParsedBuildDate().getTime() -
-                                        TimeUnit.DAYS.toMillis(365 * 2)))) {
+                        plugin.getDownloadID() == null || plugin.getUserID().equals("666666")) {
                     DisguiseUtilities.getLogger().warning(
                             "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
                                     ") in the LibsDisguises folder! For security purposes, please replace this with a" +
