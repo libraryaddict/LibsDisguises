@@ -21,6 +21,7 @@ public class LibsPackets {
     private boolean isSpawnPacket;
     private Disguise disguise;
     private boolean doNothing;
+    private int removeMetaAt = -1;
 
     public LibsPackets(Disguise disguise) {
         this.disguise = disguise;
@@ -28,6 +29,10 @@ public class LibsPackets {
 
     public void setUnhandled() {
         doNothing = true;
+    }
+
+    public void setRemoveMetaAt(int tick) {
+        removeMetaAt = tick;
     }
 
     public boolean isUnhandled() {
@@ -71,16 +76,11 @@ public class LibsPackets {
 
     public void sendDelayed(final Player observer) {
         Iterator<Map.Entry<Integer, ArrayList<PacketContainer>>> itel = delayedPackets.entrySet().iterator();
-        Optional<Integer> largestTick = delayedPackets.keySet().stream().max(Integer::compare);
-
-        if (!largestTick.isPresent()) {
-            return;
-        }
 
         while (itel.hasNext()) {
             Map.Entry<Integer, ArrayList<PacketContainer>> entry = itel.next();
             // If this is the last delayed packet
-            final boolean isRemoveCancel = isSpawnPacket && largestTick.get().equals(entry.getKey());
+            final boolean isRemoveCancel = isSpawnPacket && entry.getKey() >= removeMetaAt && removeMetaAt >= 0;
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                 if (isRemoveCancel) {

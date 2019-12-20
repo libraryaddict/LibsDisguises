@@ -254,6 +254,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 // Add a delay to remove the entry from 'cancelMeta'
 
                 packets.addDelayedPacket(metaPacket, 7);
+                packets.setRemoveMetaAt(7);
             }
 
             // Remove player from the list
@@ -436,6 +437,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (delayedArmor) {
                     packets.addDelayedPacket(packet, 7);
+                    packets.setRemoveMetaAt(7);
                 } else {
                     packets.addDelayedPacket(packet);
                 }
