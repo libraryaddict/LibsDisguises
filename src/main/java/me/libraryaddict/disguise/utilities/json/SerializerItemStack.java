@@ -3,7 +3,9 @@ package me.libraryaddict.disguise.utilities.json;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -17,12 +19,36 @@ public class SerializerItemStack implements JsonSerializer<ItemStack>, JsonDeser
 
     @Override
     public JsonElement serialize(ItemStack src, Type typeOfSrc, JsonSerializationContext context) {
-        return context.serialize(src.serialize());
+        Map<String, Object> partialSerialize = src.serialize();
+
+        if (partialSerialize.containsKey("meta")) {
+            partialSerialize.put("meta", src.getItemMeta().serialize());
+        }
+
+        return context.serialize(partialSerialize);
     }
 
     @Override
     public ItemStack deserialize(JsonElement json, Type typeOfT,
             JsonDeserializationContext context) throws JsonParseException {
-        return ItemStack.deserialize(context.deserialize(json, HashMap.class));
+        HashMap map = context.deserialize(json, HashMap.class);
+
+        if (map.containsKey("meta")) {
+            Map meta = (Map) map.get("meta");
+
+            if (meta.containsKey("meta-type")) {
+                for (Object key : meta.keySet()) {
+                    if (meta.get(key) instanceof Number) {
+                        meta.put(key, ((Number) meta.get(key)).intValue());
+                    }
+                }
+
+                ItemMeta itemMeta = ReflectionManager.getDeserializedItemMeta(meta);
+
+                map.put("meta", itemMeta);
+            }
+        }
+
+        return ItemStack.deserialize(map);
     }
 }

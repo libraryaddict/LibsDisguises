@@ -18,6 +18,7 @@ import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -1153,6 +1154,20 @@ public class ReflectionManager {
             return getNmsConstructor("PlayerInteractManager", getNmsClass("World")).newInstance(worldServer);
         }
         catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
+        try {
+            Method method = getCraftMethod(getCraftClass("inventory.CraftMetaItem$SerializableMeta"), "deserialize",
+                    Map.class);
+
+            return (ItemMeta) method.invoke(null, meta);
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
 
