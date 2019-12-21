@@ -162,6 +162,7 @@ public class LibsPremium {
 
     private static void doSecondaryCheck(String version) {
         File[] files = new File("plugins/LibsDisguises/").listFiles();
+        boolean foundJar = false;
 
         if (files == null)
             return;
@@ -172,6 +173,8 @@ public class LibsPremium {
 
             if (!file.getName().endsWith(".jar"))
                 continue;
+
+            foundJar = true;
 
             PluginInformation plugin;
 
@@ -219,7 +222,16 @@ public class LibsPremium {
                 DisguiseUtilities.getLogger().warning(
                         "You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo +
                                 ") in the LibsDisguises folder!");
+                DisguiseUtilities.getLogger().warning(
+                        "Please place the premium jar downloaded from https://www.spigotmc" +
+                                ".org/resources/libs-disguises.32453/ " + "in here!");
             }
+        }
+
+        if (!foundJar) {
+            DisguiseUtilities.getLogger().warning(
+                    "If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
+                            ".org/resources/libs-disguises.32453/ in " + new File("plugins/LibsDisguises/").getPath());
         }
     }
 
