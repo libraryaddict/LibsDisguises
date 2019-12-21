@@ -56,8 +56,9 @@ public class LibsDisguises extends JavaPlugin {
         LibsPremium.check(getDescription().getVersion(), getFile());
 
         if (!LibsPremium.isPremium()) {
-            getLogger().info("You are running the free version, commands limited to non-players and operators. (Console, Command " +
-                    "Blocks, Admins)");
+            getLogger()
+                    .info("You are running the free version, commands limited to non-players and operators. (Console," +
+                            " Command " + "Blocks, Admins)");
         }
 
         if (!ReflectionManager.getMinecraftVersion().startsWith("1.15")) {
@@ -240,8 +241,10 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             // Invalidate invalid distribution
-            if (LibsPremium.isPremium() && LibsPremium.getPaidInformation() != null &&
-                    !LibsPremium.getPaidInformation().isLegit()) {
+            if (LibsPremium.isPremium() &&
+                    ((LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().isLegit()) ||
+                            (LibsPremium.getPluginInformation() != null &&
+                                    LibsPremium.getPluginInformation().isLegit()))) {
                 throw new IllegalStateException(
                         "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
                                 "reporting this error!");
