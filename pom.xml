@@ -4,7 +4,7 @@
     <!-- A good example on why temporary names for project identification shouldn't be used -->
     <groupId>LibsDisguises</groupId>
     <artifactId>LibsDisguises</artifactId>
-    <version>9.8.8</version>
+    <version>9.8.8-SNAPSHOT</version>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
