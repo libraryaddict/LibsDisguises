@@ -27,16 +27,8 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
         InstanceCreator<FlagWatcher> {
     private Gson gson;
 
-    public SerializerFlagWatcher() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
-        gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
-        gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
-        gsonBuilder.registerTypeAdapter(WrappedChatComponent.class, new SerializerChatComponent());
-        gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
-        gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
-
-        gson = gsonBuilder.create();
+    public SerializerFlagWatcher(Gson gson) {
+        this.gson = gson;
     }
 
     @Override

@@ -811,14 +811,16 @@ public class DisguiseUtilities {
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
+
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
         gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
-        gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
-        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
         gsonBuilder.registerTypeAdapter(WrappedChatComponent.class, new SerializerChatComponent());
         gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
-        gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
+        gsonBuilder.registerTypeHierarchyAdapter(ItemStack.class, new SerializerItemStack());
+
+        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher(gsonBuilder.create()));
+        gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
 
         gson = gsonBuilder.create();
 
