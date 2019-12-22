@@ -54,11 +54,6 @@ public class PlayerWatcher extends LivingWatcher {
         return MainHand.values()[getData(MetaIndex.PLAYER_HAND)];
     }
 
-    @Deprecated
-    public BlockFace getSleepingDirection() {
-        return BlockFace.SELF;
-    }
-
     // Bit 0 (0x01): Cape enabled
     // Bit 1 (0x02): Jacket enabled
     // Bit 2 (0x04): Left Sleeve enabled
@@ -141,43 +136,12 @@ public class PlayerWatcher extends LivingWatcher {
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
-    @Deprecated
-    public boolean isSleeping() {
-        return getEntityPose() == EntityPose.SLEEPING;
-    }
-
     public void setSkin(String playerName) {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
     public void setSkin(WrappedGameProfile profile) {
         ((PlayerDisguise) getDisguise()).setSkin(profile);
-    }
-
-    @Deprecated
-    public void setSleeping(BlockFace sleepingDirection) {
-        setSleeping(true, sleepingDirection);
-    }
-
-    @Deprecated
-    public void setSleeping(boolean sleep) {
-        setSleeping(sleep, null);
-    }
-
-    /**
-     * If no BlockFace is supplied. It grabs it from the entities facing direction if applicable.
-     *
-     * @param sleeping
-     * @param sleepingDirection
-     */
-
-    @Deprecated
-    public void setSleeping(boolean sleeping, BlockFace sleepingDirection) {
-        if (sleeping == isSleeping()) {
-            return;
-        }
-
-        setEntityPose(sleeping ? EntityPose.SLEEPING : EntityPose.STANDING);
     }
 
     private void setSkinFlags(int i, boolean flag) {

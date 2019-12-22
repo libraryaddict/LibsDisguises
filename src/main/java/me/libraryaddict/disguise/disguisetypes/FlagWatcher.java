@@ -38,6 +38,8 @@ public class FlagWatcher {
     private boolean hasDied;
     private boolean[] modifiedEntityAnimations = new boolean[8];
     private transient List<WrappedWatchableObject> watchableObjects;
+    private boolean sleeping;
+    private boolean swimming;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -542,7 +544,48 @@ public class FlagWatcher {
 
     public void setSneaking(boolean setSneaking) {
         setEntityFlag(1, setSneaking);
+        updatePose();
         sendData(MetaIndex.ENTITY_META);
+    }
+
+    public boolean isSleeping() {
+        return sleeping;
+    }
+
+    public void setSleeping(boolean sleeping) {
+        if (isSleeping() == sleeping) {
+            return;
+        }
+
+        this.sleeping = sleeping;
+
+        updatePose();
+    }
+
+    public boolean isSwimming() {
+        return swimming;
+    }
+
+    public void setSwimming(boolean swimming) {
+        if (isSwimming() == swimming) {
+            return;
+        }
+
+        this.swimming = swimming;
+
+        updatePose();
+    }
+
+    protected void updatePose() {
+        if (isSleeping()) {
+            setEntityPose(EntityPose.SLEEPING);
+        } else if (isSwimming()) {
+            setEntityPose(EntityPose.SWIMMING);
+        } else if (isSneaking()) {
+            setEntityPose(EntityPose.CROUCHING);
+        } else {
+            setEntityPose(EntityPose.STANDING);
+        }
     }
 
     public void setSprinting(boolean setSprinting) {
