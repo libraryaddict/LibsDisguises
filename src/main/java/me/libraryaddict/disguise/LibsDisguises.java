@@ -242,8 +242,10 @@ public class LibsDisguises extends JavaPlugin {
 
             // Invalidate invalid distribution
             if (LibsPremium.isPremium() &&
-                    ((LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().isLegit()) ||
+                    ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() &&
+                            !LibsPremium.getPaidInformation().isLegit()) ||
                             (LibsPremium.getPluginInformation() != null &&
+                                    LibsPremium.getPluginInformation().isPremium() &&
                                     !LibsPremium.getPluginInformation().isLegit()))) {
                 throw new IllegalStateException(
                         "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
