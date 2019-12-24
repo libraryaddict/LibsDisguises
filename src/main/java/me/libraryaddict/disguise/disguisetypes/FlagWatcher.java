@@ -544,8 +544,9 @@ public class FlagWatcher {
 
     public void setSneaking(boolean setSneaking) {
         setEntityFlag(1, setSneaking);
-        updatePose();
         sendData(MetaIndex.ENTITY_META);
+
+        updatePose();
     }
 
     public boolean isSleeping() {

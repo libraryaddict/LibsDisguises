@@ -68,6 +68,8 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
+        ReflectionManager.init();
+
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
 

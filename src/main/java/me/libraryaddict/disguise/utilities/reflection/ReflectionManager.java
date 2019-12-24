@@ -32,19 +32,19 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager {
-    private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-    private static final Class<?> craftItemClass;
+    private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
-    private static final Constructor<?> boundingBoxConstructor;
-    private static final Method setBoundingBoxMethod;
-    private static final Field pingField;
-    public static final Field entityCountField;
-    private static final Field chunkMapField;
-    private static final Field chunkProviderField;
-    private static final Field entityTrackerField;
-    private static final Field trackedEntitiesField;
+    private static Constructor<?> boundingBoxConstructor;
+    private static Method setBoundingBoxMethod;
+    private static Field pingField;
+    public static Field entityCountField;
+    private static Field chunkMapField;
+    private static Field chunkProviderField;
+    private static Field entityTrackerField;
+    private static Field trackedEntitiesField;
 
-    static {
+    public static void init() {
         try {
             Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
