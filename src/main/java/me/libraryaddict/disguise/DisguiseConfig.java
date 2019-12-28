@@ -17,7 +17,10 @@ import org.bukkit.entity.Entity;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 public class DisguiseConfig {
     public enum DisguisePushing { // This enum has a really bad name..
@@ -379,6 +382,23 @@ public class DisguiseConfig {
 
         loadCustomDisguises();
 
+        // Another wee trap for the non-legit
+        if ("%%__USER__%%".equals("12345")) {
+            setSoundsEnabled(false);
+
+            // Lets remove randomly half the custom disguises hey
+            Iterator<Entry<DisguisePerm, String>> itel = getCustomDisguises().entrySet().iterator();
+
+            int i = 0;
+            while (itel.hasNext()) {
+                itel.next();
+
+                if (new Random().nextBoolean()) {
+                    itel.remove();
+                }
+            }
+        }
+
         int missingConfigs = 0;
 
         for (String key : config.getDefaultSection().getKeys(true)) {
@@ -416,36 +436,19 @@ public class DisguiseConfig {
         for (String key : section.getKeys(false)) {
             String toParse = section.getString(key);
 
-            if (getRawCustomDisguise(toParse) != null) {
-                DisguiseUtilities.getLogger()
-                        .severe("Cannot create the custom disguise '" + key + "' as there is a name conflict!");
-                continue;
-            }
-
             try {
-                String[] disguiseArgs = DisguiseUtilities.split(toParse);
-
-                Disguise disguise = DisguiseParser
-                        .parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,
-                                DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
-
-                DisguisePerm perm = new DisguisePerm(disguise.getType(), key);
-
-                customDisguises.put(perm, toParse);
-
-                DisguiseUtilities.getLogger().info("Loaded custom disguise " + key);
+                addCustomDisguise(key, toParse);
             }
             catch (DisguiseParseException e) {
-                DisguiseUtilities.getLogger().severe("Error while loading custom disguise '" + key + "'" +
-                        (e.getMessage() == null ? "" : ": " + e.getMessage()));
-
-                if (e.getMessage() == null)
-                    e.printStackTrace();
-
                 failedCustomDisguises++;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+
+                if (e.getMessage() != null) {
+                    DisguiseUtilities.getLogger().severe(e.getMessage());
+                }
+
+                if (e.getCause() != null) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -455,6 +458,33 @@ public class DisguiseConfig {
 
         DisguiseUtilities.getLogger().info("Loaded " + customDisguises.size() + " custom disguise" +
                 (customDisguises.size() == 1 ? "" : "s"));
+    }
+
+    public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {
+        if (getRawCustomDisguise(toParse) != null) {
+            throw new DisguiseParseException(
+                    "Cannot create the custom disguise '" + disguiseName + "' as there is a name conflict!");
+        }
+
+        try {
+            String[] disguiseArgs = DisguiseUtilities.split(toParse);
+
+            Disguise disguise = DisguiseParser.parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,
+                    DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+
+            DisguisePerm perm = new DisguisePerm(disguise.getType(), disguiseName);
+
+            customDisguises.put(perm, toParse);
+
+            DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
+        }
+        catch (DisguiseParseException e) {
+            throw new DisguiseParseException("Error while loading custom disguise '" + disguiseName + "'" +
+                    (e.getMessage() == null ? "" : ": " + e.getMessage()), e);
+        }
+        catch (Exception e) {
+            throw new DisguiseParseException(e);
+        }
     }
 
     public static boolean isAnimationPacketsEnabled() {

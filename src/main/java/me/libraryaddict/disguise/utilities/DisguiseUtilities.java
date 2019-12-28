@@ -1213,7 +1213,10 @@ public class DisguiseUtilities {
             return;
         }
 
-        if (LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().isLegit()) {
+        if ((LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
+                !LibsPremium.getPluginInformation().isLegit()) ||
+                (LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isLegit() &&
+                        !LibsPremium.getPaidInformation().isLegit())) {
             return;
         }
 
