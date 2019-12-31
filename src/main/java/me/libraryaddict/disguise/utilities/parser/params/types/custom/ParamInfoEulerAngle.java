@@ -21,4 +21,11 @@ public class ParamInfoEulerAngle extends ParamInfo {
 
         return new EulerAngle(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
     }
+
+    @Override
+    public String toString(Object object) {
+        EulerAngle angle = (EulerAngle) object;
+
+        return String.format("%s,%s,%s", angle.getX(), angle.getY(), angle.getZ());
+    }
 }

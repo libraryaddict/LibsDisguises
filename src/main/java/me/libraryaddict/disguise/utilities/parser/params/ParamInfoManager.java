@@ -105,8 +105,8 @@ public class ParamInfoManager {
         });
 
         // Add these last as it's what we want to present to be called the least
-        for (String methodName : new String[]{"setViewSelfDisguise", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
-                "setHearSelfDisguise", "setHidePlayer", "setExpires"}) {
+        for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
+                "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires"}) {
             try {
                 methods.add(Disguise.class
                         .getMethod(methodName, methodName.equals("setExpires") ? long.class : boolean.class));

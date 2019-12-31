@@ -44,6 +44,8 @@ public class FlagWatcher {
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
+
+        setNoGravity(true);
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
@@ -265,7 +267,7 @@ public class FlagWatcher {
         return getCustomName() != null;
     }
 
-    protected boolean hasValue(MetaIndex no) {
+    public boolean hasValue(MetaIndex no) {
         if (no == null)
             return false;
 
@@ -280,6 +282,7 @@ public class FlagWatcher {
         return getData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
+    @Deprecated
     public boolean isEntityAnimationsAdded() {
         return addEntityAnimations;
     }
@@ -335,7 +338,8 @@ public class FlagWatcher {
     }
 
     protected void sendData(MetaIndex... dataValues) {
-        if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this) {
+        if (getDisguise() == null || !DisguiseAPI.isDisguiseInUse(getDisguise()) ||
+                getDisguise().getWatcher() != this) {
             return;
         }
 
@@ -389,6 +393,10 @@ public class FlagWatcher {
                 }
             }
         }
+    }
+
+    public boolean isAddEntityAnimations() {
+        return isEntityAnimationsAdded();
     }
 
     public void setAddEntityAnimations(boolean isEntityAnimationsAdded) {

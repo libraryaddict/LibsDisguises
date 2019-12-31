@@ -11,7 +11,7 @@ public class PillagerWatcher extends IllagerWatcher {
         super(disguise);
     }
 
-    public void setAimimgBow(boolean value) {
+    public void setAimingBow(boolean value) {
         setData(MetaIndex.PILLAGER_AIMING_BOW, value);
         sendData(MetaIndex.PILLAGER_AIMING_BOW);
     }

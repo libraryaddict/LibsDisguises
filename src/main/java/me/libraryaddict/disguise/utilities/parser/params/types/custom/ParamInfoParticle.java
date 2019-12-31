@@ -2,13 +2,15 @@ package me.libraryaddict.disguise.utilities.parser.params.types.custom;
 
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -58,6 +60,32 @@ public class ParamInfoParticle extends ParamInfoEnum {
     }
 
     @Override
+    public String toString(Object object) {
+        WrappedParticle particle = (WrappedParticle) object;
+
+        Object data = particle.getData();
+        String returns = particle.getParticle().name();
+
+        if (data != null) {
+            if (data instanceof ItemStack) {
+                returns += "," + ((ItemStack) data).getType().name();
+            } else if (data instanceof WrappedBlockData) {
+
+                returns += "," + ((WrappedBlockData) data).getType().name();
+            } else if (data instanceof Particle.DustOptions) {
+                returns += "," +
+                        ParamInfoManager.getParamInfo(Color.class).toString(((Particle.DustOptions) data).getColor());
+
+                if (((Particle.DustOptions) data).getSize() != 1f) {
+                    returns += "," + ((Particle.DustOptions) data).getSize();
+                }
+            }
+        }
+
+        return returns;
+    }
+
+    @Override
     public Object fromString(String string) throws DisguiseParseException {
         String[] split = string.split("[:,]"); // Split on comma or colon
         Particle particle = (Particle) super.fromString(split[0]);
@@ -99,7 +127,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
                     throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_REDSTONE, particle.name(), string);
                 }
 
-                Color color = ParamInfoColor.parseToColor(
+                Color color = ((ParamInfoColor) ParamInfoManager.getParamInfo(Color.class)).parseToColor(
                         StringUtils.join(Arrays.copyOfRange(split, 1, split.length - (split.length % 2)), ","));
 
                 if (color == null) {

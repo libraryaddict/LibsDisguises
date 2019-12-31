@@ -21,4 +21,11 @@ public class ParamInfoBlockPosition extends ParamInfo {
 
         return new BlockPosition(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
     }
+
+    @Override
+    public String toString(Object object) {
+        BlockPosition position = (BlockPosition) object;
+
+        return String.format("%s,%s,%s", position.getX(), position.getY(), position.getZ());
+    }
 }

@@ -131,7 +131,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
     private boolean setViewDisguise(String[] strings) {
         for (String string : strings) {
-            if (!string.equalsIgnoreCase("setViewSelfDisguise"))
+            if (!string.equalsIgnoreCase("setSelfDisguiseVisible"))
                 continue;
 
             return true;

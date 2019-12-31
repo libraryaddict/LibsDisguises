@@ -19,4 +19,9 @@ public class ParamInfoFloat extends ParamInfo {
     protected Object fromString(String string) {
         return Float.parseFloat(string);
     }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
+    }
 }

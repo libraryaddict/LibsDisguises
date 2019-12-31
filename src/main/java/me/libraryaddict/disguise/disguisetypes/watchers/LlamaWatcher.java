@@ -31,8 +31,12 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         setCarpet(color.getDyeColor());
     }
 
-    public AnimalColor getCarpet() {
-        return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET));
+    public DyeColor getCarpet() {
+        if (!hasValue(MetaIndex.LLAMA_CARPET)) {
+            return null;
+        }
+
+        return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET)).getDyeColor();
     }
 
     public void setStrength(int strength) {

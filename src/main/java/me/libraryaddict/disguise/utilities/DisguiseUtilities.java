@@ -1,15 +1,13 @@
 package me.libraryaddict.disguise.utilities;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.*;
-import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -18,7 +16,6 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
@@ -29,8 +26,10 @@ import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.logging.log4j.util.Strings;
-import org.bukkit.*;
-import org.bukkit.block.BlockFace;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -600,6 +599,12 @@ public class DisguiseUtilities {
 
             return gson.fromJson(cached, WrappedGameProfile.class);
         }
+        catch (JsonSyntaxException ex) {
+            DisguiseUtilities.getLogger()
+                    .warning("Gameprofile " + file.getName() + " had invalid gson and has been deleted");
+            cachedNames.remove(playerName.toLowerCase());
+            file.delete();
+        }
         catch (Exception e) {
             e.printStackTrace();
         }
@@ -705,8 +710,14 @@ public class DisguiseUtilities {
         final String playerName = origName.toLowerCase();
 
         if (DisguiseConfig.isSaveGameProfiles() && hasGameProfile(playerName)) {
-            return getGameProfile(playerName);
-        } else if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
+            WrappedGameProfile profile = getGameProfile(playerName);
+
+            if (profile != null) {
+                return profile;
+            }
+        }
+
+        if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
             final Player player = Bukkit.getPlayerExact(playerName);
 
             if (player != null) {

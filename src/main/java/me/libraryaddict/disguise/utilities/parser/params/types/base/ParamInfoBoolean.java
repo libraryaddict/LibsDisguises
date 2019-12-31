@@ -43,6 +43,11 @@ public class ParamInfoBoolean extends ParamInfo {
     }
 
     @Override
+    public String toString(Object object) {
+        return object.toString();
+    }
+
+    @Override
     public int getMinArguments() {
         return 0;
     }

@@ -15,4 +15,9 @@ public class ParamInfoString extends ParamInfo {
     protected Object fromString(String string) {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
+    }
 }

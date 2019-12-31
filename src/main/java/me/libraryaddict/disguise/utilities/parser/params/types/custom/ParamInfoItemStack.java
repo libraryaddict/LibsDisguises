@@ -1,10 +1,12 @@
 package me.libraryaddict.disguise.utilities.parser.params.types.custom;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * Created by libraryaddict on 7/09/2018.
@@ -32,7 +34,20 @@ public class ParamInfoItemStack extends ParamInfoEnum {
         return parseToItemstack(string);
     }
 
+    @Override
+    public String toString(Object object) {
+        return DisguiseUtilities.getGson().toJson(object);
+    }
+
     protected static ItemStack parseToItemstack(String string) {
+        if (string.startsWith("{") && string.endsWith("}")) {
+            try {
+                return DisguiseUtilities.getGson().fromJson(string, ItemStack.class);
+            }
+            catch (Exception ex) {
+            }
+        }
+
         return parseToItemstack(string.split("[:,]")); // Split on colon or comma
     }
 
@@ -69,5 +84,9 @@ public class ParamInfoItemStack extends ParamInfoEnum {
         }
 
         return itemStack;
+    }
+
+    public boolean isParam(Class paramClass) {
+        return getParamClass().isAssignableFrom(paramClass);
     }
 }

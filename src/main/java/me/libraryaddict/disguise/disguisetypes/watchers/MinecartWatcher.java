@@ -14,10 +14,19 @@ public class MinecartWatcher extends FlagWatcher {
     }
 
     public ItemStack getBlockInCart() {
+        if (!hasValue(MetaIndex.MINECART_BLOCK)) {
+            return new ItemStack(Material.AIR);
+        }
+
         return ReflectionManager.getItemStackByCombinedId(getData(MetaIndex.MINECART_BLOCK));
     }
 
+    @Deprecated
     public int getBlockYOffset() {
+        return getData(MetaIndex.MINECART_BLOCK_Y);
+    }
+
+    public int getBlockOffset() {
         return getData(MetaIndex.MINECART_BLOCK_Y);
     }
 

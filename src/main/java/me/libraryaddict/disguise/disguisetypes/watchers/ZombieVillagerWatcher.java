@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.VillagerData;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 
@@ -55,6 +56,7 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         return getVillagerData().getLevel();
     }
 
+    @RandomDefaultValue
     public void setProfession(Profession profession) {
         setVillagerData(new VillagerData(getType(), profession, getLevel()));
     }

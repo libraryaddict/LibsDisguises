@@ -107,9 +107,9 @@ public class ParamInfoTypes {
         return paramInfos;
     }
 
-    private Map<String, Object> getColors() {
+    private Map<String, Color> getColors() {
         try {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Color> map = new HashMap<>();
             Class cl = Class.forName("org.bukkit.Color");
 
             for (Field field : cl.getFields()) {
@@ -117,7 +117,7 @@ public class ParamInfoTypes {
                     continue;
                 }
 
-                map.put(field.getName(), field.get(null));
+                map.put(field.getName(), (Color) field.get(null));
             }
 
             return map;

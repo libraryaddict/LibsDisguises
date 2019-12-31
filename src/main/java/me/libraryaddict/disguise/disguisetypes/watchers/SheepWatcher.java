@@ -11,8 +11,8 @@ public class SheepWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    public AnimalColor getColor() {
-        return AnimalColor.getColorByWool(((int) getData(MetaIndex.SHEEP_WOOL) & 15));
+    public DyeColor getColor() {
+        return AnimalColor.getColorByWool(((int) getData(MetaIndex.SHEEP_WOOL) & 15)).getDyeColor();
     }
 
     public boolean isSheared() {

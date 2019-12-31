@@ -87,7 +87,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
     private boolean setViewDisguise(String[] strings) {
         for (String string : strings) {
-            if (!string.equalsIgnoreCase("setViewSelfDisguise"))
+            if (!string.equalsIgnoreCase("setSelfDisguiseVisible"))
                 continue;
 
             return true;

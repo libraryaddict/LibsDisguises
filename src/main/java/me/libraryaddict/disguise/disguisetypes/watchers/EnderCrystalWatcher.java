@@ -10,33 +10,26 @@ import java.util.Optional;
 /**
  * @author Navid
  */
-public class EnderCrystalWatcher extends FlagWatcher
-{
-    public EnderCrystalWatcher(Disguise disguise)
-    {
+public class EnderCrystalWatcher extends FlagWatcher {
+    public EnderCrystalWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public void setBeamTarget(BlockPosition position)
-    {
-        setData(MetaIndex.ENDER_CRYSTAL_BEAM, Optional.of(position));
+    public void setBeamTarget(BlockPosition position) {
+        setData(MetaIndex.ENDER_CRYSTAL_BEAM, position == null ? Optional.empty() : Optional.of(position));
         sendData(MetaIndex.ENDER_CRYSTAL_BEAM);
     }
 
-    public Optional<BlockPosition> getBeamTarget()
-    {
-        return getData(MetaIndex.ENDER_CRYSTAL_BEAM);
+    public BlockPosition getBeamTarget() {
+        return getData(MetaIndex.ENDER_CRYSTAL_BEAM).orElse(null);
     }
 
-    public void setShowBottom(boolean bool)
-    {
+    public void setShowBottom(boolean bool) {
         setData(MetaIndex.ENDER_CRYSTAL_PLATE, bool);
         sendData(MetaIndex.ENDER_CRYSTAL_PLATE);
     }
 
-    public boolean isShowBottom()
-    {
+    public boolean isShowBottom() {
         return getData(MetaIndex.ENDER_CRYSTAL_PLATE);
     }
-
 }

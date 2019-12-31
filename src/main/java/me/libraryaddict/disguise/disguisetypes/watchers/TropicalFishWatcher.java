@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.TropicalFish;
 
@@ -71,6 +72,7 @@ public class TropicalFishWatcher extends FishWatcher {
         return DyeColor.getByWoolData((byte) (getVariant() >> 24 & 0xFF));
     }
 
+    @RandomDefaultValue
     public void setPatternColor(DyeColor dyeColor) {
         setVariant(getData(dyeColor, getBodyColor(), getPattern()));
     }
@@ -84,6 +86,7 @@ public class TropicalFishWatcher extends FishWatcher {
         return DyeColor.getByWoolData((byte) (getVariant() >> 16 & 0xFF));
     }
 
+    @RandomDefaultValue
     public void setBodyColor(DyeColor dyeColor) {
         setVariant(getData(dyeColor, dyeColor, getPattern()));
     }
@@ -92,6 +95,7 @@ public class TropicalFishWatcher extends FishWatcher {
         return CraftPattern.fromData(getVariant() & 0xFFFF);
     }
 
+    @RandomDefaultValue
     public void setPattern(TropicalFish.Pattern pattern) {
         setVariant(getData(getPatternColor(), getBodyColor(), pattern));
     }

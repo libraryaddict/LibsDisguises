@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
 
@@ -22,6 +23,7 @@ public class CatWatcher extends TameableWatcher {
         return Cat.Type.values()[getData(MetaIndex.CAT_TYPE)];
     }
 
+    @RandomDefaultValue
     public void setType(Cat.Type type) {
         setData(MetaIndex.CAT_TYPE, type.ordinal());
         sendData(MetaIndex.CAT_TYPE);
@@ -37,7 +39,7 @@ public class CatWatcher extends TameableWatcher {
             setTamed(true);
         }
 
-        if (newColor == getCollarColor().getDyeColor()) {
+        if (newColor == getCollarColor()) {
             return;
         }
 
@@ -45,8 +47,8 @@ public class CatWatcher extends TameableWatcher {
         sendData(MetaIndex.CAT_COLLAR);
     }
 
-    public AnimalColor getCollarColor() {
-        return AnimalColor.getColorByWool(getData(MetaIndex.CAT_COLLAR));
+    public DyeColor getCollarColor() {
+        return AnimalColor.getColorByWool(getData(MetaIndex.CAT_COLLAR)).getDyeColor();
     }
 
     public void setLyingDown(boolean value) {

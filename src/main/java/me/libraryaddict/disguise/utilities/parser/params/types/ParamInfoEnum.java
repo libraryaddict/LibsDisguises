@@ -21,7 +21,7 @@ public class ParamInfoEnum extends ParamInfo {
         super(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfoEnum(Class paramClass, String name, String description, Map<String,Object> possibleValues) {
+    public ParamInfoEnum(Class paramClass, String name, String description, Map<String, Object> possibleValues) {
         super(paramClass, name, name, description, possibleValues);
     }
 
@@ -38,5 +38,10 @@ public class ParamInfoEnum extends ParamInfo {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
     }
 }

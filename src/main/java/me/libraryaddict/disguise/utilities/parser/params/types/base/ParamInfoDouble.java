@@ -19,4 +19,9 @@ public class ParamInfoDouble extends ParamInfo {
     protected Object fromString(String string) {
         return Double.parseDouble(string);
     }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
+    }
 }

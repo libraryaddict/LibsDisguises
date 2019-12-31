@@ -406,11 +406,21 @@ public abstract class Disguise {
         return playerHiddenFromTab;
     }
 
+    @Deprecated
     public boolean isHidingArmorFromSelf() {
         return hideArmorFromSelf;
     }
 
+    @Deprecated
     public boolean isHidingHeldItemFromSelf() {
+        return hideHeldItemFromSelf;
+    }
+
+    public boolean isHideArmorFromSelf() {
+        return hideArmorFromSelf;
+    }
+
+    public boolean isHideHeldItemFromSelf() {
         return hideHeldItemFromSelf;
     }
 
@@ -442,6 +452,7 @@ public abstract class Disguise {
                 (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() : getEntity().isDead());
     }
 
+    @Deprecated
     public boolean isSelfDisguiseSoundsReplaced() {
         return hearSelfDisguise;
     }
@@ -453,6 +464,10 @@ public abstract class Disguise {
      */
     public boolean isSelfDisguiseVisible() {
         return viewSelfDisguise;
+    }
+
+    public void setSelfDisguiseVisible(boolean selfDisguiseVisible) {
+        setViewSelfDisguise(selfDisguiseVisible);
     }
 
     /**
@@ -619,6 +634,10 @@ public abstract class Disguise {
         return this;
     }
 
+    public boolean isHearSelfDisguise() {
+        return hearSelfDisguise;
+    }
+
     public Disguise setHearSelfDisguise(boolean hearSelfDisguise) {
         this.hearSelfDisguise = hearSelfDisguise;
 
@@ -711,8 +730,6 @@ public abstract class Disguise {
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
         }
 
-        getWatcher().setNoGravity(true);
-
         if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
             getWatcher().setCustomName("");
         }
@@ -730,6 +747,7 @@ public abstract class Disguise {
      * @param viewSelfDisguise
      * @return
      */
+    @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
         if (isSelfDisguiseVisible() != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;

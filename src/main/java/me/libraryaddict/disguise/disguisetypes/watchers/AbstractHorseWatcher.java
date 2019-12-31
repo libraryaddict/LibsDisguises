@@ -24,6 +24,10 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         return isHorseFlag(8);
     }
 
+    public boolean isCarryingChest() {
+        return hasChest();
+    }
+
     /**
      * If the horse can be breeded, no visible effect
      *
@@ -71,6 +75,11 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         return getData(MetaIndex.HORSE_META);
     }
 
+    public void setBreedable(boolean breedable) {
+        setCanBreed(breedable);
+    }
+
+    @Deprecated
     public void setCanBreed(boolean breed) {
         setHorseFlag(16, breed);
     }
@@ -84,8 +93,7 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
 
         if (flag) {
             setData(MetaIndex.HORSE_META, (byte) (j | i));
-        }
-        else {
+        } else {
             setData(MetaIndex.HORSE_META, (byte) (j & ~i));
         }
 
@@ -116,5 +124,4 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
     public void setTamed(boolean tamed) {
         setHorseFlag(2, tamed);
     }
-
 }

@@ -29,7 +29,7 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public BlockPosition getAttachmentPosition() {
-        return getData(MetaIndex.SHULKER_ATTACHED).get();
+        return getData(MetaIndex.SHULKER_ATTACHED).orElse(BlockPosition.ORIGIN);
     }
 
     public void setAttachmentPosition(BlockPosition pos) {
@@ -59,7 +59,7 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setColor(DyeColor newColor) {
-        if (newColor == getColor().getDyeColor()) {
+        if (newColor == getColor()) {
             return;
         }
 
@@ -67,7 +67,11 @@ public class ShulkerWatcher extends InsentientWatcher {
         sendData(MetaIndex.SHULKER_COLOR);
     }
 
-    public AnimalColor getColor() {
-        return AnimalColor.getColorByWool(getData(MetaIndex.SHULKER_COLOR));
+    public DyeColor getColor() {
+        if (!hasValue(MetaIndex.SHULKER_COLOR)) {
+            return DyeColor.PURPLE;
+        }
+
+        return AnimalColor.getColorByWool(getData(MetaIndex.SHULKER_COLOR)).getDyeColor();
     }
 }

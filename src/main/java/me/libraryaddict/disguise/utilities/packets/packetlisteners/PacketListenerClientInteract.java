@@ -182,17 +182,19 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     if (disguise.getType() == DisguiseType.SHEEP) {
                         SheepWatcher watcher = (SheepWatcher) disguise.getWatcher();
 
-                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color : watcher.getColor());
+                        watcher.setColor(DisguiseConfig.isSheepDyeable() ? color.getDyeColor() : watcher.getColor());
                         break;
                     } else if (disguise.getType() == DisguiseType.WOLF) {
                         WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
 
-                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color : watcher.getCollarColor());
+                        watcher.setCollarColor(
+                                DisguiseConfig.isWolfDyeable() ? color.getDyeColor() : watcher.getCollarColor());
                         break;
                     } else if (disguise.getType() == DisguiseType.CAT) {
                         CatWatcher watcher = (CatWatcher) disguise.getWatcher();
 
-                        watcher.setCollarColor(DisguiseConfig.isCatDyeable() ? color : watcher.getCollarColor());
+                        watcher.setCollarColor(
+                                DisguiseConfig.isCatDyeable() ? color.getDyeColor() : watcher.getCollarColor());
                         break;
                     }
                 }

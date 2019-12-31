@@ -31,6 +31,13 @@ public class GuardianWatcher extends InsentientWatcher {
         sendData(MetaIndex.GUARDIAN_TARGET);
     }
 
+    /**
+     * @return Entity id of target
+     */
+    public int getTarget() {
+        return getData(MetaIndex.GUARDIAN_TARGET);
+    }
+
     public void setTarget(Entity entity) {
         setTarget(entity == null ? 0 : entity.getEntityId());
     }
@@ -58,5 +65,4 @@ public class GuardianWatcher extends InsentientWatcher {
         setData(MetaIndex.GUARDIAN_RETRACT_SPIKES, isRetracting);
         sendData(MetaIndex.GUARDIAN_RETRACT_SPIKES);
     }
-
 }

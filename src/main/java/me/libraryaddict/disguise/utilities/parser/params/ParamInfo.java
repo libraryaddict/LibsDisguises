@@ -77,6 +77,8 @@ public abstract class ParamInfo {
 
     protected abstract Object fromString(String string) throws DisguiseParseException;
 
+    public abstract String toString(Object object);
+
     public Object fromString(List<String> arguments) throws DisguiseParseException {
         // Don't consume a string immediately, if it errors we need to check other param types
         String string = arguments.get(0);
@@ -101,7 +103,7 @@ public abstract class ParamInfo {
         return getValues() != null;
     }
 
-    private Class getParamClass() {
+    protected Class getParamClass() {
         return paramClass;
     }
 

@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -76,6 +77,8 @@ public class LibsDisguises extends JavaPlugin {
         registerValues();
 
         DisguiseConfig.loadConfig();
+
+        DisguiseParser.createDefaultMethods();
 
         PacketsManager.addPacketListeners();
 

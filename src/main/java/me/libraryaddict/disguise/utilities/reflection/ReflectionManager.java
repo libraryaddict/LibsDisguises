@@ -650,6 +650,9 @@ public class ReflectionManager {
         return null;
     }
 
+    /**
+     * Gets the UUID of the player, as well as properly capitalized playername
+     */
     public static WrappedGameProfile grabProfileAddUUID(String playername) {
         try {
             Object minecraftServer = getMinecraftServer();

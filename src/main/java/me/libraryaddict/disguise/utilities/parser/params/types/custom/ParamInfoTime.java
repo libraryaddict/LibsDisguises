@@ -15,6 +15,10 @@ public class ParamInfoTime extends ParamInfo {
 
     @Override
     protected Object fromString(String string) throws DisguiseParseException {
+        if (string.matches("[0-9]{13,}")) {
+            return Long.parseLong(string);
+        }
+
         long time = DisguiseParser.parseStringToTime(string);
 
         // If disguise expires X ticks afterwards
@@ -26,5 +30,10 @@ public class ParamInfoTime extends ParamInfo {
         }
 
         return time;
+    }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
     }
 }

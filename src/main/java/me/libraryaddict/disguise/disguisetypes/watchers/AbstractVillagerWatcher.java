@@ -15,4 +15,12 @@ public class AbstractVillagerWatcher extends AgeableWatcher {
         setData(MetaIndex.ABSTRACT_VILLAGER_ANGRY, ticks);
         sendData(MetaIndex.ABSTRACT_VILLAGER_ANGRY);
     }
+
+    public int getAngry() {
+        return getData(MetaIndex.ABSTRACT_VILLAGER_ANGRY);
+    }
+
+    public boolean isAngry() {
+        return getAngry() > 0;
+    }
 }

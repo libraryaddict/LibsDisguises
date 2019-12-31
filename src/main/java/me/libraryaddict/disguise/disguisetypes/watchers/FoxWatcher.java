@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.entity.Fox;
 
 import java.util.Random;
@@ -40,6 +41,7 @@ public class FoxWatcher extends AgeableWatcher {
         setFoxFlag(32, value);
     }
 
+    @RandomDefaultValue
     public Fox.Type getType() {
         return Fox.Type.values()[getData(MetaIndex.FOX_TYPE)];
     }

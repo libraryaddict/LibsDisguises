@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -36,6 +37,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         return Color.fromRGB(color);
     }
 
+    @RandomDefaultValue
     public void setColor(Color color) {
         setData(MetaIndex.AREA_EFFECT_CLOUD_COLOR, color.asRGB());
         sendData(MetaIndex.AREA_EFFECT_CLOUD_COLOR);

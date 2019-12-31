@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.entity.Panda;
 
 import java.util.Random;
@@ -45,11 +46,13 @@ public class PandaWatcher extends AgeableWatcher {
         return Panda.Gene.NORMAL;
     }
 
+    @RandomDefaultValue
     public void setMainGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_MAIN_GENE, (byte) gene.ordinal());
         sendData(MetaIndex.PANDA_MAIN_GENE);
     }
 
+    @RandomDefaultValue
     public void setHiddenGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_HIDDEN_GENE, (byte) gene.ordinal());
         sendData(MetaIndex.PANDA_HIDDEN_GENE);
@@ -92,6 +95,11 @@ public class PandaWatcher extends AgeableWatcher {
         sendData(MetaIndex.PANDA_HEAD_SHAKING);
     }
 
+    public int getHeadShaking() {
+        return getHeadShakingTicks();
+    }
+
+    @Deprecated
     public int getHeadShakingTicks() {
         return getData(MetaIndex.PANDA_HEAD_SHAKING);
     }

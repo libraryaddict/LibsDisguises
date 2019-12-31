@@ -19,4 +19,9 @@ public class ParamInfoInteger extends ParamInfo {
     protected Object fromString(String string) {
         return Integer.parseInt(string);
     }
+
+    @Override
+    public String toString(Object object) {
+        return object.toString();
+    }
 }

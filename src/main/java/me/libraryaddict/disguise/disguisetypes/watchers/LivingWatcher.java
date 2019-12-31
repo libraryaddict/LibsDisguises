@@ -17,10 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class LivingWatcher extends FlagWatcher {
     private double maxHealth;
@@ -120,6 +117,22 @@ public class LivingWatcher extends FlagWatcher {
 
     public boolean isMaxHealthSet() {
         return maxHealthSet;
+    }
+
+    public PotionEffectType[] getPotionEffects() {
+        PotionEffectType[] effects = new PotionEffectType[potionEffects.size()];
+
+        int i = 0;
+
+        Iterator<String> itel = potionEffects.iterator();
+
+        while (itel.hasNext()) {
+            PotionEffectType type = PotionEffectType.getByName(itel.next());
+
+            effects[i++] = type;
+        }
+
+        return effects;
     }
 
     public void addPotionEffect(PotionEffectType potionEffect) {

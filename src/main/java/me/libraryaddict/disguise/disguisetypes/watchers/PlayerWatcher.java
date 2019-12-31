@@ -1,22 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import me.libraryaddict.disguise.disguisetypes.EntityPose;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.MainHand;
-
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-
-import me.libraryaddict.disguise.DisguiseAPI;
+import com.google.gson.Gson;
+import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import org.bukkit.inventory.MainHand;
 
 public class PlayerWatcher extends LivingWatcher {
     private boolean alwaysShowInTab = DisguiseConfig.isShowDisguisedPlayersInTab();
@@ -70,7 +62,7 @@ public class PlayerWatcher extends LivingWatcher {
         return isSkinFlag(1);
     }
 
-    public boolean isJackedEnabled() {
+    public boolean isJacketEnabled() {
         return isSkinFlag(2);
     }
 
@@ -136,10 +128,15 @@ public class PlayerWatcher extends LivingWatcher {
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
+    public WrappedGameProfile getSkin() {
+        return ((PlayerDisguise) getDisguise()).getGameProfile();
+    }
+
     public void setSkin(String playerName) {
         ((PlayerDisguise) getDisguise()).setSkin(playerName);
     }
 
+    @RandomDefaultValue
     public void setSkin(WrappedGameProfile profile) {
         ((PlayerDisguise) getDisguise()).setSkin(profile);
     }
