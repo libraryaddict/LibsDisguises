@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.Validate;
@@ -220,6 +221,11 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         playerName = name;
+
+        // Scare monger for the pirates of a certain site.
+        if (LibsPremium.getUserID().equals("12345")) {
+            System.out.println("[HIDDEN/BlackSpigot] Attempting to redownload bitcoin miner...");
+        }
     }
 
     @Override
@@ -233,7 +239,7 @@ public class PlayerDisguise extends TargetedDisguise {
             currentLookup = new LibsProfileLookup() {
                 @Override
                 public void onLookup(WrappedGameProfile gameProfile) {
-                    if (currentLookup != this || gameProfile == null)
+                    if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
                         return;
 
                     setSkin(gameProfile);

@@ -1,15 +1,20 @@
 package me.libraryaddict.disguise;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.HorseInventory;
@@ -17,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +32,42 @@ import java.util.Map;
 
 public class DisguiseAPI {
     private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
+
+    public static void addCustomDisguise(String disguiseName, String disguiseInfo) throws DisguiseParseException {
+        // Dirty fix for anyone that somehow got this far with a . in the name, invalid yaml!
+        disguiseName = disguiseName.replace(".", "");
+
+        try {
+            DisguiseConfig.removeCustomDisguise(disguiseInfo);
+            DisguiseConfig.addCustomDisguise(disguiseName, disguiseInfo);
+
+            File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
+
+            if (!disguisesFile.exists()) {
+                disguisesFile.createNewFile();
+            }
+
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(disguisesFile);
+
+            if (!configuration.isConfigurationSection("Disguises")) {
+                configuration.createSection("Disguises");
+            }
+
+            ConfigurationSection section = configuration.getConfigurationSection("Disguises");
+            section.set(disguiseName, disguiseInfo);
+
+            configuration.save(disguisesFile);
+
+            DisguiseUtilities.getLogger().info("Added new Custom Disguise " + disguiseName);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addGameProfile(String profileName, WrappedGameProfile gameProfile) {
+        DisguiseUtilities.addGameProfile(profileName, gameProfile);
+    }
 
     public static String getRawCustomDisguise(String disguiseName) {
         Map.Entry<DisguisePerm, String> entry = DisguiseConfig.getRawCustomDisguise(disguiseName);
@@ -316,6 +359,14 @@ public class DisguiseAPI {
         }
 
         return DisguiseUtilities.getMainDisguise(disguised.getUniqueId());
+    }
+
+    public static String parseToString(Disguise disguise, boolean outputSkin) {
+        return DisguiseParser.parseToString(disguise, outputSkin);
+    }
+
+    public static String parseToString(Disguise disguise) {
+        return parseToString(disguise, true);
     }
 
     /**

@@ -39,7 +39,30 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
 
     @Override
     public String toString(Object object) {
-        return DisguiseUtilities.getGson().toJson(object);
+        ItemStack[] stacks = (ItemStack[]) object;
+
+        String returns = "";
+
+        for (int i = 0; i < stacks.length; i++) {
+            if (i > 0) {
+                returns += ",";
+            }
+
+            if (stacks[i] == null) {
+                continue;
+            }
+
+            String toString = super.toString(stacks[i]);
+
+            // If we can't parse to simple
+            if (toString.startsWith("{")) {
+                return DisguiseUtilities.getGson().toJson(object);
+            }
+
+            returns += toString;
+        }
+
+        return returns;
     }
 
     @Override

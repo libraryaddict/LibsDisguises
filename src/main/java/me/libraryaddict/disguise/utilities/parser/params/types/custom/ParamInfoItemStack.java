@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.parser.params.types.custom;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
 import org.bukkit.Material;
@@ -36,6 +37,27 @@ public class ParamInfoItemStack extends ParamInfoEnum {
 
     @Override
     public String toString(Object object) {
+        ItemStack itemStack = (ItemStack) object;
+        ItemStack temp = new ItemStack(itemStack.getType(), itemStack.getAmount());
+
+        if (itemStack.containsEnchantment(Enchantment.DURABILITY)) {
+            temp.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        }
+
+        if (temp.isSimilar(itemStack)) {
+            String name = itemStack.getType().name();
+
+            if (itemStack.getAmount() != 1) {
+                name += ":" + itemStack.getAmount();
+            }
+
+            if (itemStack.containsEnchantment(Enchantment.DURABILITY)) {
+                name += ":" + TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("glow");
+            }
+
+            return name;
+        }
+
         return DisguiseUtilities.getGson().toJson(object);
     }
 

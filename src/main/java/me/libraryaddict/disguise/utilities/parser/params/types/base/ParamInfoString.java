@@ -18,6 +18,6 @@ public class ParamInfoString extends ParamInfo {
 
     @Override
     public String toString(Object object) {
-        return object.toString();
+        return ((String) object).replace(ChatColor.COLOR_CHAR + "", "&");
     }
 }

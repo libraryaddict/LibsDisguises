@@ -114,6 +114,13 @@ public class DisguiseParser {
     }
 
     public static String parseToString(Disguise disguise) {
+        return parseToString(disguise, true);
+    }
+
+    /**
+     * Not outputting skin information is not garanteed to display the correct player name
+     */
+    public static String parseToString(Disguise disguise, boolean outputSkinData) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -153,10 +160,25 @@ public class DisguiseParser {
                         ourValue = null;
                     }
 
-                    // If its the same as default, continue
-                    if (!m.isAnnotationPresent(RandomDefaultValue.class) &&
-                            Objects.deepEquals(entry.getValue(), ourValue)) {
-                        continue;
+                    if (m.getName().equals("setSkin") && !outputSkinData) {
+                        PlayerDisguise pDisg = (PlayerDisguise) disguise;
+                        ourValue = pDisg.getName();
+
+                        if (pDisg.getSkin() != null) {
+                            ourValue = pDisg.getSkin();
+                        } else if (pDisg.getGameProfile() != null && pDisg.getGameProfile().getName() != null) {
+                            ourValue = pDisg.getGameProfile().getName();
+                        }
+
+                        if (ourValue.equals(pDisg.getName())) {
+                            continue;
+                        }
+                    } else {
+                        // If its the same as default, continue
+                        if (!m.isAnnotationPresent(RandomDefaultValue.class) &&
+                                Objects.deepEquals(entry.getValue(), ourValue)) {
+                            continue;
+                        }
                     }
 
                     stringBuilder.append(" ").append(m.getName());
@@ -170,9 +192,7 @@ public class DisguiseParser {
                     if (ourValue != null) {
                         valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
 
-                        if (valueString.contains(" ") || valueString.contains("\"")) {
-                            valueString = "\"" + valueString.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
-                        }
+                        valueString = DisguiseUtilities.quote(valueString);
                     } else {
                         valueString = "null";
                     }

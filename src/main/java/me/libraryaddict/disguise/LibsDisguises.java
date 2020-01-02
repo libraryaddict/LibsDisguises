@@ -104,6 +104,9 @@ public class LibsDisguises extends JavaPlugin {
             registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
             registerCommand("disguisemodifyradius",
                     new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+            registerCommand("copydisguise", new CopyDisguiseCommand());
+            registerCommand("grabskin", new GrabSkinCommand());
+            registerCommand("savedisguise", new SaveDisguiseCommand());
         } else {
             getLogger().info("Commands has been disabled, as per config");
         }

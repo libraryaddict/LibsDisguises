@@ -12,6 +12,8 @@ public enum LibsMsg {
     EXPIRED_DISGUISE(ChatColor.RED + "Your disguise has expired!"),
     CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises: %s"),
     CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player/uuid '%s'"),
+    CANNOT_FIND_PLAYER_NAME(ChatColor.RED + "Cannot find the player '%s'"),
+    CANNOT_FIND_PLAYER_UUID(ChatColor.RED + "Cannot find the uuid '%s'"),
     CLICK_TIMER(ChatColor.RED + "Right click a entity in the next %s seconds to grab the disguise reference!"),
     CLONE_HELP1(ChatColor.DARK_GREEN +
             "Right click a entity to get a disguise reference you can pass to other disguise commands!"),
@@ -20,6 +22,7 @@ public enum LibsMsg {
             "references."),
     CLONE_HELP3(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN +
             "Optional" + ChatColor.DARK_GREEN + ")"),
+    CUSTOM_DISGUISE_SAVED(ChatColor.GOLD + "Custom disguise has been saved as '%s'!"),
     D_HELP1(ChatColor.DARK_GREEN + "Disguise another player!"),
     D_HELP3(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> player <Name>"),
     D_HELP4(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> <DisguiseType> <Baby>"),
@@ -106,6 +109,8 @@ public enum LibsMsg {
     DRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply a disguise as well as the radius"),
     DRADIUS_NEEDOPTIONS_ENTITY(ChatColor.RED + "You need to supply a disguise as well as the radius and EntityType"),
     FAILED_DISGIUSE(ChatColor.RED + "Failed to disguise as a %s"),
+    GRABBED_SKIN(ChatColor.GOLD + "Grabbed skin and saved as %s!"),
+    PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown option '%s' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
     LIBS_RELOAD_WRONG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload'?"),
@@ -132,6 +137,7 @@ public enum LibsMsg {
             "Ignored %s options you do not have permission to use. Add 'show' to view unusable options."),
     OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),
     NOT_DISGUISED(ChatColor.RED + "You are not disguised!"),
+    TARGET_NOT_DISGUISED(ChatColor.RED + "That entity is not disguised!"),
     NOT_NUMBER(ChatColor.RED + "Error! %s is not a number"),
     PARSE_CANT_DISG_UNKNOWN(ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!"),
     PARSE_CANT_LOAD(ChatColor.RED + "Error! This disguise couldn't be loaded!"),
@@ -178,7 +184,50 @@ public enum LibsMsg {
             ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" + ChatColor.RED +
             "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
-    VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!");
+    VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!"),
+    CLICK_TO_COPY(ChatColor.GREEN + "Click to Copy:"),
+    CLICK_TO_COPY_DATA(ChatColor.GOLD + "Data"),
+    CLICK_TO_COPY_WITH_SKIN(ChatColor.GREEN + "Version with skin data:"),
+    CLICK_TO_COPY_HOVER(ChatColor.GOLD + "Click to Copy"),
+    CLICK_COPY(ChatColor.YELLOW + "" + ChatColor.BOLD + "%s"),
+    SKIN_API_IN_USE(ChatColor.RED + "mineskin.org is currently in use, please try again"),
+    SKIN_API_TIMER(ChatColor.RED + "mineskin.org can be used again in %s seconds"),
+    SKIN_API_FAIL(ChatColor.RED + "Unexpected error while accessing mineskin.org, please try again"),
+    SKIN_API_BAD_URL(ChatColor.RED + "Invalid url provided! Please ensure it is a .png file download!"),
+    SKIN_API_FAILED_URL(ChatColor.RED + "Invalid url provided! mineskin.org failed to grab it!"),
+    SKIN_API_FAIL_CODE(ChatColor.RED + "Error %s! %s"),
+    SKIN_API_403("mineskin.org denied access to that url"),
+    SKIN_API_404("mineskin.org unable to find an image at that url"),
+    SKIN_API_IMAGE_TIMEOUT(ChatColor.RED + "Error! mineskin.org took too long to connect! Is your image valid?"),
+    SKIN_API_TIMEOUT(ChatColor.RED + "Error! Took too long to connect to mineskin.org!"),
+    SKIN_API_USING_URL(ChatColor.GRAY + "Url provided, now attempting to connect to mineskin.org"),
+    SKIN_API_BAD_FILE_NAME(ChatColor.RED + "Invalid file name provided! File not found!"),
+    SKIN_API_BAD_FILE(ChatColor.RED + "Invalid file provided! Please ensure it is a valid .png skin!"),
+    SKIN_API_USING_FILE(ChatColor.GRAY + "File provided and found, now attempting to upload to mineskin.org"),
+    SKIN_API_INVALID_NAME(ChatColor.RED + "Invalid name/file/uuid provided!"),
+    SKIN_API_USING_UUID(ChatColor.GRAY + "UUID successfully parsed, now attempting to connect to mineskin.org"),
+    SKIN_API_USING_NAME(
+            ChatColor.GRAY + "Determined to be player name, now attempting to validate and connect to mineskin.org"),
+    SAVE_DISG_HELP_1(ChatColor.GREEN + "The <DisguiseName> is what the disguise will be called in Lib's Disguises"),
+    SAVE_DISG_HELP_2(ChatColor.GREEN +
+            "/savedisguise <DisguiseName> - If you don't provide arguments, it'll try make a disguise from your" +
+            " current disguise. This will not work if you are not disguised!"),
+    SAVE_DISG_HELP_3(ChatColor.GREEN + "/savedisguise <DisguiseName> <Arguments>"),
+    SAVE_DISG_HELP_4(ChatColor.GREEN +
+            "Your arguments need to be as if you're using /disguise. So '/disguise player Notch setsneaking' - " +
+            "Means '/savedisguise Notch player Notch setsneaking'"),
+    SAVE_DISG_HELP_5(ChatColor.GREEN + "Remember! You can upload your own skins, then reference those skins!"),
+    GRAB_DISG_HELP_1(ChatColor.GREEN +
+            "You can choose a name to save the skins under, the names will be usable as if it was an actual player skin"),
+    GRAB_DISG_HELP_2(ChatColor.DARK_GREEN + "/grabskin https://somesite.com/myskin.png <Optional Name>"),
+    GRAB_DISG_HELP_3(ChatColor.DARK_GREEN + "/grabskin myskin.png <Optional Name> - Skins must be in the folder!"),
+    GRAB_DISG_HELP_4(ChatColor.DARK_GREEN + "/grabskin <Player name or UUID> <Optional Name>"),
+    GRAB_DISG_HELP_5(
+            ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),
+    CUSTOM_DISGUISE_NAME_CONFLICT(
+            ChatColor.RED + "Cannot create the custom disguise '%s' as there is a name conflict!"),
+    ERROR_LOADING_CUSTOM_DISGUISE(ChatColor.RED + "Error while loading custom disguise '%s'%s"),
+    SKIN_API_INTERNAL_ERROR(ChatColor.RED + "Internal error in the skin API, perhaps bad data?");
 
     private String string;
 

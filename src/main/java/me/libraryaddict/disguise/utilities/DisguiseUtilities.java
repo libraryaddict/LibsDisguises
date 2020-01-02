@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -18,6 +19,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.json.*;
+import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
@@ -68,7 +70,7 @@ public class DisguiseUtilities {
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     private static HashSet<UUID> savedDisguiseList = new HashSet<>();
     private static HashSet<String> cachedNames = new HashSet<>();
-    private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
+    private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
     private static PacketContainer spawnChunk;
@@ -86,6 +88,11 @@ public class DisguiseUtilities {
     private static int velocityID;
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     private static boolean runningPaper;
+    private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
+
+    public static MineSkinAPI getMineSkinAPI() {
+        return mineSkinAPI;
+    }
 
     public static void setPlayerVelocity(Player player) {
         velocityID = player.getEntityId();
@@ -675,6 +682,10 @@ public class DisguiseUtilities {
 
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
+                if (gameProfile == null || gameProfile.getProperties().isEmpty()) {
+                    return;
+                }
+
                 if (DisguiseAPI.isDisguiseInUse(disguise) && (!gameProfile.getName()
                         .equals(disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) ||
                         !gameProfile.getProperties().isEmpty())) {
@@ -732,55 +743,57 @@ public class DisguiseUtilities {
                 }
             }
 
-            if (contactMojang && !runnables.containsKey(playerName)) {
-                Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            final WrappedGameProfile gameProfile = lookupGameProfile(origName);
+            synchronized (runnables) {
+                if (contactMojang && !runnables.containsKey(playerName)) {
+                    runnables.put(playerName, new ArrayList<>());
 
-                            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (gameProfile.getProperties().isEmpty()) {
-                                        return;
-                                    }
+                    if (runnable != null) {
+                        runnables.get(playerName).add(runnable);
+                    }
 
-                                    if (DisguiseConfig.isSaveGameProfiles()) {
-                                        addGameProfile(playerName, gameProfile);
-                                    }
+                    Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                final WrappedGameProfile gameProfile = lookupGameProfile(origName);
 
-                                    if (runnables.containsKey(playerName)) {
-                                        for (Object obj : runnables.remove(playerName)) {
-                                            if (obj instanceof Runnable) {
-                                                ((Runnable) obj).run();
-                                            } else if (obj instanceof LibsProfileLookup) {
-                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (DisguiseConfig.isSaveGameProfiles()) {
+                                            addGameProfile(playerName, gameProfile);
+                                        }
+
+                                        synchronized (runnables) {
+                                            if (runnables.containsKey(playerName)) {
+                                                for (Object obj : runnables.remove(playerName)) {
+                                                    if (obj instanceof Runnable) {
+                                                        ((Runnable) obj).run();
+                                                    } else if (obj instanceof LibsProfileLookup) {
+                                                        ((LibsProfileLookup) obj).onLookup(gameProfile);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
+                                });
+                            }
+                            catch (Exception e) {
+                                synchronized (runnables) {
+                                    runnables.remove(playerName);
                                 }
-                            });
+
+                                getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " +
+                                        e.getMessage());
+                            }
                         }
-                        catch (Exception e) {
-                            runnables.remove(playerName);
-
-                            getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " +
-                                    e.getMessage());
-                        }
-                    }
-                });
-
-                if (runnable != null && contactMojang) {
-                    if (!runnables.containsKey(playerName)) {
-                        runnables.put(playerName, new ArrayList<>());
-                    }
-
+                    });
+                } else if (runnable != null && contactMojang) {
                     runnables.get(playerName).add(runnable);
                 }
-
-                return null;
             }
+
+            return null;
         }
 
         return ReflectionManager.getGameProfile(null, origName);
@@ -822,6 +835,7 @@ public class DisguiseUtilities {
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.disableHtmlEscaping();
 
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
@@ -1329,6 +1343,15 @@ public class DisguiseUtilities {
 
         return list.toArray(new String[0]);
     }*/
+    public static String quote(String string) {
+        if (!string.contains(" ") && !string.startsWith("\"") && !string.endsWith("\"")) {
+            return string;
+        }
+
+        return "\"" + string.replaceAll("\\B\"", "\\\"").replaceAll("\\\\(?=\\\\*\"\\B)", "\\\\")
+                .replaceAll("(?=\"\\B)", "\\") + "\"";
+    }
+
     public static String[] split(String string) {
         // Regex where we first match any character that isn't a slash, if it is a slash then it must not have more
         // slashes until it hits the quote

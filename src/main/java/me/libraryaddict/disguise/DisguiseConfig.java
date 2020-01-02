@@ -7,14 +7,19 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import org.apache.logging.log4j.core.util.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -185,6 +190,18 @@ public class DisguiseConfig {
         return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(invoker, target, entry.getValue()));
     }
 
+    public static void removeCustomDisguise(String disguise) {
+        for (DisguisePerm entry : customDisguises.keySet()) {
+            String name = entry.toReadable();
+
+            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise))
+                continue;
+
+            customDisguises.remove(entry);
+            break;
+        }
+    }
+
     public static Entry<DisguisePerm, String> getRawCustomDisguise(String disguise) {
         for (Entry<DisguisePerm, String> entry : customDisguises.entrySet()) {
             String name = entry.getKey().toReadable();
@@ -294,6 +311,24 @@ public class DisguiseConfig {
         // Redundant for the first load, however other plugins may call loadConfig() at a later stage where we
         // definitely want to reload it.
         LibsDisguises.getInstance().reloadConfig();
+
+        File skinsFolder = new File(LibsDisguises.getInstance().getDataFolder(), "Skins");
+
+        if (!skinsFolder.exists()) {
+            skinsFolder.mkdir();
+
+            File explain = new File(skinsFolder, "README");
+
+            try {
+                explain.createNewFile();
+                FileUtils.write(explain,
+                        "This folder is used to store .png files for uploading with the /savedisguise or /grabskin " +
+                                "commands");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         ConfigurationSection config = LibsDisguises.getInstance().getConfig();
 
@@ -462,8 +497,7 @@ public class DisguiseConfig {
 
     public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {
         if (getRawCustomDisguise(toParse) != null) {
-            throw new DisguiseParseException(
-                    "Cannot create the custom disguise '" + disguiseName + "' as there is a name conflict!");
+            throw new DisguiseParseException(LibsMsg.CUSTOM_DISGUISE_NAME_CONFLICT, disguiseName);
         }
 
         try {
@@ -479,11 +513,12 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
         }
         catch (DisguiseParseException e) {
-            throw new DisguiseParseException("Error while loading custom disguise '" + disguiseName + "'" +
-                    (e.getMessage() == null ? "" : ": " + e.getMessage()), e);
+            throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName,
+                    (e.getMessage() == null ? "" : ": " + e.getMessage()));
         }
-        catch (Exception e) {
-            throw new DisguiseParseException(e);
+        catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, "");
         }
     }
 

@@ -72,6 +72,18 @@ commands:
       aliases: [dmodifyentity, dmodentity]
       permission: libsdisguises.seecmd.disguisemodifyentity
       description: Modify a disguise by right clicking them
+    copydisguise:
+      aliases: [disguisecopy, disgcopy, dcopy, copydisg, copyd]
+      permission: libsdisguises.seecmd.copydisguise
+      description: Output a disguise to a usable string
+    grabskin:
+      aliases: [uploadskin, skin]
+      permission: libsdisguises.seecmd.grabskin
+      description: Grab a skin from file, url or player name/uuid
+    savedisguise:
+      aliases: [customdisguise, savedisg, customdisg, createdisguise, createdisg]
+      permission: libsdisguises.seecmd.savedisguise
+      description: Save a custom disguise to disguises.yml
 
 permissions:
     libsdisguises.reload:
@@ -100,6 +112,7 @@ permissions:
          libsdisguises.seecmd.disguisemodifyplayer: true
          libsdisguises.seecmd.disguisemodifyradius: true
          libsdisguises.seecmd.disguisemodifyentity: true
+         libsdisguises.seecmd.copydisguise: true
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguiseviewself:
@@ -132,3 +145,9 @@ permissions:
       description: See the /disguisemodifyradius command in tab-completion
     libsdisguises.seecmd.disguisemodifyentity:
       description: See the /disguisemodifyentity command in tab-completion
+    libsdisguises.seecmd.copydisguise:
+      description: See the /copydisguise command in tab-completion
+    libsdisguises.seecmd.grabskin:
+      description: See the /grabskin command in tab-completion
+    libsdisguises.seecmd.savedisguise:
+      description: See the /savedisguise command in tab-completion
