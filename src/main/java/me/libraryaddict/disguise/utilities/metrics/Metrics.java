@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.metrics;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
@@ -89,8 +90,7 @@ public class Metrics {
             // Inform the server owners about bStats
             config.options()
                     .header("bStats collects some data for plugin authors like how many servers are using their " +
-                            "plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
+                            "plugins.\n" + "To honor their work, you should not disable it.\n" +
                             "This has nearly no effect on the server performance!\n" +
                             "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
             try {
@@ -121,6 +121,8 @@ public class Metrics {
                 // We are the first!
                 startSubmitting();
             }
+        } else {
+            DisguiseUtilities.getLogger().info("The author sees Metrics disabled, the author is sad");
         }
     }
 
@@ -1027,6 +1029,5 @@ public class Metrics {
         public static Country byLocale(Locale locale) {
             return byIsoTag(locale.getCountry());
         }
-
     }
 }

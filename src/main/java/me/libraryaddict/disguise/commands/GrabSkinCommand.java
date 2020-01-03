@@ -141,6 +141,8 @@ public class GrabSkinCommand implements CommandExecutor {
                 }
 
                 sender.spigot().sendMessage(builder.create());
+
+                DisguiseUtilities.setGrabSkinCommandUsed();
             }
         };
 

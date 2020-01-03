@@ -8,7 +8,6 @@ import com.comphenix.protocol.wrappers.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -79,7 +78,7 @@ public class DisguiseUtilities {
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
-    private static boolean pluginsUsed, commandsUsed;
+    private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed, saveDisguiseCommandUsed;
     private static long libsDisguisesCalled;
     /**
      * Keeps track of what tick this occured
@@ -106,6 +105,30 @@ public class DisguiseUtilities {
         // Be generous with how many ticks they have until they jump, the server could be lagging and the player
         // would effectively have anti-knockback
         return player.getEntityId() == velocityID && (player.getWorld().getTime() - velocityTime) < 3;
+    }
+
+    public static void setGrabSkinCommandUsed() {
+        grabSkinCommandUsed = true;
+    }
+
+    public static void setCopyDisguiseCommandUsed() {
+        copyDisguiseCommandUsed = true;
+    }
+
+    public static void setSaveDisguiseCommandUsed() {
+        saveDisguiseCommandUsed = true;
+    }
+
+    public static boolean isGrabSkinCommandUsed() {
+        return grabSkinCommandUsed;
+    }
+
+    public static boolean isCopyDisguiseCommandUsed() {
+        return copyDisguiseCommandUsed;
+    }
+
+    public static boolean isSaveDisguiseCommandUsed() {
+        return saveDisguiseCommandUsed;
     }
 
     public static void setPluginsUsed() {

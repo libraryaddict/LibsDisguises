@@ -68,6 +68,27 @@ public class MetricsInitalizer {
             premiumType = "Free Builds";
         }
 
+        metrics.addCustomChart(new Metrics.SimplePie("grabskin_command") {
+            @Override
+            public String getValue() {
+                return "" + DisguiseUtilities.isGrabSkinCommandUsed();
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("save_disguise_command") {
+            @Override
+            public String getValue() {
+                return "" + DisguiseUtilities.isSaveDisguiseCommandUsed();
+            }
+        });
+
+        metrics.addCustomChart(new Metrics.SimplePie("copydisguise_command") {
+            @Override
+            public String getValue() {
+                return "" + DisguiseUtilities.isCopyDisguiseCommandUsed();
+            }
+        });
+
         metrics.addCustomChart(new Metrics.SimplePie("premium") {
             @Override
             public String getValue() {

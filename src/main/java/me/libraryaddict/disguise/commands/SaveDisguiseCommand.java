@@ -164,6 +164,8 @@ public class SaveDisguiseCommand implements CommandExecutor {
         try {
             DisguiseAPI.addCustomDisguise(name, disguiseString);
             sender.sendMessage(LibsMsg.CUSTOM_DISGUISE_SAVED.get(name));
+
+            DisguiseUtilities.setSaveDisguiseCommandUsed();
         }
         catch (DisguiseParseException e) {
             if (e.getMessage() != null) {

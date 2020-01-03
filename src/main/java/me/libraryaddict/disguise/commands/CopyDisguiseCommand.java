@@ -85,6 +85,8 @@ public class CopyDisguiseCommand implements CommandExecutor {
             sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, DisguiseParser.parseToString(disguise), true);
         }
 
+        DisguiseUtilities.setCopyDisguiseCommandUsed();
+
         return true;
     }
 
