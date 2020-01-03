@@ -1,11 +1,12 @@
 # Here you can create your own disguises and disguise into them using the normal disguise commands
 # To create them is super simple, you're using it just like you would in a command. The only tricky thing is that it must be valid yaml. TIP: Enclose the strings in '
-# Please note that this is parsed exactly like a command, no spaces in your playername.
-# The following disguises will work if you remove the '#' at the beginning of the line, this creates a disguise which you can use by /disguise libraryaddict. So simple
+# Please note that this is parsed exactly like a command, no spaces in your playername. Bypass by quoting with "!
 
-# To get the skin signiture, you can find it on mojang's servers. Such as https://sessionserver.mojang.com/session/minecraft/profile/<uuid>?unsigned=false
-# Just remember to remove the slashes from the UUID, remember the UUID is the unique code given to a player, just google for a tool to see someone's UUID
-# Example: https://sessionserver.mojang.com/session/minecraft/profile/a149f81bf7844f8987c554afdd4db533?unsigned=false
+# You can use /grabskin <Target> <Optional Name> - To get the skin data from a file, another player or website.
+# /savedisguise ingame will save a custom disguise in this config, including skin data.
+# You can also provide a file or url for 'setSkin'! Just as you would for /grabskin.
+# The setSkin argument will be automatically done for all /savedisguise usages, this way the skin never changes.
+# /copydisguise <Optional Target Name/UUID> will give you the disguise in a usable string
 
 # You can also use placeholders in the disguises to create disguises that have the command users skin
 
@@ -22,6 +23,7 @@
 #  This would give the disguised target a player disguise of their own name, but using the skin of the command user
 #  Example2: 'player %target-name% setSkin %user-skin%'
 
+# The following disguises will work if you remove the '#' at the beginning of the line, this creates a disguise which you can use by /disguise libraryaddict
 Disguises:
   libraryaddict: 'player libraryaddict setArmor GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET setItemInMainHand WRITTEN_BOOK setGlowing setSkin {"id":"a149f81bf7844f8987c554afdd4db533","name":"libraryaddict","properties":[{"signature":"afoGOO45t3iGvTyQ732AlugPOvj13/RNjM0/utYlD4PZ4ab4Jopbzr8Px75+ALdkyegoKNcfaH4aXzylMvL6mIwaRdL0af7pfGibMMCMJ8F1RAMl2WqRslKBKXHGS1OXxMweoXW+RRatGgZsUC1BjxHMwd4RuXxrV9ZZ7x1r4xouUXmMzn19wqNO9EeG2q8AgF/hZdrnJPdTTrqJs04r4vCQiFiQsTWiY/B5CBOTh6fw4NpOHeeiJwHOLvN+6xKnAm77nKawaKCSciDwt54EeZoE/Q5ReQUEFgj++jdyHb5PJbhGytr//mazpTVzvlDnO06CZqigbiueV2/ush2gKSXQeimCXeNZzcj/CFgqAmMSEZQW3qHp+DgoqqtBNabJa0FBzpbQQ/jQWzoHfmUC/hTf0A0+hgOe4NqDc+xXYf4A9M/6/0JHz0voWhQJi8QriM699DeeUa31bVdTdKjcyK6Zw6/HIOJt++eFnkf++/zKt0fMiqfdRamSqR/K3w+Kk7cs2D345BNubl5L83YWmLbebUcAPKaza5gi17lUW+h/FitzfKAJZ+xsfSdj27nQLa24xYsyB3Fi5DcFLI2oQt5BYAvViT37sabGOXbDBsrijS4t3++mIbC+pCDiKi0hwZzvy0TPRTle2RMhJ6D66DmpykwqBOxzD73fEsieWX4=","name":"textures","value":"eyJ0aW1lc3RhbXAiOjE0ODA1MjA3NjAxNTksInByb2ZpbGVJZCI6ImExNDlmODFiZjc4NDRmODk4N2M1NTRhZmRkNGRiNTMzIiwicHJvZmlsZU5hbWUiOiJsaWJyYXJ5YWRkaWN0Iiwic2lnbmF0dXJlUmVxdWlyZWQiOnRydWUsInRleHR1cmVzIjp7IlNLSU4iOnsidXJsIjoiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84ZTQ5NDVkMzZjZjVhNjI1OGZjOGY4ZTM5NmZlZWYzMzY1ZjM2MjgyYjE2MjY0OWI2M2NmZWQzNzNmNzY1OSJ9LCJDQVBFIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZkNjFjM2M0YWM4OGYxYTM0NjhmYmRlZWY0NWNlYzg5ZTVhZmI4N2I5N2ExYTg0NWJmYjNjNjRmZDBiODgzIn19fQ=="}]}'
 #  Warrior: 'zombie setArmor DIAMOND_BOOTS,DIAMOND_LEGGINGS,DIAMOND_CHESTPLATE,DIAMOND_HELMET setItemInMainHand DIAMOND_SWORD setItemInOffHand SHIELD'
