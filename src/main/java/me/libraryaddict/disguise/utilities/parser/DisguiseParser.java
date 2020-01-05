@@ -15,7 +15,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -347,7 +349,7 @@ public class DisguiseParser {
         return !disguiseOptions.containsValue(true);
     }
 
-    public static String getName(Entity entity) {
+    public static String getName(CommandSender entity) {
         if (entity == null) {
             return "??";
         }
@@ -356,14 +358,16 @@ public class DisguiseParser {
             return entity.getName();
         }
 
-        if (entity.getCustomName() != null && entity.getCustomName().length() > 0) {
-            return entity.getCustomName();
+        if (entity instanceof Entity) {
+            if (((Entity) entity).getCustomName() != null && ((Entity) entity).getCustomName().length() > 0) {
+                return ((Entity) entity).getCustomName();
+            }
         }
 
         return entity.getName();
     }
 
-    public static String getSkin(CommandSender entity) {
+    private static String getSkin(CommandSender entity) {
         if (entity == null) {
             return "??";
         }
@@ -372,7 +376,6 @@ public class DisguiseParser {
             WrappedGameProfile gameProfile = ReflectionManager.getGameProfile((Player) entity);
 
             if (gameProfile != null) {
-
                 return DisguiseUtilities.getGson().toJson(gameProfile);
             }
         }
@@ -380,32 +383,61 @@ public class DisguiseParser {
         return "{}";
     }
 
+    public static String[] parsePlaceholders(String[] args, CommandSender user, CommandSender target) {
+        return parsePlaceholders(args, getName(user), getSkin(user), getName(target), DisguiseParser.getSkin(target),
+                getEntityEquipment(user), getEntityEquipment(target));
+    }
+
+    private static EntityEquipment getEntityEquipment(CommandSender entity) {
+        return entity instanceof LivingEntity ? ((LivingEntity) entity).getEquipment() : null;
+    }
+
     public static String[] parsePlaceholders(String[] args, String userName, String userSkin, String targetName,
-            String targetSkin) {
+            String targetSkin, EntityEquipment equip, EntityEquipment targetEquip) {
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
-            if (arg.contains("%user-name%")) {
-                arg = arg.replace("%user-name%", userName);
-            }
+            arg = replace(arg, "%user-name%", userName);
+            arg = replace(arg, "%user-skin%", userSkin);
+            arg = replace(arg, "%target-name%", targetName);
+            arg = replace(arg, "%target-skin%", targetSkin);
+            arg = replace(arg, "%held-item%", equip == null ? null : equip.getItemInMainHand());
+            arg = replace(arg, "%offhand-item%", equip == null ? null : equip.getItemInOffHand());
+            arg = replace(arg, "%armor%", equip == null ? null : equip.getArmorContents());
+            arg = replace(arg, "%helmet%", equip == null ? null : equip.getHelmet());
+            arg = replace(arg, "%chestplate%", equip == null ? null : equip.getChestplate());
+            arg = replace(arg, "%leggings%%", equip == null ? null : equip.getLeggings());
+            arg = replace(arg, "%boots%", equip == null ? null : equip.getBoots());
 
-            if (arg.contains("%user-skin%")) {
-                arg = arg.replace("%user-skin%", userSkin);
-            }
-
-            if (arg.contains("%target-name%")) {
-                arg = arg.replace("%target-name%", targetName);
-            }
-
-            if (arg.contains("%target-skin%")) {
-                arg = arg.replace("%target-skin%", targetSkin);
-            }
+            arg = replace(arg, "%target-held-item%", targetEquip == null ? null : targetEquip.getItemInMainHand());
+            arg = replace(arg, "%target-offhand-item%", targetEquip == null ? null : targetEquip.getItemInOffHand());
+            arg = replace(arg, "%target-armor%", targetEquip == null ? null : targetEquip.getArmorContents());
+            arg = replace(arg, "%target-helmet%", targetEquip == null ? null : targetEquip.getHelmet());
+            arg = replace(arg, "%target-chestplate%", targetEquip == null ? null : targetEquip.getChestplate());
+            arg = replace(arg, "%target-leggings%%", targetEquip == null ? null : targetEquip.getLeggings());
+            arg = replace(arg, "%target-boots%", targetEquip == null ? null : targetEquip.getBoots());
 
             args[i] = arg;
         }
 
         return args;
+    }
+
+    private static String replace(String string, String value, Object toReplace) {
+        if (!string.contains(value)) {
+            return string;
+        }
+
+        String oValue;
+
+        if (toReplace != null) {
+            oValue = ParamInfoManager.toString(toReplace);
+        } else {
+            oValue = "null";
+        }
+
+        return string.replace(value, oValue);
     }
 
     public static long parseStringToTime(String string) throws DisguiseParseException {
@@ -466,7 +498,7 @@ public class DisguiseParser {
 
         String skin = "{\"id\":\"a149f81bf7844f8987c554afdd4db533\",\"name\":\"libraryaddict\"," + "\"properties\":[]}";
         // Fill in fake data
-        args = parsePlaceholders(args, "libraryaddict", skin, "libraryaddict", skin);
+        args = parsePlaceholders(args, "libraryaddict", skin, "libraryaddict", skin, null, null);
 
         // Parse disguise
         return parseDisguise(sender, null, permNode, args, permissions);
@@ -544,7 +576,7 @@ public class DisguiseParser {
                 args = DisguiseUtilities.split(customDisguise.getValue());
             }
 
-            args = parsePlaceholders(args, sender.getName(), getSkin(sender), getName(target), getSkin(target));
+            args = parsePlaceholders(args, sender, target);
 
             if (disguisePerm == null) {
                 throw new DisguiseParseException(LibsMsg.PARSE_DISG_NO_EXIST, args[0]);

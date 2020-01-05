@@ -151,8 +151,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             String[] tempArgs = Arrays.copyOf(disguiseArgs, disguiseArgs.length);
-            tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender.getName(), DisguiseParser.getSkin(sender),
-                    DisguiseParser.getName(entity), DisguiseParser.getSkin(entity));
+            tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender, entity);
 
             try {
                 DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs);

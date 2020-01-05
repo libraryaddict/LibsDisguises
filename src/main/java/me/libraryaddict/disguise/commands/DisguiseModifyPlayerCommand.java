@@ -84,13 +84,10 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
         String[] options = DisguiseUtilities.split(StringUtils.join(newArgs, " "));
 
-        options = DisguiseParser
-                .parsePlaceholders(options, sender.getName(), DisguiseParser.getSkin(sender), DisguiseParser.getName(entityTarget),
-                        DisguiseParser.getSkin(entityTarget));
+        options = DisguiseParser.parsePlaceholders(options, sender, entityTarget);
 
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(),
-                    options);
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

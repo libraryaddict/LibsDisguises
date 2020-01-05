@@ -160,7 +160,7 @@ public enum LibsMsg {
             ChatColor.RED + "Error! You do not have permission to use the parameter %s on the %s disguise!"),
     PARSE_NO_PERM_REF(ChatColor.RED + "You do not have permission to use disguise references!"),
     PARSE_NO_REF(ChatColor.RED + "Cannot find a disguise under the reference %s"),
-    PARSE_OPTION_NA(ChatColor.RED + "Cannot find the option %s"),
+    PARSE_OPTION_NA(ChatColor.RED + "Cannot find the option '%s'"),
     PARSE_SUPPLY_PLAYER(ChatColor.RED + "Error! You need to give a player name!"),
     PARSE_TOO_MANY_ARGS(ChatColor.RED + "Error! %s doesn't know what to do with %s!"),
     PARSE_INVALID_TIME(ChatColor.RED + "Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),

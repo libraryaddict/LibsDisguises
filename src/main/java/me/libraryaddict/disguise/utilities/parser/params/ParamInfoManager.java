@@ -23,6 +23,20 @@ public class ParamInfoManager {
         return paramList;
     }
 
+    public static String toString(Object object) {
+        if (object == null) {
+            return "null";
+        }
+
+        ParamInfo info = getParamInfo(object.getClass());
+
+        if (info == null) {
+            throw new IllegalArgumentException(object.getClass() + " is not handled by ParamInfo!");
+        }
+
+        return info.toString(object);
+    }
+
     public static ParamInfo getParamInfo(Class c) {
         for (ParamInfo info : getParamInfos()) {
             if (!info.isParam(c)) {

@@ -17,6 +17,17 @@
 # %target-skin% - If target is a player, replaces %target-skin% with their skin for use with player disguises
 # If target is not a player, will silently fail
 
+# %held-item% - The currently held item in the main item slot
+# %offhand-item% - The offhand item
+# %armor% - The armor in <Item>,<Item>,<Item>,<Item> format
+# %helmet% %chestplate% %leggings% %boots% - Obvious.
+# These are best used in armor slots, or in settings that accept items. Can also be used alongside /copydisguise
+# to get the string format of an item. By /disguise zombie setiteminmainhand %held-item% - Then /copydisguise.
+# But the plugin will attempt to parse to the "simplest" format. So best used with an item that has more custom data
+# than just the amount.
+
+# These can be used again for the 'target' by prepending 'target-' to the above. So %target-armor% %target-held-item%
+
 #  The below disguise would give a disguised sheep the nametag; Me: libraryaddict, Them: Sheep
 #  Example: 'cow setCustomName "Me: %user-name%, Them: %target-name%"'
 #

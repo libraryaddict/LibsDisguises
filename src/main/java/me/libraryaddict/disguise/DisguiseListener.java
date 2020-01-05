@@ -526,9 +526,7 @@ public class DisguiseListener implements Listener {
                 return;
             }
 
-            options = DisguiseParser
-                    .parsePlaceholders(options, p.getName(), DisguiseParser.getSkin(p), DisguiseParser.getName(entity),
-                            DisguiseParser.getSkin(entity));
+            options = DisguiseParser.parsePlaceholders(options, p, entity);
 
             DisguisePermissions perms = DisguiseParser.getPermissions(p, "disguiseentitymodify");
             DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
