@@ -189,7 +189,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
 
         if (team == null) {
-            return player.getName();
+            team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
+
+            if (team == null) {
+                return player.getName();
+            }
         }
 
         return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
