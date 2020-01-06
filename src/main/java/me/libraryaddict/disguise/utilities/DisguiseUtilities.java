@@ -78,7 +78,8 @@ public class DisguiseUtilities {
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
-    private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed, saveDisguiseCommandUsed;
+    private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed,
+            saveDisguiseCommandUsed;
     private static long libsDisguisesCalled;
     /**
      * Keeps track of what tick this occured
@@ -94,8 +95,13 @@ public class DisguiseUtilities {
     }
 
     public static void setPlayerVelocity(Player player) {
-        velocityID = player.getEntityId();
-        velocityTime = player.getWorld().getTime();
+        if (player == null) {
+            velocityID = 0;
+            velocityTime = 0;
+        } else {
+            velocityID = player.getEntityId();
+            velocityTime = player.getWorld().getTime();
+        }
     }
 
     /**

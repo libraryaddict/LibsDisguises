@@ -180,6 +180,8 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 // The player only sees velocity changes when there is a velocity event. As the method claims there
                 // was no velocity event...
                 event.setCancelled(true);
+                // Clear old velocity, this should only occur once.
+                DisguiseUtilities.setPlayerVelocity(null);
             }
         }
         catch (Exception ex) {
