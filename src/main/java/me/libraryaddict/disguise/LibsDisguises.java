@@ -64,7 +64,7 @@ public class LibsDisguises extends JavaPlugin {
 
         if (!ReflectionManager.getMinecraftVersion().startsWith("1.15")) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
-                    "intended for 1.14.4!");
+                    "intended for 1.15!");
             getPluginLoader().disablePlugin(this);
             return;
         }

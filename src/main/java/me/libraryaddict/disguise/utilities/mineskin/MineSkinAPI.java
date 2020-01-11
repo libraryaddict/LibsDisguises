@@ -120,7 +120,7 @@ public class MineSkinAPI {
                     return null;
                 } else {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code,
-                            "Your image has the error: " + error.error);
+                            LibsMsg.SKIN_API_IMAGE_HAS_ERROR.get(error.error));
                     return null;
                 }
             } else if (connection.getResponseCode() == 400) {
@@ -146,7 +146,7 @@ public class MineSkinAPI {
             }
         }
         catch (SocketTimeoutException ex) {
-            callback.onError(skinUrl == null ? LibsMsg.SKIN_API_TIMEOUT : LibsMsg.SKIN_API_IMAGE_TIMEOUT);
+            callback.onError(skinUrl == null ? LibsMsg.SKIN_API_TIMEOUT_ERROR : LibsMsg.SKIN_API_IMAGE_TIMEOUT);
             return null;
         }
         catch (Exception ex) {
@@ -155,7 +155,7 @@ public class MineSkinAPI {
             try {
                 if (connection != null && (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 ||
                         connection.getResponseCode() == 504 || connection.getResponseCode() == 599)) {
-                    callback.onError(LibsMsg.SKIN_API_TIMEOUT);
+                    callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
                     return null;
                 }
             }

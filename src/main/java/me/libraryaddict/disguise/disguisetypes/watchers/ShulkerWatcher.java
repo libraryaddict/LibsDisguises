@@ -54,8 +54,7 @@ public class ShulkerWatcher extends InsentientWatcher {
 
     @Deprecated
     public void setColor(AnimalColor color) {
-        setData(MetaIndex.SHULKER_COLOR, color.getDyeColor().getWoolData());
-        sendData(MetaIndex.SHULKER_COLOR);
+        setColor(color.getDyeColor());
     }
 
     public void setColor(DyeColor newColor) {

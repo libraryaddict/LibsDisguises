@@ -38,7 +38,7 @@ public class DisguiseAPI {
         disguiseName = disguiseName.replace(".", "");
 
         try {
-            DisguiseConfig.removeCustomDisguise(disguiseInfo);
+            DisguiseConfig.removeCustomDisguise(disguiseName);
             DisguiseConfig.addCustomDisguise(disguiseName, disguiseInfo);
 
             File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");

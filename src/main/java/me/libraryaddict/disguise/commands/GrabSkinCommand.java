@@ -90,18 +90,13 @@ public class GrabSkinCommand implements CommandExecutor {
                 String nName = name;
 
                 if (nName == null) {
-                    if (profile.getName() != null && profile.getName().length() > 0 &&
-                            !DisguiseUtilities.hasGameProfile(profile.getName())) {
-                        nName = profile.getName();
-                    } else {
-                        int i = 1;
+                    int i = 1;
 
-                        while (DisguiseUtilities.hasGameProfile("skin" + i)) {
-                            i++;
-                        }
-
-                        nName = "skin" + i;
+                    while (DisguiseUtilities.hasGameProfile("skin" + i)) {
+                        i++;
                     }
+
+                    nName = "skin" + i;
                 }
 
                 if (profile.getName() == null || !profile.getName().equals(nName)) {
