@@ -87,7 +87,8 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         options = DisguiseParser.parsePlaceholders(options, sender, entityTarget);
 
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options);
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options,
+                    "DisguiseModifyPlayer");
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

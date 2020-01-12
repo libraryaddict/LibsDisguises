@@ -58,7 +58,8 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         options = DisguiseParser.parsePlaceholders(options, sender, sender);
 
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options);
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options,
+                    "DisguiseModify");
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

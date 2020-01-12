@@ -537,8 +537,9 @@ public class DisguiseListener implements Listener {
             }
 
             try {
-                DisguiseParser.callMethods(p, disguise, perms, disguisePerm, new ArrayList<>(Arrays.asList(options)),
-                        options);
+                DisguiseParser
+                        .callMethods(p, disguise, perms, disguisePerm, new ArrayList<>(Arrays.asList(options)), options,
+                                "DisguiseModifyEntity");
                 p.sendMessage(LibsMsg.LISTENER_MODIFIED_DISG.get());
             }
             catch (DisguiseParseException ex) {

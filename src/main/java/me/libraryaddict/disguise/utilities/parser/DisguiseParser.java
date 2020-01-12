@@ -335,6 +335,7 @@ public class DisguiseParser {
      * Returns if command user can access the disguise creation permission type
      */
     private static boolean hasPermissionOption(HashMap<String, Boolean> disguiseOptions, String string) {
+        string = string.toLowerCase();
         // If no permissions were defined, return true
         if (disguiseOptions.isEmpty()) {
             return true;
@@ -712,18 +713,19 @@ public class DisguiseParser {
         String[] newArgs = new String[args.length - toSkip];
         System.arraycopy(args, toSkip, newArgs, 0, args.length - toSkip);
 
-        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs);
+        callMethods(sender, disguise, permissions, disguisePerm, usedOptions, newArgs, permNode);
 
         // Alright. We've constructed our disguise.
         return disguise;
     }
 
     public static void callMethods(CommandSender sender, Disguise disguise, DisguisePermissions disguisePermission,
-            DisguisePerm disguisePerm, Collection<String> usedOptions,
-            String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+            DisguisePerm disguisePerm, Collection<String> usedOptions, String[] args,
+            String permNode) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             DisguiseParseException {
         Method[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
         List<String> list = new ArrayList<>(Arrays.asList(args));
+        HashMap<String, Boolean> disguiseOptions = null;
 
         for (int argIndex = 0; argIndex < args.length; argIndex++) {
             // This is the method name they provided
@@ -786,6 +788,22 @@ public class DisguiseParser {
 
             if (!usedOptions.contains(methodToUse.getName().toLowerCase())) {
                 usedOptions.add(methodToUse.getName().toLowerCase());
+            }
+
+            if (methodToUse.getName().equalsIgnoreCase("setpainting") ||
+                    methodToUse.getName().equalsIgnoreCase("setpotionid") ||
+                    methodToUse.getName().equalsIgnoreCase("setitemstack") ||
+                    methodToUse.getName().equalsIgnoreCase("setblock")) {
+                if (disguiseOptions == null) {
+                    disguiseOptions = getDisguiseOptions(sender, permNode, disguisePerm);
+                }
+
+                String stringValue = ParamInfoManager.toString(valueToSet);
+
+                if (!hasPermissionOption(disguiseOptions, valueToSet + "")) {
+                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, stringValue,
+                            disguisePerm.toReadable());
+                }
             }
 
             doCheck(sender, disguisePermission, disguisePerm, usedOptions);

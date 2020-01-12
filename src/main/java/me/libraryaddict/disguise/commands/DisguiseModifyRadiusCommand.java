@@ -154,7 +154,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender, entity);
 
             try {
-                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs);
+                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs,
+                        "DisguiseModifyRadius");
                 modifiedDisguises++;
             }
             catch (DisguiseParseException ex) {
