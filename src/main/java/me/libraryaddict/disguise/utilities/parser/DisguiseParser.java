@@ -800,7 +800,7 @@ public class DisguiseParser {
 
                 String stringValue = ParamInfoManager.toString(valueToSet);
 
-                if (!hasPermissionOption(disguiseOptions, valueToSet + "")) {
+                if (!hasPermissionOption(disguiseOptions, stringValue)) {
                     throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, stringValue,
                             disguisePerm.toReadable());
                 }
