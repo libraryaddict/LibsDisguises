@@ -7,7 +7,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -596,7 +596,6 @@ public class MetaIndex<Y> {
      * All flag types should never occur twice.
      */
     public static void validateMetadata() {
-
         HashMap<Class, Integer> maxValues = new HashMap<>();
 
         for (MetaIndex type : values()) {
@@ -639,10 +638,14 @@ public class MetaIndex<Y> {
         }
     }
 
+    public String toString() {
+        return LibsMsg.META_INFO.get(getName(this), getFlagWatcher().getSimpleName(), getIndex(),
+                getDefault().getClass().getSimpleName(), DisguiseUtilities.getGson().toJson(getDefault()));
+    }
+
     /**
      * Used for debugging purposes, prints off the registered MetaIndexes
      */
-    @Deprecated
     public static void printMetadata() {
         ArrayList<String> toPrint = new ArrayList<>();
 
@@ -653,9 +656,7 @@ public class MetaIndex<Y> {
 
                 MetaIndex index = (MetaIndex) field.get(null);
 
-                toPrint.add(
-                        index.getFlagWatcher().getSimpleName() + " " + field.getName() + " " + index.getIndex() + " " +
-                                index.getDefault().getClass().getSimpleName());
+                toPrint.add(index.toString());
             }
         }
         catch (Exception ex) {
@@ -742,10 +743,28 @@ public class MetaIndex<Y> {
         return _values;
     }
 
+    public static MetaIndex getMetaIndexByName(String name) {
+        name = name.toUpperCase();
+
+        try {
+            for (Field field : MetaIndex.class.getFields()) {
+                if (!field.getName().equals(name) || field.getType() != MetaIndex.class) {
+                    continue;
+                }
+
+                return (MetaIndex) field.get(null);
+            }
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /**
      * Get the field name of a registered MetaIndex
      */
-    @Deprecated
     public static String getName(MetaIndex metaIndex) {
         try {
             for (Field field : MetaIndex.class.getFields()) {

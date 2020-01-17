@@ -2,8 +2,12 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -76,16 +80,61 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
             }
         } else if (args.length > 0) {
-            if (sender.hasPermission("libsdisguises.reload")) {
-                if (args[0].equalsIgnoreCase("reload")) {
-                    DisguiseConfig.loadConfig();
-                    sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
+            if (args[0].equalsIgnoreCase("reload")) {
+                if (!sender.hasPermission("libsdisguises.reload")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
                     return true;
+                }
+
+                DisguiseConfig.loadConfig();
+                sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
+                return true;
+            } else if (args[0].equalsIgnoreCase("metainfo") || args[0].equalsIgnoreCase("meta")) {
+                if (!sender.hasPermission("libsdisguises.metainfo")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                if (args.length > 1) {
+                    MetaIndex index = MetaIndex.getMetaIndexByName(args[1]);
+
+                    if (index == null) {
+                        sender.sendMessage(LibsMsg.META_NOT_FOUND.get());
+                        return true;
+                    }
+
+                    sender.sendMessage(index.toString());
                 } else {
-                    sender.sendMessage(LibsMsg.LIBS_RELOAD_WRONG.get());
+                    ArrayList<String> names = new ArrayList<>();
+
+                    for (MetaIndex index : MetaIndex.values()) {
+                        names.add(MetaIndex.getName(index));
+                    }
+
+                    names.sort(String::compareToIgnoreCase);
+
+                    ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.META_VALUES.get());
+
+                    Iterator<String> itel = names.iterator();
+
+                    while (itel.hasNext()) {
+                        String name = itel.next();
+
+                        builder.appendLegacy(name);
+                        builder.event(
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd.getName() + " metainfo " + name));
+                        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new ComponentBuilder("").appendLegacy(LibsMsg.META_CLICK_SHOW.get(name)).create()));
+
+                        if (itel.hasNext()) {
+                            builder.appendLegacy(LibsMsg.META_VALUE_SEPERATOR.get());
+                        }
+                    }
+
+                    sender.spigot().sendMessage(builder.create());
                 }
             } else {
-                sender.sendMessage(LibsMsg.NO_PERM.get());
+                sender.sendMessage(LibsMsg.LIBS_COMMAND_WRONG_ARG.get());
             }
         }
         return true;
