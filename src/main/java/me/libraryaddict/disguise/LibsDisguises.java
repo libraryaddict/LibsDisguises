@@ -36,9 +36,27 @@ public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
     private String buildNumber;
+    private boolean reloaded;
+
+    @Override
+    public void onLoad() {
+        if (Bukkit.getServer().getWorlds().isEmpty()) {
+            return;
+        }
+
+        reloaded = true;
+        getLogger().severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
+                "reloads gracefully!");
+    }
 
     @Override
     public void onEnable() {
+        if (reloaded) {
+            getLogger()
+                    .severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
+                            "reloads gracefully!");
+        }
+
         instance = this;
 
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
