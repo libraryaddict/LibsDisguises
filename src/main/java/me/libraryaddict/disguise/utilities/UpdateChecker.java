@@ -72,21 +72,9 @@ public class UpdateChecker {
     private String fetchSpigotVersion() {
         try {
             // We're connecting to spigot's API
-            URL url = new URL("https://www.spigotmc.org/api/general.php");
+            URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID);
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            // We're writing a body that contains the API access key (Not required and obsolete, but!)
-            con.setDoOutput(true);
-
-            // Can't think of a clean way to represent this without looking bad
-            String body = "key" + "=" + "98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4" + "&" +
-                    "resource=" + this.resourceID;
-
-            // Get the output stream, what the site receives
-            try (OutputStream stream = con.getOutputStream()) {
-                // Write our body containing version and access key
-                stream.write(body.getBytes(StandardCharsets.UTF_8));
-            }
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
