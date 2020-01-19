@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.packets.packethandlers;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -9,11 +8,9 @@ import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
@@ -28,7 +25,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -36,6 +32,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -159,29 +156,40 @@ public class PacketHandlerSpawn implements IPacketHandler {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
 
             String name = playerDisguise.getName();
-            WrappedGameProfile gameProfile = playerDisguise.getGameProfile();
+            WrappedGameProfile spawnProfile = playerDisguise.isNameVisible() ? playerDisguise.getGameProfile() :
+                    ReflectionManager.getGameProfileWithThisSkin(UUID.randomUUID(), "",
+                            playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();
 
-            // Send player info along with the disguise
-            PacketContainer sendTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+            if (!playerDisguise.isDisplayedInTab() || !playerDisguise.isNameVisible()) {
+                // Send player info along with the disguise
+                PacketContainer sendTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-            if (!((PlayerDisguise) disguise).isDisplayedInTab()) {
                 // Add player to the list, necessary to spawn them
                 sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
 
                 List playerList = Collections
-                        .singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), gameProfile));
+                        .singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), spawnProfile));
                 sendTab.getModifier().write(1, playerList);
 
                 packets.addPacket(sendTab);
+
+                // Remove player from the list
+                PacketContainer deleteTab = sendTab.shallowClone();
+                deleteTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
+
+                if (LibsPremium.getPaidInformation() == null ||
+                        LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
+                    packets.addDelayedPacket(deleteTab, DisguiseConfig.getPlayerDisguisesTablistExpires());
+                }
             }
 
             // Spawn the player
             PacketContainer spawnPlayer = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
 
             spawnPlayer.getIntegers().write(0, entityId); // Id
-            spawnPlayer.getModifier().write(1, gameProfile.getUUID());
+            spawnPlayer.getModifier().write(1, spawnProfile.getUUID());
 
             Location spawnAt = disguisedEntity.getLocation();
 
@@ -255,17 +263,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 packets.addDelayedPacket(metaPacket, 7);
                 packets.setRemoveMetaAt(7);
-            }
-
-            // Remove player from the list
-            PacketContainer deleteTab = sendTab.shallowClone();
-            deleteTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
-
-            if (!((PlayerDisguise) disguise).isDisplayedInTab()) {
-                if (LibsPremium.getPaidInformation() == null ||
-                        LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    packets.addDelayedPacket(deleteTab, DisguiseConfig.getPlayerDisguisesTablistExpires());
-                }
             }
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();

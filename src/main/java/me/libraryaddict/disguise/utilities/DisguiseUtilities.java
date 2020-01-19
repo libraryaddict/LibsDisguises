@@ -855,7 +855,7 @@ public class DisguiseUtilities {
         return gson;
     }
 
-    public static void init(LibsDisguises disguises) {
+    public static void init() {
         try {
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         }
@@ -903,6 +903,12 @@ public class DisguiseUtilities {
             catch (Exception ex) {
                 getLogger().warning("The file '" + key + "' does not belong in " + savedDisguises.getAbsolutePath());
             }
+        }
+
+        registerNoName(Bukkit.getScoreboardManager().getMainScoreboard());
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            registerNoName(player.getScoreboard());
         }
     }
 
@@ -1206,6 +1212,18 @@ public class DisguiseUtilities {
         }
 
         player.updateInventory();
+    }
+
+    public static void registerNoName(Scoreboard scoreboard) {
+        Team mainTeam = scoreboard.getTeam("LD_NoName");
+
+        if (mainTeam == null) {
+            mainTeam = scoreboard.registerNewTeam("LD_NoName");
+            mainTeam.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
+            mainTeam.addEntry("");
+        } else if (!mainTeam.hasEntry("")) {
+            mainTeam.addEntry("");
+        }
     }
 
     public static void removeSelfDisguiseScoreboard(Player player) {

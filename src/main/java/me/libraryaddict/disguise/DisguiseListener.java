@@ -334,6 +334,17 @@ public class DisguiseListener implements Listener {
                 }
             }
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!event.getPlayer().isOnline()) {
+                    return;
+                }
+
+                DisguiseUtilities.registerNoName(event.getPlayer().getScoreboard());
+            }
+        }.runTaskLater(LibsDisguises.getInstance(), 20);
     }
 
     /**

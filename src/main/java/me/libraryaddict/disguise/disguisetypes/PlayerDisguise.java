@@ -28,6 +28,7 @@ public class PlayerDisguise extends TargetedDisguise {
     private WrappedGameProfile gameProfile;
     private String playerName;
     private String skinToUse;
+    private boolean nameVisible = true;
     private UUID uuid = UUID.randomUUID();
 
     private PlayerDisguise() {
@@ -86,6 +87,32 @@ public class PlayerDisguise extends TargetedDisguise {
         return uuid;
     }
 
+    public boolean isNameVisible() {
+        return nameVisible;
+    }
+
+    public PlayerDisguise setNameVisible(boolean nameVisible) {
+        if (isNameVisible() == nameVisible) {
+            return this;
+        }
+
+        if (isDisguiseInUse()) {
+            if (stopDisguise()) {
+                this.nameVisible = nameVisible;
+
+                if (!startDisguise()) {
+                    throw new IllegalStateException("Unable to restart disguise");
+                }
+            } else {
+                throw new IllegalStateException("Unable to restart disguise");
+            }
+        } else {
+            this.nameVisible = nameVisible;
+        }
+
+        return this;
+    }
+
     @Override
     public PlayerDisguise addPlayer(Player player) {
         return (PlayerDisguise) super.addPlayer(player);
@@ -110,6 +137,7 @@ public class PlayerDisguise extends TargetedDisguise {
             disguise.setSkin(getSkin());
         }
 
+        disguise.setNameVisible(isNameVisible());
         disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
         disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
@@ -215,12 +243,28 @@ public class PlayerDisguise extends TargetedDisguise {
         return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         if (name.length() > 16) {
             name = name.substring(0, 16);
         }
 
-        playerName = name;
+        if (name.equals(playerName)) {
+            return;
+        }
+
+        if (isDisguiseInUse()) {
+            if (stopDisguise()) {
+                playerName = name;
+
+                if (!startDisguise()) {
+                    throw new IllegalStateException("Unable to restart disguise");
+                }
+            } else {
+                throw new IllegalStateException("Unable to restart disguise");
+            }
+        } else {
+            playerName = name;
+        }
 
         // Scare monger for the pirates of a certain site.
         if (LibsPremium.getUserID().equals("12345")) {
