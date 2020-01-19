@@ -3,7 +3,9 @@ package me.libraryaddict.disguise.utilities.parser.params;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfoTypes;
@@ -127,6 +129,15 @@ public class ParamInfoManager {
             }
             catch (Exception ex) {
                 ex.printStackTrace();
+            }
+        }
+
+        if (watcherClass == PlayerWatcher.class) {
+            try {
+                methods.add(PlayerDisguise.class.getMethod("setNameVisible", boolean.class));
+            }
+            catch (NoSuchMethodException e) {
+                e.printStackTrace();
             }
         }
 

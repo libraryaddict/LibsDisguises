@@ -19,7 +19,6 @@ public class PacketsManager {
     private static PacketListener clientInteractEntityListener;
     private static PacketListener inventoryListener;
     private static boolean inventoryModifierEnabled;
-    private static LibsDisguises libsDisguises;
     private static PacketListener mainListener;
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
@@ -32,8 +31,8 @@ public class PacketsManager {
         // You ain't supposed to be allowed to 'interact' with a item that cannot be clicked.
         // Because it kicks you for hacking.
 
-        clientInteractEntityListener = new PacketListenerClientInteract(libsDisguises);
-        PacketListener tabListListener = new PacketListenerTabList(libsDisguises);
+        clientInteractEntityListener = new PacketListenerClientInteract(LibsDisguises.getInstance());
+        PacketListener tabListListener = new PacketListenerTabList(LibsDisguises.getInstance());
 
         ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
         ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
@@ -45,14 +44,13 @@ public class PacketsManager {
     /**
      * Creates the packet listeners
      */
-    public static void init(LibsDisguises plugin) {
-        libsDisguises = plugin;
-        soundsListener = new PacketListenerSounds(libsDisguises);
+    public static void init() {
+        soundsListener = new PacketListenerSounds(LibsDisguises.getInstance());
 
         // Self disguise (/vsd) listener
-        viewDisguisesListener = new PacketListenerViewSelfDisguise(libsDisguises);
+        viewDisguisesListener = new PacketListenerViewSelfDisguise(LibsDisguises.getInstance());
 
-        inventoryListener = new PacketListenerInventory(libsDisguises);
+        inventoryListener = new PacketListenerInventory(LibsDisguises.getInstance());
         packetsHandler = new PacketsHandler();
     }
 
@@ -161,7 +159,7 @@ public class PacketsManager {
                 packetsToListen.add(Server.ENTITY_STATUS);
             }
 
-            mainListener = new PacketListenerMain(libsDisguises, packetsToListen);
+            mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
 
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
         }

@@ -29,6 +29,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 public class DisguiseParser {
+    /**
+     * <Setter, <Getter, DefaultValue>>
+     */
     private static HashMap<Method, Map.Entry<Method, Object>> defaultWatcherValues = new HashMap<>();
 
     public static void createDefaultMethods() {
@@ -113,6 +116,10 @@ public class DisguiseParser {
         catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    public static HashMap<Method, Entry<Method, Object>> getMethodDefaults() {
+        return defaultWatcherValues;
     }
 
     public static String parseToString(Disguise disguise) {

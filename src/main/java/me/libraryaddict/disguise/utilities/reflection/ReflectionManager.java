@@ -1,19 +1,22 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.EntityPose;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.disguisetypes.VillagerData;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -26,13 +29,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager {
-    private static String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static String bukkitVersion;
     private static Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
     private static Constructor<?> boundingBoxConstructor;
@@ -45,6 +49,8 @@ public class ReflectionManager {
     private static Field trackedEntitiesField;
 
     public static void init() {
+        bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+
         try {
             Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
@@ -1175,5 +1181,363 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    private static Class<? extends FlagWatcher> getFlagWatcher(DisguiseType disguiseType) {
+        Class<? extends FlagWatcher> watcherClass;
+
+        try {
+            switch (disguiseType) {
+                case ARROW:
+                    watcherClass = TippedArrowWatcher.class;
+                    break;
+                case COD:
+                case SALMON:
+                    watcherClass = FishWatcher.class;
+                    break;
+                case SPECTRAL_ARROW:
+                    watcherClass = ArrowWatcher.class;
+                    break;
+                case PRIMED_TNT:
+                    watcherClass = TNTWatcher.class;
+                    break;
+                case MINECART_CHEST:
+                case MINECART_HOPPER:
+                case MINECART_MOB_SPAWNER:
+                case MINECART_TNT:
+                    watcherClass = MinecartWatcher.class;
+                    break;
+                case SPIDER:
+                case CAVE_SPIDER:
+                    watcherClass = SpiderWatcher.class;
+                    break;
+                case PIG_ZOMBIE:
+                case HUSK:
+                case DROWNED:
+                    watcherClass = ZombieWatcher.class;
+                    break;
+                case MAGMA_CUBE:
+                    watcherClass = SlimeWatcher.class;
+                    break;
+                case ELDER_GUARDIAN:
+                    watcherClass = GuardianWatcher.class;
+                    break;
+                case WITHER_SKELETON:
+                case STRAY:
+                    watcherClass = SkeletonWatcher.class;
+                    break;
+                case ILLUSIONER:
+                case EVOKER:
+                    watcherClass = IllagerWizardWatcher.class;
+                    break;
+                case PUFFERFISH:
+                    watcherClass = PufferFishWatcher.class;
+                    break;
+                default:
+                    watcherClass = (Class<? extends FlagWatcher>) Class.forName(
+                            "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) +
+                                    "Watcher");
+                    break;
+            }
+        }
+        catch (ClassNotFoundException ex) {
+            // There is no explicit watcher for this entity.
+            Class entityClass = disguiseType.getEntityType().getEntityClass();
+
+            if (entityClass != null) {
+                if (Tameable.class.isAssignableFrom(entityClass)) {
+                    watcherClass = TameableWatcher.class;
+                } else if (Ageable.class.isAssignableFrom(entityClass)) {
+                    watcherClass = AgeableWatcher.class;
+                } else if (Creature.class.isAssignableFrom(entityClass)) {
+                    watcherClass = InsentientWatcher.class;
+                } else if (LivingEntity.class.isAssignableFrom(entityClass)) {
+                    watcherClass = LivingWatcher.class;
+                } else if (Fish.class.isAssignableFrom(entityClass)) {
+                    watcherClass = FishWatcher.class;
+                } else {
+                    watcherClass = FlagWatcher.class;
+                }
+            } else {
+                watcherClass = FlagWatcher.class; // Disguise is unknown type
+            }
+        }
+
+        return watcherClass;
+    }
+
+    /**
+     * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their
+     * sound volume
+     * for mob noises. As well as setting their watcher class and entity size.
+     */
+    public static void registerValues() {
+        for (DisguiseType disguiseType : DisguiseType.values()) {
+            if (disguiseType.getEntityType() == null) {
+                continue;
+            }
+
+            Class watcherClass = getFlagWatcher(disguiseType);
+
+            if (watcherClass == null) {
+                DisguiseUtilities.getLogger()
+                        .severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
+                continue;
+            }
+
+            // Invalidate invalid distribution
+            if (LibsPremium.isPremium() &&
+                    ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() &&
+                            !LibsPremium.getPaidInformation().isLegit()) ||
+                            (LibsPremium.getPluginInformation() != null &&
+                                    LibsPremium.getPluginInformation().isPremium() &&
+                                    !LibsPremium.getPluginInformation().isLegit()))) {
+                throw new IllegalStateException(
+                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
+                                "reporting this error!");
+            }
+
+            disguiseType.setWatcherClass(watcherClass);
+
+            if (LibsDisguises.getInstance() == null || DisguiseValues.getDisguiseValues(disguiseType) != null) {
+                continue;
+            }
+
+            createNMSValues(disguiseType);
+        }
+    }
+
+    private static void createNMSValues(DisguiseType disguiseType) {
+        String nmsEntityName = toReadable(disguiseType.name());
+        Class nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+
+        if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
+            String[] split = splitReadable(disguiseType.name());
+            ArrayUtils.reverse(split);
+
+            nmsEntityName = StringUtils.join(split);
+            nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
+
+            if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
+                nmsEntityName = null;
+            }
+        }
+
+        if (nmsEntityName == null) {
+            switch (disguiseType) {
+                case DONKEY:
+                    nmsEntityName = "HorseDonkey";
+                    break;
+                case ARROW:
+                    nmsEntityName = "TippedArrow";
+                    break;
+                case DROPPED_ITEM:
+                    nmsEntityName = "Item";
+                    break;
+                case FIREBALL:
+                    nmsEntityName = "LargeFireball";
+                    break;
+                case FIREWORK:
+                    nmsEntityName = "Fireworks";
+                    break;
+                case GIANT:
+                    nmsEntityName = "GiantZombie";
+                    break;
+                case HUSK:
+                    nmsEntityName = "ZombieHusk";
+                    break;
+                case ILLUSIONER:
+                    nmsEntityName = "IllagerIllusioner";
+                    break;
+                case LEASH_HITCH:
+                    nmsEntityName = "Leash";
+                    break;
+                case MINECART:
+                    nmsEntityName = "MinecartRideable";
+                    break;
+                case MINECART_COMMAND:
+                    nmsEntityName = "MinecartCommandBlock";
+                    break;
+                case MINECART_TNT:
+                    nmsEntityName = "MinecartTNT";
+                    break;
+                case MULE:
+                    nmsEntityName = "HorseMule";
+                    break;
+                case PRIMED_TNT:
+                    nmsEntityName = "TNTPrimed";
+                    break;
+                case PUFFERFISH:
+                    nmsEntityName = "PufferFish";
+                    break;
+                case SPLASH_POTION:
+                    nmsEntityName = "Potion";
+                    break;
+                case STRAY:
+                    nmsEntityName = "SkeletonStray";
+                    break;
+                case TRIDENT:
+                    nmsEntityName = "ThrownTrident";
+                    break;
+                case WANDERING_TRADER:
+                    nmsEntityName = "VillagerTrader";
+                    break;
+                case TRADER_LLAMA:
+                    nmsEntityName = "LLamaTrader"; // Interesting capitalization
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        try {
+            if (disguiseType == DisguiseType.UNKNOWN) {
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
+
+                disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
+
+                DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+
+                if (sound != null) {
+                    sound.setDamageAndIdleSoundVolume(1f);
+                }
+
+                return;
+            }
+
+            if (nmsEntityName == null) {
+                DisguiseUtilities.getLogger().warning("Entity name not found! (" + disguiseType.name() + ")");
+                return;
+            }
+
+            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType, nmsEntityName);
+
+            if (nmsEntity == null) {
+                DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");
+                return;
+            }
+
+            disguiseType.setTypeId(ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
+
+            Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
+
+            int entitySize = 0;
+
+            for (Field field : ReflectionManager.getNmsClass("Entity").getFields()) {
+                if (field.getType().getName().equals("EnumEntitySize")) {
+                    Enum enumEntitySize = (Enum) field.get(nmsEntity);
+
+                    entitySize = enumEntitySize.ordinal();
+
+                    break;
+                }
+            }
+
+            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize,
+                    bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
+
+            WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
+            ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
+            boolean loggedName = false;
+
+            for (WrappedWatchableObject watch : watcher.getWatchableObjects()) {
+                MetaIndex flagType = MetaIndex.getMetaIndex(disguiseType.getWatcherClass(), watch.getIndex());
+
+                if (flagType == null) {
+                    DisguiseUtilities.getLogger()
+                            .severe("MetaIndex not found for " + disguiseType + "! Index: " + watch.getIndex());
+                    DisguiseUtilities.getLogger()
+                            .severe("Value: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" +
+                                    nmsEntity.getClass() + ") & " + disguiseType.getWatcherClass().getSimpleName());
+                    continue;
+                }
+
+                indexes.remove(flagType);
+
+                Object ourValue = ReflectionManager.convertInvalidMeta(flagType.getDefault());
+                Object nmsValue = ReflectionManager.convertInvalidMeta(watch.getValue());
+
+                if (ourValue.getClass() != nmsValue.getClass()) {
+                    if (!loggedName) {
+                        DisguiseUtilities.getLogger().severe(StringUtils.repeat("=", 20));
+                        DisguiseUtilities.getLogger()
+                                .severe("MetaIndex mismatch! Disguise " + disguiseType + ", Entity " + nmsEntityName);
+                        loggedName = true;
+                    }
+
+                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
+                    DisguiseUtilities.getLogger()
+                            .severe("Index: " + watch.getIndex() + " | " + flagType.getFlagWatcher().getSimpleName() +
+                                    " | " + MetaIndex.getName(flagType));
+                    Object flagDefault = flagType.getDefault();
+
+                    DisguiseUtilities.getLogger()
+                            .severe("LibsDisguises: " + flagDefault + " (" + flagDefault.getClass() + ")");
+                    DisguiseUtilities.getLogger()
+                            .severe("LibsDisguises Converted: " + ourValue + " (" + ourValue.getClass() + ")");
+                    DisguiseUtilities.getLogger()
+                            .severe("Minecraft: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ")");
+                    DisguiseUtilities.getLogger()
+                            .severe("Minecraft Converted: " + nmsValue + " (" + nmsValue.getClass() + ")");
+                    DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
+                }
+            }
+
+            for (MetaIndex index : indexes) {
+                DisguiseUtilities.getLogger().warning(
+                        disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() +
+                                " at index " + index.getIndex());
+            }
+
+            DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+
+            if (sound != null) {
+                Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);
+
+                if (soundStrength != null) {
+                    sound.setDamageAndIdleSoundVolume(soundStrength);
+                }
+            }
+
+            // Get the bounding box
+            disguiseValues.setAdultBox(ReflectionManager.getBoundingBox(bukkitEntity));
+
+            if (bukkitEntity instanceof Ageable) {
+                ((Ageable) bukkitEntity).setBaby();
+
+                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+            } else if (bukkitEntity instanceof Zombie) {
+                ((Zombie) bukkitEntity).setBaby(true);
+
+                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+            }
+
+            //disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
+        }
+        catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
+            DisguiseUtilities.getLogger()
+                    .severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
+            DisguiseUtilities.getLogger().severe("Before reporting this error, " +
+                    "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+            DisguiseUtilities.getLogger().severe("Development builds are available at (ProtocolLib) " +
+                    "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) https://ci.md-5" +
+                    ".net/job/LibsDisguises/");
+
+            ex.printStackTrace();
+        }
+    }
+
+    private static String[] splitReadable(String string) {
+        String[] split = string.split("_");
+
+        for (int i = 0; i < split.length; i++) {
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+        }
+
+        return split;
+    }
+
+    private static String toReadable(String string) {
+        return StringUtils.join(splitReadable(string));
     }
 }
