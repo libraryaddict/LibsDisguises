@@ -113,7 +113,7 @@ public enum LibsMsg {
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown option '%s' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
-    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload' or 'metainfo'?"),
+    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'permtest' or 'metainfo'?"),
     LIMITED_RADIUS(ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY(ChatColor.RED + "Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
@@ -235,7 +235,16 @@ public enum LibsMsg {
     META_NOT_FOUND(ChatColor.RED + "No meta exists under that name!"),
     META_VALUES(ChatColor.BLUE + "Metas: " + ChatColor.DARK_AQUA),
     META_VALUE_SEPERATOR(ChatColor.AQUA + ", " + ChatColor.DARK_AQUA),
-    META_CLICK_SHOW(ChatColor.GOLD + "Click to show %s");
+    META_CLICK_SHOW(ChatColor.GOLD + "Click to show %s"),
+    LIBS_PERM_CHECK_INFO_1(ChatColor.AQUA + "Now checking for the permission 'libsdisguises.disguise.pig'"),
+    LIBS_PERM_CHECK_INFO_2(ChatColor.AQUA +
+            "If you did not give this permission, please set it. You can supply a player name to test another player."),
+    NORMAL_PERM_CHECK_SUCCESS(ChatColor.GOLD + "Normal permission check, success."),
+    NORMAL_PERM_CHECK_FAIL(ChatColor.RED + "Normal permission check, fail."),
+    LIBS_PERM_CHECK_SUCCESS(
+            ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
+    LIBS_PERM_CHECK_FAIL(
+            ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!");
 
     private String string;
 

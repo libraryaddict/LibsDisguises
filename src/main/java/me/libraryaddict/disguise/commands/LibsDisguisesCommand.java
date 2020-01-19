@@ -2,17 +2,22 @@ package me.libraryaddict.disguise.commands;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.permissions.Permissible;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -89,6 +94,40 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 DisguiseConfig.loadConfig();
                 sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
                 return true;
+            } else if (args[0].equalsIgnoreCase("permtest")) {
+                if (!sender.hasPermission("libsdisguises.permtest")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                Permissible player;
+
+                if (args.length > 1) {
+                    player = Bukkit.getPlayer(args[1]);
+
+                    if (player == null) {
+                        sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[1]));
+                        return true;
+                    }
+                } else {
+                    player = sender;
+                }
+
+                DisguisePermissions permissions = new DisguisePermissions(player, "disguise");
+                sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_INFO_1.get());
+                sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_INFO_2.get());
+
+                if (player.hasPermission("libsdisguises.disguise.pig")) {
+                    sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_SUCCESS.get());
+
+                    if (permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.PIG))) {
+                        sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_SUCCESS.get());
+                    } else {
+                        sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_FAIL.get());
+                    }
+                } else {
+                    sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_FAIL.get());
+                }
             } else if (args[0].equalsIgnoreCase("metainfo") || args[0].equalsIgnoreCase("meta")) {
                 if (!sender.hasPermission("libsdisguises.metainfo")) {
                     sender.sendMessage(LibsMsg.NO_PERM.get());
