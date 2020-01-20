@@ -42,6 +42,9 @@ SaveDisguises:
   Players: false
   Entities: false
 
+# Do names go beyond the 16 char limit for player disguises?
+ExtendedNames: true
+
 # Does the player keep their disguise after they die?
 KeepDisguises:
   PlayerDeath: false

@@ -155,9 +155,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
         } else if (disguise.getType().isPlayer()) {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
 
-            String name = playerDisguise.getName();
             WrappedGameProfile spawnProfile = playerDisguise.isNameVisible() ? playerDisguise.getGameProfile() :
-                    ReflectionManager.getGameProfileWithThisSkin(UUID.randomUUID(), "",
+                    ReflectionManager.getGameProfileWithThisSkin(UUID.randomUUID(),
+                            playerDisguise.isNameVisible() ? playerDisguise.getProfileName() : "",
                             playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();

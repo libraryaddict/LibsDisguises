@@ -93,6 +93,15 @@ public class DisguiseConfig {
     private static int playerDisguisesTablistExpires;
     private static boolean dynamicExpiry;
     private static boolean playerHideArmor;
+    private static boolean extendedDisguisesNames;
+
+    public static boolean isExtendedDisguiseNames() {
+        return extendedDisguisesNames;
+    }
+
+    public static void setExtendedDisguiseNames(boolean extendedDisguiseNames) {
+        extendedDisguisesNames = extendedDisguiseNames;
+    }
 
     public static boolean isPlayerHideArmor() {
         return playerHideArmor;
@@ -388,6 +397,7 @@ public class DisguiseConfig {
         setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpires"));
         setDynamicExpiry(config.getBoolean("DynamicExpiry"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
+        setExtendedDisguiseNames(config.getBoolean("ExtendedNames"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

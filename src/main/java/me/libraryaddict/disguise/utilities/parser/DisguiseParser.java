@@ -136,7 +136,7 @@ public class DisguiseParser {
             stringBuilder.append(disguise.getType().name());
 
             if (disguise.isPlayerDisguise()) {
-                stringBuilder.append(" ").append(((PlayerDisguise) disguise).getName());
+                stringBuilder.append(" ").append(DisguiseUtilities.quote(((PlayerDisguise) disguise).getName()));
             }
 
             for (Method m : ParamInfoManager.getDisguiseWatcherMethods(disguise.getType().getWatcherClass())) {

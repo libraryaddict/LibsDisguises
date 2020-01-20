@@ -531,7 +531,7 @@ public abstract class Disguise {
                     deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
                     deleteTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                             new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                    WrappedChatComponent.fromText(disguise.getName()))));
+                                    WrappedChatComponent.fromText(disguise.getProfileName()))));
 
                     try {
                         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -820,7 +820,7 @@ public abstract class Disguise {
                 addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
                 addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                         new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                WrappedChatComponent.fromText(disguise.getName()))));
+                                WrappedChatComponent.fromText(disguise.getProfileName()))));
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {

@@ -49,8 +49,6 @@ public class ReflectionManager {
     private static Field trackedEntitiesField;
 
     public static void init() {
-        bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-
         try {
             Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
@@ -286,6 +284,10 @@ public class ReflectionManager {
     }
 
     public static String getBukkitVersion() {
+        if (bukkitVersion == null) {
+            bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+        }
+
         return bukkitVersion;
     }
 

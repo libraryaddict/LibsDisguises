@@ -343,6 +343,10 @@ public class DisguiseListener implements Listener {
                 }
 
                 DisguiseUtilities.registerNoName(event.getPlayer().getScoreboard());
+
+                if (event.getPlayer().getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
+                    DisguiseUtilities.registerExtendedNames(event.getPlayer().getScoreboard());
+                }
             }
         }.runTaskLater(LibsDisguises.getInstance(), 20);
     }
