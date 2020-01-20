@@ -113,6 +113,8 @@ permissions:
          libsdisguises.seecmd.disguisemodifyradius: true
          libsdisguises.seecmd.disguisemodifyentity: true
          libsdisguises.seecmd.copydisguise: true
+         libsdisguises.seecmd.grabskin: true
+         libsdisguises.seecmd.savedisguise: true
     libsdisguises.seecmd.libsdisguises:
       description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguiseviewself:
