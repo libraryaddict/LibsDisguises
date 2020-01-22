@@ -246,37 +246,27 @@ public class DisguiseParser {
 
     private static HashMap<String, Boolean> getDisguiseOptions(CommandSender sender, String permNode,
             DisguisePerm type) {
-        switch (type.getType()) {
-            case PLAYER:
-            case FALLING_BLOCK:
-            case PAINTING:
-            case SPLASH_POTION:
-            case FISHING_HOOK:
-            case DROPPED_ITEM:
-                HashMap<String, Boolean> returns = new HashMap<>();
+        HashMap<String, Boolean> returns = new HashMap<>();
 
-                String beginning = "libsdisguises.options." + permNode.toLowerCase() + ".";
+        String beginning = "libsdisguises.options." + permNode.toLowerCase() + ".";
 
-                for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-                    String lowerPerm = permission.getPermission().toLowerCase();
+        for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
+            String lowerPerm = permission.getPermission().toLowerCase();
 
-                    if (lowerPerm.startsWith(beginning)) {
-                        String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+            if (lowerPerm.startsWith(beginning)) {
+                String[] split = lowerPerm.substring(beginning.length()).split("\\.");
 
-                        if (split.length > 1) {
-                            if (split[0].replace("_", "").equals(type.toReadable().toLowerCase().replace(" ", ""))) {
-                                for (int i = 1; i < split.length; i++) {
-                                    returns.put(split[i], permission.getValue());
-                                }
-                            }
+                if (split.length > 1) {
+                    if (split[0].replace("_", "").equals(type.toReadable().toLowerCase().replace(" ", ""))) {
+                        for (int i = 1; i < split.length; i++) {
+                            returns.put(split[i], permission.getValue());
                         }
                     }
                 }
-
-                return returns;
-            default:
-                return new HashMap<>();
+            }
         }
+
+        return returns;
     }
 
     public static DisguisePerm getDisguisePerm(String name) {
