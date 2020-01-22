@@ -722,7 +722,7 @@ public class DisguiseParser {
             DisguiseParseException {
         Method[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
         List<String> list = new ArrayList<>(Arrays.asList(args));
-        HashMap<String, Boolean> disguiseOptions = null;
+        HashMap<String, Boolean> disguiseOptions = getDisguiseOptions(sender, permNode, disguisePerm);
 
         for (int argIndex = 0; argIndex < args.length; argIndex++) {
             // This is the method name they provided
@@ -787,14 +787,7 @@ public class DisguiseParser {
                 usedOptions.add(methodToUse.getName().toLowerCase());
             }
 
-            if (methodToUse.getName().equalsIgnoreCase("setpainting") ||
-                    methodToUse.getName().equalsIgnoreCase("setpotionid") ||
-                    methodToUse.getName().equalsIgnoreCase("setitemstack") ||
-                    methodToUse.getName().equalsIgnoreCase("setblock")) {
-                if (disguiseOptions == null) {
-                    disguiseOptions = getDisguiseOptions(sender, permNode, disguisePerm);
-                }
-
+            if (!disguiseOptions.isEmpty()) {
                 String stringValue = ParamInfoManager.toString(valueToSet);
 
                 if (!hasPermissionOption(disguiseOptions, stringValue)) {
