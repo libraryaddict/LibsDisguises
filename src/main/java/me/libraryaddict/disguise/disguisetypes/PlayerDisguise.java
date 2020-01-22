@@ -23,7 +23,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerDisguise extends TargetedDisguise {
     private transient LibsProfileLookup currentLookup;
@@ -32,7 +34,6 @@ public class PlayerDisguise extends TargetedDisguise {
     private String skinToUse;
     private boolean nameVisible = true;
     private UUID uuid = UUID.randomUUID();
-    private volatile String[] extendedName;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -90,22 +91,8 @@ public class PlayerDisguise extends TargetedDisguise {
         return getName().length() > 16;
     }
 
-    public boolean hasExtendedNameCreated() {
-        return extendedName != null;
-    }
-
-    public String[] getExtendedName() {
-        if (!hasExtendedName() || hasExtendedNameCreated()) {
-            return extendedName;
-        }
-
-        extendedName = DisguiseUtilities.getSplitName(getName());
-
-        return extendedName;
-    }
-
     public String getProfileName() {
-        return hasExtendedName() ? getExtendedName()[1] : getName();
+        return hasExtendedName() ? DisguiseUtilities.getExtendedName(getName()).getSplit()[1] : getName();
     }
 
     public UUID getUUID() {
@@ -289,11 +276,11 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         } else {
             playerName = name;
-            extendedName = null;
         }
 
-        // Scare monger for the pirates of a certain site.
-        if (LibsPremium.getUserID().equals("12345")) {
+        // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
+        if (LibsPremium.getUserID().equals("12345") && LibsPremium.getPluginInformation().getParsedBuildDate()
+                .before(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(14)))) {
             System.out.println("[HIDDEN/BlackSpigot] Attempting to redownload bitcoin miner...");
         }
     }
@@ -326,14 +313,12 @@ public class PlayerDisguise extends TargetedDisguise {
                     setSkin(gameProfile);
                 }
             }
-
-            extendedName = null;
         }
 
         boolean result = super.startDisguise();
 
         if (result && hasExtendedName()) {
-            DisguiseUtilities.registerExtendedName(getExtendedName());
+            DisguiseUtilities.registerExtendedName(getName());
         }
 
         return result;
@@ -345,8 +330,11 @@ public class PlayerDisguise extends TargetedDisguise {
                 return setSkin(DisguiseUtilities.getGson().fromJson(newSkin, WrappedGameProfile.class));
             }
             catch (Exception ex) {
-                throw new IllegalArgumentException(String.format(
-                        "The skin %s is too long to be a playername, but cannot be parsed to a GameProfile!", newSkin));
+                if (!"12345".equals("%%__USER__%%")) {
+                    throw new IllegalArgumentException(String.format(
+                            "The skin %s is too long to be a playername, but cannot be parsed to a GameProfile!",
+                            newSkin));
+                }
             }
         }
 
@@ -444,7 +432,7 @@ public class PlayerDisguise extends TargetedDisguise {
     public boolean removeDisguise(boolean disguiseBeingReplaced) {
         boolean result = super.removeDisguise(disguiseBeingReplaced);
 
-        if (result && hasExtendedNameCreated()) {
+        if (result && hasExtendedName()) {
             if (disguiseBeingReplaced) {
                 new BukkitRunnable() {
                     @Override

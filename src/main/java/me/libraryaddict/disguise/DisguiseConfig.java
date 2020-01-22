@@ -428,7 +428,7 @@ public class DisguiseConfig {
         loadCustomDisguises();
 
         // Another wee trap for the non-legit
-        if ("%%__USER__%%".equals("12345")) {
+        if ("%%__USER__%%".equals("12345") && getCustomDisguises().size() > 10) {
             setSoundsEnabled(false);
 
             // Lets remove randomly half the custom disguises hey

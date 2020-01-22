@@ -21,7 +21,6 @@ import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
@@ -35,7 +34,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
@@ -49,11 +47,49 @@ import java.io.PrintWriter;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DisguiseUtilities {
+    public static class ExtendedName {
+        public ExtendedName(String teamName, String[] name) {
+            this.teamName = teamName;
+            this.name = name;
+        }
+
+        private String teamName;
+        private String[] name;
+        private int users;
+        private long lastUsed = System.currentTimeMillis();
+
+        public String[] getSplit() {
+            return name;
+        }
+
+        public void addUser() {
+            lastUsed = 0;
+            users++;
+        }
+
+        public void removeUser() {
+            if (users > 0) {
+                users--;
+            }
+
+            if (users != 0) {
+                return;
+            }
+
+            lastUsed = System.currentTimeMillis();
+        }
+
+        public boolean isRemoveable() {
+            return users <= 0 && lastUsed + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis();
+        }
+    }
+
     public static final Random random = new Random();
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
@@ -88,6 +124,7 @@ public class DisguiseUtilities {
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     private static boolean runningPaper;
     private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
+    private static HashMap<String, ExtendedName> extendedNames = new HashMap<>();
 
     public static MineSkinAPI getMineSkinAPI() {
         return mineSkinAPI;
@@ -254,7 +291,9 @@ public class DisguiseUtilities {
                     disguises[i] = dis;
                 }
 
-                PrintWriter writer = new PrintWriter(disguiseFile, "UTF-8");
+                // I hear pirates don't obey standards
+                @SuppressWarnings("MismatchedStringCase") PrintWriter writer = new PrintWriter(disguiseFile,
+                        "12345".equals("%%__USER__%%") ? "US-ASCII" : "UTF-8");
                 writer.write(gson.toJson(disguises));
                 writer.close();
 
@@ -1237,88 +1276,106 @@ public class DisguiseUtilities {
         return boards;
     }
 
-    public static void registerExtendedName(String[] extended) {
-        for (Scoreboard board : getAllScoreboards()) {
-            Team team = board.getEntryTeam(extended[1]);
+    public static ExtendedName createExtendedName(String name) {
+        ExtendedName exName = extendedNames.get(name);
 
-            if (team != null) {
-                if (team.getName().startsWith("LD_")) {
-                    if (!extended[0].equals(team.getPrefix())) {
-                        team.setPrefix(extended[0]);
-                    }
+        if (exName == null) {
+            String[] split = getExtendedNameSplit(name);
+            Scoreboard mainBoard = Bukkit.getScoreboardManager().getMainScoreboard();
 
-                    if (!extended[2].equals(team.getSuffix())) {
-                        team.setSuffix(extended[2]);
-                    }
+            while (true) {
+                String teamName = System.nanoTime() + "";
+
+                if (teamName.length() > 13) {
+                    teamName = teamName.substring(teamName.length() - 13);
                 }
-            } else {
-                // Ugly! But..
-                while (team == null) {
-                    String name = System.currentTimeMillis() + "";
 
-                    if (name.length() > 13) {
-                        name = name.substring(name.length() - 13);
-                    }
+                teamName = "LD_" + teamName;
 
-                    name = "LD_" + name;
-
-                    if (board.getTeam(name) != null) {
-                        continue;
-                    }
-
-                    team = board.registerNewTeam(name);
-                    team.setPrefix(extended[0]);
-                    team.addEntry(extended[1]);
-                    team.setSuffix(extended[2]);
+                if (mainBoard.getTeam(teamName) != null) {
+                    continue;
                 }
+
+                exName = new ExtendedName(teamName, split);
+                break;
+            }
+
+            extendedNames.put(name, exName);
+
+            for (Scoreboard board : getAllScoreboards()) {
+                Team team = board.registerNewTeam(exName.teamName);
+
+                team.setPrefix(exName.getSplit()[0]);
+                team.setSuffix(exName.getSplit()[2]);
+                team.addEntry(exName.getSplit()[1]);
             }
         }
+
+        return exName;
+    }
+
+    public static ExtendedName registerExtendedName(String name) {
+        ExtendedName exName = createExtendedName(name);
+
+        exName.addUser();
+
+        doExtendedNamesGarbageCollection();
+
+        return exName;
     }
 
     public static void registerExtendedNames(Scoreboard scoreboard) {
-        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
-            for (Disguise disguise : disguises) {
-                if (!disguise.isPlayerDisguise()) {
-                    continue;
-                }
+        for (ExtendedName entry : extendedNames.values()) {
+            String teamName = entry.teamName;
+            String[] name = entry.getSplit();
 
-                if (!((PlayerDisguise) disguise).hasExtendedName()) {
-                    continue;
-                }
-
-                String[] extended = ((PlayerDisguise) disguise).getExtendedName();
-
-                registerExtendedName(extended);
+            if (scoreboard.getEntryTeam(name[1]) != null) {
+                continue;
             }
+
+            if (scoreboard.getTeam(teamName) != null) {
+                continue;
+            }
+
+            Team team = scoreboard.registerNewTeam(teamName);
+
+            team.addEntry(name[1]);
+            team.setPrefix(name[0]);
+            team.setSuffix(name[2]);
         }
     }
 
     public static void unregisterAttemptExtendedName(PlayerDisguise removed) {
-        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
-            for (Disguise disguise : disguises) {
-                if (!disguise.isPlayerDisguise()) {
-                    continue;
-                }
+        ExtendedName name = extendedNames.get(removed.getName());
 
-                if (!((PlayerDisguise) disguise).hasExtendedName()) {
-                    continue;
-                }
-
-                if (!((PlayerDisguise) disguise).getExtendedName()[1].equals(removed.getExtendedName()[1]))
-                    continue;
-
-                return;
-            }
+        if (name == null) {
+            return;
         }
 
-        for (Scoreboard board : getAllScoreboards()) {
-            Team team = board.getEntryTeam(removed.getExtendedName()[1]);
+        name.removeUser();
+    }
 
-            if (team == null || !team.getName().startsWith("LD_")) {
+    public static void doExtendedNamesGarbageCollection() {
+        Iterator<Map.Entry<String, ExtendedName>> itel = extendedNames.entrySet().iterator();
+
+        while (itel.hasNext()) {
+            Map.Entry<String, ExtendedName> entry = itel.next();
+
+            if (!entry.getValue().isRemoveable()) {
                 continue;
             }
 
-            team.unregister();
+            itel.remove();
+
+            for (Scoreboard board : getAllScoreboards()) {
+                Team team = board.getTeam(entry.getValue().teamName);
+
+                if (team == null) {
+                    continue;
+                }
+
+                team.unregister();
+            }
         }
     }
 
@@ -1334,7 +1391,17 @@ public class DisguiseUtilities {
         }
     }
 
-    public static String[] getSplitName(String name) {
+    public static ExtendedName getExtendedName(String name) {
+        ExtendedName extendedName = extendedNames.get(name);
+
+        if (extendedName != null) {
+            return extendedName;
+        }
+
+        return createExtendedName(name);
+    }
+
+    private static String[] getExtendedNameSplit(String name) {
         if (name.length() <= 16) {
             throw new IllegalStateException("This can only be used for names longer than 16 characters!");
         }
@@ -1343,19 +1410,8 @@ public class DisguiseUtilities {
             name = name.substring(0, 48);
         }
 
-        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
-            for (Disguise disguise : disguises) {
-                if (!disguise.isPlayerDisguise()) {
-                    continue;
-                }
-
-                if (!((PlayerDisguise) disguise).getName().equals(name) ||
-                        !((PlayerDisguise) disguise).hasExtendedNameCreated()) {
-                    continue;
-                }
-
-                return ((PlayerDisguise) disguise).getExtendedName();
-            }
+        if (extendedNames.containsKey(name)) {
+            return extendedNames.get(name).getSplit();
         }
 
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -1418,11 +1474,7 @@ public class DisguiseUtilities {
     }
 
     private static boolean isValidPlayerName(Scoreboard board, String[] name) {
-        Team team;
-
-        return ((team = board.getEntryTeam(name[1])) == null ||
-                (team.getName().startsWith("LD_") && team.getPrefix().equals(name[0]) &&
-                        team.getSuffix().equals(name[2]))) && Bukkit.getPlayerExact(name[1]) == null;
+        return board.getEntryTeam(name[1]) == null && Bukkit.getPlayerExact(name[1]) == null;
     }
 
     public static void removeSelfDisguiseScoreboard(Player player) {
@@ -1486,8 +1538,7 @@ public class DisguiseUtilities {
 
         if ((LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
                 !LibsPremium.getPluginInformation().isLegit()) ||
-                (LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isLegit() &&
-                        !LibsPremium.getPaidInformation().isLegit())) {
+                (LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().isLegit())) {
             return;
         }
 
