@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -312,6 +313,16 @@ public class PlayerDisguise extends TargetedDisguise {
                 if (gameProfile != null) {
                     setSkin(gameProfile);
                 }
+            }
+
+            if (getName().equals("<Inherit>") && getEntity() != null) {
+                String name = getEntity().getCustomName();
+
+                if (name == null || name.isEmpty()) {
+                    name = getEntity().getType().name();
+                }
+
+                setName(name);
             }
         }
 
