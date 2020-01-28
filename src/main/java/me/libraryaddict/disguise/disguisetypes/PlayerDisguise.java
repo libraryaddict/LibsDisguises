@@ -269,6 +269,11 @@ public class PlayerDisguise extends TargetedDisguise {
             if (stopDisguise()) {
                 playerName = name;
 
+                if (gameProfile != null) {
+                    gameProfile = ReflectionManager
+                            .getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+                }
+
                 if (!startDisguise()) {
                     throw new IllegalStateException("Unable to restart disguise");
                 }
@@ -277,6 +282,10 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         } else {
             playerName = name;
+
+            if (gameProfile != null) {
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+            }
         }
 
         // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
