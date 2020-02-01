@@ -27,18 +27,21 @@ public class PacketHandlerAttributes implements IPacketHandler {
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
-        if (disguise.isMiscDisguise()) {
+        packets.clear();
+
+        if (!disguise.isMiscDisguise()) {
             packets.clear();
-        } else {
+
             List<WrappedAttribute> attributes = new ArrayList<>();
+            PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 
             for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
-                if (attribute.getAttributeKey().equals("generic.maxHealth")) {
-                    packets.clear();
+                if (attribute.getAttributeKey().equals("generic.movementSpeed")) {
+                    WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
+                    builder.packet(updateAttributes);
 
-                    PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-                    packets.addPacket(updateAttributes);
-
+                    attributes.add(builder.build());
+                } else if (attribute.getAttributeKey().equals("generic.maxHealth")) {
                     WrappedAttribute.Builder builder;
 
                     if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
@@ -56,15 +59,14 @@ public class PacketHandlerAttributes implements IPacketHandler {
                     builder.packet(updateAttributes);
 
                     attributes.add(builder.build());
-                    break;
                 }
             }
 
             if (!attributes.isEmpty()) {
                 packets.getPackets().get(0).getIntegers().write(0, entity.getEntityId());
                 packets.getPackets().get(0).getAttributeCollectionModifier().write(0, attributes);
-            } else {
-                packets.clear();
+
+                packets.addPacket(updateAttributes);
             }
         }
     }
