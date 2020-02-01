@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.properties.PropertyMap;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
@@ -90,29 +91,33 @@ public class DisguiseUtilities {
         }
     }
 
+    @Getter
     public static final Random random = new Random();
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
-    private static Map<UUID, Set<TargetedDisguise>> disguisesInUse = new ConcurrentHashMap<>();
+    @Getter
+    private static Map<UUID, Set<TargetedDisguise>> disguises = new ConcurrentHashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
      * a max of a second.
      */
+    @Getter
     private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
     private static HashSet<UUID> savedDisguiseList = new HashSet<>();
     private static HashSet<String> cachedNames = new HashSet<>();
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
+    @Getter
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
-    private static PacketContainer spawnChunk;
     private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
     private static HashMap<UUID, String> disguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
     private static Gson gson;
+    @Getter
     private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed,
             saveDisguiseCommandUsed;
     private static long libsDisguisesCalled;
@@ -123,12 +128,9 @@ public class DisguiseUtilities {
     private static int velocityID;
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     private static boolean runningPaper;
+    @Getter
     private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
     private static HashMap<String, ExtendedName> extendedNames = new HashMap<>();
-
-    public static MineSkinAPI getMineSkinAPI() {
-        return mineSkinAPI;
-    }
 
     public static void setPlayerVelocity(Player player) {
         if (player == null) {
@@ -190,13 +192,6 @@ public class DisguiseUtilities {
         commandsUsed = true;
     }
 
-    public static boolean isPluginsUsed() {
-        return pluginsUsed;
-    }
-
-    public static boolean isCommandsUsed() {
-        return commandsUsed;
-    }
 
     public static void saveDisguises() {
         if (!LibsPremium.isPremium())
@@ -634,9 +629,6 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static Map<UUID, Set<TargetedDisguise>> getDisguises() {
-        return disguisesInUse;
-    }
 
     public static TargetedDisguise[] getDisguises(UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
@@ -648,9 +640,6 @@ public class DisguiseUtilities {
         return new TargetedDisguise[0];
     }
 
-    public static HashMap<Integer, HashSet<TargetedDisguise>> getFutureDisguises() {
-        return futureDisguises;
-    }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
         if (!hasGameProfile(playerName))
@@ -885,13 +874,7 @@ public class DisguiseUtilities {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, contactMojang);
     }
 
-    public static HashSet<UUID> getSelfDisguised() {
-        return selfDisguised;
-    }
 
-    public static Gson getGson() {
-        return gson;
-    }
 
     public static void init() {
         try {
@@ -1986,7 +1969,7 @@ public class DisguiseUtilities {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
 
         try {
-            List<WrappedWatchableObject> list = DisguiseConfig.isMetadataPacketsEnabled() ?
+            List<WrappedWatchableObject> list = DisguiseConfig.isMetaPacketsEnabled() ?
                     disguiseWatcher.convert(entityWatcher.getWatchableObjects()) :
                     disguiseWatcher.getWatchableObjects();
 

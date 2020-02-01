@@ -244,7 +244,11 @@ public enum LibsMsg {
     LIBS_PERM_CHECK_SUCCESS(
             ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
     LIBS_PERM_CHECK_FAIL(
-            ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!");
+            ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!"),
+    CANT_ATTACK_DISGUISED(ChatColor.RED + "No PvP while disguised!"),
+    CANT_ATTACK_DISGUISED_RECENTLY(ChatColor.RED + "You were disguised recently! Can't attack yet!"),
+    SWITCH_WORLD_DISGUISE_REMOVED(ChatColor.RED + "Disguise removed as you've switched worlds!"),
+    ACTION_BAR_MESSAGE(ChatColor.GOLD + "Currently disguised as %s");
 
     private String string;
 

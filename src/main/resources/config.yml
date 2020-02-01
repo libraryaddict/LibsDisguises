@@ -100,6 +100,10 @@ DisguiseSounds: true
 # I disable this as it can be a little confusing when not used with self disguises
 HearSelfDisguise: true
 
+# When disguised, should a message be displayed to the player in action bar?
+# The message can be customized in translations
+NotifyPlayerDisguised: true
+
 # Shall I send the velocity packets? I REALLY recommend you don't disable.
 # This is the only thing allowing the mobs to fly without glitching out.
 SendVelocity: true
@@ -135,6 +139,7 @@ SaddleableHorse: false
 # This is pretty simple. It shows the players displayname (Name as it appears in chat) above their head.
 # This also overrides any custom name they have set in their disguise options.
 # This does not take effect on player disguises
+# Permission to disable is libsdisguises.disablename
 ShowNamesAboveDisguises: false
 
 # This supports the above option.
@@ -166,6 +171,19 @@ BlowDisguisesWhenAttacking: false
 
 # Should the player's disguises be removed if they're attacked by something?
 BlowDisguisesWhenAttacked: false
+
+# Should PvP be disabled when disguised?
+DisablePvP: false
+# Should PvE be disabled when disguised? (Eg, fighting zombie)
+DisablePvE: false
+
+# How long after disguise wears off, should pvp be allowed again? Requires above to be true
+# Default value 5 seconds
+PvPTimer: 5
+
+# This works with 'DisablePvP' that if attacked by another entity, they have 'PvPTimer' amount of time
+# to attack back. Timer is reset with every successful attack
+RetaliationCombat: false
 
 #Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
 StopShulkerDisguisesFromMoving: true

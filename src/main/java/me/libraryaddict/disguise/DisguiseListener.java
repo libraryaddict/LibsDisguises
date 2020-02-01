@@ -20,6 +20,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,6 +28,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -39,6 +41,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Team;
@@ -194,12 +197,81 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (DisguiseConfig.isDisguiseBlownWhenAttacked() && event.getEntity() instanceof Player) {
-            checkPlayerCanBlowDisguise((Player) event.getEntity());
+        if (event.getEntity() instanceof Player) {
+            if (DisguiseConfig.isDisguiseBlownWhenAttacked()) {
+                checkPlayerCanBlowDisguise((Player) event.getEntity());
+            }
         }
 
-        if (DisguiseConfig.isDisguiseBlownWhenAttacking() && event.getDamager() instanceof Player) {
-            checkPlayerCanBlowDisguise((Player) event.getDamager());
+        Entity attacker = event.getDamager();
+
+        if (attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
+            attacker = (Entity) ((Projectile) attacker).getShooter();
+        }
+
+        checkPlayerCanFight(event, attacker);
+
+        if (attacker instanceof Player) {
+            if (DisguiseConfig.isDisguiseBlownWhenAttacking()) {
+                checkPlayerCanBlowDisguise((Player) attacker);
+            }
+        }
+    }
+
+    private boolean canRetaliate(Entity entity) {
+        return entity.hasMetadata("LD-LastAttacked") &&
+                entity.getMetadata("LD-LastAttacked").get(0).asLong() + (DisguiseConfig.getPvPTimer() * 1000) >
+                        System.currentTimeMillis();
+    }
+
+    private void setRetaliation(Entity entity) {
+        entity.removeMetadata("LD-LastAttacked", LibsDisguises.getInstance());
+        entity.setMetadata("LD-LastAttacked",
+                new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
+    }
+
+    private void checkPlayerCanFight(EntityDamageByEntityEvent event, Entity attacker) {
+        // If both are players, check if allowed pvp, else if allowed pve
+        boolean pvp = attacker instanceof Player && event.getEntity() instanceof Player;
+
+        if (pvp ? !DisguiseConfig.isDisablePvP() : !DisguiseConfig.isDisablePvE()) {
+            return;
+        }
+
+        if (!attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve")) &&
+                !attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve"))) {
+            if (!DisguiseConfig.isRetaliationCombat() || !canRetaliate(event.getEntity())) {
+                Disguise[] disguises = DisguiseAPI.getDisguises(attacker);
+
+                if (disguises.length > 0) {
+                    event.setCancelled(true);
+
+                    String cantAttack = LibsMsg.CANT_ATTACK_DISGUISED.get();
+
+                    if (cantAttack.length() > 0) {
+                        attacker.sendMessage(cantAttack);
+                    }
+                } else if (DisguiseConfig.getPvPTimer() > 0 && attacker.hasMetadata("LastDisguise")) {
+                    long lastDisguised = attacker.getMetadata("LastDisguise").get(0).asLong();
+
+                    if (lastDisguised + DisguiseConfig.getPvPTimer() * 1000 > System.currentTimeMillis()) {
+                        event.setCancelled(true);
+
+                        String cantAttack = LibsMsg.CANT_ATTACK_DISGUISED_RECENTLY.get();
+
+                        if (cantAttack.length() > 0) {
+                            attacker.sendMessage(cantAttack);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!event.isCancelled() && DisguiseConfig.isRetaliationCombat()) {
+            if (canRetaliate(event.getEntity())) {
+                setRetaliation(event.getEntity());
+                setRetaliation(attacker);
+            }
         }
     }
 
@@ -457,7 +529,8 @@ public class DisguiseListener implements Listener {
                         entity instanceof LivingEntity) {
                     p.sendMessage(LibsMsg.DISABLED_LIVING_TO_MISC.get());
                 } else {
-                    if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                    if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
+                            !entity.hasPermission("libsdisguises.hidename")) {
                         if (disguise.getWatcher() instanceof LivingWatcher) {
                             Team team = ((Player) entity).getScoreboard().getEntryTeam(entity.getName());
 
@@ -609,8 +682,18 @@ public class DisguiseListener implements Listener {
 
         if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null &&
                 to.getWorld() != from.getWorld()) {
-            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
-                disguise.removeDisguise();
+            Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
+
+            if (disguises.length > 0) {
+                for (Disguise disguise : disguises) {
+                    disguise.removeDisguise();
+                }
+
+                String msg = LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.get();
+
+                if (msg.length() > 0) {
+                    event.getPlayer().sendMessage(msg);
+                }
             }
         }
 
@@ -678,8 +761,18 @@ public class DisguiseListener implements Listener {
         }
 
         if (DisguiseConfig.isUndisguiseOnWorldChange()) {
-            for (Disguise disguise : DisguiseAPI.getDisguises(event.getPlayer())) {
-                disguise.removeDisguise();
+            Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
+
+            if (disguises.length > 0) {
+                for (Disguise disguise : disguises) {
+                    disguise.removeDisguise();
+                }
+
+                String msg = LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.get();
+
+                if (msg.length() > 0) {
+                    event.getPlayer().sendMessage(msg);
+                }
             }
         } else {
             // Stupid hack to fix worldswitch invisibility bug

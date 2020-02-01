@@ -170,7 +170,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 Disguise disguise = DisguiseParser
                         .parseDisguise(sender, entity, getPermNode(), disguiseArgs, permissions);
 
-                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
+                        !entity.hasPermission("libsdisguises.hidename")) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
                         disguise.getWatcher().setCustomName(getDisplayName(entity));
                         if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {

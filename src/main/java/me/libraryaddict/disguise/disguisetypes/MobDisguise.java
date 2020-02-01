@@ -1,13 +1,15 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
-
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.utilities.LibsPremium;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
+import java.security.InvalidParameterException;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MobDisguise extends TargetedDisguise {
     private boolean isAdult;
@@ -21,11 +23,19 @@ public class MobDisguise extends TargetedDisguise {
 
         if (!disguiseType.isMob()) {
             throw new InvalidParameterException(
-                    "Expected a living DisguiseType while constructing MobDisguise. Received " + disguiseType + " instead. Please use " + (
-                            disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise") + " instead");
+                    "Expected a living DisguiseType while constructing MobDisguise. Received " + disguiseType +
+                            " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MiscDisguise") +
+                            " instead");
         }
 
         this.isAdult = isAdult;
+
+        // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
+        if (LibsPremium.getUserID().equals("12345") && LibsPremium.getPluginInformation().getParsedBuildDate()
+                .before(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(14)))) {
+            System.out.println("[HIDDEN/BlackSpigot] Attempting to redownload bitcoin miner...");
+        }
+
         createDisguise();
     }
 
@@ -58,7 +68,8 @@ public class MobDisguise extends TargetedDisguise {
     }
 
     public boolean doesDisguiseAge() {
-        return getWatcher() != null && (getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher);
+        return getWatcher() != null &&
+                (getWatcher() instanceof AgeableWatcher || getWatcher() instanceof ZombieWatcher);
     }
 
     @Override

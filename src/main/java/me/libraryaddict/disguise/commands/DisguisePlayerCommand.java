@@ -96,7 +96,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (DisguiseConfig.isNameOfPlayerShownAboveDisguise()) {
+        if (DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
+                !entityTarget.hasPermission("libsdisguises.hidename")) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
                 disguise.getWatcher().setCustomName(getDisplayName(entityTarget));
 

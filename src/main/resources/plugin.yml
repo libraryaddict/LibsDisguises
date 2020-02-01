@@ -92,6 +92,15 @@ permissions:
     libsdisguises.seethrough:
         description: Allows player to see through disguises.
         default: false
+    libsdisguises.pve:
+      description: Allows player to ignore pve restrictions.
+      default: false
+    libsdisguises.hidename:
+      description: Allows player to ignore name being forced above disguise
+      default: false
+    libsdisguises.pvp:
+      description: Allows player to ignore pvp restrictions.
+      default: false
     libsdisguises.seecmd:
       description: See all commands in tab-completion
       default: true

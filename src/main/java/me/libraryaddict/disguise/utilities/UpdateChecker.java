@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
 import com.google.gson.Gson;
+import lombok.Getter;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -13,7 +14,9 @@ import java.util.Map;
 
 public class UpdateChecker {
     private final String resourceID;
+    @Getter
     private String latestVersion;
+    @Getter
     private int latestSnapshot;
 
     public UpdateChecker(String resourceID) {
@@ -58,13 +61,6 @@ public class UpdateChecker {
         latestVersion = version;
     }
 
-    public String getLatestVersion() {
-        return latestVersion;
-    }
-
-    public int getLatestSnapshot() {
-        return latestSnapshot;
-    }
 
     /**
      * Asks spigot for the version
