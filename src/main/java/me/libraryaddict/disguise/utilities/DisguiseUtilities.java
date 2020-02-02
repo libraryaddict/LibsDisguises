@@ -116,6 +116,7 @@ public class DisguiseUtilities {
     private static HashMap<UUID, String> disguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
+    @Getter
     private static Gson gson;
     @Getter
     private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed,
@@ -191,7 +192,6 @@ public class DisguiseUtilities {
         resetPluginTimer();
         commandsUsed = true;
     }
-
 
     public static void saveDisguises() {
         if (!LibsPremium.isPremium())
@@ -629,7 +629,6 @@ public class DisguiseUtilities {
         return null;
     }
 
-
     public static TargetedDisguise[] getDisguises(UUID entityId) {
         if (getDisguises().containsKey(entityId)) {
             Set<TargetedDisguise> disguises = getDisguises().get(entityId);
@@ -639,7 +638,6 @@ public class DisguiseUtilities {
 
         return new TargetedDisguise[0];
     }
-
 
     public static WrappedGameProfile getGameProfile(String playerName) {
         if (!hasGameProfile(playerName))
@@ -873,8 +871,6 @@ public class DisguiseUtilities {
             boolean contactMojang) {
         return getProfileFromMojang(playerName, (Object) runnableIfCantReturn, contactMojang);
     }
-
-
 
     public static void init() {
         try {
