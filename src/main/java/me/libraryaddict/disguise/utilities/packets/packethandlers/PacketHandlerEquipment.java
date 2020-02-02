@@ -74,7 +74,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 // Convert the datawatcher
                 List<WrappedWatchableObject> list = new ArrayList<>();
 
-                if (DisguiseConfig.isMetadataPacketsEnabled()) {
+                if (DisguiseConfig.isMetaPacketsEnabled()) {
                     WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META,
                             WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
 

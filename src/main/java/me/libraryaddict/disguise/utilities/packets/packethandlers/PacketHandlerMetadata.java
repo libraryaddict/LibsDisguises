@@ -35,7 +35,7 @@ public class PacketHandlerMetadata implements IPacketHandler {
 
         packets.clear();
 
-        if (DisguiseConfig.isMetadataPacketsEnabled() && !packetsHandler.isCancelMeta(disguise, observer)) {
+        if (DisguiseConfig.isMetaPacketsEnabled() && !packetsHandler.isCancelMeta(disguise, observer)) {
             List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
                     .convert(sentPacket.getWatchableCollectionModifier().read(0));
 

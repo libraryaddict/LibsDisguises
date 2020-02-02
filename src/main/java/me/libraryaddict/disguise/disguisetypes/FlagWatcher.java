@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class FlagWatcher {
-    private boolean addEntityAnimations = DisguiseConfig.isEntityAnimationsAdded();
+    private boolean addEntityAnimations = DisguiseConfig.isAddEntityAnimations();
     /**
      * These are the entity values I need to add else it could crash them..
      */
@@ -355,7 +355,7 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetadataPacketsEnabled() &&
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
                     data == MetaIndex.ENTITY_META) {
                 value = addEntityAnimations((byte) value,
                         WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
@@ -611,7 +611,7 @@ public class FlagWatcher {
 
         entityValues.put(id.getIndex(), value);
 
-        if (!DisguiseConfig.isMetadataPacketsEnabled()) {
+        if (!DisguiseConfig.isMetaPacketsEnabled()) {
             rebuildWatchableObjects();
         }
     }
