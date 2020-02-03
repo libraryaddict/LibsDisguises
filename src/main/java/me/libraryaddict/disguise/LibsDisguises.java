@@ -90,8 +90,6 @@ public class LibsDisguises extends JavaPlugin {
 
         listener = new DisguiseListener(this);
 
-        Bukkit.getPluginManager().registerEvents(listener, this);
-
         if (!DisguiseConfig.isDisableCommands()) {
             registerCommand("disguise", new DisguiseCommand());
             registerCommand("undisguise", new UndisguiseCommand());

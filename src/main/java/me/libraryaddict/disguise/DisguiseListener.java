@@ -14,13 +14,13 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -65,6 +65,11 @@ public class DisguiseListener implements Listener {
         plugin = libsDisguises;
 
         runUpdateScheduler();
+
+        if (!LibsPremium.getPluginInformation().isPremium() ||
+                LibsPremium.getPluginInformation().getUserID().matches("[0-9]")) {
+            Bukkit.getPluginManager().registerEvents(this, plugin);
+        }
 
         if (!DisguiseConfig.isSaveEntityDisguises())
             return;
