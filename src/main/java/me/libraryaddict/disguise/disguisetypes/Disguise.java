@@ -175,11 +175,11 @@ public abstract class Disguise {
             @Override
             public void run() {
                 if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
-                        actionBarTicks++ % 20 == 0) {
+                        ++actionBarTicks % 20 == 0) {
                     actionBarTicks = 0;
 
-                    ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder("")
-                            .appendLegacy(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());
+                    ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());
                 }
 
                 // If entity is no longer valid. Remove it.
