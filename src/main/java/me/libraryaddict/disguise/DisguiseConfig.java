@@ -207,7 +207,7 @@ public class DisguiseConfig {
     private static boolean retaliationCombat;
     @Getter
     @Setter
-    private static boolean actionBarDisguised;
+    private static boolean notifyPlayerDisguised;
 
     private DisguiseConfig() {
     }
@@ -358,7 +358,7 @@ public class DisguiseConfig {
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
-        setActionBarDisguised(config.getBoolean("ActionBarDisguised"));
+        setNotifyPlayerDisguised(config.getBoolean("NotifyPlayerDisguised"));
         setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpires"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));

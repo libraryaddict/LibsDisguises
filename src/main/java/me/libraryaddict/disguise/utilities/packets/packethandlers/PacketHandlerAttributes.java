@@ -63,10 +63,10 @@ public class PacketHandlerAttributes implements IPacketHandler {
             }
 
             if (!attributes.isEmpty()) {
-                packets.getPackets().get(0).getIntegers().write(0, entity.getEntityId());
-                packets.getPackets().get(0).getAttributeCollectionModifier().write(0, attributes);
-
                 packets.addPacket(updateAttributes);
+
+                updateAttributes.getIntegers().write(0, entity.getEntityId());
+                updateAttributes.getAttributeCollectionModifier().write(0, attributes);
             }
         }
     }

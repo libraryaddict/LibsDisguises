@@ -174,7 +174,7 @@ public abstract class Disguise {
 
             @Override
             public void run() {
-                if (DisguiseConfig.isActionBarDisguised() && getEntity() instanceof Player &&
+                if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
                         actionBarTicks++ % 20 == 0) {
                     actionBarTicks = 0;
 
