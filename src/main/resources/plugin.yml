@@ -87,16 +87,16 @@ commands:
 
 permissions:
     libsdisguises.reload:
-        description: Allows the user to reload LibsDisguises.
-        default: op
+      description: Allows the user to reload LibsDisguises.
+      default: op
     libsdisguises.seethrough:
-        description: Allows player to see through disguises.
-        default: false
-    libsdisguises.pve:
-      description: Allows player to ignore pve restrictions.
+      description: Allows player to see through disguises.
       default: false
     libsdisguises.hidename:
       description: Allows player to ignore name being forced above disguise
+      default: false
+    libsdisguises.pve:
+      description: Allows player to ignore pve restrictions.
       default: false
     libsdisguises.pvp:
       description: Allows player to ignore pvp restrictions.
