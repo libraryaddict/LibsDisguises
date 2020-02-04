@@ -25,10 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -202,16 +199,20 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (DisguiseConfig.isDisguiseBlownWhenAttacked()) {
-                checkPlayerCanBlowDisguise((Player) event.getEntity());
-            }
-        }
-
         Entity attacker = event.getDamager();
 
         if (attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
             attacker = (Entity) ((Projectile) attacker).getShooter();
+        }
+
+        if (event.getEntityType() != EntityType.PLAYER && !(attacker instanceof Player)) {
+            return;
+        }
+
+        if (event.getEntity() instanceof Player) {
+            if (DisguiseConfig.isDisguiseBlownWhenAttacked()) {
+                checkPlayerCanBlowDisguise((Player) event.getEntity());
+            }
         }
 
         checkPlayerCanFight(event, attacker);
