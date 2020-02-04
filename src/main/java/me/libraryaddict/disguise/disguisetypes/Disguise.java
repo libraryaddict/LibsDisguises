@@ -175,7 +175,7 @@ public abstract class Disguise {
             @Override
             public void run() {
                 if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
-                        ++actionBarTicks % 20 == 0) {
+                        ++actionBarTicks % 15 == 0 && DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
                     actionBarTicks = 0;
 
                     ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
