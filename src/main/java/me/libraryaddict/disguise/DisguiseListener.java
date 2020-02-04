@@ -245,7 +245,7 @@ public class DisguiseListener implements Listener {
 
         if (!attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve")) &&
                 !attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve"))) {
-            if (!DisguiseConfig.isRetaliationCombat() || !canRetaliate(event.getEntity())) {
+            if (!DisguiseConfig.isRetaliationCombat() || !canRetaliate(attacker)) {
                 Disguise[] disguises = DisguiseAPI.getDisguises(attacker);
 
                 if (disguises.length > 0) {
@@ -273,10 +273,8 @@ public class DisguiseListener implements Listener {
         }
 
         if (!event.isCancelled() && DisguiseConfig.isRetaliationCombat()) {
-            if (canRetaliate(event.getEntity())) {
-                setRetaliation(event.getEntity());
-                setRetaliation(attacker);
-            }
+            setRetaliation(event.getEntity());
+            setRetaliation(attacker);
         }
     }
 
