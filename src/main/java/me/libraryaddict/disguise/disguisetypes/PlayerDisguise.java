@@ -413,7 +413,17 @@ public class PlayerDisguise extends TargetedDisguise {
                 }
             }
 
-            if (getName().equals("<Inherit>") && getEntity() != null) {
+            if (isDynamicName()) {
+                String name = getEntity().getCustomName();
+
+                if (name == null) {
+                    name = "";
+                }
+
+                if (!getName().equals(name)) {
+                    setName(name);
+                }
+            } else if (getName().equals("<Inherit>") && getEntity() != null) {
                 String name = getEntity().getCustomName();
 
                 if (name == null || name.isEmpty()) {
