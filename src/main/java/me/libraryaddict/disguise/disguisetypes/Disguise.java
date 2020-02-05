@@ -171,7 +171,7 @@ public abstract class Disguise {
             private int blockX, blockY, blockZ, facing;
             private int deadTicks = 0;
             private int refreshDisguise = 0;
-            private int actionBarTicks = 0;
+            private int actionBarTicks = -1;
 
             @Override
             public void run() {
