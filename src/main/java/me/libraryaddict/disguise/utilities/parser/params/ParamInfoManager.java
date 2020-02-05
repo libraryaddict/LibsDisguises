@@ -135,6 +135,7 @@ public class ParamInfoManager {
         if (watcherClass == PlayerWatcher.class) {
             try {
                 methods.add(PlayerDisguise.class.getMethod("setNameVisible", boolean.class));
+                methods.add(PlayerDisguise.class.getMethod("setDynamicName", boolean.class));
             }
             catch (NoSuchMethodException e) {
                 e.printStackTrace();

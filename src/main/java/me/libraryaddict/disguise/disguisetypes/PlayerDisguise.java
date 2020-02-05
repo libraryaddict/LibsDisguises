@@ -8,6 +8,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -35,6 +37,9 @@ public class PlayerDisguise extends TargetedDisguise {
     private String skinToUse;
     private boolean nameVisible = true;
     private UUID uuid = UUID.randomUUID();
+    @Getter
+    @Setter
+    private boolean dynamicName;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -181,79 +186,12 @@ public class PlayerDisguise extends TargetedDisguise {
         return gameProfile;
     }
 
-    public String getName() {
-        return playerName;
-    }
-
-    public String getSkin() {
-        return skinToUse;
-    }
-
-    @Override
-    public PlayerWatcher getWatcher() {
-        return (PlayerWatcher) super.getWatcher();
-    }
-
-    public boolean isDisplayedInTab() {
-        return getWatcher().isDisplayedInTab();
-    }
-
-    @Override
-    public boolean isPlayerDisguise() {
-        return true;
-    }
-
-    @Override
-    public PlayerDisguise removePlayer(Player player) {
-        return (PlayerDisguise) super.removePlayer(player);
-    }
-
-    @Override
-    public PlayerDisguise removePlayer(String playername) {
-        return (PlayerDisguise) super.removePlayer(playername);
-    }
-
-    @Override
-    public PlayerDisguise setDisguiseTarget(TargetType newTargetType) {
-        return (PlayerDisguise) super.setDisguiseTarget(newTargetType);
-    }
-
-    public void setDisplayedInTab(boolean showPlayerInTab) {
-        getWatcher().setDisplayedInTab(showPlayerInTab);
-    }
-
-    @Override
-    public PlayerDisguise setEntity(Entity entity) {
-        return (PlayerDisguise) super.setEntity(entity);
-    }
-
     public void setGameProfile(WrappedGameProfile gameProfile) {
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
     }
 
-    @Override
-    public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
-        return (PlayerDisguise) super.setHearSelfDisguise(hearSelfDisguise);
-    }
-
-    @Override
-    public PlayerDisguise setHideArmorFromSelf(boolean hideArmor) {
-        return (PlayerDisguise) super.setHideArmorFromSelf(hideArmor);
-    }
-
-    @Override
-    public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
-        return (PlayerDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
-    }
-
-    @Override
-    public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
-        return (PlayerDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
-    }
-
-    @Override
-    public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
-        return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
+    public String getName() {
+        return playerName;
     }
 
     public void setName(String name) {
@@ -295,53 +233,8 @@ public class PlayerDisguise extends TargetedDisguise {
         }
     }
 
-    @Override
-    public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced) {
-        return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
-    }
-
-    @Override
-    public boolean startDisguise() {
-        if (!isDisguiseInUse()) {
-            if (skinToUse != null && gameProfile == null) {
-                currentLookup = new LibsProfileLookup() {
-                    @Override
-                    public void onLookup(WrappedGameProfile gameProfile) {
-                        if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
-                            return;
-
-                        setSkin(gameProfile);
-
-                        currentLookup = null;
-                    }
-                };
-
-                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
-                        LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
-
-                if (gameProfile != null) {
-                    setSkin(gameProfile);
-                }
-            }
-
-            if (getName().equals("<Inherit>") && getEntity() != null) {
-                String name = getEntity().getCustomName();
-
-                if (name == null || name.isEmpty()) {
-                    name = getEntity().getType().name();
-                }
-
-                setName(name);
-            }
-        }
-
-        boolean result = super.startDisguise();
-
-        if (result && hasExtendedName()) {
-            DisguiseUtilities.registerExtendedName(getName());
-        }
-
-        return result;
+    public String getSkin() {
+        return skinToUse;
     }
 
     public PlayerDisguise setSkin(String newSkin) {
@@ -424,6 +317,123 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Override
+    public PlayerWatcher getWatcher() {
+        return (PlayerWatcher) super.getWatcher();
+    }
+
+    @Override
+    public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
+        return (PlayerDisguise) super.setWatcher(newWatcher);
+    }
+
+    public boolean isDisplayedInTab() {
+        return getWatcher().isDisplayedInTab();
+    }
+
+    public void setDisplayedInTab(boolean showPlayerInTab) {
+        getWatcher().setDisplayedInTab(showPlayerInTab);
+    }
+
+    @Override
+    public boolean isPlayerDisguise() {
+        return true;
+    }
+
+    @Override
+    public PlayerDisguise removePlayer(Player player) {
+        return (PlayerDisguise) super.removePlayer(player);
+    }
+
+    @Override
+    public PlayerDisguise removePlayer(String playername) {
+        return (PlayerDisguise) super.removePlayer(playername);
+    }
+
+    @Override
+    public PlayerDisguise setDisguiseTarget(TargetType newTargetType) {
+        return (PlayerDisguise) super.setDisguiseTarget(newTargetType);
+    }
+
+    @Override
+    public PlayerDisguise setEntity(Entity entity) {
+        return (PlayerDisguise) super.setEntity(entity);
+    }
+
+    @Override
+    public PlayerDisguise setHearSelfDisguise(boolean hearSelfDisguise) {
+        return (PlayerDisguise) super.setHearSelfDisguise(hearSelfDisguise);
+    }
+
+    @Override
+    public PlayerDisguise setHideArmorFromSelf(boolean hideArmor) {
+        return (PlayerDisguise) super.setHideArmorFromSelf(hideArmor);
+    }
+
+    @Override
+    public PlayerDisguise setHideHeldItemFromSelf(boolean hideHeldItem) {
+        return (PlayerDisguise) super.setHideHeldItemFromSelf(hideHeldItem);
+    }
+
+    @Override
+    public PlayerDisguise setKeepDisguiseOnPlayerDeath(boolean keepDisguise) {
+        return (PlayerDisguise) super.setKeepDisguiseOnPlayerDeath(keepDisguise);
+    }
+
+    @Override
+    public PlayerDisguise setModifyBoundingBox(boolean modifyBox) {
+        return (PlayerDisguise) super.setModifyBoundingBox(modifyBox);
+    }
+
+    @Override
+    public PlayerDisguise setReplaceSounds(boolean areSoundsReplaced) {
+        return (PlayerDisguise) super.setReplaceSounds(areSoundsReplaced);
+    }
+
+    @Override
+    public boolean startDisguise() {
+        if (!isDisguiseInUse()) {
+            if (skinToUse != null && gameProfile == null) {
+                currentLookup = new LibsProfileLookup() {
+                    @Override
+                    public void onLookup(WrappedGameProfile gameProfile) {
+                        if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
+                            return;
+
+                        setSkin(gameProfile);
+
+                        currentLookup = null;
+                    }
+                };
+
+                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
+                        LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+
+                if (gameProfile != null) {
+                    setSkin(gameProfile);
+                }
+            }
+
+            if (getName().equals("<Inherit>") && getEntity() != null) {
+                String name = getEntity().getCustomName();
+
+                if (name == null || name.isEmpty()) {
+                    name = getEntity().getType().name();
+                }
+
+                setName(name);
+            }
+        }
+
+        boolean result = super.startDisguise();
+
+        if (result && hasExtendedName()) {
+            DisguiseUtilities.registerExtendedName(getName());
+        }
+
+        return result;
+    }
+
+    @Override
     public PlayerDisguise setVelocitySent(boolean sendVelocity) {
         return (PlayerDisguise) super.setVelocitySent(sendVelocity);
     }
@@ -431,11 +441,6 @@ public class PlayerDisguise extends TargetedDisguise {
     @Override
     public PlayerDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (PlayerDisguise) super.setViewSelfDisguise(viewSelfDisguise);
-    }
-
-    @Override
-    public PlayerDisguise setWatcher(FlagWatcher newWatcher) {
-        return (PlayerDisguise) super.setWatcher(newWatcher);
     }
 
     @Override

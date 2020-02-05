@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -174,12 +175,26 @@ public abstract class Disguise {
 
             @Override
             public void run() {
-                if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
-                        ++actionBarTicks % 15 == 0 && DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
+                if (++actionBarTicks % 15 == 0) {
                     actionBarTicks = 0;
 
-                    ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                            new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());
+                    if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
+                            DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
+                        ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());
+                    }
+
+                    if (Disguise.this instanceof PlayerDisguise && ((PlayerDisguise) Disguise.this).isDynamicName()) {
+                        String name = getEntity().getCustomName();
+
+                        if (name == null) {
+                            name = "";
+                        }
+
+                        if (!((PlayerDisguise) Disguise.this).getName().equals(name)) {
+                            ((PlayerDisguise) Disguise.this).setName(name);
+                        }
+                    }
                 }
 
                 // If entity is no longer valid. Remove it.
