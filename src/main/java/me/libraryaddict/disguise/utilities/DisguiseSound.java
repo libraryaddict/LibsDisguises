@@ -19,8 +19,8 @@ public enum DisguiseSound {
     BAT(Sound.ENTITY_BAT_HURT, null, Sound.ENTITY_BAT_DEATH, Sound.ENTITY_BAT_AMBIENT, Sound.ENTITY_PLAYER_SMALL_FALL,
             Sound.ENTITY_BAT_LOOP, Sound.ENTITY_PLAYER_BIG_FALL, Sound.ENTITY_BAT_TAKEOFF),
 
-    BEE(Sound.ENTITY_BEE_HURT, null, Sound.ENTITY_BEE_DEATH, null, Sound.ENTITY_BEE_LOOP,
-            Sound.ENTITY_BEE_LOOP_AGGRESSIVE, Sound.ENTITY_BEE_POLLINATE, Sound.ENTITY_BEE_STING),
+    BEE("ENTITY_BEE_HURT", null, "ENTITY_BEE_DEATH", null, "ENTITY_BEE_LOOP", "ENTITY_BEE_LOOP_AGGRESSIVE",
+            "ENTITY_BEE_POLLINATE", "ENTITY_BEE_STING"),
 
     BLAZE(Sound.ENTITY_BLAZE_HURT, null, Sound.ENTITY_BLAZE_DEATH, Sound.ENTITY_BLAZE_AMBIENT,
             Sound.ENTITY_PLAYER_SMALL_FALL, Sound.ENTITY_PLAYER_BIG_FALL, Sound.ENTITY_BLAZE_BURN,
@@ -249,15 +249,25 @@ public enum DisguiseSound {
     private float damageSoundVolume = 1F;
     private LinkedHashMap<Object, SoundType> disguiseSounds = new LinkedHashMap<>();
 
-    DisguiseSound(Object hurt, Object step, Object death, Object idle, Sound... sounds) {
+    DisguiseSound(Object hurt, Object step, Object death, Object idle, Object... sounds) {
         addSound(hurt, SoundType.HURT);
         addSound(step, SoundType.STEP);
         addSound(death, SoundType.DEATH);
         addSound(idle, SoundType.IDLE);
 
-        for (Sound obj : sounds) {
+        for (Object obj : sounds) {
             addSound(obj, SoundType.CANCEL);
         }
+    }
+
+    private Sound parseSound(String name) {
+        try {
+            return Sound.valueOf(name);
+        }
+        catch (Exception ex) {
+        }
+
+        return null;
     }
 
     private void addSound(Object sound, SoundType type) {
@@ -265,12 +275,34 @@ public enum DisguiseSound {
             return;
         }
 
-        if (sound instanceof Sound) {
-            addSound((Sound) sound, type);
+        if (sound instanceof String[]) {
+            for (String s : (String[]) sound) {
+                Sound so = parseSound(s);
+
+                if (so == null) {
+                    continue;
+                }
+
+                addSound(so, type);
+            }
+        } else if (sound instanceof String) {
+            Sound so = parseSound((String) sound);
+
+            if (so == null) {
+                return;
+            }
+
+            addSound(so, type);
         } else if (sound instanceof Sound[]) {
             for (Sound s : (Sound[]) sound) {
+                if (s == null) {
+                    continue;
+                }
+
                 addSound(s, type);
             }
+        } else if (sound instanceof Sound) {
+            addSound((Sound) sound, type);
         } else {
             throw new IllegalArgumentException("Was given an unknown object " + sound);
         }
@@ -288,6 +320,10 @@ public enum DisguiseSound {
 
     public float getDamageAndIdleSoundVolume() {
         return damageSoundVolume;
+    }
+
+    public void setDamageAndIdleSoundVolume(float strength) {
+        this.damageSoundVolume = strength;
     }
 
     public Object getSound(SoundType type) {
@@ -333,9 +369,5 @@ public enum DisguiseSound {
 
     public boolean isCancelSound(String sound) {
         return getSound(sound) == SoundType.CANCEL;
-    }
-
-    public void setDamageAndIdleSoundVolume(float strength) {
-        this.damageSoundVolume = strength;
     }
 }

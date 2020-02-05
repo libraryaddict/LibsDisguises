@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -54,7 +55,8 @@ public class LibsDisguises extends JavaPlugin {
         YamlConfiguration pluginYml = ReflectionManager.getPluginYaml(getClassLoader());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
 
-        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
+        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion() + " | " +
+                ReflectionManager.getVersion());
 
         getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
@@ -68,9 +70,9 @@ public class LibsDisguises extends JavaPlugin {
                             " Command " + "Blocks, Admins)");
         }
 
-        if (!ReflectionManager.getMinecraftVersion().startsWith("1.15")) {
+        if (ReflectionManager.getVersion() == null) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
-                    "intended for 1.15!");
+                    "intended for 1.14 & 1.15!");
             getPluginLoader().disablePlugin(this);
             return;
         }
@@ -90,6 +92,8 @@ public class LibsDisguises extends JavaPlugin {
 
         listener = new DisguiseListener(this);
 
+        registerCommand("libsdisguises", new LibsDisguisesCommand());
+
         if (!DisguiseConfig.isDisableCommands()) {
             registerCommand("disguise", new DisguiseCommand());
             registerCommand("undisguise", new UndisguiseCommand());
@@ -101,7 +105,6 @@ public class LibsDisguises extends JavaPlugin {
             registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
             registerCommand("disguisehelp", new DisguiseHelpCommand());
             registerCommand("disguiseclone", new DisguiseCloneCommand());
-            registerCommand("libsdisguises", new LibsDisguisesCommand());
             registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
             registerCommand("disguisemodify", new DisguiseModifyCommand());
             registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());

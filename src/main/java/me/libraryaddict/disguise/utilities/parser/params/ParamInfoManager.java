@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfoTypes;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.ChatColor;
 
 import javax.annotation.Nullable;
@@ -90,7 +91,9 @@ public class ParamInfoManager {
         while (itel.hasNext()) {
             Method method = itel.next();
 
-            if (method.getParameterTypes().length != 1) {
+            if (!ReflectionManager.isSupported(method)) {
+                itel.remove();
+            } else if (method.getParameterTypes().length != 1) {
                 itel.remove();
             } else if (method.getName().startsWith("get")) {
                 itel.remove();

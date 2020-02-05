@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
@@ -47,6 +48,12 @@ public class ReflectionManager {
     private static Field chunkProviderField;
     private static Field entityTrackerField;
     private static Field trackedEntitiesField;
+    @Getter
+    private static NmsVersion version;
+
+    public static boolean isSupported(NmsVersion version) {
+        return getVersion().ordinal() >= version.ordinal();
+    }
 
     public static void init() {
         try {
@@ -94,6 +101,52 @@ public class ReflectionManager {
         entityCountField = getNmsField("Entity", "entityCount");
 
         entityCountField.setAccessible(true);
+    }
+
+    public static boolean isSupported(AccessibleObject obj) {
+        if (obj.isAnnotationPresent(NmsAdded.class)) {
+            NmsAdded added = obj.getAnnotation(NmsAdded.class);
+
+            // If it was added after/on this version
+            if (!isSupported(added.added())) {
+                return false;
+            }
+        }
+
+        if (obj.isAnnotationPresent(NmsRemoved.class)) {
+            NmsRemoved removed = obj.getAnnotation(NmsRemoved.class);
+
+            if (isSupported(removed.removed())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean isSupported(Class cl, String name) {
+        try {
+            for (Field field : cl.getFields()) {
+                if (!field.getName().equals(name)) {
+                    continue;
+                }
+
+                return isSupported(field);
+            }
+
+            for (Method method : cl.getMethods()) {
+                if (!method.getName().equals(name)) {
+                    continue;
+                }
+
+                return isSupported(method);
+            }
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return true;
     }
 
     public static YamlConfiguration getPluginYaml(ClassLoader loader) {
@@ -286,6 +339,15 @@ public class ReflectionManager {
     public static String getBukkitVersion() {
         if (bukkitVersion == null) {
             bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+
+            for (NmsVersion v : NmsVersion.values()) {
+                if (!getBukkitVersion().startsWith(v.name())) {
+                    continue;
+                }
+
+                version = v;
+                break;
+            }
         }
 
         return bukkitVersion;

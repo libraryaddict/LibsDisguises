@@ -17,7 +17,8 @@ public class TranslateFiller {
         // Fill the configs
 
         for (ParamInfo info : ParamInfoManager.getParamInfos()) {
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                    .save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
 
             if (!info.getRawName().equals(info.getRawDescriptiveName())) {
                 TranslateType.DISGUISE_OPTIONS_PARAMETERS
@@ -50,6 +51,10 @@ public class TranslateFiller {
             }
 
             TranslateType.DISGUISES.save(StringUtils.join(split, " "), "Name for the " + type.name() + " disguise");
+
+            if (type.getEntityType() == null) {
+                continue;
+            }
 
             for (Method method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass())) {
                 Class para = method.getParameterTypes()[0];

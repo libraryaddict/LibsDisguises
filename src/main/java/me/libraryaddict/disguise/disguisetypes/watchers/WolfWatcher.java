@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemoved;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
 
 public class WolfWatcher extends TameableWatcher {
@@ -13,6 +15,24 @@ public class WolfWatcher extends TameableWatcher {
 
     public DyeColor getCollarColor() {
         return AnimalColor.getColorByWool(getData(MetaIndex.WOLF_COLLAR)).getDyeColor();
+    }
+
+    @Deprecated
+    public void setCollarColor(AnimalColor color) {
+        setCollarColor(color.getDyeColor());
+    }
+
+    public void setCollarColor(DyeColor newColor) {
+        if (!isTamed()) {
+            setTamed(true);
+        }
+
+        if (newColor == getCollarColor()) {
+            return;
+        }
+
+        setData(MetaIndex.WOLF_COLLAR, (int) newColor.getWoolData());
+        sendData(MetaIndex.WOLF_COLLAR);
     }
 
     public boolean isBegging() {
@@ -32,21 +52,24 @@ public class WolfWatcher extends TameableWatcher {
         setTameableFlag(2, angry);
     }
 
-    @Deprecated
-    public void setCollarColor(AnimalColor color) {
-        setCollarColor(color.getDyeColor());
+    /**
+     * Used for tail rotation.
+     *
+     * @return
+     */
+    @NmsRemoved(removed = NmsVersion.v1_15)
+    public float getDamageTaken() {
+        return getData(MetaIndex.WOLF_DAMAGE);
     }
 
-    public void setCollarColor(DyeColor newColor) {
-        if (!isTamed()) {
-            setTamed(true);
-        }
-
-        if (newColor == getCollarColor()) {
-            return;
-        }
-
-        setData(MetaIndex.WOLF_COLLAR, (int) newColor.getWoolData());
-        sendData(MetaIndex.WOLF_COLLAR);
+    /**
+     * Used for tail rotation.
+     *
+     * @param damage
+     */
+    @NmsRemoved(removed = NmsVersion.v1_15)
+    public void setDamageTaken(float damage) {
+        setData(MetaIndex.WOLF_DAMAGE, damage);
+        sendData(MetaIndex.WOLF_DAMAGE);
     }
 }

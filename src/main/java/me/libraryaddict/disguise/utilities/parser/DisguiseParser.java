@@ -37,6 +37,10 @@ public class DisguiseParser {
     public static void createDefaultMethods() {
         try {
             for (DisguiseType type : DisguiseType.values()) {
+                if (type.getEntityType() == null) {
+                    continue;
+                }
+
                 Disguise disguise;
 
                 if (type.isMisc()) {
@@ -284,19 +288,21 @@ public class DisguiseParser {
     }
 
     public static DisguisePerm[] getDisguisePerms() {
-        DisguisePerm[] perms = new DisguisePerm[DisguiseType.values().length +
-                DisguiseConfig.getCustomDisguises().size()];
-        int i = 0;
+        ArrayList<DisguisePerm> perms = new ArrayList<>();
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
-            perms[i++] = new DisguisePerm(disguiseType);
+            if (disguiseType.getEntityType() == null) {
+                continue;
+            }
+
+            perms.add(new DisguisePerm(disguiseType));
         }
 
         for (Entry<DisguisePerm, String> entry : DisguiseConfig.getCustomDisguises().entrySet()) {
-            perms[i++] = entry.getKey();
+            perms.add(entry.getKey());
         }
 
-        return perms;
+        return perms.toArray(new DisguisePerm[0]);
     }
 
     /**

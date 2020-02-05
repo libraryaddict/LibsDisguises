@@ -7,6 +7,10 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsAdded;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemoved;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -108,8 +112,10 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Byte> BAT_HANGING = new MetaIndex<>(BatWatcher.class, 0, (byte) 1);
 
+    @NmsAdded(added = NmsVersion.v1_15)
     public static MetaIndex<Byte> BEE_META = new MetaIndex<>(BeeWatcher.class, 0, (byte) 0);
 
+    @NmsAdded(added = NmsVersion.v1_15)
     public static MetaIndex<Integer> BEE_ANGER = new MetaIndex<>(BeeWatcher.class, 1, 0);
 
     /**
@@ -199,6 +205,7 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Boolean> ENDERMAN_AGRESSIVE = new MetaIndex<>(EndermanWatcher.class, 1, false);
 
+    @NmsAdded(added = NmsVersion.v1_15)
     public static MetaIndex<Boolean> ENDERMAN_UNKNOWN = new MetaIndex<>(EndermanWatcher.class, 2, false);
 
     /**
@@ -351,6 +358,7 @@ public class MetaIndex<Y> {
     /**
      * How many bee stings does the entity have
      */
+    @NmsAdded(added = NmsVersion.v1_15)
     public static MetaIndex<Integer> LIVING_STINGS = new MetaIndex<>(LivingWatcher.class, 5, 0);
 
     public static MetaIndex<Optional<BlockPosition>> LIVING_BED_POSITION = new MetaIndex<>(LivingWatcher.class, 6,
@@ -488,6 +496,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> TRIDENT_ENCHANTS = new MetaIndex<>(TridentWatcher.class, 0, (byte) 0);
 
+    @NmsAdded(added = NmsVersion.v1_15)
     public static MetaIndex<Boolean> TRIDENT_ENCHANTED = new MetaIndex<>(TridentWatcher.class, 1, false);
 
     public static MetaIndex<Integer> TROPICAL_FISH_VARIANT = new MetaIndex<>(TropicalFishWatcher.class, 0, 0);
@@ -525,9 +534,12 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> WITHER_SKULL_BLUE = new MetaIndex<>(WitherSkullWatcher.class, 0, false);
 
-    public static MetaIndex<Boolean> WOLF_BEGGING = new MetaIndex<>(WolfWatcher.class, 0, false);
+    public static MetaIndex<Boolean> WOLF_BEGGING = new MetaIndex<>(WolfWatcher.class, 1, false);
 
-    public static MetaIndex<Integer> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 1, 14);
+    @NmsRemoved(removed = NmsVersion.v1_15)
+    public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 1F);
+
+    public static MetaIndex<Integer> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 2, 14);
 
     public static MetaIndex<Boolean> ZOMBIE_BABY = new MetaIndex<>(ZombieWatcher.class, 0, false);
 
@@ -545,6 +557,7 @@ public class MetaIndex<Y> {
 
     static {
         setValues();
+        eliminateBlankIndexes();
         orderMetaIndexes();
     }
 
@@ -825,6 +838,10 @@ public class MetaIndex<Y> {
             for (Field field : MetaIndex.class.getFields()) {
                 if (field.getType() != MetaIndex.class)
                     continue;
+
+                if (!ReflectionManager.isSupported(field)) {
+                    continue;
+                }
 
                 MetaIndex index = (MetaIndex) field.get(null);
 

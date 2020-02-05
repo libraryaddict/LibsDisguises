@@ -64,6 +64,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             ArrayList<String> classes = new ArrayList<>();
 
             for (DisguiseType type : DisguiseType.values()) {
+                if (type.getEntityType() == null) {
+                    continue;
+                }
+
                 classes.add(type.toReadable());
             }
 
@@ -79,6 +83,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         if (!isInteger(args[0])) {
             for (DisguiseType t : DisguiseType.values()) {
+                if (t.getEntityType() == null) {
+                    continue;
+                }
+
                 if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
                     baseType = t;
                     starting = 1;
@@ -193,6 +201,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         if (args.length == 0) {
             for (DisguiseType type : DisguiseType.values()) {
+                if (type.getEntityType() == null) {
+                    continue;
+                }
+
                 tabs.add(type.toReadable().replaceAll(" ", "_"));
             }
 
@@ -203,6 +215,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         if (!isInteger(args[0])) {
             for (DisguiseType t : DisguiseType.values()) {
+                if (t.getEntityType() == null) {
+                    continue;
+                }
+
                 if (t.toReadable().replaceAll(" ", "").equalsIgnoreCase(args[0].replaceAll("_", ""))) {
                     starting = 2;
                     break;

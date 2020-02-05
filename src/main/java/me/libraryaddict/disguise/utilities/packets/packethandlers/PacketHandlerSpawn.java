@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
 import org.bukkit.Location;
@@ -224,11 +225,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(spawnPlayer);
 
-            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, newWatcher, true)
-                    .createPacket(entityId, newWatcher, true);
+            if (ReflectionManager.isSupported(NmsVersion.v1_15)) {
+                PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, newWatcher, true)
+                        .createPacket(entityId, newWatcher, true);
 
-            packets.addPacket(metaPacket);
+                packets.addPacket(metaPacket);
+            } else {
+                spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
+            }
 
             if (!selfDisguise) {
                 // Teleport the player back to where he's supposed to be
@@ -248,7 +253,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 packets.addDelayedPacket(teleportPacket, 3);
 
                 // Send a metadata packet
-                metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
                 newWatcher = DisguiseUtilities
                         .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
@@ -309,11 +314,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
                             disguise.getWatcher());
 
-            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, disguisedEntity.getEntityId(),
-                            newWatcher, true).createPacket(disguisedEntity.getEntityId(), newWatcher, true);
+            if (ReflectionManager.isSupported(NmsVersion.v1_15)) {
+                PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, disguisedEntity.getEntityId(),
+                                newWatcher, true).createPacket(disguisedEntity.getEntityId(), newWatcher, true);
 
-            packets.addPacket(metaPacket);
+                packets.addPacket(metaPacket);
+            } else {
+                spawnEntity.getDataWatcherModifier().write(0, newWatcher);
+            }
         } else if (disguise.getType().isMisc()) {
             int data = ((MiscDisguise) disguise).getData();
             double x = loc.getX();
