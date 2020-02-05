@@ -98,6 +98,15 @@ permissions:
     libsdisguises.pve:
       description: Allows player to ignore pve restrictions.
       default: false
+    libsdisguises.permtest:
+      description: Allows player to test permissions
+      default: false
+    libsdisguises.metainfo:
+      description: Allows player to get meta info
+      default: false
+    libsdisguises.json:
+      description: Allows player to parse held item to json
+      default: true
     libsdisguises.pvp:
       description: Allows player to ignore pvp restrictions.
       default: false

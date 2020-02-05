@@ -113,7 +113,7 @@ public enum LibsMsg {
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown option '%s' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
-    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'permtest' or 'metainfo'?"),
+    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'permtest', 'json' or 'metainfo'?"),
     LIMITED_RADIUS(ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY(ChatColor.RED + "Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
@@ -248,7 +248,9 @@ public enum LibsMsg {
     CANT_ATTACK_DISGUISED(ChatColor.RED + "Cannot fight while disguised!"),
     CANT_ATTACK_DISGUISED_RECENTLY(ChatColor.RED + "You were disguised recently! Can't attack yet!"),
     SWITCH_WORLD_DISGUISE_REMOVED(ChatColor.RED + "Disguise removed as you've switched worlds!"),
-    ACTION_BAR_MESSAGE(ChatColor.GOLD + "Currently disguised as %s");
+    ACTION_BAR_MESSAGE(ChatColor.GOLD + "Currently disguised as %s"),
+    ITEM_SERIALIZED(ChatColor.GOLD + "Serialized, click to copy: "),
+    ITEM_SIMPLE_STRING(ChatColor.GOLD + "Simple, click to copy: ");
 
     private String string;
 
