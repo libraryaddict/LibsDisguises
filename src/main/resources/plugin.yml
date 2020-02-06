@@ -89,7 +89,6 @@ commands:
 permissions:
     libsdisguises.reload:
       description: Allows the user to reload LibsDisguises.
-      default: op
     libsdisguises.seethrough:
       description: Allows player to see through disguises.
       default: false
@@ -99,18 +98,18 @@ permissions:
     libsdisguises.pve:
       description: Allows player to ignore pve restrictions.
       default: false
-    libsdisguises.permtest:
-      description: Allows player to test permissions
-      default: false
-    libsdisguises.metainfo:
-      description: Allows player to get meta info
-      default: false
-    libsdisguises.json:
-      description: Allows player to parse held item to json
-      default: true
     libsdisguises.pvp:
       description: Allows player to ignore pvp restrictions.
       default: false
+    libsdisguises.permtest:
+      description: Allows player to test permissions
+    libsdisguises.metainfo:
+      description: Allows player to get meta info
+    libsdisguises.json:
+      description: Allows player to parse held item to json
+      default: true
+    libsdisguises.scoreboardtest:
+      description: Test if the scoreboard is valid, this is a simple test.
     libsdisguises.seecmd:
       description: See all commands in tab-completion
       default: true

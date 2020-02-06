@@ -113,7 +113,8 @@ public enum LibsMsg {
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown option '%s' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
-    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'permtest', 'json' or 'metainfo'?"),
+    LIBS_COMMAND_WRONG_ARG(
+            ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'scoreboard', 'permtest', 'json' or 'metainfo'?"),
     LIMITED_RADIUS(ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY(ChatColor.RED + "Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
@@ -250,7 +251,15 @@ public enum LibsMsg {
     SWITCH_WORLD_DISGUISE_REMOVED(ChatColor.RED + "Disguise removed as you've switched worlds!"),
     ACTION_BAR_MESSAGE(ChatColor.GOLD + "Currently disguised as %s"),
     ITEM_SERIALIZED(ChatColor.GOLD + "Serialized, click to copy: "),
-    ITEM_SIMPLE_STRING(ChatColor.GOLD + "Simple, click to copy: ");
+    ITEM_SIMPLE_STRING(ChatColor.GOLD + "Simple, click to copy: "),
+    LIBS_SCOREBOARD_NO_TEAM(ChatColor.RED + "Not on a scoreboard team!"),
+    LIBS_SCOREBOARD_NO_TEAM_PUSH(ChatColor.RED + "Scoreboard team has pushing enabled!"),
+    LIBS_SCOREBOARD_SUCCESS(ChatColor.GOLD +
+            "On a team and pushing is disabled! If you're still having issues and you are disguised right now, then " +
+            "you have a plugin modifying scoreboard through packets"),
+    LIBS_SCOREBOARD_DISABLED(
+            "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
+                    ".");
 
     private String string;
 
