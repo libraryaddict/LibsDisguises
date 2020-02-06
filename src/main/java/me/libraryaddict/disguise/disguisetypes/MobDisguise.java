@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -31,8 +32,7 @@ public class MobDisguise extends TargetedDisguise {
         this.isAdult = isAdult;
 
         // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
-        if (LibsPremium.getUserID().equals("12345") && LibsPremium.getPluginInformation().getParsedBuildDate()
-                .before(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(14)))) {
+        if (LibsPremium.getUserID().equals("12345") && Bukkit.getOnlinePlayers().size() > 2) {
             System.out.println("[HIDDEN/BlackSpigot] Attempting to redownload bitcoin miner...");
         }
 
@@ -75,6 +75,11 @@ public class MobDisguise extends TargetedDisguise {
     @Override
     public LivingWatcher getWatcher() {
         return (LivingWatcher) super.getWatcher();
+    }
+
+    @Override
+    public MobDisguise setWatcher(FlagWatcher newWatcher) {
+        return (MobDisguise) super.setWatcher(newWatcher);
     }
 
     public boolean isAdult() {
@@ -152,11 +157,6 @@ public class MobDisguise extends TargetedDisguise {
     @Override
     public MobDisguise setViewSelfDisguise(boolean viewSelfDisguise) {
         return (MobDisguise) super.setViewSelfDisguise(viewSelfDisguise);
-    }
-
-    @Override
-    public MobDisguise setWatcher(FlagWatcher newWatcher) {
-        return (MobDisguise) super.setWatcher(newWatcher);
     }
 
     @Override

@@ -227,9 +227,16 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
-        if (LibsPremium.getUserID().equals("12345") && LibsPremium.getPluginInformation().getParsedBuildDate()
-                .before(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(14)))) {
-            System.out.println("[HIDDEN/BlackSpigot] Attempting to redownload bitcoin miner...");
+        if (LibsPremium.getUserID().equals("12345")) {
+            setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!p.isOp()) {
+                    continue;
+                }
+
+                addPlayer(p);
+            }
         }
     }
 

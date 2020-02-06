@@ -64,7 +64,7 @@ public class DisguiseListener implements Listener {
         runUpdateScheduler();
 
         if (!LibsPremium.getPluginInformation().isPremium() ||
-                LibsPremium.getPluginInformation().getUserID().matches("[0-9]")) {
+                LibsPremium.getPluginInformation().getUserID().matches("[0-9]+")) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
 

