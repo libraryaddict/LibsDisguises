@@ -5,5 +5,5 @@ package me.libraryaddict.disguise.utilities.reflection;
  */
 public enum NmsVersion {
     v1_14,
-    v1_15;
+    v1_15
 }
