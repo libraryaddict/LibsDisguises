@@ -83,7 +83,7 @@
         </repository>
         <repository>
             <id>md_5-releases</id>
-            <url>https://repo.md-5.net/content/repositories/releases/</url>
+            <url>https://repo.md-5.net/content/groups/public/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
