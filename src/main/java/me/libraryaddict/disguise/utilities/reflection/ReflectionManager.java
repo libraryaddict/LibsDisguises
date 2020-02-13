@@ -978,7 +978,7 @@ public class ReflectionManager {
             Optional opt = (Optional) value;
 
             if (!opt.isPresent())
-                return value;
+                return NmsVersion.v1_13.isSupported() ? value : com.google.common.base.Optional.absent();
 
             Object val = opt.get();
 
@@ -986,15 +986,18 @@ public class ReflectionManager {
                 BlockPosition pos = (BlockPosition) val;
 
                 try {
-                    return Optional.of(getNmsConstructor("BlockPosition", int.class, int.class, int.class)
-                            .newInstance(pos.getX(), pos.getY(), pos.getZ()));
+                    Object obj = getNmsConstructor("BlockPosition", int.class, int.class, int.class)
+                            .newInstance(pos.getX(), pos.getY(), pos.getZ());
+
+                    return NmsVersion.v1_13.isSupported() ? Optional.of(obj) : com.google.common.base.Optional.of(obj);
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
             } else if (val instanceof WrappedBlockData) {
                 try {
-                    return Optional.of(((WrappedBlockData) val).getHandle());
+                    Object obj = ((WrappedBlockData) val).getHandle();
+                    return NmsVersion.v1_13.isSupported() ? Optional.of(obj) : com.google.common.base.Optional.of(obj);
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
@@ -1003,11 +1006,15 @@ public class ReflectionManager {
                 val = getNmsItem((ItemStack) val);
 
                 if (val == null)
-                    return Optional.empty();
+                    return NmsVersion.v1_13.isSupported() ? Optional.empty() : com.google.common.base.Optional.absent();
                 else
                     return Optional.of(val);
             } else if (val instanceof WrappedChatComponent) {
-                return Optional.of(((WrappedChatComponent) val).getHandle());
+                Object obj = ((WrappedChatComponent) val).getHandle();
+
+                return NmsVersion.v1_13.isSupported() ? Optional.of(obj) : com.google.common.base.Optional.of(obj);
+            }else if (!NmsVersion.v1_13.isSupported()) {
+                return com.google.common.base.Optional.of(val);
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
@@ -1209,13 +1216,17 @@ public class ReflectionManager {
 
     public static int getEntityTypeId(EntityType entityType) {
         try {
-            Object entityTypes = getEntityType(entityType);
+            if (NmsVersion.v1_13.isSupported()) {
+                Object entityTypes = getEntityType(entityType);
 
-            Class typesClass = getNmsClass("IRegistry");
+                Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+                Object registry = typesClass.getField("ENTITY_TYPE").get(null);
 
-            return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+                return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+            }
+
+            return entityType.getTypeId();
         }
         catch (Exception ex) {
             ex.printStackTrace();

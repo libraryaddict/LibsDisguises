@@ -45,8 +45,20 @@ public class MetaIndex<Y> {
     /**
      * The type of particle to display
      */
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public static MetaIndex<WrappedParticle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
-            WrappedParticle.create(Particle.SPELL_MOB, null));
+            NmsVersion.v1_13.isSupported() ? WrappedParticle.create(Particle.SPELL_MOB, null) : null);
+
+    @NmsRemovedIn(val = NmsVersion.v1_13)
+    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 3, 0);
+
+    @NmsRemovedIn(val = NmsVersion.v1_13)
+    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_PARAM_1_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 4,
+            0);
+
+    @NmsRemovedIn(val = NmsVersion.v1_13)
+    public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_PARAM_2_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 5,
+            0);
 
     /**
      * The size of the area
@@ -102,6 +114,7 @@ public class MetaIndex<Y> {
     /**
      * The shooter of the arrow, no visible effect if set
      */
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
     @NmsAddedIn(val = NmsVersion.v1_14)
@@ -141,6 +154,7 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Integer> BOAT_TYPE = new MetaIndex<>(BoatWatcher.class, 3, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
 
     @NmsAddedIn(val = NmsVersion.v1_14)
@@ -224,8 +238,14 @@ public class MetaIndex<Y> {
     /**
      * The custom name of the entity, empty if not set
      */
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public static MetaIndex<Optional<WrappedChatComponent>> ENTITY_CUSTOM_NAME = new MetaIndex<>(FlagWatcher.class, 2,
             Optional.empty());
+    /**
+     * The custom name of the entity, empty if not set
+     */
+    @NmsRemovedIn(val = NmsVersion.v1_13)
+    public static MetaIndex<String> ENTITY_CUSTOM_NAME_OLD = new MetaIndex<>(FlagWatcher.class, 2, "");
 
     /**
      * If custom name should always be visible even when not looked at
@@ -262,7 +282,7 @@ public class MetaIndex<Y> {
             new ItemStack(Material.AIR));
 
     public static MetaIndex<ItemStack> FIREWORK_ITEM = new MetaIndex<>(FireworkWatcher.class, 0,
-            new ItemStack(Material.FIREWORK_ROCKET));
+            new ItemStack(NmsVersion.v1_13.isSupported() ? Material.FIREWORK_ROCKET : Material.AIR));
 
     public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
@@ -595,6 +615,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> ZOMBIE_BABY = new MetaIndex<>(ZombieWatcher.class, 0, false);
 
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public static MetaIndex<Boolean> ZOMBIE_CONVERTING_DROWNED = new MetaIndex<>(ZombieWatcher.class, 2, false);
 
     public static MetaIndex<Integer> ZOMBIE_PLACEHOLDER = new MetaIndex<>(ZombieWatcher.class, 1, 0);

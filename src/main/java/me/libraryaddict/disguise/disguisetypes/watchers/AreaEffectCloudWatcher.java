@@ -1,12 +1,16 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 
 /**
@@ -52,24 +56,49 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    public void setParticle(WrappedParticle particle) {
-        setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
-        sendData(MetaIndex.AREA_EFFECT_PARTICLE);
-    }
-
-    public void setParticle(Particle particle) {
-        setParticle(WrappedParticle.create(particle, null));
-    }
-
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public <T> void setParticle(Particle particle, T particleData) {
         setParticle(WrappedParticle.create(particle, particleData));
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public WrappedParticle getParticle() {
-        return getData(MetaIndex.AREA_EFFECT_PARTICLE);
+        if (NmsVersion.v1_13.isSupported()) {
+            return getData(MetaIndex.AREA_EFFECT_PARTICLE);
+        } else {
+            // Item crack, block crack, block dust, falling dust
+            int particleId = getData(MetaIndex.AREA_EFFECT_PARTICLE_OLD);
+            Particle particle = Particle.values()[particleId];
+
+            return WrappedParticle.create(particle, null);
+        }
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public void setParticle(WrappedParticle particle) {
+        if (NmsVersion.v1_13.isSupported()) {
+            setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);
+            sendData(MetaIndex.AREA_EFFECT_PARTICLE);
+        } else {
+            setParticleType(particle.getParticle());
+        }
     }
 
     public Particle getParticleType() {
-        return getParticle().getParticle();
+        if (NmsVersion.v1_13.isSupported()) {
+            return getParticle().getParticle();
+        } else {
+            return Particle.values()[getData(MetaIndex.AREA_EFFECT_PARTICLE_OLD)];
+        }
+    }
+
+    public void setParticleType(Particle particle) {
+        if (NmsVersion.v1_13.isSupported()) {
+            setParticle(WrappedParticle.create(particle, null));
+        } else {
+            setData(MetaIndex.AREA_EFFECT_PARTICLE_OLD, particle.ordinal());
+
+            sendData(MetaIndex.AREA_EFFECT_PARTICLE_OLD);
+        }
     }
 }

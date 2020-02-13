@@ -217,6 +217,10 @@ public class FlagWatcher {
     }
 
     public String getCustomName() {
+        if (!NmsVersion.v1_13.isSupported()) {
+            return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
+        }
+
         Optional<WrappedChatComponent> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
 
         if (optional.isPresent()) {
@@ -230,16 +234,27 @@ public class FlagWatcher {
 
     public void setCustomName(String name) {
         if (Strings.isNullOrEmpty(name)) {
-            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+            if (NmsVersion.v1_13.isSupported()) {
+                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+            } else {
+                setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
+            }
         } else {
             if (name.length() > 64) {
                 name = name.substring(0, 64);
             }
 
-            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
+            if (NmsVersion.v1_13.isSupported()) {
+                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
+            } else {
+                setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
+            }
         }
-
-        sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+        if (NmsVersion.v1_13.isSupported()) {
+            sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+        } else {
+            sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
+        }
     }
 
     protected TargetedDisguise getDisguise() {

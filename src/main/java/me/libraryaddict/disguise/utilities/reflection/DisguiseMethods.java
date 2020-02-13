@@ -36,7 +36,7 @@ public class DisguiseMethods {
     }
 
     public DisguiseMethods() {
-        try (InputStream stream = LibsDisguises.getInstance().getResource("methods.txt")) {
+        try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
             List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.toList());
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();

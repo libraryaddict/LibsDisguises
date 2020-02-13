@@ -61,9 +61,15 @@ public class ParamInfoTypes {
                 "View all the colors you can use for a llama color"));
         paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant",
                 "View the different colors a parrot can be"));
-        paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle", "The different particles of Minecraft",
-                Particle.values(), getMaterials()));
-        paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
+
+        if (NmsVersion.v1_13.isSupported()) {
+            paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle",
+                    "The different particles of Minecraft", Particle.values(), getMaterials()));
+            paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
+        } else {
+            paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
+        }
+
         paramInfos.add(new ParamInfoEnum(DyeColor.class, "DyeColor", "Dye colors of many different colors"));
         paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style",
                 "Horse style which is the patterns on the horse"));
@@ -141,7 +147,7 @@ public class ParamInfoTypes {
         List<Material> list = new ArrayList<>();
 
         for (Material material : Material.values()) {
-            if (material == Material.AIR || material == Material.CAVE_AIR || material == Material.VOID_AIR) {
+            if (material.name().matches("([A-Z]+_)?AIR")) {
                 continue;
             }
 

@@ -146,7 +146,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
                         continue;
                     }
 
-                    AnimalColor color = AnimalColor.getColorByWool(item.getType());
+                    AnimalColor color = AnimalColor.getColorByItem(item);
 
                     if (color == null) {
                         continue;
@@ -173,7 +173,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
                         continue;
                     }
 
-                    AnimalColor color = AnimalColor.getColorByMaterial(item.getType());
+                    AnimalColor color = AnimalColor.getColorByItem(item);
 
                     if (color == null) {
                         continue;

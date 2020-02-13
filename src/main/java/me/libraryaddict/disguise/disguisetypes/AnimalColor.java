@@ -3,25 +3,28 @@ package me.libraryaddict.disguise.disguisetypes;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public enum AnimalColor {
-    BLACK(DyeColor.BLACK, Material.INK_SAC),
-    BLUE(DyeColor.BLUE, Material.LAPIS_LAZULI),
-    BROWN(DyeColor.BROWN, Material.COCOA_BEANS),
-    CYAN(DyeColor.CYAN, Material.CYAN_DYE),
-    GRAY(DyeColor.GRAY, Material.GRAY_DYE),
+    BLACK(DyeColor.BLACK,
+            NmsVersion.v1_13.isSupported() ? Material.getMaterial("INK_SAC") : Material.getMaterial("INK_SACK")),
+    BLUE(DyeColor.BLUE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LAPIS_LAZULI") : null),
+    BROWN(DyeColor.BROWN, NmsVersion.v1_13.isSupported() ? Material.getMaterial("COCOA_BEANS") : null),
+    CYAN(DyeColor.CYAN, NmsVersion.v1_13.isSupported() ? Material.getMaterial("CYAN_DYE") : null),
+    GRAY(DyeColor.GRAY, NmsVersion.v1_13.isSupported() ? Material.getMaterial("GRAY_DYE") : null),
     GREEN(DyeColor.GREEN,
             NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CATCUS_GREEN")),
-    LIGHT_BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_DYE),
-    LIME(DyeColor.LIME, Material.LIME_DYE),
-    MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_DYE),
-    ORANGE(DyeColor.ORANGE, Material.ORANGE_DYE),
-    PINK(DyeColor.PINK, Material.PINK_DYE),
-    PURPLE(DyeColor.PURPLE, Material.PURPLE_DYE),
+    LIGHT_BLUE(DyeColor.LIGHT_BLUE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIGHT_BLUE_DYE") : null),
+    LIME(DyeColor.LIME, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIME_DYE") : null),
+    MAGENTA(DyeColor.MAGENTA, NmsVersion.v1_13.isSupported() ? Material.getMaterial("MAGENTA_DYE") : null),
+    ORANGE(DyeColor.ORANGE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("ORANGE_DYE") : null),
+    PINK(DyeColor.PINK, NmsVersion.v1_13.isSupported() ? Material.getMaterial("PINK_DYE") : null),
+    PURPLE(DyeColor.PURPLE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("PURPLE_DYE") : null),
     RED(DyeColor.RED,
             NmsVersion.v1_14.isSupported() ? Material.getMaterial("RED_DYE") : Material.getMaterial("ROSE_RED")),
-    LIGHT_GRAY(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_DYE),
-    WHITE(DyeColor.WHITE, Material.BONE_MEAL),
+    LIGHT_GRAY(DyeColor.valueOf(NmsVersion.v1_13.isSupported() ? "LIGHT_GRAY" : "SILVER"),
+            NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIGHT_GRAY_DYE") : null),
+    WHITE(DyeColor.WHITE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("BONE_MEAL") : null),
     YELLOW(DyeColor.YELLOW, NmsVersion.v1_14.isSupported() ? Material.getMaterial("YELLOW_DYE") :
             Material.getMaterial("DANDELION_YELLOW"));
 
@@ -50,6 +53,18 @@ public enum AnimalColor {
             }
 
             return color;
+        }
+
+        return null;
+    }
+
+    public static AnimalColor getColorByItem(ItemStack itemStack) {
+        if (NmsVersion.v1_13.isSupported()) {
+            return getColorByMaterial(itemStack.getType());
+        }
+
+        if (itemStack.getType().name().matches("(WOOL)|(CARPET)|(INK_SACK?)")) {
+            return getColorByWool(itemStack.getDurability());
         }
 
         return null;
@@ -96,7 +111,7 @@ public enum AnimalColor {
 
     AnimalColor(DyeColor color, Material material) {
         dyeColor = color;
-        this.material = material;
+        this.material = NmsVersion.v1_13.isSupported() ? material : Material.getMaterial("INK_SACK");
     }
 
     public Material getDyeMaterial() {

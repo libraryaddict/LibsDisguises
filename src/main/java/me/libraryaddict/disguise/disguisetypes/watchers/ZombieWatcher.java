@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 
@@ -32,10 +33,12 @@ public class ZombieWatcher extends InsentientWatcher {
         setBaby(true);
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public boolean isConverting() {
         return getData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_13)
     public void setConverting(boolean converting) {
         setData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
         sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
