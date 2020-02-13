@@ -7,15 +7,14 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.NmsAdded;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemoved;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
@@ -105,6 +104,7 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> ARROW_PIERCE_LEVEL = new MetaIndex<>(ArrowWatcher.class, 2, (byte) 0);
 
     /**
@@ -112,10 +112,10 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Byte> BAT_HANGING = new MetaIndex<>(BatWatcher.class, 0, (byte) 1);
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Byte> BEE_META = new MetaIndex<>(BeeWatcher.class, 0, (byte) 0);
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Integer> BEE_ANGER = new MetaIndex<>(BeeWatcher.class, 1, 0);
 
     /**
@@ -143,12 +143,16 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LOOKING_UP = new MetaIndex<>(CatWatcher.class, 2, false);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> CAT_COLLAR = new MetaIndex<>(CatWatcher.class, 3, AnimalColor.RED.ordinal());
 
     /**
@@ -197,6 +201,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> ENDER_DRAGON_PHASE = new MetaIndex<>(EnderDragonWatcher.class, 0, 10);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<ItemStack> ENDER_SIGNAL_ITEM = new MetaIndex<>(EnderSignalWatcher.class, 0,
             new ItemStack(Material.AIR));
 
@@ -205,7 +210,7 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Boolean> ENDERMAN_AGRESSIVE = new MetaIndex<>(EndermanWatcher.class, 1, false);
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Boolean> ENDERMAN_UNKNOWN = new MetaIndex<>(EndermanWatcher.class, 2, false);
 
     /**
@@ -245,11 +250,14 @@ public class MetaIndex<Y> {
     /**
      * If entity can make sounds, no noticable effects
      */
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<EntityPose> ENTITY_POSE = new MetaIndex<>(FlagWatcher.class, 6, EntityPose.STANDING);
 
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0,
             BlockPosition.ORIGIN);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<ItemStack> FIREBALL_ITEM = new MetaIndex<>(FireballWatcher.class, 0,
             new ItemStack(Material.AIR));
 
@@ -258,9 +266,14 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Integer> FIREWORK_ATTACHED_ENTITY_OLD = new MetaIndex<>(FireworkWatcher.class, 1, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<OptionalInt> FIREWORK_ATTACHED_ENTITY = new MetaIndex<>(FireworkWatcher.class, 1,
             OptionalInt.empty());
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> FIREWORK_SHOT_AT_ANGLE = new MetaIndex<>(FireworkWatcher.class, 2, false);
 
     public static MetaIndex<Integer> FISHING_HOOK_HOOKED = new MetaIndex<>(FishingHookWatcher.class, 0, 0);
@@ -268,12 +281,16 @@ public class MetaIndex<Y> {
     /**
      * The type of fox, its coloring
      */
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> FOX_TYPE = new MetaIndex<>(FoxWatcher.class, 0, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> FOX_META = new MetaIndex<>(FoxWatcher.class, 1, (byte) 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_1 = new MetaIndex<>(FoxWatcher.class, 2, Optional.empty());
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
     /**
@@ -297,6 +314,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> HORSE_CHESTED_CARRYING_CHEST = new MetaIndex<>(ChestedHorseWatcher.class, 0,
             false);
 
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Integer> HORSE_ARMOR = new MetaIndex<>(HorseWatcher.class, 1, 0);
     /**
      * Color of the horse, uses enum not RGB
      */
@@ -313,7 +332,14 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1,
             Optional.empty());
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> ILLAGER_SPELL = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Byte> ILLAGER_META = new MetaIndex<>(IllagerWatcher.class, 0, (byte) 0);
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Byte> ILLAGER_SPELL_TICKS = new MetaIndex<>(IllagerWizardWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Byte> INSENTIENT_META = new MetaIndex<>(InsentientWatcher.class, 0, (byte) 0);
 
@@ -358,9 +384,10 @@ public class MetaIndex<Y> {
     /**
      * How many bee stings does the entity have
      */
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Integer> LIVING_STINGS = new MetaIndex<>(LivingWatcher.class, 5, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Optional<BlockPosition>> LIVING_BED_POSITION = new MetaIndex<>(LivingWatcher.class, 6,
             Optional.empty());
 
@@ -410,21 +437,31 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Boolean> MINECART_FURANCE_FUELED = new MetaIndex<>(MinecartFurnaceWatcher.class, 0, false);
 
-    public static MetaIndex<String> MUSHROOM_COW_TYPE = new MetaIndex<>(MushroomCowWatcher.class, 0,
-            MushroomCow.Variant.RED.name().toLowerCase());
+    @NmsAddedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<String> MUSHROOM_COW_TYPE = new MetaIndex<>(MushroomCowWatcher.class, 0, "RED");
 
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Integer> OCELOT_TYPE = new MetaIndex<>(OcelotWatcher.class, 0, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_UNKNOWN_1 = new MetaIndex<>(PandaWatcher.class, 1, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_UNKNOWN_2 = new MetaIndex<>(PandaWatcher.class, 2, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> PANDA_MAIN_GENE = new MetaIndex<>(PandaWatcher.class, 3, (byte) 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> PANDA_HIDDEN_GENE = new MetaIndex<>(PandaWatcher.class, 4, (byte) 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Byte> PANDA_META = new MetaIndex<>(PandaWatcher.class, 5, (byte) 0);
 
     public static MetaIndex<Integer> PARROT_VARIANT = new MetaIndex<>(ParrotWatcher.class, 0, 0);
@@ -438,6 +475,7 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> PILLAGER_AIMING_BOW = new MetaIndex<>(PillagerWatcher.class, 0, false);
 
     public static MetaIndex<Float> PLAYER_ABSORPTION = new MetaIndex<>(PlayerWatcher.class, 0, 0F);
@@ -460,6 +498,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> RABBIT_TYPE = new MetaIndex<>(RabbitWatcher.class, 0, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> RAIDER_CASTING_SPELL = new MetaIndex<>(RaiderWatcher.class, 0, false);
 
     public static MetaIndex<Byte> SHEEP_WOOL = new MetaIndex<>(SheepWatcher.class, 0, (byte) 0);
@@ -472,6 +511,9 @@ public class MetaIndex<Y> {
     public static MetaIndex<Direction> SHULKER_FACING = new MetaIndex<>(ShulkerWatcher.class, 0, Direction.DOWN);
 
     public static MetaIndex<Byte> SHULKER_PEEKING = new MetaIndex<>(ShulkerWatcher.class, 2, (byte) 0);
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Boolean> SKELETON_SWING_ARMS = new MetaIndex<>(SkeletonWatcher.class, 0, false);
 
     public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<>(SlimeWatcher.class, 0, 1);
 
@@ -487,6 +529,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1,
             Optional.empty());
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<ItemStack> THROWABLE_ITEM = new MetaIndex<>(ThrowableWatcher.class, 0,
             new ItemStack(Material.AIR));
 
@@ -496,7 +539,7 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> TRIDENT_ENCHANTS = new MetaIndex<>(TridentWatcher.class, 0, (byte) 0);
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Boolean> TRIDENT_ENCHANTED = new MetaIndex<>(TridentWatcher.class, 1, false);
 
     public static MetaIndex<Integer> TROPICAL_FISH_VARIANT = new MetaIndex<>(TropicalFishWatcher.class, 0, 0);
@@ -517,10 +560,16 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> VEX_ANGRY = new MetaIndex<>(VexWatcher.class, 0, (byte) 0);
 
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Integer> VILLAGER_PROFESSION = new MetaIndex<>(VillagerWatcher.class, 0, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Integer> ABSTRACT_VILLAGER_ANGRY = new MetaIndex<>(AbstractVillagerWatcher.class, 0, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<VillagerData> VILLAGER_DATA = new MetaIndex<>(VillagerWatcher.class, 0,
-            new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1));
+            NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) :
+                    null);
 
     public static MetaIndex<Boolean> WITCH_AGGRESSIVE = new MetaIndex<>(WitchWatcher.class, 0, false);
 
@@ -536,10 +585,13 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Boolean> WOLF_BEGGING = new MetaIndex<>(WolfWatcher.class, 1, false);
 
-    @NmsRemoved(removed = NmsVersion.v1_15)
+    @NmsRemovedIn(val = NmsVersion.v1_15)
     public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 1F);
 
     public static MetaIndex<Integer> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 2, 14);
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Boolean> ZOMBIE_AGGRESSIVE = new MetaIndex<>(ZombieWatcher.class, 2, false);
 
     public static MetaIndex<Boolean> ZOMBIE_BABY = new MetaIndex<>(ZombieWatcher.class, 0, false);
 
@@ -547,8 +599,14 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> ZOMBIE_PLACEHOLDER = new MetaIndex<>(ZombieWatcher.class, 1, 0);
 
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public static MetaIndex<Integer> ZOMBIE_VILLAGER_PROFESSION_OLD = new MetaIndex<>(ZombieVillagerWatcher.class, 1,
+            0);
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<VillagerData> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1,
-            new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1));
+            NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) :
+                    null);
 
     /**
      * Shown for villager conversion
@@ -561,35 +619,20 @@ public class MetaIndex<Y> {
         orderMetaIndexes();
     }
 
-    @Deprecated
     private static void eliminateBlankIndexes() {
-        ArrayList<Entry<Class, ArrayList<MetaIndex>>> list = new ArrayList<>();
+        HashMap<Class, ArrayList<MetaIndex>> metas = new HashMap<>();
 
         for (MetaIndex index : values()) {
-            Entry<Class, ArrayList<MetaIndex>> entry = null;
-
-            for (Entry e : list) {
-                if (e.getKey() != index.getFlagWatcher())
-                    continue;
-
-                entry = e;
-                break;
-            }
-
-            if (entry == null) {
-                entry = new AbstractMap.SimpleEntry(index.getFlagWatcher(), new ArrayList<MetaIndex>());
-
-                list.add(entry);
-            }
-
-            entry.getValue().add(index);
+            metas.computeIfAbsent(index.getFlagWatcher(), (a) -> new ArrayList<>()).add(index);
         }
 
-        for (Entry<Class, ArrayList<MetaIndex>> entry : list) {
-            entry.getValue().sort(Comparator.comparingInt(MetaIndex::getIndex));
+        for (ArrayList<MetaIndex> list : metas.values()) {
+            list.sort(Comparator.comparingInt(MetaIndex::getIndex));
 
-            for (MetaIndex ind : entry.getValue()) {
-                ind._index = entry.getValue().indexOf(ind);
+            int i = 0;
+
+            for (MetaIndex ind : list) {
+                ind._index = i++;
             }
         }
     }
@@ -599,7 +642,7 @@ public class MetaIndex<Y> {
             if (flagType.getFlagWatcher() == FlagWatcher.class)
                 continue;
 
-            flagType._index += getNoIndexes(flagType.getFlagWatcher().getSuperclass());
+            flagType._index += getNoIndexes(ReflectionManager.getSuperClass(flagType.getFlagWatcher()));
         }
     }
 
@@ -628,7 +671,7 @@ public class MetaIndex<Y> {
                     if (type.getIndex() != i)
                         continue;
 
-                    if (!type.getFlagWatcher().isAssignableFrom(entry.getKey()))
+                    if (!ReflectionManager.isAssignableFrom(entry.getKey(), type.getFlagWatcher()))
                         continue;
 
                     if (found != null) {
@@ -702,7 +745,7 @@ public class MetaIndex<Y> {
             if (type.getIndex() != flagNo)
                 continue;
 
-            if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
+            if (!ReflectionManager.isAssignableFrom(watcherClass, type.getFlagWatcher()))
                 continue;
 
             return type;
@@ -719,7 +762,7 @@ public class MetaIndex<Y> {
         ArrayList<MetaIndex> list = new ArrayList<>();
 
         for (MetaIndex type : values()) {
-            if (type == null || !type.getFlagWatcher().isAssignableFrom(watcherClass))
+            if (type == null || !ReflectionManager.isAssignableFrom(watcherClass, type.getFlagWatcher()))
                 continue;
 
             list.add(type);
@@ -741,7 +784,7 @@ public class MetaIndex<Y> {
         }
 
         if (c != FlagWatcher.class) {
-            found += getNoIndexes(c.getSuperclass());
+            found += getNoIndexes(ReflectionManager.getSuperClass(c));
         }
 
         return found;
@@ -839,11 +882,12 @@ public class MetaIndex<Y> {
                 if (field.getType() != MetaIndex.class)
                     continue;
 
+                MetaIndex index = (MetaIndex) field.get(null);
+
                 if (!ReflectionManager.isSupported(field)) {
+                    index._index = -1;
                     continue;
                 }
-
-                MetaIndex index = (MetaIndex) field.get(null);
 
                 if (index == null)
                     continue;

@@ -22,14 +22,10 @@ import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
-import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
-import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
-import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.*;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -41,17 +37,16 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.bukkit.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class DisguiseUtilities {
     public static class ExtendedName {
@@ -111,7 +106,6 @@ public class DisguiseUtilities {
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static HashSet<UUID> selfDisguised = new HashSet<>();
-    private static Thread mainThread;
     private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
     private static HashMap<UUID, String> disguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
@@ -321,7 +315,13 @@ public class DisguiseUtilities {
         }
 
         try {
-            String cached = FileUtils.readFileToString(disguiseFile, "UTF-8");
+            String cached = null;
+
+            try (FileInputStream input = new FileInputStream(
+                    disguiseFile); InputStreamReader inputReader = new InputStreamReader(input,
+                    StandardCharsets.UTF_8); BufferedReader reader = new BufferedReader(inputReader)) {
+                cached = reader.lines().collect(Collectors.joining("\n"));
+            }
 
             if (remove) {
                 removeSavedDisguise(entityUUID);
@@ -515,7 +515,7 @@ public class DisguiseUtilities {
      * Sends entity removal packets, as this disguise was removed
      */
     public static void destroyEntity(TargetedDisguise disguise) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         try {
@@ -696,7 +696,7 @@ public class DisguiseUtilities {
      * @return
      */
     public static List<Player> getPerverts(Disguise disguise) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         if (disguise.getEntity() == null)
@@ -895,16 +895,6 @@ public class DisguiseUtilities {
 
         gson = gsonBuilder.create();
 
-        try {
-            Field threadField = ReflectionManager.getNmsField("MinecraftServer", "serverThread");
-            threadField.setAccessible(true);
-
-            mainThread = (Thread) threadField.get(ReflectionManager.getMinecraftServer());
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         if (!profileCache.exists())
             profileCache.mkdirs();
 
@@ -953,7 +943,7 @@ public class DisguiseUtilities {
      * Resends the entity to this specific player
      */
     public static void refreshTracker(final TargetedDisguise disguise, String player) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         if (disguise.getEntity() == null || !disguise.getEntity().isValid())
@@ -990,10 +980,12 @@ public class DisguiseUtilities {
                         .get(entityTrackerEntry);
 
                 Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                                ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
+                                ReflectionManager.getNmsClass("EntityPlayer"));
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
@@ -1030,7 +1022,7 @@ public class DisguiseUtilities {
      * A convenience method for me to refresh trackers in other plugins
      */
     public static void refreshTrackers(Entity entity) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         if (entity.isValid()) {
@@ -1044,10 +1036,12 @@ public class DisguiseUtilities {
                             .get(entityTrackerEntry);
 
                     Method clear = ReflectionManager
-                            .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
+                            .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                                    ReflectionManager.getNmsClass("EntityPlayer"));
 
                     final Method updatePlayer = ReflectionManager
-                            .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
+                            .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
+                                    ReflectionManager.getNmsClass("EntityPlayer"));
 
                     trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                     // ConcurrentModificationException
@@ -1081,7 +1075,7 @@ public class DisguiseUtilities {
      * Resends the entity to all the watching players, which is where the magic begins
      */
     public static void refreshTrackers(final TargetedDisguise disguise) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         if (!disguise.getEntity().isValid()) {
@@ -1115,10 +1109,12 @@ public class DisguiseUtilities {
                         .get(entityTrackerEntry);
 
                 final Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "a", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                                ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", "b", ReflectionManager.getNmsClass("EntityPlayer"));
+                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
+                                ReflectionManager.getNmsClass("EntityPlayer"));
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
                 PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
@@ -1179,7 +1175,7 @@ public class DisguiseUtilities {
     }
 
     public static void removeSelfDisguise(Player player) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         if (!selfDisguised.contains(player.getUniqueId())) {
@@ -1700,7 +1696,7 @@ public class DisguiseUtilities {
      * Sends the self disguise to the player
      */
     public static void sendSelfDisguise(final Player player, final TargetedDisguise disguise) {
-        if (mainThread != Thread.currentThread())
+        if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
 
         try {
@@ -1755,7 +1751,8 @@ public class DisguiseUtilities {
             boolean isMoving = false;
 
             try {
-                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField("q");
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry")
+                        .getDeclaredField(NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             }
@@ -1815,14 +1812,6 @@ public class DisguiseUtilities {
                             ReflectionManager.getNmsItem(player.getInventory().getItemInOffHand())));
 
             Location loc = player.getLocation();
-
-            // If the disguised is sleeping for w/e reason
-            if (player.isSleeping()) {
-            /*    sendSelfPacket(player,
-                        manager.createPacketConstructor(Server.BED, player, ReflectionManager.getBlockPosition(0, 0, 0))
-                                .createPacket(player, ReflectionManager
-                                        .getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())));*/
-            }
 
             // Resend any active potion effects
             for (PotionEffect potionEffect : player.getActivePotionEffects()) {

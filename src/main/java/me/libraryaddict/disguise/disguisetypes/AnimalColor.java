@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 
@@ -9,17 +10,20 @@ public enum AnimalColor {
     BROWN(DyeColor.BROWN, Material.COCOA_BEANS),
     CYAN(DyeColor.CYAN, Material.CYAN_DYE),
     GRAY(DyeColor.GRAY, Material.GRAY_DYE),
-    GREEN(DyeColor.GREEN, Material.GREEN_DYE),
+    GREEN(DyeColor.GREEN,
+            NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CATCUS_GREEN")),
     LIGHT_BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_DYE),
     LIME(DyeColor.LIME, Material.LIME_DYE),
     MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_DYE),
     ORANGE(DyeColor.ORANGE, Material.ORANGE_DYE),
     PINK(DyeColor.PINK, Material.PINK_DYE),
     PURPLE(DyeColor.PURPLE, Material.PURPLE_DYE),
-    RED(DyeColor.RED, Material.RED_DYE),
+    RED(DyeColor.RED,
+            NmsVersion.v1_14.isSupported() ? Material.getMaterial("RED_DYE") : Material.getMaterial("ROSE_RED")),
     LIGHT_GRAY(DyeColor.LIGHT_GRAY, Material.LIGHT_GRAY_DYE),
     WHITE(DyeColor.WHITE, Material.BONE_MEAL),
-    YELLOW(DyeColor.YELLOW, Material.YELLOW_DYE);
+    YELLOW(DyeColor.YELLOW, NmsVersion.v1_14.isSupported() ? Material.getMaterial("YELLOW_DYE") :
+            Material.getMaterial("DANDELION_YELLOW"));
 
     public static AnimalColor getColorByWool(int woolId) {
         for (AnimalColor color : values()) {

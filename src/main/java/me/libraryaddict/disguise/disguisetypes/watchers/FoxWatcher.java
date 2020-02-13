@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Fox;
 
 import java.util.Random;
@@ -10,6 +12,7 @@ import java.util.Random;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
+@NmsAddedIn(val = NmsVersion.v1_14)
 public class FoxWatcher extends AgeableWatcher {
     public FoxWatcher(Disguise disguise) {
         super(disguise);
@@ -21,16 +24,16 @@ public class FoxWatcher extends AgeableWatcher {
         return getFoxFlag(1);
     }
 
+    public void setSitting(boolean value) {
+        setFoxFlag(1, value);
+    }
+
     public boolean isCrouching() {
         return getFoxFlag(4);
     }
 
     public void setCrouching(boolean value) {
         setFoxFlag(4, value);
-    }
-
-    public void setSitting(boolean value) {
-        setFoxFlag(1, value);
     }
 
     public boolean isSleeping() {
@@ -51,36 +54,36 @@ public class FoxWatcher extends AgeableWatcher {
         sendData(MetaIndex.FOX_TYPE);
     }
 
-    public void setHeadTilted(boolean value) {
-        setFoxFlag(8, value);
-    }
-
     public boolean isHeadTilted() {
         return getFoxFlag(8);
     }
 
-    public void setSpringing(boolean value) {
-        setFoxFlag(16, value);
+    public void setHeadTilted(boolean value) {
+        setFoxFlag(8, value);
     }
 
     public boolean isSpringing() {
         return getFoxFlag(16);
     }
 
-    public void setTipToeing(boolean value) {
-        setFoxFlag(64, value);
+    public void setSpringing(boolean value) {
+        setFoxFlag(16, value);
     }
 
     public boolean isTipToeing() {
         return getFoxFlag(64);
     }
 
-    public void setAngry(boolean value) {
-        setFoxFlag(128, value);
+    public void setTipToeing(boolean value) {
+        setFoxFlag(64, value);
     }
 
     public boolean isAngry() {
         return getFoxFlag(128);
+    }
+
+    public void setAngry(boolean value) {
+        setFoxFlag(128, value);
     }
 
     private boolean getFoxFlag(int value) {

@@ -4,6 +4,8 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -13,16 +15,20 @@ public abstract class ThrowableWatcher extends FlagWatcher {
     public ThrowableWatcher(Disguise disguise) {
         super(disguise);
 
-        setItemStack(getDefaultItemStack());
+        if (NmsVersion.v1_14.isSupported()) {
+            setItemStack(getDefaultItemStack());
+        }
     }
 
     protected abstract ItemStack getDefaultItemStack();
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public ItemStack getItemStack() {
         return getData(MetaIndex.THROWABLE_ITEM);
     }
 
     @RandomDefaultValue
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.THROWABLE_ITEM, item);
         sendData(MetaIndex.THROWABLE_ITEM);

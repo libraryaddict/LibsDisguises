@@ -5,14 +5,12 @@ import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 2/06/2017.
@@ -265,7 +263,11 @@ public class LibsPremium {
             YamlConfiguration config = new YamlConfiguration();
 
             try {
-                config.loadFromString(IOUtils.toString(LibsDisguises.getInstance().getResource("plugin.yml"), "UTF-8"));
+                try (InputStream stream = LibsDisguises.getInstance().getResource("plugin.yml")) {
+                    config.loadFromString(
+                            new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                                    .collect(Collectors.joining("\n")));
+                }
 
                 // If plugin.yml contains a build-date
                 if (config.contains("build-date")) {

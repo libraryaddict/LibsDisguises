@@ -3,7 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemoved;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
 
@@ -57,7 +57,8 @@ public class WolfWatcher extends TameableWatcher {
      *
      * @return
      */
-    @NmsRemoved(removed = NmsVersion.v1_15)
+    @NmsRemovedIn(val = NmsVersion.v1_15)
+    @Deprecated
     public float getDamageTaken() {
         return getData(MetaIndex.WOLF_DAMAGE);
     }
@@ -67,7 +68,8 @@ public class WolfWatcher extends TameableWatcher {
      *
      * @param damage
      */
-    @NmsRemoved(removed = NmsVersion.v1_15)
+    @Deprecated
+    @NmsRemovedIn(val = NmsVersion.v1_15)
     public void setDamageTaken(float damage) {
         setData(MetaIndex.WOLF_DAMAGE, damage);
         sendData(MetaIndex.WOLF_DAMAGE);

@@ -78,24 +78,16 @@ public class DisguiseParser {
                         getName = "get" + getName;
                     }
 
-                    Method getMethod = null;
-
-                    for (Method m : setMethod.getDeclaringClass().getDeclaredMethods()) {
-                        if (!m.getName().equals(getName)) {
-                            continue;
-                        }
-
-                        if (m.getParameterTypes().length > 0 || m.getReturnType() != setMethod.getParameterTypes()[0]) {
-                            continue;
-                        }
-
-                        getMethod = m;
-                        break;
-                    }
+                    Method getMethod = setMethod.getDeclaringClass().getMethod(getName);
 
                     if (getMethod == null) {
                         DisguiseUtilities.getLogger().severe(String
                                 .format("No such method '%s' when looking for the companion of '%s' in '%s'", getName,
+                                        setMethod.getName(), setMethod.getDeclaringClass().getSimpleName()));
+                        continue;
+                    }else if (getMethod.getReturnType() != setMethod.getParameterTypes()[0]){
+                        DisguiseUtilities.getLogger().severe(String
+                                .format("Invalid return type of '%s' when looking for the companion of '%s' in '%s'", getName,
                                         setMethod.getName(), setMethod.getDeclaringClass().getSimpleName()));
                         continue;
                     }

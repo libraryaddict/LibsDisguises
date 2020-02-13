@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.reflection.NmsAdded;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 
 /**
@@ -13,12 +13,12 @@ public class TridentWatcher extends ArrowWatcher {
         super(disguise);
     }
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public boolean isEnchanted() {
         return getData(MetaIndex.TRIDENT_ENCHANTED);
     }
 
-    @NmsAdded(added = NmsVersion.v1_15)
+    @NmsAddedIn(val = NmsVersion.v1_15)
     public void setEnchanted(boolean enchanted) {
         setData(MetaIndex.TRIDENT_ENCHANTED, enchanted);
         sendData(MetaIndex.TRIDENT_ENCHANTED);

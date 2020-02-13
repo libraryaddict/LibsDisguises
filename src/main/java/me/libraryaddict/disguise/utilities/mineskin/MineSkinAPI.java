@@ -3,18 +3,18 @@ package me.libraryaddict.disguise.utilities.mineskin;
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.SkinUtils;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 28/12/2019.
@@ -107,7 +107,8 @@ public class MineSkinAPI {
             }
 
             if (connection.getResponseCode() == 500) {
-                APIError error = new Gson().fromJson(IOUtils.toString(connection.getErrorStream()), APIError.class);
+                APIError error = new Gson().fromJson(new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))
+                        .lines().collect(Collectors.joining("\n")), APIError.class);
 
                 if (error.code == 403) {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_403.get());
@@ -136,7 +137,8 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = connection.getInputStream()) {
                 // Read it to string
-                String response = IOUtils.toString(input);
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
+                        .lines().collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
@@ -188,7 +190,8 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String response = IOUtils.toString(input);
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
+                        .lines().collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 

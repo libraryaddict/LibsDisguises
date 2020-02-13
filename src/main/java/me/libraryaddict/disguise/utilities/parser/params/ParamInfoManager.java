@@ -9,6 +9,8 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.params.ParamInfoTypes;
+import me.libraryaddict.disguise.utilities.reflection.DisguiseMethods;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.ChatColor;
 
@@ -21,6 +23,7 @@ import java.util.List;
 
 public class ParamInfoManager {
     private static List<ParamInfo> paramList;
+    private static DisguiseMethods disguiseMethods;
 
     public static List<ParamInfo> getParamInfos() {
         return paramList;
@@ -61,12 +64,6 @@ public class ParamInfoManager {
             if (!method.getName().toLowerCase().equals(methodName.toLowerCase()))
                 continue;
 
-            if (method.getParameterTypes().length != 1)
-                continue;
-
-            if (method.getAnnotation(Deprecated.class) != null)
-                continue;
-
             return getParamInfo(method.getParameterTypes()[0]);
         }
 
@@ -75,6 +72,7 @@ public class ParamInfoManager {
 
     static {
         paramList = new ParamInfoTypes().getParamInfos();
+        disguiseMethods = new DisguiseMethods();
 
         //paramList.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
     }
@@ -84,7 +82,7 @@ public class ParamInfoManager {
             return new Method[0];
         }
 
-        ArrayList<Method> methods = new ArrayList<>(Arrays.asList(watcherClass.getMethods()));
+        ArrayList<Method> methods = new ArrayList<>(disguiseMethods.getMethods(watcherClass));
 
         Iterator<Method> itel = methods.iterator();
 
@@ -93,19 +91,7 @@ public class ParamInfoManager {
 
             if (!ReflectionManager.isSupported(method)) {
                 itel.remove();
-            } else if (method.getParameterTypes().length != 1) {
-                itel.remove();
-            } else if (method.getName().startsWith("get")) {
-                itel.remove();
-            } else if (method.isAnnotationPresent(Deprecated.class)) {
-                itel.remove();
             } else if (getParamInfo(method.getParameterTypes()[0]) == null) {
-                itel.remove();
-            } else if (!method.getReturnType().equals(Void.TYPE)) {
-                itel.remove();
-            } else if (method.getName().equals("removePotionEffect")) {
-                itel.remove();
-            } else if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                 itel.remove();
             }
         }

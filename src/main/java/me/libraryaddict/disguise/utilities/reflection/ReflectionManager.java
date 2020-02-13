@@ -18,7 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -26,15 +26,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class ReflectionManager {
     private static String bukkitVersion;
@@ -43,17 +47,19 @@ public class ReflectionManager {
     private static Constructor<?> boundingBoxConstructor;
     private static Method setBoundingBoxMethod;
     private static Field pingField;
-    public static Field entityCountField;
+    private static Field entityCountField;
     private static Field chunkMapField;
     private static Field chunkProviderField;
     private static Field entityTrackerField;
     private static Field trackedEntitiesField;
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    private static Method ihmGet;
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    private static Field trackerField;
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    private static Field entitiesField;
     @Getter
     private static NmsVersion version;
-
-    public static boolean isSupported(NmsVersion version) {
-        return getVersion().ordinal() >= version.ordinal();
-    }
 
     public static void init() {
         try {
@@ -88,10 +94,16 @@ public class ReflectionManager {
 
         pingField = getNmsField("EntityPlayer", "ping");
 
-        chunkProviderField = getNmsField("World", "chunkProvider");
-        chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
-        trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
-        entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
+        if (NmsVersion.v1_14.isSupported()) {
+            chunkProviderField = getNmsField("World", "chunkProvider");
+            chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
+            trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
+            entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
+        } else {
+            trackerField = getNmsField("WorldServer", "tracker");
+            entitiesField = getNmsField("EntityTracker", "trackedEntities");
+            ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+        }
 
         boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class,
                 double.class, double.class, double.class);
@@ -104,19 +116,19 @@ public class ReflectionManager {
     }
 
     public static boolean isSupported(AccessibleObject obj) {
-        if (obj.isAnnotationPresent(NmsAdded.class)) {
-            NmsAdded added = obj.getAnnotation(NmsAdded.class);
+        if (obj.isAnnotationPresent(NmsAddedIn.class)) {
+            NmsAddedIn added = obj.getAnnotation(NmsAddedIn.class);
 
-            // If it was added after/on this version
-            if (!isSupported(added.added())) {
+            // If it was added after this version
+            if (!added.val().isSupported()) {
                 return false;
             }
         }
 
-        if (obj.isAnnotationPresent(NmsRemoved.class)) {
-            NmsRemoved removed = obj.getAnnotation(NmsRemoved.class);
+        if (obj.isAnnotationPresent(NmsRemovedIn.class)) {
+            NmsRemovedIn removed = obj.getAnnotation(NmsRemovedIn.class);
 
-            if (isSupported(removed.removed())) {
+            if (removed.val().isSupported()) {
                 return false;
             }
         }
@@ -152,7 +164,8 @@ public class ReflectionManager {
     public static YamlConfiguration getPluginYaml(ClassLoader loader) {
         try (InputStream stream = loader.getResourceAsStream("plugin.yml")) {
             YamlConfiguration config = new YamlConfiguration();
-            config.loadFromString(IOUtils.toString(stream, "UTF-8"));
+            config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n")));
 
             return config;
         }
@@ -169,17 +182,21 @@ public class ReflectionManager {
 
     public static int getNewEntityId(boolean increment) {
         try {
-            AtomicInteger entityCount = (AtomicInteger) entityCountField.get(null);
-
-            int id;
+            Number entityCount = (Number) entityCountField.get(null);
 
             if (increment) {
-                id = entityCount.getAndIncrement();
-            } else {
-                id = entityCount.get();
+                if (NmsVersion.v1_14.isSupported()) {
+                    return ((AtomicInteger) entityCount).getAndIncrement();
+                } else {
+                    int id = entityCount.intValue();
+
+                    entityCountField.set(null, id + 1);
+
+                    return id;
+                }
             }
 
-            return id;
+            return entityCount.intValue();
         }
         catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -194,34 +211,44 @@ public class ReflectionManager {
             Object entityObject;
             Object world = getWorldServer(Bukkit.getWorlds().get(0));
 
-            switch (entityName) {
-                case "Player":
-                    Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
+            if (entityName.equals("Player")) {
+                Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
 
-                    Object playerinteractmanager = getNmsClass("PlayerInteractManager")
-                            .getDeclaredConstructor(getNmsClass("WorldServer")).newInstance(world);
+                Object playerinteractmanager = getNmsClass("PlayerInteractManager")
+                        .getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
+                        .newInstance(world);
 
-                    WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
+                WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
-                    entityObject = entityClass
-                            .getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
-                                    gameProfile.getHandleType(), playerinteractmanager.getClass())
-                            .newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
-                    break;
-                case "EnderPearl":
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
-                            .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
-                    break;
-                case "FishingHook":
+                entityObject = entityClass
+                        .getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                                gameProfile.getHandleType(), playerinteractmanager.getClass())
+                        .newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+            } else if (entityName.equals("EnderPearl")) {
+                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
+                        .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
+            } else if (entityName.equals("FishingHook")) {
+                if (NmsVersion.v1_14.isSupported()) {
                     entityObject = entityClass
                             .getDeclaredConstructor(getNmsClass("EntityHuman"), getNmsClass("World"), int.class,
                                     int.class)
                             .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
-                    break;
-                default:
+                } else {
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
+                            .newInstance(world, createEntityInstance(DisguiseType.PLAYER, "Player"));
+                }
+            } else if (!NmsVersion.v1_14.isSupported() && entityName.equals("Potion")) {
+                entityObject = entityClass
+                        .getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE,
+                                getNmsClass("ItemStack"))
+                        .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+            } else {
+                if (NmsVersion.v1_14.isSupported()) {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityTypes"), getNmsClass("World"))
                             .newInstance(getEntityType(disguiseType.getEntityType()), world);
-                    break;
+                } else {
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
+                }
             }
 
             return entityObject;
@@ -395,17 +422,25 @@ public class ReflectionManager {
 
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
         Object world = getWorldServer(target.getWorld());
-        Object chunkProvider = chunkProviderField.get(world);
-        Object chunkMap = chunkMapField.get(chunkProvider);
-        Map trackedEntities = (Map) trackedEntitiesField.get(chunkMap);
 
-        Object entityTracker = trackedEntities.get(target.getEntityId());
+        if (NmsVersion.v1_14.isSupported()) {
+            Object chunkProvider = chunkProviderField.get(world);
+            Object chunkMap = chunkMapField.get(chunkProvider);
+            Map trackedEntities = (Map) trackedEntitiesField.get(chunkMap);
 
-        if (entityTracker == null) {
-            return null;
+            Object entityTracker = trackedEntities.get(target.getEntityId());
+
+            if (entityTracker == null) {
+                return null;
+            }
+
+            return entityTrackerField.get(entityTracker);
         }
 
-        return entityTrackerField.get(entityTracker);
+        Object tracker = trackerField.get(world);
+        Object trackedEntities = entitiesField.get(tracker);
+
+        return ihmGet.invoke(trackedEntities, target.getEntityId());
     }
 
     public static Object getMinecraftServer() {
@@ -675,13 +710,21 @@ public class ReflectionManager {
 
     public static float[] getSize(Entity entity) {
         try {
-            Object size = getNmsField("Entity", "size").get(getNmsEntity(entity));
+            if (NmsVersion.v1_14.isSupported()) {
+                Object size = getNmsField("Entity", "size").get(getNmsEntity(entity));
 
-            //float length = getNmsField("EntitySize", "length").getFloat(size);
-            float width = getNmsField("EntitySize", "width").getFloat(size);
-            float height = getNmsField("Entity", "headHeight").getFloat(getNmsEntity(entity));
+                //float length = getNmsField("EntitySize", "length").getFloat(size);
+                float width = getNmsField("EntitySize", "width").getFloat(size);
+                float height = getNmsField("Entity", "headHeight").getFloat(getNmsEntity(entity));
 
-            return new float[]{width, height};
+                return new float[]{width, height};
+            } else {
+
+                //    float length = getNmsField("Entity", "length").getFloat(getNmsEntity(entity));
+                float width = getNmsField("Entity", "width").getFloat(getNmsEntity(entity));
+                float height = (Float) getNmsMethod("Entity", "getHeadHeight").invoke(getNmsEntity(entity));
+                return new float[]{width, height};
+            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -1045,6 +1088,30 @@ public class ReflectionManager {
         return null;
     }
 
+    public static boolean isAssignableFrom(Class toCheck, Class checkAgainst) {
+        if (!NmsVersion.v1_14.isSupported() && toCheck != checkAgainst) {
+            if (toCheck == OcelotWatcher.class) {
+                toCheck = TameableWatcher.class;
+            }
+        }
+
+        return checkAgainst.isAssignableFrom(toCheck);
+    }
+
+    public static Class getSuperClass(Class cl) {
+        if (cl == FlagWatcher.class) {
+            return null;
+        }
+
+        if (!NmsVersion.v1_14.isSupported()) {
+            if (cl == OcelotWatcher.class) {
+                return TameableWatcher.class;
+            }
+        }
+
+        return cl.getSuperclass();
+    }
+
     public static Object getVillagerProfession(Villager.Profession profession) {
         try {
             Object villagerProfession = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
@@ -1124,10 +1191,14 @@ public class ReflectionManager {
     public static Object getEntityType(EntityType entityType) {
         try {
             Method entityTypes = getNmsMethod("EntityTypes", "a", String.class);
+            Object val = entityTypes.invoke(null,
+                    entityType.getName() == null ? entityType.name().toLowerCase() : entityType.getName());
 
-            Optional<Object> entityObj = (Optional<Object>) entityTypes.invoke(null, entityType.getName());
+            if (NmsVersion.v1_14.isSupported()) {
+                return ((Optional<Object>) val).orElse(null);
+            }
 
-            return entityObj.orElse(null);
+            return val;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -1513,6 +1584,7 @@ public class ReflectionManager {
                     DisguiseUtilities.getLogger()
                             .severe("Value: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" +
                                     nmsEntity.getClass() + ") & " + disguiseType.getWatcherClass().getSimpleName());
+
                     continue;
                 }
 

@@ -29,7 +29,6 @@ public class PacketsHandler {
 
         packetHandlers.add(new PacketHandlerAnimation());
         packetHandlers.add(new PacketHandlerAttributes());
-        packetHandlers.add(new PacketHandlerBed());
         packetHandlers.add(new PacketHandlerCollect());
         packetHandlers.add(new PacketHandlerEntityStatus());
         packetHandlers.add(new PacketHandlerEquipment(this));

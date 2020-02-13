@@ -7,6 +7,6 @@ import java.lang.annotation.RetentionPolicy;
  * Created by libraryaddict on 6/02/2020.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NmsRemoved {
-    NmsVersion removed();
+public @interface NmsRemovedIn {
+    NmsVersion val();
 }

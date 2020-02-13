@@ -13,6 +13,8 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -195,10 +197,12 @@ public class FlagWatcher {
         return newList;
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public EntityPose getEntityPose() {
         return getData(MetaIndex.ENTITY_POSE);
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setEntityPose(EntityPose entityPose) {
         setData(MetaIndex.ENTITY_POSE, entityPose);
         sendData(MetaIndex.ENTITY_POSE);
@@ -206,6 +210,10 @@ public class FlagWatcher {
 
     public ItemStack[] getArmor() {
         return getEquipment().getArmorContents();
+    }
+
+    public void setArmor(ItemStack[] items) {
+        getEquipment().setArmorContents(items);
     }
 
     public String getCustomName() {
@@ -220,8 +228,27 @@ public class FlagWatcher {
         return null;
     }
 
+    public void setCustomName(String name) {
+        if (Strings.isNullOrEmpty(name)) {
+            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+        } else {
+            if (name.length() > 64) {
+                name = name.substring(0, 64);
+            }
+
+            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
+        }
+
+        sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+    }
+
     protected TargetedDisguise getDisguise() {
         return disguise;
+    }
+
+    protected void setDisguise(TargetedDisguise disguise) {
+        this.disguise = disguise;
+        equipment.setFlagWatcher(this);
     }
 
     private boolean getEntityFlag(int byteValue) {
@@ -236,8 +263,16 @@ public class FlagWatcher {
         return equipment.getItemInMainHand();
     }
 
+    public void setItemInMainHand(ItemStack itemstack) {
+        setItemStack(EquipmentSlot.HAND, itemstack);
+    }
+
     public ItemStack getItemInOffHand() {
         return equipment.getItemInOffHand();
+    }
+
+    public void setItemInOffHand(ItemStack itemstack) {
+        setItemStack(EquipmentSlot.OFF_HAND, itemstack);
     }
 
     public ItemStack getItemStack(EquipmentSlot slot) {
@@ -278,8 +313,19 @@ public class FlagWatcher {
         return getEntityFlag(0);
     }
 
+    public void setBurning(boolean setBurning) {
+        setEntityFlag(0, setBurning);
+
+        sendData(MetaIndex.ENTITY_META);
+    }
+
     public boolean isCustomNameVisible() {
         return getData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
+    }
+
+    public void setCustomNameVisible(boolean display) {
+        setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
+        sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
     @Deprecated
@@ -291,28 +337,65 @@ public class FlagWatcher {
         return getEntityFlag(7);
     }
 
+    public void setFlyingWithElytra(boolean flying) {
+        setEntityFlag(7, flying);
+        sendData(MetaIndex.ENTITY_META);
+    }
+
     public boolean isGlowing() {
         return getEntityFlag(6);
+    }
+
+    public void setGlowing(boolean glowing) {
+        setEntityFlag(6, glowing);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public boolean isInvisible() {
         return getEntityFlag(5);
     }
 
+    public void setInvisible(boolean setInvis) {
+        setEntityFlag(5, setInvis);
+        sendData(MetaIndex.ENTITY_META);
+    }
+
     public boolean isNoGravity() {
         return getData(MetaIndex.ENTITY_NO_GRAVITY);
+    }
+
+    public void setNoGravity(boolean noGravity) {
+        setData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
+        sendData(MetaIndex.ENTITY_NO_GRAVITY);
     }
 
     public boolean isRightClicking() {
         return getEntityFlag(4);
     }
 
+    public void setRightClicking(boolean setRightClicking) {
+        setEntityFlag(4, setRightClicking);
+        sendData(MetaIndex.ENTITY_META);
+    }
+
     public boolean isSneaking() {
         return getEntityFlag(1);
     }
 
+    public void setSneaking(boolean setSneaking) {
+        setEntityFlag(1, setSneaking);
+        sendData(MetaIndex.ENTITY_META);
+
+        updatePose();
+    }
+
     public boolean isSprinting() {
         return getEntityFlag(3);
+    }
+
+    public void setSprinting(boolean setSprinting) {
+        setEntityFlag(3, setSprinting);
+        sendData(MetaIndex.ENTITY_META);
     }
 
     public void rebuildWatchableObjects() {
@@ -355,8 +438,7 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
-                    data == MetaIndex.ENTITY_META) {
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() && data == MetaIndex.ENTITY_META) {
                 value = addEntityAnimations((byte) value,
                         WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
@@ -403,40 +485,11 @@ public class FlagWatcher {
         addEntityAnimations = isEntityAnimationsAdded;
     }
 
-    public void setArmor(ItemStack[] items) {
-        getEquipment().setArmorContents(items);
-    }
-
     protected void setBackupValue(MetaIndex no, Object value) {
         if (no == null)
             return;
 
         backupEntityValues.put(no.getIndex(), value);
-    }
-
-    public void setBurning(boolean setBurning) {
-        setEntityFlag(0, setBurning);
-
-        sendData(MetaIndex.ENTITY_META);
-    }
-
-    public void setCustomName(String name) {
-        if (Strings.isNullOrEmpty(name)) {
-            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
-        } else {
-            if (name.length() > 64) {
-                name = name.substring(0, 64);
-            }
-
-            setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
-        }
-
-        sendData(MetaIndex.ENTITY_CUSTOM_NAME);
-    }
-
-    public void setCustomNameVisible(boolean display) {
-        setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
-        sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {
@@ -451,21 +504,6 @@ public class FlagWatcher {
         }
     }
 
-    public void setFlyingWithElytra(boolean flying) {
-        setEntityFlag(7, flying);
-        sendData(MetaIndex.ENTITY_META);
-    }
-
-    public void setGlowing(boolean glowing) {
-        setEntityFlag(6, glowing);
-        sendData(MetaIndex.ENTITY_META);
-    }
-
-    public void setInvisible(boolean setInvis) {
-        setEntityFlag(5, setInvis);
-        sendData(MetaIndex.ENTITY_META);
-    }
-
     /**
      * Don't use this, use setItemInMainHand instead
      *
@@ -474,14 +512,6 @@ public class FlagWatcher {
     @Deprecated
     public void setItemInHand(ItemStack itemstack) {
         setItemInMainHand(itemstack);
-    }
-
-    public void setItemInMainHand(ItemStack itemstack) {
-        setItemStack(EquipmentSlot.HAND, itemstack);
-    }
-
-    public void setItemInOffHand(ItemStack itemstack) {
-        setItemStack(EquipmentSlot.OFF_HAND, itemstack);
     }
 
     public void setItemStack(EquipmentSlot slot, ItemStack itemStack) {
@@ -540,23 +570,6 @@ public class FlagWatcher {
         }
     }
 
-    public void setNoGravity(boolean noGravity) {
-        setData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
-        sendData(MetaIndex.ENTITY_NO_GRAVITY);
-    }
-
-    public void setRightClicking(boolean setRightClicking) {
-        setEntityFlag(4, setRightClicking);
-        sendData(MetaIndex.ENTITY_META);
-    }
-
-    public void setSneaking(boolean setSneaking) {
-        setEntityFlag(1, setSneaking);
-        sendData(MetaIndex.ENTITY_META);
-
-        updatePose();
-    }
-
     public boolean isSleeping() {
         return sleeping;
     }
@@ -597,14 +610,14 @@ public class FlagWatcher {
         }
     }
 
-    public void setSprinting(boolean setSprinting) {
-        setEntityFlag(3, setSprinting);
-        sendData(MetaIndex.ENTITY_META);
-    }
-
     protected <Y> void setData(MetaIndex<Y> id, Y value) {
         if (id == null)
             return;
+
+        if (id.getIndex() == -1) {
+            throw new IllegalArgumentException(
+                    "You can't do that in this version of Minecraft! I can't use " + MetaIndex.getName(id) + "!");
+        }
 
         if (value == null && id.getDefault() instanceof ItemStack)
             throw new IllegalArgumentException("Cannot use null ItemStacks");
@@ -614,10 +627,5 @@ public class FlagWatcher {
         if (!DisguiseConfig.isMetaPacketsEnabled()) {
             rebuildWatchableObjects();
         }
-    }
-
-    protected void setDisguise(TargetedDisguise disguise) {
-        this.disguise = disguise;
-        equipment.setFlagWatcher(this);
     }
 }

@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Panda;
 
 import java.util.Random;
@@ -10,6 +12,7 @@ import java.util.Random;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
+@NmsAddedIn(val = NmsVersion.v1_14)
 public class PandaWatcher extends AgeableWatcher {
     public PandaWatcher(Disguise disguise) {
         super(disguise);
@@ -32,6 +35,12 @@ public class PandaWatcher extends AgeableWatcher {
         return Panda.Gene.NORMAL;
     }
 
+    @RandomDefaultValue
+    public void setMainGene(Panda.Gene gene) {
+        setData(MetaIndex.PANDA_MAIN_GENE, (byte) gene.ordinal());
+        sendData(MetaIndex.PANDA_MAIN_GENE);
+    }
+
     public Panda.Gene getHiddenGene() {
         int id = getData(MetaIndex.PANDA_HIDDEN_GENE);
 
@@ -47,56 +56,50 @@ public class PandaWatcher extends AgeableWatcher {
     }
 
     @RandomDefaultValue
-    public void setMainGene(Panda.Gene gene) {
-        setData(MetaIndex.PANDA_MAIN_GENE, (byte) gene.ordinal());
-        sendData(MetaIndex.PANDA_MAIN_GENE);
-    }
-
-    @RandomDefaultValue
     public void setHiddenGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_HIDDEN_GENE, (byte) gene.ordinal());
         sendData(MetaIndex.PANDA_HIDDEN_GENE);
-    }
-
-    public void setSneeze(boolean value) {
-        setPandaFlag(2, value);
     }
 
     public boolean isSneeze() {
         return getPandaFlag(2);
     }
 
-    public void setTumble(boolean value) {
-        setPandaFlag(4, value);
+    public void setSneeze(boolean value) {
+        setPandaFlag(2, value);
     }
 
     public boolean isTumble() {
         return getPandaFlag(4);
     }
 
-    public void setSitting(boolean value) {
-        setPandaFlag(8, value);
+    public void setTumble(boolean value) {
+        setPandaFlag(4, value);
     }
 
     public boolean isSitting() {
         return getPandaFlag(8);
     }
 
-    public void setUpsideDown(boolean value) {
-        setPandaFlag(16, value);
+    public void setSitting(boolean value) {
+        setPandaFlag(8, value);
     }
 
     public boolean isUpsideDown() {
         return getPandaFlag(16);
     }
 
-    public void setHeadShaking(int timeInTicks) {
-        setData(MetaIndex.PANDA_HEAD_SHAKING, timeInTicks);
-        sendData(MetaIndex.PANDA_HEAD_SHAKING);
+    public void setUpsideDown(boolean value) {
+        setPandaFlag(16, value);
     }
 
     public int getHeadShaking() {
         return getHeadShakingTicks();
+    }
+
+    public void setHeadShaking(int timeInTicks) {
+        setData(MetaIndex.PANDA_HEAD_SHAKING, timeInTicks);
+        sendData(MetaIndex.PANDA_HEAD_SHAKING);
     }
 
     @Deprecated

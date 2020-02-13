@@ -2,15 +2,16 @@ package me.libraryaddict.disguise.utilities;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UpdateChecker {
     private final String resourceID;
@@ -75,7 +76,8 @@ public class UpdateChecker {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String version = IOUtils.toString(input);
+                String version = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
+                        .lines().collect(Collectors.joining("\n"));
 
                 // If the version is not empty, return it
                 if (!version.isEmpty()) {
@@ -149,7 +151,8 @@ public class UpdateChecker {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = IOUtils.toString(input);
+                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
+                        .lines().collect(Collectors.joining("\n"));
 
                 jsonObject = new Gson().fromJson(json, Map.class);
             }

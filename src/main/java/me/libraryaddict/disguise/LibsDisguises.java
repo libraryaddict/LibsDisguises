@@ -20,6 +20,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
@@ -71,7 +73,15 @@ public class LibsDisguises extends JavaPlugin {
 
         if (ReflectionManager.getVersion() == null) {
             getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " +
-                    "intended for 1.14 & 1.15!");
+                    "intended for " + StringUtils
+                    .join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", "."))
+                            .collect(Collectors.toList()), " & ") + "!");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
+
+        if (!LibsPremium.isPremium() && ReflectionManager.getVersion().ordinal() < NmsVersion.values().length - 1) {
+            getLogger().severe("Backwards compatibility is premium only! Use older builds or purchase the plugin!");
             getPluginLoader().disablePlugin(this);
             return;
         }

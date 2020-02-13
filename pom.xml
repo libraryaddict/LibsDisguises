@@ -8,7 +8,7 @@
     <version>9.9.3-SNAPSHOT</version>
 
     <build>
-        <defaultGoal>clean install</defaultGoal>
+        <defaultGoal>exec:java clean install</defaultGoal>
         <finalName>LibsDisguises</finalName>
 
         <resources>
@@ -30,6 +30,25 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+
+                <executions>
+                    <execution>
+                        <id>my-execution</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includePluginDependencies>true</includePluginDependencies>
+                    <mainClass>me.libraryaddict.disguise.utilities.reflection.CompileMethods</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -60,12 +79,12 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
         <!-- testing -->
         <dependency>

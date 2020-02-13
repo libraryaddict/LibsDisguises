@@ -2,11 +2,14 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import org.bukkit.entity.Entity;
 
+import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -20,27 +23,36 @@ import java.util.jar.JarFile;
 // Code for this taken and slightly modified from
 // https://github.com/ddopson/java-class-enumerator
 public class ClassGetter {
-    private class TestPrem {
-        String user = "%%__USER__%%";
-    }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    private @interface PremInfo {
-        String user();
-    }
-
     public static ArrayList<Class<?>> getClassesForPackage(String pkgname) {
+        return getClassesForPackage(Entity.class, pkgname);
+    }
+
+    public static ArrayList<Class<?>> getClassesForPackage(Class runFrom, String pkgname) {
         ArrayList<Class<?>> classes = new ArrayList<>();
         // String relPath = pkgname.replace('.', '/');
 
         // Get a File object for the package
-        CodeSource src = Entity.class.getProtectionDomain().getCodeSource();
+        CodeSource src = runFrom.getProtectionDomain().getCodeSource();
 
         if (src != null) {
             URL resource = src.getLocation();
-            resource.getPath();
-            processJarfile(resource, pkgname, classes);
+
+            if (resource.getPath().endsWith(".jar")) {
+                processJarfile(resource, pkgname, classes);
+            } else {
+                for (File f : new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles()) {
+                    if (!f.getName().endsWith(".class")) {
+                        continue;
+                    }
+
+                    try {
+                        classes.add(Class.forName(pkgname + "." + f.getName().replace(".class", "")));
+                    }
+                    catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
 
         return classes;
@@ -58,7 +70,6 @@ public class ClassGetter {
         }
     }
 
-    @PremInfo(user = "%%__USER__%%")
     private static void processJarfile(URL resource, String pkgname, ArrayList<Class<?>> classes) {
         try {
             String relPath = pkgname.replace('.', '/');

@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 
 public class ArrowWatcher extends FlagWatcher {
     public ArrowWatcher(Disguise disguise) {
@@ -18,12 +20,14 @@ public class ArrowWatcher extends FlagWatcher {
         sendData(MetaIndex.ARROW_CRITICAL);
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
+    public int getPierceLevel() {
+        return getData(MetaIndex.ARROW_PIERCE_LEVEL);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setPierceLevel(int pierceLevel) {
         setData(MetaIndex.ARROW_PIERCE_LEVEL, (byte) pierceLevel);
         sendData(MetaIndex.ARROW_PIERCE_LEVEL);
-    }
-
-    public int getPierceLevel() {
-        return getData(MetaIndex.ARROW_PIERCE_LEVEL);
     }
 }

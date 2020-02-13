@@ -16,11 +16,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Entity;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -308,9 +308,13 @@ public class DisguiseConfig {
 
             try {
                 explain.createNewFile();
-                FileUtils.write(explain,
-                        "This folder is used to store .png files for uploading with the /savedisguise or /grabskin " +
-                                "commands");
+
+                try (PrintWriter out = new PrintWriter(explain)) {
+                    out.println(
+                            "This folder is used to store .png files for uploading with the /savedisguise or " +
+                                    "/grabskin " +
+                                    "commands");
+                }
             }
             catch (IOException e) {
                 e.printStackTrace();

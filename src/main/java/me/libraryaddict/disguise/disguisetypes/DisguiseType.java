@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.utilities.reflection.NmsAdded;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
@@ -16,13 +17,13 @@ public enum DisguiseType {
 
     BAT,
 
-    @NmsAdded(added = NmsVersion.v1_15) BEE,
+    @NmsAddedIn(val = NmsVersion.v1_15) BEE,
 
     BLAZE,
 
     BOAT(1),
 
-    CAT,
+    @NmsAddedIn(val = NmsVersion.v1_14) CAT,
 
     CAVE_SPIDER,
 
@@ -74,7 +75,7 @@ public enum DisguiseType {
 
     FISHING_HOOK(90),
 
-    FOX,
+    @NmsAddedIn(val = NmsVersion.v1_14) FOX,
 
     GHAST,
 
@@ -122,7 +123,7 @@ public enum DisguiseType {
 
     PAINTING,
 
-    PANDA,
+    @NmsAddedIn(val = NmsVersion.v1_14) PANDA,
 
     PARROT,
 
@@ -132,7 +133,7 @@ public enum DisguiseType {
 
     PIG_ZOMBIE,
 
-    PILLAGER,
+    @NmsAddedIn(val = NmsVersion.v1_14) PILLAGER,
 
     PLAYER,
 
@@ -144,7 +145,7 @@ public enum DisguiseType {
 
     RABBIT,
 
-    RAVAGER,
+    @NmsAddedIn(val = NmsVersion.v1_14) RAVAGER,
 
     SALMON,
 
@@ -180,9 +181,11 @@ public enum DisguiseType {
 
     THROWN_EXP_BOTTLE(75),
 
+    @NmsRemovedIn(val = NmsVersion.v1_14) TIPPED_ARROW(60),
+
     TRIDENT(94, 0),
 
-    TRADER_LLAMA,
+    @NmsAddedIn(val = NmsVersion.v1_14) TRADER_LLAMA,
 
     TROPICAL_FISH,
 
@@ -198,7 +201,7 @@ public enum DisguiseType {
 
     VINDICATOR,
 
-    WANDERING_TRADER,
+    @NmsAddedIn(val = NmsVersion.v1_14) WANDERING_TRADER,
 
     WITCH,
 

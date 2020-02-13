@@ -3,6 +3,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,15 +15,19 @@ public class EnderSignalWatcher extends FlagWatcher {
     public EnderSignalWatcher(Disguise disguise) {
         super(disguise);
 
-        setItemStack(new ItemStack(Material.ENDER_EYE));
+        if (NmsVersion.v1_14.isSupported()) {
+            setItemStack(new ItemStack(Material.ENDER_EYE));
+        }
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
+    public ItemStack getItemStack() {
+        return getData(MetaIndex.ENDER_SIGNAL_ITEM);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.ENDER_SIGNAL_ITEM, item);
         sendData(MetaIndex.ENDER_SIGNAL_ITEM);
-    }
-
-    public ItemStack getItemStack() {
-        return getData(MetaIndex.ENDER_SIGNAL_ITEM);
     }
 }
