@@ -11,7 +11,7 @@ public enum AnimalColor {
     CYAN(DyeColor.CYAN, Material.CYAN_DYE),
     GRAY(DyeColor.GRAY, Material.GRAY_DYE),
     GREEN(DyeColor.GREEN,
-            NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CATCUS_GREEN")),
+            NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CACTUS_GREEN")),
     LIGHT_BLUE(DyeColor.LIGHT_BLUE, Material.LIGHT_BLUE_DYE),
     LIME(DyeColor.LIME, Material.LIME_DYE),
     MAGENTA(DyeColor.MAGENTA, Material.MAGENTA_DYE),
