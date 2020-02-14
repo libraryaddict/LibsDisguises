@@ -80,12 +80,6 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
-        if (!LibsPremium.isPremium() && ReflectionManager.getVersion().ordinal() < NmsVersion.values().length - 1) {
-            getLogger().severe("Backwards compatibility is premium only! Use older builds or purchase the plugin!");
-            getPluginLoader().disablePlugin(this);
-            return;
-        }
-
         ReflectionManager.init();
 
         PacketsManager.init();
