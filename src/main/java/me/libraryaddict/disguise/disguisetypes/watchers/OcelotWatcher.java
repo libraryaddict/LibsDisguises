@@ -7,6 +7,9 @@ import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Ocelot;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public class OcelotWatcher extends AgeableWatcher {
 
     public OcelotWatcher(Disguise disguise) {
@@ -35,5 +38,54 @@ public class OcelotWatcher extends AgeableWatcher {
     public void setType(Ocelot.Type newType) {
         setData(MetaIndex.OCELOT_TYPE, newType.getId());
         sendData(MetaIndex.OCELOT_TYPE);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public Optional<UUID> getOwner() {
+        return getData(MetaIndex.TAMEABLE_OWNER);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public void setOwner(UUID owner) {
+        setData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
+        sendData(MetaIndex.TAMEABLE_OWNER);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public boolean isSitting() {
+        return isTameableFlag(1);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public void setSitting(boolean sitting) {
+        setTameableFlag(1, sitting);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public boolean isTamed() {
+        return isTameableFlag(4);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    public void setTamed(boolean tamed) {
+        setTameableFlag(4, tamed);
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    protected boolean isTameableFlag(int no) {
+        return (getData(MetaIndex.TAMEABLE_META) & no) != 0;
+    }
+
+    @NmsRemovedIn(val = NmsVersion.v1_14)
+    protected void setTameableFlag(int no, boolean flag) {
+        byte value = getData(MetaIndex.TAMEABLE_META);
+
+        if (flag) {
+            setData(MetaIndex.TAMEABLE_META, (byte) (value | no));
+        } else {
+            setData(MetaIndex.TAMEABLE_META, (byte) (value & -(no + 1)));
+        }
+
+        sendData(MetaIndex.TAMEABLE_META);
     }
 }
