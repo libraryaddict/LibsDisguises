@@ -93,17 +93,22 @@ public class LibsPackets {
             final boolean isRemoveCancel = isSpawnPacket && entry.getKey() >= removeMetaAt && removeMetaAt >= 0;
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                if (!disguise.isDisguiseInUse()) {
-                    if (isRemoveCancel) {
-                        PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
-                    }
-
-                    return;
-                }
 
                 if (isRemoveCancel) {
                     PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
+                }
 
+                if (!disguise.isDisguiseInUse()) {
+                    ArrayList<PacketContainer> packets = entry.getValue();
+
+                    if (packets.stream().noneMatch(p -> p.getType() == PacketType.Play.Server.PLAYER_INFO)) {
+                        return;
+                    }
+
+                    packets.removeIf(p -> p.getType() != PacketType.Play.Server.PLAYER_INFO);
+                }
+
+                if (isRemoveCancel) {
                     if (isSendArmor()) {
                         for (EquipmentSlot slot : EquipmentSlot.values()) {
                             PacketContainer packet = createPacket(slot);
