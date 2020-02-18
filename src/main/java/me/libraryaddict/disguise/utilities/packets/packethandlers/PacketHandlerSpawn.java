@@ -12,11 +12,11 @@ import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
-import me.libraryaddict.disguise.utilities.reflection.DisguiseValues;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
@@ -88,7 +88,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                         disguisedEntity instanceof Damageable) {
                     builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
                 } else {
-                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
+                    builder.baseValue(
+                            DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
                 }
 
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);

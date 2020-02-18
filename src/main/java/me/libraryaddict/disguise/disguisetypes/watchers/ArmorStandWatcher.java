@@ -1,11 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.util.EulerAngle;
-
 import com.comphenix.protocol.wrappers.Vector3F;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.util.EulerAngle;
 
 public class ArmorStandWatcher extends LivingWatcher {
     public ArmorStandWatcher(Disguise disguise) {

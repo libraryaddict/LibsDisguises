@@ -1,10 +1,10 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedParticle;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Color;
@@ -153,5 +153,13 @@ public class ParamInfoParticle extends ParamInfoEnum {
         }
 
         return WrappedParticle.create(particle, data);
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return true;
     }
 }

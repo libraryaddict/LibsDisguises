@@ -62,7 +62,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
         List<String> tabs = new ArrayList<>();
 
         for (DisguisePerm perm : perms.getAllowed()) {
-            tabs.addAll(getTabDisguiseSubOptions(sender, perms, perm, args, 0, getCurrentArg(args)));
+            tabs.addAll(getTabDisguiseOptions(sender, perms, perm, args, 0, getCurrentArg(origArgs)));
         }
 
         return filterTabs(tabs, origArgs);

@@ -13,9 +13,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -23,12 +21,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -788,6 +783,14 @@ public abstract class Disguise {
 
         if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
             getWatcher().setCustomName("");
+        }
+
+        // If a horse is disguised as a horse, it should obey parent no gravity rule
+        if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse) &&
+                (getWatcher() instanceof BoatWatcher || getWatcher() instanceof AbstractHorseWatcher)) {
+            getWatcher().setNoGravity(!getEntity().hasGravity());
+        } else {
+            getWatcher().setNoGravity(true);
         }
     }
 

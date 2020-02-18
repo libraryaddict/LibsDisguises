@@ -1,14 +1,13 @@
-package me.libraryaddict.disguise.utilities.parser.params;
+package me.libraryaddict.disguise.utilities.params;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
-import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
-import me.libraryaddict.disguise.utilities.parser.params.types.base.*;
-import me.libraryaddict.disguise.utilities.parser.params.types.custom.*;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.params.types.base.*;
+import me.libraryaddict.disguise.utilities.params.types.custom.*;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -26,6 +25,11 @@ import java.util.*;
  * Created by libraryaddict on 7/09/2018.
  */
 public class ParamInfoTypes {
+    public ParamInfoItemBlock getParamInfoBlock() {
+        return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
+                "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials());
+    }
+
     /**
      * Constructor values are listed here for continuity
      */
@@ -95,7 +99,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
                 "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)",
                 "Four ItemStacks separated by a comma", getMaterials()));
-        paramInfos.add(new ParamInfoEnum(PotionEffectType.class, "Potion Effect",
+        paramInfos.add(new ParamInfoPotionEffect(PotionEffectType.class, "Potion Effect",
                 "View all the potion effects you can add", getPotions()));
 
         paramInfos.add(new ParamInfoBlockPosition(BlockPosition.class, "Block Position", "Block Position (num,num,num)",

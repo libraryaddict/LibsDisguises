@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
@@ -34,10 +33,6 @@ public class FallingBlockWatcher extends FlagWatcher {
 
     public boolean isGridLocked() {
         return gridLocked;
-    }
-
-    private short conRel(double oldCord, double newCord) {
-        return (short) (((oldCord - newCord) * 4096) * (isGridLocked() ? -1 : 1));
     }
 
     public void setGridLocked(boolean gridLocked) {
@@ -75,12 +70,16 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
     }
 
+    private short conRel(double oldCord, double newCord) {
+        return (short) (((oldCord - newCord) * 4096) * (isGridLocked() ? -1 : 1));
+    }
+
     public ItemStack getBlock() {
         return block;
     }
 
     public void setBlock(ItemStack block) {
-        if (block == null || block.getType() == null || block.getType() == Material.AIR) {
+        if (block == null || block.getType() == null || block.getType() == Material.AIR || !block.getType().isBlock()) {
             block = new ItemStack(Material.STONE);
         }
 

@@ -46,8 +46,6 @@ public class FlagWatcher {
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
-
-        setNoGravity(true);
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
@@ -585,10 +583,12 @@ public class FlagWatcher {
         }
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public boolean isSleeping() {
         return sleeping;
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setSleeping(boolean sleeping) {
         if (isSleeping() == sleeping) {
             return;
@@ -599,10 +599,12 @@ public class FlagWatcher {
         updatePose();
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public boolean isSwimming() {
         return swimming;
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     public void setSwimming(boolean swimming) {
         if (isSwimming() == swimming) {
             return;

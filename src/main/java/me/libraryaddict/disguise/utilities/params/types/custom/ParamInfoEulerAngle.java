@@ -1,6 +1,6 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import org.bukkit.util.EulerAngle;
 
 /**

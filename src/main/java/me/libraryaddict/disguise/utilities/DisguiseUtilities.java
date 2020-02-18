@@ -5,6 +5,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.*;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtList;
+import com.comphenix.protocol.wrappers.nbt.NbtType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -24,6 +28,7 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.*;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -1944,6 +1949,70 @@ public class DisguiseUtilities {
                         " (" + ((Optional) value).get().getClass().getName() + ")" :
                         value instanceof Optional || value == null ? "" : " " + value.getClass().getName()) +
                 "! Are you running " + "the latest " + "version of " + "ProtocolLib?");
+    }
+
+    public static String serialize(NbtBase base) {
+        return serialize(0, base);
+    }
+
+    private static String serialize(int depth, NbtBase base) {
+        switch (base.getType()) {
+            case TAG_COMPOUND:
+                StringBuilder builder = new StringBuilder();
+
+                builder.append("{");
+
+                for (String key : ((NbtCompound) base).getKeys()) {
+                    NbtBase<Object> nbt = ((NbtCompound) base).getValue(key);
+                    String val = serialize(depth + 1, nbt);
+
+                    // Skip root empty values
+                    if (depth == 0 && val.matches("0(\\.0)?")) {
+                        continue;
+                    }
+
+                    if (builder.length() != 1) {
+                        builder.append(",");
+                    }
+
+                    builder.append(key).append(":").append(val);
+                }
+
+                builder.append("}");
+
+                return builder.toString();
+            case TAG_LIST:
+                Collection col = ((NbtList) base).asCollection();
+
+                return "[" + StringUtils.join(col.stream().map(b -> serialize(depth + 1, (NbtBase) b)).toArray(), ",") +
+                        "]";
+            case TAG_BYTE_ARRAY:
+            case TAG_INT_ARRAY:
+            case TAG_LONG_ARRAY:
+                Object[] array = (Object[]) base.getValue();
+                String[] str = new String[array.length];
+
+                for (int i = 0; i < array.length; i++) {
+                    str[i] = array[i].toString();//+ getChar(base.getType());
+                }
+
+                return "[" + StringUtils.join(str, ",") + "]";
+            case TAG_BYTE:
+            case TAG_INT:
+            case TAG_LONG:
+            case TAG_FLOAT:
+            case TAG_SHORT:
+            case TAG_DOUBLE:
+                return base.getValue().toString();// + getChar(base.getType());
+            case TAG_STRING:
+                String val = (String) base.getValue();
+
+                return "\"" + val.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+            case TAG_END:
+                return "";
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     /**

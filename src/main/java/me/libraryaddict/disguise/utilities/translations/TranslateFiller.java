@@ -1,9 +1,9 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 

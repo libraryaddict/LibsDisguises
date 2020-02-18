@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.ItemStack;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.inventory.ItemStack;
 
 public class DroppedItemWatcher extends FlagWatcher {
     public DroppedItemWatcher(Disguise disguise) {

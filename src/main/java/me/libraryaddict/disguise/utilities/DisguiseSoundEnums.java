@@ -1,14 +1,14 @@
 package me.libraryaddict.disguise.utilities;
 
 import lombok.Getter;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import org.bukkit.Sound;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
-import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 
 /**
  * Only living disguises go in here!

@@ -1,18 +1,21 @@
-package me.libraryaddict.disguise.utilities.reflection;
+package me.libraryaddict.disguise.utilities.watchers;
 
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import org.apache.commons.lang.ClassUtils;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.asm.WatcherInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -35,10 +38,19 @@ public class DisguiseMethods {
         return methods;
     }
 
+    public ArrayList<Method> getMethods() {
+        ArrayList<Method> methods = new ArrayList<>();
+
+        this.watcherMethods.values().forEach(methods::addAll);
+
+        return methods;
+    }
+
     public DisguiseMethods() {
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
             List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.toList());
+
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
             classes.put(FlagWatcher.class.getSimpleName(), FlagWatcher.class);
 
@@ -56,26 +68,19 @@ public class DisguiseMethods {
             }
 
             for (String line : lines) {
-                String[] split = line.split(":");
+                WatcherInfo info = new WatcherInfo(line);
 
-                if (split.length > 3) {
-                    int added = Integer.parseInt(split[0]);
-                    int removed = Integer.parseInt(split[1]);
-
-                    if (added >= 0 && added > ReflectionManager.getVersion().ordinal()) {
-                        continue;
-                    } else if (removed >= 0 && removed <= ReflectionManager.getVersion().ordinal()) {
-                        continue;
-                    }
+                if (!info.isSupported() || info.getParam().isEmpty()) {
+                    continue;
                 }
 
-                Class<? extends FlagWatcher> watcher = classes.get(split[split.length - 3]);
+                Class<? extends FlagWatcher> watcher = classes.get(info.getWatcher());
 
                 if (watcher == null) {
                     continue;
                 }
 
-                String paramName = split[split.length - 1];
+                String paramName = info.getParam();
                 Class param;
 
                 if (!paramName.contains(".")) {
@@ -84,12 +89,24 @@ public class DisguiseMethods {
                     param = Class.forName(paramName);
                 }
 
-                Method method = watcher.getMethod(split[split.length - 2], param);
+                Method method = watcher.getMethod(info.getMethod(), param);
+
+                if (method.getParameterCount() != 1) {
+                    continue;
+                } else if (method.getName().startsWith("get")) {
+                    continue;
+                } else if (method.isAnnotationPresent(Deprecated.class)) {
+                    continue;
+                } else if (!method.getReturnType().equals(Void.TYPE)) {
+                    continue;
+                } else if (ParamInfoManager.getParamInfo(method) == null) {
+                    continue;
+                }
 
                 watcherMethods.computeIfAbsent(watcher, (a) -> new ArrayList<>()).add(method);
             }
         }
-        catch (IOException | ClassNotFoundException | NoSuchMethodException e) {
+        catch (IOException | ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }

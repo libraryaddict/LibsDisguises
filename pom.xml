@@ -47,7 +47,7 @@
                 </executions>
                 <configuration>
                     <includePluginDependencies>true</includePluginDependencies>
-                    <mainClass>me.libraryaddict.disguise.utilities.reflection.CompileMethods</mainClass>
+                    <mainClass>me.libraryaddict.disguise.utilities.watchers.CompileMethods</mainClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -65,6 +65,12 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.3.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

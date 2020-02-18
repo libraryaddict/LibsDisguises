@@ -1,29 +1,29 @@
-package me.libraryaddict.disguise.utilities.parser.params;
+package me.libraryaddict.disguise.utilities.params;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfoTypes;
-import me.libraryaddict.disguise.utilities.reflection.DisguiseMethods;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBlock;
+import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class ParamInfoManager {
     private static List<ParamInfo> paramList;
     private static DisguiseMethods disguiseMethods;
+    @Getter
+    private static ParamInfoItemBlock paramInfoItemBlock;
 
     public static List<ParamInfo> getParamInfos() {
         return paramList;
@@ -41,6 +41,15 @@ public class ParamInfoManager {
         }
 
         return info.toString(object);
+    }
+
+    public static ParamInfo getParamInfo(Method method) {
+        if (method.getDeclaringClass() == FallingBlockWatcher.class &&
+                method.getParameterTypes()[0] == ItemStack.class) {
+            return getParamInfoItemBlock();
+        }
+
+        return getParamInfo(method.getParameterTypes()[0]);
     }
 
     public static ParamInfo getParamInfo(Class c) {
@@ -64,14 +73,16 @@ public class ParamInfoManager {
             if (!method.getName().toLowerCase().equals(methodName.toLowerCase()))
                 continue;
 
-            return getParamInfo(method.getParameterTypes()[0]);
+            return getParamInfo(method);
         }
 
         return null;
     }
 
     static {
-        paramList = new ParamInfoTypes().getParamInfos();
+        ParamInfoTypes infoTypes = new ParamInfoTypes();
+        paramList = infoTypes.getParamInfos();
+        paramInfoItemBlock = infoTypes.getParamInfoBlock();
         disguiseMethods = new DisguiseMethods();
 
         //paramList.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
@@ -83,18 +94,6 @@ public class ParamInfoManager {
         }
 
         ArrayList<Method> methods = new ArrayList<>(disguiseMethods.getMethods(watcherClass));
-
-        Iterator<Method> itel = methods.iterator();
-
-        while (itel.hasNext()) {
-            Method method = itel.next();
-
-            if (!ReflectionManager.isSupported(method)) {
-                itel.remove();
-            } else if (getParamInfo(method.getParameterTypes()[0]) == null) {
-                itel.remove();
-            }
-        }
 
         // Order first by their declaring class, the top class (SheepWatcher) goes before (FlagWatcher)
         // Order methods in the same watcher by their name from A to Z

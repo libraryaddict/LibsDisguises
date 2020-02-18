@@ -1,7 +1,7 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
 /**
  * Created by libraryaddict on 7/09/2018.

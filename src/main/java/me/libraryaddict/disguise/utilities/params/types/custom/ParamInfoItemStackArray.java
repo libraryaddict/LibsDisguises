@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.inventory.ItemStack;
@@ -89,5 +89,13 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         }
 
         return items;
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return true;
     }
 }

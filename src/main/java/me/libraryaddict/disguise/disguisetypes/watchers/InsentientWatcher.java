@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import org.bukkit.inventory.MainHand;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.inventory.MainHand;
 
 public class InsentientWatcher extends LivingWatcher {
     public InsentientWatcher(Disguise disguise) {

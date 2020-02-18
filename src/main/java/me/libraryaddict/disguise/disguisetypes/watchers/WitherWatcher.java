@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.security.InvalidParameterException;
-
-import org.bukkit.ChatColor;
-
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import org.bukkit.ChatColor;
+
+import java.security.InvalidParameterException;
 
 public class WitherWatcher extends InsentientWatcher
 {

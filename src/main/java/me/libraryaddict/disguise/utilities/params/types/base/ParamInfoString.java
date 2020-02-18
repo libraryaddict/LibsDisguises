@@ -1,6 +1,6 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.base;
+package me.libraryaddict.disguise.utilities.params.types.base;
 
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import org.bukkit.ChatColor;
 
 /**

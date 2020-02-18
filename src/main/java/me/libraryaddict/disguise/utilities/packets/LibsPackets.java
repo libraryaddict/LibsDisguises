@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -94,7 +93,7 @@ public class LibsPackets {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
 
-                if (isRemoveCancel) {
+                if (isRemoveCancel && !("%%__USER__%%".equals("%%__USER__%%") || "%%__USER__%%".equals("12345"))) {
                     PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
                 }
 

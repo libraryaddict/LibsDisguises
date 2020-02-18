@@ -1,7 +1,7 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.base;
+package me.libraryaddict.disguise.utilities.params.types.base;
 
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -50,5 +50,13 @@ public class ParamInfoBoolean extends ParamInfo {
     @Override
     public int getMinArguments() {
         return 0;
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return false;
     }
 }

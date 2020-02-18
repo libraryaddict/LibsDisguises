@@ -10,15 +10,12 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
-import me.libraryaddict.disguise.utilities.DisguiseSound;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.*;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -1013,7 +1010,7 @@ public class ReflectionManager {
                 Object obj = ((WrappedChatComponent) val).getHandle();
 
                 return NmsVersion.v1_13.isSupported() ? Optional.of(obj) : com.google.common.base.Optional.of(obj);
-            }else if (!NmsVersion.v1_13.isSupported()) {
+            } else if (!NmsVersion.v1_13.isSupported()) {
                 return com.google.common.base.Optional.of(val);
             }
         } else if (value instanceof Vector3F) {
@@ -1061,6 +1058,71 @@ public class ReflectionManager {
         }
 
         return value;
+    }
+
+    public static Material getMaterial(String name) {
+        try {
+            if (!NmsVersion.v1_13.isSupported()) {
+                Method toMinecraft = getCraftMethod("util.CraftMagicNumbers", "getMaterialFromInternalName",
+                        String.class);
+
+                return (Material) toMinecraft.invoke(null, name);
+            }
+
+            Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name);
+
+            Object registry = getNmsField("IRegistry", "ITEM").get(null);
+
+            Method getMethod = getNmsMethod(getNmsClass("RegistryMaterials"), "get", mcKey.getClass());
+            Object item = getMethod.invoke(registry, mcKey);
+
+            if (item == null) {
+                return null;
+            }
+
+            Method getMaterial = getCraftMethod("util.CraftMagicNumbers", "getMaterial", getNmsClass("Item"));
+
+            return (Material) getMaterial.invoke(null, item);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static String getItemName(Material material) {
+        try {
+            Object item = getCraftMethod("util.CraftMagicNumbers", "getItem", Material.class).invoke(null, material);
+
+            if (item == null) {
+                return null;
+            }
+
+            Object registry;
+
+            if (NmsVersion.v1_13.isSupported()) {
+                registry = getNmsField("IRegistry", "ITEM").get(null);
+            } else {
+                registry = getNmsField("Item", "REGISTRY").get(null);
+            }
+
+            Method getMethod = getNmsMethod(registry.getClass(), NmsVersion.v1_13.isSupported() ? "getKey" : "b",
+                    Object.class);
+
+            Object mcKey = getMethod.invoke(registry, item);
+
+            if (mcKey == null) {
+                return null;
+            }
+
+            return (String) getNmsMethod("MinecraftKey", "getKey").invoke(mcKey);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Object getNmsVillagerData(VillagerData data) {

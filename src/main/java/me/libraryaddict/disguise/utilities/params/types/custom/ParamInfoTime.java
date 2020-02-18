@@ -1,9 +1,9 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
 /**
  * Created by libraryaddict on 6/03/2019.
@@ -11,6 +11,11 @@ import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 public class ParamInfoTime extends ParamInfo {
     public ParamInfoTime(Class paramClass, String name, String description) {
         super(paramClass, name, description);
+    }
+
+    @Override
+    public boolean isParam(Class classType) {
+        return classType == Long.class || classType == Long.TYPE;
     }
 
     @Override
@@ -35,5 +40,13 @@ public class ParamInfoTime extends ParamInfo {
     @Override
     public String toString(Object object) {
         return object.toString();
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return true;
     }
 }

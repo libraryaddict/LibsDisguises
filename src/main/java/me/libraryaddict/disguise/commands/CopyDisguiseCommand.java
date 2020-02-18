@@ -6,11 +6,11 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -79,10 +79,11 @@ public class CopyDisguiseCommand implements CommandExecutor {
             return true;
         }*/
 
-        sendMessage(sender, LibsMsg.CLICK_TO_COPY, disguiseString, false);
+        sendMessage(sender, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
 
         if (disguise instanceof PlayerDisguise) {
-            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, DisguiseParser.parseToString(disguise), true);
+            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY,
+                    DisguiseParser.parseToString(disguise), true);
         }
 
         DisguiseUtilities.setCopyDisguiseCommandUsed();
@@ -90,7 +91,12 @@ public class CopyDisguiseCommand implements CommandExecutor {
         return true;
     }
 
-    private void sendMessage(CommandSender sender, LibsMsg msg, String string, boolean forceAbbrev) {
+    private void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
+        if (!NmsVersion.v1_13.isSupported()) {
+            sender.sendMessage(oldVer.get(string));
+            return;
+        }
+
         ComponentBuilder builder = new ComponentBuilder("").appendLegacy(msg.get()).append(" ");
 
         if (string.length() > 256 || forceAbbrev) {

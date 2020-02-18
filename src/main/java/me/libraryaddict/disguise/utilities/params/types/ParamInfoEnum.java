@@ -1,7 +1,7 @@
-package me.libraryaddict.disguise.utilities.parser.params.types;
+package me.libraryaddict.disguise.utilities.params.types;
 
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
 
 import java.util.Map;
 
@@ -43,5 +43,13 @@ public class ParamInfoEnum extends ParamInfo {
     @Override
     public String toString(Object object) {
         return object.toString();
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return false;
     }
 }

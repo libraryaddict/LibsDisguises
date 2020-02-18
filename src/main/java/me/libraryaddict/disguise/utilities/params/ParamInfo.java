@@ -1,7 +1,7 @@
-package me.libraryaddict.disguise.utilities.parser.params;
+package me.libraryaddict.disguise.utilities.params;
 
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -141,5 +141,12 @@ public abstract class ParamInfo {
 
     public Set<String> getEnums(String tabComplete) {
         return getValues().keySet();
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    public boolean isCustomValues() {
+        return true;
     }
 }

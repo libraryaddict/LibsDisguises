@@ -1,10 +1,12 @@
-package me.libraryaddict.disguise.utilities.reflection;
+package me.libraryaddict.disguise.utilities.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.MushroomCowWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Sound;
 
@@ -66,24 +68,22 @@ public class CompileMethods {
         ArrayList<Class<?>> classes = ClassGetter
                 .getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
         classes.add(FlagWatcher.class);
-        classes.add(MushroomCowWatcher.class);
+        classes.sort((c1, c2) -> c1.isAssignableFrom(c2) ? -1 : 1);
 
         ArrayList<String> methods = new ArrayList<>();
 
         for (Class c : classes) {
             for (Method method : c.getMethods()) {
-                if (method.getParameterTypes().length != 1) {
+                if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
-                } else if (method.getName().startsWith("get")) {
-                    continue;
-                } else if (method.isAnnotationPresent(Deprecated.class) &&
+                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) &&
                         !method.isAnnotationPresent(NmsRemovedIn.class)) {
                     continue;
-                } else if (!method.getReturnType().equals(Void.TYPE)) {
+                } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) &&
+                        !method.getName().startsWith("get") && !method.getName().startsWith("has") &&
+                        !method.getName().startsWith("is")) {
                     continue;
                 } else if (method.getName().equals("removePotionEffect")) {
-                    continue;
-                } else if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
                 } else if (LibsPremium.isPremium() && new Random().nextBoolean()) {
                     continue;
@@ -104,10 +104,15 @@ public class CompileMethods {
                     removed = method.getDeclaringClass().getAnnotation(NmsRemovedIn.class).val().ordinal();
                 }
 
-                Class<?> param = method.getParameterTypes()[0];
+                String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : "";
+                String descriptor = "";
 
-                String s = ((added >= 0 || removed >= 0) ? added + ":" + removed + ":" : "") +
-                        method.getDeclaringClass().getSimpleName() + ":" + method.getName() + ":" + param.getName();
+                if (added >= 0 || removed >= 0) {
+                    descriptor = ":" + getMethodDescriptor(method) + ":" + added + ":" + removed;
+                }
+
+                String s =
+                        method.getDeclaringClass().getSimpleName() + ":" + method.getName() + ":" + param + descriptor;
 
                 if (methods.contains(s)) {
                     continue;
@@ -125,5 +130,45 @@ public class CompileMethods {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    static String getDescriptorForClass(final Class c) {
+        if (c.isPrimitive()) {
+            if (c == byte.class)
+                return "B";
+            if (c == char.class)
+                return "C";
+            if (c == double.class)
+                return "D";
+            if (c == float.class)
+                return "F";
+            if (c == int.class)
+                return "I";
+            if (c == long.class)
+                return "J";
+            if (c == short.class)
+                return "S";
+            if (c == boolean.class)
+                return "Z";
+            if (c == void.class)
+                return "V";
+
+            throw new RuntimeException("Unrecognized primitive " + c);
+        }
+
+        if (c.isArray())
+            return c.getName().replace('.', '/');
+
+        return ('L' + c.getName() + ';').replace('.', '/');
+    }
+
+    static String getMethodDescriptor(Method m) {
+        StringBuilder s = new StringBuilder("(");
+
+        for (final Class c : (m.getParameterTypes())) {
+            s.append(getDescriptorForClass(c));
+        }
+
+        return s.append(")") + getDescriptorForClass(m.getReturnType());
     }
 }

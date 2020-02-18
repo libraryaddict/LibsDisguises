@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands;
 
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -9,11 +10,14 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,6 +31,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -206,10 +211,45 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 String gson = DisguiseUtilities.getGson().toJson(item);
                 String simple = ParamInfoManager.toString(item);
 
-                sendMessage(sender, LibsMsg.ITEM_SERIALIZED, gson);
+                // item{nbt} amount
+                // item amount data {nbt}
 
-                if (!gson.equals(simple)) {
-                    sendMessage(sender, LibsMsg.ITEM_SIMPLE_STRING, simple);
+                String itemName = ReflectionManager.getItemName(item.getType());
+                ArrayList<String> mcArray = new ArrayList<>();
+
+                if (NmsVersion.v1_13.isSupported() && item.hasItemMeta()) {
+                    mcArray.add(itemName + DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
+                } else {
+                    mcArray.add(itemName);
+                }
+
+                if (item.getAmount() != 1) {
+                    mcArray.add(String.valueOf(item.getAmount()));
+                }
+
+                if (!NmsVersion.v1_13.isSupported()) {
+                    if (item.getDurability() != 0) {
+                        mcArray.add(String.valueOf(item.getDurability()));
+                    }
+
+                    if (item.hasItemMeta()) {
+                        mcArray.add(DisguiseUtilities.serialize(NbtFactory.fromItemTag(item)));
+                    }
+                }
+
+                String ldItem = StringUtils.join(mcArray, "-");
+                String mcItem = StringUtils.join(mcArray, " ");
+
+                sendMessage(sender, LibsMsg.ITEM_SERIALIZED, LibsMsg.ITEM_SERIALIZED_NO_COPY, gson);
+
+                if (!gson.equals(simple) && !ldItem.equals(simple) && !mcItem.equals(simple)) {
+                    sendMessage(sender, LibsMsg.ITEM_SIMPLE_STRING, LibsMsg.ITEM_SIMPLE_STRING_NO_COPY, simple);
+                }
+
+                sendMessage(sender, LibsMsg.ITEM_SERIALIZED_MC, LibsMsg.ITEM_SERIALIZED_MC_NO_COPY, mcItem);
+
+                if (mcArray.size() > 1) {
+                    sendMessage(sender, LibsMsg.ITEM_SERIALIZED_MC, LibsMsg.ITEM_SERIALIZED_MC_NO_COPY, ldItem);
                 }
             } else if (args[0].equalsIgnoreCase("metainfo") || args[0].equalsIgnoreCase("meta")) {
                 if (!sender.hasPermission("libsdisguises.metainfo")) {
@@ -235,25 +275,30 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
                     names.sort(String::compareToIgnoreCase);
 
-                    ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.META_VALUES.get());
+                    if (NmsVersion.v1_13.isSupported()) {
+                        ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.META_VALUES.get());
 
-                    Iterator<String> itel = names.iterator();
+                        Iterator<String> itel = names.iterator();
 
-                    while (itel.hasNext()) {
-                        String name = itel.next();
+                        while (itel.hasNext()) {
+                            String name = itel.next();
 
-                        builder.appendLegacy(name);
-                        builder.event(
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd.getName() + " metainfo " + name));
-                        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new ComponentBuilder("").appendLegacy(LibsMsg.META_CLICK_SHOW.get(name)).create()));
+                            builder.appendLegacy(name);
+                            builder.event(
+                                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, cmd.getName() + " metainfo " + name));
+                            builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new ComponentBuilder("").appendLegacy(LibsMsg.META_CLICK_SHOW.get(name)).create()));
 
-                        if (itel.hasNext()) {
-                            builder.appendLegacy(LibsMsg.META_VALUE_SEPERATOR.get());
+                            if (itel.hasNext()) {
+                                builder.appendLegacy(LibsMsg.META_VALUE_SEPERATOR.get());
+                            }
                         }
-                    }
 
-                    sender.spigot().sendMessage(builder.create());
+                        sender.spigot().sendMessage(builder.create());
+                    } else {
+                        sender.sendMessage(
+                                LibsMsg.META_VALUES_NO_CLICK.get(StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get())));
+                    }
                 }
             } else {
                 sender.sendMessage(LibsMsg.LIBS_COMMAND_WRONG_ARG.get());
@@ -262,7 +307,12 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private void sendMessage(CommandSender sender, LibsMsg prefix, String string) {
+    private void sendMessage(CommandSender sender, LibsMsg prefix, LibsMsg oldVer, String string) {
+        if (!NmsVersion.v1_13.isSupported()) {
+            sender.sendMessage(oldVer.get(string));
+            return;
+        }
+
         int start = 0;
         int msg = 1;
 
@@ -286,7 +336,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
             builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
             builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + " " + msg).create()));
+                    new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + (string.length() <= 256 ? "" : " " + msg))
+                            .create()));
             msg += 1;
         }
 
@@ -299,7 +350,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         String[] args = getArgs(origArgs);
 
         if (args.length == 0)
-            tabs.add("Reload");
+            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo"));
 
         return filterTabs(tabs, origArgs);
     }

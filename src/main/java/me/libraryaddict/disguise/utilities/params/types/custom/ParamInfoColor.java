@@ -1,6 +1,6 @@
-package me.libraryaddict.disguise.utilities.parser.params.types.custom;
+package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import me.libraryaddict.disguise.utilities.parser.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import org.bukkit.Color;
 
 import java.util.Map;
@@ -59,5 +59,13 @@ public class ParamInfoColor extends ParamInfoEnum {
     @Override
     protected Object fromString(String string) {
         return parseToColor(string);
+    }
+
+    /**
+     * Is the values it returns all it can do?
+     */
+    @Override
+    public boolean isCustomValues() {
+        return true;
     }
 }

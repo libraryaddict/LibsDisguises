@@ -229,7 +229,7 @@ public class LibsPremium {
         if (!foundJar) {
             DisguiseUtilities.getLogger().warning(
                     "If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
-                            ".org/resources/libs-disguises.32453/ in " + new File("plugins/LibsDisguises/").getPath());
+                            ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
         }
     }
 

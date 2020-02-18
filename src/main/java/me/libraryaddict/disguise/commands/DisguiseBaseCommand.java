@@ -1,13 +1,12 @@
 package me.libraryaddict.disguise.commands;
 
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -159,6 +158,10 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         if (addMethods) {
             // If this is a method, add. Else if it can be a param of the previous argument, add.
             for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass())) {
+                if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getName()))) {
+                    continue;
+                }
+
                 tabs.add(method.getName());
             }
         }

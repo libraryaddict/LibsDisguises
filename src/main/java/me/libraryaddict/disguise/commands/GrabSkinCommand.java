@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.SkinUtils;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -111,31 +112,35 @@ public class GrabSkinCommand implements CommandExecutor {
                 int start = 0;
                 int msg = 1;
 
-                ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.CLICK_TO_COPY.get());
+                if (NmsVersion.v1_13.isSupported()) {
+                    ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.CLICK_TO_COPY.get());
 
-                while (start < string.length()) {
-                    int end = Math.min(256, string.length() - start);
+                    while (start < string.length()) {
+                        int end = Math.min(256, string.length() - start);
 
-                    String sub = string.substring(start, start + end);
+                        String sub = string.substring(start, start + end);
 
-                    builder.append(" ");
+                        builder.append(" ");
 
-                    if (string.length() <= 256) {
-                        builder.appendLegacy(LibsMsg.CLICK_TO_COPY_DATA.get());
-                    } else {
-                        builder.reset();
-                        builder.appendLegacy(LibsMsg.CLICK_COPY.get(msg));
+                        if (string.length() <= 256) {
+                            builder.appendLegacy(LibsMsg.CLICK_TO_COPY_DATA.get());
+                        } else {
+                            builder.reset();
+                            builder.appendLegacy(LibsMsg.CLICK_COPY.get(msg));
+                        }
+
+                        start += end;
+
+                        builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
+                        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + " " + msg).create()));
+                        msg += 1;
                     }
 
-                    start += end;
-
-                    builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + " " + msg).create()));
-                    msg += 1;
+                    sender.spigot().sendMessage(builder.create());
+                } else {
+                    sender.sendMessage(LibsMsg.SKIN_DATA.get(string));
                 }
-
-                sender.spigot().sendMessage(builder.create());
 
                 DisguiseUtilities.setGrabSkinCommandUsed();
             }
