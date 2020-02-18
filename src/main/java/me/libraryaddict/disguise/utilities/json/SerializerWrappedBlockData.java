@@ -1,9 +1,7 @@
 package me.libraryaddict.disguise.utilities.json;
 
 import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
-import com.mojang.authlib.GameProfile;
 import org.bukkit.Material;
 
 import java.lang.reflect.Type;

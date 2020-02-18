@@ -6,8 +6,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.Serializable;
-
 public class LibsEquipment implements EntityEquipment {
     private ItemStack[] equipment = new ItemStack[EquipmentSlot.values().length];
     private transient FlagWatcher flagWatcher;

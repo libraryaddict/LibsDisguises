@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.google.gson.Gson;
-import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;

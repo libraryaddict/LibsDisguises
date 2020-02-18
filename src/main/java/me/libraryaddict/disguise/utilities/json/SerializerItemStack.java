@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.utilities.json;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
-import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -10,7 +8,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Created by libraryaddict on 1/06/2017.

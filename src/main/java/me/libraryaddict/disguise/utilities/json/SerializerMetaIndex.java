@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.utilities.json;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.google.gson.*;
-import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 import java.lang.reflect.Type;

@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -10,7 +9,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 
 /**

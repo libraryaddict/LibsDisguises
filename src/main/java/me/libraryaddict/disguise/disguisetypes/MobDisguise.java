@@ -9,8 +9,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.security.InvalidParameterException;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class MobDisguise extends TargetedDisguise {
     private boolean isAdult;

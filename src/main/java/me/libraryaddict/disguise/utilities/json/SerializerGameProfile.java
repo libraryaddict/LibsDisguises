@@ -5,7 +5,6 @@ import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**

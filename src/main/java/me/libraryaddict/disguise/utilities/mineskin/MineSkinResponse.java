@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.apache.commons.lang.StringUtils;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
 
