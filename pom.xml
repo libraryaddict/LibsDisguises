@@ -5,7 +5,7 @@
     <!-- A good example on why temporary names for project identification shouldn't be used -->
     <groupId>LibsDisguises</groupId>
     <artifactId>LibsDisguises</artifactId>
-    <version>9.9.4-SNAPSHOT</version>
+    <version>9.9.5</version>
 
     <build>
         <defaultGoal>exec:java clean install</defaultGoal>
