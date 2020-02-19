@@ -31,6 +31,7 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onLoad() {
         if (Bukkit.getServer().getWorlds().isEmpty()) {
+            WatcherSanitizer.init();
             return;
         }
 
@@ -79,7 +80,6 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
-        WatcherSanitizer.init();
         ReflectionManager.init();
 
         PacketsManager.init();

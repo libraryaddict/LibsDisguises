@@ -55,7 +55,6 @@ public class ReflectionManager {
     private static Field trackerField;
     @NmsRemovedIn(val = NmsVersion.v1_14)
     private static Field entitiesField;
-    @Getter
     private static NmsVersion version;
 
     public static void init() {
@@ -358,6 +357,14 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    public static NmsVersion getVersion() {
+        if (version == null) {
+            getBukkitVersion();
+        }
+
+        return version;
     }
 
     public static String getBukkitVersion() {
