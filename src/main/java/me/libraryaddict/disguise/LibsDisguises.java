@@ -30,6 +30,8 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        instance = this;
+
         if (Bukkit.getServer().getWorlds().isEmpty()) {
             WatcherSanitizer.init();
             return;
@@ -47,8 +49,6 @@ public class LibsDisguises extends JavaPlugin {
                     .severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
                             "reloads gracefully!");
         }
-
-        instance = this;
 
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
             saveResource("disguises.yml", false);
