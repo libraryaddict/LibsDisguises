@@ -93,7 +93,7 @@ public class LibsPackets {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
 
-                if (isRemoveCancel && !("%%__USER__%%".equals("%%__USER__%%") || "%%__USER__%%".equals("12345"))) {
+                if (isRemoveCancel && "%%__USER__%%".equals("%%__USER__%%") && !"%%__USER__%%".equals("12345")) {
                     PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
                 }
 

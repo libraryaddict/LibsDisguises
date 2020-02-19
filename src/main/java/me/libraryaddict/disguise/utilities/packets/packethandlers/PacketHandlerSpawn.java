@@ -88,8 +88,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                         disguisedEntity instanceof Damageable) {
                     builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
                 } else {
-                    builder.baseValue(
-                            DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
+                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
                 }
 
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
@@ -434,14 +433,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     itemToSend = disguise.getWatcher().getItemStack(slot);
 
                     // If the disguise armor isn't visible
-                    if (itemToSend == null || itemToSend.getType() != Material.AIR) {
+                    if (itemToSend == null) {
                         itemToSend = ReflectionManager.getEquipment(slot, disguisedEntity);
 
                         // If natural armor isn't sent either
                         if (itemToSend == null || itemToSend.getType() == Material.AIR) {
                             continue;
                         }
-                    } else {
+                    } else if (itemToSend.getType() == Material.AIR) {
                         // Its air which shouldn't be sent
                         continue;
                     }
