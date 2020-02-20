@@ -21,6 +21,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -203,6 +204,10 @@ public class DisguiseListener implements Listener {
 
         if (attacker instanceof Projectile && ((Projectile) attacker).getShooter() instanceof Player) {
             attacker = (Entity) ((Projectile) attacker).getShooter();
+        }
+
+        if ("%%__USER__%%".equals("12345")) {
+            event.setDamage(0.5);
         }
 
         if (event.getEntityType() != EntityType.PLAYER && !(attacker instanceof Player)) {
@@ -432,6 +437,11 @@ public class DisguiseListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
+        // If yer a pirate with a pirated jar, sometimes you can't move
+        if (DisguiseUtilities.isInvalidFile() && !event.getPlayer().isOp() && RandomUtils.nextDouble() < 0.01) {
+            event.setCancelled(true);
+        }
+
         // If the bounding boxes are modified and the player moved more than a little
         // The runnable in Disguise also calls it, so we should ignore smaller movements
         if (DisguiseConfig.isModifyBoundingBox() && event.getFrom().distanceSquared(event.getTo()) > 0.2) {

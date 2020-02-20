@@ -131,6 +131,8 @@ public class DisguiseUtilities {
     @Getter
     private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
     private static HashMap<String, ExtendedName> extendedNames = new HashMap<>();
+    @Getter
+    private static boolean invalidFile;
 
     public static void setPlayerVelocity(Player player) {
         if (player == null) {
@@ -907,6 +909,10 @@ public class DisguiseUtilities {
             savedDisguises.mkdirs();
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
+
+        invalidFile = new File(
+                LibsDisguises.getInstance().getClass().getProtectionDomain().getCodeSource().getLocation().getFile())
+                .getName().toLowerCase().matches(".*((crack)|(null)|(leak)).*");
 
         for (String key : savedDisguises.list()) {
             try {

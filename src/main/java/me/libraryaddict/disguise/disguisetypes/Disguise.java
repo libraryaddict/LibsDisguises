@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
@@ -826,6 +827,18 @@ public abstract class Disguise {
 
         if (getEntity() == null) {
             throw new IllegalStateException("No entity is assigned to this disguise!");
+        }
+
+        if (LibsPremium.getUserID().equals("12345") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
+            ((TargetedDisguise) this).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
+
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!p.isOp()) {
+                    continue;
+                }
+
+                ((TargetedDisguise) this).addPlayer(p);
+            }
         }
 
         DisguiseUtilities.setPluginsUsed();

@@ -50,32 +50,6 @@
                     <mainClass>me.libraryaddict.disguise.utilities.watchers.CompileMethods</mainClass>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.objectweb.asm</pattern>
-                                    <shadedPattern>me.libraryaddict.asm</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.ow2.asm:asm</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

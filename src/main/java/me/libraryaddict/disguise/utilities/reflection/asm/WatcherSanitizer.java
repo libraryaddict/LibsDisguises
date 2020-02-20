@@ -23,6 +23,10 @@ public class WatcherSanitizer {
         if (NmsVersion.v1_14.isSupported()) {
             asm = new Asm14();
         } else {
+            if (!NmsVersion.v1_13.isSupported()) {
+                new AsmDownloader();
+            }
+
             asm = new Asm13();
         }
 

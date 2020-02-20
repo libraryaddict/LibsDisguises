@@ -222,19 +222,6 @@ public class PlayerDisguise extends TargetedDisguise {
                 gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
             }
         }
-
-        // Scare monger for the pirates of a certain site. Don't start messages until 14 days has passed!
-        if (LibsPremium.getUserID().equals("12345")) {
-            setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
-
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp()) {
-                    continue;
-                }
-
-                addPlayer(p);
-            }
-        }
     }
 
     public String getSkin() {

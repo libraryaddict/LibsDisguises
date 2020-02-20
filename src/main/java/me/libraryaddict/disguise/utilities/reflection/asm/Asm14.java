@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection.asm;
 
-import org.objectweb.asm.*;
+import org.bukkit.craftbukkit.libs.org.objectweb.asm.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
