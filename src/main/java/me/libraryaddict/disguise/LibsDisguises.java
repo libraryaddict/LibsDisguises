@@ -124,10 +124,6 @@ public class LibsDisguises extends JavaPlugin {
         new MetricsInitalizer();
     }
 
-    public ClassLoader getClassyLoader() {
-        return getClassLoader();
-    }
-
     @Override
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
