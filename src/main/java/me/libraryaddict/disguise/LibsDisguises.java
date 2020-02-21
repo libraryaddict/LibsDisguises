@@ -32,13 +32,13 @@ public class LibsDisguises extends JavaPlugin {
     public void onLoad() {
         instance = this;
 
-        if (Bukkit.getServer().getWorlds().isEmpty()) {
+        if (!Bukkit.getServer().getWorlds().isEmpty()) {
+            reloaded = true;
             return;
         }
 
         WatcherSanitizer.init();
 
-        reloaded = true;
         getLogger().severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
                 "reloads gracefully!");
     }
