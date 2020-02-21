@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
@@ -310,10 +311,8 @@ public class DisguiseConfig {
                 explain.createNewFile();
 
                 try (PrintWriter out = new PrintWriter(explain)) {
-                    out.println(
-                            "This folder is used to store .png files for uploading with the /savedisguise or " +
-                                    "/grabskin " +
-                                    "commands");
+                    out.println("This folder is used to store .png files for uploading with the /savedisguise or " +
+                            "/grabskin " + "commands");
                 }
             }
             catch (IOException e) {
@@ -466,6 +465,11 @@ public class DisguiseConfig {
 
         for (String key : section.getKeys(false)) {
             String toParse = section.getString(key);
+
+            if (!NmsVersion.v1_13.isSupported() && key.equals("libraryaddict")) {
+                toParse = toParse.replace("GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET",
+                        "GOLD_BOOTS,GOLD_LEGGINGS,GOLD_CHESTPLATE,GOLD_HELMET");
+            }
 
             try {
                 addCustomDisguise(key, toParse);
