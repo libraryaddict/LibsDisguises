@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import sun.plugin.security.PluginClassLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
