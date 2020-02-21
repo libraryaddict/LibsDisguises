@@ -30,11 +30,11 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        instance = this;
+
         if (Bukkit.getServer().getWorlds().isEmpty()) {
             return;
         }
-
-        instance = this;
 
         WatcherSanitizer.init();
 

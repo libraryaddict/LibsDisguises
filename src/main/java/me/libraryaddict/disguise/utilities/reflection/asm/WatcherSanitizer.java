@@ -47,7 +47,7 @@ public class WatcherSanitizer {
 
                 PluginDescriptionFile desc = (PluginDescriptionFile) dF.get(loader);
 
-                DisguiseUtilities.getLogger().severe(desc.getFullName() +
+                LibsDisguises.getInstance().getLogger().severe(desc.getFullName() +
                         " has been a naughty plugin, they're declaring access to the disguise watchers before Lib's " +
                         "Disguises can properly load them! They should add 'LibsDisguises' to the 'depend' section of" +
                         " their plugin.yml!");
