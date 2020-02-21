@@ -42,10 +42,8 @@ public class Asm13 implements IAsm {
         Field field = loader.getClass().getDeclaredField("classes");
         field.setAccessible(true);
         Map<String, Class<?>> map = (Map<String, Class<?>>) field.get(loader);
-        Class newClass =
-
-                (Class<?>) getDefineClassMethod()
-                        .invoke(getClass().getClassLoader(), className, bytes, 0, bytes.length);
+        Class newClass = (Class<?>) getDefineClassMethod()
+                .invoke(getClass().getClassLoader(), className, bytes, 0, bytes.length);
 
         map.put(className, newClass);
         return newClass;

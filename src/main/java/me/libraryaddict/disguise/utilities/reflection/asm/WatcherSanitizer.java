@@ -1,23 +1,70 @@
 package me.libraryaddict.disguise.utilities.reflection.asm;
 
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
+import sun.plugin.security.PluginClassLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 17/02/2020.
  */
 public class WatcherSanitizer {
+    public static void checkPreLoaded() throws NoSuchFieldException, IllegalAccessException {
+        JavaPluginLoader javaLoader = (JavaPluginLoader) LibsDisguises.getInstance().getPluginLoader();
+
+        Field cM = JavaPluginLoader.class.getDeclaredField("classes");
+        cM.setAccessible(true);
+        Map<String, Class<?>> classes = (Map<String, Class<?>>) cM.get(javaLoader);
+        Field lM = JavaPluginLoader.class.getDeclaredField("loaders");
+        lM.setAccessible(true);
+        List loaders = (List) lM.get(javaLoader);
+
+        Field lF = WatcherSanitizer.class.getClassLoader().getClass().getDeclaredField("classes");
+        lF.setAccessible(true);
+        Field dF = WatcherSanitizer.class.getClassLoader().getClass().getDeclaredField("description");
+        dF.setAccessible(true);
+
+        for (Object loader : loaders) {
+            Map<String, Class<?>> lClasses = (Map<String, Class<?>>) lF.get(loader);
+
+            for (Class c : lClasses.values()) {
+                if (!c.getName().startsWith("me.libraryaddict.disguise.disguisetypes.watchers.") &&
+                        !c.getName().equals("me.libraryaddict.disguise.disguisetypes.FlagWatcher")) {
+                    continue;
+                }
+
+                PluginDescriptionFile desc = (PluginDescriptionFile) dF.get(loader);
+
+                DisguiseUtilities.getLogger().severe(desc.getFullName() +
+                        " has been a naughty plugin, they're declaring access to the disguise watchers before Lib's " +
+                        "Disguises can properly load them! They should add 'LibsDisguises' to the 'depend' section of" +
+                        " their plugin.yml!");
+                break;
+            }
+        }
+    }
 
     public static void init() {
+        try {
+            checkPreLoaded();
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
         IAsm asm;
 
         if (NmsVersion.v1_14.isSupported()) {
