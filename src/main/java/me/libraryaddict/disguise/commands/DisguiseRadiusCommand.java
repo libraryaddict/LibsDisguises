@@ -33,9 +33,16 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
     public DisguiseRadiusCommand(int maxRadius) {
         this.maxRadius = maxRadius;
-        for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
-            if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
+
+        validClasses.add(Entity.class);
+
+        for (EntityType type : EntityType.values()) {
+            Class c = type.getEntityClass();
+
+            while (!validClasses.contains(c)) {
                 validClasses.add(c);
+
+                c = c.getSuperclass();
             }
         }
     }
