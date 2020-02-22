@@ -89,6 +89,10 @@ public class TranslateFiller {
         for (EntityType type : EntityType.values()) {
             Class c = type.getEntityClass();
 
+            if (c == null) {
+                continue;
+            }
+
             while (!validClasses.contains(c)) {
                 validClasses.add(c);
 
