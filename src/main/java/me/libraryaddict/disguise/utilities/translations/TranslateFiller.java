@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
@@ -80,11 +81,19 @@ public class TranslateFiller {
         TranslateType.DISGUISE_OPTIONS.save("baby", "Used as a shortcut for setBaby when disguising an entity");
         TranslateType.DISGUISE_OPTIONS.save("adult", "Used as a shortcut for setBaby(false) when disguising an entity");
 
-        for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
-            if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
-                TranslateType.DISGUISES.save(c.getSimpleName(),
-                        "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
+        try {
+            for (Class c : ClassGetter.getClassesForPackage("org.bukkit.entity")) {
+                if (c != Entity.class && Entity.class.isAssignableFrom(c) &&
+                        c.getAnnotation(Deprecated.class) == null) {
+                    TranslateType.DISGUISES.save(c.getSimpleName(),
+                            "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
+                }
             }
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger()
+                    .severe("Error while trying to read entity types, assuming you're using a weird jar loader and " +
+                            "not making this fatal..");
         }
 
         TranslateType.DISGUISES.save("EntityType", "Used for the disgiuse radius command to list all entitytypes");
