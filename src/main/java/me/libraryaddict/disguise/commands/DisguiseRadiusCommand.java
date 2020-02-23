@@ -43,7 +43,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 continue;
             }
 
-            while (!validClasses.contains(c)) {
+            while (Entity.class.isAssignableFrom(c) && !validClasses.contains(c) && c != Entity.class) {
                 validClasses.add(c);
 
                 c = c.getSuperclass();

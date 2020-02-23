@@ -84,7 +84,6 @@ public class TranslateFiller {
         TranslateType.DISGUISE_OPTIONS.save("adult", "Used as a shortcut for setBaby(false) when disguising an entity");
 
         ArrayList<Class> validClasses = new ArrayList<>();
-        validClasses.add(Entity.class);
 
         for (EntityType type : EntityType.values()) {
             Class c = type.getEntityClass();
@@ -93,7 +92,7 @@ public class TranslateFiller {
                 continue;
             }
 
-            while (!validClasses.contains(c)) {
+            while (Entity.class.isAssignableFrom(c) && !validClasses.contains(c) && c != Entity.class) {
                 validClasses.add(c);
 
                 c = c.getSuperclass();
