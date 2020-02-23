@@ -88,11 +88,7 @@ public class TranslateFiller {
         for (EntityType type : EntityType.values()) {
             Class c = type.getEntityClass();
 
-            if (c == null) {
-                continue;
-            }
-
-            while (Entity.class.isAssignableFrom(c) && !validClasses.contains(c) && c != Entity.class) {
+            while (c != null && Entity.class.isAssignableFrom(c) && !validClasses.contains(c)) {
                 validClasses.add(c);
 
                 c = c.getSuperclass();
