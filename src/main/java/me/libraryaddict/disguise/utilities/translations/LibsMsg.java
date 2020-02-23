@@ -266,7 +266,7 @@ public enum LibsMsg {
     LIBS_SCOREBOARD_NO_TEAM_PUSH(ChatColor.RED + "On scoreboard team '%s' and pushing is enabled!"),
     LIBS_SCOREBOARD_SUCCESS(ChatColor.GOLD +
             "On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right now, then " +
-            "you have a plugin modifying scoreboard through packets."),
+            "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your name above head, or the tablist. Check their configs for pushing disabling options"),
     LIBS_SCOREBOARD_DISABLED(
             "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
                     ".");
