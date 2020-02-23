@@ -106,7 +106,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 DisguiseConfig.loadConfig();
                 sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
                 return true;
-            } else if (args[0].equalsIgnoreCase("scoreboard") || args[0].equalsIgnoreCase("board")) {
+            } else if (args[0].equalsIgnoreCase("scoreboard") || args[0].equalsIgnoreCase("board") ||
+                    args[0].equalsIgnoreCase("teams")) {
                 if (!sender.hasPermission("libsdisguises.scoreboardtest")) {
                     sender.sendMessage(LibsMsg.NO_PERM.get());
                     return true;
@@ -153,11 +154,11 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
                 if (team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.NEVER &&
                         team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.FOR_OTHER_TEAMS) {
-                    sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_TEAM_PUSH.get());
+                    sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_TEAM_PUSH.get(team.getName()));
                     return true;
                 }
 
-                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_SUCCESS.get());
+                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_SUCCESS.get(team.getName()));
                 return true;
             } else if (args[0].equalsIgnoreCase("permtest")) {
                 if (!sender.hasPermission("libsdisguises.permtest")) {
@@ -296,8 +297,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
                         sender.spigot().sendMessage(builder.create());
                     } else {
-                        sender.sendMessage(
-                                LibsMsg.META_VALUES_NO_CLICK.get(StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get())));
+                        sender.sendMessage(LibsMsg.META_VALUES_NO_CLICK
+                                .get(StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get())));
                     }
                 }
             } else {
