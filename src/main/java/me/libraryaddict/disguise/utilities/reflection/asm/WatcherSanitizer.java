@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection.asm;
 
+import com.google.gson.Gson;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -78,19 +79,21 @@ public class WatcherSanitizer {
             e.printStackTrace();
         }
 
-        IAsm asm;
-
-        if (NmsVersion.v1_14.isSupported()) {
-            asm = new Asm14();
-        } else {
-            if (!NmsVersion.v1_13.isSupported()) {
-                new AsmDownloader();
-            }
-
-            asm = new Asm13();
-        }
+        ArrayList<String> mapped = new ArrayList<>();
 
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
+            IAsm asm;
+
+            if (NmsVersion.v1_14.isSupported()) {
+                asm = new Asm14();
+            } else {
+                if (!NmsVersion.v1_13.isSupported()) {
+                    new AsmDownloader();
+                }
+
+                asm = new Asm13();
+            }
+
             List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.toList());
 
@@ -115,10 +118,12 @@ public class WatcherSanitizer {
 
             for (Map.Entry<String, ArrayList<Map.Entry<String, String>>> entry : toRemove.entrySet()) {
                 Class result = asm.createClassWithoutMethods(entry.getKey(), entry.getValue());
+                mapped.add(entry.getKey());
             }
         }
-        catch (IOException | NoClassDefFoundError | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
+        catch (IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException | LinkageError e) {
             e.printStackTrace();
+            LibsDisguises.getInstance().getLogger().severe("Registered: " + new Gson().toJson(mapped));
         }
     }
 }
