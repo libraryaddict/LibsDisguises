@@ -13,10 +13,7 @@ import org.bukkit.Sound;
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -64,15 +61,37 @@ public class CompileMethods {
         }
     }
 
+    private static void addClass(ArrayList<Class> classes, Class c) {
+        if (classes.contains(c)) {
+            return;
+        }
+
+        System.out.println("Now processing " + c.getName());
+
+        if (c != FlagWatcher.class) {
+            addClass(classes, c.getSuperclass());
+
+            int ind = classes.indexOf(c.getSuperclass());
+            classes.add(ind + 1, c);
+        } else {
+            classes.add(0, c);
+        }
+    }
+
     private static void doMethods() {
         ArrayList<Class<?>> classes = ClassGetter
                 .getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
         classes.add(FlagWatcher.class);
-        classes.sort((c1, c2) -> c1.isAssignableFrom(c2) ? -1 : 1);
+
+        ArrayList<Class> sorted = new ArrayList<>();
+
+        for (Class c : classes) {
+            addClass(sorted, c);
+        }
 
         ArrayList<String> methods = new ArrayList<>();
 
-        for (Class c : classes) {
+        for (Class c : sorted) {
             for (Method method : c.getMethods()) {
                 if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
