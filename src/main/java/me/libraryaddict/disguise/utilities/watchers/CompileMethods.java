@@ -66,8 +66,6 @@ public class CompileMethods {
             return;
         }
 
-        System.out.println("Now processing " + c.getName());
-
         if (c != FlagWatcher.class) {
             addClass(classes, c.getSuperclass());
 
