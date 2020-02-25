@@ -68,18 +68,14 @@ public class CompileMethods {
 
         if (c != FlagWatcher.class) {
             addClass(classes, c.getSuperclass());
-
-            int ind = classes.indexOf(c.getSuperclass());
-            classes.add(ind + 1, c);
-        } else {
-            classes.add(0, c);
         }
+
+        classes.add(c);
     }
 
     private static void doMethods() {
         ArrayList<Class<?>> classes = ClassGetter
                 .getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
-        classes.add(FlagWatcher.class);
 
         ArrayList<Class> sorted = new ArrayList<>();
 

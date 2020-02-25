@@ -34,7 +34,6 @@ public class ClassGetter {
             if (resource.getPath().toLowerCase().endsWith(".jar")) {
                 processJarfile(resource, pkgname, classes);
             } else {
-                System.out.println("Not sure how you got here: " + resource.getPath());
                 for (File f : new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles()) {
                     if (!f.getName().endsWith(".class") || f.getName().contains("$")) {
                         continue;
