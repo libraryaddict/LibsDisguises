@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -506,6 +507,32 @@ public class DisguiseParser {
 
         // Parse disguise
         return parseDisguise(sender, null, permNode, args, permissions);
+    }
+
+    public static void modifyDisguise(Disguise disguise, Entity target,
+            String[] params) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        if (target != null) {
+            params = DisguiseParser.parsePlaceholders(params, target, target);
+        }
+
+        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise,
+                new DisguisePermissions(Bukkit.getConsoleSender(), "disguise"), new DisguisePerm(disguise.getType()),
+                new ArrayList<>(), params, "Disguise");
+    }
+
+    public static void modifyDisguise(Disguise disguise,
+            String[] params) throws IllegalAccessException, InvocationTargetException, DisguiseParseException {
+        modifyDisguise(disguise, null, params);
+    }
+
+    public static void modifyDisguise(Disguise disguise,
+            String params) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        modifyDisguise(disguise, DisguiseUtilities.split(params));
+    }
+
+    public static void modifyDisguise(Disguise disguise, Entity target,
+            String params) throws IllegalAccessException, InvocationTargetException, DisguiseParseException {
+        modifyDisguise(disguise, target, DisguiseUtilities.split(params));
     }
 
     public static Disguise parseDisguise(

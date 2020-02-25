@@ -87,10 +87,12 @@ public class DisguiseAPI {
         return disguise.getValue();
     }
 
+    @Deprecated
     public static Disguise constructDisguise(Entity entity) {
         return constructDisguise(entity, true, true, true);
     }
 
+    @Deprecated
     public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean doSneak, boolean doSprint) {
         DisguiseType disguiseType = DisguiseType.getType(entity);
         Disguise disguise;
