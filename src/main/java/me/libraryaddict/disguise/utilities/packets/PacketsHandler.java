@@ -34,10 +34,7 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerEntityStatus());
         packetHandlers.add(new PacketHandlerEquipment(this));
 
-        //if (!NmsVersion.v1_14.isSupported()) {
-            packetHandlers.add(new PacketHandlerHeadRotation());
-       // }
-
+        packetHandlers.add(new PacketHandlerHeadRotation());
         packetHandlers.add(new PacketHandlerMetadata(this));
         packetHandlers.add(new PacketHandlerMovement());
         packetHandlers.add(new PacketHandlerSpawn(this));

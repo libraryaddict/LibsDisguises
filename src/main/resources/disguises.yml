@@ -1,3 +1,6 @@
+# It is strongly recommended you use /savedisguise instead of editing this file!
+# You can use that command in console or ingame! This helps eliminate user error!
+
 # Here you can create your own disguises and disguise into them using the normal disguise commands
 # To create them is super simple, you're using it just like you would in a command. The only tricky thing is that it must be valid yaml. TIP: Enclose the strings in '
 # Please note that this is parsed exactly like a command, no spaces in your playername. Bypass by quoting with "!
