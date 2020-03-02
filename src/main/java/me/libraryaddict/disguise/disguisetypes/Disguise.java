@@ -175,6 +175,7 @@ public abstract class Disguise {
                     actionBarTicks = 0;
 
                     if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
+                            !getEntity().hasPermission("libsdisguises.noactionbar") &&
                             DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
                         ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
                                 new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());

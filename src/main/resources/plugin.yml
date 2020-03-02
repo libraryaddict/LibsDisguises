@@ -110,6 +110,9 @@ permissions:
       default: true
     libsdisguises.scoreboardtest:
       description: Test if the scoreboard is valid, this is a simple test.
+    libsdisguises.noactionbar:
+      description: Hides the action bar even if enabled in config
+      default: false
     libsdisguises.seecmd:
       description: See all commands in tab-completion
       default: true
