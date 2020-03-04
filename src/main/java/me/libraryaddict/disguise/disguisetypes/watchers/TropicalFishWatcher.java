@@ -84,7 +84,7 @@ public class TropicalFishWatcher extends FishWatcher {
 
     @RandomDefaultValue
     public void setBodyColor(DyeColor dyeColor) {
-        setVariant(getData(dyeColor, dyeColor, getPattern()));
+        setVariant(getData(getPatternColor(), dyeColor, getPattern()));
     }
 
     public TropicalFish.Pattern getPattern() {
