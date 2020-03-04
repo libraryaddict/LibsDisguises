@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.TropicalFish;
 
@@ -58,14 +59,9 @@ public class TropicalFishWatcher extends FishWatcher {
     public TropicalFishWatcher(Disguise disguise) {
         super(disguise);
 
-        Random random = new Random();
-
-        int n = random.nextInt(2);
-        int n2 = random.nextInt(6);
-        int n3 = random.nextInt(15);
-        int n4 = random.nextInt(15);
-
-        this.setVariant(n | n2 << 8 | n3 << 16 | n4 << 24);
+        this.setPattern(TropicalFish.Pattern.values()[RandomUtils.nextInt(TropicalFish.Pattern.values().length)]);
+        this.setBodyColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
+        this.setPatternColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
     }
 
     public DyeColor getPatternColor() {
