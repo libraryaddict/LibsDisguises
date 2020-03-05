@@ -244,26 +244,40 @@ public class DisguiseParser {
             DisguisePerm type) {
         HashMap<String, HashMap<String, Boolean>> returns = new HashMap<>();
 
-        String beginning = "libsdisguises.options." + permNode.toLowerCase() + ".";
-
+        // libsdisguises.options.<command>.<disguise>.<method>.<options>
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
             String lowerPerm = permission.getPermission().toLowerCase();
 
-            if (lowerPerm.startsWith(beginning)) {
-                String[] split = lowerPerm.substring(beginning.length()).split("\\.");
+            if (!lowerPerm.startsWith("libsdisguises.options.")) {
+                continue;
+            }
 
-                if (split.length > 2) {
-                    if (split[0].replace("_", "").equals(type.toReadable().toLowerCase().replace(" ", ""))) {
-                        HashMap<String, Boolean> vals = new HashMap<>();
+            String[] split = lowerPerm.split("\\.");
 
-                        for (int i = 2; i < split.length; i++) {
-                            vals.put(split[i], permission.getValue());
-                        }
+            // <command>.<disguise>.<method>.<options>
+            if (split.length < 4) {
+                continue;
+            }
 
-                        for (String s : split[1].split("/")) {
-                            returns.put(s, vals);
-                        }
-                    }
+            if (!split[2].equalsIgnoreCase(permNode) && !split[2].equalsIgnoreCase("*")) {
+                continue;
+            }
+
+            if (!split[3].replace("_", "").equalsIgnoreCase(type.toReadable().replace(" ", ""))) {
+                continue;
+            }
+
+            HashMap<String, Boolean> options = new HashMap<>();
+
+            for (int i = 5; i < split.length; i++) {
+                options.put(split[i], permission.getValue());
+            }
+
+            for (String s : split[4].split("/")) {
+                if (returns.containsKey(s)) {
+                    returns.get(s).putAll(options);
+                } else {
+                    returns.put(s, options);
                 }
             }
         }
@@ -337,13 +351,16 @@ public class DisguiseParser {
      */
     private static boolean hasPermissionOption(HashMap<String, HashMap<String, Boolean>> disguiseOptions, String method,
             String value) {
-        value = value.toLowerCase();
+        method = method.toLowerCase();
+
         // If no permissions were defined, return true
-        if (!disguiseOptions.containsKey(method.toLowerCase())) {
+        if (!disguiseOptions.containsKey(method)) {
             return true;
         }
 
-        HashMap<String, Boolean> map = disguiseOptions.get(method.toLowerCase());
+        HashMap<String, Boolean> map = disguiseOptions.get(method);
+
+        value = value.toLowerCase();
 
         // If they were explictly defined, can just return the value
         if (map.containsKey(value)) {
