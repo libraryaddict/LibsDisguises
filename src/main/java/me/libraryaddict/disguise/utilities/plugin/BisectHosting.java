@@ -59,6 +59,7 @@ public class BisectHosting {
                                 "time");
                 writer.write(
                         "\n# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming servers");
+                writer.write("\n# Be sure to visit through this link! https://bisecthosting.com/libraryaddict");
                 writer.write("\nBisect-Hosted: " + hostedBy);
             }
             catch (FileNotFoundException | UnsupportedEncodingException e) {
