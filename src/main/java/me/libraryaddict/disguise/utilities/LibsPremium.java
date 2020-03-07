@@ -229,7 +229,7 @@ public class LibsPremium {
 
         if (!foundJar) {
             if (new BisectHosting().isBisectHosted("LibsDisguises")) {
-                DisguiseUtilities.getLogger().info("Hosted by Bisect Hosting! Premium enabled!");
+                DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
                 paidInformation = new PluginInformation("0", "32453", "0", true, "0", "#0", "0");
 

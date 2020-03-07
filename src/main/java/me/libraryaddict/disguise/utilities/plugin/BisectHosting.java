@@ -53,9 +53,9 @@ public class BisectHosting {
 
             try (PrintWriter writer = new PrintWriter(configFile, "UTF-8")) {
                 // This setting is if the server should check if you are using Bisect Hosting",
-                writer.write("# If you're using Bisect Hosting, this will tell the server to enable premium for free!");
+                writer.write("# If you're using BisectHosting, this will tell the server to enable premium for free!");
                 writer.write(
-                        "\n# However if you're not using Bisect Hosting, this is false so the server won't waste " +
+                        "\n# However if you're not using BisectHosting, this is false so the server won't waste " +
                                 "time");
                 writer.write(
                         "\n# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming servers");
