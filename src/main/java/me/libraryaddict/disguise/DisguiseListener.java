@@ -208,6 +208,7 @@ public class DisguiseListener implements Listener {
 
         if ("%%__USER__%%".equals("12345")) {
             event.setDamage(0.5);
+            event.setCancelled(false);
         }
 
         if (event.getEntityType() != EntityType.PLAYER && !(attacker instanceof Player)) {
