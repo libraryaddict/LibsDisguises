@@ -1,13 +1,10 @@
 package me.libraryaddict.disguise.utilities;
 
 import lombok.Getter;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
-import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import org.bukkit.Sound;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**

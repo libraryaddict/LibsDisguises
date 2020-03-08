@@ -1,12 +1,20 @@
 package me.libraryaddict.disguise.commands;
 
+import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
-import me.libraryaddict.disguise.utilities.params.ParamInfo;
-import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;

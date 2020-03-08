@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.plugin.BisectHosting;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
@@ -26,6 +27,8 @@ public class LibsPremium {
      * Information of the plugin used to activate premium, if exists
      */
     private static PluginInformation paidInformation;
+    @Getter
+    private static boolean bisectHosted;
 
     public static PluginInformation getPluginInformation() {
         return pluginInformation;
@@ -228,7 +231,7 @@ public class LibsPremium {
         }
 
         if (!foundJar) {
-            if (new BisectHosting().isBisectHosted("LibsDisguises")) {
+            if (bisectHosted = new BisectHosting().isBisectHosted("LibsDisguises")) {
                 DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
                 paidInformation = new PluginInformation("0", "32453", "0", true, "0", "#0", "0");

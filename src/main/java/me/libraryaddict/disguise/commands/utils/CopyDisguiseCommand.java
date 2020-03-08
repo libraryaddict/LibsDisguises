@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.commands;
+package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;

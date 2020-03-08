@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,7 +13,7 @@ import java.net.URL;
  */
 public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
-        File configFile = new File("plugins/" + pluginName + "/internal-config.yml");
+        File configFile = new File("plugins/" + pluginName + "/internal.yml");
         boolean claimedHosted = false;
 
         if (configFile.exists()) {
@@ -54,9 +53,8 @@ public class BisectHosting {
             try (PrintWriter writer = new PrintWriter(configFile, "UTF-8")) {
                 // This setting is if the server should check if you are using Bisect Hosting",
                 writer.write("# If you're using BisectHosting, this will tell the server to enable premium for free!");
-                writer.write(
-                        "\n# However if you're not using BisectHosting, this is false so the server won't waste " +
-                                "time");
+                writer.write("\n# However if you're not using BisectHosting, this is false so the server won't waste " +
+                        "time");
                 writer.write(
                         "\n# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming servers");
                 writer.write("\n# Be sure to visit through this link! https://bisecthosting.com/libraryaddict");
@@ -67,7 +65,7 @@ public class BisectHosting {
             }
         } else if (claimedHosted) {
             // Just a small message for those who tried to enable it
-            LibsDisguises.getInstance().getLogger().severe("Check for Bisect Hosting failed! Connection error?");
+            LibsDisguises.getInstance().getLogger().severe("Check for BisectHosting failed! Connection error?");
         }
 
         return hostedBy;

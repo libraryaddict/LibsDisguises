@@ -1,6 +1,19 @@
 package me.libraryaddict.disguise;
 
-import me.libraryaddict.disguise.commands.*;
+import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.disguise.DisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
+import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
+import me.libraryaddict.disguise.commands.undisguise.UndisguiseCommand;
+import me.libraryaddict.disguise.commands.undisguise.UndisguiseEntityCommand;
+import me.libraryaddict.disguise.commands.undisguise.UndisguisePlayerCommand;
+import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
+import me.libraryaddict.disguise.commands.utils.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;

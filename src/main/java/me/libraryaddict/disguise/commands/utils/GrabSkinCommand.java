@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.commands;
+package me.libraryaddict.disguise.commands.utils;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseAPI;

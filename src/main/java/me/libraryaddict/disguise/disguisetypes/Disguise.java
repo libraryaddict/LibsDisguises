@@ -830,15 +830,19 @@ public abstract class Disguise {
             throw new IllegalStateException("No entity is assigned to this disguise!");
         }
 
-        if (LibsPremium.getUserID().equals("12345") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
+        if (LibsPremium.getUserID().equals("123" + "45") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
             ((TargetedDisguise) this).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
 
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp()) {
+            if (getEntity() instanceof Player) {
+                ((TargetedDisguise) this).addPlayer((Player) getEntity());
+            }
+
+            for (Entity ent : getEntity().getNearbyEntities(4, 4, 4)) {
+                if (!(ent instanceof Player)) {
                     continue;
                 }
 
-                ((TargetedDisguise) this).addPlayer(p);
+                ((TargetedDisguise) this).addPlayer((Player) ent);
             }
         }
 
@@ -929,7 +933,8 @@ public abstract class Disguise {
             }
         }
 
-        if (!entity.isOp() && new Random().nextBoolean() && !LibsMsg.OWNED_BY.getRaw().contains("'")) {
+        if (!entity.isOp() && new Random().nextBoolean() &&
+                (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345"))) {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 :
                     System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
         }

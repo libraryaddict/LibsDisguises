@@ -1,9 +1,9 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.params.ParamInfo;
 
 /**
  * Created by libraryaddict on 6/03/2019.

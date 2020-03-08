@@ -67,6 +67,13 @@ public class MetricsInitalizer {
             premiumType = "Free Builds";
         }
 
+        metrics.addCustomChart(new Metrics.SimplePie("bisecthosting") {
+            @Override
+            public String getValue() {
+                return "" + LibsPremium.isBisectHosted();
+            }
+        });
+
         metrics.addCustomChart(new Metrics.SimplePie("grabskin_command") {
             @Override
             public String getValue() {
