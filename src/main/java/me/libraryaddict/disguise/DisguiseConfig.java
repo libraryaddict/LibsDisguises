@@ -18,11 +18,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -209,6 +212,27 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean notifyPlayerDisguised;
+    private static PermissionDefault commandVisibility = PermissionDefault.TRUE;
+
+    public static PermissionDefault getCommandVisibility() {
+        return commandVisibility;
+    }
+
+    public static void setCommandVisibility(PermissionDefault permissionDefault) {
+        if (permissionDefault == null || getCommandVisibility() == permissionDefault) {
+            return;
+        }
+
+        commandVisibility = permissionDefault;
+
+        for (Permission perm : LibsDisguises.getInstance().getDescription().getPermissions()) {
+            if (!perm.getName().startsWith("libsdisguises.seecmd")) {
+                continue;
+            }
+
+            perm.setDefault(getCommandVisibility());
+        }
+    }
 
     private DisguiseConfig() {
     }
@@ -408,6 +432,15 @@ public class DisguiseConfig {
         catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
                     "' to a valid option for SelfDisguisesScoreboard");
+        }
+
+        PermissionDefault commandVisibility = PermissionDefault.getByName(config.getString("Permissions.SeeCommands"));
+
+        if (commandVisibility == null) {
+            DisguiseUtilities.getLogger().warning("Invalid option '" + config.getString("Permissions.SeeCommands") +
+                    "' for Permissions.SeeCommands when loading config!");
+        } else {
+            setCommandVisibility(commandVisibility);
         }
 
         loadCustomDisguises();

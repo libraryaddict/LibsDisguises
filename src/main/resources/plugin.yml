@@ -11,7 +11,6 @@ api-version: 1.13
 commands:
     libsdisguises:
       aliases: [libsdisg, ld]
-      #permission: libsdisguises.seecmd.libsdisguises
       description: Main command for libsdisguises.
     disguise:
       aliases: [d, dis]
@@ -117,7 +116,6 @@ permissions:
       description: See all commands in tab-completion
       default: true
       children:
-         #libsdisguises.seecmd.libsdisguises: true
          libsdisguises.seecmd.disguise: true
          libsdisguises.seecmd.disguiseentity: true
          libsdisguises.seecmd.disguisehelp: true
@@ -136,8 +134,6 @@ permissions:
          libsdisguises.seecmd.copydisguise: true
          libsdisguises.seecmd.grabskin: true
          libsdisguises.seecmd.savedisguise: true
-    libsdisguises.seecmd.libsdisguises:
-      description: See the /libsdisguises command in tab-completion
     libsdisguises.seecmd.disguiseviewself:
       description: See the /disguiseviewself command in tab-completion
     libsdisguises.seecmd.disguise:
