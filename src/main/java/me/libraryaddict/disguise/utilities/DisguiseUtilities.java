@@ -1776,10 +1776,8 @@ public class DisguiseUtilities {
             // Send the velocity packets
             if (isMoving) {
                 Vector velocity = player.getVelocity();
-                sendSelfPacket(player, manager
-                        .createPacketConstructor(Server.ENTITY_VELOCITY, player.getEntityId(), velocity.getX(),
-                                velocity.getY(), velocity.getZ())
-                        .createPacket(player.getEntityId(), velocity.getX(), velocity.getY(), velocity.getZ()));
+                sendSelfPacket(player,
+                        manager.createPacketConstructor(Server.ENTITY_VELOCITY, player).createPacket(player));
             }
 
             // Why the hell would he even need this. Meh.
