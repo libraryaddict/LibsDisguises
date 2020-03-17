@@ -53,7 +53,7 @@ commands:
       permission: libsdisguises.seecmd.disguiseclone
       description: Copy a disguise (or entity) and use it later.
     disguiseviewself:
-      aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd]
+      aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd, selfdisguise, selfdisg, selfd]
       permission: libsdisguises.seecmd.viewself
       description: Toggle seeing your own disguise on or off.
     disguisemodify:
