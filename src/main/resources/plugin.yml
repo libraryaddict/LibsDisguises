@@ -109,6 +109,8 @@ permissions:
       default: true
     libsdisguises.scoreboardtest:
       description: Test if the scoreboard is valid, this is a simple test.
+    libsdisguises.config:
+      description: Allows player to check Lib's Disguises config for values
     libsdisguises.noactionbar:
       description: Hides the action bar even if enabled in config
       default: false

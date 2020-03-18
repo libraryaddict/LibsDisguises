@@ -462,20 +462,83 @@ public class DisguiseConfig {
             }
         }
 
-        int missingConfigs = 0;
+        boolean verbose = config.getBoolean("VerboseConfig");
+        boolean changed = config.getBoolean("ChangedConfig");
 
-        for (String key : config.getDefaultSection().getKeys(true)) {
-            if (config.contains(key, true)) {
+        if (!verbose) {
+            int missingConfigs = 0;
+
+            for (String key : config.getDefaultSection().getKeys(true)) {
+                if (config.contains(key, true)) {
+                    continue;
+                }
+
+                missingConfigs++;
+            }
+
+            if (missingConfigs > 0) {
+                DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs +
+                        " options! Please consider regenerating your config!");
+            }
+        }
+
+        if (verbose || changed) {
+            ArrayList<String> returns = doOutput(config, changed, verbose);
+
+            if (!returns.isEmpty()) {
+                DisguiseUtilities.getLogger()
+                        .info("This is not an error! Now outputting " + (verbose ? "missing " : "") +
+                                (changed ? (verbose ? "and " : "") + "changed/invalid " : "") + "config values");
+
+                for (String v : returns) {
+                    DisguiseUtilities.getLogger().info(v);
+                }
+            }
+        }
+    }
+
+    public static ArrayList<String> doOutput(ConfigurationSection config, boolean informChangedUnknown,
+            boolean informMissing) {
+        HashMap<String, Object> configs = new HashMap<>();
+        ConfigurationSection defaultSection = config.getDefaultSection();
+        ArrayList<String> returns = new ArrayList<>();
+
+        for (String key : defaultSection.getKeys(true)) {
+            if (defaultSection.isConfigurationSection(key)) {
                 continue;
             }
 
-            missingConfigs++;
+            configs.put(key, defaultSection.get(key));
         }
 
-        if (missingConfigs > 0) {
-            DisguiseUtilities.getLogger().warning(
-                    "Your config is missing " + missingConfigs + " options! Please consider regenerating your config!");
+        for (String key : config.getKeys(true)) {
+            if (config.isConfigurationSection(key)) {
+                continue;
+            }
+
+            if (!configs.containsKey(key)) {
+                if (informChangedUnknown) {
+                    returns.add("Unknown config option '" + key + ": " + config.get(key) + "'");
+                }
+                continue;
+            }
+
+            if (!configs.get(key).equals(config.get(key))) {
+                if (informChangedUnknown) {
+                    returns.add("Modified config: '" + key + ": " + config.get(key) + "'");
+                }
+            }
+
+            configs.remove(key);
         }
+
+        if (informMissing) {
+            for (Entry<String, Object> entry : configs.entrySet()) {
+                returns.add("Missing '" + entry.getKey() + ": " + entry.getValue() + "'");
+            }
+        }
+
+        return returns;
     }
 
     static void loadCustomDisguises() {

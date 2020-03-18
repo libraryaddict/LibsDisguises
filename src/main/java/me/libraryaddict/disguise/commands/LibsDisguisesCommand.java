@@ -252,6 +252,23 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 if (mcArray.size() > 1) {
                     sendMessage(sender, LibsMsg.ITEM_SERIALIZED_MC, LibsMsg.ITEM_SERIALIZED_MC_NO_COPY, ldItem);
                 }
+            } else if (args[0].equalsIgnoreCase("config")) {
+                if (!sender.hasPermission("libsdisguises.config")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                ArrayList<String> returns = DisguiseConfig
+                        .doOutput(LibsDisguises.getInstance().getConfig(), true, true);
+
+                if (returns.isEmpty()) {
+                    sender.sendMessage(LibsMsg.USING_DEFAULT_CONFIG.get());
+                    return true;
+                }
+
+                for (String s : returns) {
+                    sender.sendMessage(ChatColor.AQUA + "[LibsDisguises] " + s);
+                }
             } else if (args[0].equalsIgnoreCase("metainfo") || args[0].equalsIgnoreCase("meta")) {
                 if (!sender.hasPermission("libsdisguises.metainfo")) {
                     sender.sendMessage(LibsMsg.NO_PERM.get());
@@ -351,7 +368,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         String[] args = getArgs(origArgs);
 
         if (args.length == 0)
-            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo"));
+            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config"));
 
         return filterTabs(tabs, origArgs);
     }

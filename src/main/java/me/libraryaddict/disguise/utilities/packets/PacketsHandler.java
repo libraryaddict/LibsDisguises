@@ -2,8 +2,10 @@ package me.libraryaddict.disguise.utilities.packets;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.packethandlers.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,7 +36,12 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerEquipment(this));
 
         packetHandlers.add(new PacketHandlerHeadRotation());
-        packetHandlers.add(new PacketHandlerMetadata(this));
+
+        // If not prem, if build is from jenkins, else its a custom and needs paid info
+        if (!LibsPremium.isPremium() || LibsDisguises.getInstance().getBuildNo().matches("[0-9]+") || LibsPremium.getPaidInformation() != null) {
+            packetHandlers.add(new PacketHandlerMetadata(this));
+        }
+
         packetHandlers.add(new PacketHandlerMovement());
         packetHandlers.add(new PacketHandlerSpawn(this));
         packetHandlers.add(new PacketHandlerVelocity());

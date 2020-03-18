@@ -28,6 +28,12 @@ Permissions:
   # NOT_OP = Only non operators can see this
   SeeCommands: TRUE
 
+# You can also get this information through /libsdisguises config
+# Should the plugin output missing config options instead of just counting them
+VerboseConfig: false
+# Should the plugin output changed config options? Will also list unknown extra options
+ChangedConfig: false
+
 # Disables commands with the exception of /libsdisguises. Useful if you don't want the plugin to be used by anything
 #  but a plugin
 # Useful if you didn't purchase the plugin.
