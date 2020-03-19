@@ -15,14 +15,16 @@ public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
         File configFile = new File("plugins/" + pluginName + "/internal.yml");
         boolean claimedHosted = false;
+        String serverIp = Bukkit.getIp().replaceAll("[^:0-9.]", "");
 
         if (configFile.exists()) {
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
 
-            if (configuration.contains("Bisect-Hosted")) {
+            if (configuration.contains("Bisect-Hosted") && configuration.contains("Server-IP")) {
                 claimedHosted = configuration.getBoolean("Bisect-Hosted");
+
                 // If not hosted by bisect
-                if (!claimedHosted) {
+                if (!claimedHosted && configuration.getString("Server-IP").equals(serverIp)) {
                     return false;
                 }
             }
@@ -45,7 +47,6 @@ public class BisectHosting {
 
         // If config doesn't exist, or it's not a bisect server
         if (!configFile.exists()) {
-
             if (!configFile.getParentFile().exists()) {
                 configFile.getParentFile().mkdirs();
             }
@@ -59,6 +60,7 @@ public class BisectHosting {
                         "\n# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming servers");
                 writer.write("\n# Be sure to visit through this link! https://bisecthosting.com/libraryaddict");
                 writer.write("\nBisect-Hosted: " + hostedBy);
+                writer.write("\nServer-IP: " + serverIp);
             }
             catch (FileNotFoundException | UnsupportedEncodingException e) {
                 e.printStackTrace();
