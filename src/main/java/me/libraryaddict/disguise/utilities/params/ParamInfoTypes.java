@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.params;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
@@ -12,6 +13,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
@@ -86,6 +89,11 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant",
                     "The different variants for mushroom cows"));
         }
+
+        paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar",
+                "Where the disguised indicator should appear"));
+        paramInfos.add(new ParamInfoEnum(BarColor.class, "BarColor", "The color of the boss bar"));
+        paramInfos.add(new ParamInfoEnum(BarStyle.class, "BarStyle", "The style of the boss bar"));
 
         // Register custom types
         paramInfos.add(new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)",

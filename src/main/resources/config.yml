@@ -120,9 +120,15 @@ DisguiseSounds: true
 # I disable this as it can be a little confusing when not used with self disguises
 HearSelfDisguise: true
 
-# When disguised, should a message be displayed to the player in action bar?
+# When disguised, should a message be displayed to the player? If so, where?
 # The message can be customized in translations
-NotifyPlayerDisguised: true
+# NONE, BOSS_BAR, ACTION_BAR
+NotifyBar: ACTION_BAR
+# If using boss bar, these two options come into play
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/boss/BarColor.html
+BossBarColor: GREEN
+# https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/boss/BarStyle.html
+BossBarStyle: SOLID
 
 # Shall I send the velocity packets? I REALLY recommend you don't disable.
 # This is the only thing allowing the mobs to fly without glitching out.

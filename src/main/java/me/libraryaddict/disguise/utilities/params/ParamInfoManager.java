@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.params;
 
 import lombok.Getter;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -12,6 +13,8 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBloc
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.ChatColor;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -110,10 +113,29 @@ public class ParamInfoManager {
 
         // Add these last as it's what we want to present to be called the least
         for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
-                "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires"}) {
+                "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar",
+                "setBossBarColor", "setBossBarStyle"}) {
             try {
-                methods.add(Disguise.class
-                        .getMethod(methodName, methodName.equals("setExpires") ? long.class : boolean.class));
+                Class cl = boolean.class;
+
+                switch (methodName) {
+                    case "setExpires":
+                        cl = long.class;
+                        break;
+                    case "setNotifyBar":
+                        cl = DisguiseConfig.NotifyBar.class;
+                        break;
+                    case "setBossBarColor":
+                        cl = BarColor.class;
+                        break;
+                    case "setBossBarStyle":
+                        cl = BarStyle.class;
+                        break;
+                    default:
+                        break;
+                }
+
+                methods.add(Disguise.class.getMethod(methodName, cl));
             }
             catch (Exception ex) {
                 ex.printStackTrace();

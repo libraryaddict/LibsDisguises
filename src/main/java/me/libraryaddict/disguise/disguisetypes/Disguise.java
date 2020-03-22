@@ -9,6 +9,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import lombok.AccessLevel;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -24,6 +26,10 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.*;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
@@ -61,6 +67,14 @@ public abstract class Disguise {
     private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
     private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
+    @Getter
+    private DisguiseConfig.NotifyBar notifyBar = DisguiseConfig.getNotifyBar();
+    @Getter
+    private BarColor bossBarColor = DisguiseConfig.getBossBarColor();
+    @Getter
+    private BarStyle bossBarStyle = DisguiseConfig.getBossBarStyle();
+    @Getter(value = AccessLevel.PRIVATE)
+    private final NamespacedKey bossBar = new NamespacedKey(LibsDisguises.getInstance(), UUID.randomUUID().toString());
     private FlagWatcher watcher;
     /**
      * If set, how long before disguise expires
@@ -131,6 +145,64 @@ public abstract class Disguise {
         }
     }
 
+    public void setNotifyBar(DisguiseConfig.NotifyBar bar) {
+        if (getNotifyBar() == bar) {
+            return;
+        }
+
+        if (getNotifyBar() == DisguiseConfig.NotifyBar.BOSS_BAR) {
+            Bukkit.removeBossBar(getBossBar());
+        }
+
+        this.notifyBar = bar;
+
+        makeBossBar();
+    }
+
+    public void setBossBarColor(BarColor color) {
+        if (getBossBarColor() == color) {
+            return;
+        }
+
+        this.bossBarColor = color;
+
+        makeBossBar();
+    }
+
+    public void setBossBarStyle(BarStyle style) {
+        if (getBossBarStyle() == style) {
+            return;
+        }
+
+        this.bossBarStyle = style;
+
+        makeBossBar();
+    }
+
+    public void setBossBar(BarColor color, BarStyle style) {
+        this.bossBarColor = color;
+        this.bossBarStyle = style;
+
+        setNotifyBar(DisguiseConfig.NotifyBar.BOSS_BAR);
+    }
+
+    private void makeBossBar() {
+        if (getNotifyBar() != DisguiseConfig.NotifyBar.BOSS_BAR || !(getEntity() instanceof Player)) {
+            return;
+        }
+
+        if (getEntity().hasPermission("libsdisguises.noactionbar") || DisguiseAPI.getDisguise(getEntity()) != this) {
+            return;
+        }
+
+        Bukkit.removeBossBar(getBossBar());
+
+        BossBar bar = Bukkit
+                .createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable()), getBossBarColor(),
+                        getBossBarStyle());
+        bar.addPlayer((Player) getEntity());
+    }
+
     private void createRunnable() {
         final boolean alwaysSendVelocity;
 
@@ -174,7 +246,7 @@ public abstract class Disguise {
                 if (++actionBarTicks % 15 == 0) {
                     actionBarTicks = 0;
 
-                    if (DisguiseConfig.isNotifyPlayerDisguised() && getEntity() instanceof Player &&
+                    if (getNotifyBar() == DisguiseConfig.NotifyBar.ACTION_BAR && getEntity() instanceof Player &&
                             !getEntity().hasPermission("libsdisguises.noactionbar") &&
                             DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
                         ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
@@ -744,6 +816,11 @@ public abstract class Disguise {
         getEntity().setMetadata("LastDisguise",
                 new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
 
+        if (getNotifyBar() == DisguiseConfig.NotifyBar.BOSS_BAR && getEntity() instanceof Player &&
+                !getEntity().hasPermission("libsdisguises.noactionbar")) {
+            Bukkit.removeBossBar(getBossBar());
+        }
+
         return true;
     }
 
@@ -942,6 +1019,8 @@ public abstract class Disguise {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 :
                     System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
         }
+
+        makeBossBar();
 
         return true;
     }

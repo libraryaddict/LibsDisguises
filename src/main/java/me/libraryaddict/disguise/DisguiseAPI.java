@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
@@ -24,10 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DisguiseAPI {
     private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);

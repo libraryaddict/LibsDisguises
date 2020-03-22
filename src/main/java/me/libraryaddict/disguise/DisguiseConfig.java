@@ -14,6 +14,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -211,7 +213,13 @@ public class DisguiseConfig {
     private static boolean retaliationCombat;
     @Getter
     @Setter
-    private static boolean notifyPlayerDisguised;
+    private static NotifyBar notifyBar = NotifyBar.ACTION_BAR;
+    @Getter
+    @Setter
+    private static BarStyle bossBarStyle = BarStyle.SOLID;
+    @Getter
+    @Setter
+    private static BarColor bossBarColor = BarColor.GREEN;
     private static PermissionDefault commandVisibility = PermissionDefault.TRUE;
 
     public static PermissionDefault getCommandVisibility() {
@@ -385,7 +393,6 @@ public class DisguiseConfig {
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
-        setNotifyPlayerDisguised(config.getBoolean("NotifyPlayerDisguised"));
         setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpires"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));
@@ -410,6 +417,30 @@ public class DisguiseConfig {
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
+        }
+
+        try {
+            setNotifyBar(NotifyBar.valueOf(config.getString("NotifyBar").toUpperCase()));
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger()
+                    .warning("Cannot parse '" + config.getString("NotifyBar") + "' to a valid option for NotifyBar");
+        }
+
+        try {
+            setBossBarColor(BarColor.valueOf(config.getString("BossBarColor").toUpperCase()));
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger().warning(
+                    "Cannot parse '" + config.getString("BossBarColor") + "' to a valid option for BossBarColor");
+        }
+
+        try {
+            setBossBarStyle(BarStyle.valueOf(config.getString("BossBarStyle").toUpperCase()));
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger().warning(
+                    "Cannot parse '" + config.getString("BossBarStyle") + "' to a valid option for BossBarStyle");
         }
 
         try {
@@ -723,5 +754,13 @@ public class DisguiseConfig {
         SAME_BUILDS,
         SNAPSHOTS,
         RELEASES
+    }
+
+    public enum NotifyBar {
+        NONE,
+
+        BOSS_BAR,
+
+        ACTION_BAR
     }
 }
