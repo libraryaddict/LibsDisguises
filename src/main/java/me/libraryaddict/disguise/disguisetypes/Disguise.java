@@ -443,6 +443,10 @@ public abstract class Disguise {
         return watcher;
     }
 
+    /**
+     * Deprecated as this isn't used as it should be
+     */
+    @Deprecated
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of " +
