@@ -75,10 +75,9 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
             }
         }
 
-        // TODO Replace this with better
-        String[] split = string.split(",", -1);
+        String[] split = split(string);
 
-        if (split.length != 4) {
+        if (split == null || split.length != 4) {
             return null;
         }
 
@@ -90,6 +89,57 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         }
 
         return items;
+    }
+
+    private static String[] split(String string) {
+        String[] split = new String[4];
+
+        char[] chars = string.toCharArray();
+        boolean quote = false;
+        int depth = 0;
+        int splitNo = 0;
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < chars.length; i++) {
+            if (splitNo > 3 || depth < 0) {
+                return null;
+            }
+
+            char c = chars[i];
+
+            if (!quote && depth == 0 && c == ',') {
+                split[splitNo++] = builder.toString();
+                builder = new StringBuilder();
+                continue;
+            }
+
+            builder.append(c);
+
+            if (c == '\\' && i + 1 < chars.length) {
+                builder.append(chars[++i]);
+                continue;
+            }
+
+            if (c == '"') {
+                quote = !quote;
+            }
+
+            if (!quote) {
+                if (c == '{' || c == '[') {
+                    depth++;
+                } else if (c == '}' || c == ']') {
+                    depth--;
+                }
+            }
+        }
+
+        if (splitNo != 3 || quote || depth != 0) {
+            return null;
+        }
+
+        split[splitNo] = builder.toString();
+
+        return split;
     }
 
     /**
