@@ -462,7 +462,17 @@ public class DisguiseConfig {
             }
         }
 
-        boolean verbose = config.getBoolean("VerboseConfig");
+        boolean verbose;
+
+        if (config.contains("VerboseConfig")) {
+            verbose = config.getBoolean("VerboseConfig");
+        } else {
+            DisguiseUtilities.getLogger()
+                    .info("As 'VerboseConfig' hasn't been set, it is assumed true. Set it in your config to remove " +
+                            "these messages!");
+            verbose = true;
+        }
+
         boolean changed = config.getBoolean("ChangedConfig");
 
         if (!verbose) {
