@@ -75,6 +75,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
             }
         }
 
+        // TODO Replace this with better
         String[] split = string.split(",", -1);
 
         if (split.length != 4) {
@@ -85,7 +86,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         ItemStack[] items = new ItemStack[4];
 
         for (int a = 0; a < 4; a++) {
-            items[a] = parseToItemstack(split[a].split(":"));
+            items[a] = parseToItemstack(split[a]);
         }
 
         return items;
