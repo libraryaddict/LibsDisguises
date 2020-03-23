@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
@@ -65,7 +66,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
         }
 
         // If its not a CraftItemStack
-        if (item.getClass().getSimpleName().equals("ItemStack") && item.hasItemMeta()) {
+        if (!MinecraftReflection.isCraftItemStack(item) && item.hasItemMeta()) {
             item = ReflectionManager.getCraftItem(item);
         }
 
