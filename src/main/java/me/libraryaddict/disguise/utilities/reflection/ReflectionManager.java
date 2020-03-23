@@ -364,7 +364,7 @@ public class ReflectionManager {
 
     public static ItemStack getCraftItem(ItemStack bukkitItem) {
         try {
-            return (ItemStack) craftItemClass.getMethod("asCraftMirror", ItemStack.class).invoke(null, bukkitItem);
+            return (ItemStack) craftItemClass.getMethod("asCraftCopy", ItemStack.class).invoke(null, bukkitItem);
         }
         catch (Exception e) {
             e.printStackTrace();
