@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -353,6 +354,17 @@ public class ReflectionManager {
     public static ItemStack getBukkitItem(Object nmsItem) {
         try {
             return (ItemStack) craftItemClass.getMethod("asBukkitCopy", getNmsClass("ItemStack")).invoke(null, nmsItem);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static ItemStack getCraftItem(ItemStack bukkitItem) {
+        try {
+            return (ItemStack) craftItemClass.getMethod("asCraftMirror", ItemStack.class).invoke(null, bukkitItem);
         }
         catch (Exception e) {
             e.printStackTrace();

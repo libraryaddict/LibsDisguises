@@ -64,6 +64,11 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             return name;
         }
 
+        // If its not a CraftItemStack
+        if (item.getClass().getSimpleName().equals("ItemStack") && item.hasItemMeta()) {
+            item = ReflectionManager.getCraftItem(item);
+        }
+
         String itemName = ReflectionManager.getItemName(item.getType());
         ArrayList<String> mcArray = new ArrayList<>();
 

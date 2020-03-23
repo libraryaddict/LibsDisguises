@@ -199,7 +199,7 @@ public class PlayerDisguise extends TargetedDisguise {
             name = name.substring(0, 16);
         }
 
-        if (isDisguiseInUse() && isShowName()) {
+        if (isDisguiseInUse() && isNameVisible()) {
             if (stopDisguise()) {
                 playerName = name;
 

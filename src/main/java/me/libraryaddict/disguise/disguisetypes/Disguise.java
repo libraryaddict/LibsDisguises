@@ -62,7 +62,6 @@ public abstract class Disguise {
     private boolean playerHiddenFromTab = DisguiseConfig.isHideDisguisedPlayers();
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private boolean mobsIgnoreDisguise;
-    private boolean showName;
     private transient BukkitTask task;
     private Runnable velocityRunnable;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
@@ -664,21 +663,6 @@ public abstract class Disguise {
 
     public void setSelfDisguiseVisible(boolean selfDisguiseVisible) {
         setViewSelfDisguise(selfDisguiseVisible);
-    }
-
-    /**
-     * Returns true if the entity's name is showing through the disguise
-     *
-     * @return
-     */
-    public boolean isShowName() {
-        return showName;
-    }
-
-    public Disguise setShowName(boolean showName) {
-        this.showName = showName;
-
-        return this;
     }
 
     public boolean isSoundsReplaced() {
