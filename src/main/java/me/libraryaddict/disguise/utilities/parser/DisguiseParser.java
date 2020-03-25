@@ -571,6 +571,11 @@ public class DisguiseParser {
     public static Disguise parseDisguise(CommandSender sender, Entity target, String permNode, String[] args,
             DisguisePermissions permissions) throws DisguiseParseException, IllegalAccessException,
             InvocationTargetException {
+        if (!Bukkit.isPrimaryThread()) {
+            DisguiseUtilities.getLogger().warning(
+                    "DisguiseParser should not be called async! This operation will become impossible in the future!");
+        }
+
         if (sender instanceof Player) {
             DisguiseUtilities.setCommandsUsed();
         }
