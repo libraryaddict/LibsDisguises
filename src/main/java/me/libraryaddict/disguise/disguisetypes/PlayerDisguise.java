@@ -50,12 +50,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise(String name) {
-        this();
-
-        setName(name);
-        setSkin(name);
-
-        createDisguise();
+        this(name, name);
     }
 
     public PlayerDisguise(String name, String skinToUse) {
@@ -201,6 +196,12 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (isDisguiseInUse() && isNameVisible()) {
             if (stopDisguise()) {
+                if (getName().isEmpty() && !name.isEmpty()) {
+                    setNameVisible(true);
+                } else if (name.isEmpty()) {
+                    setNameVisible(false);
+                }
+
                 playerName = name;
 
                 if (gameProfile != null) {
@@ -215,6 +216,12 @@ public class PlayerDisguise extends TargetedDisguise {
                 throw new IllegalStateException("Unable to restart disguise");
             }
         } else {
+            if (getName() != null&&!getName().isEmpty() && name.isEmpty()) {
+                setNameVisible(false);
+            } else if (!name.isEmpty()) {
+                setNameVisible(true);
+            }
+
             playerName = name;
 
             if (gameProfile != null) {
