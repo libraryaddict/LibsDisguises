@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class PacketsManager {
     private static PacketListener clientInteractEntityListener;
@@ -66,22 +67,6 @@ public class PacketsManager {
         return inventoryModifierEnabled;
     }
 
-    public static boolean isViewDisguisesListenerEnabled() {
-        return viewDisguisesListenerEnabled;
-    }
-
-    public static void setHearDisguisesListener(boolean enabled) {
-        if (soundsListenerEnabled != enabled) {
-            soundsListenerEnabled = enabled;
-
-            if (soundsListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
-            }
-        }
-    }
-
     public static void setInventoryListenerEnabled(boolean enabled) {
         if (inventoryModifierEnabled != enabled) {
             inventoryModifierEnabled = enabled;
@@ -105,10 +90,27 @@ public class PacketsManager {
         }
     }
 
+    public static boolean isViewDisguisesListenerEnabled() {
+        return viewDisguisesListenerEnabled;
+    }
+
+    public static void setHearDisguisesListener(boolean enabled) {
+        if (soundsListenerEnabled != enabled) {
+            soundsListenerEnabled = enabled;
+
+            if (soundsListenerEnabled) {
+                ProtocolLibrary.getProtocolManager().addPacketListener(soundsListener);
+            } else {
+                ProtocolLibrary.getProtocolManager().removePacketListener(soundsListener);
+            }
+        }
+    }
+
     public static void setupMainPacketsListener() {
         if (clientInteractEntityListener != null) {
             if (mainListener != null) {
-                ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
+                // ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(mainListener);
             }
 
             ArrayList<PacketType> packetsToListen = new ArrayList<>();
@@ -161,7 +163,9 @@ public class PacketsManager {
 
             mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
 
-            ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
+            //  ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
+            ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(mainListener)
+                    .syncStart(10, TimeUnit.SECONDS);
         }
     }
 
@@ -170,9 +174,13 @@ public class PacketsManager {
             viewDisguisesListenerEnabled = enabled;
 
             if (viewDisguisesListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+                //ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager()
+                        .registerAsyncHandler(viewDisguisesListener).syncStart(10, TimeUnit.SECONDS);
             } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+                ProtocolLibrary.getProtocolManager().getAsynchronousManager()
+                        .unregisterAsyncHandler(viewDisguisesListener);
+                //  ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
