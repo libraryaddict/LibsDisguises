@@ -29,8 +29,7 @@ public class PacketListenerMain extends PacketAdapter {
 
         final Player observer = event.getPlayer();
 
-        if (observer == null || observer.getName() == null ||
-                observer.getName().contains("UNKNOWN[")) // If the player is temporary
+        if (observer.getName().contains("UNKNOWN[")) // If the player is temporary
             return;
 
         // First get the entity, the one sending this packet

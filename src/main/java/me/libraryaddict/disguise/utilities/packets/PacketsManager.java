@@ -109,8 +109,7 @@ public class PacketsManager {
     public static void setupMainPacketsListener() {
         if (clientInteractEntityListener != null) {
             if (mainListener != null) {
-                // ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().unregisterAsyncHandler(mainListener);
+                ProtocolLibrary.getProtocolManager().removePacketListener(mainListener);
             }
 
             ArrayList<PacketType> packetsToListen = new ArrayList<>();
@@ -163,9 +162,7 @@ public class PacketsManager {
 
             mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
 
-            //  ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
-            ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(mainListener)
-                    .syncStart(10, TimeUnit.SECONDS);
+            ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
         }
     }
 
@@ -174,13 +171,9 @@ public class PacketsManager {
             viewDisguisesListenerEnabled = enabled;
 
             if (viewDisguisesListenerEnabled) {
-                //ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager()
-                        .registerAsyncHandler(viewDisguisesListener).syncStart(10, TimeUnit.SECONDS);
+                ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
             } else {
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager()
-                        .unregisterAsyncHandler(viewDisguisesListener);
-                //  ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+                ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
