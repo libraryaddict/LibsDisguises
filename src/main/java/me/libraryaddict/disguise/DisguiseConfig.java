@@ -254,6 +254,12 @@ public class DisguiseConfig {
     }
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(String disguise) {
+        if (!Bukkit.isPrimaryThread()) {
+            DisguiseUtilities.getLogger().warning(
+                    "Custom Disguises should not be called async! This operation will become impossible in the " +
+                            "future!");
+        }
+
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -273,6 +279,12 @@ public class DisguiseConfig {
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target,
             String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        if (!Bukkit.isPrimaryThread()) {
+            DisguiseUtilities.getLogger().warning(
+                    "Custom Disguises should not be called async! This operation will become impossible in the " +
+                            "future!");
+        }
+
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -285,6 +297,12 @@ public class DisguiseConfig {
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target,
             String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+        if (!Bukkit.isPrimaryThread()) {
+            DisguiseUtilities.getLogger().warning(
+                    "Custom Disguises should not be called async! This operation will become impossible in the " +
+                            "future!");
+        }
+
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
 
         if (entry == null) {
@@ -633,6 +651,12 @@ public class DisguiseConfig {
     }
 
     public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {
+        if (!Bukkit.isPrimaryThread()) {
+            DisguiseUtilities.getLogger().warning(
+                    "Custom Disguises should not be called async! This operation will become impossible in the " +
+                            "future!");
+        }
+
         if (getRawCustomDisguise(toParse) != null) {
             throw new DisguiseParseException(LibsMsg.CUSTOM_DISGUISE_NAME_CONFLICT, disguiseName);
         }
