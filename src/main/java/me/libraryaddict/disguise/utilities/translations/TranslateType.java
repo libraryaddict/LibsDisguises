@@ -90,6 +90,7 @@ public enum TranslateType {
         try {
             config.load(getFile());
             int dupes = 0;
+            int diff = 0;
 
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
@@ -118,7 +119,16 @@ public enum TranslateType {
                     }
 
                     translated.put(newKey, ChatColor.translateAlternateColorCodes('&', value));
+
+                    if (!newKey.equals(translated.get(newKey))) {
+                        diff++;
+                    }
                 }
+            }
+
+            if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
+                DisguiseUtilities.getLogger().info(diff +
+                        " translated strings, but translations has been disabled in config. Is this intended?");
             }
         }
         catch (Exception e) {
