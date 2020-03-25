@@ -40,7 +40,8 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
         try {
             final Player observer = event.getPlayer();
 
-            if (observer.getName().contains("UNKNOWN[")) {// If the player is temporary
+            if (observer == null || observer.getName() == null ||
+                    observer.getName().contains("UNKNOWN[")) {// If the player is temporary
                 return;
             }
 
