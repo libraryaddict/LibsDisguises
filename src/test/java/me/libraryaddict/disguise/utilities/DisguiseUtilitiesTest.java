@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.utilities;
 
+import com.google.gson.Gson;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -108,6 +110,21 @@ public class DisguiseUtilitiesTest {
 
                 "Foobar", "is", "not", "Foo Bar", "but", "is", "a", "single", "word", "foobar", "or", "as", "some",
                 "quote", "it,", "'foobar'", "and", "again,", "not", "'foo", "bar'", "-", "It", "is", "'foobar'!");
+
+        splitAndBack("Hi \" bye");
+        splitAndBack("Hi\\\" I'm Sam");
+        splitAndBack("\"Hi\\\" I'm Sam");
+        splitAndBack("\"Hi\\\\\" I'm Sam");
+        splitAndBack("\"Hi\\\\\\\" I'm Sam");
+        splitAndBack("\"Hi\\\\\\\" \"I'm Sam");
+    }
+
+    private void splitAndBack(String string) {
+        String quoted = DisguiseUtilities.quote(string);
+        String[] split = DisguiseUtilities.split(quoted);
+
+        Assert.assertEquals(1, split.length);
+        Assert.assertEquals(string, split[0]);
     }
 
     private void splitEquals(String toSplit, String... expected) {
@@ -116,5 +133,7 @@ public class DisguiseUtilitiesTest {
                 .toArray(String[]::new);
 
         Assert.assertArrayEquals(expect, splitted);
+
+        splitAndBack(toSplit);
     }
 }

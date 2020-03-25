@@ -1633,8 +1633,7 @@ public class DisguiseUtilities {
             return string;
         }
 
-        return "\"" + string.replaceAll("\\B\"", "\\\"").replaceAll("\\\\(?=\\\\*\"\\B)", "\\\\")
-                .replaceAll("(?=\"\\B)", "\\") + "\"";
+        return "\"" + string.replaceAll("\\\\(?=\\\\*\"( |$))", "\\\\\\\\").replaceAll("((?<= )\")|(\"(?= ))", "\\\\\"") + "\"";
     }
 
     public static String[] split(String string) {
