@@ -399,7 +399,9 @@ public class FlagWatcher {
         setEntityFlag(1, setSneaking);
         sendData(MetaIndex.ENTITY_META);
 
-        updatePose();
+        if (NmsVersion.v1_14.isSupported()) {
+            updatePose();
+        }
     }
 
     public boolean isSprinting() {
@@ -615,6 +617,7 @@ public class FlagWatcher {
         updatePose();
     }
 
+    @NmsAddedIn(val = NmsVersion.v1_14)
     protected void updatePose() {
         if (isSleeping()) {
             setEntityPose(EntityPose.SLEEPING);
