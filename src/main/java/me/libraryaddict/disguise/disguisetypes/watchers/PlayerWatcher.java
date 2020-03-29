@@ -15,6 +15,7 @@ public class PlayerWatcher extends LivingWatcher {
         super(disguise);
 
         setData(MetaIndex.PLAYER_SKIN, MetaIndex.PLAYER_SKIN.getDefault());
+        setData(MetaIndex.PLAYER_HAND, (byte) 1); // I may be left handed, but the others are right
     }
 
     public boolean isDisplayedInTab() {
@@ -35,13 +36,13 @@ public class PlayerWatcher extends LivingWatcher {
         return watcher;
     }
 
+    public MainHand getMainHand() {
+        return MainHand.values()[getData(MetaIndex.PLAYER_HAND)];
+    }
+
     public void setMainHand(MainHand mainHand) {
         setData(MetaIndex.PLAYER_HAND, (byte) mainHand.ordinal());
         sendData(MetaIndex.PLAYER_HAND);
-    }
-
-    public MainHand getMainHand() {
-        return MainHand.values()[getData(MetaIndex.PLAYER_HAND)];
     }
 
     // Bit 0 (0x01): Cape enabled
@@ -60,34 +61,14 @@ public class PlayerWatcher extends LivingWatcher {
         return isSkinFlag(1);
     }
 
-    public boolean isJacketEnabled() {
-        return isSkinFlag(2);
-    }
-
-    public boolean isLeftSleeveEnabled() {
-        return isSkinFlag(3);
-    }
-
-    public boolean isRightSleeveEnabled() {
-        return isSkinFlag(4);
-    }
-
-    public boolean isLeftPantsEnabled() {
-        return isSkinFlag(5);
-    }
-
-    public boolean isRightPantsEnabled() {
-        return isSkinFlag(6);
-    }
-
-    public boolean isHatEnabled() {
-        return isSkinFlag(7);
-    }
-
     public void setCapeEnabled(boolean enabled) {
         setSkinFlags(1, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
+    }
+
+    public boolean isJacketEnabled() {
+        return isSkinFlag(2);
     }
 
     public void setJacketEnabled(boolean enabled) {
@@ -96,10 +77,18 @@ public class PlayerWatcher extends LivingWatcher {
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
+    public boolean isLeftSleeveEnabled() {
+        return isSkinFlag(3);
+    }
+
     public void setLeftSleeveEnabled(boolean enabled) {
         setSkinFlags(3, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
+    }
+
+    public boolean isRightSleeveEnabled() {
+        return isSkinFlag(4);
     }
 
     public void setRightSleeveEnabled(boolean enabled) {
@@ -108,16 +97,28 @@ public class PlayerWatcher extends LivingWatcher {
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
+    public boolean isLeftPantsEnabled() {
+        return isSkinFlag(5);
+    }
+
     public void setLeftPantsEnabled(boolean enabled) {
         setSkinFlags(5, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
+    public boolean isRightPantsEnabled() {
+        return isSkinFlag(6);
+    }
+
     public void setRightPantsEnabled(boolean enabled) {
         setSkinFlags(6, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
+    }
+
+    public boolean isHatEnabled() {
+        return isSkinFlag(7);
     }
 
     public void setHatEnabled(boolean enabled) {
