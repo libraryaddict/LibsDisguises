@@ -120,9 +120,9 @@ public class PacketListenerSounds extends PacketAdapter {
 
                         try {
                             if (entity instanceof LivingEntity) {
-                                hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(nmsEntity) ==
+                               /* hasInvun = ReflectionManager.getNmsField("Entity", "noDamageTicks").getInt(nmsEntity) ==
                                         ReflectionManager.getNmsField("EntityLiving", "maxNoDamageTicks")
-                                                .getInt(nmsEntity);
+                                                .getInt(nmsEntity);*/
                             } else {
                                 Class clazz = ReflectionManager.getNmsClass("DamageSource");
 
