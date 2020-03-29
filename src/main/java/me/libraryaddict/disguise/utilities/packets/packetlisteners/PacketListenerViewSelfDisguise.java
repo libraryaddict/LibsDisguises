@@ -183,7 +183,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 DisguiseUtilities.setPlayerVelocity(null);
             }
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             event.setCancelled(true);
             ex.printStackTrace();
         }
