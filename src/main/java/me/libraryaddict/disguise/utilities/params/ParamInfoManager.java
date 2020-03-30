@@ -146,6 +146,7 @@ public class ParamInfoManager {
             try {
                 methods.add(PlayerDisguise.class.getMethod("setNameVisible", boolean.class));
                 methods.add(PlayerDisguise.class.getMethod("setDynamicName", boolean.class));
+                methods.add(PlayerDisguise.class.getMethod("setName", String.class));
             }
             catch (NoSuchMethodException e) {
                 e.printStackTrace();

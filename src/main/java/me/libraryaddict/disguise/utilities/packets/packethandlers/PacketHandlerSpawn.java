@@ -155,10 +155,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(5, pitch);
         } else if (disguise.getType().isPlayer()) {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
+            boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardDisguiseNames();
 
-            WrappedGameProfile spawnProfile = playerDisguise.isNameVisible() ? playerDisguise.getGameProfile() :
-                    ReflectionManager.getGameProfileWithThisSkin(UUID.randomUUID(),
-                            playerDisguise.isNameVisible() ? playerDisguise.getProfileName() : "",
+            WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
+                    .getGameProfileWithThisSkin(UUID.randomUUID(), visibleOrNewCompat ? playerDisguise.getProfileName() : "",
                             playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();

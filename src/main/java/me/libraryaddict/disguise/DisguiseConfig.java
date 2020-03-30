@@ -221,6 +221,9 @@ public class DisguiseConfig {
     @Setter
     private static BarColor bossBarColor = BarColor.GREEN;
     private static PermissionDefault commandVisibility = PermissionDefault.TRUE;
+    @Getter
+    @Setter
+    private static boolean scoreboardDisguiseNames;
 
     public static PermissionDefault getCommandVisibility() {
         return commandVisibility;
@@ -432,6 +435,7 @@ public class DisguiseConfig {
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
+        setScoreboardDisguiseNames(config.getBoolean("ScoreboardNames"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

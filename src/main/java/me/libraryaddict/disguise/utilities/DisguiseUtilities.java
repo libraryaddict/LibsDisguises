@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
@@ -49,47 +50,52 @@ import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DisguiseUtilities {
-    public static class ExtendedName {
-        public ExtendedName(String teamName, String[] name) {
-            this.teamName = teamName;
-            this.name = name;
+    @Setter
+    public static class DisguiseTeam {
+        public DisguiseTeam(String[] name) {
+            this.split = name;
         }
 
+        @Getter
         private String teamName;
-        private String[] name;
-        private int users;
-        private long lastUsed = System.currentTimeMillis();
+        private String[] split;
+        private PlayerDisguise disguise;
 
-        public String[] getSplit() {
-            return name;
+        public String getPlayer() {
+            return split[1];
         }
 
-        public void addUser() {
-            lastUsed = 0;
-            users++;
+        public String getPrefix() {
+            return split[0];
         }
 
-        public void removeUser() {
-            if (users > 0) {
-                users--;
+        public String getSuffix() {
+            return split[2];
+        }
+
+        public void handleTeam(Scoreboard board, boolean nameVisible) {
+            Team team = board.getTeam(getTeamName());
+
+            if (team == null) {
+                team = board.registerNewTeam(getTeamName());
+                team.addEntry(getPlayer());
+
+                if (!nameVisible) {
+                    team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
+                }
+            } else if (team.getOption(Option.NAME_TAG_VISIBILITY) !=
+                    (nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER)) {
+                team.setOption(Option.NAME_TAG_VISIBILITY, nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             }
 
-            if (users != 0) {
-                return;
-            }
-
-            lastUsed = System.currentTimeMillis();
-        }
-
-        public boolean isRemoveable() {
-            return users <= 0 && lastUsed + TimeUnit.HOURS.toMillis(1) < System.currentTimeMillis();
+            team.setPrefix(getPrefix());
+            team.setSuffix(getSuffix());
         }
     }
 
@@ -132,9 +138,10 @@ public class DisguiseUtilities {
     private static boolean runningPaper;
     @Getter
     private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
-    private static HashMap<String, ExtendedName> extendedNames = new HashMap<>();
     @Getter
     private static boolean invalidFile;
+    @Getter
+    private static char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     public static void setPlayerVelocity(Player player) {
         if (player == null) {
@@ -234,8 +241,6 @@ public class DisguiseUtilities {
         } else {
             disguise = disguise.clone();
         }
-
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
         String reference = null;
         int referenceLength = Math.max(2, (int) Math.ceil((0.1D + DisguiseConfig.getMaxClonedDisguises()) / 26D));
@@ -928,14 +933,14 @@ public class DisguiseUtilities {
         // Clear the old scoreboard teams for extended names!
         for (Scoreboard board : getAllScoreboards()) {
             for (Team team : board.getTeams()) {
-                if (!team.getName().matches("LD_[0-9]{10,}")) {
+                if (!team.getName().startsWith("LD_")) {
                     continue;
                 }
 
                 team.unregister();
             }
 
-            registerExtendedNames(board);
+            registerAllExtendedNames(board);
             registerNoName(board);
         }
     }
@@ -1264,107 +1269,84 @@ public class DisguiseUtilities {
         return boards;
     }
 
-    public static ExtendedName createExtendedName(String name) {
-        ExtendedName exName = extendedNames.get(name);
+    public static DisguiseTeam createExtendedName(String name) {
+        String[] split = getExtendedNameSplit(null, name);
 
-        if (exName == null) {
-            String[] split = getExtendedNameSplit(name);
-            Scoreboard mainBoard = Bukkit.getScoreboardManager().getMainScoreboard();
+        return new DisguiseTeam(split);
+    }
 
-            while (true) {
-                String teamName = System.nanoTime() + "";
+    public static String getUniqueTeam() {
+        Scoreboard mainBoard = Bukkit.getScoreboardManager().getMainScoreboard();
 
-                if (teamName.length() > 13) {
-                    teamName = teamName.substring(teamName.length() - 13);
-                }
+        for (int i = 0; i < 1000; i++) {
+            String teamName = encode(System.nanoTime() / 100 % 100000) + "";
 
-                teamName = "LD_" + teamName;
+            if (teamName.length() > 13) {
+                teamName = teamName.substring(teamName.length() - 13);
+            }
 
-                if (mainBoard.getTeam(teamName) != null) {
+            teamName = "LD_" + teamName;
+
+            if (mainBoard.getTeam(teamName) != null) {
+                continue;
+            }
+
+            return teamName;
+        }
+
+        throw new IllegalStateException("Lib's Disguises unable to find a unique team name!");
+    }
+
+    public static void updateExtendedName(PlayerDisguise disguise) {
+        DisguiseTeam exName = disguise.getScoreboardName();
+
+        for (Scoreboard board : getAllScoreboards()) {
+            exName.handleTeam(board, disguise.isNameVisible());
+        }
+    }
+
+    public static void registerExtendedName(PlayerDisguise disguise) {
+        DisguiseTeam exName = disguise.getScoreboardName();
+
+        if (exName.getTeamName() == null) {
+            exName.setTeamName(getUniqueTeam());
+        }
+
+        for (Scoreboard board : getAllScoreboards()) {
+            exName.handleTeam(board, disguise.isNameVisible());
+        }
+    }
+
+    public static void registerAllExtendedNames(Scoreboard scoreboard) {
+        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
+            for (Disguise disguise : disguises) {
+                if (!disguise.isPlayerDisguise() || !disguise.isDisguiseInUse()) {
                     continue;
                 }
 
-                exName = new ExtendedName(teamName, split);
-                break;
-            }
+                DisguiseTeam name = ((PlayerDisguise) disguise).getScoreboardName();
 
-            extendedNames.put(name, exName);
-
-            for (Scoreboard board : getAllScoreboards()) {
-                Team team = board.registerNewTeam(exName.teamName);
-
-                team.setPrefix(exName.getSplit()[0]);
-                team.setSuffix(exName.getSplit()[2]);
-                team.addEntry(exName.getSplit()[1]);
+                name.handleTeam(scoreboard, ((PlayerDisguise) disguise).isNameVisible());
             }
         }
-
-        return exName;
     }
 
-    public static ExtendedName registerExtendedName(String name) {
-        ExtendedName exName = createExtendedName(name);
-
-        exName.addUser();
-
-        doExtendedNamesGarbageCollection();
-
-        return exName;
-    }
-
-    public static void registerExtendedNames(Scoreboard scoreboard) {
-        for (ExtendedName entry : extendedNames.values()) {
-            String teamName = entry.teamName;
-            String[] name = entry.getSplit();
-
-            if (scoreboard.getEntryTeam(name[1]) != null) {
-                continue;
-            }
-
-            if (scoreboard.getTeam(teamName) != null) {
-                continue;
-            }
-
-            Team team = scoreboard.registerNewTeam(teamName);
-
-            team.addEntry(name[1]);
-            team.setPrefix(name[0]);
-            team.setSuffix(name[2]);
-        }
-    }
-
-    public static void unregisterAttemptExtendedName(PlayerDisguise removed) {
-        ExtendedName name = extendedNames.get(removed.getName());
-
-        if (name == null) {
+    public static void unregisterExtendedName(PlayerDisguise removed) {
+        if (removed.getScoreboardName().getTeamName() == null) {
             return;
         }
 
-        name.removeUser();
-    }
+        for (Scoreboard board : getAllScoreboards()) {
+            Team t = board.getTeam(removed.getScoreboardName().getTeamName());
 
-    public static void doExtendedNamesGarbageCollection() {
-        Iterator<Map.Entry<String, ExtendedName>> itel = extendedNames.entrySet().iterator();
-
-        while (itel.hasNext()) {
-            Map.Entry<String, ExtendedName> entry = itel.next();
-
-            if (!entry.getValue().isRemoveable()) {
+            if (t == null) {
                 continue;
             }
 
-            itel.remove();
-
-            for (Scoreboard board : getAllScoreboards()) {
-                Team team = board.getTeam(entry.getValue().teamName);
-
-                if (team == null) {
-                    continue;
-                }
-
-                team.unregister();
-            }
+            t.unregister();
         }
+
+        removed.getScoreboardName().setTeamName(null);
     }
 
     public static void registerNoName(Scoreboard scoreboard) {
@@ -1379,18 +1361,8 @@ public class DisguiseUtilities {
         }
     }
 
-    public static ExtendedName getExtendedName(String name) {
-        ExtendedName extendedName = extendedNames.get(name);
-
-        if (extendedName != null) {
-            return extendedName;
-        }
-
-        return createExtendedName(name);
-    }
-
-    private static String[] getExtendedNameSplit(String name) {
-        if (name.length() <= 16) {
+    public static String[] getExtendedNameSplit(String playerName, String name) {
+        if (name.length() <= 16 && !DisguiseConfig.isScoreboardDisguiseNames()) {
             throw new IllegalStateException("This can only be used for names longer than 16 characters!");
         }
 
@@ -1398,11 +1370,52 @@ public class DisguiseUtilities {
             name = name.substring(0, 48);
         }
 
-        if (extendedNames.containsKey(name)) {
-            return extendedNames.get(name).getSplit();
-        }
-
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+
+        // If name is short enough to be used outside of player name
+        if (DisguiseConfig.isScoreboardDisguiseNames() && name.length() <= 32) {
+            String[] newName = new String[]{name, playerName, ""};
+
+            if (name.length() > 16) {
+                if (name.charAt(16) == ChatColor.COLOR_CHAR) {
+                    newName[0] = name.substring(0, 15);
+                } else {
+                    newName[0] = name.substring(0, 16);
+                }
+
+                String suffix = ChatColor.getLastColors(newName[0]) + name.substring(newName[0].length());
+
+                if (suffix.length() > 16) {
+                    suffix = suffix.substring(0, 16);
+                }
+                // Don't allow second name to hit 17 chars
+                newName[2] = suffix;
+            }
+
+            String namePrefix = colorize("LD");
+
+            if (playerName == null || !playerName.startsWith(namePrefix)) {
+                String nameSuffix = "" + ChatColor.RESET;
+                long time = System.nanoTime() / 100 % 10000;
+
+                for (int i = 0; i < 1000; i++) {
+                    String testName = namePrefix + colorize(encode(time + i)) + nameSuffix;
+
+                    if (testName.length() > 16) {
+                        break;
+                    }
+
+                    if (!isValidPlayerName(board, testName)) {
+                        continue;
+                    }
+
+                    newName[1] = testName;
+                    break;
+                }
+            }
+
+            return newName;
+        }
 
         for (int prefixLen = 16; prefixLen >= 0; prefixLen--) {
             String prefix = name.substring(0, prefixLen);
@@ -1430,7 +1443,7 @@ public class DisguiseUtilities {
 
                 String[] extended = new String[]{prefix, nName, suffix};
 
-                if (!isValidPlayerName(board, extended)) {
+                if ((playerName == null || !playerName.equals(extended[1])) && !isValidPlayerName(board, extended[1])) {
                     continue;
                 }
 
@@ -1461,8 +1474,29 @@ public class DisguiseUtilities {
         return new String[]{prefix, nName, suffix};
     }
 
-    private static boolean isValidPlayerName(Scoreboard board, String[] name) {
-        return board.getEntryTeam(name[1]) == null && Bukkit.getPlayerExact(name[1]) == null;
+    private static String colorize(String s) {
+        StringBuilder builder = new StringBuilder(s.length() * 2);
+
+        for (char c : s.toCharArray()) {
+            builder.append(ChatColor.COLOR_CHAR).append(c);
+        }
+
+        return builder.toString();
+    }
+
+    private static String encode(long toConvert) {
+        StringBuilder builder = new StringBuilder();
+
+        while (toConvert != 0) {
+            builder.append(alphabet[(int) (toConvert % alphabet.length)]);
+            toConvert /= alphabet.length;
+        }
+
+        return builder.reverse().toString();
+    }
+
+    private static boolean isValidPlayerName(Scoreboard board, String name) {
+        return board.getEntryTeam(name) == null && Bukkit.getPlayerExact(name) == null;
     }
 
     public static void removeSelfDisguiseScoreboard(Player player) {
@@ -1633,7 +1667,9 @@ public class DisguiseUtilities {
             return string;
         }
 
-        return "\"" + string.replaceAll("\\\\(?=\\\\*\"( |$))", "\\\\\\\\").replaceAll("((?<= )\")|(\"(?= ))", "\\\\\"") + "\"";
+        return "\"" +
+                string.replaceAll("\\\\(?=\\\\*\"( |$))", "\\\\\\\\").replaceAll("((?<= )\")|(\"(?= ))", "\\\\\"") +
+                "\"";
     }
 
     public static String[] split(String string) {
