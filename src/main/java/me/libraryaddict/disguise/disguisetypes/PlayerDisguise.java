@@ -36,7 +36,7 @@ public class PlayerDisguise extends TargetedDisguise {
     @Getter
     @Setter
     private boolean dynamicName;
-    private DisguiseUtilities.DisguiseTeam scoreboardName;
+    private volatile DisguiseUtilities.DisguiseTeam scoreboardName;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
