@@ -106,7 +106,6 @@ permissions:
       description: Allows player to get meta info
     libsdisguises.json:
       description: Allows player to parse held item to json
-      default: true
     libsdisguises.scoreboardtest:
       description: Test if the scoreboard is valid, this is a simple test.
     libsdisguises.config:

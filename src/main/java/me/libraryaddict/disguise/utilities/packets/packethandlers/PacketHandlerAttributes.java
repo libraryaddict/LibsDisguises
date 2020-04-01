@@ -50,47 +50,48 @@ public class PacketHandlerAttributes implements IPacketHandler {
             return;
         }
 
-        if (!disguise.isMiscDisguise()) {
-            packets.clear();
+        if (disguise.isMiscDisguise()) {
+            return;
+        }
 
-            List<WrappedAttribute> attributes = new ArrayList<>();
-            PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+        packets.clear();
 
-            for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
-                if (attribute.getAttributeKey().equals("generic.maxHealth")) {
-                    WrappedAttribute.Builder builder;
+        List<WrappedAttribute> attributes = new ArrayList<>();
+        PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 
-                    if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
-                        builder = WrappedAttribute.newBuilder();
-                        builder.attributeKey("generic.maxHealth");
-                        builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
-                    } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity()) {
-                        builder = WrappedAttribute.newBuilder(attribute);
-                    } else {
-                        builder = WrappedAttribute.newBuilder();
-                        builder.attributeKey("generic.maxHealth");
-                        builder.baseValue(
-                                DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
-                    }
+        for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
+            if (attribute.getAttributeKey().equals("generic.maxHealth")) {
+                WrappedAttribute.Builder builder;
 
-                    builder.packet(updateAttributes);
-
-                    attributes.add(builder.build());
-                } else if (attribute.getAttributeKey().equals("generic.movementSpeed") &&
-                        disguise.getWatcher() instanceof AbstractHorseWatcher) {
-                    WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
-                    builder.packet(updateAttributes);
-
-                    attributes.add(builder.build());
+                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                    builder = WrappedAttribute.newBuilder();
+                    builder.attributeKey("generic.maxHealth");
+                    builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
+                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity()) {
+                    builder = WrappedAttribute.newBuilder(attribute);
+                } else {
+                    builder = WrappedAttribute.newBuilder();
+                    builder.attributeKey("generic.maxHealth");
+                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
                 }
-            }
 
-            if (!attributes.isEmpty()) {
-                packets.addPacket(updateAttributes);
+                builder.packet(updateAttributes);
 
-                updateAttributes.getIntegers().write(0, entity.getEntityId());
-                updateAttributes.getAttributeCollectionModifier().write(0, attributes);
+                attributes.add(builder.build());
+            } else if (attribute.getAttributeKey().equals("generic.movementSpeed") &&
+                    disguise.getWatcher() instanceof AbstractHorseWatcher) {
+                WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
+                builder.packet(updateAttributes);
+
+                attributes.add(builder.build());
             }
+        }
+
+        if (!attributes.isEmpty()) {
+            packets.addPacket(updateAttributes);
+
+            updateAttributes.getIntegers().write(0, entity.getEntityId());
+            updateAttributes.getAttributeCollectionModifier().write(0, attributes);
         }
     }
 }

@@ -63,7 +63,7 @@ SaveDisguises:
   Entities: false
 
 # Do names go beyond the 16 char limit for player disguises?
-ExtendedNames: true
+ExtendedNames: false
 # Do names resolve into scoreboard teams so changing the player name is flawless?
 # This will only work properly for names 28 chars or less in length.
 # Notch [DragonSlayer lvl: 28]

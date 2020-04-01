@@ -397,7 +397,8 @@ public class DisguiseConfig {
         setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
-        setExtendedDisguiseNames(config.getBoolean("ExtendedNames"));
+        // The default value shall be false if you don't update config
+        setExtendedDisguiseNames(config.contains("ScoreboardNames") && config.getBoolean("ExtendedNames"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
