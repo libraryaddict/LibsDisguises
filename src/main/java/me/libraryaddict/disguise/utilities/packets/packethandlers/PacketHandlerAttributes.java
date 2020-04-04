@@ -54,8 +54,6 @@ public class PacketHandlerAttributes implements IPacketHandler {
             return;
         }
 
-        packets.clear();
-
         List<WrappedAttribute> attributes = new ArrayList<>();
         PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 
