@@ -1,6 +1,10 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.commands.interactions.CopyDisguiseInteraction;
+import me.libraryaddict.disguise.commands.interactions.DisguiseModifyInteraction;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -11,6 +15,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -63,21 +68,15 @@ public class CopyDisguiseCommand implements CommandExecutor {
         Disguise disguise = DisguiseAPI.getDisguise(target);
 
         if (disguise == null) {
-            sender.sendMessage((sender == target ? LibsMsg.NOT_DISGUISED : LibsMsg.TARGET_NOT_DISGUISED).get());
+            LibsDisguises.getInstance().getListener()
+                    .addInteraction(sender.getName(), new CopyDisguiseInteraction(this),
+                            DisguiseConfig.getDisguiseEntityExpire());
+
+            sender.sendMessage(LibsMsg.DISGUISECOPY_INTERACT.get(DisguiseConfig.getDisguiseEntityExpire()));
             return true;
         }
 
         String disguiseString = DisguiseParser.parseToString(disguise, false);
-
-        /*if (!(sender instanceof Player)) {
-            sender.sendMessage(disguiseString);
-
-            if (disguise instanceof PlayerDisguise) {
-                sender.sendMessage(DisguiseParser.parseToString(disguise, false));
-            }
-
-            return true;
-        }*/
 
         sendMessage(sender, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
 
@@ -91,7 +90,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
         return true;
     }
 
-    private void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
+    public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
         if (!NmsVersion.v1_13.isSupported()) {
             sender.sendMessage(oldVer.get(string));
             return;

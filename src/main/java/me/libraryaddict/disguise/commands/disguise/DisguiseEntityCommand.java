@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands.disguise;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
+import me.libraryaddict.disguise.commands.interactions.DisguiseEntityInteraction;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
@@ -61,7 +62,9 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        LibsDisguises.getInstance().getListener().setDisguiseEntity(sender.getName(), disguiseArgs);
+        LibsDisguises.getInstance().getListener()
+                .addInteraction(sender.getName(), new DisguiseEntityInteraction(disguiseArgs),
+                        DisguiseConfig.getDisguiseEntityExpire());
 
         sender.sendMessage(LibsMsg.DISG_ENT_CLICK
                 .get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getType().toReadable()));

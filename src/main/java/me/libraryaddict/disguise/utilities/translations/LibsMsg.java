@@ -63,6 +63,7 @@ public enum LibsMsg {
     DMODIFY_MODIFIED(ChatColor.RED + "Your disguise has been modified!"),
     DMODIFY_NO_PERM(ChatColor.RED + "No permission to modify your disguise!"),
     DMODIFYENT_CLICK(ChatColor.RED + "Right click a disguised entity in the next %s seconds to modify their disguise!"),
+    DISGUISECOPY_INTERACT(ChatColor.RED + "Right click a disguised entity in the next %s seconds to copy their disguise!"),
     DMODPLAYER_HELP1(ChatColor.DARK_GREEN + "Modify the disguise of another player!"),
     DMODPLAYER_MODIFIED(ChatColor.RED + "Modified the disguise of %s!"),
     DMODPLAYER_NODISGUISE(ChatColor.RED + "The player '%s' is not disguised"),

@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands.modify;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
+import me.libraryaddict.disguise.commands.interactions.DisguiseModifyInteraction;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements TabCompleter {
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -39,8 +41,9 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
         // TODO Validate if any disguises have this arg
 
-        LibsDisguises.getInstance().getListener()
-                .setDisguiseModify(sender.getName(), DisguiseUtilities.split(StringUtils.join(args, " ")));
+        LibsDisguises.getInstance().getListener().addInteraction(sender.getName(),
+                new DisguiseModifyInteraction(DisguiseUtilities.split(StringUtils.join(args, " "))),
+                DisguiseConfig.getDisguiseEntityExpire());
 
         sender.sendMessage(LibsMsg.DMODIFYENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire()));
         return true;
