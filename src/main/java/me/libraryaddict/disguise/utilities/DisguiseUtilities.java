@@ -1300,6 +1300,10 @@ public class DisguiseUtilities {
     public static void updateExtendedName(PlayerDisguise disguise) {
         DScoreTeam exName = disguise.getScoreboardName();
 
+        if (exName.getTeamName() == null) {
+            exName.setTeamName(getUniqueTeam());
+        }
+
         for (Scoreboard board : getAllScoreboards()) {
             exName.handleTeam(board, disguise.isNameVisible());
         }
@@ -1325,6 +1329,10 @@ public class DisguiseUtilities {
                 }
 
                 DScoreTeam name = ((PlayerDisguise) disguise).getScoreboardName();
+
+                if (name.getTeamName() == null) {
+                    continue;
+                }
 
                 name.handleTeam(scoreboard, ((PlayerDisguise) disguise).isNameVisible());
             }

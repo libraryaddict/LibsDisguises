@@ -98,7 +98,15 @@ public class PlayerDisguise extends TargetedDisguise {
         return scoreboardName;
     }
 
+    private boolean isStaticName(String name) {
+        return name != null && (name.equalsIgnoreCase("Dinnerbone") || name.equalsIgnoreCase("Grumm"));
+    }
+
     public boolean hasScoreboardName() {
+        if (isStaticName(getName())) {
+            return false;
+        }
+
         return scoreboardName != null || DisguiseConfig.isScoreboardDisguiseNames() || getName().length() > 16;
     }
 
@@ -214,15 +222,19 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisguiseInUse()) {
-            boolean resendDisguise = !DisguiseConfig.isScoreboardDisguiseNames();
+            boolean resendDisguise = false;
 
-            if (hasScoreboardName()) {
+            if (DisguiseConfig.isScoreboardDisguiseNames() && !isStaticName(name)) {
                 DisguiseUtilities.DScoreTeam team = getScoreboardName();
                 String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
                 resendDisguise = !split[1].equals(team.getPlayer());
                 team.setSplit(split);
             }
+
+            resendDisguise =
+                    !DisguiseConfig.isScoreboardDisguiseNames() || isStaticName(name) || isStaticName(getName()) ||
+                            resendDisguise;
 
             if (resendDisguise) {
                 if (stopDisguise()) {
