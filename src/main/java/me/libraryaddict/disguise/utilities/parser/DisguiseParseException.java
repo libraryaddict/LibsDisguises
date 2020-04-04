@@ -13,7 +13,7 @@ public class DisguiseParseException extends Exception {
     }
 
     public DisguiseParseException(LibsMsg message, String... params) {
-        super(message.get((Object[]) params));
+        super(message.get(params));
     }
 
     public DisguiseParseException(String message) {

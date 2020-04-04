@@ -31,7 +31,7 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
             material = Material.getMaterial(split[0].toUpperCase());
         }
 
-        if (material == null) {
+        if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
             throw new IllegalArgumentException();
         }
 

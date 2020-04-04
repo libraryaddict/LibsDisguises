@@ -126,9 +126,7 @@ public class ReflectionManager {
         if (obj.isAnnotationPresent(NmsRemovedIn.class)) {
             NmsRemovedIn removed = obj.getAnnotation(NmsRemovedIn.class);
 
-            if (removed.val().isSupported()) {
-                return false;
-            }
+            return !removed.val().isSupported();
         }
 
         return true;
@@ -716,7 +714,7 @@ public class ReflectionManager {
 
     public static double getPing(Player player) {
         try {
-            return (double) pingField.getInt(ReflectionManager.getNmsEntity(player));
+            return pingField.getInt(ReflectionManager.getNmsEntity(player));
         }
         catch (Exception ex) {
             ex.printStackTrace();

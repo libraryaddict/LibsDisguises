@@ -282,7 +282,7 @@ public class DisguisePermissions {
 
                 // The permission is negated, and only has negated options. Should mean something, but to most people
                 // it's nonsense and should be ignored.
-                if (parsedPermission.isNegated() && !parsedPermission.options.values().contains(true)) {
+                if (parsedPermission.isNegated() && !parsedPermission.options.containsValue(true)) {
                     continue;
                 }
 

@@ -36,7 +36,7 @@ public class PlayerDisguise extends TargetedDisguise {
     @Getter
     @Setter
     private boolean dynamicName;
-    private volatile DisguiseUtilities.DisguiseTeam scoreboardName;
+    private volatile DisguiseUtilities.DScoreTeam scoreboardName;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -85,7 +85,7 @@ public class PlayerDisguise extends TargetedDisguise {
         createDisguise();
     }
 
-    public DisguiseUtilities.DisguiseTeam getScoreboardName() {
+    public DisguiseUtilities.DScoreTeam getScoreboardName() {
         if (getName().length() <= 16 ? !DisguiseConfig.isScoreboardDisguiseNames() :
                 !DisguiseConfig.isExtendedDisguiseNames()) {
             throw new IllegalStateException("Cannot use this method when it's been disabled in config!");
@@ -217,7 +217,7 @@ public class PlayerDisguise extends TargetedDisguise {
             boolean resendDisguise = !DisguiseConfig.isScoreboardDisguiseNames();
 
             if (hasScoreboardName()) {
-                DisguiseUtilities.DisguiseTeam team = getScoreboardName();
+                DisguiseUtilities.DScoreTeam team = getScoreboardName();
                 String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
                 resendDisguise = !split[1].equals(team.getPlayer());
@@ -258,7 +258,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         } else {
             if (scoreboardName != null) {
-                DisguiseUtilities.DisguiseTeam team = getScoreboardName();
+                DisguiseUtilities.DScoreTeam team = getScoreboardName();
                 String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
                 team.setSplit(split);

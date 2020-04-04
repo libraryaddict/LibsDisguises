@@ -131,7 +131,7 @@ public class MiscDisguise extends TargetedDisguise {
     public int getData() {
         switch (getType()) {
             case FALLING_BLOCK:
-                return (int) ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
+                return ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
             case PAINTING:
                 return ((PaintingWatcher) getWatcher()).getArt().getId();
             case SPLASH_POTION:

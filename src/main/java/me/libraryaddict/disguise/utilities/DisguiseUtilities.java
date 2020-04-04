@@ -57,8 +57,8 @@ import java.util.stream.Collectors;
 
 public class DisguiseUtilities {
     @Setter
-    public static class DisguiseTeam {
-        public DisguiseTeam(String[] name) {
+    public static class DScoreTeam {
+        public DScoreTeam(String[] name) {
             this.split = name;
         }
 
@@ -1269,10 +1269,10 @@ public class DisguiseUtilities {
         return boards;
     }
 
-    public static DisguiseTeam createExtendedName(String name) {
+    public static DScoreTeam createExtendedName(String name) {
         String[] split = getExtendedNameSplit(null, name);
 
-        return new DisguiseTeam(split);
+        return new DScoreTeam(split);
     }
 
     public static String getUniqueTeam() {
@@ -1298,7 +1298,7 @@ public class DisguiseUtilities {
     }
 
     public static void updateExtendedName(PlayerDisguise disguise) {
-        DisguiseTeam exName = disguise.getScoreboardName();
+        DScoreTeam exName = disguise.getScoreboardName();
 
         for (Scoreboard board : getAllScoreboards()) {
             exName.handleTeam(board, disguise.isNameVisible());
@@ -1306,7 +1306,7 @@ public class DisguiseUtilities {
     }
 
     public static void registerExtendedName(PlayerDisguise disguise) {
-        DisguiseTeam exName = disguise.getScoreboardName();
+        DScoreTeam exName = disguise.getScoreboardName();
 
         if (exName.getTeamName() == null) {
             exName.setTeamName(getUniqueTeam());
@@ -1324,7 +1324,7 @@ public class DisguiseUtilities {
                     continue;
                 }
 
-                DisguiseTeam name = ((PlayerDisguise) disguise).getScoreboardName();
+                DScoreTeam name = ((PlayerDisguise) disguise).getScoreboardName();
 
                 name.handleTeam(scoreboard, ((PlayerDisguise) disguise).isNameVisible());
             }

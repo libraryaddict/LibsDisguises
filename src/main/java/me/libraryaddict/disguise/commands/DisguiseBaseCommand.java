@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -20,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.Method;
@@ -135,30 +137,39 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         boolean addMethods = true;
         List<String> tabs = new ArrayList<>();
 
-        // Check what argument was used before the current argument to see what we're displaying
-        if (allArgs.length > startsAt) {
+        ParamInfo info = null;
+
+        if (allArgs.length == startsAt) {
+            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
+                info = ParamInfoManager.getParamInfoItemBlock();
+            } else if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
+                info = ParamInfoManager.getParamInfo(ItemStack.class);
+            }
+        } else if (allArgs.length > startsAt) {
+            // Check what argument was used before the current argument to see what we're displaying
+
             String prevArg = allArgs[allArgs.length - 1];
 
-            ParamInfo info = ParamInfoManager.getParamInfo(disguisePerm, prevArg);
+            info = ParamInfoManager.getParamInfo(disguisePerm, prevArg);
 
-            // If the previous argument is a method
-            if (info != null) {
-                if (!info.isParam(boolean.class)) {
-                    addMethods = false;
-                }
+            if (info != null && !info.isParam(boolean.class)) {
+                addMethods = false;
+            }
+        }
 
-                // If there is a list of default values
-                if (info.hasValues()) {
-                    tabs.addAll(info.getEnums(currentArg));
-                } else if (info.isParam(String.class)) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        // If command user cannot see player online, don't tab-complete name
-                        if (commandSender instanceof Player && !((Player) commandSender).canSee(player)) {
-                            continue;
-                        }
-
-                        tabs.add(player.getName());
+        // If the previous argument is a method
+        if (info != null) {
+            // If there is a list of default values
+            if (info.hasValues()) {
+                tabs.addAll(info.getEnums(currentArg));
+            } else if (info.isParam(String.class)) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    // If command user cannot see player online, don't tab-complete name
+                    if (commandSender instanceof Player && !((Player) commandSender).canSee(player)) {
+                        continue;
                     }
+
+                    tabs.add(player.getName());
                 }
             }
         }

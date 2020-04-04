@@ -47,7 +47,7 @@ public class ZombieWatcher extends InsentientWatcher {
     @Deprecated
     @NmsRemovedIn(val = NmsVersion.v1_14)
     public boolean isAggressive() {
-        return (boolean) getData(MetaIndex.ZOMBIE_AGGRESSIVE);
+        return getData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
     @Deprecated

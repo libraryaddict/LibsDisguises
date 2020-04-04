@@ -131,7 +131,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
                 material = Material.getMaterial(split[0].toUpperCase());
             }
 
-            if (material == null) {
+            if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
                 throw new IllegalArgumentException();
             }
 
@@ -161,7 +161,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
 
         Material material = Material.getMaterial(split[0].toUpperCase());
 
-        if (material == null) {
+        if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
             throw new IllegalArgumentException();
         }
 

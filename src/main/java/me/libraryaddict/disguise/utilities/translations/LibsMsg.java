@@ -27,13 +27,13 @@ public enum LibsMsg {
     D_HELP3(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> player <Name>"),
     D_HELP4(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> <DisguiseType> <Baby>"),
     D_HELP5(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> <Dropped_Item/Falling_Block> <Id> <Durability>"),
-    D_PARSE_NOPERM(ChatColor.RED + "You do not have permission to use the option %s"),
+    D_PARSE_NOPERM(ChatColor.RED + "You do not have permission to use the method %s"),
     DHELP_CANTFIND(ChatColor.RED + "Cannot find the disguise %s"),
     DHELP_HELP1(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN +
-            "- View the options you can set on a disguise. Add 'show' to reveal the options you don't have permission" +
+            "- View the methods you can set on a disguise. Add 'show' to reveal the methods you don't have permission" +
             " to use"),
     DHELP_HELP2(ChatColor.RED + "/disguisehelp <DisguiseOption> " + ChatColor.GREEN + "- View information about the " +
-            "disguise options such as 'RabbitType'"),
+            "disguise values such as 'RabbitType'"),
     DHELP_HELP3(ChatColor.RED + "/disguisehelp " + ChatColor.DARK_GREEN + "%s" + ChatColor.GREEN + " - %s"),
     DHELP_HELP4(ChatColor.RED + "%s: " + ChatColor.GREEN + "%s"),
     DHELP_HELP4_SEPERATOR(ChatColor.RED + ", " + ChatColor.GREEN),
@@ -77,13 +77,13 @@ public enum LibsMsg {
     DCLONE_SNEAK("doSneak"),
     DCLONE_SPRINT("doSprint"),
     DMODRADIUS_HELP2((ChatColor.DARK_GREEN + "/disguisemodifyradius <DisguiseType" + ChatColor.DARK_GREEN + "(" +
-            ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Disguise Options>")
+            ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Disguise Methods>")
             .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
     DMODRADIUS_HELP3(ChatColor.DARK_GREEN + "See the DisguiseType's usable by " + ChatColor.GREEN +
             "/disguisemodifyradius DisguiseType"),
-    DMODRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply the disguise options as well as the radius"),
+    DMODRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply the disguise methods as well as the radius"),
     DMODRADIUS_NEEDOPTIONS_ENTITY(
-            ChatColor.RED + "You need to supply the disguise options as well as the radius and EntityType"),
+            ChatColor.RED + "You need to supply the disguise methods as well as the radius and EntityType"),
     DMODRADIUS_NOENTS(ChatColor.RED + "Couldn't find any disguised entities!"),
     DMODRADIUS_NOPERM(ChatColor.RED + "No permission to modify %s disguises!"),
     DMODRADIUS_UNRECOGNIZED(ChatColor.RED + "Unrecognised DisguiseType %s"),
@@ -112,7 +112,7 @@ public enum LibsMsg {
     FAILED_DISGIUSE(ChatColor.RED + "Failed to disguise as a %s"),
     GRABBED_SKIN(ChatColor.GOLD + "Grabbed skin and saved as %s!"),
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
-    INVALID_CLONE(ChatColor.DARK_RED + "Unknown option '%s' - Valid options are 'IgnoreEquipment' 'DoSneakSprint' " +
+    INVALID_CLONE(ChatColor.DARK_RED + "Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
     LIBS_COMMAND_WRONG_ARG(
             ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'scoreboard', 'permtest', 'json' or 'metainfo'?"),
@@ -136,7 +136,7 @@ public enum LibsMsg {
     NO_PERM(ChatColor.RED + "You are forbidden to use this command."),
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
     NO_PERMS_USE_OPTIONS(ChatColor.RED +
-            "Ignored %s options you do not have permission to use. Add 'show' to view unusable options."),
+            "Ignored %s methods you do not have permission to use. Add 'show' to view unusable methods."),
     OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),
     NOT_DISGUISED(ChatColor.RED + "You are not disguised!"),
     TARGET_NOT_DISGUISED(ChatColor.RED + "That entity is not disguised!"),
@@ -156,13 +156,13 @@ public enum LibsMsg {
             ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Color,Size.0?" + ChatColor.RED + ", received " +
                     ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
     PARSE_NO_ARGS("No arguments defined"),
-    PARSE_NO_OPTION_VALUE(ChatColor.RED + "No value was given for the option %s"),
+    PARSE_NO_OPTION_VALUE(ChatColor.RED + "No value was given for the method %s"),
     PARSE_NO_PERM_NAME(ChatColor.RED + "Error! You don't have permission to use that name!"),
     PARSE_NO_PERM_PARAM(
             ChatColor.RED + "Error! You do not have permission to use the parameter %s on the %s disguise!"),
     PARSE_NO_PERM_REF(ChatColor.RED + "You do not have permission to use disguise references!"),
     PARSE_NO_REF(ChatColor.RED + "Cannot find a disguise under the reference %s"),
-    PARSE_OPTION_NA(ChatColor.RED + "Cannot find the option '%s'"),
+    PARSE_OPTION_NA(ChatColor.RED + "Cannot find the method '%s'"),
     PARSE_SUPPLY_PLAYER(ChatColor.RED + "Error! You need to give a player name!"),
     PARSE_TOO_MANY_ARGS(ChatColor.RED + "Error! %s doesn't know what to do with %s!"),
     PARSE_INVALID_TIME(ChatColor.RED + "Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
@@ -295,7 +295,7 @@ public enum LibsMsg {
             return TranslateType.MESSAGES.get(getRaw());
         }
 
-        return String.format(TranslateType.MESSAGES.get(getRaw()), (Object[]) strings);
+        return String.format(TranslateType.MESSAGES.get(getRaw()), strings);
     }
 
     public String toString() {
