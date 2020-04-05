@@ -85,6 +85,10 @@ public class LibsPremium {
             return false;
         }
 
+        if (premiumVersion.startsWith("9.")){
+            return false;
+        }
+
         // If current version is not a number version, then the premium version cannot be checked
         if (!currentVersion.matches("[0-9]+(\\.[0-9]+)+")) {
             // Return true as the rest of the version check cannot be used
