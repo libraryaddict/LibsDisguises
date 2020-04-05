@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +63,6 @@ public class UpdateChecker {
         latestVersion = version;
     }
 
-
     /**
      * Asks spigot for the version
      */
@@ -76,8 +76,8 @@ public class UpdateChecker {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String version = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n"));
+                String version = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
 
                 // If the version is not empty, return it
                 if (!version.isEmpty()) {
@@ -93,9 +93,16 @@ public class UpdateChecker {
     }
 
     private boolean isNewerVersion(String currentVersion, String newVersion) {
+        // Lets just ignore all this fancy logic, and say that if you're not on the current release, you're outdated!
+        return !currentVersion.replaceAll("(v)|(-SNAPSHOT)", "").equals(newVersion.replaceAll("(v)|(-SNAPSHOT)", ""));
+
+        /*
         // Remove 'v' and '-SNAPSHOT' from string, split by decimal points
         String[] cSplit = currentVersion.replaceAll("(v)|(-SNAPSHOT)", "").split("\\.");
         String[] nSplit = newVersion.replaceAll("(v)|(-SNAPSHOT)", "").split("\\.");
+
+        // Lets just ignore all this fancy logic, and say that if you're not on the current release, you're outdated!
+        return !Arrays.equals(cSplit, nSplit);
 
         // Iterate over the versions from left to right
         for (int i = 0; i < Math.max(cSplit.length, nSplit.length); i++) {
@@ -134,7 +141,7 @@ public class UpdateChecker {
         }
 
         // Both versions should be the same, return false as it's not a newer version
-        return false;
+        return false;*/
     }
 
     /**
@@ -151,8 +158,8 @@ public class UpdateChecker {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n"));
+                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
 
                 jsonObject = new Gson().fromJson(json, Map.class);
             }
