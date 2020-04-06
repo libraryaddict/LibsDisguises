@@ -139,7 +139,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             int id = ((MiscDisguise) disguise).getData();
 
-            mods.write(4, ReflectionManager.getEnumArt(Art.values()[id]));
+            mods.write(4, NmsVersion.v1_13.isSupported() ? id : ReflectionManager.getEnumArt(Art.values()[id]));
 
             // Make the teleport packet to make it visible..
             PacketContainer teleportPainting = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
