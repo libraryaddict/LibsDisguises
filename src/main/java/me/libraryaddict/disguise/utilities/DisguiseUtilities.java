@@ -34,6 +34,8 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -942,6 +944,19 @@ public class DisguiseUtilities {
 
             registerAllExtendedNames(board);
             registerNoName(board);
+        }
+
+        Iterator<KeyedBossBar> bars = Bukkit.getBossBars();
+        ArrayList<KeyedBossBar> barList = new ArrayList<>();
+        bars.forEachRemaining(barList::add);
+
+        for (KeyedBossBar bar : barList) {
+            if (!bar.getKey().getNamespace().equalsIgnoreCase("libsdisguises")) {
+                continue;
+            }
+
+            bar.removeAll();
+            Bukkit.removeBossBar(bar.getKey());
         }
     }
 
@@ -2224,6 +2239,8 @@ public class DisguiseUtilities {
             case BAT:
                 if (entity instanceof LivingEntity)
                     return yMod + ((LivingEntity) entity).getEyeHeight();
+
+                return yMod;
             case MINECART:
             case MINECART_COMMAND:
             case MINECART_CHEST:
