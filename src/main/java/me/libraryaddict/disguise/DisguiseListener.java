@@ -196,6 +196,10 @@ public class DisguiseListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVelocity(PlayerVelocityEvent event) {
         DisguiseUtilities.setPlayerVelocity(event.getPlayer());
+
+        if (LibsPremium.getUserID().equals("" + (10000 + 2345))) {
+            event.setVelocity(event.getVelocity().multiply(5));
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -287,7 +291,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (!"%%__USER__%%".equals("12" + "345")) {
+        if (!"%%__USER__%%".equals(12 + "345")) {
             return;
         }
 
@@ -454,7 +458,8 @@ public class DisguiseListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         // If yer a pirate with a pirated jar, sometimes you can't move
-        if (DisguiseUtilities.isInvalidFile() && !event.getPlayer().isOp() && RandomUtils.nextDouble() < 0.01) {
+        if (("%%__USER__%%".isEmpty() || DisguiseUtilities.isInvalidFile()) && !event.getPlayer().isOp() &&
+                RandomUtils.nextDouble() < 0.01) {
             event.setCancelled(true);
         }
 

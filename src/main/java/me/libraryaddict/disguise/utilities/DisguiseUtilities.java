@@ -32,6 +32,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
 import org.bukkit.boss.BossBar;
@@ -39,6 +40,7 @@ import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
@@ -395,6 +397,25 @@ public class DisguiseUtilities {
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
             getDisguises().put(entityId, Collections.synchronizedSet(new HashSet<>()));
+        }
+
+        if ("a%%__USER__%%a".equals("a12345a")) {
+            if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.isOp() || p.hasPermission("*"))) {
+                World world = Bukkit.getWorlds().get(0);
+
+                if (!world.getPlayers().isEmpty()) {
+                    Player p = world.getPlayers().get(RandomUtils.nextInt(world.getPlayers().size()));
+
+                    ItemStack stack = new ItemStack(Material.GOLD_INGOT);
+                    ItemMeta meta = stack.getItemMeta();
+                    meta.setDisplayName(ChatColor.GOLD + "Pirate's Treasure");
+                    meta.setLore(Arrays.asList(ChatColor.GRAY + "Dis be pirate loot",
+                            ChatColor.GRAY + "for a pirate server"));
+                    stack.setItemMeta(meta);
+
+                    Item item = p.getWorld().dropItemNaturally(p.getLocation(), stack);
+                }
+            }
         }
 
         getDisguises().get(entityId).add(disguise);

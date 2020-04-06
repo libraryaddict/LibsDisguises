@@ -648,7 +648,7 @@ public class DisguiseConfig {
         }
 
         if (failedCustomDisguises > 0) {
-            DisguiseUtilities.getLogger().severe("Failed to load " + failedCustomDisguises + " custom disguises");
+            DisguiseUtilities.getLogger().warning("Failed to load " + failedCustomDisguises + " custom disguises");
         }
 
         DisguiseUtilities.getLogger().info("Loaded " + customDisguises.size() + " custom disguise" +
