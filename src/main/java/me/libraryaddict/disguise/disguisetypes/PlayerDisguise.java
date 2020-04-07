@@ -87,7 +87,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public DisguiseUtilities.DScoreTeam getScoreboardName() {
-        if (getName().length() <= 16 ? !DisguiseConfig.isScoreboardDisguiseNames() :
+        if (getName().length() <= 32 ? !DisguiseConfig.isScoreboardDisguiseNames() :
                 !DisguiseConfig.isExtendedDisguiseNames()) {
             throw new IllegalStateException("Cannot use this method when it's been disabled in config!");
         }
@@ -218,13 +218,21 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public void setName(String name) {
+        if (getName().equals("<Inherit>") && getEntity() != null) {
+            name = getEntity().getCustomName();
+
+            if (name == null || name.isEmpty()) {
+                name = getEntity().getType().name();
+            }
+        }
+
         if (name.equals(playerName)) {
             return;
         }
 
         int cLimit = DisguiseConfig.isExtendedDisguiseNames() ? 16 * 3 :
                 DisguiseConfig.isScoreboardDisguiseNames() ? 16 * 2 : 16;
-        if (!DisguiseConfig.isExtendedDisguiseNames() && name.length() > cLimit) {
+        if (name.length() > cLimit) {
             name = name.substring(0, cLimit);
         }
 
@@ -318,7 +326,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setSkin(String newSkin) {
-        if (newSkin != null && newSkin.length() > 50) {
+        if (newSkin != null && newSkin.length() > 70) {
             try {
                 return setSkin(DisguiseUtilities.getGson().fromJson(newSkin, WrappedGameProfile.class));
             }
