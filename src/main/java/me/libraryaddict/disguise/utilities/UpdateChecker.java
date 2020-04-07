@@ -94,18 +94,6 @@ public class UpdateChecker {
         return null;
     }
 
-    private int reduceToNumber(String version) {
-        String[] split = version.split("\\.");
-
-        int num = 0;
-
-        for (int i = 0; i < split.length; i++) {
-            num += Integer.parseInt(split[i]) * ((split.length - i) * 10);
-        }
-
-        return num;
-    }
-
     private boolean isNewerVersion(String currentVersion, String newVersion) {
         currentVersion = currentVersion.replaceAll("(v)|(-SNAPSHOT)", "");
         newVersion = newVersion.replaceAll("(v)|(-SNAPSHOT)", "");
@@ -113,12 +101,13 @@ public class UpdateChecker {
         // If the server has been online for less than 6 hours and both versions are 1.1.1 kind of versions
         if (started + TimeUnit.HOURS.toMillis(6) > System.currentTimeMillis() &&
                 currentVersion.matches("[0-9]+(\\.[0-9]+)*") && newVersion.matches("[0-9]+(\\.[0-9]+)*")) {
-            int v1 = reduceToNumber(currentVersion);
-            int v2 = reduceToNumber(newVersion);
+
+            int cVersion = Integer.parseInt(currentVersion.replace(".", ""));
+            int nVersion = Integer.parseInt(newVersion.replace(".", ""));
 
             // If the current version is a higher version, and is only a higher version by 3 minor numbers
             // Then we have a cache problem
-            if (v1 > v2 && v2 + 3 > v1) {
+            if (cVersion > nVersion && nVersion + 3 > cVersion) {
                 return false;
             }
         }
