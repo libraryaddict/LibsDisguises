@@ -222,8 +222,10 @@ public class PlayerDisguise extends TargetedDisguise {
             return;
         }
 
-        if (!DisguiseConfig.isExtendedDisguiseNames() && name.length() > 16) {
-            name = name.substring(0, 16);
+        int cLimit = DisguiseConfig.isExtendedDisguiseNames() ? 16 * 3 :
+                DisguiseConfig.isScoreboardDisguiseNames() ? 16 * 2 : 16;
+        if (!DisguiseConfig.isExtendedDisguiseNames() && name.length() > cLimit) {
+            name = name.substring(0, cLimit);
         }
 
         if (isDisguiseInUse()) {
