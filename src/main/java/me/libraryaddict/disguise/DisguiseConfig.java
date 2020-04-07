@@ -444,6 +444,14 @@ public class DisguiseConfig {
 
         try {
             setNotifyBar(NotifyBar.valueOf(config.getString("NotifyBar").toUpperCase()));
+
+            if (getNotifyBar() == NotifyBar.BOSS_BAR) {
+                DisguiseUtilities.getLogger().warning(
+                        "BossBars hasn't been implemented properly in 1.12 due to api restrictions, falling back to " +
+                                "ACTION_BAR");
+
+                setNotifyBar(NotifyBar.ACTION_BAR);
+            }
         }
         catch (Exception ex) {
             DisguiseUtilities.getLogger()

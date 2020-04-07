@@ -127,6 +127,7 @@ HearSelfDisguise: true
 
 # When disguised, should a message be displayed to the player? If so, where?
 # The message can be customized in translations
+# BOSS_BAR is not supported in 1.12!
 # NONE, BOSS_BAR, ACTION_BAR
 NotifyBar: ACTION_BAR
 # If using boss bar, these two options come into play

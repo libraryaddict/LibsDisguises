@@ -967,17 +967,19 @@ public class DisguiseUtilities {
             registerNoName(board);
         }
 
-        Iterator<KeyedBossBar> bars = Bukkit.getBossBars();
-        ArrayList<KeyedBossBar> barList = new ArrayList<>();
-        bars.forEachRemaining(barList::add);
+        if (NmsVersion.v1_13.isSupported()) {
+            Iterator<KeyedBossBar> bars = Bukkit.getBossBars();
+            ArrayList<KeyedBossBar> barList = new ArrayList<>();
+            bars.forEachRemaining(barList::add);
 
-        for (KeyedBossBar bar : barList) {
-            if (!bar.getKey().getNamespace().equalsIgnoreCase("libsdisguises")) {
-                continue;
+            for (KeyedBossBar bar : barList) {
+                if (!bar.getKey().getNamespace().equalsIgnoreCase("libsdisguises")) {
+                    continue;
+                }
+
+                bar.removeAll();
+                Bukkit.removeBossBar(bar.getKey());
             }
-
-            bar.removeAll();
-            Bukkit.removeBossBar(bar.getKey());
         }
     }
 
