@@ -155,6 +155,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             else
                 disguise = DisguiseAPI.getDisguise(entity);
 
+            if (disguise == null) {
+                continue;
+            }
+
             DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
 
             if (!permissions.isAllowedDisguise(disguisePerm)) {

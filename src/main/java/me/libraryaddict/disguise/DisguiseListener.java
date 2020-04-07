@@ -420,14 +420,8 @@ public class DisguiseListener implements Listener {
 
                 if (disguise.isDisplayedInTab()) {
                     try {
-                        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-
-                        addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-                                new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                        WrappedChatComponent.fromText(disguise.getGameProfile().getName()))));
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, addTab);
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(p,
+                                DisguiseUtilities.getTabPacket(disguise, PlayerInfoAction.ADD_PLAYER));
                     }
                     catch (InvocationTargetException e) {
                         e.printStackTrace();

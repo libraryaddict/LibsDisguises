@@ -415,7 +415,7 @@ public class DisguiseConfig {
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
-        setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpires"));
+        setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpiry"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));
         setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));

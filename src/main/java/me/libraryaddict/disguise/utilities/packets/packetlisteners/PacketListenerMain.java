@@ -61,8 +61,6 @@ public class PacketListenerMain extends PacketAdapter {
             return;
         }
 
-        packets.setSpawnPacketCheck(event.getPacketType());
-
         event.setCancelled(true);
 
         try {

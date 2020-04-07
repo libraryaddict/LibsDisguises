@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import lombok.Getter;
 import lombok.Setter;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -96,6 +97,10 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         return scoreboardName;
+    }
+
+    private void setScoreboardName(String[] split) {
+        getScoreboardName().setSplit(split);
     }
 
     private boolean isStaticName(String name) {
@@ -229,7 +234,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
                 resendDisguise = !split[1].equals(team.getPlayer());
-                team.setSplit(split);
+                setScoreboardName(split);
             }
 
             resendDisguise =
@@ -268,12 +273,28 @@ public class PlayerDisguise extends TargetedDisguise {
 
                 playerName = name;
             }
+
+            if (isDisplayedInTab()) {
+                PacketContainer addTab = DisguiseUtilities.getTabPacket(this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
+
+                try {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (!canSee(player))
+                            continue;
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                    }
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
             if (scoreboardName != null) {
                 DisguiseUtilities.DScoreTeam team = getScoreboardName();
                 String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
-                team.setSplit(split);
+                setScoreboardName(split);
             }
 
             if (name.isEmpty()) {
@@ -308,6 +329,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
+        String oldSkin = skinToUse;
         skinToUse = newSkin;
 
         if (newSkin == null) {
@@ -316,6 +338,31 @@ public class PlayerDisguise extends TargetedDisguise {
         } else {
             if (newSkin.length() > 16) {
                 skinToUse = newSkin.substring(0, 16);
+            }
+
+            if (newSkin.equals(oldSkin)) {
+                return this;
+            }
+
+            if (isDisguiseInUse()) {
+                currentLookup = new LibsProfileLookup() {
+                    @Override
+                    public void onLookup(WrappedGameProfile gameProfile) {
+                        if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
+                            return;
+
+                        setSkin(gameProfile);
+
+                        currentLookup = null;
+                    }
+                };
+
+                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup,
+                        LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+
+                if (gameProfile != null) {
+                    setSkin(gameProfile);
+                }
             }
         }
 
@@ -342,13 +389,15 @@ public class PlayerDisguise extends TargetedDisguise {
         this.skinToUse = gameProfile.getName();
         this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), gameProfile);
 
+        refreshDisguise();
+
+        return this;
+    }
+
+    private void refreshDisguise() {
         if (DisguiseUtilities.isDisguiseInUse(this)) {
             if (isDisplayedInTab()) {
-                PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                addTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                        new PlayerInfoData(getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                WrappedChatComponent.fromText(getProfileName()))));
+                PacketContainer addTab = DisguiseUtilities.getTabPacket(this, PlayerInfoAction.ADD_PLAYER);
 
                 PacketContainer deleteTab = addTab.shallowClone();
                 deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
@@ -369,8 +418,6 @@ public class PlayerDisguise extends TargetedDisguise {
 
             DisguiseUtilities.refreshTrackers(this);
         }
-
-        return this;
     }
 
     @Override

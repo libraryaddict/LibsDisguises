@@ -159,7 +159,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
                     .getGameProfileWithThisSkin(UUID.randomUUID(),
-                            visibleOrNewCompat ? playerDisguise.getProfileName() : "", playerDisguise.getGameProfile());
+                            visibleOrNewCompat ? playerDisguise.getName() : "", playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();
 
@@ -182,7 +182,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (LibsPremium.getPaidInformation() == null ||
                         LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    packets.addDelayedPacket(deleteTab, DisguiseConfig.getPlayerDisguisesTablistExpires());
+                    packets.addDelayedPacket(deleteTab, 2);
                 }
             }
 
@@ -196,18 +196,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             boolean selfDisguise = observer == disguisedEntity;
 
-            WrappedDataWatcher newWatcher;
-
-            if (selfDisguise) {
-                newWatcher = DisguiseUtilities
-                        .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
-                                disguise.getWatcher());
-            } else {
-                newWatcher = new WrappedDataWatcher();
-
-                spawnAt = observer.getLocation();
-                spawnAt.add(spawnAt.getDirection().normalize().multiply(20));
-            }
+            WrappedDataWatcher newWatcher = DisguiseUtilities
+                    .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
+                            disguise.getWatcher());
 
             // Spawn him in front of the observer
             StructureModifier<Double> doubles = spawnPlayer.getDoubles();
@@ -219,10 +210,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
             bytes.write(0, yaw);
             bytes.write(1, pitch);
 
-            // Make him invisible
-            newWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(MetaIndex.ENTITY_META.getIndex(),
-                    WrappedDataWatcher.Registry.get(Byte.class)), (byte) 32);
-
             packets.addPacket(spawnPlayer);
 
             if (NmsVersion.v1_15.isSupported()) {
@@ -233,41 +220,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 packets.addPacket(metaPacket);
             } else {
                 spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
-            }
-
-            if (!selfDisguise) {
-                // Teleport the player back to where he's supposed to be
-                PacketContainer teleportPacket = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-
-                doubles = teleportPacket.getDoubles();
-
-                teleportPacket.getIntegers().write(0, entityId); // Id
-                doubles.write(0, loc.getX());
-                doubles.write(1, loc.getY());
-                doubles.write(2, loc.getZ());
-
-                bytes = teleportPacket.getBytes();
-                bytes.write(0, yaw);
-                bytes.write(1, pitch);
-
-                packets.addDelayedPacket(teleportPacket, 3);
-
-                // Send a metadata packet
-                PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-
-                newWatcher = DisguiseUtilities
-                        .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
-                                disguise.getWatcher());
-
-                metaPacket.getIntegers().write(0, entityId); // Id
-                metaPacket.getWatchableCollectionModifier().write(0, newWatcher.getWatchableObjects());
-
-                packetsHandler.addCancel(disguise, observer);
-
-                // Add a delay to remove the entry from 'cancelMeta'
-
-                packets.addDelayedPacket(metaPacket, 7);
-                packets.setRemoveMetaAt(7);
             }
         } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();
@@ -420,37 +372,24 @@ public class PacketHandlerSpawn implements IPacketHandler {
         }
 
         // If armor must be sent because its currently not displayed and would've been sent normally
-        boolean delayedArmor =
-                DisguiseConfig.isPlayerHideArmor() && (disguise.isPlayerDisguise() && disguisedEntity != observer) &&
-                        disguisedEntity instanceof LivingEntity;
 
-        if (delayedArmor) {
-            packets.setSendArmor(true);
-            packets.setRemoveMetaAt(7);
-        }
         // This sends the armor packets so that the player isn't naked.
-        if (DisguiseConfig.isEquipmentPacketsEnabled() || delayedArmor) {
+        if (DisguiseConfig.isEquipmentPacketsEnabled()) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 // Get what the disguise wants to show for its armor
-                ItemStack itemToSend;
+                ItemStack itemToSend = disguise.getWatcher().getItemStack(slot);
 
-                if (delayedArmor) {
-                    itemToSend = new ItemStack(Material.AIR);
-                } else {
-                    itemToSend = disguise.getWatcher().getItemStack(slot);
+                // If the disguise armor isn't visible
+                if (itemToSend == null) {
+                    itemToSend = ReflectionManager.getEquipment(slot, disguisedEntity);
 
-                    // If the disguise armor isn't visible
-                    if (itemToSend == null) {
-                        itemToSend = ReflectionManager.getEquipment(slot, disguisedEntity);
-
-                        // If natural armor isn't sent either
-                        if (itemToSend == null || itemToSend.getType() == Material.AIR) {
-                            continue;
-                        }
-                    } else if (itemToSend.getType() == Material.AIR) {
-                        // Its air which shouldn't be sent
+                    // If natural armor isn't sent either
+                    if (itemToSend == null || itemToSend.getType() == Material.AIR) {
                         continue;
                     }
+                } else if (itemToSend.getType() == Material.AIR) {
+                    // Its air which shouldn't be sent
+                    continue;
                 }
 
                 PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);

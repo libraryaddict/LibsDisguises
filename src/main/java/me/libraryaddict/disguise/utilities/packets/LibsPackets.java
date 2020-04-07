@@ -24,13 +24,8 @@ import java.util.*;
 public class LibsPackets {
     private ArrayList<PacketContainer> packets = new ArrayList<>();
     private HashMap<Integer, ArrayList<PacketContainer>> delayedPackets = new HashMap<>();
-    private boolean isSpawnPacket;
     private Disguise disguise;
     private boolean doNothing;
-    private int removeMetaAt = -1;
-    @Getter
-    @Setter
-    private boolean sendArmor;
 
     public LibsPackets(Disguise disguise) {
         this.disguise = disguise;
@@ -40,20 +35,12 @@ public class LibsPackets {
         doNothing = true;
     }
 
-    public void setRemoveMetaAt(int tick) {
-        removeMetaAt = tick;
-    }
-
     public boolean isUnhandled() {
         return doNothing;
     }
 
     public Disguise getDisguise() {
         return disguise;
-    }
-
-    public void setSpawnPacketCheck(PacketType type) {
-        isSpawnPacket = type.name().contains("SPAWN") && type.name().contains("ENTITY");
     }
 
     public void addPacket(PacketContainer packet) {
@@ -84,19 +71,8 @@ public class LibsPackets {
     }
 
     public void sendDelayed(final Player observer) {
-        Iterator<Map.Entry<Integer, ArrayList<PacketContainer>>> itel = delayedPackets.entrySet().iterator();
-
-        while (itel.hasNext()) {
-            Map.Entry<Integer, ArrayList<PacketContainer>> entry = itel.next();
-            // If this is the last delayed packet
-            final boolean isRemoveCancel = isSpawnPacket && entry.getKey() >= removeMetaAt && removeMetaAt >= 0;
-
+        for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : delayedPackets.entrySet()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-
-                if (isRemoveCancel && "%%__USER__%%".equals("%%__USER__%%") && !"%%__USER__%%".equals("12345")) {
-                    PacketsManager.getPacketsHandler().removeCancel(disguise, observer);
-                }
-
                 if (!disguise.isDisguiseInUse()) {
                     ArrayList<PacketContainer> packets = entry.getValue();
 
@@ -105,25 +81,6 @@ public class LibsPackets {
                     }
 
                     packets.removeIf(p -> p.getType() != PacketType.Play.Server.PLAYER_INFO);
-                }
-
-                if (isRemoveCancel) {
-                    if (isSendArmor()) {
-                        for (EquipmentSlot slot : EquipmentSlot.values()) {
-                            PacketContainer packet = createPacket(slot);
-
-                            if (packet == null) {
-                                continue;
-                            }
-
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                            }
-                            catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
                 }
 
                 try {

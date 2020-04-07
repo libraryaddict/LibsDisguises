@@ -35,19 +35,22 @@ public class PacketHandlerMetadata implements IPacketHandler {
 
         packets.clear();
 
-        if (DisguiseConfig.isMetaPacketsEnabled() && !packetsHandler.isCancelMeta(disguise, observer)) {
-            List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
-                    .convert(sentPacket.getWatchableCollectionModifier().read(0));
-
-            PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-
-            packets.addPacket(metaPacket);
-
-            StructureModifier<Object> newMods = metaPacket.getModifier();
-
-            newMods.write(0, entity.getEntityId());
-
-            metaPacket.getWatchableCollectionModifier().write(0, watchableObjects);
+        if (!DisguiseConfig.isMetaPacketsEnabled()) {
+            return;
         }
+
+        List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
+                .convert(sentPacket.getWatchableCollectionModifier().read(0));
+
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+
+        packets.addPacket(metaPacket);
+
+        StructureModifier<Object> newMods = metaPacket.getModifier();
+
+        newMods.write(0, entity.getEntityId());
+
+        metaPacket.getWatchableCollectionModifier().write(0, watchableObjects);
     }
 }
+

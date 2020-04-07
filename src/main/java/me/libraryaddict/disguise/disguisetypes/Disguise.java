@@ -962,11 +962,7 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-                PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-                addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-                        new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL,
-                                WrappedChatComponent.fromText(disguise.getProfileName()))));
+                PacketContainer addTab = DisguiseUtilities.getTabPacket(disguise, PlayerInfoAction.ADD_PLAYER);
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
