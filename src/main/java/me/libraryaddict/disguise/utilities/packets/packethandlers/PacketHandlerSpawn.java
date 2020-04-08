@@ -158,8 +158,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
             boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardDisguiseNames();
 
             WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
-                    .getGameProfileWithThisSkin(UUID.randomUUID(),
-                            visibleOrNewCompat ? playerDisguise.getName() : "", playerDisguise.getGameProfile());
+                    .getGameProfileWithThisSkin(UUID.randomUUID(), visibleOrNewCompat ? playerDisguise.getName() : "",
+                            playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();
 
@@ -196,10 +196,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             boolean selfDisguise = observer == disguisedEntity;
 
-            WrappedDataWatcher newWatcher = DisguiseUtilities
-                    .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
-                            disguise.getWatcher());
-
             // Spawn him in front of the observer
             StructureModifier<Double> doubles = spawnPlayer.getDoubles();
             doubles.write(0, spawnAt.getX());
@@ -211,6 +207,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
             bytes.write(1, pitch);
 
             packets.addPacket(spawnPlayer);
+
+            WrappedDataWatcher newWatcher = DisguiseUtilities
+                    .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
+                            disguise.getWatcher());
 
             if (NmsVersion.v1_15.isSupported()) {
                 PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
