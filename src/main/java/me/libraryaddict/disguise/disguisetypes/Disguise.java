@@ -80,10 +80,11 @@ public abstract class Disguise {
      * If set, how long before disguise expires
      */
     private long disguiseExpires;
-    @Getter
     /**
      * For when plugins may want to assign custom data to a disguise, such as who owns it
-     */ private final HashMap<String, Object> customData = new HashMap<>();
+     */
+    @Getter
+    private final HashMap<String, Object> customData = new HashMap<>();
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;

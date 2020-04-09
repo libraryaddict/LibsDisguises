@@ -22,6 +22,7 @@ Permissions:
   # The permissions for commands are a simple 'libsdisguises.seecmd.command' where 'command' can be
   # 'disguise', 'undisguise' etc. A simple 'libsdisguises.seecmd' permission may also work for children
   # If you change this while the server is running, players may need to rejoin for it to take effect
+  # Remember that command blocks need 'TRUE' or 'OP' to use the commands.
   # TRUE = Everyone can see this, the default. Can be negated with permissions
   # FALSE = No one can see this without permissions to allow it
   # OP = Only operators can see this
