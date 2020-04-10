@@ -63,7 +63,8 @@ public enum LibsMsg {
     DMODIFY_MODIFIED(ChatColor.RED + "Your disguise has been modified!"),
     DMODIFY_NO_PERM(ChatColor.RED + "No permission to modify your disguise!"),
     DMODIFYENT_CLICK(ChatColor.RED + "Right click a disguised entity in the next %s seconds to modify their disguise!"),
-    DISGUISECOPY_INTERACT(ChatColor.RED + "Right click a disguised entity in the next %s seconds to copy their disguise!"),
+    DISGUISECOPY_INTERACT(
+            ChatColor.RED + "Right click a disguised entity in the next %s seconds to copy their disguise!"),
     DMODPLAYER_HELP1(ChatColor.DARK_GREEN + "Modify the disguise of another player!"),
     DMODPLAYER_MODIFIED(ChatColor.RED + "Modified the disguise of %s!"),
     DMODPLAYER_NODISGUISE(ChatColor.RED + "The player '%s' is not disguised"),
@@ -224,13 +225,17 @@ public enum LibsMsg {
             "Your arguments need to be as if you're using /disguise. So '/disguise player Notch setsneaking' - " +
             "Means '/savedisguise Notch player Notch setsneaking'"),
     SAVE_DISG_HELP_5(ChatColor.GREEN + "Remember! You can upload your own skins, then reference those skins!"),
+    SAVE_DISG_HELP_6(ChatColor.GREEN +
+            "If you are using setSkin, you can append :slim to your skin path to get the slim Alex model. So myskin" +
+            ".png:slim"),
     GRAB_DISG_HELP_1(ChatColor.GREEN +
             "You can choose a name to save the skins under, the names will be usable as if it was an actual player " +
             "skin"),
     GRAB_DISG_HELP_2(ChatColor.DARK_GREEN + "/grabskin https://somesite.com/myskin.png <Optional Name>"),
     GRAB_DISG_HELP_3(ChatColor.DARK_GREEN + "/grabskin myskin.png <Optional Name> - Skins must be in the folder!"),
     GRAB_DISG_HELP_4(ChatColor.DARK_GREEN + "/grabskin <Player name or UUID> <Optional Name>"),
-    GRAB_DISG_HELP_5(
+    GRAB_DISG_HELP_5(ChatColor.GREEN + "If you want the slim Alex version of the skin, append :slim. So 'myskin.png:slim'"),
+    GRAB_DISG_HELP_6(
             ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),
     CUSTOM_DISGUISE_NAME_CONFLICT(
             ChatColor.RED + "Cannot create the custom disguise '%s' as there is a name conflict!"),

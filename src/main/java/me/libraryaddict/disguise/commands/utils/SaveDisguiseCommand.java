@@ -182,5 +182,6 @@ public class SaveDisguiseCommand implements CommandExecutor {
         sender.sendMessage(LibsMsg.SAVE_DISG_HELP_3.get());
         sender.sendMessage(LibsMsg.SAVE_DISG_HELP_4.get());
         sender.sendMessage(LibsMsg.SAVE_DISG_HELP_5.get());
+        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_6.get());
     }
 }
