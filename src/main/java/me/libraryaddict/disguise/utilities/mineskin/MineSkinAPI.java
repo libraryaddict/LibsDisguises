@@ -52,11 +52,13 @@ public class MineSkinAPI {
      *
      * @param url
      */
-    public MineSkinResponse generateFromUrl(SkinUtils.SkinCallback callback, String url) {
-        return doPost(callback, "/generate/url", url, null);
+    public MineSkinResponse generateFromUrl(SkinUtils.SkinCallback callback, String url,
+            SkinUtils.ModelType modelType) {
+        return doPost(callback, "/generate/url", url, null, modelType);
     }
 
-    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file) {
+    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file,
+            SkinUtils.ModelType modelType) {
         lock.lock();
 
         HttpURLConnection connection = null;
@@ -102,13 +104,20 @@ public class MineSkinAPI {
                     writer.append(CRLF).append(skinUrl).append(CRLF).flush();
                 }
 
+                if (modelType == SkinUtils.ModelType.SLIM) {
+                    writer.append("--").append(boundary).append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"model\"").append(CRLF);
+                    writer.append(CRLF).append("slim").append(CRLF).flush();
+                }
+
                 // End of multipart/form-data.
                 writer.append("--").append(boundary).append("--").append(CRLF).flush();
             }
 
             if (connection.getResponseCode() == 500) {
-                APIError error = new Gson().fromJson(new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n")), APIError.class);
+                APIError error = new Gson().fromJson(
+                        new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))
+                                .lines().collect(Collectors.joining("\n")), APIError.class);
 
                 if (error.code == 403) {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_403.get());
@@ -137,8 +146,8 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = connection.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n"));
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
@@ -176,22 +185,27 @@ public class MineSkinAPI {
         return null;
     }
 
-    public MineSkinResponse generateFromUUID(UUID uuid) throws IllegalArgumentException {
+    public MineSkinResponse generateFromUUID(UUID uuid, SkinUtils.ModelType modelType) throws IllegalArgumentException {
         lock.lock();
 
         try {
-            URL url = new URL("https://api.mineskin.org/generate/user/:" + uuid.toString());
+            String siteUrl = "https://api.mineskin.org/generate/user/:" + uuid.toString();
+
+            if (modelType == SkinUtils.ModelType.SLIM) {
+                siteUrl += "?model=slim";
+            }
+
+            URL url = new URL(siteUrl);
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("User-Agent", "LibsDisguises");
-            // We're writing a body that contains the API access key (Not required and obsolete, but!)
             con.setDoOutput(true);
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n"));
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
@@ -223,7 +237,8 @@ public class MineSkinAPI {
      *
      * @param file
      */
-    public MineSkinResponse generateFromFile(SkinUtils.SkinCallback callback, File file) {
-        return doPost(callback, "/generate/upload", null, file);
+    public MineSkinResponse generateFromFile(SkinUtils.SkinCallback callback, File file,
+            SkinUtils.ModelType modelType) {
+        return doPost(callback, "/generate/upload", null, file, modelType);
     }
 }

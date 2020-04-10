@@ -25,12 +25,18 @@ public class SkinUtils {
         void onSuccess(WrappedGameProfile profile);
     }
 
-    public static void handleFile(File file, SkinCallback callback) {
+    public enum ModelType {
+        SLIM,
+        NORMAL
+    }
+
+    public static void handleFile(File file, ModelType modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    MineSkinResponse response = DisguiseUtilities.getMineSkinAPI().generateFromFile(callback, file);
+                    MineSkinResponse response = DisguiseUtilities.getMineSkinAPI()
+                            .generateFromFile(callback, file, modelType);
 
                     new BukkitRunnable() {
                         @Override
@@ -42,7 +48,7 @@ public class SkinUtils {
                                 return;
                             }
 
-                            handleProfile(response.getGameProfile(), callback);
+                            handleProfile(response.getGameProfile(), modelType, callback);
                         }
                     }.runTask(LibsDisguises.getInstance());
                 }
@@ -58,11 +64,12 @@ public class SkinUtils {
         }.runTaskAsynchronously(LibsDisguises.getInstance());
     }
 
-    public static void handleUrl(String url, SkinCallback callback) {
+    public static void handleUrl(String url, ModelType modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                MineSkinResponse response = DisguiseUtilities.getMineSkinAPI().generateFromUrl(callback, url);
+                MineSkinResponse response = DisguiseUtilities.getMineSkinAPI()
+                        .generateFromUrl(callback, url, modelType);
 
                 new BukkitRunnable() {
                     @Override
@@ -73,14 +80,14 @@ public class SkinUtils {
                             callback.onError(LibsMsg.SKIN_API_FAIL);
                         }
 
-                        handleProfile(response.getGameProfile(), callback);
+                        handleProfile(response.getGameProfile(), modelType, callback);
                     }
                 }.runTask(LibsDisguises.getInstance());
             }
         }.runTaskAsynchronously(LibsDisguises.getInstance());
     }
 
-    public static void handleName(String playerName, SkinCallback callback) {
+    public static void handleName(String playerName, ModelType modelType, SkinCallback callback) {
         WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(playerName, new LibsProfileLookup() {
             @Override
             public void onLookup(WrappedGameProfile gameProfile) {
@@ -94,7 +101,7 @@ public class SkinUtils {
                     return;
                 }
 
-                handleProfile(gameProfile, callback);
+                handleProfile(gameProfile, modelType, callback);
             }
         });
 
@@ -108,18 +115,18 @@ public class SkinUtils {
             return;
         }
 
-        handleProfile(gameProfile, callback);
+        handleProfile(gameProfile, modelType, callback);
     }
 
-    public static void handleProfile(GameProfile profile, SkinCallback callback) {
-        handleProfile(WrappedGameProfile.fromHandle(profile), callback);
+    public static void handleProfile(GameProfile profile, ModelType modelType, SkinCallback callback) {
+        handleProfile(WrappedGameProfile.fromHandle(profile), modelType, callback);
     }
 
-    public static void handleProfile(WrappedGameProfile profile, SkinCallback callback) {
+    public static void handleProfile(WrappedGameProfile profile, ModelType modelType, SkinCallback callback) {
         callback.onSuccess(profile);
     }
 
-    public static void handleUUID(UUID uuid, SkinCallback callback) {
+    public static void handleUUID(UUID uuid, ModelType modelType, SkinCallback callback) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -134,7 +141,7 @@ public class SkinUtils {
                             return;
                         }
 
-                        handleProfile(profile, callback);
+                        handleProfile(profile, modelType, callback);
                     }
                 }.runTask(LibsDisguises.getInstance());
             }
@@ -158,10 +165,17 @@ public class SkinUtils {
     }
 
     public static void grabSkin(String param, SkinCallback callback) {
+        ModelType modelType = param.toLowerCase().endsWith(":slim") ? ModelType.SLIM : ModelType.NORMAL;
+
+        if (modelType == ModelType.SLIM) {
+            param = param.substring(0, param.length() - ":slim".length());
+        }
+
         if (param.matches("https?:\\/\\/.+")) {
             // Its an url
             callback.onInfo(LibsMsg.SKIN_API_USING_URL);
-            handleUrl(param, callback);
+
+            handleUrl(param, modelType, callback);
         } else {
             // Check if it contains legal file characters
             if (!param.matches("[a-zA-Z0-9 -_]+(\\.png)?")) {
@@ -183,7 +197,7 @@ public class SkinUtils {
 
             if (file != null) {
                 callback.onInfo(LibsMsg.SKIN_API_USING_FILE);
-                handleFile(file, callback);
+                handleFile(file, modelType, callback);
                 // We're using a file!
             } else {
                 // We're using a player name or UUID!
@@ -192,7 +206,7 @@ public class SkinUtils {
                         UUID uuid = UUID.fromString(param);
 
                         callback.onInfo(LibsMsg.SKIN_API_USING_UUID);
-                        handleUUID(uuid, callback);
+                        handleUUID(uuid, modelType, callback);
                         return;
                     }
                     catch (Exception ignored) {
@@ -200,7 +214,7 @@ public class SkinUtils {
                 }
 
                 callback.onInfo(LibsMsg.SKIN_API_USING_NAME);
-                handleName(param, callback);
+                handleName(param, modelType, callback);
             }
         }
     }
