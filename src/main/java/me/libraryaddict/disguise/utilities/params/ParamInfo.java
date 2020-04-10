@@ -3,10 +3,7 @@ package me.libraryaddict.disguise.utilities.params;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 7/09/2018.
@@ -68,7 +65,15 @@ public abstract class ParamInfo {
     }
 
     public void setOtherValues(String... otherValues) {
-        this.otherValues = otherValues;
+        if (this.otherValues != null) {
+            this.otherValues = Arrays.copyOf(this.otherValues, this.otherValues.length + otherValues.length);
+
+            for (int i = 0; i < otherValues.length; i++) {
+                this.otherValues[this.otherValues.length - (otherValues.length - i)] = otherValues[i];
+            }
+        } else {
+            this.otherValues = otherValues;
+        }
     }
 
     public boolean canReturnNull() {
@@ -140,6 +145,13 @@ public abstract class ParamInfo {
     }
 
     public Set<String> getEnums(String tabComplete) {
+        if (getOtherValues() != null) {
+            HashSet<String> set = new HashSet<>(getValues().keySet());
+            set.addAll(Arrays.asList(getOtherValues()));
+
+            return set;
+        }
+
         return getValues().keySet();
     }
 

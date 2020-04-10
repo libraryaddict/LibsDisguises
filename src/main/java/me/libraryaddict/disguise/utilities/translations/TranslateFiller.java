@@ -36,12 +36,12 @@ public class TranslateFiller {
                 }
             }
 
-            if (info.getOtherValues() != null) {
+            /*if (info.getOtherValues() != null) {
                 for (String e : info.getOtherValues()) {
                     TranslateType.DISGUISE_OPTIONS_PARAMETERS
                             .save(e, "Used for the disguise option " + info.getRawName());
                 }
-            }
+            }*/
         }
 
         for (DisguiseType type : DisguiseType.values()) {

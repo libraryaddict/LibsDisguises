@@ -24,7 +24,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
 
-        setOtherValues("null", "glow");
+        setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%");
     }
 
     @Override
@@ -97,7 +97,9 @@ public class ParamInfoItemStack extends ParamInfoEnum {
     }
 
     protected static ItemStack parseToItemstack(String string) {
-        if (string.startsWith("{") && string.endsWith("}")) {
+        if (string.isEmpty()) {
+            return null;
+        } else if (string.startsWith("{") && string.endsWith("}")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, ItemStack.class);
             }

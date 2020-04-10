@@ -1,8 +1,11 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import com.google.gson.Gson;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,6 +16,8 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
     public ParamInfoItemStackArray(Class paramClass, String name, String valueType, String description,
             Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
+
+        setOtherValues("%armor%");
     }
 
     @Override
@@ -22,16 +27,21 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
 
     @Override
     public Set<String> getEnums(String tabComplete) {
-        String beginning = tabComplete.substring(0, tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
-        String end = tabComplete.substring(tabComplete.contains(",") ? tabComplete.lastIndexOf(",") + 1 : 0);
+        ArrayList<String> split = split(tabComplete);
 
         Set<String> toReturn = new LinkedHashSet<>();
 
+        if (split == null || split.stream().anyMatch(s -> s.equalsIgnoreCase("%armor%"))) {
+            return toReturn;
+        }
+
+        String lastEntry = split.remove(split.size() - 1);
+
         for (String material : super.getEnums(null)) {
-            if (!material.toLowerCase().startsWith(end.toLowerCase()))
+            if (!split.isEmpty() && !material.toLowerCase().startsWith(lastEntry.toLowerCase()))
                 continue;
 
-            toReturn.add(beginning + material);
+            toReturn.add(StringUtils.join(split, ",") + (split.isEmpty() ? "" : ",") + material);
         }
 
         return toReturn;
@@ -75,9 +85,9 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
             }
         }
 
-        String[] split = split(string);
+        ArrayList<String> split = split(string);
 
-        if (split == null || split.length != 4) {
+        if (split == null || split.size() != 4) {
             return null;
         }
 
@@ -85,30 +95,29 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
         ItemStack[] items = new ItemStack[4];
 
         for (int a = 0; a < 4; a++) {
-            items[a] = parseToItemstack(split[a]);
+            items[a] = parseToItemstack(split.get(a));
         }
 
         return items;
     }
 
-    private static String[] split(String string) {
-        String[] split = new String[4];
+    private ArrayList<String> split(String string) {
+        ArrayList<String> split = new ArrayList<>();
 
         char[] chars = string.toCharArray();
         boolean quote = false;
         int depth = 0;
-        int splitNo = 0;
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < chars.length; i++) {
-            if (splitNo > 3 || depth < 0) {
+            if (split.size() > 3 || depth < 0) {
                 return null;
             }
 
             char c = chars[i];
 
             if (!quote && depth == 0 && c == ',') {
-                split[splitNo++] = builder.toString();
+                split.add(builder.toString());
                 builder = new StringBuilder();
                 continue;
             }
@@ -122,9 +131,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
 
             if (c == '"') {
                 quote = !quote;
-            }
-
-            if (!quote) {
+            } else if (!quote) {
                 if (c == '{' || c == '[') {
                     depth++;
                 } else if (c == '}' || c == ']') {
@@ -133,11 +140,11 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
             }
         }
 
-        if (splitNo != 3 || quote || depth != 0) {
+        if (quote || depth != 0) {
             return null;
         }
 
-        split[splitNo] = builder.toString();
+        split.add(builder.toString());
 
         return split;
     }

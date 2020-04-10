@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 public class ParamInfoString extends ParamInfo {
     public ParamInfoString(Class paramClass, String name, String description) {
         super(paramClass, name, description);
+
+        setOtherValues("%user-name%", "%target-name%");
     }
 
     @Override

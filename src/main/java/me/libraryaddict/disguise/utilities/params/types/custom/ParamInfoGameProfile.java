@@ -11,6 +11,8 @@ import me.libraryaddict.disguise.utilities.params.ParamInfo;
 public class ParamInfoGameProfile extends ParamInfo {
     public ParamInfoGameProfile(Class paramClass, String name, String description) {
         super(paramClass, name, description);
+
+        setOtherValues("%user-skin%", "%target-skin%");
     }
 
     @Override
