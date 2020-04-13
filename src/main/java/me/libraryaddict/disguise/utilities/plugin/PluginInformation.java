@@ -20,7 +20,7 @@ public class PluginInformation {
         this.userID = userID;
         this.resourceID = resourceID;
         this.downloadID = downloadID;
-        this.premium = premium;
+        this.premium = premium && !"81".equals(resourceID);
         this.version = version;
         this.buildNumber = buildNumber;
         this.buildDate = buildDate;

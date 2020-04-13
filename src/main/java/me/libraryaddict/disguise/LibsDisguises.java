@@ -111,7 +111,7 @@ public class LibsDisguises extends JavaPlugin {
 
         registerCommand("libsdisguises", new LibsDisguisesCommand());
 
-        if (!DisguiseConfig.isDisableCommands()) {
+        if (!DisguiseConfig.isDisableCommands() && !LibsPremium.isAPIPlugin()) {
             registerCommand("disguise", new DisguiseCommand());
             registerCommand("undisguise", new UndisguiseCommand());
             registerCommand("disguiseplayer", new DisguisePlayerCommand());
@@ -132,7 +132,11 @@ public class LibsDisguises extends JavaPlugin {
             registerCommand("grabskin", new GrabSkinCommand());
             registerCommand("savedisguise", new SaveDisguiseCommand());
         } else {
-            getLogger().info("Commands has been disabled, as per config");
+            if (LibsPremium.isAPIPlugin()) {
+                getLogger().info("Commands not enabled in API version of Lib's Disguises!");
+            } else {
+                getLogger().info("Commands has been disabled, as per config");
+            }
         }
 
         new MetricsInitalizer();

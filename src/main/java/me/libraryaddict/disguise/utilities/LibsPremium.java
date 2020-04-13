@@ -64,7 +64,11 @@ public class LibsPremium {
      * @return true if userID does not contain __USER__
      */
     private static Boolean isPremium(String userID) {
-        return !userID.contains("__USER__");
+        return !userID.contains("__USER__") && !getResourceID().equals("81");
+    }
+
+    public static Boolean isAPIPlugin() {
+        return !isPremium() && getResourceID().equals("81");
     }
 
     /**
@@ -85,7 +89,7 @@ public class LibsPremium {
             return false;
         }
 
-        if (premiumVersion.startsWith("9.")){
+        if (premiumVersion.startsWith("9.")) {
             return false;
         }
 
