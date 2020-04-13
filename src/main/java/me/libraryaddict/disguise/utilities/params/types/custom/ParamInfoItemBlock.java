@@ -13,8 +13,23 @@ import java.util.Arrays;
 public class ParamInfoItemBlock extends ParamInfoItemStack {
     public ParamInfoItemBlock(Class paramClass, String name, String valueType, String description,
             Material[] possibleValues) {
-        super(paramClass, name, valueType, description,
-                Arrays.stream(possibleValues).filter(Material::isBlock).toArray(Material[]::new));
+        super(paramClass, name, valueType, description, Arrays.stream(possibleValues).filter(m -> {
+            if (!m.isBlock())
+                return false;
+
+            if (NmsVersion.v1_13.isSupported())
+                return true;
+
+            switch (m) {
+                case CAKE:
+                case FLOWER_POT:
+                case CAULDRON:
+                case BREWING_STAND:
+                    return false;
+                default:
+                    return true;
+            }
+        }).toArray(Material[]::new));
     }
 
     @Override
