@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.CustomWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -221,7 +222,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             } else {
                 spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
             }
-        } else if (disguise.getType().isMob() || disguise.getType() == DisguiseType.ARMOR_STAND) {
+        } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();
 
             PacketContainer spawnEntity = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
@@ -231,7 +232,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, disguisedEntity.getUniqueId());
-            mods.write(2, disguise.getType().getTypeId());
+
+            if (disguise.getType() != DisguiseType.CUSTOM) {
+                mods.write(2, disguise.getType().getTypeId());
+            } else {
+                mods.write(2, ((CustomWatcher) disguise.getWatcher()).getTypeId());
+            }
 
             // region Vector calculations
             double d1 = 3.9D;

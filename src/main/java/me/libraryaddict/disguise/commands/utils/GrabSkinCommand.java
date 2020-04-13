@@ -45,7 +45,8 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         String[] args = DisguiseUtilities.split(StringUtils.join(strings, " "));
-        String tName = args.length > 1 ? args[1] : null;
+        String tName = args.length > 1 ? args[0] : null;
+        String skin = args.length > 1 ? args[1] : args[0];
 
         String usable = SkinUtils.getUsableStatus();
 
@@ -54,8 +55,8 @@ public class GrabSkinCommand implements CommandExecutor {
             return true;
         }
 
-        if (tName == null && args[0].matches("(.*\\/)?[a-zA-Z0-9_-]{3,20}\\.png")) {
-            tName = args[0].substring(args[0].lastIndexOf("/") + 1, args[0].lastIndexOf("."));
+        if (tName == null && skin.matches("(.*\\/)?[a-zA-Z0-9_-]{3,20}\\.png")) {
+            tName = skin.substring(skin.lastIndexOf("/") + 1, skin.lastIndexOf("."));
 
             if (DisguiseUtilities.hasGameProfile(tName)) {
                 tName = null;
@@ -146,7 +147,7 @@ public class GrabSkinCommand implements CommandExecutor {
             }
         };
 
-        SkinUtils.grabSkin(args[0], callback);
+        SkinUtils.grabSkin(skin, callback);
 
         return true;
     }

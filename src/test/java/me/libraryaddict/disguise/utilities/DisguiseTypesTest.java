@@ -14,6 +14,8 @@ public class DisguiseTypesTest {
         for (EntityType entityType : EntityType.values()) {
             if (entityType == EntityType.LIGHTNING) {
                 continue;
+            } else if (entityType == EntityType.UNKNOWN) {
+                continue;
             }
 
             DisguiseType disguiseType = DisguiseType.getType(entityType);

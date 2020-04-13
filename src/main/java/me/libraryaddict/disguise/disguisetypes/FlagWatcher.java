@@ -9,6 +9,8 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Strings;
+import lombok.AccessLevel;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -33,8 +35,13 @@ public class FlagWatcher {
     /**
      * These are the entity values I need to add else it could crash them..
      */
+    @Getter(value = AccessLevel.PROTECTED)
     private HashMap<Integer, Object> backupEntityValues = new HashMap<>();
     private transient TargetedDisguise disguise;
+    /**
+     * Disguise set data
+     */
+    @Getter(value = AccessLevel.PROTECTED)
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;

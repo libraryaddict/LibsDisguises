@@ -35,6 +35,8 @@ public enum DisguiseType {
 
     CREEPER,
 
+    CUSTOM,
+
     DOLPHIN,
 
     DONKEY,
@@ -261,7 +263,11 @@ public enum DisguiseType {
         }
 
         try {
-            setEntityType(EntityType.valueOf(name()));
+            if (name().equalsIgnoreCase("CUSTOM")) {
+                setEntityType(EntityType.UNKNOWN);
+            } else {
+                setEntityType(EntityType.valueOf(name()));
+            }
         }
         catch (Exception ex) {
         }

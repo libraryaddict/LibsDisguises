@@ -231,9 +231,9 @@ public enum LibsMsg {
     GRAB_DISG_HELP_1(ChatColor.GREEN +
             "You can choose a name to save the skins under, the names will be usable as if it was an actual player " +
             "skin"),
-    GRAB_DISG_HELP_2(ChatColor.DARK_GREEN + "/grabskin https://somesite.com/myskin.png <Optional Name>"),
-    GRAB_DISG_HELP_3(ChatColor.DARK_GREEN + "/grabskin myskin.png <Optional Name> - Skins must be in the folder!"),
-    GRAB_DISG_HELP_4(ChatColor.DARK_GREEN + "/grabskin <Player name or UUID> <Optional Name>"),
+    GRAB_DISG_HELP_2(ChatColor.DARK_GREEN + "/grabskin <Optional Name> https://somesite.com/myskin.png"),
+    GRAB_DISG_HELP_3(ChatColor.DARK_GREEN + "/grabskin <Optional Name> myskin.png - Skins must be in the folder!"),
+    GRAB_DISG_HELP_4(ChatColor.DARK_GREEN + "/grabskin <Optional Name> <Player name or UUID>"),
     GRAB_DISG_HELP_5(ChatColor.GREEN + "If you want the slim Alex version of the skin, append :slim. So 'myskin.png:slim'"),
     GRAB_DISG_HELP_6(
             ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),

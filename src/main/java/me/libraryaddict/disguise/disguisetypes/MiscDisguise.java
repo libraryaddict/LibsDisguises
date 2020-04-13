@@ -1,9 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -147,6 +144,8 @@ public class MiscDisguise extends TargetedDisguise {
     public int getId() {
         if (getType() == DisguiseType.FALLING_BLOCK) {
             return ((FallingBlockWatcher) getWatcher()).getBlock().getType().ordinal();
+        } else if (getType() == DisguiseType.CUSTOM) {
+            return ((CustomWatcher) getWatcher()).getTypeId();
         }
 
         return id;
