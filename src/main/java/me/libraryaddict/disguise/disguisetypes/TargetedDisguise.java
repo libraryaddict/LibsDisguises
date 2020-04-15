@@ -33,6 +33,14 @@ public abstract class TargetedDisguise extends Disguise {
     private ArrayList<String> disguiseViewers = new ArrayList<>();
     private TargetType targetType = TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS;
 
+    @Override
+    protected void clone(Disguise disguise) {
+        ((TargetedDisguise) disguise).targetType = getDisguiseTarget();
+        ((TargetedDisguise) disguise).disguiseViewers = new ArrayList<>(disguiseViewers);
+
+        super.clone(disguise);
+    }
+
     public TargetedDisguise addPlayer(Player player) {
         addPlayer(player.getName());
 
@@ -92,6 +100,16 @@ public abstract class TargetedDisguise extends Disguise {
         return targetType;
     }
 
+    public TargetedDisguise setDisguiseTarget(TargetType newTargetType) {
+        if (DisguiseUtilities.isDisguiseInUse(this)) {
+            throw new RuntimeException("Cannot set the disguise target after the entity has been disguised");
+        }
+
+        targetType = newTargetType;
+
+        return this;
+    }
+
     public List<String> getObservers() {
         return Collections.unmodifiableList(disguiseViewers);
     }
@@ -133,16 +151,6 @@ public abstract class TargetedDisguise extends Disguise {
                 }
             }
         }
-
-        return this;
-    }
-
-    public TargetedDisguise setDisguiseTarget(TargetType newTargetType) {
-        if (DisguiseUtilities.isDisguiseInUse(this)) {
-            throw new RuntimeException("Cannot set the disguise target after the entity has been disguised");
-        }
-
-        targetType = newTargetType;
 
         return this;
     }

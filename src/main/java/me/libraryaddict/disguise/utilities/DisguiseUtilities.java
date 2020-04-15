@@ -973,12 +973,17 @@ public class DisguiseUtilities {
             bars.forEachRemaining(barList::add);
 
             for (KeyedBossBar bar : barList) {
-                if (!bar.getKey().getNamespace().equalsIgnoreCase("libsdisguises")) {
-                    continue;
-                }
+                // Catch error incase someone added an invalid bossbar name
+                try {
+                    if (!bar.getKey().getNamespace().equalsIgnoreCase("libsdisguises")) {
+                        continue;
+                    }
 
-                bar.removeAll();
-                Bukkit.removeBossBar(bar.getKey());
+                    bar.removeAll();
+                    Bukkit.removeBossBar(bar.getKey());
+                }
+                catch (IllegalArgumentException ex) {
+                }
             }
         }
     }

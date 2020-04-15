@@ -5,7 +5,6 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
@@ -71,13 +70,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
 
             DisguiseAPI.disguiseEntity(entity, disguise);
 
-            String disguiseName;
-
-            if (disguise instanceof PlayerDisguise) {
-                disguiseName = ((PlayerDisguise) disguise).getName();
-            } else {
-                disguiseName = disguise.getType().toReadable();
-            }
+            String disguiseName = disguise.getDisguiseName();
 
             // Jeez, maybe I should redo my messages here
             if (disguise.isDisguiseInUse()) {

@@ -1,6 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -108,17 +111,9 @@ public class MiscDisguise extends TargetedDisguise {
     @Override
     public MiscDisguise clone() {
         MiscDisguise disguise = new MiscDisguise(getType(), getData());
-        disguise.setReplaceSounds(isSoundsReplaced());
-        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
-        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
-        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
-        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
-        disguise.setVelocitySent(isVelocitySent());
-        disguise.setModifyBoundingBox(isModifyBoundingBox());
 
-        if (getWatcher() != null) {
-            disguise.setWatcher(getWatcher().clone(disguise));
-        }
+        clone(disguise);
+
         return disguise;
     }
 
@@ -144,8 +139,6 @@ public class MiscDisguise extends TargetedDisguise {
     public int getId() {
         if (getType() == DisguiseType.FALLING_BLOCK) {
             return ((FallingBlockWatcher) getWatcher()).getBlock().getType().ordinal();
-        } else if (getType() == DisguiseType.CUSTOM) {
-            return ((CustomWatcher) getWatcher()).getTypeId();
         }
 
         return id;

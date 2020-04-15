@@ -61,7 +61,8 @@ public class PacketHandlerAttributes implements IPacketHandler {
             if (attribute.getAttributeKey().equals("generic.maxHealth")) {
                 WrappedAttribute.Builder builder;
 
-                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                if (disguise.getWatcher() instanceof LivingWatcher &&
+                        ((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
                     builder = WrappedAttribute.newBuilder();
                     builder.attributeKey("generic.maxHealth");
                     builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());

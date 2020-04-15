@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import com.google.gson.Gson;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.inventory.ItemStack;

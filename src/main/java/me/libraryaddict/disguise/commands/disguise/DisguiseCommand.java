@@ -78,9 +78,9 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
-            sender.sendMessage(LibsMsg.DISGUISED.get(disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.DISGUISED.get(disguise.getDisguiseName()));
         } else {
-            sender.sendMessage(LibsMsg.FAILED_DISGIUSE.get(disguise.getType().toReadable()));
+            sender.sendMessage(LibsMsg.FAILED_DISGIUSE.get(disguise.getDisguiseName()));
         }
 
         return true;

@@ -121,11 +121,11 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (disguise.isDisguiseInUse()) {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG.get(entityTarget instanceof Player ? entityTarget.getName() :
-                    DisguiseType.getType(entityTarget).toReadable(), disguise.getType().toReadable()));
+                    DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName()));
         } else {
             sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL
                     .get(entityTarget instanceof Player ? entityTarget.getName() :
-                            DisguiseType.getType(entityTarget).toReadable(), disguise.getType().toReadable()));
+                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName()));
         }
 
         return true;

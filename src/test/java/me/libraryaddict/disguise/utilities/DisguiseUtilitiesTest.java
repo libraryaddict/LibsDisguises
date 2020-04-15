@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import com.google.gson.Gson;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

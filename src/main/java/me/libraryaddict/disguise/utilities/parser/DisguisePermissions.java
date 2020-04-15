@@ -384,6 +384,10 @@ public class DisguisePermissions {
             if (disguiseType.isMisc()) {
                 return 3;
             }
+        }  else if (permissionName.equals("custom")) {
+            if (disguiseType.isMisc()) {
+                return 3;
+            }
         } else if (permissionName.equals("*")) {
             return 4;
         }

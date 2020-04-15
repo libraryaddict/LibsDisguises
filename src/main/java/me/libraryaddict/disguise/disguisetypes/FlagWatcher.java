@@ -271,10 +271,6 @@ public class FlagWatcher {
         equipment.setFlagWatcher(this);
     }
 
-    private boolean getEntityFlag(int byteValue) {
-        return (getData(MetaIndex.ENTITY_META) & 1 << byteValue) != 0;
-    }
-
     public EntityEquipment getEquipment() {
         return equipment;
     }
@@ -512,6 +508,10 @@ public class FlagWatcher {
             return;
 
         backupEntityValues.put(no.getIndex(), value);
+    }
+
+    private boolean getEntityFlag(int byteValue) {
+        return (getData(MetaIndex.ENTITY_META) & 1 << byteValue) != 0;
     }
 
     private void setEntityFlag(int byteValue, boolean flag) {

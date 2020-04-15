@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSerializer<Disguise>, InstanceCreator<Disguise> {
+public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSerializer<Disguise>,
+        InstanceCreator<Disguise> {
 
     @Override
     public Disguise deserialize(JsonElement json, Type typeOfT,
@@ -53,7 +54,9 @@ public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSeria
 
     @Override
     public JsonElement serialize(Disguise src, Type typeOfSrc, JsonSerializationContext context) {
-        if (src.isPlayerDisguise())
+        if (src.isCustomDisguise()) {
+            return context.serialize(src, CustomDisguise.class);
+        } else if (src.isPlayerDisguise())
             return context.serialize(src, PlayerDisguise.class);
         else if (src.isMobDisguise())
             return context.serialize(src, MobDisguise.class);

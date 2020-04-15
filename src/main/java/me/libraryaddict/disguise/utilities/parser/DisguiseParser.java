@@ -4,6 +4,8 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -302,7 +304,7 @@ public class DisguiseParser {
         ArrayList<DisguisePerm> perms = new ArrayList<>();
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
-            if (disguiseType.getEntityType() == null) {
+            if (disguiseType.getEntityType() == null || disguiseType.isCustom()) {
                 continue;
             }
 
@@ -312,6 +314,8 @@ public class DisguiseParser {
         for (Entry<DisguisePerm, String> entry : DisguiseConfig.getCustomDisguises().entrySet()) {
             perms.add(entry.getKey());
         }
+
+        perms.addAll(ModdedManager.getDisguiseTypes());
 
         return perms.toArray(new DisguisePerm[0]);
     }
@@ -595,6 +599,7 @@ public class DisguiseParser {
         ArrayList<String> usedOptions = new ArrayList<>();
         Disguise disguise = null;
         DisguisePerm disguisePerm;
+        String name;
 
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
@@ -608,6 +613,7 @@ public class DisguiseParser {
             }
 
             disguisePerm = new DisguisePerm(disguise.getType());
+            name = disguise.getDisguiseName();
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
@@ -622,17 +628,31 @@ public class DisguiseParser {
             }
         } else {
             disguisePerm = getDisguisePerm(args[0]);
-            Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
-
-            if (customDisguise != null) {
-                args = DisguiseUtilities.split(customDisguise.getValue());
-            }
-
-            args = parsePlaceholders(args, sender, target);
 
             if (disguisePerm == null) {
                 throw new DisguiseParseException(LibsMsg.PARSE_DISG_NO_EXIST, args[0]);
             }
+
+            name = disguisePerm.toReadable();
+
+            if (disguisePerm.getType().isCustom()) {
+                CustomEntity ent = ModdedManager.getCustomEntity(disguisePerm.toReadable());
+
+                if (ent == null) {
+                    throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
+                }
+
+                disguise = new CustomDisguise(ent);
+            }
+
+            Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
+
+            if (customDisguise != null) {
+                args = DisguiseUtilities.split(customDisguise.getValue());
+                name = customDisguise.getKey().toReadable();
+            }
+
+            args = parsePlaceholders(args, sender, target);
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
@@ -665,12 +685,14 @@ public class DisguiseParser {
 
                         // Construct the player disguise
                         disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
+                        name = ((PlayerDisguise) disguise).getName();
                         toSkip++;
                     }
                 } else if (disguisePerm.isMob()) { // Its a mob, use the mob constructor
-                    boolean adult = true;
 
                     if (args.length > 1) {
+                        boolean adult = true;
+
                         if (args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("baby")) ||
                                 args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"))) {
                             usedOptions.add("setbaby");
@@ -678,10 +700,13 @@ public class DisguiseParser {
                             adult = args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"));
 
                             toSkip++;
+                            disguise = new MobDisguise(disguisePerm.getType(), adult);
+                        } else {
+                            disguise = new MobDisguise(disguisePerm.getType());
                         }
+                    } else {
+                        disguise = new MobDisguise(disguisePerm.getType());
                     }
-
-                    disguise = new MobDisguise(disguisePerm.getType(), adult);
                 } else if (disguisePerm.isMisc()) {
                     // Its a misc, we are going to use the MiscDisguise constructor.
                     ItemStack itemStack = new ItemStack(Material.STONE);
@@ -762,6 +787,8 @@ public class DisguiseParser {
                 }
             }
         }
+
+        disguise.setDisguiseName(name);
 
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];

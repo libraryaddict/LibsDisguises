@@ -9,7 +9,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
-import me.libraryaddict.disguise.disguisetypes.watchers.CustomWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -25,7 +24,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -233,10 +231,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, disguisedEntity.getUniqueId());
 
-            if (disguise.getType() != DisguiseType.CUSTOM) {
+            if (!disguise.getType().isCustom()) {
                 mods.write(2, disguise.getType().getTypeId());
             } else {
-                mods.write(2, ((CustomWatcher) disguise.getWatcher()).getTypeId());
+                mods.write(2, ((CustomDisguise) disguise).getCustomEntity().getTypeId());
             }
 
             // region Vector calculations
@@ -309,7 +307,13 @@ public class PacketHandlerSpawn implements IPacketHandler {
             PacketContainer spawnEntity;
 
             if (NmsVersion.v1_14.isSupported()) {
-                Object entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
+                Object entityType;
+
+                if (disguise.isCustomDisguise()) {
+                    entityType = ((CustomDisguise) disguise).getCustomEntity().getEntityType();
+                } else {
+                    entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
+                }
 
                 Object[] params = new Object[]{disguisedEntity.getEntityId(), disguisedEntity.getUniqueId(), x, y, z,
                         loc.getPitch(), loc.getYaw(), entityType, data,
@@ -319,6 +323,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
                         .createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, params).createPacket(params);
             } else {
                 int objectId = disguise.getType().getObjectId();
+
+                if (disguise.isCustomDisguise()) {
+                    objectId = ((CustomDisguise) disguise).getCustomEntity().getTypeId();
+                }
+
                 Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
 
                 spawnEntity = ProtocolLibrary.getProtocolManager()

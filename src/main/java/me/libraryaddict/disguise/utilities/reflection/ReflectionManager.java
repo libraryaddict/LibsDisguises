@@ -1294,6 +1294,56 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object registerEntityType(NamespacedKey key) {
+        try {
+            Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(key.toString());
+
+            Class typesClass = getNmsClass("IRegistry");
+
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+
+            Constructor c = getNmsClass("EntityTypes").getConstructors()[0];
+
+            // UGLY :D
+            Object entityType = c.newInstance(null, null, false, false, false, false, null);
+
+            for (Field f : entityType.getClass().getDeclaredFields()) {
+                if (f.getType() != String.class) {
+                    continue;
+                }
+
+                f.setAccessible(true);
+                f.set(entityType, key.toString());
+                break;
+            }
+
+            typesClass.getMethod("a", typesClass, mcKey.getClass(), Object.class)
+                    .invoke(null, registry, mcKey, entityType);
+
+            return entityType;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        throw new IllegalStateException("Failed to find EntityType id for " + key);
+    }
+
+    public static int getEntityTypeId(Object entityTypes) {
+        try {
+            Class typesClass = getNmsClass("IRegistry");
+
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+
+            return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        throw new IllegalStateException("Failed to find EntityType id for " + entityTypes);
+    }
+
     public static int getEntityTypeId(EntityType entityType) {
         try {
             if (NmsVersion.v1_13.isSupported()) {
@@ -1313,6 +1363,22 @@ public class ReflectionManager {
         }
 
         throw new IllegalStateException("Failed to find EntityType id for " + entityType);
+    }
+
+    public static Object getEntityType(NamespacedKey name) {
+        try {
+            Class typesClass = getNmsClass("IRegistry");
+
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+            Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name.toString());
+
+            return registry.getClass().getMethod("a", mcKey.getClass()).invoke(registry, mcKey);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        throw new IllegalStateException("The entity " + name + " is not registered!");
     }
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
@@ -1416,6 +1482,10 @@ public class ReflectionManager {
             switch (disguiseType) {
                 case ARROW:
                     watcherClass = TippedArrowWatcher.class;
+                    break;
+                case CUSTOM_LIVING:
+                case CUSTOM_MISC:
+                    watcherClass = CustomWatcher.class;
                     break;
                 case COD:
                 case SALMON:
@@ -1617,7 +1687,7 @@ public class ReflectionManager {
         }
 
         try {
-            if (disguiseType == DisguiseType.UNKNOWN) {
+            if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
                 DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
 
                 disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));

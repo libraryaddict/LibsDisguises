@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
@@ -39,6 +40,7 @@ public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
     private String buildNumber;
+    @Getter
     private boolean reloaded;
 
     @Override

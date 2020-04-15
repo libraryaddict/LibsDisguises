@@ -35,7 +35,9 @@ public enum DisguiseType {
 
     CREEPER,
 
-    CUSTOM,
+    CUSTOM_MISC,
+
+    CUSTOM_LIVING,
 
     DOLPHIN,
 
@@ -263,13 +265,15 @@ public enum DisguiseType {
         }
 
         try {
-            if (name().equalsIgnoreCase("CUSTOM")) {
+            // Why oh why can't isCustom() work :(
+            if (name().startsWith("CUSTOM_")) {
                 setEntityType(EntityType.UNKNOWN);
             } else {
                 setEntityType(EntityType.valueOf(name()));
             }
         }
         catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -324,11 +328,13 @@ public enum DisguiseType {
     }
 
     public boolean isMisc() {
-        return getEntityType() != null && !getEntityType().isAlive();
+        return this == DisguiseType.CUSTOM_MISC ||
+                (!isCustom() && getEntityType() != null && !getEntityType().isAlive());
     }
 
     public boolean isMob() {
-        return getEntityType() != null && getEntityType().isAlive() && !isPlayer();
+        return this == DisguiseType.CUSTOM_LIVING ||
+                (!isCustom() && getEntityType() != null && getEntityType().isAlive() && !isPlayer());
     }
 
     public boolean isPlayer() {
@@ -337,6 +343,10 @@ public enum DisguiseType {
 
     public boolean isUnknown() {
         return this == DisguiseType.UNKNOWN;
+    }
+
+    public boolean isCustom() {
+        return this == DisguiseType.CUSTOM_MISC || this == DisguiseType.CUSTOM_LIVING;
     }
 
     public String toReadable() {

@@ -67,7 +67,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
                         DisguiseConfig.getDisguiseEntityExpire());
 
         sender.sendMessage(LibsMsg.DISG_ENT_CLICK
-                .get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getType().toReadable()));
+                .get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getDisguiseName()));
         return true;
     }
 

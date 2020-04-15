@@ -6,6 +6,8 @@ import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -14,6 +16,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.command.CommandSender;
@@ -353,6 +356,8 @@ public class DisguiseConfig {
         // definitely want to reload it.
         LibsDisguises.getInstance().reloadConfig();
 
+        loadModdedDisguiseTypes();
+
         File skinsFolder = new File(LibsDisguises.getInstance().getDataFolder(), "Skins");
 
         if (!skinsFolder.exists()) {
@@ -445,7 +450,7 @@ public class DisguiseConfig {
         try {
             setNotifyBar(NotifyBar.valueOf(config.getString("NotifyBar").toUpperCase()));
 
-            if (getNotifyBar() == NotifyBar.BOSS_BAR) {
+            if (getNotifyBar() == NotifyBar.BOSS_BAR && !NmsVersion.v1_13.isSupported()) {
                 DisguiseUtilities.getLogger().warning(
                         "BossBars hasn't been implemented properly in 1.12 due to api restrictions, falling back to " +
                                 "ACTION_BAR");
@@ -565,6 +570,69 @@ public class DisguiseConfig {
                 for (String v : returns) {
                     DisguiseUtilities.getLogger().info(v);
                 }
+            }
+        }
+    }
+
+    public static void loadModdedDisguiseTypes() {
+        if (LibsDisguises.getInstance().isReloaded()) {
+            return;
+        }
+
+        File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
+
+        if (!disguisesFile.exists())
+            return;
+
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(disguisesFile);
+
+        if (!config.contains("Custom-Entities")) {
+            return;
+        }
+
+        for (String name : config.getConfigurationSection("Custom-Entities").getKeys(false)) {
+            try {
+                if (!name.matches("[a-zA-Z0-9_]+")) {
+                    DisguiseUtilities.getLogger().severe("Invalid custom disguise name '" + name + "'");
+                    continue;
+                }
+
+                ConfigurationSection section = config.getConfigurationSection("Custom-Entities." + name);
+
+                if (!section.contains("Name")) {
+                    DisguiseUtilities.getLogger().severe("No mod:entity 'Name' provided for '" + name + "'");
+                    continue;
+                }
+
+                String key = section.getString("Name");
+
+                // Lets not do sanity checking and blame it on the config author
+                // Well, maybe just a : check...
+                if (!key.contains(":") || key.contains(".")) {
+                    DisguiseUtilities.getLogger().severe("Invalid modded name '" + key + "' in disguises.yml!");
+                    continue;
+                }
+
+                boolean register = section.getBoolean("Register", true);
+                boolean living = section.getString("Type", "LIVING").equalsIgnoreCase("LIVING");
+                String type = section.getString("Type");
+                String mod = section.getString("Mod");
+                String[] version =
+                        mod == null || !section.contains("Version") ? null : section.getString("Version").split(",");
+                String requireMessage = mod == null ? null : section.getString("Required");
+
+                CustomEntity entity = new CustomEntity(null, name, living, mod, version, requireMessage, 0);
+
+                ModdedManager.registerCustomEntity(
+                        new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)),
+                        entity, register);
+
+                DisguiseUtilities.getLogger()
+                        .info("Modded entity " + name + " has been " + (register ? "registered" : "added"));
+            }
+            catch (Exception ex) {
+                DisguiseUtilities.getLogger().severe("Error while trying to register modded entity " + name);
+                ex.printStackTrace();
             }
         }
     }

@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -85,9 +86,13 @@ public abstract class Disguise {
      */
     @Getter
     private final HashMap<String, Object> customData = new HashMap<>();
+    @Getter
+    @Setter
+    private String disguiseName;
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
+        this.disguiseName = disguiseType.toReadable();
     }
 
     public void addCustomData(String key, Object data) {
@@ -105,6 +110,24 @@ public abstract class Disguise {
     @Override
     public abstract Disguise clone();
 
+    protected void clone(Disguise disguise) {
+        disguise.setDisguiseName(getDisguiseName());
+
+        disguise.setReplaceSounds(isSoundsReplaced());
+        disguise.setViewSelfDisguise(isSelfDisguiseVisible());
+        disguise.setHearSelfDisguise(isSelfDisguiseSoundsReplaced());
+        disguise.setHideArmorFromSelf(isHidingArmorFromSelf());
+        disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
+        disguise.setVelocitySent(isVelocitySent());
+        disguise.setModifyBoundingBox(isModifyBoundingBox());
+
+        if (getWatcher() != null) {
+            disguise.setWatcher(getWatcher().clone(disguise));
+        }
+
+        disguise.createDisguise();
+    }
+
     /**
      * Seems I do this method so I can make cleaner constructors on disguises..
      */
@@ -119,7 +142,7 @@ public abstract class Disguise {
 
         boolean isAdult = true;
 
-        if (isMobDisguise()) {
+        if (this instanceof MobDisguise) {
             isAdult = ((MobDisguise) this).isAdult();
         }
 
@@ -216,7 +239,7 @@ public abstract class Disguise {
         Bukkit.removeBossBar(getBossBar());
 
         BossBar bar = Bukkit
-                .createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable()), getBossBarColor(),
+                .createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()), getBossBarColor(),
                         getBossBarStyle());
         bar.setProgress(1);
         bar.addPlayer((Player) getEntity());
@@ -269,7 +292,7 @@ public abstract class Disguise {
                             !getEntity().hasPermission("libsdisguises.noactionbar") &&
                             DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
                         ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getType().toReadable())).create());
+                                new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName())).create());
                     }
 
                     if (Disguise.this instanceof PlayerDisguise && ((PlayerDisguise) Disguise.this).isDynamicName()) {
@@ -656,6 +679,10 @@ public abstract class Disguise {
     }
 
     public boolean isPlayerDisguise() {
+        return false;
+    }
+
+    public boolean isCustomDisguise() {
         return false;
     }
 
