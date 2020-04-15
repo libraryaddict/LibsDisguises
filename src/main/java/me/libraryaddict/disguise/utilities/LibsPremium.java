@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.FileUtil;
 
 import java.io.*;
 import java.net.URL;
@@ -312,6 +313,53 @@ public class LibsPremium {
             doSecondaryCheck(version);
         } else {
             DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(getUserID()));
+
+            boolean foundBetter = false;
+
+            // Lets not do any sanity checks since it won't affect legit users
+            for (File f : LibsDisguises.getInstance().getDataFolder().listFiles()) {
+                if (f.isDirectory() || !f.getName().endsWith(".jar")) {
+                    continue;
+                }
+
+                try {
+                    PluginInformation info = getInformation(f);
+
+                    if (info.getBuildNumber() == null || !info.getBuildNumber().matches("[0-9]+")) {
+                        f.delete();
+                        DisguiseUtilities.getLogger().info("Ew, I don't recognize " + f.getName());
+                        continue;
+                    } else if (Integer.parseInt(info.getBuildNumber()) <
+                            Integer.parseInt(LibsDisguises.getInstance().getBuildNo())) {
+                        f.delete();
+                        DisguiseUtilities.getLogger().info("Ew, " + f.getName() + " is so old");
+                        continue;
+                    }
+
+                    if (!info.isLegit()) {
+                        f.delete();
+                        DisguiseUtilities.getLogger().info("Ew, I saw something nasty in " + f.getName());
+                        continue;
+                    }
+
+                    foundBetter = true;
+                    break;
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!foundBetter) {
+                File f = new File(
+                        LibsDisguises.getInstance().getClass().getProtectionDomain().getCodeSource().getLocation()
+                                .getFile());
+
+                FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
+
+                DisguiseUtilities.getLogger().info("Copied " + f.getName() +
+                        " to the plugin folder! This is incase you want to use dev builds.");
+            }
         }
 
         if (isPremium()) {
