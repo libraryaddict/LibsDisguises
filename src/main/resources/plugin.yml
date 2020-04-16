@@ -88,6 +88,8 @@ commands:
 permissions:
     libsdisguises.reload:
       description: Allows the user to reload LibsDisguises.
+    libsdisguises.mods:
+      description: Allows the user to see mods in use.
     libsdisguises.seethrough:
       description: Allows player to see through disguises.
       default: false

@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -590,6 +591,8 @@ public class DisguiseConfig {
             return;
         }
 
+        ArrayList<String> channels = new ArrayList<>();
+
         for (String name : config.getConfigurationSection("Custom-Entities").getKeys(false)) {
             try {
                 if (!name.matches("[a-zA-Z0-9_]+")) {
@@ -620,6 +623,20 @@ public class DisguiseConfig {
                 String[] version =
                         mod == null || !section.contains("Version") ? null : section.getString("Version").split(",");
                 String requireMessage = mod == null ? null : section.getString("Required");
+                if (section.contains("Channels")) {
+                    for (String s : section.getString("Channels").split(",")) {
+                        if (!s.contains("|")) {
+                            s += "|";
+                            DisguiseUtilities.getLogger().severe("No channel version declared for " + s);
+                        }
+
+                        channels.add(s);
+                    }
+                }
+
+                if (requireMessage != null) {
+                    requireMessage = ChatColor.translateAlternateColorCodes('&', requireMessage);
+                }
 
                 CustomEntity entity = new CustomEntity(null, name, living, mod, version, requireMessage, 0);
 
@@ -635,6 +652,8 @@ public class DisguiseConfig {
                 ex.printStackTrace();
             }
         }
+
+        new ModdedManager(channels);
     }
 
     public static ArrayList<String> doOutput(ConfigurationSection config, boolean informChangedUnknown,

@@ -106,6 +106,40 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 DisguiseConfig.loadConfig();
                 sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
                 return true;
+            } else if (args[0].equalsIgnoreCase("mods")) {
+                if (!sender.hasPermission("libsdisguises.mods")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                if (!Bukkit.getMessenger().isOutgoingChannelRegistered(LibsDisguises.getInstance(), "fml:handshake")) {
+                    sender.sendMessage(LibsMsg.NO_MODS_LISTENING.get());
+                    return true;
+                }
+
+                Player player;
+
+                if (args.length > 1) {
+                    player = Bukkit.getPlayer(args[1]);
+
+                    if (player == null) {
+                        sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[1]));
+                        return true;
+                    }
+                } else if (sender instanceof Player) {
+                    player = (Player) sender;
+                } else {
+                    sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+                    return true;
+                }
+
+                if (!player.hasMetadata("forge_mods")) {
+                    sender.sendMessage(LibsMsg.NO_MODS.get(player.getName()));
+                    return true;
+                }
+
+                sender.sendMessage(LibsMsg.MODS_LIST.get(player.getName(),
+                        StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", ")));
             } else if (args[0].equalsIgnoreCase("scoreboard") || args[0].equalsIgnoreCase("board") ||
                     args[0].equalsIgnoreCase("teams")) {
                 if (!sender.hasPermission("libsdisguises.scoreboardtest")) {
@@ -368,7 +402,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         String[] args = getArgs(origArgs);
 
         if (args.length == 0)
-            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config"));
+            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config", "mods"));
 
         return filterTabs(tabs, origArgs);
     }

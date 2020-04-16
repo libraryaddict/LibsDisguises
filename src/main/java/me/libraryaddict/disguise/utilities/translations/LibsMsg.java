@@ -134,8 +134,11 @@ public enum LibsMsg {
     MADE_REF(ChatColor.RED + "Constructed a %s disguise! Your reference is %s"),
     MADE_REF_EXAMPLE(ChatColor.RED + "Example usage: /disguise %s"),
     NO_CONSOLE(ChatColor.RED + "You may not use this command from the console!"),
+    NO_MODS(ChatColor.RED + "%s is not using any mods!"),
+    MODS_LIST(ChatColor.DARK_GREEN + "%s has the mods:" + ChatColor.AQUA + " %s"),
     NO_PERM(ChatColor.RED + "You are forbidden to use this command."),
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
+    NO_MODS_LISTENING(ChatColor.RED + "This server is not listening for mods!"),
     NO_PERMS_USE_OPTIONS(ChatColor.RED +
             "Ignored %s methods you do not have permission to use. Add 'show' to view unusable methods."),
     OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),

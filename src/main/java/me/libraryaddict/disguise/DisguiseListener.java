@@ -12,6 +12,8 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
+import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -41,6 +43,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -373,6 +376,18 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
+    public void onLogin(PlayerRegisterChannelEvent event) {
+        // If it's not a forge handshake, or we didn't register it
+        if (!event.getChannel().equals("fml:handshake") ||
+                !Bukkit.getMessenger().isOutgoingChannelRegistered(LibsDisguises.getInstance(), "fml:handshake")) {
+            return;
+        }
+
+        event.getPlayer()
+                .sendPluginMessage(LibsDisguises.getInstance(), "fml:handshake", ModdedManager.getFmlHandshake());
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
 
@@ -428,17 +443,41 @@ public class DisguiseListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!event.getPlayer().isOnline()) {
+                if (!p.isOnline()) {
                     return;
                 }
 
-                DisguiseUtilities.registerNoName(event.getPlayer().getScoreboard());
+                DisguiseUtilities.registerNoName(p.getScoreboard());
 
-                if (event.getPlayer().getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
-                    DisguiseUtilities.registerAllExtendedNames(event.getPlayer().getScoreboard());
+                if (p.getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
+                    DisguiseUtilities.registerAllExtendedNames(p.getScoreboard());
+                }
+
+                if (!p.hasMetadata("forge_mods")) {
+                    Optional<CustomEntity> required = ModdedManager.getEntities().values().stream()
+                            .filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
+
+                    required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
                 }
             }
         }.runTaskLater(LibsDisguises.getInstance(), 20);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!p.isOnline()) {
+                    return;
+                }
+
+                if (!p.hasMetadata("forge_mods")) {
+                    Optional<CustomEntity> required = ModdedManager.getEntities().values().stream()
+                            .filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
+
+                    required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
+                }
+            }
+        }.runTaskLater(LibsDisguises.getInstance(), 60);
+
     }
 
     /**

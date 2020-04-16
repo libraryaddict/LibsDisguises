@@ -53,6 +53,6 @@ Custom-Entities:
 #    Register: true # This means Lib's Disguises should register the EntityType in nms, not another plugin
 #    Type: LIVING # MISC, LIVING - What type of disguise type, doesn't support custom packets
 #    Mod: LibAttacks # The mod they need installed
-#    Version: '1.0,1.01,@2\.[0]+' # The version they need seperated by commas, the prefix @ means its regex
-# If exists, will prevent anyone without the mod/version from joining with this error
+# If exists, will prevent anyone without the mod from joining with this error
 #    Required: 'Install LibAttacks! Download it from our site!'
+#    Channels: librarian:channel|1 # Sometimes a mod needs a channel enabled.. Seperate each channel with a comma
