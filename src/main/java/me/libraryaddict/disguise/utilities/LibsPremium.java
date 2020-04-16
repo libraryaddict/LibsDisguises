@@ -128,7 +128,7 @@ public class LibsPremium {
             }
 
             // Fetch the plugin.yml from the jar file
-            YamlConfiguration config = ReflectionManager.getPluginYaml(cl);
+            YamlConfiguration config = ReflectionManager.getPluginYAML(cl);
             // No checks for null config as the correct error will be thrown on access
 
             Boolean premium;

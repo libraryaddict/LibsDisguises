@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -157,16 +159,28 @@ public class ReflectionManager {
         return true;
     }
 
-    public static YamlConfiguration getPluginYaml(ClassLoader loader) {
-        try (InputStream stream = loader.getResourceAsStream("plugin.yml")) {
-            YamlConfiguration config = new YamlConfiguration();
-            config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
-                    .collect(Collectors.joining("\n")));
+    public static YamlConfiguration getPluginYAML(ClassLoader loader) {
+        try {
+            URL url = loader.getResource("plugin.yml");
 
-            return config;
+            if (url == null) {
+                return null;
+            } else {
+                URLConnection connection = url.openConnection();
+                connection.setUseCaches(false);
+
+                try (InputStream stream = connection.getInputStream()) {
+                    YamlConfiguration config = new YamlConfiguration();
+
+                    config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                            .collect(Collectors.joining("\n")));
+
+                    return config;
+                }
+            }
         }
-        catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        catch (IOException | InvalidConfigurationException ex) {
+            ex.printStackTrace();
         }
 
         return null;
