@@ -273,7 +273,6 @@ public enum DisguiseType {
             }
         }
         catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
