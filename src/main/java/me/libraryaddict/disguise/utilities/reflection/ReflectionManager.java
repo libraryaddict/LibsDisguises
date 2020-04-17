@@ -16,22 +16,17 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -39,6 +34,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public class ReflectionManager {
@@ -159,27 +156,24 @@ public class ReflectionManager {
         return true;
     }
 
-    public static YamlConfiguration getPluginYAML(ClassLoader loader) {
-        try {
-            URL url = loader.getResource("plugin.yml");
+    /**
+     * Copied from Bukkit
+     */
+    public static YamlConfiguration getPluginYAML(File file) {
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry entry = jar.getJarEntry("plugin.yml");
 
-            if (url == null) {
-                return null;
-            } else {
-                URLConnection connection = url.openConnection();
-                connection.setUseCaches(false);
+            try (InputStream stream = jar.getInputStream(entry)) {
+                YamlConfiguration config = new YamlConfiguration();
 
-                try (InputStream stream = connection.getInputStream()) {
-                    YamlConfiguration config = new YamlConfiguration();
+                String configString = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n"));
+                config.loadFromString(configString);
 
-                    config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
-                            .collect(Collectors.joining("\n")));
-
-                    return config;
-                }
+                return config;
             }
         }
-        catch (IOException | InvalidConfigurationException ex) {
+        catch (Exception ex) {
             ex.printStackTrace();
         }
 

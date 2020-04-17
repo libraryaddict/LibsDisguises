@@ -70,7 +70,7 @@ public class LibsDisguises extends JavaPlugin {
             saveResource("disguises.yml", false);
         }
 
-        YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getClassLoader());
+        YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
 
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
