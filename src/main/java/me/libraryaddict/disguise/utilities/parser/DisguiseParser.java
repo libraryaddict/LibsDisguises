@@ -264,7 +264,18 @@ public class DisguiseParser {
                 continue;
             }
 
-            if (!split[3].replace("_", "").equalsIgnoreCase(type.toReadable().replace(" ", ""))) {
+            boolean applicable = false;
+
+            for (String s : split[3].split("/")) {
+                if (!s.equals("*") && !s.replace("_", "").equalsIgnoreCase(type.toReadable().replace(" ", ""))) {
+                    continue;
+                }
+
+                applicable = true;
+                break;
+            }
+
+            if (!applicable) {
                 continue;
             }
 
