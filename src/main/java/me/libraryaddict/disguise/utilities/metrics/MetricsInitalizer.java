@@ -74,6 +74,13 @@ public class MetricsInitalizer {
             }
         });
 
+        metrics.addCustomChart(new Metrics.SimplePie("ld_api") {
+            @Override
+            public String getValue() {
+                return "" + LibsPremium.isAPIPlugin();
+            }
+        });
+
         metrics.addCustomChart(new Metrics.SimplePie("grabskin_command") {
             @Override
             public String getValue() {
