@@ -145,6 +145,11 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     @Override
+    public File getFile() {
+        return super.getFile();
+    }
+
+    @Override
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
 

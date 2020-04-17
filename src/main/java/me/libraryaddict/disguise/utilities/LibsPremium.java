@@ -64,8 +64,8 @@ public class LibsPremium {
      * @param userID
      * @return true if userID does not contain __USER__
      */
-    private static Boolean isPremium(String userID) {
-        return !userID.contains("__USER__") && !getResourceID().equals("81");
+    private static Boolean isPremium(String resourceID, String userID) {
+        return !userID.contains("__USER__") && !resourceID.equals("81");
     }
 
     public static Boolean isAPIPlugin() {
@@ -76,7 +76,7 @@ public class LibsPremium {
      * Returns true if this plugin is premium
      */
     public static Boolean isPremium() {
-        return thisPluginIsPaidFor == null ? isPremium(getUserID()) : thisPluginIsPaidFor;
+        return thisPluginIsPaidFor == null ? isPremium(getResourceID(), getUserID()) : thisPluginIsPaidFor;
     }
 
     /**
@@ -142,7 +142,7 @@ public class LibsPremium {
                 userId = (String) c.getMethod("getUserID").invoke(null);
                 resourceId = (String) c.getMethod("getResourceID").invoke(null);
                 downloadId = (String) c.getMethod("getDownloadID").invoke(null);
-                premium = isPremium(userId);
+                premium = isPremium(resourceId, userId);
             }
 
             String pluginBuildDate = "??/??/????";
@@ -306,7 +306,7 @@ public class LibsPremium {
             }
 
             pluginInformation = new PluginInformation(getUserID(), getResourceID(), getDownloadID(),
-                    isPremium(getUserID()), version, buildNo, pluginBuildDate);
+                    isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
         }
 
         if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {
@@ -351,9 +351,7 @@ public class LibsPremium {
             }
 
             if (!foundBetter) {
-                File f = new File(
-                        LibsDisguises.getInstance().getClass().getProtectionDomain().getCodeSource().getLocation()
-                                .getFile());
+                File f = LibsDisguises.getInstance().getFile();
 
                 FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
 

@@ -940,9 +940,8 @@ public class DisguiseUtilities {
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
 
-        invalidFile = new File(
-                LibsDisguises.getInstance().getClass().getProtectionDomain().getCodeSource().getLocation().getFile())
-                .getName().toLowerCase().matches(".*((crack)|(null)|(leak)).*");
+        invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase()
+                .matches(".*((crack)|(null)|(leak)).*");
 
         for (String key : savedDisguises.list()) {
             try {
