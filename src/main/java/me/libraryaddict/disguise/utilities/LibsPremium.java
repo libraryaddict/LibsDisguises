@@ -356,7 +356,7 @@ public class LibsPremium {
                 FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
 
                 DisguiseUtilities.getLogger().info("Copied " + f.getName() +
-                        " to the plugin folder! This is incase you want to use dev builds.");
+                        " to the plugin folder! You can use dev builds with premium enabled!");
             }
         }
 
