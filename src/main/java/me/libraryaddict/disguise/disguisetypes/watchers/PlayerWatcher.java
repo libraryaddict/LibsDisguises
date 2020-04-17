@@ -29,6 +29,24 @@ public class PlayerWatcher extends LivingWatcher {
         alwaysShowInTab = showPlayerInTab;
     }
 
+    public boolean isNameVisible() {
+        return ((PlayerDisguise) getDisguise()).isNameVisible();
+    }
+
+    public void setNameVisible(boolean nameVisible) {
+        ((PlayerDisguise) getDisguise()).setNameVisible(nameVisible);
+    }
+
+    @RandomDefaultValue
+    public String getName() {
+        return ((PlayerDisguise) getDisguise()).getName();
+    }
+
+    @RandomDefaultValue
+    public void setName(String name) {
+        ((PlayerDisguise) getDisguise()).setName(name);
+    }
+
     @Override
     public PlayerWatcher clone(Disguise disguise) {
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);
