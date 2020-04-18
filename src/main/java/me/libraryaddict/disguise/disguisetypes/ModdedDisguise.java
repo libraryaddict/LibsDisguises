@@ -17,7 +17,7 @@ public class ModdedDisguise extends TargetedDisguise {
     private ModdedEntity moddedEntity;
 
     public ModdedDisguise(String moddedEntityName) {
-        this(ModdedManager.getCustomEntity(moddedEntityName));
+        this(ModdedManager.getModdedEntity(moddedEntityName));
     }
 
     public ModdedDisguise(ModdedEntity moddedEntity) {

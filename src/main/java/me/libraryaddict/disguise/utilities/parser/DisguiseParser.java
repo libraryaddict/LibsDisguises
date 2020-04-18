@@ -647,7 +647,7 @@ public class DisguiseParser {
             name = disguisePerm.toReadable();
 
             if (disguisePerm.getType().isCustom()) {
-                ModdedEntity ent = ModdedManager.getCustomEntity(disguisePerm.toReadable());
+                ModdedEntity ent = ModdedManager.getModdedEntity(disguisePerm.toReadable());
 
                 if (ent == null) {
                     throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);

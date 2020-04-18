@@ -596,7 +596,7 @@ public class DisguiseConfig {
         for (String name : config.getConfigurationSection("Custom-Entities").getKeys(false)) {
             try {
                 if (!name.matches("[a-zA-Z0-9_]+")) {
-                    DisguiseUtilities.getLogger().severe("Invalid custom disguise name '" + name + "'");
+                    DisguiseUtilities.getLogger().severe("Invalid modded disguise name '" + name + "'");
                     continue;
                 }
 
@@ -640,7 +640,7 @@ public class DisguiseConfig {
 
                 ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);
 
-                ModdedManager.registerCustomEntity(
+                ModdedManager.registerModdedEntity(
                         new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)),
                         entity, register);
 

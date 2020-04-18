@@ -67,7 +67,7 @@ public class ModdedManager implements PluginMessageListener {
         fmlHandshake = stream.toByteArray();
     }
 
-    public static void registerCustomEntity(NamespacedKey name, ModdedEntity entity, boolean register) {
+    public static void registerModdedEntity(NamespacedKey name, ModdedEntity entity, boolean register) {
         if (entities.keySet().stream().anyMatch(n -> n.toString().equalsIgnoreCase(name.toString()))) {
             throw new IllegalArgumentException(name + " has already been registered");
         }
@@ -93,11 +93,11 @@ public class ModdedManager implements PluginMessageListener {
         entities.put(name, entity);
     }
 
-    public static ModdedEntity getCustomEntity(NamespacedKey name) {
+    public static ModdedEntity getModdedEntity(NamespacedKey name) {
         return entities.get(name);
     }
 
-    public static ModdedEntity getCustomEntity(String name) {
+    public static ModdedEntity getModdedEntity(String name) {
         for (ModdedEntity entity : entities.values()) {
             if (!entity.getName().equalsIgnoreCase(name)) {
                 continue;
