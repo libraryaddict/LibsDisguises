@@ -99,7 +99,8 @@ public class ModdedManager implements PluginMessageListener {
 
     public static CustomEntity getCustomEntity(String name) {
         for (CustomEntity entity : entities.values()) {
-            if (!entity.getName().equalsIgnoreCase(name)) {
+            if (!name.contains(":") ? entity.getName().split(":")[1].equalsIgnoreCase(name) :
+                    !entity.getName().equalsIgnoreCase(name)) {
                 continue;
             }
 

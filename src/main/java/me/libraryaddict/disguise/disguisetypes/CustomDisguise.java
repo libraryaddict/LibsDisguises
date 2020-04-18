@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.watchers.CustomWatcher;
 import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -14,6 +15,10 @@ import java.security.InvalidParameterException;
 public class CustomDisguise extends TargetedDisguise {
     @Getter
     private CustomEntity customEntity;
+
+    public CustomDisguise(String moddedEntityName) {
+        this(ModdedManager.getCustomEntity(moddedEntityName));
+    }
 
     public CustomDisguise(CustomEntity customEntity) {
         super(customEntity.isLiving() ? DisguiseType.CUSTOM_LIVING : DisguiseType.CUSTOM_MISC);
