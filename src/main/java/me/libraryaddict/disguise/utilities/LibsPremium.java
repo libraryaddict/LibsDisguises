@@ -325,12 +325,12 @@ public class LibsPremium {
                 try {
                     PluginInformation info = getInformation(f);
 
-                    if (info.getBuildNumber() == null || !info.getBuildNumber().matches("[0-9]+")) {
+                    if (info.getBuildNumber() == null || !info.getBuildNumber().matches("#[0-9]+")) {
                         f.delete();
                         DisguiseUtilities.getLogger().info("Ew, I don't recognize " + f.getName());
                         continue;
-                    } else if (Integer.parseInt(info.getBuildNumber()) <
-                            Integer.parseInt(LibsDisguises.getInstance().getBuildNo())) {
+                    } else if (Integer.parseInt(info.getBuildNumber().replace("#", "")) <
+                            Integer.parseInt(LibsDisguises.getInstance().getBuildNo().replace("#", ""))) {
                         f.delete();
                         DisguiseUtilities.getLogger().info("Ew, " + f.getName() + " is so old");
                         continue;
