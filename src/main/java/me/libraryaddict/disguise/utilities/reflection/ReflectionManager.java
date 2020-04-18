@@ -21,7 +21,6 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -1491,9 +1490,9 @@ public class ReflectionManager {
                 case ARROW:
                     watcherClass = TippedArrowWatcher.class;
                     break;
-                case CUSTOM_LIVING:
-                case CUSTOM_MISC:
-                    watcherClass = CustomWatcher.class;
+                case MODDED_LIVING:
+                case MODDED_MISC:
+                    watcherClass = ModdedWatcher.class;
                     break;
                 case COD:
                 case SALMON:

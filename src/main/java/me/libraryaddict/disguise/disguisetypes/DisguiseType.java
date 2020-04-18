@@ -35,10 +35,6 @@ public enum DisguiseType {
 
     CREEPER,
 
-    CUSTOM_MISC,
-
-    CUSTOM_LIVING,
-
     DOLPHIN,
 
     DONKEY,
@@ -118,6 +114,10 @@ public enum DisguiseType {
     MINECART_MOB_SPAWNER(10, 4),
 
     MINECART_TNT(10, 3),
+
+    MODDED_MISC,
+
+    MODDED_LIVING,
 
     MULE,
 
@@ -266,7 +266,7 @@ public enum DisguiseType {
 
         try {
             // Why oh why can't isCustom() work :(
-            if (name().startsWith("CUSTOM_")) {
+            if (name().startsWith("MODDED_")) {
                 setEntityType(EntityType.UNKNOWN);
             } else {
                 setEntityType(EntityType.valueOf(name()));
@@ -327,12 +327,12 @@ public enum DisguiseType {
     }
 
     public boolean isMisc() {
-        return this == DisguiseType.CUSTOM_MISC ||
+        return this == DisguiseType.MODDED_MISC ||
                 (!isCustom() && getEntityType() != null && !getEntityType().isAlive());
     }
 
     public boolean isMob() {
-        return this == DisguiseType.CUSTOM_LIVING ||
+        return this == DisguiseType.MODDED_LIVING ||
                 (!isCustom() && getEntityType() != null && getEntityType().isAlive() && !isPlayer());
     }
 
@@ -345,7 +345,7 @@ public enum DisguiseType {
     }
 
     public boolean isCustom() {
-        return this == DisguiseType.CUSTOM_MISC || this == DisguiseType.CUSTOM_LIVING;
+        return this == DisguiseType.MODDED_MISC || this == DisguiseType.MODDED_LIVING;
     }
 
     public String toReadable() {

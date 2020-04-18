@@ -6,7 +6,7 @@ import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
@@ -638,7 +638,7 @@ public class DisguiseConfig {
                     requireMessage = ChatColor.translateAlternateColorCodes('&', requireMessage);
                 }
 
-                CustomEntity entity = new CustomEntity(null, name, living, mod, version, requireMessage, 0);
+                ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);
 
                 ModdedManager.registerCustomEntity(
                         new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)),

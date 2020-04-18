@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class ModdedManager implements PluginMessageListener {
     @Getter
-    private static final HashMap<NamespacedKey, CustomEntity> entities = new HashMap<>();
+    private static final HashMap<NamespacedKey, ModdedEntity> entities = new HashMap<>();
     @Getter
     private static byte[] fmlHandshake;
 
@@ -67,7 +67,7 @@ public class ModdedManager implements PluginMessageListener {
         fmlHandshake = stream.toByteArray();
     }
 
-    public static void registerCustomEntity(NamespacedKey name, CustomEntity entity, boolean register) {
+    public static void registerCustomEntity(NamespacedKey name, ModdedEntity entity, boolean register) {
         if (entities.keySet().stream().anyMatch(n -> n.toString().equalsIgnoreCase(name.toString()))) {
             throw new IllegalArgumentException(name + " has already been registered");
         }
@@ -93,12 +93,12 @@ public class ModdedManager implements PluginMessageListener {
         entities.put(name, entity);
     }
 
-    public static CustomEntity getCustomEntity(NamespacedKey name) {
+    public static ModdedEntity getCustomEntity(NamespacedKey name) {
         return entities.get(name);
     }
 
-    public static CustomEntity getCustomEntity(String name) {
-        for (CustomEntity entity : entities.values()) {
+    public static ModdedEntity getCustomEntity(String name) {
+        for (ModdedEntity entity : entities.values()) {
             if (!entity.getName().equalsIgnoreCase(name)) {
                 continue;
             }
@@ -112,9 +112,9 @@ public class ModdedManager implements PluginMessageListener {
     public static ArrayList<DisguisePerm> getDisguiseTypes() {
         ArrayList<DisguisePerm> perms = new ArrayList<>();
 
-        for (Map.Entry<NamespacedKey, CustomEntity> entry : entities.entrySet()) {
+        for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
             perms.add(new DisguisePerm(
-                    entry.getValue().isLiving() ? DisguiseType.CUSTOM_LIVING : DisguiseType.CUSTOM_MISC,
+                    entry.getValue().isLiving() ? DisguiseType.MODDED_LIVING : DisguiseType.MODDED_MISC,
                     entry.getValue().getName()));
         }
 
@@ -147,7 +147,7 @@ public class ModdedManager implements PluginMessageListener {
 
             player.setMetadata("forge_mods", new FixedMetadataValue(LibsDisguises.getInstance(), mods));
 
-            for (CustomEntity e : getEntities().values()) {
+            for (ModdedEntity e : getEntities().values()) {
                 if (e.getMod() == null) {
                     continue;
                 }

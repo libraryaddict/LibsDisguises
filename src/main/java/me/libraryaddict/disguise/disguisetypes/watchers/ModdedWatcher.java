@@ -6,8 +6,8 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 /**
  * Created by libraryaddict on 13/04/2020.
  */
-public class CustomWatcher extends FlagWatcher {
-    public CustomWatcher(Disguise disguise) {
+public class ModdedWatcher extends FlagWatcher {
+    public ModdedWatcher(Disguise disguise) {
         super(disguise);
     }
 

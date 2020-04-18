@@ -12,7 +12,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
-import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.math.RandomUtils;
@@ -454,7 +454,7 @@ public class DisguiseListener implements Listener {
                 }
 
                 if (!p.hasMetadata("forge_mods")) {
-                    Optional<CustomEntity> required = ModdedManager.getEntities().values().stream()
+                    Optional<ModdedEntity> required = ModdedManager.getEntities().values().stream()
                             .filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
@@ -470,7 +470,7 @@ public class DisguiseListener implements Listener {
                 }
 
                 if (!p.hasMetadata("forge_mods")) {
-                    Optional<CustomEntity> required = ModdedManager.getEntities().values().stream()
+                    Optional<ModdedEntity> required = ModdedManager.getEntities().values().stream()
                             .filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));

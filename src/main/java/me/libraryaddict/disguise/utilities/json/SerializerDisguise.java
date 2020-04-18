@@ -55,7 +55,7 @@ public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSeria
     @Override
     public JsonElement serialize(Disguise src, Type typeOfSrc, JsonSerializationContext context) {
         if (src.isCustomDisguise()) {
-            return context.serialize(src, CustomDisguise.class);
+            return context.serialize(src, ModdedDisguise.class);
         } else if (src.isPlayerDisguise())
             return context.serialize(src, PlayerDisguise.class);
         else if (src.isMobDisguise())

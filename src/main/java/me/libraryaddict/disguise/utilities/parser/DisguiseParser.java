@@ -4,7 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.modded.CustomEntity;
+import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -647,13 +647,13 @@ public class DisguiseParser {
             name = disguisePerm.toReadable();
 
             if (disguisePerm.getType().isCustom()) {
-                CustomEntity ent = ModdedManager.getCustomEntity(disguisePerm.toReadable());
+                ModdedEntity ent = ModdedManager.getCustomEntity(disguisePerm.toReadable());
 
                 if (ent == null) {
                     throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
                 }
 
-                disguise = new CustomDisguise(ent);
+                disguise = new ModdedDisguise(ent);
             }
 
             Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);

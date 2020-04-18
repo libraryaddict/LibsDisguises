@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @Getter
-public class CustomEntity {
+public class ModdedEntity {
     @Setter
     private Object entityType;
     private final String name;

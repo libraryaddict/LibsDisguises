@@ -234,7 +234,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             if (!disguise.getType().isCustom()) {
                 mods.write(2, disguise.getType().getTypeId());
             } else {
-                mods.write(2, ((CustomDisguise) disguise).getCustomEntity().getTypeId());
+                mods.write(2, ((ModdedDisguise) disguise).getModdedEntity().getTypeId());
             }
 
             // region Vector calculations
@@ -310,7 +310,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 Object entityType;
 
                 if (disguise.isCustomDisguise()) {
-                    entityType = ((CustomDisguise) disguise).getCustomEntity().getEntityType();
+                    entityType = ((ModdedDisguise) disguise).getModdedEntity().getEntityType();
                 } else {
                     entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
                 }
@@ -325,7 +325,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 int objectId = disguise.getType().getObjectId();
 
                 if (disguise.isCustomDisguise()) {
-                    objectId = ((CustomDisguise) disguise).getCustomEntity().getTypeId();
+                    objectId = ((ModdedDisguise) disguise).getModdedEntity().getTypeId();
                 }
 
                 Object nmsEntity = ReflectionManager.getNmsEntity(disguisedEntity);
