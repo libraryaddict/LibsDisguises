@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.commands.utils.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -42,6 +43,8 @@ public class LibsDisguises extends JavaPlugin {
     private String buildNumber;
     @Getter
     private boolean reloaded;
+    @Getter
+    private final UpdateChecker updateChecker = new UpdateChecker("32453");
 
     @Override
     public void onLoad() {
@@ -166,6 +169,10 @@ public class LibsDisguises extends JavaPlugin {
 
     public String getBuildNo() {
         return buildNumber;
+    }
+
+    public int getBuildNumber() {
+        return isNumberedBuild() ? Integer.parseInt(getBuildNo()) : 0;
     }
 
     public boolean isNumberedBuild() {

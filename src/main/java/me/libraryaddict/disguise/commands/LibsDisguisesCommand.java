@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
@@ -27,6 +28,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -88,10 +90,22 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             }
 
             sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + version +
-                    " by libraryaddict, formerly maintained by Byteflux and NavidK0." +
-                    (sender.hasPermission("libsdisguises.reload") ?
-                            "\nUse " + ChatColor.GREEN + "/libsdisguises " + "reload" + ChatColor.DARK_GREEN +
-                                    " to reload the config. All disguises will be blown by doing this" + "." : ""));
+                    " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
+
+            if (sender.hasPermission("libsdisguises.reload")) {
+                sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" +
+                        ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this" +
+                        ".");
+            }
+
+            if (sender.hasPermission("libsdisguises.update")) {
+                sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises update" +
+                        ChatColor.DARK_GREEN +
+                        " to update Lib's Disguises to latest jenkins build. This will be updated on server restart. " +
+                        "To force an update, use /libsdisguises update! with an ! on the end");
+            }
+
+            // TODO Other options
 
             if (LibsPremium.isPremium()) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
@@ -352,6 +366,56 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                                 .get(StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get())));
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("update") || args[0].equalsIgnoreCase("update!")) {
+                if (!sender.hasPermission("libsdisguises.update")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                UpdateChecker checker = LibsDisguises.getInstance().getUpdateChecker();
+
+                if (checker.isDownloading()) {
+                    sender.sendMessage(LibsMsg.UPDATE_IN_PROGRESS.get());
+                    return true;
+                }
+
+                boolean force = args[0].endsWith("!");
+
+                if (!force) {
+                    if (checker.getLatestSnapshot() <= 0) {
+                        sender.sendMessage(LibsMsg.UPDATE_NOT_READY.get());
+                        return true;
+                    }
+
+                    if (checker.getLatestSnapshot() == LibsDisguises.getInstance().getBuildNumber()) {
+                        sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
+                        return true;
+                    }
+                }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        boolean result;
+
+                        if (force) {
+                            result = checker.grabLatestSnapshot();
+                        } else {
+                            result = checker.grabSnapshotBuild();
+                        }
+
+                        if (!result) {
+                            sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
+                            return;
+                        }
+
+                        sender.sendMessage(LibsMsg.UPDATE_SUCCESS.get()); // Update success, please restart to update
+
+                        if (sender instanceof Player) {
+                            Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_SUCCESS.get());
+                        }
+                    }
+                }.runTaskAsynchronously(LibsDisguises.getInstance());
             } else {
                 sender.sendMessage(LibsMsg.LIBS_COMMAND_WRONG_ARG.get());
             }
@@ -402,7 +466,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         String[] args = getArgs(origArgs);
 
         if (args.length == 0)
-            tabs.addAll(Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config", "mods"));
+            tabs.addAll(
+                    Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config", "mods", "update"));
 
         return filterTabs(tabs, origArgs);
     }

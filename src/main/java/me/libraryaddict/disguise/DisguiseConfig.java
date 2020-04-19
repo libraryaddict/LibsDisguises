@@ -228,6 +228,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean scoreboardDisguiseNames;
+    @Getter
+    @Setter
+    private static int tablistRemoveDelay;
 
     public static PermissionDefault getCommandVisibility() {
         return commandVisibility;
@@ -443,6 +446,7 @@ public class DisguiseConfig {
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setScoreboardDisguiseNames(config.getBoolean("ScoreboardNames"));
+        setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

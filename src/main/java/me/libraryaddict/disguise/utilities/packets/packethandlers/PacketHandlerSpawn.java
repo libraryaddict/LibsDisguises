@@ -181,7 +181,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (LibsPremium.getPaidInformation() == null ||
                         LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    packets.addDelayedPacket(deleteTab, 2);
+                    packets.addDelayedPacket(deleteTab, DisguiseConfig.getTablistRemoveDelay());
                 }
             }
 

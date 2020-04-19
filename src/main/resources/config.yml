@@ -70,6 +70,8 @@ ExtendedNames: false
 # Notch [DragonSlayer lvl: 28]
 # It's recommended to leave this on unless you need it off
 ScoreboardNames: true
+# How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
+TablistRemoveDelay: 2
 
 # Does the player keep their disguise after they die?
 KeepDisguises:
@@ -97,6 +99,7 @@ Scoreboard:
   WarnConflict: true
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?
+# Disabling this will also disable auto updating
 NotifyUpdate: true
 
 # Whats the permission to get the notification?
@@ -107,6 +110,8 @@ Permission: 'libsdisguises.update'
 # RELEASES - Only check for actual releases
 # SNAPSHOTS - Only check for new snapshots
 UpdatesBranch: SAME_BUILDS
+# Should the plugin automatically update if the server is using dev builds?
+AutoUpdateDev: true
 
 # Whats the max size allowed for command disguiseradius
 DisguiseRadiusMax: 50

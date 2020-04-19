@@ -2,8 +2,12 @@ package me.libraryaddict.disguise.utilities;
 
 import com.google.gson.Gson;
 import lombok.Getter;
+import me.libraryaddict.disguise.LibsDisguises;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,9 +25,90 @@ public class UpdateChecker {
     @Getter
     private int latestSnapshot;
     private final long started = System.currentTimeMillis();
+    private int lastDownload;
 
     public UpdateChecker(String resourceID) {
         this.resourceID = resourceID;
+    }
+
+    public boolean grabSnapshotBuild() {
+        if (getLatestSnapshot() == 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (lastDownload == -1) {
+            return false;
+        }
+
+        if (getLatestSnapshot() == lastDownload) {
+            return false;
+        }
+
+        return grabSnapshotBuild(getLatestSnapshot());
+    }
+
+    public boolean grabSnapshotBuild(int buildNo) {
+        boolean result = grabSnapshotBuild(
+                "https://ci.md-5.net/job/LibsDisguises/" + buildNo + "/artifact/target/LibsDisguises.jar");
+
+        if (result) {
+            lastDownload = buildNo;
+        }
+
+        return result;
+    }
+
+    public boolean grabLatestSnapshot() {
+        boolean result = grabSnapshotBuild(
+                "https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/artifact/target/LibsDisguises.jar");
+
+        if (result) {
+            lastDownload = LibsDisguises.getInstance().getBuildNumber();
+        }
+
+        return result;
+    }
+
+    public boolean isDownloading() {
+        return lastDownload == -1;
+    }
+
+    public int getLastDownload() {
+        return lastDownload;
+    }
+
+    public boolean grabSnapshotBuild(String urlString) {
+        DisguiseUtilities.getLogger().info("Now downloading latest build of Lib's Disguises from " + urlString);
+        lastDownload = -1;
+
+        File dest = new File(Bukkit.getUpdateFolderFile(), "LibsDisguises.jar");
+
+        if (!dest.exists()) {
+            dest.mkdirs();
+        }
+
+        try {
+            // We're connecting to spigot's API
+            URL url = new URL(urlString);
+            // Creating a connection
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+            // Get the input stream, what we receive
+            try (InputStream input = con.getInputStream()) {
+                FileUtils.copyInputStreamToFile(input, dest);
+            }
+
+            DisguiseUtilities.getLogger().info("Download success!");
+            return true;
+        }
+        catch (Exception ex) {
+            // Failed, set the last download back to previous build
+            dest.delete();
+            DisguiseUtilities.getLogger().warning("Failed to download snapshot build.");
+            lastDownload = 0;
+        }
+
+        return false;
     }
 
     public void checkSnapshotUpdate(int buildNumber) {

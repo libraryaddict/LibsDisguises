@@ -103,15 +103,22 @@ public class DisguiseListener implements Listener {
     }
 
     private void runUpdateScheduler() {
+        boolean autoUpdate = plugin.getConfig().getBoolean("AutoUpdateDev");
+
         if (!plugin.getConfig().getBoolean("NotifyUpdate")) {
             return;
+        }
+
+        if (autoUpdate && !isCheckReleases()) {
+            DisguiseUtilities.getLogger()
+                    .info("Plugin will attempt to auto update when new builds are ready! Check config to disable.");
         }
 
         updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try {
-                    UpdateChecker updateChecker = new UpdateChecker("32453");
+                    UpdateChecker updateChecker = LibsDisguises.getInstance().getUpdateChecker();
                     boolean checkReleases = isCheckReleases();
 
                     if (checkReleases) {
@@ -126,15 +133,21 @@ public class DisguiseListener implements Listener {
                         latestVersion = version;
                         updateMessage = LibsMsg.UPDATE_READY;
                     } else {
-                        updateChecker.checkSnapshotUpdate(Integer.parseInt(plugin.getBuildNo()));
+                        updateChecker.checkSnapshotUpdate(plugin.getBuildNumber());
 
                         if (updateChecker.getLatestSnapshot() <= 0) {
                             return;
                         }
 
-                        currentVersion = plugin.getBuildNo();
                         latestVersion = "" + updateChecker.getLatestSnapshot();
-                        updateMessage = LibsMsg.UPDATE_READY_SNAPSHOT;
+
+                        if (autoUpdate && plugin.isNumberedBuild()) {
+                            boolean result = updateChecker.grabSnapshotBuild();
+                            updateMessage = result ? LibsMsg.UPDATE_SUCCESS : LibsMsg.UPDATE_FAILED;
+                        } else {
+                            currentVersion = plugin.getBuildNo();
+                            updateMessage = LibsMsg.UPDATE_READY_SNAPSHOT;
+                        }
                     }
 
                     Bukkit.getScheduler().runTask(plugin, new Runnable() {
@@ -165,7 +178,11 @@ public class DisguiseListener implements Listener {
             return;
         }
 
-        player.sendMessage(updateMessage.get(currentVersion, latestVersion));
+        if (updateMessage == LibsMsg.UPDATE_SUCCESS || updateMessage == LibsMsg.UPDATE_FAILED) {
+            player.sendMessage(updateMessage.get());
+        } else {
+            player.sendMessage(updateMessage.get(currentVersion, latestVersion));
+        }
     }
 
     public void cleanup() {
@@ -477,7 +494,6 @@ public class DisguiseListener implements Listener {
                 }
             }
         }.runTaskLater(LibsDisguises.getInstance(), 60);
-
     }
 
     /**

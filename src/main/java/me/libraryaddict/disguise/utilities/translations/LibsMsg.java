@@ -137,6 +137,11 @@ public enum LibsMsg {
     NO_MODS(ChatColor.RED + "%s is not using any mods!"),
     MODS_LIST(ChatColor.DARK_GREEN + "%s has the mods:" + ChatColor.AQUA + " %s"),
     NO_PERM(ChatColor.RED + "You are forbidden to use this command."),
+    UPDATE_NOT_READY(ChatColor.RED + "Lib's Disguises doesn't know what's the latest update!"),
+    UPDATE_ON_LATEST(ChatColor.RED + "You are already on the latest version of LibsDisguises!"),
+    UPDATE_FAILED(ChatColor.RED + "LibsDisguises update failed! Check console for errors."),
+    UPDATE_SUCCESS(ChatColor.DARK_GREEN + "LibsDisguises update success! Restart server to update!"),
+    UPDATE_IN_PROGRESS(ChatColor.DARK_GREEN + "LibsDisguises is now downloading an update..."),
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
     NO_MODS_LISTENING(ChatColor.RED + "This server is not listening for mods!"),
     NO_PERMS_USE_OPTIONS(ChatColor.RED +
