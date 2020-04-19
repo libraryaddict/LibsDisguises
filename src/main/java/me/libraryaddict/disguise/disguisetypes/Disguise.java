@@ -903,6 +903,7 @@ public abstract class Disguise {
 
         if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
             getWatcher().setCustomName("");
+            getWatcher().setCustomNameVisible(false);
         }
 
         // If a horse is disguised as a horse, it should obey parent no gravity rule
