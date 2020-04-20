@@ -37,11 +37,11 @@ public enum TranslateType {
             type.loadTranslations();
         }
 
+        TranslateFiller.fillConfigs();
+
         if (!LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             DisguiseUtilities.getLogger().severe("You must purchase the plugin to use translations!");
         }
-
-        TranslateFiller.fillConfigs();
     }
 
     protected void saveTranslations() {

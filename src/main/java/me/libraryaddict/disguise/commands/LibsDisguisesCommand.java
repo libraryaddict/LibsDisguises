@@ -4,8 +4,7 @@ import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
@@ -15,6 +14,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -32,10 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
@@ -120,6 +117,61 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 DisguiseConfig.loadConfig();
                 sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
                 return true;
+            } else if (args[0].equalsIgnoreCase("count")) {
+                if (!sender.hasPermission("libsdisguises.count")) {
+                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    return true;
+                }
+
+                HashMap<DisguiseType, Integer> counts = new HashMap<>();
+
+                for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                    for (Disguise disguise : disguises) {
+                        if (disguise.isPlayerDisguise() && DisguiseConfig.isScoreboardDisguiseNames()) {
+                            if (((PlayerDisguise) disguise).hasScoreboardName()) {
+                                for (Player player : Bukkit.getOnlinePlayers()) {
+                                    Scoreboard board = player.getScoreboard();
+
+                                    if (board.getEntryTeam(((PlayerDisguise) disguise).getProfileName()) == null) {
+                                        DisguiseUtilities.getLogger().warning(
+                                                "The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                                        " is missing a scoreboard team on " + player.getName() +
+                                                        " and possibly more players!");
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        counts.compute(disguise.getType(), (a, b) -> (b != null ? b : 0) + 1);
+                    }
+                }
+
+                if (counts.isEmpty()) {
+                    sender.sendMessage(LibsMsg.NO_DISGUISES_IN_USE.get());
+                } else {
+                    sender.sendMessage(
+                            LibsMsg.ACTIVE_DISGUISES_COUNT.get(counts.values().stream().reduce(Integer::sum)));
+
+                    ArrayList<DisguiseType> types = new ArrayList<>(counts.keySet());
+                    types.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER
+                            .compare(TranslateType.DISGUISES.get(d1.toReadable()),
+                                    TranslateType.DISGUISES.get(d2.toReadable())));
+
+                    StringBuilder builder = new StringBuilder();
+
+                    for (int i = 0; i < types.size(); i++) {
+                        builder.append(LibsMsg.ACTIVE_DISGUISES_DISGUISE
+                                .get(TranslateType.DISGUISES.get(types.get(i).toReadable()), counts.get(types.get(i))));
+
+                        if (i + 1 < types.size()) {
+                            builder.append(LibsMsg.ACTIVE_DISGUISES_SEPERATOR.get());
+                        }
+                    }
+
+                    sender.sendMessage(LibsMsg.ACTIVE_DISGUISES.get(builder.toString()));
+                }
             } else if (args[0].equalsIgnoreCase("mods")) {
                 if (!sender.hasPermission("libsdisguises.mods")) {
                     sender.sendMessage(LibsMsg.NO_PERM.get());
@@ -467,7 +519,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 0)
             tabs.addAll(
-                    Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config", "mods", "update"));
+                    Arrays.asList("reload", "scoreboard", "permtest", "json", "metainfo", "config", "mods", "update",
+                            "count"));
 
         return filterTabs(tabs, origArgs);
     }

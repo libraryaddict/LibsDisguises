@@ -8,6 +8,11 @@ import org.bukkit.ChatColor;
  * Created by libraryaddict on 15/06/2017.
  */
 public enum LibsMsg {
+    NO_DISGUISES_IN_USE(ChatColor.RED + "There are no disguises in use!"),
+    ACTIVE_DISGUISES_COUNT(ChatColor.DARK_GREEN + "There are %s disguises active"),
+    ACTIVE_DISGUISES_DISGUISE(ChatColor.GREEN + "%s: " + ChatColor.AQUA + "%s"),
+    ACTIVE_DISGUISES(ChatColor.DARK_GREEN + "The disguises in use are: %s"),
+    ACTIVE_DISGUISES_SEPERATOR(ChatColor.RED + ", " + ChatColor.GREEN),
     BLOWN_DISGUISE(ChatColor.RED + "Your disguise was blown!"),
     EXPIRED_DISGUISE(ChatColor.RED + "Your disguise has expired!"),
     CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises:" + ChatColor.GREEN + " %s"),

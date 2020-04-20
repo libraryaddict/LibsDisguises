@@ -88,6 +88,8 @@ commands:
 permissions:
     libsdisguises.reload:
       description: Allows the user to reload LibsDisguises.
+    libsdisguises.count:
+      description: Allows the user to see how many disguises are active
     libsdisguises.mods:
       description: Allows the user to see mods in use.
     libsdisguises.seethrough:
