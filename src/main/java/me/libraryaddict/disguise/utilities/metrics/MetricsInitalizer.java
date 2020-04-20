@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.metrics;
 
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -63,6 +64,8 @@ public class MetricsInitalizer {
             } else {
                 premiumType = "Paid Builds";
             }
+        } else if (LibsPremium.isAPIPlugin()) {
+            premiumType = "Free Plugin";
         } else {
             premiumType = "Free Builds";
         }
@@ -71,13 +74,6 @@ public class MetricsInitalizer {
             @Override
             public String getValue() {
                 return "" + LibsPremium.isBisectHosted();
-            }
-        });
-
-        metrics.addCustomChart(new Metrics.SimplePie("ld_api") {
-            @Override
-            public String getValue() {
-                return "" + LibsPremium.isAPIPlugin();
             }
         });
 
