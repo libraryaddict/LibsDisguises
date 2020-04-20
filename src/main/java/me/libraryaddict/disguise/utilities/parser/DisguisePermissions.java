@@ -138,8 +138,9 @@ public class DisguisePermissions {
 
         String disguiseName = split[2];
 
-        DisguisePerm dPerm = DisguiseParser.getDisguisePerm(disguiseName);
         HashMap<String, Boolean> options = getOptions(permission);
+
+        DisguisePerm dPerm = DisguiseParser.getDisguisePerm(disguiseName);
 
         // If this refers to a specific disguise
         if (dPerm != null) {
@@ -233,7 +234,16 @@ public class DisguisePermissions {
 
         List<ParsedPermission> list = new ArrayList<>();
 
+        ArrayList<String> valids = new ArrayList<>();
+
         for (Map.Entry<String, Boolean> entry : permissions.entrySet()) {
+            String key = entry.getKey();
+
+            if (key.split("\\.").length > 2 && key.split("\\.")[2].equalsIgnoreCase("valid")) {
+                valids.add(key);
+                continue;
+            }
+
             ParsedPermission temp = parsePermission(entry.getKey());
 
             if (temp == null) {
@@ -243,6 +253,20 @@ public class DisguisePermissions {
             temp.setNegated(!entry.getValue());
 
             list.add(temp);
+        }
+
+        for (String valid : valids) {
+            HashMap<String, Boolean> options = getOptions(valid);
+
+            String key = valid.split("\\.")[1];
+
+            if (!key.equals("*") && !key.equalsIgnoreCase(commandName)){
+                continue;
+            }
+
+            for (ParsedPermission perms : list) {
+                perms.options.putAll(options);
+            }
         }
 
         // Sorted from 5 to 0 where "*" is first and "Cow" is last
@@ -384,7 +408,7 @@ public class DisguisePermissions {
             if (disguiseType.isMisc()) {
                 return 3;
             }
-        }  else if (permissionName.equals("custom")) {
+        } else if (permissionName.equals("custom")) {
             if (disguiseType.isMisc()) {
                 return 3;
             }
