@@ -69,11 +69,11 @@ public class FlagWatcher {
         FlagWatcher cloned;
 
         try {
-            cloned = getClass().getConstructor(Disguise.class).newInstance(getDisguise());
+            cloned = getClass().getConstructor(Disguise.class).newInstance(owningDisguise);
         }
         catch (Exception e) {
             e.printStackTrace();
-            cloned = new FlagWatcher(getDisguise());
+            cloned = new FlagWatcher(owningDisguise);
         }
 
         cloned.entityValues = (HashMap<Integer, Object>) entityValues.clone();

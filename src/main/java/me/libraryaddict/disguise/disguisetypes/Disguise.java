@@ -563,8 +563,9 @@ public abstract class Disguise {
     @Deprecated
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
-            throw new IllegalArgumentException(newWatcher.getClass().getSimpleName() + " is not a instance of " +
-                    getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
+            throw new IllegalArgumentException(
+                    (newWatcher == null ? "null" : newWatcher.getClass().getSimpleName()) + " is not a instance of " +
+                            getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
