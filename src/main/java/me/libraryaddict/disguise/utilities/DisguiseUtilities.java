@@ -489,60 +489,65 @@ public class DisguiseUtilities {
      */
     public static void checkConflicts(TargetedDisguise disguise, String name) {
         // If the disguise is being used.. Else we may accidentally undisguise something else
-        if (DisguiseAPI.isDisguiseInUse(disguise)) {
-            Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getUniqueId()).iterator();
-            // Iterate through the disguises
-            while (disguiseItel.hasNext()) {
-                TargetedDisguise d = disguiseItel.next();
-                // Make sure the disguise isn't the same thing
-                if (d != disguise) {
-                    // If the loop'd disguise is hiding the disguise to everyone in its list
-                    if (d.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                        // If player is a observer in the loop
-                        if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // If player is a observer in the disguise
-                            // Remove them from the loop
-                            if (name != null) {
-                                d.removePlayer(name);
-                            } else {
-                                for (String playername : disguise.getObservers()) {
-                                    d.silentlyRemovePlayer(playername);
-                                }
-                            }
-                        } else if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // If player is not a observer in the loop
-                            if (name != null) {
-                                if (!disguise.getObservers().contains(name)) {
-                                    d.removePlayer(name);
-                                }
-                            } else {
-                                for (String playername : new ArrayList<>(d.getObservers())) {
-                                    if (!disguise.getObservers().contains(playername)) {
-                                        d.silentlyRemovePlayer(playername);
-                                    }
-                                }
-                            }
-                        }
-                    } else if (d.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                        // Here you add it to the loop if they see the disguise
-                        if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // Everyone who is in the disguise needs to be added to the loop
-                            if (name != null) {
-                                d.addPlayer(name);
-                            } else {
-                                for (String playername : disguise.getObservers()) {
-                                    d.silentlyAddPlayer(playername);
-                                }
-                            }
-                        } else if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                            // This here is a paradox.
-                            // If fed a name. I can do this.
-                            // But the rest of the time.. Its going to conflict.
+        if (!DisguiseAPI.isDisguiseInUse(disguise)) {
+            return;
+        }
 
-                            disguiseItel.remove();
-                            d.removeDisguise(true);
+        Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getUniqueId()).iterator();
+
+        // Iterate through the disguises
+        while (disguiseItel.hasNext()) {
+            TargetedDisguise d = disguiseItel.next();
+            // Make sure the disguise isn't the same thing
+            if (d == disguise) {
+                continue;
+            }
+
+            // If the loop'd disguise is hiding the disguise to everyone in its list
+            if (d.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                // If player is a observer in the loop
+                if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    // If player is a observer in the disguise
+                    // Remove them from the loop
+                    if (name != null) {
+                        d.removePlayer(name);
+                    } else {
+                        for (String playername : disguise.getObservers()) {
+                            d.silentlyRemovePlayer(playername);
                         }
                     }
+                } else if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    // If player is not a observer in the loop
+                    if (name != null) {
+                        if (!disguise.getObservers().contains(name)) {
+                            d.removePlayer(name);
+                        }
+                    } else {
+                        for (String playername : new ArrayList<>(d.getObservers())) {
+                            if (!disguise.getObservers().contains(playername)) {
+                                d.silentlyRemovePlayer(playername);
+                            }
+                        }
+                    }
+                }
+            } else if (d.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                // Here you add it to the loop if they see the disguise
+                if (disguise.getDisguiseTarget() == TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    // Everyone who is in the disguise needs to be added to the loop
+                    if (name != null) {
+                        d.addPlayer(name);
+                    } else {
+                        for (String playername : disguise.getObservers()) {
+                            d.silentlyAddPlayer(playername);
+                        }
+                    }
+                } else if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                    // This here is a paradox.
+                    // If fed a name. I can do this.
+                    // But the rest of the time.. Its going to conflict.
+
+                    disguiseItel.remove();
+                    d.removeDisguise(true);
                 }
             }
         }
