@@ -427,9 +427,9 @@ public class DisguiseConfig {
         setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpiry"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));
-        setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
         setSaveGameProfiles(config.getBoolean("SaveGameProfiles"));
         setSavePlayerDisguises(config.getBoolean("SaveDisguises.Players"));
+        setSaveEntityDisguises(config.getBoolean("SaveDisguises.Entities"));
         setSelfDisguisesSoundsReplaced(config.getBoolean("HearSelfDisguise"));
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
