@@ -306,7 +306,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             PacketContainer spawnEntity;
 
-            if (NmsVersion.v1_14.isSupported()) {System.out.println("...");
+            if (NmsVersion.v1_14.isSupported()) {
                 Object entityType;
 
                 if (disguise.isCustomDisguise()) {
