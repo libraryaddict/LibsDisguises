@@ -81,6 +81,6 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
 
         sender.sendMessage(LibsMsg.DMODENT_HELP1.get());
         sender.sendMessage(LibsMsg.DMODIFY_HELP3
-                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+                .get( StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));
     }
 }

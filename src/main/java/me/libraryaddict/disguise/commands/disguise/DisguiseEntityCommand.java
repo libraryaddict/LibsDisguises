@@ -66,8 +66,8 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
                 .addInteraction(sender.getName(), new DisguiseEntityInteraction(disguiseArgs),
                         DisguiseConfig.getDisguiseEntityExpire());
 
-        sender.sendMessage(LibsMsg.DISG_ENT_CLICK
-                .get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getDisguiseName()));
+        sender.sendMessage(
+                LibsMsg.DISG_ENT_CLICK.get(DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getDisguiseName()));
         return true;
     }
 
@@ -94,8 +94,8 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DISG_ENT_HELP1.get());
-        sender.sendMessage(LibsMsg.CAN_USE_DISGS
-                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(
+                LibsMsg.CAN_USE_DISGS.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));
 
         if (allowedDisguises.contains("player")) {
             sender.sendMessage(LibsMsg.DISG_ENT_HELP3.get());

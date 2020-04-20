@@ -114,8 +114,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
         sender.sendMessage(LibsMsg.DISG_HELP1.get());
-        sender.sendMessage(LibsMsg.CAN_USE_DISGS
-                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(
+                LibsMsg.CAN_USE_DISGS.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));
 
         if (allowedDisguises.contains("player")) {
             sender.sendMessage(LibsMsg.DISG_HELP2.get());

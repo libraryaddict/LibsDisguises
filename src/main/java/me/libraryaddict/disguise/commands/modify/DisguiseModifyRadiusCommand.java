@@ -288,8 +288,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP1.get(maxRadius));
-        sender.sendMessage(LibsMsg.DMODIFY_HELP3
-                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(
+                LibsMsg.DMODIFY_HELP3.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));
 
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP2.get());
         sender.sendMessage(LibsMsg.DMODRADIUS_HELP3.get());

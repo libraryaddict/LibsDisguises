@@ -10,7 +10,8 @@ import org.bukkit.ChatColor;
 public enum LibsMsg {
     BLOWN_DISGUISE(ChatColor.RED + "Your disguise was blown!"),
     EXPIRED_DISGUISE(ChatColor.RED + "Your disguise has expired!"),
-    CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises: %s"),
+    CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises:" + ChatColor.GREEN + " %s"),
+    CAN_USE_DISGS_SEPERATOR(ChatColor.RED + "," + ChatColor.GREEN),
     CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player/uuid '%s'"),
     CANNOT_FIND_PLAYER_NAME(ChatColor.RED + "Cannot find the player '%s'"),
     CANNOT_FIND_PLAYER_UUID(ChatColor.RED + "Cannot find the uuid '%s'"),
@@ -59,7 +60,7 @@ public enum LibsMsg {
     DMODENT_HELP1(ChatColor.DARK_GREEN + "Choose the options for a disguise then right click a entity to modify it!"),
     DMODIFY_HELP1(ChatColor.DARK_GREEN + "Modify your own disguise as you wear it!"),
     DMODIFY_HELP2(ChatColor.DARK_GREEN + "/disguisemodify setBaby true setSprinting true"),
-    DMODIFY_HELP3(ChatColor.DARK_GREEN + "You can modify the disguises: %s"),
+    DMODIFY_HELP3(ChatColor.DARK_GREEN + "You can modify the disguises:" + ChatColor.GREEN + " %s"),
     DMODIFY_MODIFIED(ChatColor.RED + "Your disguise has been modified!"),
     DMODIFY_NO_PERM(ChatColor.RED + "No permission to modify your disguise!"),
     DMODIFYENT_CLICK(ChatColor.RED + "Right click a disguised entity in the next %s seconds to modify their disguise!"),

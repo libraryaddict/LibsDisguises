@@ -278,8 +278,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         sender.sendMessage(LibsMsg.DRADIUS_HELP1.get(maxRadius));
-        sender.sendMessage(LibsMsg.CAN_USE_DISGS
-                .get(ChatColor.GREEN + StringUtils.join(allowedDisguises, ChatColor.RED + ", " + ChatColor.GREEN)));
+        sender.sendMessage(
+                LibsMsg.CAN_USE_DISGS.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));
 
         if (allowedDisguises.contains("player")) {
             sender.sendMessage(LibsMsg.DRADIUS_HELP3.get());
