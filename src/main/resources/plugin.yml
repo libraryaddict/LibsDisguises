@@ -86,92 +86,94 @@ commands:
       description: Save a custom disguise to disguises.yml
 
 permissions:
-    libsdisguises.reload:
-      description: Allows the user to reload LibsDisguises.
-    libsdisguises.count:
-      description: Allows the user to see how many disguises are active
-    libsdisguises.mods:
-      description: Allows the user to see mods in use.
-    libsdisguises.seethrough:
-      description: Allows player to see through disguises.
-      default: false
-    libsdisguises.hidename:
-      description: Allows player to ignore name being forced above disguise
-      default: false
-    libsdisguises.pve:
-      description: Allows player to ignore pve restrictions.
-      default: false
-    libsdisguises.pvp:
-      description: Allows player to ignore pvp restrictions.
-      default: false
-    libsdisguises.permtest:
-      description: Allows player to test permissions
-    libsdisguises.metainfo:
-      description: Allows player to get meta info
-    libsdisguises.json:
-      description: Allows player to parse held item to json
-    libsdisguises.scoreboardtest:
-      description: Test if the scoreboard is valid, this is a simple test.
-    libsdisguises.config:
-      description: Allows player to check Lib's Disguises config for values
-    libsdisguises.noactionbar:
-      description: Hides the action bar even if enabled in config
-      default: false
-    libsdisguises.seecmd:
-      description: See all commands in tab-completion
-      default: true
-      children:
-         libsdisguises.seecmd.disguise: true
-         libsdisguises.seecmd.disguiseentity: true
-         libsdisguises.seecmd.disguisehelp: true
-         libsdisguises.seecmd.disguiseplayer: true
-         libsdisguises.seecmd.disguiseradius: true
-         libsdisguises.seecmd.undisguise: true
-         libsdisguises.seecmd.undisguiseentity: true
-         libsdisguises.seecmd.undisguiseplayer: true
-         libsdisguises.seecmd.undisguiseradius: true
-         libsdisguises.seecmd.disguiseclone: true
-         libsdisguises.seecmd.disguiseviewself: true
-         libsdisguises.seecmd.disguisemodify: true
-         libsdisguises.seecmd.disguisemodifyplayer: true
-         libsdisguises.seecmd.disguisemodifyradius: true
-         libsdisguises.seecmd.disguisemodifyentity: true
-         libsdisguises.seecmd.copydisguise: true
-         libsdisguises.seecmd.grabskin: true
-         libsdisguises.seecmd.savedisguise: true
-    libsdisguises.seecmd.disguiseviewself:
-      description: See the /disguiseviewself command in tab-completion
-    libsdisguises.seecmd.disguise:
-      description: See the /disguise command in tab-completion
-    libsdisguises.seecmd.disguiseentity:
-      description: See the /disguiseentity command in tab-completion
-    libsdisguises.seecmd.disguisehelp:
-      description: See the /disguisehelp command in tab-completion
-    libsdisguises.seecmd.disguiseplayer:
-      description: See the /disguiseplayer command in tab-completion
-    libsdisguises.seecmd.disguiseradius:
-      description: See the /disguiseradius command in tab-completion
-    libsdisguises.seecmd.undisguise:
-      description: See the /undisguise command in tab-completion
-    libsdisguises.seecmd.undisguiseentity:
-      description: See the /undisguiseentity command in tab-completion
-    libsdisguises.seecmd.undisguiseplayer:
-      description: See the /undisguiseplayer command in tab-completion
-    libsdisguises.seecmd.undisguiseradius:
-      description: See the /undisguiseradius command in tab-completion
-    libsdisguises.seecmd.disguiseclone:
-      description: See the /disguiseclone command in tab-completion
-    libsdisguises.seecmd.disguisemodify:
-      description: See the /disguisemodify command in tab-completion
-    libsdisguises.seecmd.disguisemodifyplayer:
-      description: See the /disguisemodifyplayer command in tab-completion
-    libsdisguises.seecmd.disguisemodifyradius:
-      description: See the /disguisemodifyradius command in tab-completion
-    libsdisguises.seecmd.disguisemodifyentity:
-      description: See the /disguisemodifyentity command in tab-completion
-    libsdisguises.seecmd.copydisguise:
-      description: See the /copydisguise command in tab-completion
-    libsdisguises.seecmd.grabskin:
-      description: See the /grabskin command in tab-completion
-    libsdisguises.seecmd.savedisguise:
-      description: See the /savedisguise command in tab-completion
+  libsdisguises.reload:
+    description: Allows the user to reload LibsDisguises.
+  libsdisguises.update:
+    description: Allows the user to update Libs Disguises
+  libsdisguises.count:
+    description: Allows the user to see how many disguises are active
+  libsdisguises.mods:
+    description: Allows the user to see mods in use.
+  libsdisguises.seethrough:
+    description: Allows player to see through disguises.
+    default: false
+  libsdisguises.hidename:
+    description: Allows player to ignore name being forced above disguise
+    default: false
+  libsdisguises.pve:
+    description: Allows player to ignore pve restrictions.
+    default: false
+  libsdisguises.pvp:
+    description: Allows player to ignore pvp restrictions.
+    default: false
+  libsdisguises.permtest:
+    description: Allows player to test permissions
+  libsdisguises.metainfo:
+    description: Allows player to get meta info
+  libsdisguises.json:
+    description: Allows player to parse held item to json
+  libsdisguises.scoreboardtest:
+    description: Test if the scoreboard is valid, this is a simple test.
+  libsdisguises.config:
+    description: Allows player to check Lib's Disguises config for values
+  libsdisguises.noactionbar:
+    description: Hides the action bar even if enabled in config
+    default: false
+  libsdisguises.seecmd:
+    description: See all commands in tab-completion
+    default: true
+    children:
+       libsdisguises.seecmd.disguise: true
+       libsdisguises.seecmd.disguiseentity: true
+       libsdisguises.seecmd.disguisehelp: true
+       libsdisguises.seecmd.disguiseplayer: true
+       libsdisguises.seecmd.disguiseradius: true
+       libsdisguises.seecmd.undisguise: true
+       libsdisguises.seecmd.undisguiseentity: true
+       libsdisguises.seecmd.undisguiseplayer: true
+       libsdisguises.seecmd.undisguiseradius: true
+       libsdisguises.seecmd.disguiseclone: true
+       libsdisguises.seecmd.disguiseviewself: true
+       libsdisguises.seecmd.disguisemodify: true
+       libsdisguises.seecmd.disguisemodifyplayer: true
+       libsdisguises.seecmd.disguisemodifyradius: true
+       libsdisguises.seecmd.disguisemodifyentity: true
+       libsdisguises.seecmd.copydisguise: true
+       libsdisguises.seecmd.grabskin: true
+       libsdisguises.seecmd.savedisguise: true
+  libsdisguises.seecmd.disguiseviewself:
+    description: See the /disguiseviewself command in tab-completion
+  libsdisguises.seecmd.disguise:
+    description: See the /disguise command in tab-completion
+  libsdisguises.seecmd.disguiseentity:
+    description: See the /disguiseentity command in tab-completion
+  libsdisguises.seecmd.disguisehelp:
+    description: See the /disguisehelp command in tab-completion
+  libsdisguises.seecmd.disguiseplayer:
+    description: See the /disguiseplayer command in tab-completion
+  libsdisguises.seecmd.disguiseradius:
+    description: See the /disguiseradius command in tab-completion
+  libsdisguises.seecmd.undisguise:
+    description: See the /undisguise command in tab-completion
+  libsdisguises.seecmd.undisguiseentity:
+    description: See the /undisguiseentity command in tab-completion
+  libsdisguises.seecmd.undisguiseplayer:
+    description: See the /undisguiseplayer command in tab-completion
+  libsdisguises.seecmd.undisguiseradius:
+    description: See the /undisguiseradius command in tab-completion
+  libsdisguises.seecmd.disguiseclone:
+    description: See the /disguiseclone command in tab-completion
+  libsdisguises.seecmd.disguisemodify:
+    description: See the /disguisemodify command in tab-completion
+  libsdisguises.seecmd.disguisemodifyplayer:
+    description: See the /disguisemodifyplayer command in tab-completion
+  libsdisguises.seecmd.disguisemodifyradius:
+    description: See the /disguisemodifyradius command in tab-completion
+  libsdisguises.seecmd.disguisemodifyentity:
+    description: See the /disguisemodifyentity command in tab-completion
+  libsdisguises.seecmd.copydisguise:
+    description: See the /copydisguise command in tab-completion
+  libsdisguises.seecmd.grabskin:
+    description: See the /grabskin command in tab-completion
+  libsdisguises.seecmd.savedisguise:
+    description: See the /savedisguise command in tab-completion
