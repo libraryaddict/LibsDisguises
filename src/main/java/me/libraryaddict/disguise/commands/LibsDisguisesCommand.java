@@ -104,6 +104,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + version +
                     " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
 
+            // TODO You can use the following arguments, hover over them for more information
+
             if (sender.hasPermission("libsdisguises.reload")) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" +
                         ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this" +

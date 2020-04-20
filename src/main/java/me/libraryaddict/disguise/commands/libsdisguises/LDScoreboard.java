@@ -2,6 +2,11 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -10,7 +15,9 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -28,6 +35,32 @@ public class LDScoreboard implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        if (DisguiseConfig.isScoreboardDisguiseNames()) {
+            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                for (Disguise disguise : disguises) {
+                    if (!disguise.isPlayerDisguise()) {
+                        continue;
+                    }
+
+                    if (!((PlayerDisguise) disguise).hasScoreboardName()) {
+                        continue;
+                    }
+
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        Scoreboard board = player.getScoreboard();
+
+                        if (board.getTeam(((PlayerDisguise) disguise).getScoreboardName().getTeamName()) != null) {
+                            continue;
+                        }
+
+                        sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                " is missing a scoreboard team on " + player.getName() + " and possibly more players!");
+
+                        break;
+                    }
+                }
+            }
+        }
 
         if (DisguiseConfig.getPushingOption() == DisguiseConfig.DisguisePushing.IGNORE_SCOREBOARD) {
             sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_DISABLED.get());
@@ -75,5 +108,10 @@ public class LDScoreboard implements LDCommand {
         }
 
         sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_SUCCESS.get(team.getName()));
+    }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
     }
 }

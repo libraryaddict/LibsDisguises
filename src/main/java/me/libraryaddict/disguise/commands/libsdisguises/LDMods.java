@@ -56,4 +56,9 @@ public class LDMods implements LDCommand {
         sender.sendMessage(LibsMsg.MODS_LIST.get(player.getName(),
                 StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", ")));
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

@@ -122,4 +122,9 @@ public class LDJson implements LDCommand {
 
         sender.spigot().sendMessage(builder.create());
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

@@ -37,4 +37,9 @@ public class LDConfig implements LDCommand {
             sender.sendMessage(ChatColor.AQUA + "[LibsDisguises] " + s);
         }
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

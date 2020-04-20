@@ -73,4 +73,9 @@ public class LDMetaInfo implements LDCommand {
             }
         }
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

@@ -26,4 +26,9 @@ public class LDReload implements LDCommand {
         DisguiseConfig.loadConfig();
         sender.sendMessage(LibsMsg.RELOADED_CONFIG.get());
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

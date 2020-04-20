@@ -72,4 +72,9 @@ public class LDUpdate implements LDCommand {
             }
         }.runTaskAsynchronously(LibsDisguises.getInstance());
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }

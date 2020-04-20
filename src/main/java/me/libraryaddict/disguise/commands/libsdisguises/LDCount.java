@@ -35,23 +35,6 @@ public class LDCount implements LDCommand {
 
         for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
             for (Disguise disguise : disguises) {
-                if (disguise.isPlayerDisguise() && DisguiseConfig.isScoreboardDisguiseNames()) {
-                    if (((PlayerDisguise) disguise).hasScoreboardName()) {
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            Scoreboard board = player.getScoreboard();
-
-                            if (board.getEntryTeam(((PlayerDisguise) disguise).getProfileName()) == null) {
-                                DisguiseUtilities.getLogger().warning(
-                                        "The player disguise " + ((PlayerDisguise) disguise).getName() +
-                                                " is missing a scoreboard team on " + player.getName() +
-                                                " and possibly more players!");
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
                 counts.compute(disguise.getType(), (a, b) -> (b != null ? b : 0) + 1);
             }
         }
@@ -78,5 +61,10 @@ public class LDCount implements LDCommand {
 
             sender.sendMessage(LibsMsg.ACTIVE_DISGUISES.get(builder.toString()));
         }
+    }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
     }
 }

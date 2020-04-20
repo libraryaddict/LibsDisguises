@@ -56,4 +56,9 @@ public class LDPermTest implements LDCommand {
             sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_FAIL.get());
         }
     }
+
+    @Override
+    public LibsMsg getHelp() {
+        return null;
+    }
 }
