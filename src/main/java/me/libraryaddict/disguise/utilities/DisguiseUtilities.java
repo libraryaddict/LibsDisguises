@@ -916,6 +916,11 @@ public class DisguiseUtilities {
 
     public static void init() {
         try {
+            // Force an exception to be thrown if it doesn't contain trackedPlayerMap
+            Class tracker = ReflectionManager.getNmsClass("EntityTrackerEntry");
+            tracker.getDeclaredField("trackedPlayerMap");
+
+            // Don't really need this here, but it's insurance!
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         }
         catch (Exception ex) {
