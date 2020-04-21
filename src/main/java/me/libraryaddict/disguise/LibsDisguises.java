@@ -53,9 +53,8 @@ public class LibsDisguises extends JavaPlugin {
 
         if (!Bukkit.getServer().getWorlds().isEmpty()) {
             reloaded = true;
-            getLogger()
-                    .severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
-                            "reloads gracefully!");
+            getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " +
+                    "reloads gracefully!");
             return;
         }
 
@@ -65,9 +64,8 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onEnable() {
         if (reloaded) {
-            getLogger()
-                    .severe("Lib's Disguises was reloaded! Please do not report any bugs! This plugin can't handle " +
-                            "reloads gracefully!");
+            getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " +
+                    "reloads gracefully!");
         }
 
         if (!new File(getDataFolder(), "disguises.yml").exists()) {
