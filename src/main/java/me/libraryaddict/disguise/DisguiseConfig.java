@@ -561,6 +561,7 @@ public class DisguiseConfig {
             if (missingConfigs > 0) {
                 DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs +
                         " options! Please consider regenerating your config!");
+                DisguiseUtilities.getLogger().info("You can also add the missing entries yourself! Try '/libsdisguises config'");
             }
         }
 
