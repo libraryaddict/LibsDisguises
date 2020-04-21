@@ -1389,11 +1389,13 @@ public class ReflectionManager {
     }
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
-        return Enum.valueOf(getNmsClass("EntityPose"), entityPose.name());
+        return Enum.valueOf(getNmsClass("EntityPose"),
+                entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
     }
 
     public static EntityPose getEntityPose(Object nmsEntityPose) {
-        return EntityPose.valueOf(((Enum) nmsEntityPose).name());
+        String name = ((Enum) nmsEntityPose).name();
+        return EntityPose.valueOf(name.equals("CROUCHING") ? "SNEAKING" : name);
     }
 
     public static WrappedWatchableObject createWatchable(MetaIndex index, Object obj) {

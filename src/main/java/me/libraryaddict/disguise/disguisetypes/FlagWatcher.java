@@ -663,7 +663,7 @@ public class FlagWatcher {
         } else if (isSwimming()) {
             setEntityPose(EntityPose.SWIMMING);
         } else if (isSneaking()) {
-            setEntityPose(EntityPose.CROUCHING);
+            setEntityPose(EntityPose.SNEAKING);
         } else {
             setEntityPose(EntityPose.STANDING);
         }
