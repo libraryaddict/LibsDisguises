@@ -87,8 +87,11 @@ public class FallingBlockWatcher extends FlagWatcher {
 
         this.block = block;
 
-        getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(block.getType().name())));
+        if (!getDisguise().isCustomName()) {
+            getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                            .get(ReflectionManager.toReadable(block.getType().name())));
+        }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());

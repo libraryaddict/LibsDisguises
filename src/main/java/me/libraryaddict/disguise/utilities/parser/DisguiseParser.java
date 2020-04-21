@@ -611,6 +611,7 @@ public class DisguiseParser {
         Disguise disguise = null;
         DisguisePerm disguisePerm;
         String name;
+        boolean customName = false;
 
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
@@ -625,6 +626,7 @@ public class DisguiseParser {
 
             disguisePerm = new DisguisePerm(disguise.getType());
             name = disguise.getDisguiseName();
+            customName = disguise.isCustomName();
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
@@ -654,6 +656,7 @@ public class DisguiseParser {
                 }
 
                 disguise = new ModdedDisguise(ent);
+                customName = true;
             }
 
             Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
@@ -661,6 +664,7 @@ public class DisguiseParser {
             if (customDisguise != null) {
                 args = DisguiseUtilities.split(customDisguise.getValue());
                 name = customDisguise.getKey().toReadable();
+                customName = true;
             }
 
             args = parsePlaceholders(args, sender, target);
@@ -696,7 +700,11 @@ public class DisguiseParser {
 
                         // Construct the player disguise
                         disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
-                        name = ((PlayerDisguise) disguise).getName();
+
+                        if (!customName) {
+                            name = ((PlayerDisguise) disguise).getName();
+                        }
+
                         toSkip++;
                     }
                 } else if (disguisePerm.isMob()) { // Its a mob, use the mob constructor
@@ -792,7 +800,10 @@ public class DisguiseParser {
                     if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM ||
                             disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
                         disguise = new MiscDisguise(disguisePerm.getType(), itemStack);
-                        name = disguise.getDisguiseName();
+
+                        if (!customName) {
+                            name = disguise.getDisguiseName();
+                        }
                     } else {
                         disguise = new MiscDisguise(disguisePerm.getType(), miscId);
                     }
@@ -801,6 +812,7 @@ public class DisguiseParser {
         }
 
         disguise.setDisguiseName(name);
+        disguise.setCustomName(customName);
 
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];

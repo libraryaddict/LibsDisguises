@@ -89,6 +89,12 @@ public abstract class Disguise {
     @Getter
     @Setter
     private String disguiseName;
+    /**
+     * Is the name allowed to be changed by Lib's Disguises if they do some option?
+     */
+    @Getter
+    @Setter
+    private boolean customName = true;
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -112,6 +118,7 @@ public abstract class Disguise {
 
     protected void clone(Disguise disguise) {
         disguise.setDisguiseName(getDisguiseName());
+        disguise.setCustomName(isCustomName());
 
         disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
