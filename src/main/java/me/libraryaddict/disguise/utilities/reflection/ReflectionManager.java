@@ -1841,7 +1841,7 @@ public class ReflectionManager {
         return split;
     }
 
-    private static String toReadable(String string) {
+    public static String toReadable(String string) {
         return StringUtils.join(splitReadable(string));
     }
 }

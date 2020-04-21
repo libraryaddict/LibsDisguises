@@ -8,6 +8,8 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -84,6 +86,9 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
 
         this.block = block;
+
+        getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(block.getType().name())));
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());

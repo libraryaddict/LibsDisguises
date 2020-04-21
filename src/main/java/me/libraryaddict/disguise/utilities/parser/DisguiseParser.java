@@ -792,6 +792,7 @@ public class DisguiseParser {
                     if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM ||
                             disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
                         disguise = new MiscDisguise(disguisePerm.getType(), itemStack);
+                        name = disguise.getDisguiseName();
                     } else {
                         disguise = new MiscDisguise(disguisePerm.getType(), miscId);
                     }
