@@ -84,6 +84,38 @@ public class FlagWatcher {
         return cloned;
     }
 
+    public ItemStack getHelmet() {
+        return getEquipment().getHelmet();
+    }
+
+    public void setHelmet(ItemStack itemStack) {
+        getEquipment().setHelmet(itemStack);
+    }
+
+    public ItemStack getBoots() {
+        return getEquipment().getBoots();
+    }
+
+    public void setBoots(ItemStack itemStack) {
+        getEquipment().setBoots(itemStack);
+    }
+
+    public ItemStack getLeggings() {
+        return getEquipment().getLeggings();
+    }
+
+    public void setLeggings(ItemStack itemStack) {
+        getEquipment().setLeggings(itemStack);
+    }
+
+    public ItemStack getChestplate() {
+        return getEquipment().getChestplate();
+    }
+
+    public void setChestplate(ItemStack itemStack) {
+        getEquipment().setChestplate(itemStack);
+    }
+
     public List<WrappedWatchableObject> convert(List<WrappedWatchableObject> list) {
         List<WrappedWatchableObject> newList = new ArrayList<>();
         HashSet<Integer> sentValues = new HashSet<>();
