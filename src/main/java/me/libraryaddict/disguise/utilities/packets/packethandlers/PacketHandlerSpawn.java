@@ -70,10 +70,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
     private void constructSpawnPackets(final Player observer, LibsPackets packets, Entity disguisedEntity) {
         Disguise disguise = packets.getDisguise();
 
-        if (disguise.getEntity() == null) {
-            disguise.setEntity(disguisedEntity);
-        }
-
         if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
 

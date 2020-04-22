@@ -73,7 +73,7 @@ public class PacketListenerSounds extends PacketAdapter {
                 for (TargetedDisguise entityDisguise : disguises) {
                     Entity entity = entityDisguise.getEntity();
 
-                    if (entity.getWorld() != observer.getWorld()) {
+                    if (entity == null || entity.getWorld() != observer.getWorld()) {
                         continue;
                     }
 
