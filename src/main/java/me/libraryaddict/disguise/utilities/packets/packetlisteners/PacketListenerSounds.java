@@ -257,7 +257,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
             Entity entity = disguise.getEntity();
 
-            if (disguise != null && !disguise.getType().isPlayer() &&
+            if (!disguise.getType().isPlayer() &&
                     (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
                 DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
 

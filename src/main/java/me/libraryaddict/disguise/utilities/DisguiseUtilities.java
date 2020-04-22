@@ -428,36 +428,48 @@ public class DisguiseUtilities {
         }
     }
 
-    public static void addFutureDisguise(final int entityId, final TargetedDisguise disguise) {
-        if (!futureDisguises.containsKey(entityId)) {
-            futureDisguises.put(entityId, new HashSet<TargetedDisguise>());
+    public static void onFutureDisguise(Entity entity) {
+        if (!getFutureDisguises().containsKey(entity.getEntityId())) {
+            return;
         }
 
-        futureDisguises.get(entityId).add(disguise);
+        UUID uniqueId = entity.getUniqueId();
+
+        for (TargetedDisguise disguise : getFutureDisguises().remove(entity.getEntityId())) {
+            addDisguise(uniqueId, disguise);
+        }
+    }
+
+    public static void addFutureDisguise(final int entityId, final TargetedDisguise disguise) {
+        if (!getFutureDisguises().containsKey(entityId)) {
+            getFutureDisguises().put(entityId, new HashSet<>());
+        }
+
+        getFutureDisguises().get(entityId).add(disguise);
 
         final BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (futureDisguises.containsKey(entityId) && futureDisguises.get(entityId).contains(disguise)) {
-                    for (World world : Bukkit.getWorlds()) {
-                        for (Entity entity : world.getEntities()) {
-                            if (entity.getEntityId() == entityId) {
-                                UUID uniqueId = entity.getUniqueId();
+                if (!getFutureDisguises().containsKey(entityId) ||
+                        !getFutureDisguises().get(entityId).contains(disguise)) {
+                    return;
+                }
 
-                                for (TargetedDisguise disguise : futureDisguises.remove(entityId)) {
-                                    addDisguise(uniqueId, disguise);
-                                }
-
-                                return;
-                            }
+                for (World world : Bukkit.getWorlds()) {
+                    for (Entity entity : world.getEntities()) {
+                        if (entity.getEntityId() != entityId) {
+                            continue;
                         }
-                    }
 
-                    futureDisguises.get(entityId).remove(disguise);
-
-                    if (futureDisguises.get(entityId).isEmpty()) {
-                        futureDisguises.remove(entityId);
+                        onFutureDisguise(entity);
+                        return;
                     }
+                }
+
+                getFutureDisguises().get(entityId).remove(disguise);
+
+                if (getFutureDisguises().get(entityId).isEmpty()) {
+                    getFutureDisguises().remove(entityId);
                 }
             }
         };
@@ -2227,14 +2239,14 @@ public class DisguiseUtilities {
         }
 
         if (getFutureDisguises().containsKey(entityId)) {
-            HashSet<TargetedDisguise> hashSet = getFutureDisguises().get(entityId);
+            for (World world : Bukkit.getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    if (entity.getEntityId() != entityId) {
+                        continue;
+                    }
 
-            for (TargetedDisguise dis : hashSet) {
-                if (!dis.canSee(observer) || !dis.isDisguiseInUse()) {
-                    continue;
+                    onFutureDisguise(entity);
                 }
-
-                return dis;
             }
         }
 

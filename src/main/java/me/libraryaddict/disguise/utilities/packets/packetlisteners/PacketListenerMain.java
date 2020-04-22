@@ -39,25 +39,10 @@ public class PacketListenerMain extends PacketAdapter {
 
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, entityId);
 
-        if (disguise == null) {
-            return;
-        }
-
-        if (disguise.getEntity() == null) {
-            for (Entity e : observer.getWorld().getEntities()) {
-                if (e.getEntityId() != entityId) {
-                    continue;
-                }
-
-                disguise.setEntity(e);
-                break;
-            }
-        }
-
         // If the entity is the same as the sender. Don't disguise!
         // Prevents problems and there is no advantage to be gained.
         // Or if they are null and there's no disguise
-        if (disguise.getEntity() == observer) {
+        if (disguise == null || disguise.getEntity() == observer) {
             return;
         }
 
