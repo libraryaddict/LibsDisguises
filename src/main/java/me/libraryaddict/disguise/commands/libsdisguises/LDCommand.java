@@ -11,6 +11,8 @@ import java.util.List;
 public interface LDCommand {
     List<String> getTabComplete();
 
+    boolean hasPermission(CommandSender sender);
+
     String getPermission();
 
     void onCommand(CommandSender sender, String[] args);

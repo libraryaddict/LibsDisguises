@@ -111,7 +111,12 @@ public class LDScoreboard implements LDCommand {
     }
 
     @Override
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(getPermission());
+    }
+
+    @Override
     public LibsMsg getHelp() {
-        return null;
+        return LibsMsg.LD_COMMAND_SCOREBOARD;
     }
 }

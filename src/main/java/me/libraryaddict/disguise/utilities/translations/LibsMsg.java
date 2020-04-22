@@ -293,7 +293,26 @@ public enum LibsMsg {
     LIBS_SCOREBOARD_DISABLED(
             "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
                     "."),
-    USING_DEFAULT_CONFIG(ChatColor.DARK_GREEN + "Using the default config!");
+    USING_DEFAULT_CONFIG(ChatColor.DARK_GREEN + "Using the default config!"),
+    LD_COMMAND_HELP(ChatColor.BLUE + "/libsdisguises help - " + ChatColor.AQUA + "Returns this!"),
+    LD_COMMAND_COUNT(ChatColor.BLUE + "/libsdisguises count - " + ChatColor.AQUA +
+            "Tells you how many active disguises there are"),
+    LD_COMMAND_METAINFO(ChatColor.BLUE + "/libsdisguises metainfo - " + ChatColor.AQUA +
+            "Debugging info, tells you what the metadata is for a disguise"),
+    LD_COMMAND_CONFIG(ChatColor.BLUE + "/libsdisguises config - " + ChatColor.AQUA +
+            "Tells you what's not normal in your config"),
+    LD_COMMAND_UPDATE(ChatColor.BLUE + "/libsdisguises update - " + ChatColor.AQUA +
+            "Update's the plugin, doing 'update!' will force an update. Server must be restarted to install update."),
+    LD_COMMAND_JSON(ChatColor.BLUE + "/libsdisguises json - " + ChatColor.AQUA +
+            "Turns the current held item into a string format"),
+    LD_COMMAND_MODS(ChatColor.BLUE + "/libsdisguises mods <Player?> - " + ChatColor.AQUA +
+            "If using modded entities, this will tell you what mods a player is using if possible"),
+    LD_COMMAND_PERMTEST(ChatColor.BLUE + "/libsdisguises permtest <Player?> - " + ChatColor.AQUA +
+            "Does a quick test to see if your permissions are working"),
+    LD_COMMAND_SCOREBOARD(ChatColor.BLUE + "/libsdisguises scoreboard <Player?> - " + ChatColor.AQUA +
+            "Does a test to see if there's any scoreboard issues it can detect"),
+    LD_COMMAND_RELOAD(ChatColor.BLUE + "/libsdisguises reload - " + ChatColor.AQUA +
+            "Reload's the plugin config and possibly blows disguises");
 
     private String string;
 

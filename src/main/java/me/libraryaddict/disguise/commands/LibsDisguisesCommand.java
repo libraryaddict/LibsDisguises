@@ -1,53 +1,35 @@
 package me.libraryaddict.disguise.commands;
 
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.DisguiseConfig;
+import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.libsdisguises.*;
-import me.libraryaddict.disguise.disguisetypes.*;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.UpdateChecker;
-import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.permissions.Permissible;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
-    private ArrayList<LDCommand> commands = new ArrayList<>();
+    @Getter
+    private final ArrayList<LDCommand> commands = new ArrayList<>();
 
     public LibsDisguisesCommand() {
-        commands.add(new LDConfig());
-        commands.add(new LDCount());
-        commands.add(new LDJson());
-        commands.add(new LDMetaInfo());
-        commands.add(new LDMods());
-        commands.add(new LDPermTest());
-        commands.add(new LDReload());
-        commands.add(new LDScoreboard());
-        commands.add(new LDUpdate());
+        getCommands().add(new LDHelp(this));
+        getCommands().add(new LDReload());
+        getCommands().add(new LDUpdate());
+        getCommands().add(new LDCount());
+        getCommands().add(new LDConfig());
+        getCommands().add(new LDPermTest());
+        getCommands().add(new LDScoreboard());
+        getCommands().add(new LDJson());
+        getCommands().add(new LDMods());
+        getCommands().add(new LDMetaInfo());
     }
 
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
@@ -101,25 +83,16 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 version += disguises.getBuildNo();
             }
 
-            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running " + "Lib's Disguises v" + version +
+            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running Lib's Disguises " +
+                    (LibsPremium.isAPIPlugin() ? "API " : "") + "v" + version +
                     " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
-
-            // TODO You can use the following arguments, hover over them for more information
 
             if (sender.hasPermission("libsdisguises.reload")) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" +
                         ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this" +
                         ".");
+                sender.sendMessage(ChatColor.DARK_GREEN + "Use /libsdisguises help to see more help");
             }
-
-            if (sender.hasPermission("libsdisguises.update")) {
-                sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises update" +
-                        ChatColor.DARK_GREEN +
-                        " to update Lib's Disguises to latest jenkins build. This will be updated on server restart. " +
-                        "To force an update, use /libsdisguises update! with an ! on the end");
-            }
-
-            // TODO Other options
 
             if (LibsPremium.isPremium()) {
                 sender.sendMessage(ChatColor.DARK_GREEN + "This server supports the plugin developer!");
@@ -127,7 +100,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         } else if (args.length > 0) {
             LDCommand command = null;
 
-            for (LDCommand c : commands) {
+            for (LDCommand c : getCommands()) {
                 if (!c.getTabComplete().contains(args[0].toLowerCase())) {
                     continue;
                 }
@@ -137,7 +110,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             }
 
             if (command != null) {
-                if (!sender.hasPermission(command.getPermission())) {
+                if (!command.hasPermission(sender)) {
                     sender.sendMessage(LibsMsg.NO_PERM.get());
                     return true;
                 }
@@ -156,8 +129,8 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         ArrayList<String> tabs = new ArrayList<>();
         String[] args = getArgs(origArgs);
 
-        for (LDCommand command : commands) {
-            if (!sender.hasPermission(command.getPermission())) {
+        for (LDCommand command : getCommands()) {
+            if (!command.hasPermission(sender)) {
                 continue;
             }
 

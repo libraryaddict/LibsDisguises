@@ -20,6 +20,11 @@ public class LDConfig implements LDCommand {
     }
 
     @Override
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(getPermission());
+    }
+
+    @Override
     public String getPermission() {
         return "libsdisguises.config";
     }
@@ -40,6 +45,6 @@ public class LDConfig implements LDCommand {
 
     @Override
     public LibsMsg getHelp() {
-        return null;
+        return LibsMsg.LD_COMMAND_CONFIG;
     }
 }
