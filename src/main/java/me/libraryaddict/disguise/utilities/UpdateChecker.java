@@ -83,9 +83,11 @@ public class UpdateChecker {
 
         File dest = new File(Bukkit.getUpdateFolderFile(), "LibsDisguises.jar");
 
-        if (!dest.exists()) {
-            dest.mkdirs();
+        if (dest.exists()) {
+            dest.delete();
         }
+
+        dest.getParentFile().mkdirs();
 
         try {
             // We're connecting to spigot's API
@@ -106,6 +108,7 @@ public class UpdateChecker {
             dest.delete();
             DisguiseUtilities.getLogger().warning("Failed to download snapshot build.");
             lastDownload = 0;
+            ex.printStackTrace();
         }
 
         return false;

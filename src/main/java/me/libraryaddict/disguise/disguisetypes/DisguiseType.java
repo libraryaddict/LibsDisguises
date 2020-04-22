@@ -195,8 +195,6 @@ public enum DisguiseType {
 
     TURTLE,
 
-    ZOMBIE_HORSE,
-
     UNKNOWN,
 
     VEX,
@@ -218,6 +216,8 @@ public enum DisguiseType {
     WOLF,
 
     ZOMBIE,
+
+    ZOMBIE_HORSE,
 
     ZOMBIE_VILLAGER;
 

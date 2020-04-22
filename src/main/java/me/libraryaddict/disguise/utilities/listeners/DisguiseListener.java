@@ -182,9 +182,17 @@ public class DisguiseListener implements Listener {
         }
 
         if (updateMessage == LibsMsg.UPDATE_SUCCESS || updateMessage == LibsMsg.UPDATE_FAILED) {
-            player.sendMessage(updateMessage.get());
+            if (player instanceof Player) {
+                player.sendMessage(updateMessage.get());
+            } else {
+                DisguiseUtilities.getLogger().info(updateMessage.get());
+            }
         } else {
-            player.sendMessage(updateMessage.get(currentVersion, latestVersion));
+            if (player instanceof Player) {
+                player.sendMessage(updateMessage.get(currentVersion, latestVersion));
+            } else {
+                DisguiseUtilities.getLogger().info(updateMessage.get(currentVersion, latestVersion));
+            }
         }
     }
 
