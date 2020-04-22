@@ -42,7 +42,7 @@ public class LDCount implements LDCommand {
         if (counts.isEmpty()) {
             sender.sendMessage(LibsMsg.NO_DISGUISES_IN_USE.get());
         } else {
-            sender.sendMessage(LibsMsg.ACTIVE_DISGUISES_COUNT.get(counts.values().stream().reduce(Integer::sum)));
+            sender.sendMessage(LibsMsg.ACTIVE_DISGUISES_COUNT.get(counts.values().stream().reduce(Integer::sum).get()));
 
             ArrayList<DisguiseType> types = new ArrayList<>(counts.keySet());
             types.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(TranslateType.DISGUISES.get(d1.toReadable()),
