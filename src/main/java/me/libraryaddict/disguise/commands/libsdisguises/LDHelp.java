@@ -6,7 +6,6 @@ import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

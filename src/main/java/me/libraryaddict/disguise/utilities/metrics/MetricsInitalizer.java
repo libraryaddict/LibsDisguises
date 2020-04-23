@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.metrics;
 
-import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
