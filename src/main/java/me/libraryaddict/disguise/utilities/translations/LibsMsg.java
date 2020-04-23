@@ -195,11 +195,11 @@ public enum LibsMsg {
     UNDISRADIUS(ChatColor.RED + "Successfully undisguised %s entities!"),
     UPDATE_READY(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
             "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
-            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "!"),
+            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "! Use /libsdisguises update to automatically update!"),
     UPDATE_READY_SNAPSHOT(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
             "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "#%s" + ChatColor.DARK_RED +
             ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" + ChatColor.RED +
-            "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/"),
+            "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/ or use /libsdisguises update"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
     VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!"),
     CLICK_TO_COPY(ChatColor.GREEN + "Click to Copy:"),
