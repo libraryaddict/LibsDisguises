@@ -321,7 +321,9 @@ public enum LibsMsg {
     LD_COMMAND_SCOREBOARD(ChatColor.BLUE + "/libsdisguises scoreboard <Player?> - " + ChatColor.AQUA +
             "Does a test to see if there's any scoreboard issues it can detect"),
     LD_COMMAND_RELOAD(ChatColor.BLUE + "/libsdisguises reload - " + ChatColor.AQUA +
-            "Reload's the plugin config and possibly blows disguises");
+            "Reload's the plugin config and possibly blows disguises"),
+    LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA +
+            "Used to help debug scoreboard issues on a player disguise");
 
     private String string;
 
