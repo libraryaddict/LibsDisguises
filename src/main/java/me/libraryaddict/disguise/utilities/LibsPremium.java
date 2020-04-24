@@ -112,7 +112,7 @@ public class LibsPremium {
         //return premiumVersion.equals(currentVersion);
     }
 
-    private static PluginInformation getInformation(File file) throws Exception {
+    public static PluginInformation getInformation(File file) throws Exception {
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
@@ -166,8 +166,8 @@ public class LibsPremium {
 
             String pluginVersion = config.getString("version");
 
-            return new PluginInformation(userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber,
-                    pluginBuildDate);
+            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion,
+                    pluginBuildNumber, pluginBuildDate);
         }
     }
 
@@ -243,7 +243,7 @@ public class LibsPremium {
             if (bisectHosted = new BisectHosting().isBisectHosted("LibsDisguises")) {
                 DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
-                paidInformation = new PluginInformation("0", "32453", "0", true, "0", "#0", "0");
+                paidInformation = new PluginInformation(0, "0", "32453", "0", true, "0", "#0", "0");
 
                 thisPluginIsPaidFor = true;
             } else {
@@ -305,8 +305,9 @@ public class LibsPremium {
                 buildNo = "#" + buildNo;
             }
 
-            pluginInformation = new PluginInformation(getUserID(), getResourceID(), getDownloadID(),
-                    isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
+            pluginInformation = new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(),
+                    getResourceID(), getDownloadID(), isPremium(getResourceID(), getUserID()), version, buildNo,
+                    pluginBuildDate);
         }
 
         if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {

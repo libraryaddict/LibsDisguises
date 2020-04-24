@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities;
 import com.google.gson.Gson;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
@@ -31,38 +32,38 @@ public class UpdateChecker {
         this.resourceID = resourceID;
     }
 
-    public boolean grabSnapshotBuild() {
+    public PluginInformation grabSnapshotBuild() {
         if (getLatestSnapshot() == 0) {
             throw new IllegalArgumentException();
         }
 
         if (lastDownload == -1) {
-            return false;
+            return null;
         }
 
         if (getLatestSnapshot() == lastDownload) {
-            return false;
+            return null;
         }
 
         return grabSnapshotBuild(getLatestSnapshot());
     }
 
-    public boolean grabSnapshotBuild(int buildNo) {
-        boolean result = grabSnapshotBuild(
+    public PluginInformation grabSnapshotBuild(int buildNo) {
+        PluginInformation result = grabSnapshotBuild(
                 "https://ci.md-5.net/job/LibsDisguises/" + buildNo + "/artifact/target/LibsDisguises.jar");
 
-        if (result) {
+        if (result != null) {
             lastDownload = buildNo;
         }
 
         return result;
     }
 
-    public boolean grabLatestSnapshot() {
-        boolean result = grabSnapshotBuild(
+    public PluginInformation grabLatestSnapshot() {
+        PluginInformation result = grabSnapshotBuild(
                 "https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/artifact/target/LibsDisguises.jar");
 
-        if (result) {
+        if (result != null) {
             lastDownload = LibsDisguises.getInstance().getBuildNumber();
         }
 
@@ -77,7 +78,7 @@ public class UpdateChecker {
         return lastDownload;
     }
 
-    public boolean grabSnapshotBuild(String urlString) {
+    public PluginInformation grabSnapshotBuild(String urlString) {
         DisguiseUtilities.getLogger().info("Now downloading latest build of Lib's Disguises from " + urlString);
         lastDownload = -1;
 
@@ -101,7 +102,8 @@ public class UpdateChecker {
             }
 
             DisguiseUtilities.getLogger().info("Download success!");
-            return true;
+
+            return LibsPremium.getInformation(dest);
         }
         catch (Exception ex) {
             // Failed, set the last download back to previous build
@@ -111,7 +113,7 @@ public class UpdateChecker {
             ex.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
     public void checkSnapshotUpdate(int buildNumber) {

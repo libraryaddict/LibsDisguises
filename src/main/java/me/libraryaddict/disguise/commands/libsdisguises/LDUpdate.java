@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
+import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -51,7 +52,7 @@ public class LDUpdate implements LDCommand {
         new BukkitRunnable() {
             @Override
             public void run() {
-                boolean result;
+                PluginInformation result;
 
                 if (force) {
                     result = checker.grabLatestSnapshot();
@@ -59,15 +60,21 @@ public class LDUpdate implements LDCommand {
                     result = checker.grabSnapshotBuild();
                 }
 
-                if (!result) {
+                if (result == null) {
                     sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
                     return;
                 }
 
                 sender.sendMessage(LibsMsg.UPDATE_SUCCESS.get()); // Update success, please restart to update
+                sender.sendMessage(LibsMsg.UPDATE_INFO
+                        .get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
+                                result.getSize() / 1024));
 
                 if (sender instanceof Player) {
                     Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_SUCCESS.get());
+                    sender.sendMessage(LibsMsg.UPDATE_INFO
+                            .get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
+                                    result.getSize() / 1024));
                 }
             }
         }.runTaskAsynchronously(LibsDisguises.getInstance());
