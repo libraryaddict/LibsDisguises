@@ -67,7 +67,8 @@ public class LDScoreboard implements LDCommand {
 
                         if (team == null) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                sender.sendMessage("The player disguise " +
+                                        ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
                                         " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " +
                                         player.getName() + " and possibly more players!");
                             }
@@ -78,17 +79,22 @@ public class LDScoreboard implements LDCommand {
                         if (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
                                 !team.getSuffix().equals(scoreboardName.getSuffix())) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                sender.sendMessage("The player disguise " +
+                                        ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
                                         " on scoreboard team '" + scoreboardName.getTeamName() + "' on " +
-                                        player.getName() + " has an unexpected prefix/suffix of '" + team.getPrefix() +
-                                        "' & '" + team.getSuffix() + "'!");
+                                        player.getName() + " has an unexpected prefix/suffix of '" +
+                                        team.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
+                                        team.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'! Expected '" +
+                                        scoreboardName.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
+                                        scoreboardName.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'");
                             }
                             continue;
                         }
 
                         if (!team.hasEntry(scoreboardName.getPlayer())) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                sender.sendMessage("The player disguise " +
+                                        ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
                                         " on scoreboard team '" + scoreboardName.getTeamName() + "' on " +
                                         player.getName() + " does not have the player entry expected! Instead has '" +
                                         StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') +
