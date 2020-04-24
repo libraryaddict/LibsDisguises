@@ -1340,6 +1340,10 @@ public class DisguiseUtilities {
     }
 
     public static String getUniqueTeam() {
+        return getUniqueTeam("LD_");
+    }
+
+    public static String getUniqueTeam(String prefix) {
         Scoreboard mainBoard = Bukkit.getScoreboardManager().getMainScoreboard();
 
         for (int i = 0; i < 1000; i++) {
@@ -1349,7 +1353,7 @@ public class DisguiseUtilities {
                 teamName = teamName.substring(teamName.length() - 13);
             }
 
-            teamName = "LD_" + teamName;
+            teamName = prefix + teamName;
 
             if (mainBoard.getTeam(teamName) != null) {
                 continue;
