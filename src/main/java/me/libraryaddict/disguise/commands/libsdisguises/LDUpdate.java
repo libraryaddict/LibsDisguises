@@ -72,7 +72,7 @@ public class LDUpdate implements LDCommand {
 
                 if (sender instanceof Player) {
                     Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_SUCCESS.get());
-                    sender.sendMessage(LibsMsg.UPDATE_INFO
+                    Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_INFO
                             .get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
                                     result.getSize() / 1024));
                 }

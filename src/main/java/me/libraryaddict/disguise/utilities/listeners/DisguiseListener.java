@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.UpdateChecker;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
+import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -145,8 +146,11 @@ public class DisguiseListener implements Listener {
                         latestVersion = "" + updateChecker.getLatestSnapshot();
 
                         if (autoUpdate && plugin.isNumberedBuild()) {
-                            boolean result = updateChecker.grabSnapshotBuild();
-                            updateMessage = result ? LibsMsg.UPDATE_SUCCESS : LibsMsg.UPDATE_FAILED;
+                            PluginInformation result = updateChecker.grabSnapshotBuild();
+                            updateMessage = result != null ? LibsMsg.UPDATE_SUCCESS : LibsMsg.UPDATE_FAILED;
+                            Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_INFO
+                                    .get(result.getVersion(), result.getBuildNumber(),
+                                            result.getParsedBuildDate().toString(), result.getSize() / 1024));
                         } else {
                             currentVersion = plugin.getBuildNo();
                             updateMessage = LibsMsg.UPDATE_READY_SNAPSHOT;
