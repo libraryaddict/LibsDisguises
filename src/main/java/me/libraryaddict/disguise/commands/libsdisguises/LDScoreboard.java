@@ -7,15 +7,15 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -34,6 +34,9 @@ public class LDScoreboard implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (DisguiseConfig.isScoreboardDisguiseNames()) {
+            int issuesFound = 0;
+            int unexpected = 0;
+
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                 for (Disguise disguise : disguises) {
                     if (!disguise.isPlayerDisguise()) {
@@ -41,24 +44,71 @@ public class LDScoreboard implements LDCommand {
                     }
 
                     if (!((PlayerDisguise) disguise).hasScoreboardName()) {
+                        if (unexpected++ < 3) {
+                            sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                    " isn't using a scoreboard name? This is unexpected");
+                        }
                         continue;
                     }
+
+                    ArrayList<Scoreboard> checked = new ArrayList<>();
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         Scoreboard board = player.getScoreboard();
 
-                        if (board.getTeam(((PlayerDisguise) disguise).getScoreboardName().getTeamName()) != null) {
+                        if (checked.contains(board)) {
                             continue;
                         }
 
-                        sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
-                                " is missing a scoreboard team on " + player.getName() + " and possibly more players!");
+                        checked.add(board);
+                        DisguiseUtilities.DScoreTeam scoreboardName = ((PlayerDisguise) disguise).getScoreboardName();
 
-                        break;
+                        Team team = board.getTeam(scoreboardName.getTeamName());
+
+                        if (team == null) {
+                            if (issuesFound++ < 5) {
+                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                        " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " +
+                                        player.getName() + " and possibly more players!");
+                            }
+
+                            continue;
+                        }
+
+                        if (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
+                                !team.getSuffix().equals(scoreboardName.getSuffix())) {
+                            if (issuesFound++ < 5) {
+                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " +
+                                        player.getName() + " has an unexpected prefix/suffix of '" + team.getPrefix() +
+                                        "' & '" + team.getSuffix() + "'!");
+                            }
+                            continue;
+                        }
+
+                        if (!team.hasEntry(scoreboardName.getPlayer())) {
+                            if (issuesFound++ < 5) {
+                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " +
+                                        player.getName() + " does not have the player entry expected! Instead has '" +
+                                        StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') +
+                                        "'");
+                            }
+                        }
                     }
                 }
             }
+
+            if (issuesFound == 0) {
+                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_ISSUES.get());
+            } else {
+                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_ISSUES.get(issuesFound));
+            }
+        } else {
+            sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NAMES_DISABLED.get());
         }
+
+        sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.get());
 
         if (DisguiseConfig.getPushingOption() == DisguiseConfig.DisguisePushing.IGNORE_SCOREBOARD) {
             sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_DISABLED.get());

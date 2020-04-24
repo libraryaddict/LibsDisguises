@@ -195,7 +195,8 @@ public enum LibsMsg {
     UNDISRADIUS(ChatColor.RED + "Successfully undisguised %s entities!"),
     UPDATE_READY(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
             "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
-            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "! Use /libsdisguises update to automatically update!"),
+            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
+            "! Use /libsdisguises update to automatically update!"),
     UPDATE_READY_SNAPSHOT(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
             "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "#%s" + ChatColor.DARK_RED +
             ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" + ChatColor.RED +
@@ -293,7 +294,13 @@ public enum LibsMsg {
     LIBS_SCOREBOARD_DISABLED(
             "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
                     "."),
+    LIBS_SCOREBOARD_NAMES_DISABLED(ChatColor.RED +
+            "Scoreboard names has been disabled, the test for player disguises has failed before it started"),
+    LIBS_SCOREBOARD_IGNORE_TEST(
+            ChatColor.GREEN + "This was a seperate test from the self disguising collision test that will follow!"),
     USING_DEFAULT_CONFIG(ChatColor.DARK_GREEN + "Using the default config!"),
+    LIBS_SCOREBOARD_ISSUES(ChatColor.GREEN + "Too many issues found, hidden %s"),
+    LIBS_SCOREBOARD_NO_ISSUES(ChatColor.GREEN + "No issues found in player disguise scoreboard name teams"),
     LD_COMMAND_HELP(ChatColor.BLUE + "/libsdisguises help - " + ChatColor.AQUA + "Returns this!"),
     LD_COMMAND_COUNT(ChatColor.BLUE + "/libsdisguises count - " + ChatColor.AQUA +
             "Tells you how many active disguises there are"),
