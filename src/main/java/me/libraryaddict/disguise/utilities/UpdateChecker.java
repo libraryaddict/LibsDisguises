@@ -95,6 +95,7 @@ public class UpdateChecker {
             URL url = new URL(urlString);
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setDefaultUseCaches(false);
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
@@ -163,6 +164,7 @@ public class UpdateChecker {
             URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID);
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setDefaultUseCaches(false);
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
@@ -261,6 +263,7 @@ public class UpdateChecker {
             URL url = new URL("https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/api/json");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setDefaultUseCaches(false);
             Map<String, Object> jsonObject;
 
             // Get the input stream, what we receive
