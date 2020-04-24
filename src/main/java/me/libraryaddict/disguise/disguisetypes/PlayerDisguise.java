@@ -80,6 +80,7 @@ public class PlayerDisguise extends TargetedDisguise {
         createDisguise();
     }
 
+    @Deprecated
     public DisguiseUtilities.DScoreTeam getScoreboardName() {
         if (getName().length() <= 32 ? !DisguiseConfig.isScoreboardDisguiseNames() :
                 !DisguiseConfig.isExtendedDisguiseNames()) {
@@ -162,8 +163,6 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise();
 
-        disguise.playerName = getName();
-
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
             disguise.gameProfile = ReflectionManager
@@ -172,6 +171,7 @@ public class PlayerDisguise extends TargetedDisguise {
             disguise.setSkin(getSkin());
         }
 
+        disguise.setName(getName());
         disguise.setNameVisible(isNameVisible());
         disguise.setDynamicName(isDynamicName());
 
