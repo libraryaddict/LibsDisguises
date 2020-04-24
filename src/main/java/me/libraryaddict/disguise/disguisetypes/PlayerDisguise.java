@@ -173,6 +173,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         disguise.setNameVisible(isNameVisible());
+        disguise.setDynamicName(isDynamicName());
 
         clone(disguise);
 
