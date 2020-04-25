@@ -1453,7 +1453,7 @@ public class DisguiseUtilities {
             String[] newName = new String[]{name, playerName, ""};
 
             if (name.length() > 16) {
-                if (name.charAt(16) == ChatColor.COLOR_CHAR) {
+                if (name.charAt(15) == ChatColor.COLOR_CHAR) {
                     newName[0] = name.substring(0, 15);
                 } else {
                     newName[0] = name.substring(0, 16);
