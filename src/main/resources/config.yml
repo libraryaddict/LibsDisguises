@@ -99,19 +99,16 @@ Scoreboard:
   WarnConflict: true
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?
-# Disabling this will also disable auto updating
+# Disabling this will also disable notifications when the plugin updated
 NotifyUpdate: true
-
-# Whats the permission to get the notification?
-Permission: 'libsdisguises.update'
+# Should the plugin automatically update?
+AutoUpdate: true
 
 # Where should the plugin check for updates?
 # SAME_BUILDS - Will check snapshots if you're not using a release build
 # RELEASES - Only check for actual releases
 # SNAPSHOTS - Only check for new snapshots
 UpdatesBranch: SAME_BUILDS
-# Should the plugin automatically update if the server is using dev builds?
-AutoUpdateDev: true
 
 # Whats the max size allowed for command disguiseradius
 DisguiseRadiusMax: 50

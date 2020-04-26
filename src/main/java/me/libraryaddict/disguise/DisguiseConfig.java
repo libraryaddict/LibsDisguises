@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
@@ -26,16 +27,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class DisguiseConfig {
     @Getter
@@ -44,9 +45,6 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static HashMap<DisguisePerm, String> customDisguises = new HashMap<>();
-    @Getter
-    @Setter
-    private static String updateNotificationPermission;
     @Getter
     @Setter
     private static UpdatesBranch updatesBranch = UpdatesBranch.SAME_BUILDS;
@@ -231,6 +229,127 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static int tablistRemoveDelay;
+    @Getter
+    private static boolean usingReleaseBuild = true;
+    @Getter
+    private static boolean bisectHosted = true;
+    @Getter
+    private static String savedServerIp = "";
+    @Getter
+    private static boolean autoUpdate;
+    @Getter
+    private static boolean notifyUpdate;
+    private static BukkitTask updaterTask;
+
+    public static void setAutoUpdate(boolean update) {
+        if (isAutoUpdate() == update) {
+            return;
+        }
+
+        autoUpdate = update;
+        doUpdaterTask();
+    }
+
+    public static void setNotifyUpdate(boolean update) {
+        if (isNotifyUpdate() == update) {
+            return;
+        }
+
+        notifyUpdate = update;
+        doUpdaterTask();
+    }
+
+    private static void doUpdaterTask() {
+        boolean startTask = isAutoUpdate() || isNotifyUpdate();
+
+        // Don't ever run the auto updater on a custom build..
+        if (!LibsDisguises.getInstance().isNumberedBuild()) {
+            return;
+        }
+
+        if (updaterTask == null != startTask) {
+            return;
+        }
+
+        if (!startTask) {
+            updaterTask.cancel();
+            updaterTask = null;
+            return;
+        }
+
+        updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(LibsDisguises.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck();
+            }
+        }, 0, (20 * TimeUnit.HOURS.toSeconds(6))); // Check every 6 hours
+    }
+
+    public static void setUsingReleaseBuilds(boolean useReleaseBuilds) {
+        if (useReleaseBuilds == isUsingReleaseBuild()) {
+            return;
+        }
+
+        usingReleaseBuild = useReleaseBuilds;
+        saveInternalConfig();
+    }
+
+    public static void setBisectHosted(boolean isBisectHosted, String serverIP) {
+        if (isBisectHosted() == isBisectHosted && getSavedServerIp().equals(serverIP)) {
+            return;
+        }
+
+        bisectHosted = isBisectHosted;
+        savedServerIp = serverIP;
+        saveInternalConfig();
+    }
+
+    public static void loadInternalConfig() {
+        File internalFile = new File(LibsDisguises.getInstance().getDataFolder(), "internal.yml");
+
+        if (!internalFile.exists()) {
+            saveInternalConfig();
+        }
+
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(internalFile);
+
+        bisectHosted = configuration.getBoolean("Bisect-Hosted", isBisectHosted());
+        savedServerIp = configuration.getString("Server-IP", getSavedServerIp());
+        usingReleaseBuild = configuration.getBoolean("ReleaseBuild", isUsingReleaseBuild());
+
+        if (!configuration.contains("Bisect-Hosted") || !configuration.contains("Server-IP") ||
+                !configuration.contains("ReleaseBuild")) {
+            saveInternalConfig();
+        }
+    }
+
+    public static void saveInternalConfig() {
+        File internalFile = new File(LibsDisguises.getInstance().getDataFolder(), "internal.yml");
+
+        String internalConfig = ReflectionManager
+                .getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
+
+        // Bisect hosted, server ip, release builds
+        for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild()}) {
+            internalConfig = internalConfig.replaceFirst("%data%", "" + s);
+        }
+
+        internalFile.delete();
+
+        try {
+            internalFile.createNewFile();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (PrintWriter writer = new PrintWriter(internalFile, "UTF-8")) {
+            writer.write(internalConfig);
+        }
+        catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static PermissionDefault getCommandVisibility() {
         return commandVisibility;
@@ -438,7 +557,6 @@ public class DisguiseConfig {
         setUUIDGeneratedVersion(config.getInt("UUIDVersion"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
         setUpdateGameProfiles(config.getBoolean("UpdateGameProfiles"));
-        setUpdateNotificationPermission(config.getString("Permission"));
         setUseTranslations(config.getBoolean("Translations"));
         setVelocitySent(config.getBoolean("SendVelocity"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
@@ -447,6 +565,7 @@ public class DisguiseConfig {
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setScoreboardDisguiseNames(config.getBoolean("ScoreboardNames"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
+        setAutoUpdate(config.getBoolean("AutoUpdate"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
@@ -561,7 +680,8 @@ public class DisguiseConfig {
             if (missingConfigs > 0) {
                 DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs +
                         " options! Please consider regenerating your config!");
-                DisguiseUtilities.getLogger().info("You can also add the missing entries yourself! Try '/libsdisguises config'");
+                DisguiseUtilities.getLogger()
+                        .info("You can also add the missing entries yourself! Try '/libsdisguises config'");
             }
         }
 

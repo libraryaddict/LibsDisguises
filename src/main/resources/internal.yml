@@ -1,0 +1,8 @@
+# If you're using BisectHosting, this will tell the server to enable premium for free!
+# However if you're not using BisectHosting, this is false so the server won't waste time
+# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming server
+# Be sure to visit through this link! https://bisecthosting.com/libraryaddict
+Bisect-Hosted: %data%
+Server-IP: %data%
+# Should the plugin be doing release or dev builds updating?
+ReleaseBuild: %data%

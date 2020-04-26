@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -158,25 +159,41 @@ public class ReflectionManager {
         return true;
     }
 
-    /**
-     * Copied from Bukkit
-     */
-    public static YamlConfiguration getPluginYAML(File file) {
+    public static String getResourceAsString(File file, String fileName) {
         try (JarFile jar = new JarFile(file)) {
-            JarEntry entry = jar.getJarEntry("plugin.yml");
+            JarEntry entry = jar.getJarEntry(fileName);
 
             try (InputStream stream = jar.getInputStream(entry)) {
-                YamlConfiguration config = new YamlConfiguration();
-
-                String configString = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                         .collect(Collectors.joining("\n"));
-                config.loadFromString(configString);
-
-                return config;
             }
         }
         catch (Exception ex) {
             ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Copied from Bukkit
+     */
+    public static YamlConfiguration getPluginYAML(File file) {
+        try {
+            String s = getResourceAsString(file, "plugin.yml");
+
+            if (s == null) {
+                return null;
+            }
+
+            YamlConfiguration config = new YamlConfiguration();
+
+            config.loadFromString(getResourceAsString(file, "plugin.yml"));
+
+            return config;
+        }
+        catch (InvalidConfigurationException e) {
+            e.printStackTrace();
         }
 
         return null;

@@ -17,7 +17,7 @@ import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.commands.utils.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.UpdateChecker;
+import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
@@ -31,10 +31,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -81,6 +84,8 @@ public class LibsDisguises extends JavaPlugin {
 
         getLogger().info("Build Date: " + pluginYml.getString("build-date"));
 
+        DisguiseConfig.loadInternalConfig();
+
         LibsPremium.check(getDescription().getVersion(), getFile());
 
         if (!LibsPremium.isPremium()) {
@@ -96,6 +101,17 @@ public class LibsDisguises extends JavaPlugin {
                             .collect(Collectors.toList()), " & ") + "!");
             getPluginLoader().disablePlugin(this);
             return;
+        }
+
+        // If this is a release build, even if jenkins build..
+        if (isReleaseBuild()) {
+            // If downloaded from spigot, forcibly set release build to true
+            if (LibsPremium.getUserID().matches("[0-9]+")) {
+                DisguiseConfig.setUsingReleaseBuilds(true);
+            }
+            // Otherwise leave it untouched as they might've just happened to hit a dev build, which is a release build
+        } else {
+            DisguiseConfig.setUsingReleaseBuilds(false);
         }
 
         ReflectionManager.init();

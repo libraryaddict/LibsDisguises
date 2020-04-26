@@ -1,7 +1,8 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.UpdateChecker;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
@@ -18,7 +19,10 @@ import java.util.List;
 public class LDUpdate implements LDCommand {
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("update", "update!");
+        // Update by download
+        // Update check
+        // Update to latest dev build
+        return Arrays.asList("update", "update?", "update!");
     }
 
     @Override
@@ -35,16 +39,21 @@ public class LDUpdate implements LDCommand {
             return;
         }
 
+        boolean check = args[0].endsWith("?");
         boolean force = args[0].endsWith("!");
 
-        if (!force) {
-            if (checker.getLatestSnapshot() <= 0) {
-                sender.sendMessage(LibsMsg.UPDATE_NOT_READY.get());
+        if (!check && !force && checker.getUpdate() != null) {
+            if (checker.getUpdate().getVersion().equals(checker.getUpdate().isReleaseBuild() ?
+                    LibsDisguises.getInstance().getDescription().getDescription() :
+                    LibsDisguises.getInstance().getBuildNumber())) {
+                sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
                 return;
             }
 
-            if (checker.getLatestSnapshot() == LibsDisguises.getInstance().getBuildNumber()) {
-                sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
+            if (checker.getLastDownload() != null && checker.getUpdate().getVersion()
+                    .equals(checker.isUsingReleaseBuilds() ? checker.getLastDownload().getVersion() :
+                            checker.getLastDownload().getBuildNumber())) {
+                sender.sendMessage(LibsMsg.UPDATE_ALREADY_DOWNLOADED.get());
                 return;
             }
         }
@@ -52,29 +61,49 @@ public class LDUpdate implements LDCommand {
         new BukkitRunnable() {
             @Override
             public void run() {
-                PluginInformation result;
+                LibsMsg updateResult = null;
 
-                if (force) {
-                    result = checker.grabLatestSnapshot();
-                } else {
-                    result = checker.grabSnapshotBuild();
+                if (check || checker.getUpdate() == null || force) {
+                    updateResult = checker.doUpdateCheck();
                 }
+
+                if (checker.getUpdate() == null) {
+                    sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
+                    return;
+                }
+
+                if (!checker.isUpdateReady()) {
+                    sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
+                    return;
+                }
+
+                if (check) {
+                    if (updateResult != null) {
+                        sender.sendMessage(updateResult.get());
+                    } else {
+                        for (String msg : checker.getUpdateMessage()) {
+                            sender.sendMessage(msg);
+                        }
+                    }
+
+                    return;
+                }
+
+                PluginInformation result = checker.doUpdate();
 
                 if (result == null) {
                     sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
                     return;
                 }
 
-                sender.sendMessage(LibsMsg.UPDATE_SUCCESS.get()); // Update success, please restart to update
-                sender.sendMessage(LibsMsg.UPDATE_INFO
-                        .get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
-                                result.getSize() / 1024));
+                for (String msg : checker.getUpdateMessage()) {
+                    sender.sendMessage(msg);
+                }
 
                 if (sender instanceof Player) {
-                    Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_SUCCESS.get());
-                    Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_INFO
-                            .get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
-                                    result.getSize() / 1024));
+                    for (String msg : checker.getUpdateMessage()) {
+                        DisguiseUtilities.getLogger().info(msg);
+                    }
                 }
             }
         }.runTaskAsynchronously(LibsDisguises.getInstance());

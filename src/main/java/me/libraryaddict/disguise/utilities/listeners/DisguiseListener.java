@@ -14,7 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.UpdateChecker;
+import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
@@ -53,13 +53,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class DisguiseListener implements Listener {
-    private String currentVersion;
     private HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
-    private String latestVersion;
-    private LibsMsg updateMessage;
     private LibsDisguises plugin;
-    private BukkitTask updaterTask;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
@@ -117,87 +113,6 @@ public class DisguiseListener implements Listener {
             DisguiseUtilities.getLogger()
                     .info("Plugin will attempt to auto update when new builds are ready! Check config to disable.");
         }
-
-        updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    UpdateChecker updateChecker = LibsDisguises.getInstance().getUpdateChecker();
-                    boolean checkReleases = isCheckReleases();
-
-                    if (checkReleases) {
-                        currentVersion = plugin.getDescription().getVersion();
-                        updateChecker.checkOfficialUpdate(currentVersion);
-                        String version = updateChecker.getLatestVersion();
-
-                        if (version == null) {
-                            return;
-                        }
-
-                        latestVersion = version;
-                        updateMessage = LibsMsg.UPDATE_READY;
-                    } else {
-                        updateChecker.checkSnapshotUpdate(plugin.getBuildNumber());
-
-                        if (updateChecker.getLatestSnapshot() <= 0) {
-                            return;
-                        }
-
-                        latestVersion = "" + updateChecker.getLatestSnapshot();
-
-                        if (autoUpdate && plugin.isNumberedBuild()) {
-                            PluginInformation result = updateChecker.grabSnapshotBuild();
-                            updateMessage = result != null ? LibsMsg.UPDATE_SUCCESS : LibsMsg.UPDATE_FAILED;
-                            Bukkit.getConsoleSender().sendMessage(LibsMsg.UPDATE_INFO
-                                    .get(result.getVersion(), result.getBuildNumber(),
-                                            result.getParsedBuildDate().toString(), result.getSize() / 1024));
-                        } else {
-                            currentVersion = plugin.getBuildNo();
-                            updateMessage = LibsMsg.UPDATE_READY_SNAPSHOT;
-                        }
-                    }
-
-                    Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyUpdate(Bukkit.getConsoleSender());
-
-                            for (Player p : Bukkit.getOnlinePlayers()) {
-                                notifyUpdate(p);
-                            }
-                        }
-                    });
-                }
-                catch (Exception ex) {
-                    DisguiseUtilities.getLogger()
-                            .warning(String.format("Failed to check for update: %s", ex.getMessage()));
-                }
-            }
-        }, 0, (20 * TimeUnit.HOURS.toSeconds(6))); // Check every 6 hours
-    }
-
-    private void notifyUpdate(CommandSender player) {
-        if (!player.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
-            return;
-        }
-
-        if (latestVersion == null) {
-            return;
-        }
-
-        if (updateMessage == LibsMsg.UPDATE_SUCCESS || updateMessage == LibsMsg.UPDATE_FAILED) {
-            if (player instanceof Player) {
-                player.sendMessage(updateMessage.get());
-            } else {
-                DisguiseUtilities.getLogger().info(updateMessage.get());
-            }
-        } else {
-            if (player instanceof Player) {
-                player.sendMessage(updateMessage.get(currentVersion, latestVersion));
-            } else {
-                DisguiseUtilities.getLogger().info(updateMessage.get(currentVersion, latestVersion));
-            }
-        }
     }
 
     public void cleanup() {
@@ -206,7 +121,6 @@ public class DisguiseListener implements Listener {
         }
 
         interactions.clear();
-        updaterTask.cancel();
     }
 
     private void checkPlayerCanBlowDisguise(Player player) {
@@ -423,7 +337,7 @@ public class DisguiseListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
 
-        notifyUpdate(p);
+        plugin.getUpdateChecker().notifyUpdate(p);
 
         if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
                 DisguiseUtilities.hasGameProfile(p.getName())) {

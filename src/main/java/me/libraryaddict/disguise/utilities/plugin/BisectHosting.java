@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,24 +14,15 @@ import java.net.URL;
  */
 public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
-        File configFile = new File("plugins/" + pluginName + "/internal.yml");
-        boolean claimedHosted = false;
-        String serverIp = Bukkit.getIp().replaceAll("[^:0-9.]", "");
+        boolean claimedHosted = DisguiseConfig.isBisectHosted();
+        String ip = Bukkit.getIp();
+        String parsedIP = ip.replaceAll("[^:0-9.]", "");
 
-        if (configFile.exists()) {
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
-
-            if (configuration.contains("Bisect-Hosted") && configuration.contains("Server-IP")) {
-                claimedHosted = configuration.getBoolean("Bisect-Hosted");
-
-                // If not hosted by bisect
-                if (!claimedHosted && configuration.getString("Server-IP").equals(serverIp)) {
-                    return false;
-                }
-            }
+        // If not hosted by bisect
+        if (!claimedHosted && DisguiseConfig.getSavedServerIp().equals(parsedIP)) {
+            return false;
         }
 
-        String ip = Bukkit.getIp();
         boolean hostedBy = false;
 
         if (ip.matches("((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
@@ -45,27 +37,11 @@ public class BisectHosting {
             }
         }
 
-        // If config doesn't exist, or it's not a bisect server
-        if (!configFile.exists()) {
-            if (!configFile.getParentFile().exists()) {
-                configFile.getParentFile().mkdirs();
-            }
+        if (claimedHosted != hostedBy || !DisguiseConfig.getSavedServerIp().equals(parsedIP)) {
+            DisguiseConfig.setBisectHosted(hostedBy, Bukkit.getIp());
+        }
 
-            try (PrintWriter writer = new PrintWriter(configFile, "UTF-8")) {
-                // This setting is if the server should check if you are using Bisect Hosting",
-                writer.write("# If you're using BisectHosting, this will tell the server to enable premium for free!");
-                writer.write("\n# However if you're not using BisectHosting, this is false so the server won't waste " +
-                        "time");
-                writer.write(
-                        "\n# Coupon 'libraryaddict' for 25% off your first invoice on any of their gaming servers");
-                writer.write("\n# Be sure to visit through this link! https://bisecthosting.com/libraryaddict");
-                writer.write("\nBisect-Hosted: " + hostedBy);
-                writer.write("\nServer-IP: " + serverIp);
-            }
-            catch (FileNotFoundException | UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        } else if (claimedHosted) {
+        if (!hostedBy && !DisguiseConfig.getSavedServerIp().equals("")) {
             // Just a small message for those who tried to enable it
             LibsDisguises.getInstance().getLogger().severe("Check for BisectHosting failed! Connection error?");
         }
