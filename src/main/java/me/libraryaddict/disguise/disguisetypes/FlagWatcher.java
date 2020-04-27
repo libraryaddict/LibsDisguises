@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -412,6 +413,7 @@ public class FlagWatcher {
         return getData(MetaIndex.ENTITY_NO_GRAVITY);
     }
 
+    @RandomDefaultValue
     public void setNoGravity(boolean noGravity) {
         setData(MetaIndex.ENTITY_NO_GRAVITY, noGravity);
         sendData(MetaIndex.ENTITY_NO_GRAVITY);
