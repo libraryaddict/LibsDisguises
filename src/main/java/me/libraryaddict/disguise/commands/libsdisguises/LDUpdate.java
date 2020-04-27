@@ -23,31 +23,12 @@ public class LDUpdate implements LDCommand {
         // Update by download
         // Update check
         // Update to latest dev build
-        return Arrays.asList("update", "update dev", "update release", "changelog", "update!");
+        return Arrays.asList("update", "update dev", "update release", "update!");
     }
 
     @Override
     public String getPermission() {
         return "libsdisguises.update";
-    }
-
-    private void doChangelog(CommandSender sender) {
-        UpdateChecker checker = LibsDisguises.getInstance().getUpdateChecker();
-
-        if (checker.getUpdate() == null) {
-            sender.sendMessage(LibsMsg.UPDATE_REQUIRED.get());
-            return;
-        }
-
-        if (!checker.getUpdate().isReleaseBuild()) {
-            sender.sendMessage(
-                    ChatColor.GOLD + "You are on build " + (LibsDisguises.getInstance().isNumberedBuild() ? "#" : "") +
-                            LibsDisguises.getInstance().getBuildNo());
-        }
-
-        for (String msg : checker.getUpdate().getChangelog()) {
-            sender.sendMessage(ChatColor.GOLD + msg);
-        }
     }
 
     @Override
@@ -56,11 +37,6 @@ public class LDUpdate implements LDCommand {
 
         if (checker.isDownloading()) {
             sender.sendMessage(LibsMsg.UPDATE_IN_PROGRESS.get());
-            return;
-        }
-
-        if (args[0].equalsIgnoreCase("changelog")) {
-            doChangelog(sender);
             return;
         }
 

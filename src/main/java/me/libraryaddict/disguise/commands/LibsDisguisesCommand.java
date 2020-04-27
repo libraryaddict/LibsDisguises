@@ -23,6 +23,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         getCommands().add(new LDHelp(this));
         getCommands().add(new LDReload());
         getCommands().add(new LDUpdate());
+        getCommands().add(new LDChangelog());
         getCommands().add(new LDCount());
         getCommands().add(new LDConfig());
         getCommands().add(new LDPermTest());

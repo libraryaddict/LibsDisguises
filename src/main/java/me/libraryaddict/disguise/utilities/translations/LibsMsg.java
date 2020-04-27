@@ -313,7 +313,10 @@ public enum LibsMsg {
     LD_COMMAND_CONFIG(ChatColor.BLUE + "/libsdisguises config - " + ChatColor.AQUA +
             "Tells you what's not normal in your config"),
     LD_COMMAND_UPDATE(ChatColor.BLUE + "/libsdisguises update - " + ChatColor.AQUA +
-            "Update's the plugin, doing 'update!' will force an update. Server must be restarted to install update."),
+            "'update' will fetch an update, 'update dev' will fetch a dev build update, 'update release' will fetch a" +
+            " release build update and 'update!' will download that update!"),
+    LD_COMMAND_CHANGELOG(ChatColor.BLUE + "/libsdisguises changelog - " + ChatColor.AQUA +
+            "Gives you the changelog of the current update fetched"),
     LD_COMMAND_JSON(ChatColor.BLUE + "/libsdisguises json - " + ChatColor.AQUA +
             "Turns the current held item into a string format"),
     LD_COMMAND_MODS(ChatColor.BLUE + "/libsdisguises mods <Player?> - " + ChatColor.AQUA +
@@ -327,7 +330,7 @@ public enum LibsMsg {
     LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA +
             "Used to help debug scoreboard issues on a player disguise");
 
-    private String string;
+    private final String string;
 
     LibsMsg(String string) {
         this.string = string;
