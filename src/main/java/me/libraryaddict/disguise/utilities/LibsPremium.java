@@ -65,7 +65,7 @@ public class LibsPremium {
      * @return true if userID does not contain __USER__
      */
     private static Boolean isPremium(String resourceID, String userID) {
-        return !userID.contains("__USER__") && !resourceID.equals("81");
+        return !userID.contains("__USER__") && resourceID.equals("32453");
     }
 
     public static Boolean isAPIPlugin() {

@@ -16,12 +16,16 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -1851,6 +1855,34 @@ public class ReflectionManager {
 
             ex.printStackTrace();
         }
+    }
+
+    public static Map<String, Command> getCommands(CommandMap map) {
+        try {
+            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            field.setAccessible(true);
+
+            return (Map<String, Command>) field.get(map);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static SimpleCommandMap getCommandMap() {
+        try {
+            Field commandMap = SimplePluginManager.class.getDeclaredField("commandMap");
+            commandMap.setAccessible(true);
+
+            return (SimpleCommandMap) commandMap.get(Bukkit.getPluginManager());
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     private static String[] splitReadable(String string) {

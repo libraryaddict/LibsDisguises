@@ -27,9 +27,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.asm.WatcherSanitizer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
@@ -39,6 +37,8 @@ import org.bukkit.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
@@ -161,7 +161,38 @@ public class LibsDisguises extends JavaPlugin {
             getLogger().info("Commands has been disabled, as per config");
         }
 
+        unregisterCommands();
+
         new MetricsInitalizer();
+    }
+
+    private void unregisterCommands() {
+        CommandMap map = ReflectionManager.getCommandMap();
+        Map<String, Command> commands = ReflectionManager.getCommands(map);
+
+        for (String command : getDescription().getCommands().keySet()) {
+            PluginCommand cmd = getCommand("libsdisguises:" + command);
+
+            if (cmd.getExecutor() != this) {
+                continue;
+            }
+
+            if (cmd.getPermission() != null && cmd.getPermission().startsWith("libsdisguises.seecmd")) {
+                Bukkit.getPluginManager().removePermission(cmd.getPermission());
+            }
+
+            Iterator<Map.Entry<String, Command>> itel = commands.entrySet().iterator();
+
+            while (itel.hasNext()) {
+                Map.Entry<String, Command> entry = itel.next();
+
+                if (entry.getValue() != cmd) {
+                    continue;
+                }
+
+                itel.remove();
+            }
+        }
     }
 
     @Override
@@ -195,7 +226,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {
-        PluginCommand command = getCommand(commandName);
+        PluginCommand command = getCommand("libsdisguises:" + commandName);
 
         command.setExecutor(executioner);
 
