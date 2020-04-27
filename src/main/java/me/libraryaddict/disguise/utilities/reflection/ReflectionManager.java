@@ -69,7 +69,7 @@ public class ReflectionManager {
         try {
             Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
-            for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
+            for (Method method : getNmsClass("EntityCow").getDeclaredMethods()) {
                 if (method.getReturnType() != float.class)
                     continue;
 
@@ -86,7 +86,8 @@ public class ReflectionManager {
                 if ((float) method.invoke(entity) != 0.4f)
                     continue;
 
-                damageAndIdleSoundMethod = method;
+                damageAndIdleSoundMethod = getNmsClass("EntityLiving").getDeclaredMethod(method.getName());
+                damageAndIdleSoundMethod.setAccessible(true);
                 break;
             }
         }
