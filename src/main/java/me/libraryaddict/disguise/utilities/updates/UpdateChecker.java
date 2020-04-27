@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,8 +41,49 @@ public class UpdateChecker {
         this.resourceID = resourceID;
     }
 
+    public boolean isServerLatestVersion() {
+        return isOnLatestUpdate(false);
+    }
+
+    public boolean isOnLatestUpdate(boolean includeDownloaded) {
+        if (getUpdate() == null) {
+            return false;
+        }
+
+        boolean isRelease =
+                includeDownloaded && getLastDownload() != null ? !getLastDownload().getVersion().contains("-SNAPSHOT") :
+                        LibsDisguises.getInstance().isReleaseBuild();
+
+        if (getUpdate().isReleaseBuild() != isRelease) {
+            return false;
+        }
+
+        String version;
+
+        if (getUpdate().isReleaseBuild()) {
+            if (lastDownload != null && includeDownloaded) {
+                version = lastDownload.getVersion();
+            } else {
+                version = LibsDisguises.getInstance().getDescription().getVersion();
+            }
+        } else {
+            if (lastDownload != null && includeDownloaded) {
+                version = lastDownload.getBuildNumber();
+            } else {
+                version = LibsDisguises.getInstance().getBuildNo();
+            }
+        }
+
+        return getUpdate() != null && getUpdate().getVersion().equals(version);
+    }
+
     public boolean isDownloading() {
         return downloading.get();
+    }
+
+    public boolean isOldUpdate() {
+        return getUpdate() == null ||
+                getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)));
     }
 
     public boolean isUsingReleaseBuilds() {
@@ -71,30 +111,6 @@ public class UpdateChecker {
         }
     }
 
-    public boolean isUpdateReady() {
-        if (getUpdate() == null) {
-            return false;
-        }
-
-        String version;
-
-        if (getUpdate().isReleaseBuild()) {
-            if (lastDownload != null) {
-                version = lastDownload.getVersion();
-            } else {
-                version = LibsDisguises.getInstance().getDescription().getVersion();
-            }
-        } else {
-            if (lastDownload != null) {
-                version = lastDownload.getBuildNumber();
-            } else {
-                version = LibsDisguises.getInstance().getBuildNo();
-            }
-        }
-
-        return getUpdate() != null && !getUpdate().getVersion().equals(version);
-    }
-
     public void doAutoUpdateCheck() {
         try {
             DisguiseUpdate oldUpdate = getUpdate();
@@ -103,7 +119,8 @@ public class UpdateChecker {
 
             doUpdateCheck();
 
-            if (!isUpdateReady() || (oldUpdate != null && oldUpdate.getVersion().equals(getUpdate().getVersion()))) {
+            if (isOnLatestUpdate(true) ||
+                    (oldUpdate != null && oldUpdate.getVersion().equals(getUpdate().getVersion()))) {
                 return;
             }
 
@@ -164,11 +181,13 @@ public class UpdateChecker {
         if (getUpdate().isReleaseBuild()) {
             String currentVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
-            if (!isNewerVersion(currentVersion, getUpdate().getVersion())) {
+            if (LibsDisguises.getInstance().isReleaseBuild() &&
+                    !isNewerVersion(currentVersion, getUpdate().getVersion())) {
                 return LibsMsg.UPDATE_ON_LATEST;
             }
 
-            updateMessage = new String[]{LibsMsg.UPDATE_READY.get(currentVersion, getUpdate().getVersion())};
+            updateMessage = new String[]{LibsMsg.UPDATE_READY.get(currentVersion, getUpdate().getVersion()),
+                    LibsMsg.UPDATE_HOW.get()};
         } else {
             if (!getUpdate().getVersion().matches("[0-9]+")) {
                 return LibsMsg.UPDATE_FAILED;
@@ -180,8 +199,11 @@ public class UpdateChecker {
                 return LibsMsg.UPDATE_ON_LATEST;
             }
 
+            String build = LibsDisguises.getInstance().getBuildNo();
+
             updateMessage = new String[]{
-                    LibsMsg.UPDATE_READY_SNAPSHOT.get(LibsDisguises.getInstance().getBuildNo(), newBuild)};
+                    LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("[0-9]+") ? "#" : "") + build, newBuild),
+                    LibsMsg.UPDATE_HOW.get()};
         }
 
         return null;

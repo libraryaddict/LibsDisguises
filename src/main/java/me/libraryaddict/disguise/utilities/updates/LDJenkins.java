@@ -3,9 +3,8 @@ package me.libraryaddict.disguise.utilities.updates;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import org.bukkit.ChatColor;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -14,8 +13,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -48,8 +47,9 @@ public class LDJenkins {
      */
     private Map<String, Object> fetchLastSnapshotBuild() {
         try {
+            DisguiseUtilities.getLogger().info("Now looking for update on Jenkins..");
             // We're connecting to md_5's jenkins REST api
-            URL url = new URL("https://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/api/json");
+            URL url = new URL("https://ci.md-5.net/job/LibsDisguises/api/json?tree=builds[changeSet[items[msg]],id,result]");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDefaultUseCaches(false);
@@ -77,28 +77,50 @@ public class LDJenkins {
     public DisguiseUpdate getLatestSnapshot() {
         Map<String, Object> lastBuild = fetchLastSnapshotBuild();
 
-        if (lastBuild == null || !lastBuild.containsKey("id") || !lastBuild.containsKey("timestamp")) {
+        if (lastBuild == null || !lastBuild.containsKey("builds")) {
             return null;
         }
 
         ArrayList<String> changelog = new ArrayList<>();
+        String version = null;
 
-        if (lastBuild.get("changeSet") instanceof Map) {
-            Object items = ((Map) lastBuild.get("changeSet")).get("items");
+        for (Map map : (List<Map>) lastBuild.get("builds")) {
+            String result = (String) map.get("result");
 
-            if (items instanceof Map[]) {
-                for (Map item : (Map[]) items) {
+            if (!"SUCCESS".equalsIgnoreCase(result)) {
+                continue;
+            }
+
+            if (changelog.isEmpty()) {
+                version = (String) map.get("id");
+            }
+
+            Object items = ((Map) map.get("changeSet")).get("items");
+            boolean release = false;
+
+            if (items instanceof List) {
+                for (Map item : (List<Map>) items) {
                     String msg = (String) item.get("msg");
 
                     if (msg == null) {
                         continue;
                     }
 
-                    changelog.add(msg);
+                    changelog.add("#" + map.get("id") + ": " + ChatColor.YELLOW + msg);
+
+                    release = release || msg.toLowerCase().matches("release.? .*");
                 }
+            }
+
+            if (release) {
+                break;
             }
         }
 
-        return new JenkinsUpdate((String) lastBuild.get("id"), changelog.toArray(new String[0]));
+        if (changelog.isEmpty()) {
+            return null;
+        }
+
+        return new JenkinsUpdate(version, changelog.toArray(new String[0]));
     }
 }

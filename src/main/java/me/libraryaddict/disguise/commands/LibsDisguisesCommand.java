@@ -135,7 +135,23 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 continue;
             }
 
-            tabs.addAll(command.getTabComplete());
+            if (origArgs.length <= 1) {
+                tabs.addAll(command.getTabComplete());
+            } else {
+                for (String s : command.getTabComplete()) {
+                    if (!s.contains(" ")) {
+                        continue;
+                    }
+
+                    String[] split = s.split(" ");
+
+                    if (!args[0].equalsIgnoreCase(split[0])) {
+                        continue;
+                    }
+
+                    tabs.add(split[1]);
+                }
+            }
         }
 
         return filterTabs(tabs, origArgs);

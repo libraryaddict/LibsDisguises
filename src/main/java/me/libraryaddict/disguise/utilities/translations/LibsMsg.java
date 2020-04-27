@@ -121,8 +121,9 @@ public enum LibsMsg {
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' " +
             "'DoSneak' 'DoSprint'"),
-    LIBS_COMMAND_WRONG_ARG(
-            ChatColor.RED + "[LibsDisguises] Did you mean 'reload', 'scoreboard', 'permtest', 'json' or 'metainfo'?"),
+    LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Invalid argument, use /libsdisguises help"),
+    LIBS_UPDATE_UNKNOWN_BRANCH(
+            ChatColor.RED + "[LibsDisguises] Invalid argument, use 'dev' or 'release' to switch branches"),
     LIMITED_RADIUS(ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY(ChatColor.RED + "Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
@@ -147,6 +148,7 @@ public enum LibsMsg {
     UPDATE_ALREADY_DOWNLOADED(ChatColor.RED + "That update has already been downloaded!"),
     UPDATE_FAILED(ChatColor.RED + "LibsDisguises update failed! Check console for errors."),
     UPDATE_SUCCESS(ChatColor.DARK_GREEN + "LibsDisguises update success! Restart server to update!"),
+    UPDATE_REQUIRED(ChatColor.RED + "LibsDisguises requies an update check before it can give you that!"),
     UPDATE_INFO(ChatColor.DARK_GREEN + "Lib's Disguises v%s, build %s, built %s and size %skb"),
     UPDATE_IN_PROGRESS(ChatColor.DARK_GREEN + "LibsDisguises is now downloading an update..."),
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
@@ -196,12 +198,13 @@ public enum LibsMsg {
     UNDISRADIUS(ChatColor.RED + "Successfully undisguised %s entities!"),
     UPDATE_READY(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
             "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
-            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
-            "! Use /libsdisguises update to automatically update!"),
+            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "!"),
     UPDATE_READY_SNAPSHOT(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
-            "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "#%s" + ChatColor.DARK_RED +
-            ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!" + ChatColor.RED +
-            "\nhttps://ci.md-5.net/job/LibsDisguises/lastSuccessfulBuild/ or use /libsdisguises update"),
+            "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "%s" + ChatColor.DARK_RED +
+            ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!"),
+    UPDATE_HOW(ChatColor.DARK_AQUA + "Use " + ChatColor.AQUA + "/libsdisgusies changelog" + ChatColor.DARK_AQUA +
+            " to see what changed, use " + ChatColor.AQUA + "/libsdisguises update!" + ChatColor.DARK_AQUA +
+            " to download the update!"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
     VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!"),
     CLICK_TO_COPY(ChatColor.GREEN + "Click to Copy:"),
