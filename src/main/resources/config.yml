@@ -34,6 +34,9 @@ Permissions:
 VerboseConfig: false
 # Should the plugin output changed config options? Will also list unknown extra options
 ChangedConfig: false
+# Should the config automatically update itself each time there's a config entry missing?
+# The old config will have any custom comments or invalid config entries wiped.
+UpdateConfig: true
 
 # Disables commands with the exception of /libsdisguises. Useful if you don't want the plugin to be used by anything
 #  but a plugin

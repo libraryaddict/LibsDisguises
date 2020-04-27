@@ -16,6 +16,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -23,7 +25,9 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -475,6 +479,72 @@ public class DisguiseConfig {
         TranslateType.refreshTranslations();
     }
 
+    public static void saveDefaultConfig() {
+        String[] string = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "config.yml")
+                .split("\n");
+        FileConfiguration savedConfig = LibsDisguises.getInstance().getConfig();
+
+        StringBuilder section = new StringBuilder();
+
+        for (int i = 0; i < string.length; i++) {
+            String s = string[i];
+
+            if (s.trim().startsWith("#") || !s.contains(":")) {
+                continue;
+            }
+
+            String rawKey = s.split(":")[0];
+
+            if (section.length() > 0) {
+                int matches = StringUtils.countMatches(rawKey, "  ");
+
+                int allowed = 0;
+
+                for (int a = 0; a < matches; a++) {
+                    allowed = section.indexOf(".", allowed) + 1;
+                }
+
+                section = new StringBuilder(section.substring(0, allowed));
+            }
+
+            String key = (rawKey.startsWith(" ") ? section.toString() : "") + rawKey.trim();
+
+            if (savedConfig.isConfigurationSection(key)) {
+                section.append(key).append(".");
+            } else if (savedConfig.isSet(key)) {
+                String rawVal = s.split(":")[1].trim();
+                Object val = savedConfig.get(key);
+
+                if (savedConfig.isString(key) && !rawVal.equals("true") && !rawVal.equals("false")) {
+                    val = "'" + StringEscapeUtils.escapeJava(val.toString().replace(ChatColor.COLOR_CHAR + "", "&")) +
+                            "'";
+                }
+
+                string[i] = rawKey + ": " + val;
+            }
+        }
+
+        File config = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
+
+        try {
+            if (config.exists()) {
+                FileUtils.copyFile(config, new File(config.getParentFile(), "config-old.yml"));
+                config.delete();
+
+                DisguiseUtilities.getLogger().info("Old config has been copied to config-old.yml");
+            }
+
+            config.createNewFile();
+
+            try (PrintWriter out = new PrintWriter(config)) {
+                out.write(StringUtils.join(string, "\n"));
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void loadConfig() {
         // Always save the default config
         LibsDisguises.getInstance().saveDefaultConfig();
@@ -670,25 +740,6 @@ public class DisguiseConfig {
 
         boolean changed = config.getBoolean("ChangedConfig");
 
-        if (!verbose) {
-            int missingConfigs = 0;
-
-            for (String key : config.getDefaultSection().getKeys(true)) {
-                if (config.contains(key, true)) {
-                    continue;
-                }
-
-                missingConfigs++;
-            }
-
-            if (missingConfigs > 0) {
-                DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs +
-                        " options! Please consider regenerating your config!");
-                DisguiseUtilities.getLogger()
-                        .info("You can also add the missing entries yourself! Try '/libsdisguises config'");
-            }
-        }
-
         if (verbose || changed) {
             ArrayList<String> returns = doOutput(config, changed, verbose);
 
@@ -702,13 +753,31 @@ public class DisguiseConfig {
                 }
             }
         }
+
+        int missingConfigs = 0;
+
+        for (String key : config.getDefaultSection().getKeys(true)) {
+            if (config.contains(key, true)) {
+                continue;
+            }
+
+            missingConfigs++;
+        }
+
+        if (missingConfigs > 0) {
+            if (config.getBoolean("UpdateConfig")) {
+                saveDefaultConfig();
+                DisguiseUtilities.getLogger().info("Config has been auto-updated!");
+            } else if (!verbose) {
+                DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs +
+                        " options! Please consider regenerating your config!");
+                DisguiseUtilities.getLogger()
+                        .info("You can also add the missing entries yourself! Try '/libsdisguises config'");
+            }
+        }
     }
 
     public static void loadModdedDisguiseTypes() {
-        if (LibsDisguises.getInstance().isReloaded()) {
-            return;
-        }
-
         File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
 
         if (!disguisesFile.exists())
@@ -752,6 +821,7 @@ public class DisguiseConfig {
                 String[] version =
                         mod == null || !section.contains("Version") ? null : section.getString("Version").split(",");
                 String requireMessage = mod == null ? null : section.getString("Required");
+
                 if (section.contains("Channels")) {
                     for (String s : section.getString("Channels").split(",")) {
                         if (!s.contains("|")) {
@@ -768,6 +838,12 @@ public class DisguiseConfig {
                 }
 
                 ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);
+
+                if (ModdedManager.getModdedEntity(name) != null) {
+                    DisguiseUtilities.getLogger()
+                            .info("Modded entity " + name + " has already been " + (register ? "registered" : "added"));
+                    continue;
+                }
 
                 ModdedManager.registerModdedEntity(
                         new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)),
