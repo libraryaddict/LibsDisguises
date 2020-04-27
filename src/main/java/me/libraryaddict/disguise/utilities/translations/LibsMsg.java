@@ -328,7 +328,8 @@ public enum LibsMsg {
     LD_COMMAND_RELOAD(ChatColor.BLUE + "/libsdisguises reload - " + ChatColor.AQUA +
             "Reload's the plugin config and possibly blows disguises"),
     LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA +
-            "Used to help debug scoreboard issues on a player disguise");
+            "Used to help debug scoreboard issues on a player disguise"),
+    SELF_DISGUISE_HIDDEN(ChatColor.GREEN + "Self disguise hidden as it's too tall..");
 
     private final String string;
 

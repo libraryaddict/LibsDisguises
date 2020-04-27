@@ -114,7 +114,7 @@ public class ParamInfoManager {
         // Add these last as it's what we want to present to be called the least
         for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
                 "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar",
-                "setBossBarColor", "setBossBarStyle"}) {
+                "setBossBarColor", "setBossBarStyle", "setHideTallSelfDisguise"}) {
             try {
                 Class cl = boolean.class;
 

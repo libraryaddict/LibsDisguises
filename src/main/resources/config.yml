@@ -119,6 +119,9 @@ UndisguiseRadiusMax: 50
 # Shall the players view their disguises?
 # Best used when viewing yourself in 3rd person
 ViewSelfDisguises: true
+# Some disguises are rather big and tall and block your vision
+# By default those disguises are disabled, such as zombies, players, etc.
+HideTallSelfDisguises: true
 
 # Shall I disguise the sounds?
 # This turns your damage sound into a MOOOO

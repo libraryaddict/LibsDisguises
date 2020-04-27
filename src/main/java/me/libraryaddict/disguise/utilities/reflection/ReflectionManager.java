@@ -1717,7 +1717,7 @@ public class ReflectionManager {
 
         try {
             if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
-                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0, 0);
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0);
 
                 disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
@@ -1758,7 +1758,7 @@ public class ReflectionManager {
                 }
             }
 
-            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(), entitySize,
+            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(),
                     bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
             WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);

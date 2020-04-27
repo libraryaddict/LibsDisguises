@@ -20,7 +20,9 @@ import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -95,6 +97,9 @@ public abstract class Disguise {
     @Getter
     @Setter
     private boolean customName = true;
+    @Getter
+    @Setter
+    private boolean hideTallSelfDisguise = DisguiseConfig.isHideTallSelfDisguises();
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -119,6 +124,7 @@ public abstract class Disguise {
     protected void clone(Disguise disguise) {
         disguise.setDisguiseName(getDisguiseName());
         disguise.setCustomName(isCustomName());
+        disguise.setHideTallSelfDisguise(isHideTallSelfDisguise());
 
         disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
@@ -541,6 +547,27 @@ public abstract class Disguise {
 
         if (entity != null) {
             setupWatcher();
+        }
+
+        if (getEntity() instanceof Player && isSelfDisguiseVisible() && isHideTallSelfDisguise() &&
+                !getType().isCustom()) {
+            DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
+
+            if (values != null) {
+                FakeBoundingBox box = null;
+
+                if (isMobDisguise() && !((MobDisguise) this).isAdult()) {
+                    box = values.getBabyBox();
+                }
+
+                if (box == null) {
+                    box = values.getAdultBox();
+                }
+
+                if (box != null && box.getY() > 1.7D) {
+                    setSelfDisguiseVisible(false);
+                }
+            }
         }
 
         return this;

@@ -240,6 +240,9 @@ public class DisguiseConfig {
     @Getter
     private static boolean notifyUpdate;
     private static BukkitTask updaterTask;
+    @Getter
+    @Setter
+    private static boolean hideTallSelfDisguises;
 
     public static void setAutoUpdate(boolean update) {
         if (isAutoUpdate() == update) {
@@ -566,6 +569,7 @@ public class DisguiseConfig {
         setScoreboardDisguiseNames(config.getBoolean("ScoreboardNames"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
+        setHideTallSelfDisguises(config.getBoolean("HideTallSelfDisguises"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
