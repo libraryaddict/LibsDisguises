@@ -125,7 +125,7 @@ ViewSelfDisguises: true
 # Some disguises are rather big and tall and block your vision
 # By default those disguises are disabled, such as zombies, players, etc.
 # The baby versions however, should be short enough that it's a non-issue
-HideTallSelfDisguises: true
+HideTallSelfDisguises: false
 
 # Shall I disguise the sounds?
 # This turns your damage sound into a MOOOO
