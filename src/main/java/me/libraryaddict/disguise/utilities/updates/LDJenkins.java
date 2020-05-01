@@ -49,7 +49,8 @@ public class LDJenkins {
         try {
             DisguiseUtilities.getLogger().info("Now looking for update on Jenkins..");
             // We're connecting to md_5's jenkins REST api
-            URL url = new URL("https://ci.md-5.net/job/LibsDisguises/api/json?tree=builds[changeSet[items[msg]],id,result]");
+            URL url = new URL(
+                    "https://ci.md-5.net/job/LibsDisguises/api/json?tree=builds[changeSet[items[msg]],id,result]");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDefaultUseCaches(false);
@@ -87,14 +88,6 @@ public class LDJenkins {
         for (Map map : (List<Map>) lastBuild.get("builds")) {
             String result = (String) map.get("result");
 
-            if (!"SUCCESS".equalsIgnoreCase(result)) {
-                continue;
-            }
-
-            if (changelog.isEmpty()) {
-                version = (String) map.get("id");
-            }
-
             Object items = ((Map) map.get("changeSet")).get("items");
             boolean release = false;
 
@@ -112,8 +105,14 @@ public class LDJenkins {
                 }
             }
 
-            if (release) {
-                break;
+            if ("SUCCESS".equalsIgnoreCase(result)) {
+                if (version == null) {
+                    version = (String) map.get("id");
+                }
+
+                if (release) {
+                    break;
+                }
             }
         }
 
