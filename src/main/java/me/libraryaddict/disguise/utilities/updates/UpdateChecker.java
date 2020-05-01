@@ -212,9 +212,10 @@ public class UpdateChecker {
     private PluginInformation grabJarDownload(String urlString) {
         downloading.set(true);
 
-        DisguiseUtilities.getLogger().info("Now downloading build of Lib's Disguises from " + urlString);
-
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
+
+        DisguiseUtilities.getLogger()
+                .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
 
         if (dest.exists()) {
             dest.delete();
