@@ -9,7 +9,6 @@ import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
@@ -19,6 +18,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -232,7 +233,7 @@ public class UpdateChecker {
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
-                FileUtils.copyInputStreamToFile(input, dest);
+                Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
             DisguiseUtilities.getLogger().info("Download success!");

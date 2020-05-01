@@ -27,7 +27,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -528,8 +527,7 @@ public class DisguiseConfig {
 
         try {
             if (config.exists()) {
-                FileUtils.copyFile(config, new File(config.getParentFile(), "config-old.yml"));
-                config.delete();
+                config.renameTo(new File(config.getParentFile(), "config-old.yml"));
 
                 DisguiseUtilities.getLogger().info("Old config has been copied to config-old.yml");
             }
