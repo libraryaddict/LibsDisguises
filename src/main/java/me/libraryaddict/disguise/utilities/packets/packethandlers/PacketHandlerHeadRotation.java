@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ShulkerBullet;
 
 /**
  * Created by libraryaddict on 3/01/2019.
