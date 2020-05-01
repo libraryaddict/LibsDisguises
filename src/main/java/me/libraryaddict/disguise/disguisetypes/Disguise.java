@@ -99,7 +99,7 @@ public abstract class Disguise {
     private boolean customName = true;
     @Getter
     @Setter
-    private boolean hideTallSelfDisguise = DisguiseConfig.isHideTallSelfDisguises();
+    private boolean tallDisguisesVisible = !DisguiseConfig.isHideTallSelfDisguises();
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -124,7 +124,7 @@ public abstract class Disguise {
     protected void clone(Disguise disguise) {
         disguise.setDisguiseName(getDisguiseName());
         disguise.setCustomName(isCustomName());
-        disguise.setHideTallSelfDisguise(isHideTallSelfDisguise());
+        disguise.setTallDisguisesVisible(isTallDisguisesVisible());
 
         disguise.setReplaceSounds(isSoundsReplaced());
         disguise.setViewSelfDisguise(isSelfDisguiseVisible());
@@ -549,7 +549,7 @@ public abstract class Disguise {
             setupWatcher();
         }
 
-        if (getEntity() instanceof Player && isSelfDisguiseVisible() && isHideTallSelfDisguise() &&
+        if (getEntity() instanceof Player && isSelfDisguiseVisible() && isTallDisguisesVisible() &&
                 !getType().isCustom()) {
             DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
 
@@ -958,6 +958,10 @@ public abstract class Disguise {
      */
     @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        if (viewSelfDisguise && !isTallDisguisesVisible()) {
+            setTallDisguisesVisible(true);
+        }
+
         if (isSelfDisguiseVisible() != viewSelfDisguise) {
             this.viewSelfDisguise = viewSelfDisguise;
 
