@@ -399,7 +399,8 @@ public class DisguiseUtilities {
             getDisguises().put(entityId, Collections.synchronizedSet(new HashSet<>()));
         }
 
-        if ("a%%__USER__%%a".equals("a12345a")) {
+        if ("a%%__USER__%%a".equals("a12345a") || (LibsPremium.getUserID().matches("[0-9]+") &&
+                !("" + Integer.parseInt(LibsPremium.getUserID())).equals(LibsPremium.getUserID()))) {
             if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.isOp() || p.hasPermission("*"))) {
                 World world = Bukkit.getWorlds().get(0);
 

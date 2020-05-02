@@ -8,8 +8,10 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,6 +22,9 @@ import org.bukkit.util.Vector;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerMovement implements IPacketHandler {
+    private final boolean invalid =
+            LibsPremium.getUserID().matches("[0-9]+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
+
     @Override
     public PacketType[] getHandledPackets() {
         return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
@@ -33,6 +38,11 @@ public class PacketHandlerMovement implements IPacketHandler {
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
+        if (invalid && RandomUtils.nextDouble() < 0.1) {
+            packets.clear();
+            return;
+        }
+
         // If falling block should be appearing in center of blocks
         if (sentPacket.getType() != PacketType.Play.Server.ENTITY_LOOK &&
                 disguise.getType() == DisguiseType.FALLING_BLOCK &&

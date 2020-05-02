@@ -1023,8 +1023,10 @@ public abstract class Disguise {
             createRunnable();
         }
 
-        task = Bukkit.getScheduler().
-                runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
+        if (!DisguiseUtilities.isInvalidFile()) {
+            task = Bukkit.getScheduler().
+                    runTaskTimer(LibsDisguises.getInstance(), velocityRunnable, 1, 1);
+        }
 
         if (this instanceof PlayerDisguise) {
             PlayerDisguise disguise = (PlayerDisguise) this;
