@@ -24,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -218,6 +219,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();
+
+            if (disguise.getType() == DisguiseType.SQUID && disguisedEntity.getType() != EntityType.SQUID) {
+                vec = new Vector();
+            }
 
             PacketContainer spawnEntity = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             packets.addPacket(spawnEntity);
