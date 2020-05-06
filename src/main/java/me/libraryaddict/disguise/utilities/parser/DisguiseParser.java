@@ -626,7 +626,7 @@ public class DisguiseParser {
 
             disguisePerm = new DisguisePerm(disguise.getType());
             name = disguise.getDisguiseName();
-            customName = disguise.isCustomName();
+            customName = disguise.isCustomDisguiseName();
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
@@ -757,11 +757,11 @@ public class DisguiseParser {
 
                                 usedOptions.add(optionName);
                                 doCheck(sender, permissions, disguisePerm, usedOptions);
+                                String itemName = itemStack == null ? "null" : itemStack.getType().name().toLowerCase();
 
-                                if (!hasPermissionOption(disguiseOptions, optionName,
-                                        itemStack.getType().name().toLowerCase())) {
-                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM,
-                                            itemStack.getType().name(), disguisePerm.toReadable());
+                                if (!hasPermissionOption(disguiseOptions, optionName, itemName)) {
+                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, itemName,
+                                            disguisePerm.toReadable());
                                 }
 
                                 toSkip++;
@@ -812,7 +812,7 @@ public class DisguiseParser {
         }
 
         disguise.setDisguiseName(name);
-        disguise.setCustomName(customName);
+        disguise.setCustomDisguiseName(customName);
 
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];
