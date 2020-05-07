@@ -21,6 +21,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -255,6 +256,10 @@ public class FlagWatcher {
     }
 
     public String getCustomName() {
+        if (DisguiseConfig.isOverrideCustomNames() && DisguiseConfig.isArmorstandsName()) {
+            return StringUtils.join(getDisguise().getMultiName(), "\n");
+        }
+
         if (!NmsVersion.v1_13.isSupported()) {
             return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
         }
@@ -271,6 +276,26 @@ public class FlagWatcher {
     }
 
     public void setCustomName(String name) {
+        if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
+            if (NmsVersion.v1_13.isSupported()) {
+                if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME)) {
+                    setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
+                    sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+                }
+            } else {
+                if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
+                    setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
+                    sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
+                }
+            }
+
+            if (name == null) {
+                getDisguise().setMultiName();
+            } else {
+                getDisguise().setMultiName(DisguiseUtilities.splitNewLine(name));
+            }
+        }
+
         if (Strings.isNullOrEmpty(name)) {
             if (NmsVersion.v1_13.isSupported()) {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
@@ -288,6 +313,7 @@ public class FlagWatcher {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
             }
         }
+
         if (NmsVersion.v1_13.isSupported()) {
             sendData(MetaIndex.ENTITY_CUSTOM_NAME);
         } else {

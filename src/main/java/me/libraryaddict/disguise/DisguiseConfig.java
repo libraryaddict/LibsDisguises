@@ -243,6 +243,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
+    @Getter
+    @Setter
+    private static boolean overrideCustomNames;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -644,6 +647,7 @@ public class DisguiseConfig {
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
         setHideTallSelfDisguises(config.getBoolean("HideTallSelfDisguises"));
+        setOverrideCustomNames(config.getBoolean("OverrideCustomNames"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
@@ -653,8 +657,8 @@ public class DisguiseConfig {
             setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase()));
         }
         catch (Exception ex) {
-            DisguiseUtilities.getLogger()
-                    .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
+            DisguiseUtilities.getLogger().warning(
+                    "Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
         }
 
         try {
