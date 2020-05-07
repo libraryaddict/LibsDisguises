@@ -234,7 +234,7 @@ public class PlayerDisguise extends TargetedDisguise {
             case TEAMS:
                 cLimit = 16 * 2;
                 break;
-            case TEAMS_EXTENDED:
+            case EXTENDED:
                 cLimit = 16 * 3;
                 break;
             case ARMORSTANDS:

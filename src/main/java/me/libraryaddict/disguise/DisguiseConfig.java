@@ -242,14 +242,14 @@ public class DisguiseConfig {
     private static boolean hideTallSelfDisguises;
     @Getter
     @Setter
-    private static PlayerNameType playerNameType = PlayerNameType.ARMORSTANDS;
+    private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
     }
 
     public static boolean isExtendedNames() {
-        return getPlayerNameType() == PlayerNameType.TEAMS_EXTENDED;
+        return getPlayerNameType() == PlayerNameType.EXTENDED;
     }
 
     public static void setAutoUpdate(boolean update) {
@@ -1094,11 +1094,11 @@ public class DisguiseConfig {
     public enum PlayerNameType {
         VANILLA,
         TEAMS,
-        TEAMS_EXTENDED,
+        EXTENDED,
         ARMORSTANDS;
 
         public boolean isTeams() {
-            return this == TEAMS || this == TEAMS_EXTENDED;
+            return this == TEAMS || this == EXTENDED;
         }
     }
 
