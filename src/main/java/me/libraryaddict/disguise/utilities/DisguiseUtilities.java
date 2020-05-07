@@ -2295,10 +2295,9 @@ public class DisguiseUtilities {
         ArrayList<PacketContainer> packets = new ArrayList<>();
         String[] newNames =
                 (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
-                        disguise.getMultiName();
+                        reverse(disguise.getMultiName());
         int[] standIds = disguise.getArmorstandIds();
         int[] destroyIds = new int[0];
-        internalOldNames = DisguiseUtilities.reverse(internalOldNames);
 
         if (internalOldNames.length > newNames.length) {
             // Destroy packet
