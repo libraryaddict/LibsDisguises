@@ -214,7 +214,7 @@ public class ReflectionManager {
 
             if (increment) {
                 if (NmsVersion.v1_14.isSupported()) {
-                    return ((AtomicInteger) entityCount).getAndIncrement();
+                    return ((AtomicInteger) entityCount).incrementAndGet();
                 } else {
                     int id = entityCount.intValue();
 
