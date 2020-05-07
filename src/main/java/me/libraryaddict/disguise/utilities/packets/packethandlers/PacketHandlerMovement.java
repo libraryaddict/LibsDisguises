@@ -51,7 +51,8 @@ public class PacketHandlerMovement implements IPacketHandler {
         ArrayList<PacketContainer> toAdd = new ArrayList<>();
 
         for (PacketContainer packet : packets.getPackets()) {
-            for (int standId : disguise.getArmorstandIds()) {
+            for (int i = 0; i < len; i++) {
+                int standId = disguise.getArmorstandIds()[i];
                 PacketContainer packet2 = packet.shallowClone();
                 packet2.getIntegers().write(0, standId);
 
