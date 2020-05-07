@@ -121,6 +121,8 @@ permissions:
   libsdisguises.noactionbar:
     description: Hides the action bar even if enabled in config
     default: false
+  libsdisguises.multiname:
+    description: Allows the command user to set names on different heights
   libsdisguises.seecmd:
     description: See all commands in tab-completion
     default: true

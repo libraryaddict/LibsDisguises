@@ -96,14 +96,57 @@ public abstract class Disguise {
      */
     @Getter
     @Setter
-    private boolean customName = true;
+    private boolean customDisguiseName = true;
     @Getter
     @Setter
     private boolean tallDisguisesVisible = !DisguiseConfig.isHideTallSelfDisguises();
+    @Getter
+    private String[] multiName = new String[0];
+    private transient int[] armorstandIds = new int[0];
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
         this.disguiseName = disguiseType.toReadable();
+    }
+
+    public void setMultiName(String... name) {
+        String[] oldName = getMultiName();
+        multiName = name;
+
+        if (!isDisguiseInUse()) {
+            return;
+        }
+
+        sendArmorStands(oldName);
+    }
+
+    protected void sendArmorStands(String[] oldName) {
+        ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(this, oldName);
+
+        try {
+            for (Player player : DisguiseUtilities.getPerverts(this)) {
+                for (PacketContainer packet : packets) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
+            }
+        }
+        catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int[] getArmorstandIds() {
+        if (getMultiName().length > armorstandIds.length) {
+            int oldLen = armorstandIds.length;
+
+            armorstandIds = Arrays.copyOf(armorstandIds, getMultiName().length);
+
+            for (int i = oldLen; i < armorstandIds.length; i++) {
+                armorstandIds[i] = ReflectionManager.getNewEntityId();
+            }
+        }
+
+        return armorstandIds;
     }
 
     public void addCustomData(String key, Object data) {
@@ -123,7 +166,7 @@ public abstract class Disguise {
 
     protected void clone(Disguise disguise) {
         disguise.setDisguiseName(getDisguiseName());
-        disguise.setCustomName(isCustomName());
+        disguise.setCustomDisguiseName(isCustomDisguiseName());
         disguise.setTallDisguisesVisible(isTallDisguisesVisible());
 
         disguise.setReplaceSounds(isSoundsReplaced());
@@ -133,6 +176,7 @@ public abstract class Disguise {
         disguise.setHideHeldItemFromSelf(isHidingHeldItemFromSelf());
         disguise.setVelocitySent(isVelocitySent());
         disguise.setModifyBoundingBox(isModifyBoundingBox());
+        disguise.multiName = Arrays.copyOf(multiName, multiName.length);
 
         if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
@@ -795,20 +839,13 @@ public abstract class Disguise {
             task = null;
         }
 
-        // If this disguise has a entity set
+        // If this disguise hasn't a entity set
         if (getEntity() == null) {
             // Loop through the disguises because it could be used with a unknown entity id.
             HashMap<Integer, HashSet<TargetedDisguise>> future = DisguiseUtilities.getFutureDisguises();
 
-            Iterator<Integer> itel = DisguiseUtilities.getFutureDisguises().keySet().iterator();
-
-            while (itel.hasNext()) {
-                int id = itel.next();
-
-                if (future.get(id).remove(this) && future.get(id).isEmpty()) {
-                    itel.remove();
-                }
-            }
+            DisguiseUtilities.getFutureDisguises().keySet()
+                    .removeIf(id -> future.get(id).remove(this) && future.get(id).isEmpty());
 
             return true;
         }
@@ -842,7 +879,7 @@ public abstract class Disguise {
         // Remove the disguise from the current disguises.
         if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
             if (getEntity() instanceof Player) {
-                DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                DisguiseUtilities.removeSelfDisguise(this);
             }
 
             // Better refresh the entity to undisguise it
@@ -890,6 +927,20 @@ public abstract class Disguise {
             if (bar != null) {
                 bar.removeAll();
                 Bukkit.removeBossBar(getBossBar());
+            }
+        }
+
+        if (getMultiName().length > 0) {
+            PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
+            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiName().length));
+
+            try {
+                for (Player player : DisguiseUtilities.getPerverts(this)) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
 
@@ -970,7 +1021,7 @@ public abstract class Disguise {
                     if (isSelfDisguiseVisible()) {
                         DisguiseUtilities.setupFakeDisguise(this);
                     } else {
-                        DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+                        DisguiseUtilities.removeSelfDisguise(this);
                     }
                 }
             }
@@ -1053,7 +1104,7 @@ public abstract class Disguise {
         DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
 
         if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
-            DisguiseUtilities.removeSelfDisguise((Player) getEntity());
+            DisguiseUtilities.removeSelfDisguise(this);
         }
 
         // Resend the disguised entity's packet

@@ -698,6 +698,10 @@ public class DisguiseParser {
 
                         args[1] = args[1].replace("\\_", " ");
 
+                        if (DisguiseConfig.isArmorstandsName() && !sender.hasPermission("libsdisguises.multiname")) {
+                            args[1] = DisguiseUtilities.quoteNewLine(args[1]);
+                        }
+
                         // Construct the player disguise
                         disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
 
@@ -902,6 +906,10 @@ public class DisguiseParser {
                     throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, stringValue,
                             disguisePerm.toReadable());
                 }
+            }
+
+            if (DisguiseConfig.isArmorstandsName() && methodToUse.getName().equals("setName") && !sender.hasPermission("libsdisguises.multiname")) {
+                valueToSet = DisguiseUtilities.quoteNewLine((String) valueToSet);
             }
 
             if (FlagWatcher.class.isAssignableFrom(methodToUse.getDeclaringClass())) {

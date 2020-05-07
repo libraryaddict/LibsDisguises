@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+
 /**
  * Created by libraryaddict on 3/01/2019.
  */
@@ -37,6 +39,36 @@ public class PacketHandlerMovement implements IPacketHandler {
 
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
+            Entity entity) {
+        handle2(disguise, sentPacket, packets, observer, entity);
+
+        int len = disguise.getMultiName().length;
+
+        if (len == 0) {
+            return;
+        }
+
+        ArrayList<PacketContainer> toAdd = new ArrayList<>();
+
+        for (PacketContainer packet : packets.getPackets()) {
+            for (int i = 0; i < len; i++) {
+                for (int standId : disguise.getArmorstandIds()) {
+                    PacketContainer packet2 = packet.shallowClone();
+                    packet2.getIntegers().write(0, standId);
+
+                    if (packet2.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
+                        packet2.getDoubles().write(1, packet2.getDoubles().read(1) + -0.175 + (0.28 * i));
+                    }
+
+                    toAdd.add(packet2);
+                }
+            }
+        }
+
+        packets.getPackets().addAll(toAdd);
+    }
+
+    public void handle2(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
             Entity entity) {
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();

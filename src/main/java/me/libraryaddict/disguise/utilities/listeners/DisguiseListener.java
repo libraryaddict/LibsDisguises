@@ -583,12 +583,19 @@ public class DisguiseListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
-        if (event.getEntered() instanceof Player &&
-                DisguiseAPI.isDisguised((Player) event.getEntered(), event.getEntered())) {
-            DisguiseUtilities.removeSelfDisguise((Player) event.getEntered());
-
-            ((Player) event.getEntered()).updateInventory();
+        if (!(event.getEntered() instanceof Player)) {
+            return;
         }
+
+        Disguise disguise = DisguiseAPI.getDisguise((Player) event.getEntered(), event.getEntered());
+
+        if (disguise == null) {
+            return;
+        }
+
+        DisguiseUtilities.removeSelfDisguise(disguise);
+
+        ((Player) event.getEntered()).updateInventory();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

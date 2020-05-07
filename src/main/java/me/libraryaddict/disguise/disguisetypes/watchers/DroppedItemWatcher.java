@@ -22,7 +22,7 @@ public class DroppedItemWatcher extends FlagWatcher {
         setData(MetaIndex.DROPPED_ITEM, item);
         sendData(MetaIndex.DROPPED_ITEM);
 
-        if (!getDisguise().isCustomName()) {
+        if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISES.get(DisguiseType.DROPPED_ITEM.toReadable()) + " " +
                     TranslateType.DISGUISE_OPTIONS_PARAMETERS
                             .get(ReflectionManager.toReadable((item == null ? Material.AIR : item.getType()).name())));

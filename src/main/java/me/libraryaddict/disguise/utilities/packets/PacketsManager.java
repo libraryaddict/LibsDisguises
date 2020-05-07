@@ -25,6 +25,7 @@ public class PacketsManager {
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
     private static PacketsHandler packetsHandler;
+    private static PacketListener destroyListener;
 
     public static void addPacketListeners() {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
@@ -160,8 +161,10 @@ public class PacketsManager {
             }
 
             mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
+            destroyListener = new PacketListenerDestroyEntity(LibsDisguises.getInstance());
 
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
+            ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
         }
     }
 
@@ -183,7 +186,7 @@ public class PacketsManager {
                         if (enabled) {
                             DisguiseUtilities.setupFakeDisguise(disguise);
                         } else {
-                            DisguiseUtilities.removeSelfDisguise(player);
+                            DisguiseUtilities.removeSelfDisguise(disguise);
                         }
 
                         if (inventoryModifierEnabled &&

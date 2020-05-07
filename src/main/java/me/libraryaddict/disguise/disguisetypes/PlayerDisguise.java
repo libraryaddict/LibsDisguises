@@ -12,7 +12,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,6 +26,10 @@ public class PlayerDisguise extends TargetedDisguise {
     private String playerName = "Herobrine";
     private String skinToUse;
     private boolean nameVisible = true;
+    /**
+     * Has someone set name visible explicitly?
+     */
+    private boolean explicitNameVisible = false;
     private UUID uuid = UUID.randomUUID();
     @Getter
     @Setter
@@ -82,8 +85,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Deprecated
     public DisguiseUtilities.DScoreTeam getScoreboardName() {
-        if (getName().length() <= 32 ? !DisguiseConfig.isScoreboardDisguiseNames() :
-                !DisguiseConfig.isExtendedDisguiseNames()) {
+        if (!DisguiseConfig.isScoreboardNames()) {
             throw new IllegalStateException("Cannot use this method when it's been disabled in config!");
         }
 
@@ -103,11 +105,11 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public boolean hasScoreboardName() {
-        if (isStaticName(getName())) {
+        if (!DisguiseConfig.isArmorstandsName() && isStaticName(getName())) {
             return false;
         }
 
-        return scoreboardName != null || DisguiseConfig.isScoreboardDisguiseNames() || getName().length() > 16;
+        return DisguiseConfig.isScoreboardNames();
     }
 
     public String getProfileName() {
@@ -123,12 +125,23 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setNameVisible(boolean nameVisible) {
-        if (isNameVisible() == nameVisible) {
+        return setNameVisible(nameVisible, false);
+    }
+
+    private PlayerDisguise setNameVisible(boolean nameVisible, boolean setInternally) {
+        if (isNameVisible() == nameVisible || (setInternally && explicitNameVisible)) {
             return this;
         }
 
+        if (!setInternally) {
+            explicitNameVisible = true;
+        }
+
         if (isDisguiseInUse()) {
-            if (!DisguiseConfig.isScoreboardDisguiseNames()) {
+            if (DisguiseConfig.isArmorstandsName()) {
+                this.nameVisible = nameVisible;
+                sendArmorStands(isNameVisible() ? getMultiName() : new String[0]);
+            } else if (!DisguiseConfig.isScoreboardNames()) {
                 if (stopDisguise()) {
                     this.nameVisible = nameVisible;
 
@@ -172,7 +185,8 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         disguise.setName(getName());
-        disguise.setNameVisible(isNameVisible());
+        disguise.nameVisible = isNameVisible();
+        disguise.explicitNameVisible = explicitNameVisible;
         disguise.setDynamicName(isDynamicName());
 
         clone(disguise);
@@ -214,58 +228,79 @@ public class PlayerDisguise extends TargetedDisguise {
             return;
         }
 
-        int cLimit = DisguiseConfig.isExtendedDisguiseNames() ? 16 * 3 :
-                DisguiseConfig.isScoreboardDisguiseNames() ? 16 * 2 : 16;
+        int cLimit;
+
+        switch (DisguiseConfig.getPlayerNameType()) {
+            case TEAMS:
+                cLimit = 16 * 2;
+                break;
+            case TEAMS_EXTENDED:
+                cLimit = 16 * 3;
+                break;
+            case ARMORSTANDS:
+                cLimit = 256;
+                break;
+            default:
+                cLimit = 16;
+                break;
+        }
+
         if (name.length() > cLimit) {
             name = name.substring(0, cLimit);
         }
 
         if (isDisguiseInUse()) {
-            boolean resendDisguise = false;
+            if (DisguiseConfig.isArmorstandsName()) {
+                playerName = name;
 
-            if (DisguiseConfig.isScoreboardDisguiseNames() && !isStaticName(name)) {
-                DisguiseUtilities.DScoreTeam team = getScoreboardName();
-                String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
+                setNameVisible(!name.isEmpty(), true);
+                setMultiName(DisguiseUtilities.splitNewLine(name));
+            } else {
+                boolean resendDisguise = false;
 
-                resendDisguise = !split[1].equals(team.getPlayer());
-                setScoreboardName(split);
-            }
+                if (DisguiseConfig.isScoreboardNames() && !isStaticName(name)) {
+                    DisguiseUtilities.DScoreTeam team = getScoreboardName();
+                    String[] split = DisguiseUtilities.getExtendedNameSplit(team.getPlayer(), name);
 
-            resendDisguise =
-                    !DisguiseConfig.isScoreboardDisguiseNames() || isStaticName(name) || isStaticName(getName()) ||
-                            resendDisguise;
+                    resendDisguise = !split[1].equals(team.getPlayer());
+                    setScoreboardName(split);
+                }
 
-            if (resendDisguise) {
-                if (stopDisguise()) {
-                    if (getName().isEmpty() && !name.isEmpty()) {
-                        setNameVisible(true);
-                    } else if (!getName().isEmpty() && name.isEmpty()) {
-                        setNameVisible(false);
-                    }
+                resendDisguise = !DisguiseConfig.isScoreboardNames() || isStaticName(name) || isStaticName(getName()) ||
+                        resendDisguise;
 
-                    playerName = name;
+                if (resendDisguise) {
+                    if (stopDisguise()) {
+                        if (getName().isEmpty() && !name.isEmpty()) {
+                            setNameVisible(true, true);
+                        } else if (!getName().isEmpty() && name.isEmpty()) {
+                            setNameVisible(false, true);
+                        }
 
-                    if (gameProfile != null) {
-                        gameProfile = ReflectionManager
-                                .getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
-                    }
+                        playerName = name;
 
-                    if (!startDisguise()) {
+                        if (gameProfile != null) {
+                            gameProfile = ReflectionManager
+                                    .getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+                        }
+
+                        if (!startDisguise()) {
+                            throw new IllegalStateException("Unable to restart disguise");
+                        }
+                    } else {
                         throw new IllegalStateException("Unable to restart disguise");
                     }
                 } else {
-                    throw new IllegalStateException("Unable to restart disguise");
-                }
-            } else {
-                if (getName().isEmpty() && !name.isEmpty() && !isNameVisible()) {
-                    setNameVisible(true);
-                } else if (!getName().isEmpty() && name.isEmpty() && isNameVisible()) {
-                    setNameVisible(false);
-                } else {
-                    DisguiseUtilities.updateExtendedName(this);
-                }
+                    if (getName().isEmpty() && !name.isEmpty() && !isNameVisible()) {
+                        setNameVisible(true, true);
+                    } else if (!getName().isEmpty() && name.isEmpty() && isNameVisible()) {
+                        setNameVisible(false, true);
+                    } else {
+                        DisguiseUtilities.updateExtendedName(this);
+                    }
 
-                playerName = name;
+                    playerName = name;
+                }
             }
 
             if (isDisplayedInTab()) {
@@ -291,12 +326,11 @@ public class PlayerDisguise extends TargetedDisguise {
                 setScoreboardName(split);
             }
 
-            if (name.isEmpty()) {
-                setNameVisible(false);
-            } else {
-                setNameVisible(true);
+            if (DisguiseConfig.isScoreboardNames()) {
+                setMultiName(DisguiseUtilities.splitNewLine(name));
             }
 
+            setNameVisible(!name.isEmpty(), true);
             playerName = name;
 
             if (gameProfile != null) {
@@ -310,17 +344,21 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setSkin(String newSkin) {
-        if (newSkin != null && newSkin.length() > 70) {
+        if (newSkin != null && newSkin.length() > 70 && newSkin.startsWith("{") && newSkin.endsWith("}")) {
             try {
                 return setSkin(DisguiseUtilities.getGson().fromJson(newSkin, WrappedGameProfile.class));
             }
             catch (Exception ex) {
                 if (!"12345".equals("%%__USER__%%")) {
                     throw new IllegalArgumentException(String.format(
-                            "The skin %s is too long to be a playername, but cannot be parsed to a GameProfile!",
-                            newSkin));
+                            "The skin %s is too long to normally be a playername, but cannot be parsed to a " +
+                                    "GameProfile!", newSkin));
                 }
             }
+        }
+
+        if (newSkin != null && newSkin.length() > 16) {
+            newSkin = null;
         }
 
         String oldSkin = skinToUse;
@@ -375,8 +413,6 @@ public class PlayerDisguise extends TargetedDisguise {
             this.skinToUse = null;
             return this;
         }
-
-        Validate.notEmpty(gameProfile.getName(), "Name must be set");
 
         currentLookup = null;
 

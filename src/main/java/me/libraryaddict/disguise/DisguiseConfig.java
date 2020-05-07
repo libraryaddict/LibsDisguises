@@ -95,9 +95,6 @@ public class DisguiseConfig {
     private static boolean explicitDisguisePermissions;
     @Getter
     @Setter
-    private static boolean extendedDisguiseNames;
-    @Getter
-    @Setter
     private static boolean hideDisguisedPlayers;
     @Getter
     @Setter
@@ -228,9 +225,6 @@ public class DisguiseConfig {
     private static PermissionDefault commandVisibility = PermissionDefault.TRUE;
     @Getter
     @Setter
-    private static boolean scoreboardDisguiseNames;
-    @Getter
-    @Setter
     private static int tablistRemoveDelay;
     @Getter
     private static boolean usingReleaseBuild = true;
@@ -246,6 +240,17 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean hideTallSelfDisguises;
+    @Getter
+    @Setter
+    private static PlayerNameType playerNameType = PlayerNameType.ARMORSTANDS;
+
+    public static boolean isArmorstandsName() {
+        return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
+    }
+
+    public static boolean isExtendedNames() {
+        return getPlayerNameType() == PlayerNameType.TEAMS_EXTENDED;
+    }
 
     public static void setAutoUpdate(boolean update) {
         if (isAutoUpdate() == update) {
@@ -447,6 +452,10 @@ public class DisguiseConfig {
         return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(invoker, target, entry.getValue()));
     }
 
+    public static boolean isScoreboardNames() {
+        return getPlayerNameType() != PlayerNameType.VANILLA;
+    }
+
     public static void removeCustomDisguise(String disguise) {
         for (DisguisePerm entry : customDisguises.keySet()) {
             String name = entry.toReadable();
@@ -596,8 +605,6 @@ public class DisguiseConfig {
         setEntityStatusPacketsEnabled(config.getBoolean("PacketsEnabled.EntityStatus"));
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
-        // The default value shall be false if you don't update config
-        setExtendedDisguiseNames(config.contains("ScoreboardNames") && config.getBoolean("ExtendedNames"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
@@ -634,13 +641,20 @@ public class DisguiseConfig {
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
-        setScoreboardDisguiseNames(config.getBoolean("ScoreboardNames"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
         setHideTallSelfDisguises(config.getBoolean("HideTallSelfDisguises"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");
+        }
+
+        try {
+            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase()));
+        }
+        catch (Exception ex) {
+            DisguiseUtilities.getLogger()
+                    .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
         }
 
         try {
@@ -1075,6 +1089,17 @@ public class DisguiseConfig {
         MODIFY_SCOREBOARD,
         IGNORE_SCOREBOARD,
         CREATE_SCOREBOARD
+    }
+
+    public enum PlayerNameType {
+        VANILLA,
+        TEAMS,
+        TEAMS_EXTENDED,
+        ARMORSTANDS;
+
+        public boolean isTeams() {
+            return this == TEAMS || this == TEAMS_EXTENDED;
+        }
     }
 
     public enum UpdatesBranch {

@@ -22,6 +22,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
@@ -84,6 +85,7 @@ public class DisguiseUtilities {
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
+            nameVisible = !DisguiseConfig.isArmorstandsName() && nameVisible;
             Team team = board.getTeam(getTeamName());
 
             if (team == null) {
@@ -1037,7 +1039,7 @@ public class DisguiseUtilities {
 
             if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player &&
                     disguise.getEntity().getName().equalsIgnoreCase(player)) {
-                removeSelfDisguise((Player) disguise.getEntity());
+                removeSelfDisguise(disguise);
 
                 if (disguise.isSelfDisguiseVisible()) {
                     selfDisguised.add(disguise.getEntity().getUniqueId());
@@ -1167,7 +1169,7 @@ public class DisguiseUtilities {
 
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
-                removeSelfDisguise((Player) disguise.getEntity());
+                removeSelfDisguise(disguise);
 
                 selfDisguised.add(disguise.getEntity().getUniqueId());
 
@@ -1257,16 +1259,21 @@ public class DisguiseUtilities {
         file.delete();
     }
 
-    public static void removeSelfDisguise(Player player) {
+    public static void removeSelfDisguise(Disguise disguise) {
         if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
+
+        Player player = (Player) disguise.getEntity();
 
         if (!selfDisguised.contains(player.getUniqueId())) {
             return;
         }
 
+        int[] ids = Arrays.copyOf(disguise.getArmorstandIds(), 1 + disguise.getMultiName().length);
+        ids[ids.length - 1] = DisguiseAPI.getSelfDisguiseId();
+
         // Send a packet to destroy the fake entity
-        PacketContainer packet = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
+        PacketContainer packet = getDestroyPacket(ids);
 
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -1439,7 +1446,7 @@ public class DisguiseUtilities {
     }
 
     public static String[] getExtendedNameSplit(String playerName, String name) {
-        if (name.length() <= 16 && !DisguiseConfig.isScoreboardDisguiseNames()) {
+        if (name.length() <= 16 && !DisguiseConfig.isScoreboardNames()) {
             throw new IllegalStateException("This can only be used for names longer than 16 characters!");
         }
 
@@ -1450,7 +1457,7 @@ public class DisguiseUtilities {
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 
         // If name is short enough to be used outside of player name
-        if (DisguiseConfig.isScoreboardDisguiseNames() && name.length() <= 32) {
+        if (DisguiseConfig.isScoreboardNames() && name.length() <= 32) {
             String[] newName = new String[]{name, playerName, ""};
 
             if (name.length() > 16) {
@@ -1749,6 +1756,39 @@ public class DisguiseUtilities {
                 "\"";
     }
 
+    public static String quoteNewLine(String string) {
+        return string.replaceAll("\\\\(?=\\\\+n)", "\\\\\\\\");
+    }
+
+    public static String[] splitNewLine(String string) {
+        Pattern regex = Pattern.compile("\\\\+n");
+        Matcher result = regex.matcher(string);
+
+        ArrayList<String> lines = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        int last = 0;
+
+        while (result.find()) {
+            builder.append(string, last, result.start());
+            last = result.end();
+
+            if (result.group().matches("(\\\\\\\\)+n")) {
+                builder.append(result.group().replace("\\\\", "\\"));
+            } else {
+                String group = result.group().replace("\\\\", "\\");
+
+                builder.append(group, 0, group.length() - 2);
+
+                lines.add(builder.toString());
+                builder = new StringBuilder();
+            }
+        }
+
+        lines.add(builder.toString() + string.substring(last));
+
+        return lines.toArray(new String[0]);
+    }
+
     public static String[] split(String string) {
         // Regex where we first match any character that isn't a slash, if it is a slash then it must not have more
         // slashes until it hits the quote
@@ -2020,7 +2060,7 @@ public class DisguiseUtilities {
         }
 
         // Remove the old disguise, else we have weird disguises around the place
-        DisguiseUtilities.removeSelfDisguise(player);
+        DisguiseUtilities.removeSelfDisguise(disguise);
 
         // If the disguised player can't see himself. Return
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() ||
@@ -2235,6 +2275,100 @@ public class DisguiseUtilities {
 
                 return value;
         }
+    }
+
+    public static ArrayList<PacketContainer> getNamePackets(Disguise disguise, String[] oldNames) {
+        ArrayList<PacketContainer> packets = new ArrayList<>();
+        String[] newNames =
+                (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
+                        disguise.getMultiName();
+        int[] standIds = disguise.getArmorstandIds();
+        int[] destroyIds = new int[0];
+
+        if (oldNames.length > newNames.length) {
+            // Destroy packet
+            destroyIds = Arrays.copyOfRange(standIds, newNames.length, oldNames.length);
+        }
+
+        for (int i = 0; i < newNames.length; i++) {
+            if (i < oldNames.length) {
+                if (newNames[i].equals(oldNames[i]) || newNames[i].isEmpty()) {
+                    continue;
+                }
+
+                WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+                Object name = NmsVersion.v1_13.isSupported() ? Optional.of(WrappedChatComponent.fromText(newNames[i])) :
+                        newNames[i];
+
+                WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(
+                        NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME :
+                                MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
+
+                watcher.setObject(obj, ReflectionManager.convertInvalidMeta(name));
+
+                PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, 0, watcher, true)
+                        .createPacket(standIds[i], watcher, true);
+
+                packets.add(metaPacket);
+            } else if (newNames[i].isEmpty()) {
+                destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
+                destroyIds[destroyIds.length - 1] = standIds[i];
+            } else {
+                PacketContainer packet = new PacketContainer(Server.SPAWN_ENTITY_LIVING);
+                packet.getIntegers().write(0, standIds[i]);
+                packet.getIntegers().write(1, DisguiseType.ARMOR_STAND.getTypeId());
+
+                packet.getUUIDs().write(0, UUID.randomUUID());
+
+                Location loc = disguise.getEntity().getLocation();
+
+                packet.getDoubles().write(0, loc.getX());
+                packet.getDoubles().write(1, loc.getY() + -0.175 + (0.28 * i));
+                packet.getDoubles().write(2, loc.getZ());
+                packets.add(packet);
+
+                WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+                for (MetaIndex index : MetaIndex.getMetaIndexes(LivingWatcher.class)) {
+                    Object val = index.getDefault();
+
+                    if (index == MetaIndex.ENTITY_META) {
+                        val = (byte) 32;
+                    } else if (index == MetaIndex.ARMORSTAND_META) {
+                        val = (byte) 17;
+                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
+                        val = Optional.of(WrappedChatComponent.fromText(newNames[i]));
+                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
+                        val = newNames[i];
+                    } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE) {
+                        val = true;
+                    }
+
+                    WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager
+                            .createDataWatcherObject(index, val);
+
+                    watcher.setObject(obj, ReflectionManager.convertInvalidMeta(val));
+                }
+
+                if (NmsVersion.v1_15.isSupported()) {
+                    PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                            .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, 0, watcher, true)
+                            .createPacket(standIds[i], watcher, true);
+
+                    packets.add(metaPacket);
+                } else {
+                    packet.getDataWatcherModifier().write(0, watcher);
+                }
+            }
+        }
+
+        if (destroyIds.length > 0) {
+            packets.add(getDestroyPacket(destroyIds));
+        }
+
+        return packets;
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {

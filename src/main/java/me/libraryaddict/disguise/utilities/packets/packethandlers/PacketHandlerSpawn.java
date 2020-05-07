@@ -151,7 +151,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(5, pitch);
         } else if (disguise.getType().isPlayer()) {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
-            boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardDisguiseNames();
+            boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardNames();
 
             WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
                     .getGameProfileWithThisSkin(UUID.randomUUID(), visibleOrNewCompat ? playerDisguise.getName() : "",
@@ -386,6 +386,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(newPacket);
         }
+
+        DisguiseUtilities.getNamePackets(disguise, new String[0]).forEach(packets::addPacket);
 
         // If armor must be sent because its currently not displayed and would've been sent normally
 

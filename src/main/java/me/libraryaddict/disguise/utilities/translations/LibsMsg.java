@@ -59,7 +59,7 @@ public enum LibsMsg {
     DISG_HELP4(ChatColor.DARK_GREEN + "/disguise <Dropped_Item/Falling_Block> <Id> <Durability>"),
     DISG_PLAYER_AS_DISG(ChatColor.RED + "Successfully disguised %s as a %s!"),
     DISG_PLAYER_AS_DISG_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
-    DISGUISED(ChatColor.RED + "Now disguised as a %s"),
+    DISGUISED(ChatColor.RED + "Now disguised as %s"),
     DISRADIUS(ChatColor.RED + "Successfully disguised %s entities!"),
     DISRADIUS_FAIL(ChatColor.RED + "Couldn't find any entities to disguise!"),
     DMODENT_HELP1(ChatColor.DARK_GREEN + "Choose the options for a disguise then right click a entity to modify it!"),
@@ -116,7 +116,7 @@ public enum LibsMsg {
             "disabled in the config"),
     DRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply a disguise as well as the radius"),
     DRADIUS_NEEDOPTIONS_ENTITY(ChatColor.RED + "You need to supply a disguise as well as the radius and EntityType"),
-    FAILED_DISGIUSE(ChatColor.RED + "Failed to disguise as a %s"),
+    FAILED_DISGIUSE(ChatColor.RED + "Failed to disguise as %s"),
     GRABBED_SKIN(ChatColor.GOLD + "Grabbed skin and saved as %s!"),
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
     INVALID_CLONE(ChatColor.DARK_RED + "Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' " +

@@ -36,7 +36,7 @@ public class LDScoreboard implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        if (DisguiseConfig.isScoreboardDisguiseNames()) {
+        if (DisguiseConfig.isScoreboardNames()) {
             int issuesFound = 0;
             int unexpected = 0;
 
