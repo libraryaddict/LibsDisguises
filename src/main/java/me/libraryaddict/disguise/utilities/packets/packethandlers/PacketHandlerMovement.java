@@ -51,17 +51,15 @@ public class PacketHandlerMovement implements IPacketHandler {
         ArrayList<PacketContainer> toAdd = new ArrayList<>();
 
         for (PacketContainer packet : packets.getPackets()) {
-            for (int i = 0; i < len; i++) {
-                for (int standId : disguise.getArmorstandIds()) {
-                    PacketContainer packet2 = packet.shallowClone();
-                    packet2.getIntegers().write(0, standId);
+            for (int standId : disguise.getArmorstandIds()) {
+                PacketContainer packet2 = packet.shallowClone();
+                packet2.getIntegers().write(0, standId);
 
-                    if (packet2.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                        packet2.getDoubles().write(1, packet2.getDoubles().read(1) + -0.175 + (0.28 * i));
-                    }
-
-                    toAdd.add(packet2);
+                if (packet2.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
+                    packet2.getDoubles().write(1, packet2.getDoubles().read(1) + -0.175 + (0.28 * i));
                 }
+
+                toAdd.add(packet2);
             }
         }
 
