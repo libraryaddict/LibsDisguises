@@ -1761,6 +1761,10 @@ public class DisguiseUtilities {
     }
 
     public static String[] splitNewLine(String string) {
+        if (string.contains("\n")) {
+            return string.split("\n");
+        }
+
         Pattern regex = Pattern.compile("\\\\+n");
         Matcher result = regex.matcher(string);
 
