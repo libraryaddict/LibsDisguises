@@ -28,6 +28,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -100,7 +101,6 @@ public abstract class Disguise {
     @Getter
     @Setter
     private boolean tallDisguisesVisible = !DisguiseConfig.isHideTallSelfDisguises();
-    @Getter
     private String[] multiName = new String[0];
     private transient int[] armorstandIds = new int[0];
 
@@ -109,8 +109,18 @@ public abstract class Disguise {
         this.disguiseName = disguiseType.toReadable();
     }
 
+    public int getMultiNameLength() {
+        return multiName.length;
+    }
+
+    public String[] getMultiName() {
+        return DisguiseUtilities.reverse(multiName);
+    }
+
     public void setMultiName(String... name) {
-        String[] oldName = getMultiName();
+        name = DisguiseUtilities.reverse(name);
+
+        String[] oldName = multiName;
         multiName = name;
 
         if (!isDisguiseInUse()) {
@@ -136,10 +146,10 @@ public abstract class Disguise {
     }
 
     public int[] getArmorstandIds() {
-        if (getMultiName().length > armorstandIds.length) {
+        if (getMultiNameLength() > armorstandIds.length) {
             int oldLen = armorstandIds.length;
 
-            armorstandIds = Arrays.copyOf(armorstandIds, getMultiName().length);
+            armorstandIds = Arrays.copyOf(armorstandIds, getMultiNameLength());
 
             for (int i = oldLen; i < armorstandIds.length; i++) {
                 armorstandIds[i] = ReflectionManager.getNewEntityId();
@@ -930,9 +940,9 @@ public abstract class Disguise {
             }
         }
 
-        if (getMultiName().length > 0) {
+        if (getMultiNameLength()> 0) {
             PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
-            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiName().length));
+            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
 
             try {
                 for (Player player : DisguiseUtilities.getPerverts(this)) {

@@ -34,7 +34,7 @@ public class PacketListenerDestroyEntity extends PacketAdapter {
                 continue;
             }
 
-            int len = disguise.getMultiName().length;
+            int len = disguise.getMultiNameLength();
 
             if (len == 0) {
                 continue;

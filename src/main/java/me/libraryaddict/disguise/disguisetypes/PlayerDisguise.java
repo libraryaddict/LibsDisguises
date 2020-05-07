@@ -140,7 +140,7 @@ public class PlayerDisguise extends TargetedDisguise {
         if (isDisguiseInUse()) {
             if (DisguiseConfig.isArmorstandsName()) {
                 this.nameVisible = nameVisible;
-                sendArmorStands(isNameVisible() ? getMultiName() : new String[0]);
+                sendArmorStands(isNameVisible() ? DisguiseUtilities.reverse(getMultiName()) : new String[0]);
             } else if (!DisguiseConfig.isScoreboardNames()) {
                 if (stopDisguise()) {
                     this.nameVisible = nameVisible;

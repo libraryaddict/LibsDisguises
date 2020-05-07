@@ -42,7 +42,7 @@ public class PacketHandlerMovement implements IPacketHandler {
             Entity entity) {
         handle2(disguise, sentPacket, packets, observer, entity);
 
-        int len = disguise.getMultiName().length;
+        int len = disguise.getMultiNameLength();
 
         if (len == 0) {
             return;

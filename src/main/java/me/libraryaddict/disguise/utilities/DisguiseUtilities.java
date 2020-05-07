@@ -1269,7 +1269,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        int[] ids = Arrays.copyOf(disguise.getArmorstandIds(), 1 + disguise.getMultiName().length);
+        int[] ids = Arrays.copyOf(disguise.getArmorstandIds(), 1 + disguise.getMultiNameLength());
         ids[ids.length - 1] = DisguiseAPI.getSelfDisguiseId();
 
         // Send a packet to destroy the fake entity
@@ -1758,6 +1758,16 @@ public class DisguiseUtilities {
 
     public static String quoteNewLine(String string) {
         return string.replaceAll("\\\\(?=\\\\+n)", "\\\\\\\\");
+    }
+
+    public static String[] reverse(String[] array) {
+        String[] newArray = new String[array.length];
+
+        for (int i = 1; i <= array.length; i++) {
+            newArray[array.length - i] = array[i - 1];
+        }
+
+        return newArray;
     }
 
     public static String[] splitNewLine(String string) {
@@ -2281,22 +2291,23 @@ public class DisguiseUtilities {
         }
     }
 
-    public static ArrayList<PacketContainer> getNamePackets(Disguise disguise, String[] oldNames) {
+    public static ArrayList<PacketContainer> getNamePackets(Disguise disguise, String[] internalOldNames) {
         ArrayList<PacketContainer> packets = new ArrayList<>();
         String[] newNames =
                 (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
                         disguise.getMultiName();
         int[] standIds = disguise.getArmorstandIds();
         int[] destroyIds = new int[0];
+        internalOldNames = DisguiseUtilities.reverse(internalOldNames);
 
-        if (oldNames.length > newNames.length) {
+        if (internalOldNames.length > newNames.length) {
             // Destroy packet
-            destroyIds = Arrays.copyOfRange(standIds, newNames.length, oldNames.length);
+            destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
         }
 
         for (int i = 0; i < newNames.length; i++) {
-            if (i < oldNames.length) {
-                if (newNames[i].equals(oldNames[i]) || newNames[i].isEmpty()) {
+            if (i < internalOldNames.length) {
+                if (newNames[i].equals(internalOldNames[i]) || newNames[i].isEmpty()) {
                     continue;
                 }
 
