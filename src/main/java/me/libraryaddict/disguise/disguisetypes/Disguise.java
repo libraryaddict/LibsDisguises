@@ -117,6 +117,10 @@ public abstract class Disguise {
     }
 
     public void setMultiName(String... name) {
+        if (name.length == 1 && name[0].isEmpty()) {
+            name = new String[0];
+        }
+
         name = DisguiseUtilities.reverse(name);
 
         String[] oldName = multiName;
@@ -939,7 +943,7 @@ public abstract class Disguise {
             }
         }
 
-        if (getMultiNameLength()> 0) {
+        if (getMultiNameLength() > 0) {
             PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
             packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
 

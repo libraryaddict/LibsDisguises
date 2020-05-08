@@ -217,17 +217,21 @@ public class DisguiseParser {
     }
 
     private static void addWatcherDefault(Method setMethod, Method getMethod, Object object) {
-        Map.Entry<Method, Object> entry = new HashMap.SimpleEntry<>(getMethod, object);
 
         if (defaultWatcherValues.containsKey(setMethod)) {
-            Object dObj = defaultWatcherValues.get(setMethod);
+            Object dObj = defaultWatcherValues.get(setMethod).getValue();
 
-            if (!Objects.deepEquals(defaultWatcherValues.get(setMethod).getValue(), object)) {
-                throw new IllegalStateException(String.format("%s has conflicting values!", setMethod.getName()));
+            if (!Objects.deepEquals(dObj, object)) {
+                throw new IllegalStateException(String.format(
+                        "%s has conflicting values! This means it expected the same value again but received a " +
+                                "different value on a different disguise! %s is not the same as %s!", setMethod.getName(), object,
+                        dObj));
             }
 
             return;
         }
+
+        Map.Entry<Method, Object> entry = new HashMap.SimpleEntry<>(getMethod, object);
 
         defaultWatcherValues.put(setMethod, entry);
     }
