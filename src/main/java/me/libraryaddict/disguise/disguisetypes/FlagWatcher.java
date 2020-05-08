@@ -275,7 +275,6 @@ public class FlagWatcher {
         return null;
     }
 
-    @RandomDefaultValue
     public void setCustomName(String name) {
         if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
             if (NmsVersion.v1_13.isSupported()) {
