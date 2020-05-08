@@ -908,7 +908,11 @@ public class DisguiseParser {
                 }
             }
 
-            if (DisguiseConfig.isArmorstandsName() && methodToUse.getName().equals("setName") && !sender.hasPermission("libsdisguises.multiname")) {
+            if (DisguiseConfig.isArmorstandsName() &&
+                    ((methodToUse.getName().equals("setName") && disguise.isPlayerDisguise()) ||
+                            (DisguiseConfig.isOverrideCustomNames() &&
+                                    methodToUse.getName().equals("setCustomName"))) &&
+                    !sender.hasPermission("libsdisguises.multiname")) {
                 valueToSet = DisguiseUtilities.quoteNewLine((String) valueToSet);
             }
 

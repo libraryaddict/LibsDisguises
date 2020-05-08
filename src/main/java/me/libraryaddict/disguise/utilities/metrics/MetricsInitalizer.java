@@ -63,8 +63,6 @@ public class MetricsInitalizer {
             } else {
                 premiumType = "Paid Builds";
             }
-        } else if (LibsPremium.isAPIPlugin()) {
-            premiumType = "Free Plugin";
         } else {
             premiumType = "Free Builds";
         }

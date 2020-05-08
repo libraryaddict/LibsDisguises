@@ -295,6 +295,8 @@ public class FlagWatcher {
             } else {
                 getDisguise().setMultiName(DisguiseUtilities.splitNewLine(name));
             }
+
+            return;
         }
 
         if (Strings.isNullOrEmpty(name)) {

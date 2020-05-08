@@ -85,8 +85,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
                 version += disguises.getBuildNo();
             }
 
-            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running Lib's Disguises " +
-                    (LibsPremium.isAPIPlugin() ? "API " : "") + "v" + version +
+            sender.sendMessage(ChatColor.DARK_GREEN + "This server is running Lib's Disguises " + "v" + version +
                     " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
 
             if (sender.hasPermission("libsdisguises.reload")) {

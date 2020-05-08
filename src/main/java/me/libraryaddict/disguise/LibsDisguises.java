@@ -129,29 +129,23 @@ public class LibsDisguises extends JavaPlugin {
         registerCommand("libsdisguises", new LibsDisguisesCommand());
 
         if (!DisguiseConfig.isDisableCommands()) {
-            if (!LibsPremium.isAPIPlugin()) {
-                registerCommand("disguise", new DisguiseCommand());
-                registerCommand("undisguise", new UndisguiseCommand());
-                registerCommand("disguiseplayer", new DisguisePlayerCommand());
-                registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
-                registerCommand("undisguiseentity", new UndisguiseEntityCommand());
-                registerCommand("disguiseentity", new DisguiseEntityCommand());
-                registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
-                registerCommand("undisguiseradius",
-                        new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
-                registerCommand("disguisehelp", new DisguiseHelpCommand());
-                registerCommand("disguiseclone", new DisguiseCloneCommand());
-                registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-                registerCommand("disguisemodify", new DisguiseModifyCommand());
-                registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
-                registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
-                registerCommand("disguisemodifyradius",
-                        new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
-                registerCommand("copydisguise", new CopyDisguiseCommand());
-            } else {
-                getLogger().info("This is the API version! /grabskin and /savedisguise enabled!");
-            }
-
+            registerCommand("disguise", new DisguiseCommand());
+            registerCommand("undisguise", new UndisguiseCommand());
+            registerCommand("disguiseplayer", new DisguisePlayerCommand());
+            registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+            registerCommand("undisguiseentity", new UndisguiseEntityCommand());
+            registerCommand("disguiseentity", new DisguiseEntityCommand());
+            registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+            registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
+            registerCommand("disguisehelp", new DisguiseHelpCommand());
+            registerCommand("disguiseclone", new DisguiseCloneCommand());
+            registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+            registerCommand("disguisemodify", new DisguiseModifyCommand());
+            registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
+            registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+            registerCommand("disguisemodifyradius",
+                    new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
+            registerCommand("copydisguise", new CopyDisguiseCommand());
             registerCommand("grabskin", new GrabSkinCommand());
             registerCommand("savedisguise", new SaveDisguiseCommand());
         } else {

@@ -12,6 +12,8 @@ import org.bukkit.Sound;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,12 @@ import java.util.Random;
  * Created by libraryaddict on 13/02/2020.
  */
 public class CompileMethods {
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface CompileMethodsIntfer {
+        String user() default "%%__USER__%%";
+    }
+
+    @CompileMethodsIntfer(user = "%%__USER__%%")
     public static void main(String[] args) {
         doMethods();
         doSounds();

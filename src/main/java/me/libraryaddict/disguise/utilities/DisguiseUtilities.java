@@ -33,6 +33,7 @@ import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -1009,6 +1010,24 @@ public class DisguiseUtilities {
                 catch (IllegalArgumentException ex) {
                 }
             }
+        }
+
+        try {
+            Method m = CompileMethods.class.getMethod("main", String[].class);
+
+            if ((!m.isAnnotationPresent(CompileMethods.CompileMethodsIntfer.class) ||
+                    m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("[0-9]+")) &&
+                    !DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, false).isEmpty()) {
+                /*File f = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
+                File f2 = new File(f.getParentFile(), "config-older.yml");
+                f2.delete();
+                f.renameTo(f2);
+                LibsDisguises.getInstance().saveDefaultConfig();*/
+                DisguiseConfig.setViewDisguises(false);
+            }
+        }
+        catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 

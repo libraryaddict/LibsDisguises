@@ -68,10 +68,6 @@ public class LibsPremium {
         return !userID.contains("__USER__") && resourceID.equals("32453");
     }
 
-    public static Boolean isAPIPlugin() {
-        return !isPremium() && getResourceID().equals("81");
-    }
-
     /**
      * Returns true if this plugin is premium
      */
