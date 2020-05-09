@@ -14,11 +14,19 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
     public ParamInfoItemBlock(Class paramClass, String name, String valueType, String description,
             Material[] possibleValues) {
         super(paramClass, name, valueType, description, Arrays.stream(possibleValues).filter(m -> {
-            if (!m.isBlock())
-                return false;
+            switch (m) {
+                case CHEST:
+                case TRAPPED_CHEST:
+                    return false;
+                default:
+                    break;
+            }
 
-            if (NmsVersion.v1_13.isSupported())
+            if (!m.isBlock()) {
+                return false;
+            } else if (NmsVersion.v1_13.isSupported()) {
                 return true;
+            }
 
             switch (m) {
                 case CAKE:
