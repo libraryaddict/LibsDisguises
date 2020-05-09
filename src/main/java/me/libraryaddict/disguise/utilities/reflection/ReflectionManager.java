@@ -1722,7 +1722,7 @@ public class ReflectionManager {
 
         try {
             if (disguiseType == DisguiseType.UNKNOWN || disguiseType.isCustom()) {
-                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, null, 0);
+                DisguiseValues disguiseValues = new DisguiseValues(disguiseType, 0);
 
                 disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
@@ -1763,7 +1763,7 @@ public class ReflectionManager {
                 }
             }
 
-            DisguiseValues disguiseValues = new DisguiseValues(disguiseType, nmsEntity.getClass(),
+            DisguiseValues disguiseValues = new DisguiseValues(disguiseType,
                     bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
             WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
@@ -1841,9 +1841,11 @@ public class ReflectionManager {
                 ((Zombie) bukkitEntity).setBaby(true);
 
                 disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
-            }
+            } else if (bukkitEntity instanceof ArmorStand) {
+                ((ArmorStand) bukkitEntity).setSmall(true);
 
-            //disguiseValues.setEntitySize(ReflectionManager.getSize(bukkitEntity));
+                disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
+            }
         }
         catch (SecurityException | IllegalArgumentException | IllegalAccessException | FieldAccessException ex) {
             DisguiseUtilities.getLogger()

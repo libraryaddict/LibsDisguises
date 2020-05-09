@@ -47,10 +47,12 @@ public class FlagWatcher {
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
     private boolean hasDied;
+    @Getter
     private boolean[] modifiedEntityAnimations = new boolean[8];
     private transient List<WrappedWatchableObject> watchableObjects;
     private boolean sleeping;
     private boolean swimming;
+    private transient boolean previouslySneaking;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -150,8 +152,10 @@ public class FlagWatcher {
             }
 
             if (value != null) {
-                if (isEntityAnimationsAdded() && id == 0) {
+                if (isEntityAnimationsAdded() && id == MetaIndex.ENTITY_META.getIndex()) {
                     value = addEntityAnimations((byte) value, (byte) watch.getValue());
+
+                    doSneakCheck((Byte) value);
                 }
 
                 boolean isDirty = watch.getDirtyState();
@@ -174,6 +178,10 @@ public class FlagWatcher {
 
                 if (!isDirty) {
                     watch.setDirtyState(false);
+                }
+
+                if (id == MetaIndex.ENTITY_META.getIndex()) {
+                    doSneakCheck((Byte) watch.getValue());
                 }
             }
 
@@ -207,7 +215,7 @@ public class FlagWatcher {
                 getDisguise().getEntity() instanceof Player) {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
-                if (watch.getIndex() == 6) {
+                if (watch.getIndex() == MetaIndex.LIVING_HEALTH.getIndex()) {
                     Object value = watch.getValue();
 
                     if (value instanceof Float) {
@@ -236,6 +244,21 @@ public class FlagWatcher {
         return newList;
     }
 
+    private void doSneakCheck(byte value) {
+        if (getModifiedEntityAnimations()[1] || !getDisguise().isPlayerDisguise()) {
+            return;
+        }
+
+        boolean sneak = (value & 1 << 1) != 0;
+
+        if (sneak == previouslySneaking) {
+            return;
+        }
+
+        previouslySneaking = sneak;
+        updateNameHeight();
+    }
+
     @NmsAddedIn(val = NmsVersion.v1_14)
     public EntityPose getEntityPose() {
         return getData(MetaIndex.ENTITY_POSE);
@@ -255,6 +278,55 @@ public class FlagWatcher {
         getEquipment().setArmorContents(items);
     }
 
+    protected void updateNameHeight() {
+        if (!getDisguise().isDisguiseInUse()) {
+            return;
+        }
+
+        if (!DisguiseConfig.isArmorstandsName()) {
+            return;
+        }
+
+        if (!getDisguise().isPlayerDisguise() && !DisguiseConfig.isOverrideCustomNames()) {
+            return;
+        }
+
+        if (getDisguise().getEntity() == null) {
+            return;
+        }
+
+        // Not using this as it's "Smooth" and looks a bit weirder
+        /*int[] ids = getDisguise().getArmorstandIds();
+
+        ArrayList<PacketContainer> packets = new ArrayList<>();
+        Location loc = getDisguise().getEntity().getLocation();
+
+        for (int i = 0; i < getDisguise().getMultiNameLength(); i++) {
+            PacketContainer packet = new PacketContainer(Server.ENTITY_TELEPORT);
+            packet.getIntegers().write(0, ids[i]);
+
+            StructureModifier<Double> doubles = packet.getDoubles();
+            doubles.write(0, loc.getX());
+            doubles.write(1, loc.getY() + getDisguise().getHeight() + (0.28 * i));
+            doubles.write(2, loc.getZ());
+
+            packets.add(packet);
+        }*/
+
+        ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(getDisguise(), new String[0]);
+
+        try {
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                for (PacketContainer packet : packets) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
+            }
+        }
+        catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getCustomName() {
         if (!getDisguise().isPlayerDisguise() && DisguiseConfig.isOverrideCustomNames() &&
                 DisguiseConfig.isArmorstandsName()) {
@@ -266,6 +338,10 @@ public class FlagWatcher {
         }
 
         if (!NmsVersion.v1_13.isSupported()) {
+            if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
+                return null;
+            }
+
             return getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
         }
 
@@ -469,6 +545,10 @@ public class FlagWatcher {
     public void setSneaking(boolean setSneaking) {
         setEntityFlag(1, setSneaking);
         sendData(MetaIndex.ENTITY_META);
+
+        if (getDisguise().isPlayerDisguise()) {
+            updateNameHeight();
+        }
 
         if (NmsVersion.v1_14.isSupported()) {
             updatePose();

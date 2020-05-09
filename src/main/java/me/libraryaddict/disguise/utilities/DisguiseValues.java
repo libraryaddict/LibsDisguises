@@ -15,19 +15,12 @@ public class DisguiseValues {
         return values.get(type);
     }
 
-    public static Class getNmsEntityClass(DisguiseType type) {
-        return getDisguiseValues(type).getNmsEntityClass();
-    }
-
     private FakeBoundingBox adultBox;
     private FakeBoundingBox babyBox;
-    private float[] entitySize;
-    private double maxHealth;
-    private Class nmsEntityClass;
+    private final double maxHealth;
 
-    public DisguiseValues(DisguiseType type, Class classType, double maxHealth) {
+    public DisguiseValues(DisguiseType type, double maxHealth) {
         values.put(type, this);
-        nmsEntityClass = classType;
         this.maxHealth = maxHealth;
     }
 
@@ -49,9 +42,5 @@ public class DisguiseValues {
 
     public double getMaxHealth() {
         return maxHealth;
-    }
-
-    public Class getNmsEntityClass() {
-        return nmsEntityClass;
     }
 }

@@ -22,7 +22,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
@@ -2323,6 +2323,8 @@ public class DisguiseUtilities {
             destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
         }
 
+        double height = disguise.getHeight();
+
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
                 if (newNames[i].equals(internalOldNames[i]) || newNames[i].isEmpty()) {
@@ -2358,19 +2360,19 @@ public class DisguiseUtilities {
                 Location loc = disguise.getEntity().getLocation();
 
                 packet.getDoubles().write(0, loc.getX());
-                packet.getDoubles().write(1, loc.getY() + -0.175 + (0.28 * i));
+                packet.getDoubles().write(1, loc.getY() + height + (0.28 * i));
                 packet.getDoubles().write(2, loc.getZ());
                 packets.add(packet);
 
                 WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-                for (MetaIndex index : MetaIndex.getMetaIndexes(LivingWatcher.class)) {
+                for (MetaIndex index : MetaIndex.getMetaIndexes(ArmorStandWatcher.class)) {
                     Object val = index.getDefault();
 
                     if (index == MetaIndex.ENTITY_META) {
                         val = (byte) 32;
                     } else if (index == MetaIndex.ARMORSTAND_META) {
-                        val = (byte) 17;
+                        val = (byte) 19;
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
                         val = Optional.of(WrappedChatComponent.fromText(newNames[i]));
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
@@ -2387,7 +2389,7 @@ public class DisguiseUtilities {
 
                 if (NmsVersion.v1_15.isSupported()) {
                     PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                            .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, 0, watcher, true)
+                            .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, standIds[i], watcher, true)
                             .createPacket(standIds[i], watcher, true);
 
                     packets.add(metaPacket);

@@ -25,7 +25,13 @@ public class SlimeWatcher extends InsentientWatcher {
             size = 50;
         }
 
+        if (hasValue(MetaIndex.SLIME_SIZE) && getData(MetaIndex.SLIME_SIZE) == size) {
+            return;
+        }
+
         setData(MetaIndex.SLIME_SIZE, size);
         sendData(MetaIndex.SLIME_SIZE);
+
+        updateNameHeight();
     }
 }

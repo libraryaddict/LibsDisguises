@@ -48,8 +48,10 @@ public class DisguiseParser {
                     disguise = new MiscDisguise(type);
                 } else if (type.isMob()) {
                     disguise = new MobDisguise(type);
-                } else {
+                } else if (type.isPlayer()) {
                     disguise = new PlayerDisguise("Foobar");
+                } else {
+                    continue;
                 }
 
                 FlagWatcher watcher = type.getWatcherClass().getConstructor(Disguise.class).newInstance(disguise);
@@ -217,15 +219,14 @@ public class DisguiseParser {
     }
 
     private static void addWatcherDefault(Method setMethod, Method getMethod, Object object) {
-
         if (defaultWatcherValues.containsKey(setMethod)) {
             Object dObj = defaultWatcherValues.get(setMethod).getValue();
 
             if (!Objects.deepEquals(dObj, object)) {
                 throw new IllegalStateException(String.format(
                         "%s has conflicting values! This means it expected the same value again but received a " +
-                                "different value on a different disguise! %s is not the same as %s!", setMethod.getName(), object,
-                        dObj));
+                                "different value on a different disguise! %s is not the same as %s!",
+                        setMethod.getName(), object, dObj));
             }
 
             return;

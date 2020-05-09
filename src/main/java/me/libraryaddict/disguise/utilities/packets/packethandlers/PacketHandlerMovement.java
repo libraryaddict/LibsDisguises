@@ -49,6 +49,7 @@ public class PacketHandlerMovement implements IPacketHandler {
         }
 
         ArrayList<PacketContainer> toAdd = new ArrayList<>();
+        double height = disguise.getHeight();
 
         for (PacketContainer packet : packets.getPackets()) {
             for (int i = 0; i < len; i++) {
@@ -57,7 +58,7 @@ public class PacketHandlerMovement implements IPacketHandler {
                 packet2.getIntegers().write(0, standId);
 
                 if (packet2.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                    packet2.getDoubles().write(1, packet2.getDoubles().read(1) + -0.175 + (0.28 * i));
+                    packet2.getDoubles().write(1, packet2.getDoubles().read(1) + height + (0.28 * i));
                 }
 
                 toAdd.add(packet2);

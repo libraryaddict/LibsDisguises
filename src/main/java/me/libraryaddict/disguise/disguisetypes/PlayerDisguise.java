@@ -83,6 +83,19 @@ public class PlayerDisguise extends TargetedDisguise {
         createDisguise();
     }
 
+    @Override
+    public double getHeight() {
+        if (getWatcher() == null) {
+            return 1.8;
+        }
+
+        if (getEntity() == null || getWatcher().getModifiedEntityAnimations()[1]) {
+            return getWatcher().isSneaking() ? 1.5 : 1.8;
+        }
+
+        return getEntity() instanceof Player && ((Player) getEntity()).isSneaking() ? 1.5 : 1.8;
+    }
+
     @Deprecated
     public DisguiseUtilities.DScoreTeam getScoreboardName() {
         if (!DisguiseConfig.isScoreboardNames()) {

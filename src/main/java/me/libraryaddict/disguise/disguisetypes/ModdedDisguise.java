@@ -39,6 +39,11 @@ public class ModdedDisguise extends TargetedDisguise {
     }
 
     @Override
+    public double getHeight() {
+        return 0;
+    }
+
+    @Override
     public boolean isCustomDisguise() {
         return true;
     }

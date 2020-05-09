@@ -116,6 +116,8 @@ public abstract class Disguise {
         return DisguiseUtilities.reverse(multiName);
     }
 
+    public abstract double getHeight();
+
     public void setMultiName(String... name) {
         if (name.length == 1 && name[0].isEmpty()) {
             name = new String[0];

@@ -1,8 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
-import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.*;
+import me.libraryaddict.disguise.utilities.DisguiseValues;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -28,6 +27,30 @@ public class MobDisguise extends TargetedDisguise {
         this.isAdult = isAdult;
 
         createDisguise();
+    }
+
+    @Override
+    public double getHeight() {
+        DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
+
+        if (values == null || values.getAdultBox() == null) {
+            return 0;
+        }
+
+        if (!isAdult() && values.getBabyBox() != null) {
+            return values.getBabyBox().getY();
+        }
+
+        if (getWatcher() != null) {
+            if (getType() == DisguiseType.ARMOR_STAND) {
+                return (((ArmorStandWatcher) getWatcher()).isSmall() ? values.getBabyBox() : values.getAdultBox())
+                        .getY();
+            } else if (getType() == DisguiseType.SLIME || getType() == DisguiseType.MAGMA_CUBE) {
+                return 0.51 * (0.255 * ((SlimeWatcher) getWatcher()).getSize());
+            }
+        }
+
+        return values.getAdultBox().getY();
     }
 
     @Override
