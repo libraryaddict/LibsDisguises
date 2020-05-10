@@ -116,6 +116,10 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     private void setScoreboardName(String[] split) {
+        if (isUpsideDown()) {
+            return;
+        }
+
         getScoreboardName().setSplit(split);
     }
 
