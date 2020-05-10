@@ -199,7 +199,7 @@ public class PlayerDisguise extends TargetedDisguise {
         this.upsideDown = upsideDown;
 
         if (isDisguiseInUse()) {
-            resendDisguise(getName(), true);
+            resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "Dinnerbone", true);
         } else {
             scoreboardName = null;
         }

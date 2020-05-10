@@ -37,6 +37,14 @@ public class PlayerWatcher extends LivingWatcher {
         ((PlayerDisguise) getDisguise()).setNameVisible(nameVisible);
     }
 
+    public boolean isUpsideDown() {
+        return ((PlayerDisguise) getDisguise()).isUpsideDown();
+    }
+
+    public void setUpsideDown(boolean upsideDown) {
+        ((PlayerDisguise) getDisguise()).setUpsideDown(upsideDown);
+    }
+
     @RandomDefaultValue
     public String getName() {
         return ((PlayerDisguise) getDisguise()).getName();
