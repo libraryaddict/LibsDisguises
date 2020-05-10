@@ -116,8 +116,6 @@ public abstract class Disguise {
         return DisguiseUtilities.reverse(multiName);
     }
 
-    public abstract double getHeight();
-
     public void setMultiName(String... name) {
         if (name.length == 1 && name[0].isEmpty()) {
             name = new String[0];
@@ -134,6 +132,8 @@ public abstract class Disguise {
 
         sendArmorStands(oldName);
     }
+
+    public abstract double getHeight();
 
     protected void sendArmorStands(String[] oldName) {
         ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(this, oldName);
@@ -890,6 +890,20 @@ public abstract class Disguise {
             }
         }
 
+        if (getMultiNameLength() > 0) {
+            PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
+            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
+
+            try {
+                for (Player player : DisguiseUtilities.getPerverts(this)) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
+            }
+            catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
         // If this disguise is active
         // Remove the disguise from the current disguises.
         if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
@@ -942,20 +956,6 @@ public abstract class Disguise {
             if (bar != null) {
                 bar.removeAll();
                 Bukkit.removeBossBar(getBossBar());
-            }
-        }
-
-        if (getMultiNameLength() > 0) {
-            PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
-            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
-
-            try {
-                for (Player player : DisguiseUtilities.getPerverts(this)) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
-            }
-            catch (InvocationTargetException e) {
-                e.printStackTrace();
             }
         }
 
