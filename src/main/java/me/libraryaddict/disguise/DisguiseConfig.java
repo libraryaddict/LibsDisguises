@@ -239,7 +239,7 @@ public class DisguiseConfig {
     private static BukkitTask updaterTask;
     @Getter
     @Setter
-    private static boolean hideTallSelfDisguises;
+    private static boolean tallSelfDisguises;
     @Getter
     @Setter
     private static PlayerNameType playerNameType = PlayerNameType.TEAMS;
@@ -647,7 +647,7 @@ public class DisguiseConfig {
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));
         setAutoUpdate(config.getBoolean("AutoUpdate"));
-        setHideTallSelfDisguises(config.getBoolean("HideTallSelfDisguises"));
+        setTallSelfDisguises(config.getBoolean("TallSelfDisguises"));
         setOverrideCustomNames(config.getBoolean("OverrideCustomNames"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {

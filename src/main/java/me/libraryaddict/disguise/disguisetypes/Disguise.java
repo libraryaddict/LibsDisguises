@@ -99,7 +99,7 @@ public abstract class Disguise {
     private boolean customDisguiseName = true;
     @Getter
     @Setter
-    private boolean tallDisguisesVisible = !DisguiseConfig.isHideTallSelfDisguises();
+    private boolean tallDisguisesVisible = DisguiseConfig.isTallSelfDisguises();
     private String[] multiName = new String[0];
     private transient int[] armorstandIds = new int[0];
 
@@ -608,7 +608,7 @@ public abstract class Disguise {
             setupWatcher();
         }
 
-        if (getEntity() instanceof Player && isSelfDisguiseVisible() && isTallDisguisesVisible() &&
+        if (getEntity() instanceof Player && isSelfDisguiseVisible() && !isTallDisguisesVisible() &&
                 !getType().isCustom()) {
             DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
 

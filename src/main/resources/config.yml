@@ -43,7 +43,6 @@ UpdateConfig: true
 # Useful if you didn't purchase the plugin.
 DisableCommands: false
 
-# The disguise plugin stores all GameProfiles inside a folder called "GameProfiles" as a local cache
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
 # However some people may prefer to disable this.
 # Even if you disable this, if there was disguises in the cache already then it will use them
@@ -128,9 +127,9 @@ UndisguiseRadiusMax: 50
 # Best used when viewing yourself in 3rd person
 ViewSelfDisguises: true
 # Some disguises are rather big and tall and block your vision
-# By default those disguises are disabled, such as zombies, players, etc.
+# By default those disguises are enabled despite misgivings, such as zombies, players, etc.
 # The baby versions however, should be short enough that it's a non-issue
-HideTallSelfDisguises: false
+TallSelfDisguises: true
 
 # Shall I disguise the sounds?
 # This turns your damage sound into a MOOOO
