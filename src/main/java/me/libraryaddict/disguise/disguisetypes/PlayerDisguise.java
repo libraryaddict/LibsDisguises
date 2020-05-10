@@ -400,6 +400,14 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
+        if (newSkin != null) {
+            String[] split = DisguiseUtilities.splitNewLine(newSkin);
+
+            if (split.length > 0) {
+                newSkin = split[0];
+            }
+        }
+
         if (newSkin != null && newSkin.length() > 16) {
             newSkin = null;
         }
