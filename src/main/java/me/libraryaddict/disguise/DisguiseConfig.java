@@ -491,6 +491,7 @@ public class DisguiseConfig {
     }
 
     public static void saveDefaultConfig() {
+        DisguiseUtilities.getLogger().info("Config is out of date! Now updating it!");
         String[] string = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "config.yml")
                 .split("\n");
         FileConfiguration savedConfig = LibsDisguises.getInstance().getConfig();
@@ -781,7 +782,7 @@ public class DisguiseConfig {
         }
 
         if (missingConfigs > 0) {
-            if (config.getBoolean("UpdateConfig")) {
+            if (config.getBoolean("UpdateConfig", true)) {
                 saveDefaultConfig();
                 DisguiseUtilities.getLogger().info("Config has been auto-updated!");
             } else if (!verbose) {
@@ -790,6 +791,8 @@ public class DisguiseConfig {
                 DisguiseUtilities.getLogger()
                         .info("You can also add the missing entries yourself! Try '/libsdisguises config'");
             }
+        } else {
+            DisguiseUtilities.getLogger().info("Config is up to date!");
         }
     }
 
