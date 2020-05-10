@@ -145,6 +145,10 @@ public class ParamInfoManager {
         if (watcherClass == PlayerWatcher.class) {
             try {
                 methods.add(PlayerDisguise.class.getMethod("setDynamicName", boolean.class));
+
+                if (DisguiseConfig.isArmorstandsName()) {
+                    methods.add(PlayerDisguise.class.getMethod("setUpsideDown", boolean.class));
+                }
             }
             catch (NoSuchMethodException e) {
                 e.printStackTrace();

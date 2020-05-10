@@ -35,6 +35,8 @@ public class PlayerDisguise extends TargetedDisguise {
     @Setter
     private boolean dynamicName;
     private volatile DisguiseUtilities.DScoreTeam scoreboardName;
+    @Getter
+    private boolean upsideDown;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -103,7 +105,11 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (scoreboardName == null) {
-            scoreboardName = DisguiseUtilities.createExtendedName(getName());
+            if (isUpsideDown()) {
+                scoreboardName = new DisguiseUtilities.DScoreTeam(new String[]{"", getProfileName(), ""});
+            } else {
+                scoreboardName = DisguiseUtilities.createExtendedName(getName());
+            }
         }
 
         return scoreboardName;
@@ -126,7 +132,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public String getProfileName() {
-        return hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
+        return isUpsideDown() ? "Dinnerbone" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
     }
 
     public UUID getUUID() {
@@ -185,6 +191,22 @@ public class PlayerDisguise extends TargetedDisguise {
         return (PlayerDisguise) super.addPlayer(playername);
     }
 
+    public PlayerDisguise setUpsideDown(boolean upsideDown) {
+        if (isUpsideDown() == upsideDown) {
+            return this;
+        }
+
+        this.upsideDown = upsideDown;
+
+        if (isDisguiseInUse()) {
+            resendDisguise(getName(), true);
+        } else {
+            scoreboardName = null;
+        }
+
+        return this;
+    }
+
     @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise();
@@ -201,6 +223,7 @@ public class PlayerDisguise extends TargetedDisguise {
         disguise.nameVisible = isNameVisible();
         disguise.explicitNameVisible = explicitNameVisible;
         disguise.setDynamicName(isDynamicName());
+        disguise.setUpsideDown(isUpsideDown());
 
         clone(disguise);
 
@@ -283,26 +306,7 @@ public class PlayerDisguise extends TargetedDisguise {
                         resendDisguise;
 
                 if (resendDisguise) {
-                    if (stopDisguise()) {
-                        if (getName().isEmpty() && !name.isEmpty()) {
-                            setNameVisible(true, true);
-                        } else if (!getName().isEmpty() && name.isEmpty()) {
-                            setNameVisible(false, true);
-                        }
-
-                        playerName = name;
-
-                        if (gameProfile != null) {
-                            gameProfile = ReflectionManager
-                                    .getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
-                        }
-
-                        if (!startDisguise()) {
-                            throw new IllegalStateException("Unable to restart disguise");
-                        }
-                    } else {
-                        throw new IllegalStateException("Unable to restart disguise");
-                    }
+                    resendDisguise(name, false);
                 } else {
                     if (getName().isEmpty() && !name.isEmpty() && !isNameVisible()) {
                         setNameVisible(true, true);
@@ -349,6 +353,32 @@ public class PlayerDisguise extends TargetedDisguise {
             if (gameProfile != null) {
                 gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
             }
+        }
+    }
+
+    private void resendDisguise(String name, boolean updateTeams) {
+        if (stopDisguise()) {
+            if (getName().isEmpty() && !name.isEmpty()) {
+                setNameVisible(true, true);
+            } else if (!getName().isEmpty() && name.isEmpty()) {
+                setNameVisible(false, true);
+            }
+
+            playerName = name;
+
+            if (updateTeams) {
+                scoreboardName = null;
+            }
+
+            if (gameProfile != null) {
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+            }
+
+            if (!startDisguise()) {
+                throw new IllegalStateException("Unable to restart disguise");
+            }
+        } else {
+            throw new IllegalStateException("Unable to restart disguise");
         }
     }
 
