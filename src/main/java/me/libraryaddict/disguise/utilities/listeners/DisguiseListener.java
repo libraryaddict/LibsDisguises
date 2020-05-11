@@ -497,6 +497,21 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
+    public void onRightClick(PlayerInteractAtEntityEvent event) {
+        Player p = event.getPlayer();
+
+        if (!interactions.containsKey(p.getName())) {
+            return;
+        }
+
+        event.setCancelled(true);
+        disguiseRunnable.remove(p.getName()).cancel();
+
+        Entity entity = event.getRightClicked();
+        interactions.remove(p.getName()).onInteract(p, entity);
+    }
+
+    @EventHandler
     public void onTarget(EntityTargetEvent event) {
         if (event.getTarget() == null) {
             return;
