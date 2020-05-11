@@ -114,7 +114,7 @@ public class ParamInfoManager {
         // Add these last as it's what we want to present to be called the least
         for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
                 "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar",
-                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible"}) {
+                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName"}) {
             try {
                 Class cl = boolean.class;
 
@@ -139,15 +139,6 @@ public class ParamInfoManager {
             }
             catch (Exception ex) {
                 ex.printStackTrace();
-            }
-        }
-
-        if (watcherClass == PlayerWatcher.class) {
-            try {
-                methods.add(PlayerDisguise.class.getMethod("setDynamicName", boolean.class));
-            }
-            catch (NoSuchMethodException e) {
-                e.printStackTrace();
             }
         }
 
