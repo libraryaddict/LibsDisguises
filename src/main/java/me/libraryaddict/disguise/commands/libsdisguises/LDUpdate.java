@@ -54,7 +54,7 @@ public class LDUpdate implements LDCommand {
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
 
-        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds) {
+        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && args.length <= 1) {
             if (checker.isServerLatestVersion()) {
                 sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
                 return;

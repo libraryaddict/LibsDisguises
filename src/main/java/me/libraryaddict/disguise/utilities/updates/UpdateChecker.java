@@ -160,7 +160,7 @@ public class UpdateChecker {
     }
 
     public LibsMsg doUpdateCheck() {
-        downloading.set(false);
+        downloading.set(true);
 
         try {
             update = null;
