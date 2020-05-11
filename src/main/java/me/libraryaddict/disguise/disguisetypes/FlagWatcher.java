@@ -359,16 +359,13 @@ public class FlagWatcher {
     public void setCustomName(String name) {
         if (!getDisguise().isPlayerDisguise() && DisguiseConfig.isArmorstandsName() &&
                 DisguiseConfig.isOverrideCustomNames()) {
-            if (NmsVersion.v1_13.isSupported()) {
-                if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME)) {
-                    setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());
-                    sendData(MetaIndex.ENTITY_CUSTOM_NAME);
-                }
-            } else {
-                if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
-                    setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, "");
-                    sendData(MetaIndex.ENTITY_CUSTOM_NAME_OLD);
-                }
+            MetaIndex custom =
+                    NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD;
+
+            if (!hasValue(custom)) {
+                setData(custom, custom.getDefault());
+                sendData(MetaIndex.ENTITY_CUSTOM_NAME);
+                setCustomNameVisible(false);
             }
 
             if (Strings.isNullOrEmpty(name)) {
@@ -483,6 +480,10 @@ public class FlagWatcher {
     }
 
     public void setCustomNameVisible(boolean display) {
+        if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
+            display = false;
+        }
+
         setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
         sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
