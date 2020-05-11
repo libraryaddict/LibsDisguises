@@ -102,6 +102,9 @@ public abstract class Disguise {
     private boolean tallDisguisesVisible = DisguiseConfig.isTallSelfDisguises();
     private String[] multiName = new String[0];
     private transient int[] armorstandIds = new int[0];
+    @Getter
+    @Setter
+    private boolean dynamicName;
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -125,6 +128,10 @@ public abstract class Disguise {
 
         String[] oldName = multiName;
         multiName = name;
+
+        if (Arrays.equals(oldName, name)) {
+            return;
+        }
 
         if (!isDisguiseInUse()) {
             return;
@@ -192,6 +199,7 @@ public abstract class Disguise {
         disguise.setVelocitySent(isVelocitySent());
         disguise.setModifyBoundingBox(isModifyBoundingBox());
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
+        disguise.setDynamicName(isDynamicName());
 
         if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
@@ -367,15 +375,19 @@ public abstract class Disguise {
                                 new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName())).create());
                     }
 
-                    if (Disguise.this instanceof PlayerDisguise && ((PlayerDisguise) Disguise.this).isDynamicName()) {
+                    if (isDynamicName()) {
                         String name = getEntity().getCustomName();
 
                         if (name == null) {
                             name = "";
                         }
 
-                        if (!((PlayerDisguise) Disguise.this).getName().equals(name)) {
-                            ((PlayerDisguise) Disguise.this).setName(name);
+                        if (isPlayerDisguise()) {
+                            if (!((PlayerDisguise) Disguise.this).getName().equals(name)) {
+                                ((PlayerDisguise) Disguise.this).setName(name);
+                            }
+                        } else {
+                            getWatcher().setCustomName(name);
                         }
                     }
                 }
@@ -1159,6 +1171,16 @@ public abstract class Disguise {
                 (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345"))) {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 :
                     System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
+        }
+
+        if (isDynamicName() && !isPlayerDisguise()) {
+            String name = getEntity().getCustomName();
+
+            if (name == null) {
+                name = "";
+            }
+
+            getWatcher().setCustomName(name);
         }
 
         makeBossBar();

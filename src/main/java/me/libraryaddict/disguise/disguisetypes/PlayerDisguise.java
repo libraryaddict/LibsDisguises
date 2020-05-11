@@ -31,9 +31,6 @@ public class PlayerDisguise extends TargetedDisguise {
      */
     private boolean explicitNameVisible = false;
     private UUID uuid = UUID.randomUUID();
-    @Getter
-    @Setter
-    private boolean dynamicName;
     private volatile DisguiseUtilities.DScoreTeam scoreboardName;
     @Getter
     private boolean upsideDown;
@@ -226,7 +223,6 @@ public class PlayerDisguise extends TargetedDisguise {
         disguise.setName(getName());
         disguise.nameVisible = isNameVisible();
         disguise.explicitNameVisible = explicitNameVisible;
-        disguise.setDynamicName(isDynamicName());
         disguise.setUpsideDown(isUpsideDown());
 
         clone(disguise);
