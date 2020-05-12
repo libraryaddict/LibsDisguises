@@ -341,7 +341,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 setScoreboardName(split);
             }
 
-            if (DisguiseConfig.isScoreboardNames()) {
+            if (DisguiseConfig.isArmorstandsName()) {
                 setMultiName(DisguiseUtilities.splitNewLine(name));
             }
 
