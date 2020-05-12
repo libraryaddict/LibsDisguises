@@ -53,6 +53,8 @@ public class FlagWatcher {
     private boolean sleeping;
     private boolean swimming;
     private transient boolean previouslySneaking;
+    @Getter
+    private boolean upsideDown;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -84,6 +86,9 @@ public class FlagWatcher {
         cloned.equipment = equipment.clone(cloned);
         cloned.modifiedEntityAnimations = Arrays.copyOf(modifiedEntityAnimations, modifiedEntityAnimations.length);
         cloned.addEntityAnimations = addEntityAnimations;
+        cloned.upsideDown = upsideDown;
+        cloned.swimming = swimming;
+        cloned.sleeping = sleeping;
 
         return cloned;
     }
@@ -118,6 +123,25 @@ public class FlagWatcher {
 
     public void setChestplate(ItemStack itemStack) {
         getEquipment().setChestplate(itemStack);
+    }
+
+    @Deprecated
+    public void setInternalUpsideDown(boolean upsideDown) {
+        this.upsideDown = upsideDown;
+    }
+
+    public void setUpsideDown(boolean upsideDown) {
+        if (isUpsideDown() == upsideDown) {
+            return;
+        }
+
+        this.upsideDown = upsideDown;
+
+        if (getDisguise().isPlayerDisguise()) {
+            ((PlayerDisguise) getDisguise()).setUpsideDown(upsideDown);
+        } else {
+            setInteralCustomName(isUpsideDown() ? "Dinnerbone" : "");
+        }
     }
 
     public List<WrappedWatchableObject> convert(List<WrappedWatchableObject> list) {
@@ -377,6 +401,10 @@ public class FlagWatcher {
             return;
         }
 
+        setInteralCustomName(name);
+    }
+
+    protected void setInteralCustomName(String name) {
         if (Strings.isNullOrEmpty(name)) {
             if (NmsVersion.v1_13.isSupported()) {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.empty());

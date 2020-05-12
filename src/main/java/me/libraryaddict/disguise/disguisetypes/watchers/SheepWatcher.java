@@ -15,10 +15,6 @@ public class SheepWatcher extends AgeableWatcher {
         return AnimalColor.getColorByWool(((int) getData(MetaIndex.SHEEP_WOOL) & 15)).getDyeColor();
     }
 
-    public boolean isSheared() {
-        return (getData(MetaIndex.SHEEP_WOOL) & 16) != 0;
-    }
-
     @Deprecated
     public void setColor(AnimalColor color) {
         setColor(color.getDyeColor());
@@ -29,6 +25,22 @@ public class SheepWatcher extends AgeableWatcher {
 
         setData(MetaIndex.SHEEP_WOOL, (byte) (b0 & 240 | color.getWoolData() & 15));
         sendData(MetaIndex.SHEEP_WOOL);
+    }
+
+    public boolean isRainbowWool() {
+        return "jeb_".equals(getCustomName());
+    }
+
+    public void setRainbowWool(boolean rainbow) {
+        if (isRainbowWool() == rainbow) {
+            return;
+        }
+
+        setInteralCustomName("jeb_");
+    }
+
+    public boolean isSheared() {
+        return (getData(MetaIndex.SHEEP_WOOL) & 16) != 0;
     }
 
     public void setSheared(boolean flag) {

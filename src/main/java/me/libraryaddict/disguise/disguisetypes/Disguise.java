@@ -325,6 +325,16 @@ public abstract class Disguise {
         bar.addPlayer((Player) getEntity());
     }
 
+    public boolean isUpsideDown() {
+        return getWatcher().isUpsideDown();
+    }
+
+    public Disguise setUpsideDown(boolean upsideDown) {
+        getWatcher().setUpsideDown(upsideDown);
+
+        return this;
+    }
+
     private void createRunnable() {
         final boolean alwaysSendVelocity;
 

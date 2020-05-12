@@ -32,8 +32,6 @@ public class PlayerDisguise extends TargetedDisguise {
     private boolean explicitNameVisible = false;
     private UUID uuid = UUID.randomUUID();
     private volatile DisguiseUtilities.DScoreTeam scoreboardName;
-    @Getter
-    private boolean upsideDown;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -197,7 +195,7 @@ public class PlayerDisguise extends TargetedDisguise {
             return this;
         }
 
-        this.upsideDown = upsideDown;
+        getWatcher().setInternalUpsideDown(upsideDown);
 
         if (isDisguiseInUse()) {
             resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "Dinnerbone", true);
