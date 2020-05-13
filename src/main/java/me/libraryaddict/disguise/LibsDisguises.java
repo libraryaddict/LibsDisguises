@@ -45,7 +45,7 @@ public class LibsDisguises extends JavaPlugin {
     @Getter
     private boolean reloaded;
     @Getter
-    private final UpdateChecker updateChecker = new UpdateChecker("32453");
+    private final UpdateChecker updateChecker = new UpdateChecker();
 
     @Override
     public void onLoad() {

@@ -26,21 +26,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class UpdateChecker {
-    private final String resourceID;
     private final long started = System.currentTimeMillis();
     @Getter
     private PluginInformation lastDownload;
     private final AtomicBoolean downloading = new AtomicBoolean(false);
     @Getter
     private DisguiseUpdate update;
-    private LDGithub githubUpdater = new LDGithub();
-    private LDJenkins jenkinsUpdater = new LDJenkins();
+    private final LDGithub githubUpdater = new LDGithub();
+    private final LDJenkins jenkinsUpdater = new LDJenkins();
     @Getter
     private String[] updateMessage = new String[0];
-
-    public UpdateChecker(String resourceID) {
-        this.resourceID = resourceID;
-    }
 
     public boolean isServerLatestVersion() {
         return isOnLatestUpdate(false);
@@ -255,36 +250,6 @@ public class UpdateChecker {
         }
         finally {
             downloading.set(false);
-        }
-
-        return null;
-    }
-
-    /**
-     * Asks spigot for the version
-     */
-    private String fetchSpigotVersion() {
-        try {
-            // We're connecting to spigot's API
-            URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID);
-            // Creating a connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setDefaultUseCaches(false);
-
-            // Get the input stream, what we receive
-            try (InputStream input = con.getInputStream()) {
-                // Read it to string
-                String version = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("\n"));
-
-                // If the version is not empty, return it
-                if (!version.isEmpty()) {
-                    return version;
-                }
-            }
-        }
-        catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Failed to check for a update on spigot.");
         }
 
         return null;
