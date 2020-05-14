@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -15,7 +16,7 @@ public class TippedArrowWatcher extends ArrowWatcher {
     public TippedArrowWatcher(Disguise disguise) {
         super(disguise);
 
-        if (getDisguise().getType() != DisguiseType.ARROW) {
+        if (getDisguise().getType() != DisguiseType.ARROW && DisguiseConfig.isRandomDisguises()) {
             setColor(Color.fromRGB(RandomUtils.nextInt(256), RandomUtils.nextInt(256), RandomUtils.nextInt(256)));
         }
     }

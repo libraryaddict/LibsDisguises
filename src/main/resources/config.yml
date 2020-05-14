@@ -29,6 +29,10 @@ Permissions:
   # NOT_OP = Only non operators can see this
   SeeCommands: TRUE
 
+# Some disguises have randomized options on disguise, such as a fox type or a villager breed.
+# This may be problematic for some server owners, so you can disable it below
+RandomDisguiseOptions: true
+
 # You can also get this information through /libsdisguises config
 # Should the plugin output missing config options instead of just counting them
 VerboseConfig: false

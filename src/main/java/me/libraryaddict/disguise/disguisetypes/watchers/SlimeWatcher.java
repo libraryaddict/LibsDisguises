@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -10,7 +11,11 @@ public class SlimeWatcher extends InsentientWatcher {
     public SlimeWatcher(Disguise disguise) {
         super(disguise);
 
-        setSize(DisguiseUtilities.random.nextInt(4) + 1);
+        if (DisguiseConfig.isRandomDisguises()) {
+            setSize(DisguiseUtilities.random.nextInt(4) + 1);
+        } else {
+            setSize(2);
+        }
     }
 
     public int getSize() {

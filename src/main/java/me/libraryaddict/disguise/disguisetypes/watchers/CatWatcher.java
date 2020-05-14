@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -19,7 +20,9 @@ public class CatWatcher extends TameableWatcher {
     public CatWatcher(Disguise disguise) {
         super(disguise);
 
-        setType(Cat.Type.values()[new Random().nextInt(Cat.Type.values().length)]);
+        if (DisguiseConfig.isRandomDisguises()) {
+            setType(Cat.Type.values()[new Random().nextInt(Cat.Type.values().length)]);
+        }
     }
 
     public Cat.Type getType() {

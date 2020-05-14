@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.VillagerData;
@@ -15,7 +16,9 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
     public VillagerWatcher(Disguise disguise) {
         super(disguise);
 
-        setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
+        if (DisguiseConfig.isRandomDisguises()) {
+            setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
+        }
     }
 
     @NmsAddedIn(val = NmsVersion.v1_14)

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -14,8 +15,10 @@ public class HorseWatcher extends AbstractHorseWatcher {
     public HorseWatcher(Disguise disguise) {
         super(disguise);
 
-        setStyle(Style.values()[DisguiseUtilities.random.nextInt(Style.values().length)]);
-        setColor(Color.values()[DisguiseUtilities.random.nextInt(Color.values().length)]);
+        if (DisguiseConfig.isRandomDisguises()) {
+            setStyle(Style.values()[DisguiseUtilities.random.nextInt(Style.values().length)]);
+            setColor(Color.values()[DisguiseUtilities.random.nextInt(Color.values().length)]);
+        }
     }
 
     public Color getColor() {

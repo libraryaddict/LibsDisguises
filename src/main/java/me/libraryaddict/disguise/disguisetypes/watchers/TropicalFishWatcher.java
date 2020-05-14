@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
@@ -58,9 +59,11 @@ public class TropicalFishWatcher extends FishWatcher {
     public TropicalFishWatcher(Disguise disguise) {
         super(disguise);
 
-        this.setPattern(TropicalFish.Pattern.values()[RandomUtils.nextInt(TropicalFish.Pattern.values().length)]);
-        this.setBodyColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
-        this.setPatternColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
+        if (DisguiseConfig.isRandomDisguises()) {
+            this.setPattern(TropicalFish.Pattern.values()[RandomUtils.nextInt(TropicalFish.Pattern.values().length)]);
+            this.setBodyColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
+            this.setPatternColor(DyeColor.values()[RandomUtils.nextInt(DyeColor.values().length)]);
+        }
     }
 
     public DyeColor getPatternColor() {

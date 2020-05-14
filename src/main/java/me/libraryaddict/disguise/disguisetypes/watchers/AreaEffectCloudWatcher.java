@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.WrappedParticle;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -19,7 +20,9 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
     public AreaEffectCloudWatcher(Disguise disguise) {
         super(disguise);
 
-        setColor(Color.fromRGB(RandomUtils.nextInt(256), RandomUtils.nextInt(256), RandomUtils.nextInt(256)));
+        if (DisguiseConfig.isRandomDisguises()) {
+            setColor(Color.fromRGB(RandomUtils.nextInt(256), RandomUtils.nextInt(256), RandomUtils.nextInt(256)));
+        }
     }
 
     public float getRadius() {
