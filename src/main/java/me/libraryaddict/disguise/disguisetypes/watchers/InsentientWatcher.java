@@ -9,13 +9,13 @@ public class InsentientWatcher extends LivingWatcher {
         super(disguise);
     }
 
+    public MainHand getMainHand() {
+        return getInsentientFlag(2) ? MainHand.RIGHT : MainHand.LEFT;
+    }
+
     public void setMainHand(MainHand mainHand) {
         setInsentientFlag(2, mainHand == MainHand.RIGHT);
         sendData(MetaIndex.INSENTIENT_META);
-    }
-
-    public MainHand getMainHand() {
-        return getInsentientFlag(2) ? MainHand.RIGHT : MainHand.LEFT;
     }
 
     public boolean isAI() {
@@ -31,13 +31,22 @@ public class InsentientWatcher extends LivingWatcher {
         byte b0 = getData(MetaIndex.INSENTIENT_META);
 
         if (flag) {
-            setData(MetaIndex.INSENTIENT_META, (byte) (b0 | 1 << i));
+            setData(MetaIndex.INSENTIENT_META, (byte) (b0 | i));
         } else {
-            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & (~1 << i)));
+            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & i));
         }
     }
 
     private boolean getInsentientFlag(int i) {
-        return (getData(MetaIndex.INSENTIENT_META) & 1 << i) != 0;
+        return (getData(MetaIndex.INSENTIENT_META) & i) != 0;
+    }
+
+    public boolean isEnraged() {
+        return getInsentientFlag(4);
+    }
+
+    public void setEnraged(boolean enraged) {
+        setInsentientFlag(4, enraged);
+        sendData(MetaIndex.INSENTIENT_META);
     }
 }
