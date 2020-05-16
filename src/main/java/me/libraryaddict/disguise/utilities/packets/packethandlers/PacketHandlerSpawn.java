@@ -260,9 +260,13 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(3, loc.getX());
             mods.write(4, loc.getY());
             mods.write(5, loc.getZ());
-            mods.write(6, (int) (d2 * 8000.0D));
-            mods.write(7, (int) (d3 * 8000.0D));
-            mods.write(8, (int) (d4 * 8000.0D));
+
+            if (disguise.getType() != DisguiseType.SQUID || disguisedEntity.getType() == EntityType.SQUID) {
+                mods.write(6, (int) (d2 * 8000.0D));
+                mods.write(7, (int) (d3 * 8000.0D));
+                mods.write(8, (int) (d4 * 8000.0D));
+            }
+
             mods.write(9, yaw);
             mods.write(10, pitch);
             mods.write(11, yaw);
