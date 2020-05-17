@@ -151,62 +151,69 @@ public class DisguiseParser {
 
                         stringBuilder.append(" ").append(m.getName()).append(" ").append(type.getName());
                     }
-                } else {
-                    Entry<Method, Object> entry = defaultWatcherValues.get(m);
 
-                    if (entry == null) {
-                        continue;
-                    }
-
-                    Object invokeWith = m.getDeclaringClass().isInstance(disguise) ? disguise : disguise.getWatcher();
-
-                    Object ourValue = entry.getKey().invoke(invokeWith);
-
-                    // Escape a hacky fix for custom names, disguised players with custom names don't want to show it
-                    // so it was set to an empty string.
-                    if ("".equals(ourValue) && m.getName().equals("setCustomName")) {
-                        ourValue = null;
-                    }
-
-                    if (m.getName().equals("setSkin") && !outputSkinData) {
-                        PlayerDisguise pDisg = (PlayerDisguise) disguise;
-                        ourValue = pDisg.getName();
-
-                        if (pDisg.getSkin() != null) {
-                            ourValue = pDisg.getSkin();
-                        } else if (pDisg.getGameProfile() != null && pDisg.getGameProfile().getName() != null) {
-                            ourValue = pDisg.getGameProfile().getName();
-                        }
-
-                        if (ourValue.equals(pDisg.getName())) {
-                            continue;
-                        }
-                    } else {
-                        // If its the same as default, continue
-                        if (!m.isAnnotationPresent(RandomDefaultValue.class) &&
-                                Objects.deepEquals(entry.getValue(), ourValue)) {
-                            continue;
-                        }
-                    }
-
-                    stringBuilder.append(" ").append(m.getName());
-
-                    if (ourValue instanceof Boolean && (Boolean) ourValue) {
-                        continue;
-                    }
-
-                    String valueString;
-
-                    if (ourValue != null) {
-                        valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
-
-                        valueString = DisguiseUtilities.quote(valueString);
-                    } else {
-                        valueString = "null";
-                    }
-
-                    stringBuilder.append(" ").append(valueString);
+                    continue;
                 }
+
+                // Also for this method. You can't override it, so why output it
+                if (m.getName().equals("setNoGravity")) {
+                    continue;
+                }
+
+                Entry<Method, Object> entry = defaultWatcherValues.get(m);
+
+                if (entry == null) {
+                    continue;
+                }
+
+                Object invokeWith = m.getDeclaringClass().isInstance(disguise) ? disguise : disguise.getWatcher();
+
+                Object ourValue = entry.getKey().invoke(invokeWith);
+
+                // Escape a hacky fix for custom names, disguised players with custom names don't want to show it
+                // so it was set to an empty string.
+                if ("".equals(ourValue) && m.getName().equals("setCustomName")) {
+                    ourValue = null;
+                }
+
+                if (m.getName().equals("setSkin") && !outputSkinData) {
+                    PlayerDisguise pDisg = (PlayerDisguise) disguise;
+                    ourValue = pDisg.getName();
+
+                    if (pDisg.getSkin() != null) {
+                        ourValue = pDisg.getSkin();
+                    } else if (pDisg.getGameProfile() != null && pDisg.getGameProfile().getName() != null) {
+                        ourValue = pDisg.getGameProfile().getName();
+                    }
+
+                    if (ourValue.equals(pDisg.getName())) {
+                        continue;
+                    }
+                } else {
+                    // If its the same as default, continue
+                    if (!m.isAnnotationPresent(RandomDefaultValue.class) &&
+                            Objects.deepEquals(entry.getValue(), ourValue)) {
+                        continue;
+                    }
+                }
+
+                stringBuilder.append(" ").append(m.getName());
+
+                if (ourValue instanceof Boolean && (Boolean) ourValue) {
+                    continue;
+                }
+
+                String valueString;
+
+                if (ourValue != null) {
+                    valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
+
+                    valueString = DisguiseUtilities.quote(valueString);
+                } else {
+                    valueString = "null";
+                }
+
+                stringBuilder.append(" ").append(valueString);
             }
 
             return stringBuilder.toString();
