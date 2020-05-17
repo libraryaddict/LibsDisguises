@@ -28,5 +28,9 @@ public class PacketHandlerVelocity implements IPacketHandler {
         }
 
         packets.clear();
+
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
+        packet.getIntegers().write(0, entity.getEntityId());
+        packets.addPacket(packet);
     }
 }
