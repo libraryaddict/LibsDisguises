@@ -161,7 +161,7 @@ public class PacketsManager {
             }
 
             mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
-            destroyListener = new PacketListenerDestroyEntity(LibsDisguises.getInstance());
+            destroyListener = new PacketListenerEntityDestroy(LibsDisguises.getInstance());
 
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
             ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);

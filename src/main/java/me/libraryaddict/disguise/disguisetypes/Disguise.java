@@ -917,7 +917,7 @@ public abstract class Disguise {
             packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
 
             try {
-                for (Player player : DisguiseUtilities.getPerverts(this)) {
+                for (Player player : getEntity().getWorld().getPlayers()) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
             }
