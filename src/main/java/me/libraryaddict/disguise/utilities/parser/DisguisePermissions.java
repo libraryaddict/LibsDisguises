@@ -260,7 +260,7 @@ public class DisguisePermissions {
 
             String key = valid.split("\\.")[1];
 
-            if (!key.equals("*") && !key.equalsIgnoreCase(commandName)){
+            if (!key.equals("*") && !key.equalsIgnoreCase(commandName)) {
                 continue;
             }
 
@@ -409,11 +409,15 @@ public class DisguisePermissions {
                 return 3;
             }
         } else if (permissionName.equals("custom")) {
-            if (disguiseType.isMisc()) {
+            if (disguisePerm.isCustomDisguise()) {
                 return 3;
             }
+        } else if (permissionName.equals("vanilla")) {
+            if (!disguisePerm.isCustomDisguise()) {
+                return 4;
+            }
         } else if (permissionName.equals("*")) {
-            return 4;
+            return 5;
         }
 
         return -1;
