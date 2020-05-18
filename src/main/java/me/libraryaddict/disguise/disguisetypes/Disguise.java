@@ -912,9 +912,9 @@ public abstract class Disguise {
             }
         }
 
-        if (getMultiNameLength() > 0) {
+        if (armorstandIds.length > 0) {
             PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
-            packet.getIntegerArrays().write(0, Arrays.copyOf(getArmorstandIds(), getMultiNameLength()));
+            packet.getIntegerArrays().write(0, armorstandIds);
 
             try {
                 for (Player player : getEntity().getWorld().getPlayers()) {
