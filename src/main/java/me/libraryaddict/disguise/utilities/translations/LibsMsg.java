@@ -267,6 +267,8 @@ public enum LibsMsg {
     META_VALUES_NO_CLICK(ChatColor.BLUE + "Metas, use as param for more info: " + ChatColor.DARK_AQUA),
     META_VALUE_SEPERATOR(ChatColor.AQUA + ", " + ChatColor.DARK_AQUA),
     META_CLICK_SHOW(ChatColor.GOLD + "Click to show %s"),
+    LIBS_PERM_CHECK_NON_PREM(
+            ChatColor.RED + "This server is not premium, non-admins should not be able to use commands"),
     LIBS_PERM_CHECK_INFO_1(ChatColor.AQUA + "Now checking for the permission 'libsdisguises.disguise.pig'"),
     LIBS_PERM_CHECK_INFO_2(ChatColor.AQUA +
             "If you did not give this permission, please set it. You can supply a player name to test another player."),
