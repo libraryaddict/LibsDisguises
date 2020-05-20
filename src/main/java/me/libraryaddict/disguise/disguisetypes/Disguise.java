@@ -115,6 +115,17 @@ public abstract class Disguise {
         return multiName.length;
     }
 
+    /**
+     * Gson why you so dumb and set it to null
+     */
+    private int[] getInternalArmorstandIds() {
+        if (armorstandIds == null) {
+            armorstandIds = new int[0];
+        }
+
+        return armorstandIds;
+    }
+
     public String[] getMultiName() {
         return DisguiseUtilities.reverse(multiName);
     }
@@ -158,7 +169,7 @@ public abstract class Disguise {
     }
 
     public int[] getArmorstandIds() {
-        if (getMultiNameLength() > armorstandIds.length) {
+        if (getMultiNameLength() > getInternalArmorstandIds().length) {
             int oldLen = armorstandIds.length;
 
             armorstandIds = Arrays.copyOf(armorstandIds, getMultiNameLength());
@@ -912,9 +923,9 @@ public abstract class Disguise {
             }
         }
 
-        if (armorstandIds.length > 0) {
+        if (getInternalArmorstandIds().length > 0) {
             PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
-            packet.getIntegerArrays().write(0, armorstandIds);
+            packet.getIntegerArrays().write(0, getInternalArmorstandIds());
 
             try {
                 for (Player player : getEntity().getWorld().getPlayers()) {
