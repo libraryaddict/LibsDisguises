@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -27,6 +28,10 @@ public class LDPermTest implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        if (!LibsPremium.isPremium()) {
+            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_NON_PREM.get());
+        }
+
         Permissible player;
 
         if (args.length > 1) {
