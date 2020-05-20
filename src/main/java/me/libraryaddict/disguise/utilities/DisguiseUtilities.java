@@ -142,6 +142,7 @@ public class DisguiseUtilities {
     private static long velocityTime;
     private static int velocityID;
     private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
+    @Getter
     private static boolean runningPaper;
     @Getter
     private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
