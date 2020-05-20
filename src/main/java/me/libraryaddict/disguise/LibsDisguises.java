@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.commands.utils.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
+import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -131,6 +132,10 @@ public class LibsDisguises extends JavaPlugin {
         PacketsManager.addPacketListeners();
 
         listener = new DisguiseListener(this);
+
+        if (DisguiseUtilities.isRunningPaper()) {
+            Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);
+        }
 
         registerCommand("libsdisguises", new LibsDisguisesCommand());
 
