@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
@@ -28,6 +29,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -178,7 +180,22 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (LibsPremium.getPaidInformation() == null ||
                         LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    packets.addDelayedPacket(deleteTab, DisguiseConfig.getTablistRemoveDelay());
+                    if (!observer.hasMetadata("ld_loggedin")) {
+                        ArrayList<PacketContainer> toSend;
+
+                        if (observer.hasMetadata("ld_tabsend") && !observer.getMetadata("ld_tabsend").isEmpty()) {
+                            toSend = (ArrayList<PacketContainer>) observer.getMetadata("ld_tabsend").get(0).value();
+                        } else {
+                            toSend = new ArrayList<>();
+
+                            observer.setMetadata("ld_tabsend",
+                                    new FixedMetadataValue(LibsDisguises.getInstance(), toSend));
+                        }
+
+                        toSend.add(deleteTab);
+                    } else {
+                        packets.addDelayedPacket(deleteTab, DisguiseConfig.getTablistRemoveDelay());
+                    }
                 }
             }
 
