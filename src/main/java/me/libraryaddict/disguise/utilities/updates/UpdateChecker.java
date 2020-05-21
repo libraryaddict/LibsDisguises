@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.updates;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -11,19 +12,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class UpdateChecker {
     private final long started = System.currentTimeMillis();
@@ -32,10 +29,13 @@ public class UpdateChecker {
     private final AtomicBoolean downloading = new AtomicBoolean(false);
     @Getter
     private DisguiseUpdate update;
-    private final LDGithub githubUpdater = new LDGithub();
+    private final LDGithub githubUpdater = new LDGithub(this);
     private final LDJenkins jenkinsUpdater = new LDJenkins();
     @Getter
     private String[] updateMessage = new String[0];
+    @Getter
+    @Setter
+    private boolean goSilent;
 
     public boolean isServerLatestVersion() {
         return isOnLatestUpdate(false);
@@ -90,7 +90,7 @@ public class UpdateChecker {
     }
 
     public void notifyUpdate(CommandSender player) {
-        if (!DisguiseConfig.isNotifyUpdate() || !player.hasPermission("libsdisguises.update")) {
+        if (isGoSilent() || !DisguiseConfig.isNotifyUpdate() || !player.hasPermission("libsdisguises.update")) {
             return;
         }
 
@@ -112,6 +112,7 @@ public class UpdateChecker {
             DisguiseUpdate oldUpdate = getUpdate();
 
             updateMessage = new String[0];
+            boolean alreadySilent = isGoSilent();
 
             doUpdateCheck();
 
@@ -122,7 +123,7 @@ public class UpdateChecker {
 
             notifyUpdate(Bukkit.getConsoleSender());
 
-            if (DisguiseConfig.isAutoUpdate()) {
+            if (isGoSilent() ? !alreadySilent : DisguiseConfig.isAutoUpdate()) {
                 // Update message changed by download
                 grabJarDownload(getUpdate().getDownload());
 
@@ -210,8 +211,10 @@ public class UpdateChecker {
 
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
 
-        DisguiseUtilities.getLogger()
-                .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
+        if (!isGoSilent()) {
+            DisguiseUtilities.getLogger()
+                    .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
+        }
 
         if (dest.exists()) {
             dest.delete();
@@ -231,7 +234,9 @@ public class UpdateChecker {
                 Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
-            DisguiseUtilities.getLogger().info("Download success!");
+            if (!isGoSilent()) {
+                DisguiseUtilities.getLogger().info("Download success!");
+            }
 
             PluginInformation result = LibsPremium.getInformation(dest);
             lastDownload = result;

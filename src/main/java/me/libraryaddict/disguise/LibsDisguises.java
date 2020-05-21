@@ -163,19 +163,19 @@ public class LibsDisguises extends JavaPlugin {
             getLogger().info("Commands has been disabled, as per config");
         }
 
-        unregisterCommands();
+        unregisterCommands(false);
 
         new MetricsInitalizer();
     }
 
-    private void unregisterCommands() {
+    public void unregisterCommands(boolean force) {
         CommandMap map = ReflectionManager.getCommandMap();
         Map<String, Command> commands = ReflectionManager.getCommands(map);
 
         for (String command : getDescription().getCommands().keySet()) {
             PluginCommand cmd = getCommand("libsdisguises:" + command);
 
-            if (cmd.getExecutor() != this) {
+            if (cmd.getExecutor() != this && !force) {
                 continue;
             }
 

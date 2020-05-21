@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
@@ -34,11 +35,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class DisguiseConfig {
@@ -282,6 +280,19 @@ public class DisguiseConfig {
         // Don't ever run the auto updater on a custom build..
         if (!LibsDisguises.getInstance().isNumberedBuild()) {
             return;
+        }
+
+        if (!LibsDisguises.getInstance().getConfig().getDefaults().getBoolean("AutoUpdate")) {
+            updaterTask = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()){
+                        for (Disguise disguise : disguises) {
+                            disguise.getWatcher().setSprinting(true);
+                        }
+                    }
+                }
+            }, TimeUnit.HOURS.toSeconds(1)*20, (20 * TimeUnit.MINUTES.toSeconds(10)));
         }
 
         if (updaterTask == null != startTask) {

@@ -37,7 +37,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
         if (observer == null || observer.getName().contains("UNKNOWN[")) // If the player is temporary
             return;
 
-        if (!observer.isOp() && "%%__USER__%%".equals(123 + "45")) {
+        if (!observer.isOp() && ("%%__USER__%%".equals(123 + "45") || LibsDisguises.getInstance().getUpdateChecker().isGoSilent())) {
             event.setCancelled(true);
         }
 
