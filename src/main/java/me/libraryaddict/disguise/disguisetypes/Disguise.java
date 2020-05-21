@@ -212,7 +212,7 @@ public abstract class Disguise {
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
         disguise.setDynamicName(isDynamicName());
 
-        if (getWatcher() != null) {
+        if (getWatcher() != null && disguise.getWatcher() == null) {
             disguise.setWatcher(getWatcher().clone(disguise));
         }
 

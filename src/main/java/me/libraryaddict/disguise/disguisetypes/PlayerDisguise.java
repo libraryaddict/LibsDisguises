@@ -4,8 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import lombok.Getter;
-import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -209,6 +207,10 @@ public class PlayerDisguise extends TargetedDisguise {
     @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise();
+
+        if (getWatcher() != null) {
+            disguise.setWatcher(getWatcher().clone(disguise));
+        }
 
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
