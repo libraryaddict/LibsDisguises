@@ -54,6 +54,6 @@ public class PacketListenerChannelRegister extends PacketAdapter {
 
                 player.setMetadata("ld_loggedin", new FixedMetadataValue(LibsDisguises.getInstance(), true));
             }
-        }.runTaskLater(LibsDisguises.getInstance(), 5);
+        }.runTaskLater(LibsDisguises.getInstance(), 20);
     }
 }
