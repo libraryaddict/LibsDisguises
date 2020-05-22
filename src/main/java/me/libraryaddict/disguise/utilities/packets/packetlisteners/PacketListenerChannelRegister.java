@@ -39,7 +39,7 @@ public class PacketListenerChannelRegister extends PacketAdapter {
             public void run() {
                 Player player = event.getPlayer();
 
-                if (player.hasMetadata("ld_loggedin")) {
+                if (player == null || player.hasMetadata("ld_loggedin")) {
                     return;
                 }
 
