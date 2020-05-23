@@ -24,6 +24,10 @@ public class PacketListenerChannelRegister extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
+        if (event.isPlayerTemporary()) {
+            return;
+        }
+
         if (NmsVersion.v1_13.isSupported()) {
             if (!event.getPacket().getMinecraftKeys().read(0).getFullKey().equals("minecraft:brand")) {
                 return;
@@ -34,12 +38,16 @@ public class PacketListenerChannelRegister extends PacketAdapter {
             }
         }
 
+        Player player = event.getPlayer();
+
+        if (player == null) {
+            return;
+        }
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                Player player = event.getPlayer();
-
-                if (player == null || player.hasMetadata("ld_loggedin")) {
+                if (!player.isOnline() || player.hasMetadata("ld_loggedin")) {
                     return;
                 }
 
