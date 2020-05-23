@@ -1,7 +1,10 @@
-package me.libraryaddict.disguise.utilities;
+package me.libraryaddict.disguise.utilities.sounds;
 
 import lombok.Getter;
-import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Sound;
 
 import java.util.Arrays;
@@ -229,8 +232,7 @@ public enum DisguiseSoundEnums {
             Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,
             Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR);
 
-    @Getter
-    private LinkedHashMap<Sound, SoundType> disguiseSounds = new LinkedHashMap<>();
+    private SoundGroup group = new SoundGroup(name());
 
     DisguiseSoundEnums(Object hurt, Object step, Object death, Object idle, Object... sounds) {
         addSound(hurt, SoundType.HURT);
@@ -264,6 +266,6 @@ public enum DisguiseSoundEnums {
     }
 
     private void addSound(Sound sound, SoundType type) {
-        disguiseSounds.put(sound, type);
+        group.addSound(ReflectionManager.getCraftSound(sound), type);
     }
 }

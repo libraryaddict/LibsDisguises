@@ -105,6 +105,9 @@ public abstract class Disguise {
     @Getter
     @Setter
     private boolean dynamicName;
+    @Getter
+    @Setter
+    private String soundGroup;
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
@@ -211,6 +214,7 @@ public abstract class Disguise {
         disguise.setModifyBoundingBox(isModifyBoundingBox());
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
         disguise.setDynamicName(isDynamicName());
+        disguise.setSoundGroup(getSoundGroup());
 
         if (getWatcher() != null && disguise.getWatcher() == null) {
             disguise.setWatcher(getWatcher().clone(disguise));

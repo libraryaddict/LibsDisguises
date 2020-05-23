@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBlock;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGroup;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.ChatColor;
@@ -25,6 +26,8 @@ public class ParamInfoManager {
     private static DisguiseMethods disguiseMethods;
     @Getter
     private static ParamInfoItemBlock paramInfoItemBlock;
+    @Getter
+    private static ParamInfoSoundGroup paramInfoSoundGroup;
 
     public static List<ParamInfo> getParamInfos() {
         return paramList;
@@ -45,6 +48,10 @@ public class ParamInfoManager {
     }
 
     public static ParamInfo getParamInfo(Method method) {
+        if (method.getName().equals("setSoundGroup")) {
+            return getParamInfoSoundGroup();
+        }
+
         if (method.getDeclaringClass() == FallingBlockWatcher.class &&
                 method.getParameterTypes()[0] == ItemStack.class) {
             return getParamInfoItemBlock();
@@ -84,6 +91,7 @@ public class ParamInfoManager {
         ParamInfoTypes infoTypes = new ParamInfoTypes();
         paramList = infoTypes.getParamInfos();
         paramInfoItemBlock = infoTypes.getParamInfoBlock();
+        paramInfoSoundGroup = infoTypes.getParamInfoSoundGroup();
         disguiseMethods = new DisguiseMethods();
 
         //paramList.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));
@@ -112,7 +120,7 @@ public class ParamInfoManager {
         // Add these last as it's what we want to present to be called the least
         for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
                 "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar",
-                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName"}) {
+                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName", "setSoundGroup"}) {
             try {
                 Class cl = boolean.class;
 
@@ -128,6 +136,9 @@ public class ParamInfoManager {
                         break;
                     case "setBossBarStyle":
                         cl = BarStyle.class;
+                        break;
+                    case "setSoundGroup":
+                        cl = String.class;
                         break;
                     default:
                         break;

@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.*;
 import me.libraryaddict.disguise.utilities.params.types.custom.*;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -31,6 +32,14 @@ public class ParamInfoTypes {
     public ParamInfoItemBlock getParamInfoBlock() {
         return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
                 "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials());
+    }
+
+    public ParamInfoSoundGroup getParamInfoSoundGroup() {
+        HashMap<String, Object> possibleSoundGroups = new HashMap<>();
+
+        SoundGroup.getGroups().keySet().forEach(key -> possibleSoundGroups.put(key, key));
+
+        return new ParamInfoSoundGroup(possibleSoundGroups);
     }
 
     /**

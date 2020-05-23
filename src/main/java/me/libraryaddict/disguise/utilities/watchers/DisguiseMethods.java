@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.asm.WatcherInfo;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -47,6 +48,10 @@ public class DisguiseMethods {
     }
 
     public DisguiseMethods() {
+        loadMethods();
+    }
+
+    private void loadMethods() {
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
             List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.toList());

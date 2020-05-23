@@ -9,10 +9,10 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
-import me.libraryaddict.disguise.utilities.DisguiseSound;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -1726,7 +1726,7 @@ public class ReflectionManager {
 
                 disguiseValues.setAdultBox(new FakeBoundingBox(0, 0, 0));
 
-                DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+                SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
 
                 if (sound != null) {
                     sound.setDamageAndIdleSoundVolume(1f);
@@ -1820,7 +1820,7 @@ public class ReflectionManager {
                                 " at index " + index.getIndex());
             }
 
-            DisguiseSound sound = DisguiseSound.getType(disguiseType.name());
+            SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
 
             if (sound != null) {
                 Float soundStrength = ReflectionManager.getSoundModifier(nmsEntity);

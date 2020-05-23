@@ -1,0 +1,14 @@
+# Here you can define custom sounds for a sound group!
+# This is an example group, this group will never be loaded.
+# Create your sound group here, then use 'setSoundGroup <Name>' on your disguise
+# You cannot use the same group name as a disguise type! So no 'PLAYER', 'COW' etc.
+GroupName:
+  # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
+  Idle:
+    - minecraft:some.idle.sound
+  Hurt:
+    - minecraft:some.hurt.sound
+  Death:
+    - minecraft:some.death.scream.sound
+  Step:
+    - minecraft:some.step.sound

@@ -12,10 +12,10 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
-import me.libraryaddict.disguise.utilities.DisguiseSound;
-import me.libraryaddict.disguise.utilities.DisguiseSound.SoundType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -61,7 +61,7 @@ public class PacketListenerSounds extends PacketAdapter {
             SoundType soundType = null;
 
             Entity disguisedEntity = null;
-            DisguiseSound entitySound = null;
+            SoundGroup entitySound = null;
             Object soundEffectObj = mods.read(0);
 
             Disguise disguise = null;
@@ -89,7 +89,7 @@ public class PacketListenerSounds extends PacketAdapter {
                         continue;
                     }
 
-                    entitySound = DisguiseSound.getType(entity.getType().name());
+                    entitySound = SoundGroup.getGroup(entity.getType().name());
 
                     if (entitySound == null) {
                         continue;
@@ -148,7 +148,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
                 Object sound = null;
 
-                DisguiseSound disguiseSound = DisguiseSound.getType(disguise.getType().name());
+                SoundGroup disguiseSound = SoundGroup.getGroup(disguise);
 
                 if (disguiseSound != null) {
                     sound = disguiseSound.getSound(soundType);
@@ -259,7 +259,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
             if (!disguise.getType().isPlayer() &&
                     (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
-                DisguiseSound disSound = DisguiseSound.getType(entity.getType().name());
+                SoundGroup disSound = SoundGroup.getGroup(entity.getType().name());
 
                 if (disSound == null)
                     return;
@@ -295,7 +295,7 @@ public class PacketListenerSounds extends PacketAdapter {
                             return;
                     }
 
-                    disSound = DisguiseSound.getType(disguise.getType().name());
+                    disSound = SoundGroup.getGroup(disguise);
 
                     if (disSound != null) {
                         Object sound = disSound.getSound(soundType);
