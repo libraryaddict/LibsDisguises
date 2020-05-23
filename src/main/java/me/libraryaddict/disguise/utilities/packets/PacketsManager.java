@@ -37,7 +37,7 @@ public class PacketsManager {
 
         ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
         ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerChannelRegister());
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerClientCustomPayload());
 
         // Now I call this and the main listener is registered!
         setupMainPacketsListener();

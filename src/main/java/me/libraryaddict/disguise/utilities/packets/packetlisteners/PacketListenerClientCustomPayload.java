@@ -17,8 +17,8 @@ import java.util.ArrayList;
 /**
  * Created by libraryaddict on 21/05/2020.
  */
-public class PacketListenerChannelRegister extends PacketAdapter {
-    public PacketListenerChannelRegister() {
+public class PacketListenerClientCustomPayload extends PacketAdapter {
+    public PacketListenerClientCustomPayload() {
         super(LibsDisguises.getInstance(), PacketType.Play.Client.CUSTOM_PAYLOAD);
     }
 
