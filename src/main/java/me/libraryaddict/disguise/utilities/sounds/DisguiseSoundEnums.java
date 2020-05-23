@@ -2,13 +2,11 @@ package me.libraryaddict.disguise.utilities.sounds;
 
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Sound;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 
 /**
  * Only living disguises go in here!
@@ -231,10 +229,14 @@ public enum DisguiseSoundEnums {
             Sound.ENTITY_ZOMBIE_VILLAGER_DEATH, Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, Sound.ENTITY_ZOMBIE_INFECT,
             Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,
             Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR);
-
-    private SoundGroup group = new SoundGroup(name());
+    @Getter
+    private HashMap<Sound, SoundType> sounds = new HashMap<>();
 
     DisguiseSoundEnums(Object hurt, Object step, Object death, Object idle, Object... sounds) {
+        if (LibsDisguises.getInstance() != null) {
+            throw new IllegalStateException("This cannot be called on a running server");
+        }
+
         addSound(hurt, SoundType.HURT);
         addSound(step, SoundType.STEP);
         addSound(death, SoundType.DEATH);
@@ -266,6 +268,6 @@ public enum DisguiseSoundEnums {
     }
 
     private void addSound(Sound sound, SoundType type) {
-        group.addSound(ReflectionManager.getCraftSound(sound), type);
+        sounds.put(sound, type);
     }
 }

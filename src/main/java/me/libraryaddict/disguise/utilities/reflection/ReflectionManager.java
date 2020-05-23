@@ -1283,6 +1283,18 @@ public class ReflectionManager {
         return null;
     }
 
+    public static Object createSoundEffect(String minecraftKey) {
+        try {
+            return getNmsConstructor("SoundEffect", getNmsClass("MinecraftKey"))
+                    .newInstance(createMinecraftKey(minecraftKey));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static Object createMinecraftKey(String name) {
         try {
             return getNmsClass("MinecraftKey").getConstructor(String.class).newInstance(name);

@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities.sounds;
 
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Sound;
 
@@ -33,8 +32,12 @@ public class SoundGroup {
     }
 
     public void addSound(Object sound, SoundType type) {
-        if (sound instanceof String) {
-            sound = ReflectionManager.createMinecraftKey((String) sound);
+        if (sound instanceof Sound) {
+            sound = ReflectionManager.getCraftSound((Sound) sound);
+        } else if (sound instanceof String) {
+            sound = ReflectionManager.createSoundEffect((String) sound);
+        } else if (!sound.getClass().getName().equals("SoundEffect")) {
+            throw new IllegalArgumentException();
         }
 
         disguiseSounds.put(sound, type);

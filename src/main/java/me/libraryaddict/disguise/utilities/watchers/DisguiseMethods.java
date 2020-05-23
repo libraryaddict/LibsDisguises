@@ -6,7 +6,6 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.asm.WatcherInfo;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 
 import java.io.BufferedReader;
 import java.io.IOException;

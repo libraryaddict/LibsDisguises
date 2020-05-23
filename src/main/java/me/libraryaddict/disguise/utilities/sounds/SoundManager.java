@@ -2,7 +2,7 @@ package me.libraryaddict.disguise.utilities.sounds;
 
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -70,25 +70,33 @@ public class SoundManager {
     }
 
     private void loadSounds() {
-        DisguiseSoundEnums.values();
-    }
-
-    /*private void loadSounds() {
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCODED_WITH_SOUNDS")) {
             List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.toList());
 
             for (String line : lines) {
-                String[] groups = line.split("/");
+                String[] groups = line.split("/", -1);
 
                 SoundGroup group = new SoundGroup(groups[0]);
 
                 int i = 0;
                 for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
-                    String[] sounds = groups[++i].split(",");
+                    String s = groups[++i];
+
+                    if (s.isEmpty()) {
+                        continue;
+                    }
+
+                    String[] sounds = s.split(",");
 
                     for (String sound : sounds) {
-                        group.addSound(sound, type);
+                        try {
+                            Sound actualSound = Sound.valueOf(sound);
+
+                            group.addSound(actualSound, type);
+                        }
+                        catch (Exception ignored) {
+                        }
                     }
                 }
             }
@@ -96,5 +104,5 @@ public class SoundManager {
         catch (IOException | NoClassDefFoundError e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

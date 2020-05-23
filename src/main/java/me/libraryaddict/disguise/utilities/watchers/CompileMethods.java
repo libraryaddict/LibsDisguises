@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
-import com.comphenix.protocol.wrappers.MinecraftKey;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
@@ -9,6 +8,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Sound;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -32,25 +32,22 @@ public class CompileMethods {
     @CompileMethodsIntfer(user = "%%__USER__%%")
     public static void main(String[] args) {
         doMethods();
+        doSounds();
     }
 
-    /*private static void doSounds() {
+    private static void doSounds() {
         List<String> list = new ArrayList<>();
 
-        for (DisguiseSoundEnums sound : DisguiseSoundEnums.values()){
-
-        }
-
-        for (Map.Entry<String, SoundGroup> entry : SoundGroup.getGroups().entrySet()) {
-            StringBuilder sound = new StringBuilder(entry.getKey());
+        for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
+            StringBuilder sound = new StringBuilder(e.name());
 
             for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
                 sound.append("/");
 
                 int i = 0;
 
-                for (Map.Entry<Object, SoundGroup.SoundType> values : entry.getValue().getDisguiseSounds().entrySet()) {
-                    if (values.getValue() != type) {
+                for (Map.Entry<Sound, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
+                    if (entry.getValue() != type) {
                         continue;
                     }
 
@@ -58,7 +55,7 @@ public class CompileMethods {
                         sound.append(",");
                     }
 
-                    sound.append(MinecraftKey.fromHandle(values.getKey()).getFullKey());
+                    sound.append(entry.getKey().name());
                 }
             }
 
@@ -73,7 +70,7 @@ public class CompileMethods {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-    }*/
+    }
 
     private static void addClass(ArrayList<Class> classes, Class c) {
         if (classes.contains(c)) {
