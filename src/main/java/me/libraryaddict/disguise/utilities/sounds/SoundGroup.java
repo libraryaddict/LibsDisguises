@@ -40,6 +40,10 @@ public class SoundGroup {
             throw new IllegalArgumentException();
         }
 
+        if (sound == null) {
+            return;
+        }
+
         disguiseSounds.put(sound, type);
     }
 
