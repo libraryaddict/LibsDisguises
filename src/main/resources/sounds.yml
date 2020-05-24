@@ -1,9 +1,12 @@
-# Here you can define custom sounds for a sound group!
-# This is an example group, this group will never be loaded.
-# Create your sound group here, then use 'setSoundGroup <Name>' on your disguise
-# You cannot use the same group name as a disguise type! So no 'PLAYER', 'COW' etc.
+# Sometimes you just want to have a disguise play different sounds than what it should do
+# Like a cow making skeleton noises instead. Or you want to use a resource pack, or do your own special noises instead
+# You can set the sounds to play in config with 'setSoundGroup' and below you can make your own sound groups!
+# The default disguises already have their sound groups and you cannot use their names.
+# This means no 'PLAYER' 'COW' etc
+# This is an example group, 'GroupName' will never be loaded.
 GroupName:
   # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
+  # So if hurt is missing, it won't play a hurt noise
   Idle:
     - minecraft:some.idle.sound
   Hurt:
