@@ -140,7 +140,11 @@ public class SoundGroup {
 
     public static SoundGroup getGroup(Disguise disguise) {
         if (disguise.getSoundGroup() != null) {
-            return getGroup(disguise.getSoundGroup());
+            SoundGroup dSoundGroup = getGroup(disguise.getSoundGroup());
+
+            if (dSoundGroup != null) {
+                return dSoundGroup;
+            }
         }
 
         return getGroup(disguise.getType().name());
