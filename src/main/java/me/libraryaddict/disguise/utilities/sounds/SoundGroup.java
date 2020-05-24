@@ -25,7 +25,7 @@ public class SoundGroup {
     }
 
     @Getter
-    private final static HashMap<String, SoundGroup> groups = new HashMap<>();
+    private final static LinkedHashMap<String, SoundGroup> groups = new LinkedHashMap<>();
     private float damageSoundVolume = 1F;
     @Getter
     private final LinkedHashMap<Object, SoundType> disguiseSounds = new LinkedHashMap<>();

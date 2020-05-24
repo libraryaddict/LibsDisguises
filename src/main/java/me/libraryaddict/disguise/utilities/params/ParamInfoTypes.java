@@ -35,11 +35,7 @@ public class ParamInfoTypes {
     }
 
     public ParamInfoSoundGroup getParamInfoSoundGroup() {
-        HashMap<String, Object> possibleSoundGroups = new HashMap<>();
-
-        SoundGroup.getGroups().keySet().forEach(key -> possibleSoundGroups.put(key, key));
-
-        return new ParamInfoSoundGroup(possibleSoundGroups);
+        return new ParamInfoSoundGroup();
     }
 
     /**

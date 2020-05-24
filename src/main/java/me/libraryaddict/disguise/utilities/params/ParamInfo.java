@@ -37,7 +37,7 @@ public abstract class ParamInfo {
     public ParamInfo(Class paramClass, String name, String descriptiveName, String description, Enum[] possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
-        this.possibleValues = new HashMap<>();
+        this.possibleValues = new LinkedHashMap<>();
 
         for (Enum anEnum : possibleValues) {
             this.getValues().put(anEnum.name(), anEnum);
@@ -52,7 +52,7 @@ public abstract class ParamInfo {
             Map<String, Object> possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
-        this.possibleValues = new HashMap<>();
+        this.possibleValues = new LinkedHashMap<>();
         this.possibleValues.putAll(possibleValues);
     }
 
