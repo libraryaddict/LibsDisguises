@@ -120,16 +120,15 @@ public class LibsDisguises extends JavaPlugin {
         }
 
         ReflectionManager.init();
-        new SoundManager().load();
 
         PacketsManager.init();
         DisguiseUtilities.init();
 
         ReflectionManager.registerValues();
+        DisguiseParser.createDefaultMethods();
+        new SoundManager().load();
 
         DisguiseConfig.loadConfig();
-
-        DisguiseParser.createDefaultMethods();
 
         PacketsManager.addPacketListeners();
 

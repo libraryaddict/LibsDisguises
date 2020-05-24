@@ -19,14 +19,14 @@ public class ParamInfoSoundGroup extends ParamInfoEnum {
     }
 
     public void recalculate() {
-        LinkedHashMap<String, Object> possibleSoundGroups = new LinkedHashMap<>();
+        LinkedHashMap<String, String> possibleSoundGroups = new LinkedHashMap<>();
 
         ArrayList<String> list = new ArrayList<>(SoundGroup.getGroups().keySet());
 
         list.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (String s : list) {
-            possibleSoundGroups.put(s, SoundGroup.getGroup(s));
+            possibleSoundGroups.put(s, s);
         }
 
         getValues().clear();

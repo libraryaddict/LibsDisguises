@@ -91,7 +91,8 @@ public class ParamInfoManager {
         ParamInfoTypes infoTypes = new ParamInfoTypes();
         paramList = infoTypes.getParamInfos();
         paramInfoItemBlock = infoTypes.getParamInfoBlock();
-        paramInfoSoundGroup = infoTypes.getParamInfoSoundGroup();
+        paramInfoSoundGroup = (ParamInfoSoundGroup) paramList.stream().filter(p -> p instanceof ParamInfoSoundGroup)
+                .findAny().orElse(null);
         disguiseMethods = new DisguiseMethods();
 
         //paramList.sort((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()));

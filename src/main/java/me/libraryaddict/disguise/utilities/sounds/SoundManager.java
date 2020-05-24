@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.sounds;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.ParamInfoTypes;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,8 +19,10 @@ import java.util.stream.Collectors;
 public class SoundManager {
     public void load() {
         SoundGroup.getGroups().clear();
+
         loadSounds();
         loadCustomSounds();
+
         ParamInfoManager.getParamInfoSoundGroup().recalculate();
     }
 

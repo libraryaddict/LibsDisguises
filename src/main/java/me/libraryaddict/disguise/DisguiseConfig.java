@@ -286,13 +286,13 @@ public class DisguiseConfig {
             updaterTask = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), new Runnable() {
                 @Override
                 public void run() {
-                    for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()){
+                    for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                         for (Disguise disguise : disguises) {
                             disguise.getWatcher().setSprinting(true);
                         }
                     }
                 }
-            }, TimeUnit.HOURS.toSeconds(1)*20, (20 * TimeUnit.MINUTES.toSeconds(10)));
+            }, TimeUnit.HOURS.toSeconds(1) * 20, (20 * TimeUnit.MINUTES.toSeconds(10)));
         }
 
         if (updaterTask == null != startTask) {
@@ -968,14 +968,18 @@ public class DisguiseConfig {
             try {
                 addCustomDisguise(key, toParse);
             }
-            catch (DisguiseParseException e) {
+            catch (Exception e) {
                 failedCustomDisguises++;
 
-                if (e.getMessage() != null) {
-                    DisguiseUtilities.getLogger().severe(e.getMessage());
-                }
+                if (e instanceof DisguiseParseException) {
+                    if (e.getMessage() != null) {
+                        DisguiseUtilities.getLogger().severe(e.getMessage());
+                    }
 
-                if (e.getCause() != null) {
+                    if (e.getCause() != null) {
+                        e.printStackTrace();
+                    }
+                } else {
                     e.printStackTrace();
                 }
             }
