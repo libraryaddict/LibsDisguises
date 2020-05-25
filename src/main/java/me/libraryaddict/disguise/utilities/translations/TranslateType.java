@@ -178,6 +178,10 @@ public enum TranslateType {
                         writer.write(
                                 "# %s is where text is inserted, look up printf format codes if you're interested\n");
                     }
+
+                    writer.write(
+                            "# To translate, follow this example 'Original Message': 'My New Message'\n# The Original" +
+                                    " Message is used as a yaml config key to get your new message!");
                 }
             }
 
