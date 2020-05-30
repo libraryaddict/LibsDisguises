@@ -77,6 +77,7 @@ SaveDisguises:
 # Downside of armorstand names is that there's a chance of it becoming desynced from the player disguise
 # And names will always display even if the entity is invisible using potion effects
 PlayerNames: TEAMS
+
 # If doing ARMORSTANDS in the above option, should CustomNames be overridden to use armorstands too?
 # This allows multiline names
 OverrideCustomNames: true
