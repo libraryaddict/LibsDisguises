@@ -79,6 +79,6 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
 
     @NmsAddedIn(val = NmsVersion.v1_14)
     public void setLevel(int level) {
-        setVillagerData(new VillagerData(getType(), getProfession(), getLevel()));
+        setVillagerData(new VillagerData(getType(), getProfession(), level));
     }
 }
