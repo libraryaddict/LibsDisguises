@@ -1,11 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import org.bukkit.entity.Parrot;
 import org.bukkit.inventory.MainHand;
 
 public class PlayerWatcher extends LivingWatcher {
@@ -165,6 +168,74 @@ public class PlayerWatcher extends LivingWatcher {
             setData(MetaIndex.PLAYER_SKIN, (byte) (b0 | 1 << i));
         } else {
             setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
+        }
+    }
+
+    public Parrot.Variant getRightShoulderParrot() {
+        NbtCompound nbt = (NbtCompound) getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
+
+        return Parrot.Variant.values()[nbt.getIntegerOrDefault("Variant")];
+    }
+
+    public void setRightShoulderParrot(Parrot.Variant variant) {
+        NbtCompound nbt = NbtFactory.ofCompound("");
+
+        if (variant != null) {
+            nbt.put("id", "minecraft:parrot");
+            nbt.put("Variant", variant.ordinal());
+        }
+
+        setData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY, nbt);
+        sendData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY);
+    }
+
+    public Parrot.Variant getLeftShoulderParrot() {
+        NbtCompound nbt = (NbtCompound) getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
+
+        return Parrot.Variant.values()[nbt.getIntegerOrDefault("Variant")];
+    }
+
+    public void setLeftShoulderParrot(Parrot.Variant variant) {
+        NbtCompound nbt = NbtFactory.ofCompound("");
+
+        if (variant != null) {
+            nbt.put("id", "minecraft:parrot");
+            nbt.put("Variant", variant.ordinal());
+        }
+
+        setData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY, nbt);
+        sendData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY);
+    }
+
+    public boolean isRightShoulderHasParrot() {
+        return ((NbtCompound) getData(MetaIndex.PLAYER_RIGHT_SHOULDER_ENTITY)).containsKey("id");
+    }
+
+    public void setRightShoulderHasParrot(boolean hasParrot) {
+        if (isRightShoulderHasParrot() == hasParrot) {
+            return;
+        }
+
+        if (hasParrot) {
+            setRightShoulderParrot(Parrot.Variant.RED);
+        } else {
+            setRightShoulderParrot(null);
+        }
+    }
+
+    public boolean isLeftShoulderHasParrot() {
+        return ((NbtCompound) getData(MetaIndex.PLAYER_LEFT_SHOULDER_ENTITY)).containsKey("id");
+    }
+
+    public void setLeftShoulderHasParrot(boolean hasParrot) {
+        if (isLeftShoulderHasParrot() == hasParrot) {
+            return;
+        }
+
+        if (hasParrot) {
+            setLeftShoulderParrot(Parrot.Variant.RED);
+        } else {
+            setLeftShoulderParrot(null);
         }
     }
 }
