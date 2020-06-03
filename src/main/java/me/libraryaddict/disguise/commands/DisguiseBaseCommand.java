@@ -48,12 +48,13 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected boolean isNotPremium(CommandSender sender) {
+        /*
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED + "Please purchase Lib's Disguises to enable player commands");
             return true;
         }
-
+        */
         return false;
     }
 
