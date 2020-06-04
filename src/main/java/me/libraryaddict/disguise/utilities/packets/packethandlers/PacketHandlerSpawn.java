@@ -386,9 +386,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
         if (packets.getPackets().size() <= 1 || disguise.isPlayerDisguise()) {
             PacketContainer rotateHead = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-            packets.addPacket(rotateHead);
 
             StructureModifier<Object> mods = rotateHead.getModifier();
+
+            if (!DisguiseUtilities.isRunningPaper()) {
+                packets.addPacket(rotateHead);
+            } else {
+                packets.addDelayedPacket(rotateHead, 10);
+            }
 
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, yaw);
