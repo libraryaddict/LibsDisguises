@@ -149,12 +149,12 @@ public class PacketHandlerMovement implements IPacketHandler {
                 statusPacket.getIntegers().write(0, entity.getEntityId());
                 statusPacket.getBytes().write(0, (byte) 1);
             }
-        } else
+        } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK &&
+                disguise.getType() == DisguiseType.WITHER_SKULL) {
             // Stop wither skulls from looking
-            if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK &&
-                    disguise.getType() == DisguiseType.WITHER_SKULL) {
-                packets.clear();
-            } else if (sentPacket.getType() != PacketType.Play.Server.REL_ENTITY_MOVE) {
+            packets.clear();
+        } else {
+            if (sentPacket.getType() != PacketType.Play.Server.REL_ENTITY_MOVE) {
                 packets.clear();
 
                 PacketContainer movePacket = sentPacket.shallowClone();
@@ -190,7 +190,19 @@ public class PacketHandlerMovement implements IPacketHandler {
                     if (y != 0) {
                         doubles.write(2, doubles.read(2) + y);
                     }
+                } else if (disguise.getType() == DisguiseType.DOLPHIN) {
+                    movePacket.getBooleans().write(0, false);
                 }
+            } else if (disguise.getType() == DisguiseType.DOLPHIN) {
+                // Dolphins act funny on the ground, so lets not tell the clients they are on the ground
+                packets.clear();
+
+                PacketContainer movePacket = sentPacket.shallowClone();
+
+                packets.addPacket(movePacket);
+
+                movePacket.getBooleans().write(0, false);
             }
+        }
     }
 }
