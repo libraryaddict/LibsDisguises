@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -126,6 +127,20 @@ public class LDGithub {
                         .collect(Collectors.joining("\n"));
 
                 gitData = new Gson().fromJson(json, GithubData.class);
+            }
+            catch (IOException ex) {
+                try (InputStream error = con.getErrorStream()) {
+                    String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines()
+                            .collect(Collectors.joining("\n"));
+
+                    DisguiseUtilities.getLogger().severe("Error with Github! " + line);
+                }
+                catch (Exception ex1) {
+                    DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
+                    ex1.printStackTrace();
+                }
+
+                throw ex;
             }
 
             String download = null;
