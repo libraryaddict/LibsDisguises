@@ -55,7 +55,6 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +112,7 @@ public class DisguiseUtilities {
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
     @Getter
-    private static Map<UUID, Set<TargetedDisguise>> disguises = new ConcurrentHashMap<>();
+    private static Map<UUID, Set<TargetedDisguise>> disguises = new HashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
@@ -679,9 +678,11 @@ public class DisguiseUtilities {
 
         if (getDisguises().containsKey(entityId)) {
             for (TargetedDisguise disguise : getDisguises().get(entityId)) {
-                if (disguise.canSee(observer)) {
-                    return disguise;
+                if (!disguise.canSee(observer)) {
+                    continue;
                 }
+
+                return disguise;
             }
         }
 
