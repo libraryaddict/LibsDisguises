@@ -317,19 +317,6 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
-    public void onLogin(PlayerRegisterChannelEvent event) {
-        Player player = event.getPlayer();
-
-        // If it's not a forge handshake, or we didn't register it
-        if (!event.getChannel().equals("fml:handshake") ||
-                !Bukkit.getMessenger().isOutgoingChannelRegistered(LibsDisguises.getInstance(), "fml:handshake")) {
-            return;
-        }
-
-        player.sendPluginMessage(LibsDisguises.getInstance(), "fml:handshake", ModdedManager.getFmlHandshake());
-    }
-
-    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
 

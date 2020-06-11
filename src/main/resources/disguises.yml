@@ -55,4 +55,5 @@ Custom-Entities:
 #    Mod: LibAttacks # The mod they need installed
 # If exists, will prevent anyone without the mod from joining with this error
 #    Required: 'Install LibAttacks! Download it from our site!'
-#    Channels: librarian:channel|1 # Sometimes a mod needs a channel enabled.. Seperate each channel with a comma
+#    Channels: librarian:channel|1 # Sometimes a mod needs a channel enabled.. Seperate each channel with a comma.
+#    The channels also want a protocol version, which is normally 1 or 1.0

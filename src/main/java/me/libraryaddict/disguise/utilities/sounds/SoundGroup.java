@@ -7,10 +7,8 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Sound;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by libraryaddict on 23/05/2020.

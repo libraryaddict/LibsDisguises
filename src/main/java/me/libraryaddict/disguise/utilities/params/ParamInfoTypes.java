@@ -10,7 +10,6 @@ import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.*;
 import me.libraryaddict.disguise.utilities.params.types.custom.*;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;

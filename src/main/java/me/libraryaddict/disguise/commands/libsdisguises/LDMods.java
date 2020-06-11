@@ -1,6 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -26,7 +26,7 @@ public class LDMods implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        if (!Bukkit.getMessenger().isOutgoingChannelRegistered(LibsDisguises.getInstance(), "fml:handshake")) {
+        if (ModdedManager.getEntities().isEmpty()) {
             sender.sendMessage(LibsMsg.NO_MODS_LISTENING.get());
             return;
         }
