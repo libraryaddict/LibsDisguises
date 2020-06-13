@@ -319,6 +319,9 @@ PacketsEnabled:
   Riding: true
   # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
   WitherSkull: true
+  # This is only used when using a modded disguises thingy, check disguises.yml for more info
+  # This is used as a hack to bypass bungeecord issues
+  LoginPayload: true
 
 # Added to support a Chinese Minecraft Server which uses their own skin server unless the UUID is not version 4.
 # Changing this from 4 to say, 3. Means their server will fetch skins from Mojang instead.

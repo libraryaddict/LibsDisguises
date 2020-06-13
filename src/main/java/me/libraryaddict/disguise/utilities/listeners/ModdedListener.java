@@ -18,27 +18,6 @@ import java.util.ArrayList;
 public class ModdedListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLogin(PlayerLoginEvent event) {
-        Player player = event.getPlayer();
-
-        ArrayList<String> mods = ModdedManager.getForgeMods().getIfPresent(player.getName());
-
-        player.setMetadata("forge_mods", new FixedMetadataValue(LibsDisguises.getInstance(), mods));
-
-        for (ModdedEntity e : ModdedManager.getEntities().values()) {
-            if (e.getMod() == null) {
-                continue;
-            }
-
-            if (mods.contains(e.getMod().toLowerCase())) {
-                continue;
-            }
-
-            if (e.getRequired() == null) {
-                continue;
-            }
-
-            player.kickPlayer(e.getRequired());
-            break;
-        }
+        ModdedManager.doMods(event.getPlayer());
     }
 }

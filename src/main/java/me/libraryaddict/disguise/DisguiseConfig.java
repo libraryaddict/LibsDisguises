@@ -247,6 +247,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean randomDisguises;
+    @Getter
+    @Setter
+    private static boolean loginPayloadPackets;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -632,6 +635,7 @@ public class DisguiseConfig {
         setMaxClonedDisguises(config.getInt("DisguiseCloneSize"));
         setMaxHealthDeterminedByDisguisedEntity(config.getBoolean("MaxHealthDeterminedByEntity"));
         setMetaPacketsEnabled(config.getBoolean("PacketsEnabled.Metadata"));
+        setLoginPayloadPackets(config.getBoolean("PacketsEnabled.LoginPayload"));
         setMiscDisguisesForLivingEnabled(config.getBoolean("MiscDisguisesForLiving"));
         setModifyBoundingBox(config.getBoolean("ModifyBoundingBox"));
         setModifyCollisions(config.getBoolean("Scoreboard.Collisions"));

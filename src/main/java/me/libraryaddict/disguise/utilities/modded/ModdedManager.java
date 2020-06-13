@@ -5,6 +5,7 @@ import com.comphenix.protocol.utility.StreamSerializer;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.Getter;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.listeners.ModdedListener;
@@ -13,6 +14,8 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -41,11 +44,15 @@ public class ModdedManager {
             return;
         }
 
-        if (fmlRegistries == null) {
+        if (fmlRegistries == null && DisguiseConfig.isLoginPayloadPackets()) {
             ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerModdedClient());
             Bukkit.getPluginManager().registerEvents(new ModdedListener(), LibsDisguises.getInstance());
         }
 
+        createPayloads(channels);
+    }
+
+    private void createPayloads(ArrayList<String> channels) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         DataOutputStream output = new DataOutputStream(stream);
 
@@ -161,6 +168,29 @@ public class ModdedManager {
         }
 
         return null;
+    }
+
+    public static void doMods(Player player) {
+        ArrayList<String> mods = getForgeMods().getIfPresent(player.getName());
+
+        player.setMetadata("forge_mods", new FixedMetadataValue(LibsDisguises.getInstance(), mods));
+
+        for (ModdedEntity e : ModdedManager.getEntities().values()) {
+            if (e.getMod() == null) {
+                continue;
+            }
+
+            if (mods.contains(e.getMod().toLowerCase())) {
+                continue;
+            }
+
+            if (e.getRequired() == null) {
+                continue;
+            }
+
+            player.kickPlayer(e.getRequired());
+            break;
+        }
     }
 
     public static ArrayList<DisguisePerm> getDisguiseTypes() {
