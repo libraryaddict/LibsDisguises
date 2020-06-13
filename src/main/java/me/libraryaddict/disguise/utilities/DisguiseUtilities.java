@@ -399,7 +399,7 @@ public class DisguiseUtilities {
 
     public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
         if (!getDisguises().containsKey(entityId)) {
-            getDisguises().put(entityId, Collections.synchronizedSet(new HashSet<>()));
+            getDisguises().put(entityId, new HashSet<>());
         }
 
         if ("a%%__USER__%%a".equals("a12345a") || (LibsPremium.getUserID().matches("[0-9]+") &&
