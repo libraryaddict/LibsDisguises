@@ -1280,6 +1280,10 @@ public class DisguiseUtilities {
         file.delete();
     }
 
+    public static void doDisguiseTick(Disguise disguise) {
+
+    }
+
     public static void removeSelfDisguise(Disguise disguise) {
         if (!Bukkit.isPrimaryThread())
             throw new IllegalStateException("Cannot modify disguises on an async thread");
