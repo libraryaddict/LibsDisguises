@@ -216,7 +216,7 @@ public abstract class Disguise {
         disguise.setDynamicName(isDynamicName());
         disguise.setSoundGroup(getSoundGroup());
 
-        if (getWatcher() != null && disguise.getWatcher() == null) {
+        if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
         }
 
