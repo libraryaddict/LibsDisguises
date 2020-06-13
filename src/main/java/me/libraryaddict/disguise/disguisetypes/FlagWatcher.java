@@ -46,7 +46,7 @@ public class FlagWatcher {
     @Getter(value = AccessLevel.PROTECTED)
     private HashMap<Integer, Object> entityValues = new HashMap<>();
     private LibsEquipment equipment;
-    private boolean hasDied;
+    private transient boolean hasDied;
     @Getter
     private boolean[] modifiedEntityAnimations = new boolean[8];
     private transient List<WrappedWatchableObject> watchableObjects;
