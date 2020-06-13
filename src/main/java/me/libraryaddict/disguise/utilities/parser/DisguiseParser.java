@@ -138,7 +138,11 @@ public class DisguiseParser {
                 stringBuilder.append(" ").append(DisguiseUtilities.quote(((PlayerDisguise) disguise).getName()));
             }
 
-            for (Method m : ParamInfoManager.getDisguiseWatcherMethods(disguise.getType().getWatcherClass())) {
+            Method[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getType().getWatcherClass());
+
+            for (int i = methods.length - 1; i >= 0; i--) {
+                Method m = methods[i];
+
                 // Special handling for this method
                 if (m.getName().equals("addPotionEffect")) {
                     PotionEffectType[] types = (PotionEffectType[]) m.getDeclaringClass().getMethod("getPotionEffects")
