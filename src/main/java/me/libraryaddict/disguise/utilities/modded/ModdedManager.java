@@ -68,11 +68,14 @@ public class ModdedManager {
             s.serializeVarInt(output, channels.size());
 
             for (String channel : channels) {
+                // Here's the channel name
                 s.serializeString(output, channel.substring(0, channel.indexOf("|")));
+                // Here's the channel version, yes <Client Mod> we're using your version!
                 s.serializeString(output, channel.substring(channel.indexOf("|") + 1));
             }
 
-            // We want to declare some entities
+            // We want to declare some entities. Wait. No we don't?
+            // Weird, am I missing something..
             s.serializeVarInt(output, 0);
 
             // Only this one thx
@@ -103,7 +106,9 @@ public class ModdedManager {
 
             // Write the entity names and ids
             for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
+                // We are registering librarymod:librarian
                 s.serializeString(output, entry.getKey().toString());
+                // It's got the type ID of 85
                 s.serializeVarInt(output, entry.getValue().getTypeId());
             }
 
@@ -116,7 +121,7 @@ public class ModdedManager {
             // No.. Not even blocked
             s.serializeVarInt(output, 0);
 
-            // Or dummied
+            // Or dummied. What is dummied anyways. What are these others?
             s.serializeVarInt(output, 0);
         }
         catch (IOException e) {
