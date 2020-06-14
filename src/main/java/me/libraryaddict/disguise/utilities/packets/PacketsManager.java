@@ -35,7 +35,7 @@ public class PacketsManager {
         clientInteractEntityListener = new PacketListenerClientInteract(LibsDisguises.getInstance());
         PacketListener tabListListener = new PacketListenerTabList(LibsDisguises.getInstance());
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
+        ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(clientInteractEntityListener).syncStart();
         ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerClientCustomPayload());
 
