@@ -171,10 +171,6 @@ public class LibsDisguises extends JavaPlugin {
         new MetricsInitalizer();
     }
 
-    private void startTask() {
-
-    }
-
     public void unregisterCommands(boolean force) {
         CommandMap map = ReflectionManager.getCommandMap();
         Map<String, Command> commands = ReflectionManager.getCommands(map);

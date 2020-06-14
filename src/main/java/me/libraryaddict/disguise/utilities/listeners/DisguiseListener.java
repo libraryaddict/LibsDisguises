@@ -582,6 +582,19 @@ public class DisguiseListener implements Listener {
                     }
                 }.runTaskLater(LibsDisguises.getInstance(), 4);
             }
+        } else if (from.getWorld() != to.getWorld()) {
+            // Stupid hack to fix worldswitch invisibility bug & paper packet bug
+            final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
+
+            if (viewSelfToggled) {
+                final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
+
+                if (disguise.isSelfDisguiseVisible()) {
+                    disguise.setViewSelfDisguise(false);
+
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                }
+            }
         }
     }
 
@@ -641,20 +654,17 @@ public class DisguiseListener implements Listener {
                 }
             }
         } else {
-            // Stupid hack to fix worldswitch invisibility bug
+            // Stupid hack to fix worldswitch invisibility bug & paper packet bug
             final boolean viewSelfToggled = DisguiseAPI.isViewSelfToggled(event.getPlayer());
 
             if (viewSelfToggled) {
                 final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
 
-                disguise.setViewSelfDisguise(false);
+                if (disguise.isSelfDisguiseVisible()) {
+                    disguise.setViewSelfDisguise(false);
 
-                Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        disguise.setViewSelfDisguise(true);
-                    }
-                }, 20L); // I wish I could use lambdas here, so badly
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
+                }
             }
         }
     }
