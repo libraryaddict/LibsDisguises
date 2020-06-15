@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -25,8 +26,9 @@ public class PacketListenerInventory extends PacketAdapter {
     private LibsDisguises libsDisguises;
 
     public PacketListenerInventory(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS, PacketType.Play.Client.HELD_ITEM_SLOT,
-                PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK);
+        super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS,
+                PacketType.Play.Client.HELD_ITEM_SLOT, PacketType.Play.Client.SET_CREATIVE_SLOT,
+                PacketType.Play.Client.WINDOW_CLICK);
 
         libsDisguises = plugin;
     }
@@ -45,11 +47,21 @@ public class PacketListenerInventory extends PacketAdapter {
             return;
         }
 
+        if (event.isAsync()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    onPacketReceiving(event);
+                }
+            }.runTask(LibsDisguises.getInstance());
+            return;
+        }
+
         Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
         // If player is disguised, views self disguises and has a inventory modifier
-        if (disguise != null && disguise.isSelfDisguiseVisible()
-                && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+        if (disguise != null && disguise.isSelfDisguiseVisible() &&
+                (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
             // If they are in creative and clicked on a slot
             if (event.getPacketType() == PacketType.Play.Client.SET_CREATIVE_SLOT) {
                 int slot = event.getPacket().getIntegers().read(0);
@@ -67,7 +79,8 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                            mods.write(2,
+                                    ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -77,8 +90,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             }
                         }
                     }
-                }
-                else if (slot >= 36 && slot <= 45) {
+                } else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
                         int currentSlot = player.getInventory().getHeldItemSlot();
 
@@ -91,7 +103,8 @@ public class PacketListenerInventory extends PacketAdapter {
                                 StructureModifier<Object> mods = packet.getModifier();
                                 mods.write(0, 0);
                                 mods.write(1, slot);
-                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                                mods.write(2,
+                                        ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -151,8 +164,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         }
                     }
                 }
-            }
-            else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
+            } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
                 int slot = event.getPacket().getIntegers().read(1);
 
                 org.bukkit.inventory.ItemStack clickedItem;
@@ -172,8 +184,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
 
                     return;
-                }
-                else {
+                } else {
                     // If its not a player inventory click
                     // Shift clicking is exempted for the item in hand..
                     if (event.getPacket().getIntegers().read(0) != 0) {
@@ -183,7 +194,8 @@ public class PacketListenerInventory extends PacketAdapter {
                     clickedItem = player.getItemOnCursor();
                 }
 
-                if (clickedItem != null && clickedItem.getType() != Material.AIR && clickedItem.getType() != Material.ELYTRA) {
+                if (clickedItem != null && clickedItem.getType() != Material.AIR &&
+                        clickedItem.getType() != Material.ELYTRA) {
                     // If the slot is a armor slot
                     if (slot >= 5 && slot <= 8) {
                         if (disguise.isHidingArmorFromSelf()) {
@@ -193,7 +205,8 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                            mods.write(2,
+                                    ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -203,8 +216,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             }
                         }
                         // Else if its a hotbar slot
-                    }
-                    else if (slot >= 36 && slot <= 45) {
+                    } else if (slot >= 36 && slot <= 45) {
                         if (disguise.isHidingHeldItemFromSelf()) {
                             int currentSlot = player.getInventory().getHeldItemSlot();
 
@@ -215,7 +227,8 @@ public class PacketListenerInventory extends PacketAdapter {
                                 StructureModifier<Object> mods = packet.getModifier();
                                 mods.write(0, 0);
                                 mods.write(1, slot);
-                                mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                                mods.write(2,
+                                        ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
 
                                 try {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -229,7 +242,6 @@ public class PacketListenerInventory extends PacketAdapter {
                 }
             }
         }
-
     }
 
     @Override
@@ -237,15 +249,15 @@ public class PacketListenerInventory extends PacketAdapter {
         Player player = event.getPlayer();
 
         // If the inventory is the players inventory
-        if (player instanceof com.comphenix.net.sf.cglib.proxy.Factory || player.getVehicle() != null
-                || event.getPacket().getIntegers().read(0) != 0) {
+        if (player instanceof com.comphenix.net.sf.cglib.proxy.Factory || player.getVehicle() != null ||
+                event.getPacket().getIntegers().read(0) != 0) {
             return;
         }
 
         Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
-        if (disguise == null || !disguise.isSelfDisguiseVisible()
-                || (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
+        if (disguise == null || !disguise.isSelfDisguiseVisible() ||
+                (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
             return;
         }
 
@@ -278,8 +290,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
                 }
                 // Else if its a hotbar slot
-            }
-            else if (slot >= 36 && slot <= 45) {
+            } else if (slot >= 36 && slot <= 45) {
                 if (disguise.isHidingHeldItemFromSelf()) {
                     int currentSlot = player.getInventory().getHeldItemSlot();
 
@@ -295,8 +306,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
                 }
             }
-        }
-        else if (event.getPacketType() == Server.WINDOW_ITEMS) {
+        } else if (event.getPacketType() == Server.WINDOW_ITEMS) {
             event.setPacket(event.getPacket().shallowClone());
 
             StructureModifier<List<ItemStack>> mods = event.getPacket().getItemListModifier();
@@ -315,8 +325,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         }
                     }
                     // Else if its a hotbar slot
-                }
-                else if (slot >= 36 && slot <= 45) {
+                } else if (slot >= 36 && slot <= 45) {
                     if (disguise.isHidingHeldItemFromSelf()) {
                         int currentSlot = player.getInventory().getHeldItemSlot();
 
@@ -335,5 +344,4 @@ public class PacketListenerInventory extends PacketAdapter {
             mods.write(0, items);
         }
     }
-
 }
