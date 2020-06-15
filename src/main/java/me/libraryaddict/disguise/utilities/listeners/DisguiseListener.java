@@ -589,7 +589,7 @@ public class DisguiseListener implements Listener {
             if (viewSelfToggled) {
                 final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
 
-                if (disguise.isSelfDisguiseVisible()) {
+                if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
                     Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
@@ -660,7 +660,7 @@ public class DisguiseListener implements Listener {
             if (viewSelfToggled) {
                 final Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
 
-                if (disguise.isSelfDisguiseVisible()) {
+                if (disguise != null && disguise.isSelfDisguiseVisible()) {
                     disguise.setViewSelfDisguise(false);
 
                     Bukkit.getScheduler().runTaskLater(plugin, () -> disguise.setViewSelfDisguise(true), 20L);
