@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
@@ -37,22 +38,44 @@ public class PacketListenerClientInteract extends PacketAdapter {
         if (observer == null || observer.getName().contains("UNKNOWN[")) // If the player is temporary
             return;
 
-        if (!observer.isOp() && ("%%__USER__%%".equals(123 + "45") || LibsDisguises.getInstance().getUpdateChecker().isGoSilent())) {
+        if (!observer.isOp() &&
+                ("%%__USER__%%".equals(123 + "45") || LibsDisguises.getInstance().getUpdateChecker().isGoSilent())) {
             event.setCancelled(true);
         }
 
         PacketContainer packet = event.getPacket();
 
-        final Disguise disguise = DisguiseUtilities.getDisguise(event.getPlayer(), packet.getIntegers().read(0));
+        if (packet.getIntegers().read(0) == DisguiseAPI.getSelfDisguiseId()) {
+            // Self disguise
+            event.setCancelled(true);
+        } else {
+            Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), packet.getIntegers().read(0));
+
+            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
+                event.setCancelled(true);
+            }
+        }
+
+        if (event.isAsync()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    handleSync(observer, packet);
+                }
+            }.runTask(LibsDisguises.getInstance());
+        } else {
+            handleSync(observer, packet);
+        }
+    }
+
+    private void handleSync(Player observer, PacketContainer packet) {
+        final Disguise disguise = DisguiseUtilities.getDisguise(observer, packet.getIntegers().read(0));
 
         if (disguise == null) {
             return;
         }
 
         if (disguise.getEntity() == observer) {
-            // If it's a self-interact
-            event.setCancelled(true);
-
             // The type of interact, we don't care the difference with "Interact_At" however as it's not
             // useful
             // for self disguises
@@ -78,12 +101,6 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     Bukkit.getPluginManager().callEvent(selfEvent);
                 }
             }.runTask(LibsDisguises.getInstance());
-        } else {
-            Entity entity = disguise.getEntity();
-
-            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
-                event.setCancelled(true);
-            }
         }
 
         switch (disguise.getType()) {
