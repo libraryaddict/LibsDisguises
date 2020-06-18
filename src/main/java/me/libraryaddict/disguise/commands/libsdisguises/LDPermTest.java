@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
@@ -7,6 +8,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.permissions.Permissible;
 
 import java.util.Arrays;
@@ -59,6 +61,27 @@ public class LDPermTest implements LDCommand {
             }
         } else {
             sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_FAIL.get());
+        }
+
+        if (player.hasPermission("libsdisguises.disguise.zombie") ||
+                permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.ZOMBIE))) {
+            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS.get());
+        }
+
+        PluginCommand command = LibsDisguises.getInstance().getCommand("disguise");
+
+        if (command == null) {
+            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_COMMAND_UNREGISTERED.get());
+        } else if (player.hasPermission(command.getPermission())) {
+            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_SUCCESS.get(command.getPermission()));
+        } else {
+            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_FAIL.get(command.getPermission()));
+        }
+
+        if (!sender.hasPermission("libsdisguises.seecmd.disguise")) {
+            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_FAIL.get("libsdisguises.seecmd.disguise"));
+        } else {
+            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_SUCCESS.get("libsdisguises.seecmd.disguise"));
         }
     }
 

@@ -278,6 +278,14 @@ public enum LibsMsg {
             ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
     LIBS_PERM_CHECK_FAIL(
             ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!"),
+    LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS(ChatColor.RED +
+            "Tested libsdisguises.disguise.zombie, which your player seems to have! There may be a problem in your " +
+            "permissions setup!"),
+    LIBS_PERM_CHECK_COMMAND_UNREGISTERED(
+            ChatColor.RED + "The /disguise command seems to be unregistered! Check your config!"),
+    LIBS_PERM_COMMAND_SUCCESS(
+            ChatColor.GOLD + "Tested permission '%s' for /disguise command access, permission success!"),
+    LIBS_PERM_COMMAND_FAIL(ChatColor.RED + "Tested permission '%s' for /disguise command access, permission failed!"),
     CANT_ATTACK_DISGUISED(ChatColor.RED + "Cannot fight while disguised!"),
     CANT_ATTACK_DISGUISED_RECENTLY(ChatColor.RED + "You were disguised recently! Can't attack yet!"),
     SWITCH_WORLD_DISGUISE_REMOVED(ChatColor.RED + "Disguise removed as you've switched worlds!"),
