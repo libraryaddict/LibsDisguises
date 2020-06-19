@@ -84,6 +84,10 @@ commands:
       aliases: [customdisguise, savedisg, customdisg, createdisguise, createdisg]
       permission: libsdisguises.seecmd.savedisguise
       description: Save a custom disguise to disguises.yml
+    grabhead:
+      aliases: [grabskull, playerhead, savehead, gethead]
+      permission: libsdisguises.seecmd.grabhead
+      description: Grab the head item of a skin, url or player
 
 permissions:
   libsdisguises.reload:
@@ -123,6 +127,8 @@ permissions:
     default: false
   libsdisguises.multiname:
     description: Allows the command user to set names on different heights
+  libsdisguises.grabhead:
+    description: Allows the command user to use /grabhead
   libsdisguises.seecmd:
     description: See all commands in tab-completion
     default: true
@@ -145,6 +151,7 @@ permissions:
        libsdisguises.seecmd.copydisguise: true
        libsdisguises.seecmd.grabskin: true
        libsdisguises.seecmd.savedisguise: true
+       libsdisguises.seecmd.grabhead: true
   libsdisguises.seecmd.disguiseviewself:
     description: See the /disguiseviewself command in tab-completion
   libsdisguises.seecmd.disguise:
@@ -181,3 +188,5 @@ permissions:
     description: See the /grabskin command in tab-completion
   libsdisguises.seecmd.savedisguise:
     description: See the /savedisguise command in tab-completion
+  libsdisguises.seecmd.grabhead:
+    description: See the /grabhead command in tab-completion

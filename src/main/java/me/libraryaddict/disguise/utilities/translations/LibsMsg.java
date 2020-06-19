@@ -233,6 +233,7 @@ public enum LibsMsg {
     SKIN_API_USING_FILE(ChatColor.GRAY + "File provided and found, now attempting to upload to mineskin.org"),
     SKIN_API_INVALID_NAME(ChatColor.RED + "Invalid name/file/uuid provided!"),
     SKIN_API_USING_UUID(ChatColor.GRAY + "UUID successfully parsed, now attempting to connect to mineskin.org"),
+    SKIN_API_USING_EXISTING_NAME(ChatColor.GRAY + "Found a saved skin under that name locally! Using that!"),
     SKIN_API_USING_NAME(
             ChatColor.GRAY + "Determined to be player name, now attempting to validate and connect to mineskin.org"),
     SAVE_DISG_HELP_1(ChatColor.GREEN + "The <DisguiseName> is what the disguise will be called in Lib's Disguises"),
@@ -257,6 +258,11 @@ public enum LibsMsg {
             ChatColor.GREEN + "If you want the slim Alex version of the skin, append :slim. So 'myskin.png:slim'"),
     GRAB_DISG_HELP_6(
             ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),
+    GRAB_HEAD_SUCCESS(ChatColor.GREEN + "Head successfully grabbed and added to inventory!"),
+    GRAB_HEAD_HELP_1(ChatColor.GREEN + "Grab the head of a file, player or url! This is a Lib's Disguises feature."),
+    GRAB_HEAD_HELP_2(ChatColor.DARK_GREEN + "/grabhead https://somesite.com/myskin.png"),
+    GRAB_HEAD_HELP_3(ChatColor.DARK_GREEN + "/grabhead myskin.png - Skins must be in the folder!"),
+    GRAB_HEAD_HELP_4(ChatColor.DARK_GREEN + "/grabhead <Player name or UUID>"),
     CUSTOM_DISGUISE_NAME_CONFLICT(
             ChatColor.RED + "Cannot create the custom disguise '%s' as there is a name conflict!"),
     ERROR_LOADING_CUSTOM_DISGUISE(ChatColor.RED + "Error while loading custom disguise '%s'%s"),

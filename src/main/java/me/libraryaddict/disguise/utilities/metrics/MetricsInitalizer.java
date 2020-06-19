@@ -81,6 +81,13 @@ public class MetricsInitalizer {
             }
         });
 
+        metrics.addCustomChart(new Metrics.SimplePie("grabhead_command") {
+            @Override
+            public String getValue() {
+                return "" + DisguiseUtilities.isGrabHeadCommandUsed();
+            }
+        });
+
         metrics.addCustomChart(new Metrics.SimplePie("save_disguise_command") {
             @Override
             public String getValue() {

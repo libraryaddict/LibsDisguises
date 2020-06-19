@@ -133,7 +133,7 @@ public class DisguiseUtilities {
     private static Gson gson;
     @Getter
     private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed,
-            saveDisguiseCommandUsed;
+            saveDisguiseCommandUsed, grabHeadCommandUsed;
     private static long libsDisguisesCalled;
     /**
      * Keeps track of what tick this occured
@@ -171,6 +171,10 @@ public class DisguiseUtilities {
 
     public static void setGrabSkinCommandUsed() {
         grabSkinCommandUsed = true;
+    }
+
+    public static void setGrabHeadCommandUsed() {
+        grabHeadCommandUsed = true;
     }
 
     public static void setCopyDisguiseCommandUsed() {

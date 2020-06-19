@@ -213,7 +213,16 @@ public class SkinUtils {
                     }
                 }
 
+                WrappedGameProfile profile = DisguiseUtilities.getGameProfile(param);
+
+                if (profile != null) {
+                    callback.onInfo(LibsMsg.SKIN_API_USING_EXISTING_NAME);
+                    callback.onSuccess(profile);
+                    return;
+                }
+
                 callback.onInfo(LibsMsg.SKIN_API_USING_NAME);
+
                 handleName(param, modelType, callback);
             }
         }
