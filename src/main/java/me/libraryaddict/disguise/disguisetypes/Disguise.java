@@ -419,7 +419,7 @@ public abstract class Disguise {
             @Override
             public void run() {
                 if (!isDisguiseInUse() || getEntity() == null) {
-                    runnable.cancel();
+                    cancel();
                     runnable = null;
                     return;
                 }
