@@ -47,6 +47,7 @@ Disguises:
 # If an option is missing, then it means Lib's Disguises will not do sanity checks for that.
 # No mod = Everyone gets sent it, otherwise only those with the mod will get the disguise.
 # You MUST restart the server after adding anything!
+# To repeat, this is for forge mod entities!
 Custom-Entities:
 #  Librarian:
 #    Name: libaddict:librarian # Must be a minecraft:sheep type of name, if invalid will not load

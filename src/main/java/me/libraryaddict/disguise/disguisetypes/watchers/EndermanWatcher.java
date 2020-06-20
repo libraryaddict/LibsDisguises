@@ -40,6 +40,7 @@ public class EndermanWatcher extends InsentientWatcher {
             optional = Optional.of(WrappedBlockData.createData(type));
 
         setData(MetaIndex.ENDERMAN_ITEM, optional);
+        sendData(MetaIndex.ENDERMAN_ITEM);
     }
 
     @Deprecated
