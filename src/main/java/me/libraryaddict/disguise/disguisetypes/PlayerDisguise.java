@@ -50,6 +50,17 @@ public class PlayerDisguise extends TargetedDisguise {
     public PlayerDisguise(String name, String skinToUse) {
         this();
 
+        if (name.equals(skinToUse)) {
+            WrappedGameProfile profile = getProfile(skinToUse);
+
+            if (profile != null) {
+                setName(profile.getName());
+                setSkin(profile);
+                createDisguise();
+                return;
+            }
+        }
+
         setName(name);
         setSkin(skinToUse);
 
@@ -387,17 +398,10 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public PlayerDisguise setSkin(String newSkin) {
-        if (newSkin != null && newSkin.length() > 70 && newSkin.startsWith("{") && newSkin.endsWith("}")) {
-            try {
-                return setSkin(DisguiseUtilities.getGson().fromJson(newSkin, WrappedGameProfile.class));
-            }
-            catch (Exception ex) {
-                if (!"12345".equals("%%__USER__%%")) {
-                    throw new IllegalArgumentException(String.format(
-                            "The skin %s is too long to normally be a playername, but cannot be parsed to a " +
-                                    "GameProfile!", newSkin));
-                }
-            }
+        WrappedGameProfile profile = getProfile(newSkin);
+
+        if (profile != null) {
+            return setSkin(profile);
         }
 
         if (newSkin != null) {
@@ -473,6 +477,21 @@ public class PlayerDisguise extends TargetedDisguise {
         refreshDisguise();
 
         return this;
+    }
+
+    private WrappedGameProfile getProfile(String string) {
+        if (string != null && string.length() > 70 && string.startsWith("{\"id\":") && string.endsWith("}") &&
+                string.contains(",\"name\":")) {
+            try {
+                return DisguiseUtilities.getGson().fromJson(string, WrappedGameProfile.class);
+            }
+            catch (Exception ex) {
+                throw new IllegalStateException(
+                        "Tried to parse " + string + " to a GameProfile, but it has been formatted incorrectly!");
+            }
+        }
+
+        return null;
     }
 
     private void refreshDisguise() {
