@@ -112,6 +112,12 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
     @Override
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
+
+        if (allowedDisguises.isEmpty()) {
+            sender.sendMessage(LibsMsg.NO_PERM.get());
+            return;
+        }
+
         sender.sendMessage(LibsMsg.DISG_HELP1.get());
         sender.sendMessage(
                 LibsMsg.CAN_USE_DISGS.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));

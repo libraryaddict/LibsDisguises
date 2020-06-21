@@ -171,6 +171,11 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
+        if (allowedDisguises.isEmpty()) {
+            sender.sendMessage(LibsMsg.NO_PERM.get());
+            return;
+        }
+
         sender.sendMessage(LibsMsg.D_HELP1.get());
         sender.sendMessage(
                 LibsMsg.CAN_USE_DISGS.get(StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get())));

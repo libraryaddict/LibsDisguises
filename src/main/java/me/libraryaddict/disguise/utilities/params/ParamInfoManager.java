@@ -121,7 +121,8 @@ public class ParamInfoManager {
         // Add these last as it's what we want to present to be called the least
         for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf",
                 "setHideArmorFromSelf", "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar",
-                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName", "setSoundGroup"}) {
+                "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName", "setSoundGroup",
+                "setDisguiseName"}) {
             try {
                 Class cl = boolean.class;
 
@@ -139,6 +140,7 @@ public class ParamInfoManager {
                         cl = BarStyle.class;
                         break;
                     case "setSoundGroup":
+                    case "setDisguiseName":
                         cl = String.class;
                         break;
                     default:
