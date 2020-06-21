@@ -910,8 +910,7 @@ public abstract class Disguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player) ||
-                                (!isSelfDisguiseVisible() && getEntity() == player))
+                        if (!((TargetedDisguise) this).canSee(player))
                             continue;
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
@@ -964,8 +963,7 @@ public abstract class Disguise {
 
             try {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player) ||
-                            (!isSelfDisguiseVisible() && getEntity() == player))
+                    if (!((TargetedDisguise) this).canSee(player))
                         continue;
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
@@ -1130,8 +1128,7 @@ public abstract class Disguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player) ||
-                                (!isSelfDisguiseVisible() && getEntity() == player))
+                        if (!((TargetedDisguise) this).canSee(player))
                             continue;
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
@@ -1171,8 +1168,7 @@ public abstract class Disguise {
 
             try {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player) ||
-                            (!isSelfDisguiseVisible() && getEntity() == player))
+                    if (!((TargetedDisguise) this).canSee(player))
                         continue;
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
