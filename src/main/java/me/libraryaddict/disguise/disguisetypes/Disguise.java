@@ -22,6 +22,7 @@ import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -88,7 +89,6 @@ public abstract class Disguise {
     @Getter
     private final HashMap<String, Object> customData = new HashMap<>();
     @Getter
-    @Setter
     private String disguiseName;
     /**
      * Is the name allowed to be changed by Lib's Disguises if they do some option?
@@ -115,6 +115,11 @@ public abstract class Disguise {
 
     public int getMultiNameLength() {
         return multiName.length;
+    }
+
+    @RandomDefaultValue
+    public void setDisguiseName(String name) {
+        this.disguiseName = name;
     }
 
     /**
