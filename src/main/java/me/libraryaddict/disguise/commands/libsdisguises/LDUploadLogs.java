@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import lombok.Data;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -176,10 +177,16 @@ public class LDUploadLogs implements LDCommand {
                 public void run() {
                     try {
                         String disguiseText = FileUtils.readFileToString(disguises, "UTF-8");
-                        String configText = FileUtils.readFileToString(config, "UTF-8");
+                        StringBuilder configText = new StringBuilder(FileUtils.readFileToString(config, "UTF-8"));
+
+                        configText.append("\n\n");
+
+                        for (String s : DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, true)) {
+                            configText.append("\n").append(s);
+                        }
 
                         URL latestPaste = new GuestPaste("latest.log", latestText).paste();
-                        URL configPaste = new GuestPaste("LibsDisguises config.yml", configText).paste();
+                        URL configPaste = new GuestPaste("LibsDisguises config.yml", configText.toString()).paste();
                         URL disguisesPaste = new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste();
 
                         new BukkitRunnable() {
