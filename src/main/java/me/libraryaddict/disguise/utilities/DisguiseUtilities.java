@@ -704,16 +704,18 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
+        playerName = playerName.toLowerCase();
+
         if (!hasGameProfile(playerName))
             return null;
 
         if (!profileCache.exists())
             profileCache.mkdirs();
 
-        File file = new File(profileCache, playerName.toLowerCase());
+        File file = new File(profileCache, playerName);
 
         if (!file.exists()) {
-            cachedNames.remove(playerName.toLowerCase());
+            cachedNames.remove(playerName);
             return null;
         }
 

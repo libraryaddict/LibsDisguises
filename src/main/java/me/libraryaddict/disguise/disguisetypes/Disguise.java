@@ -77,7 +77,7 @@ public abstract class Disguise {
     @Getter
     private BarStyle bossBarStyle = DisguiseConfig.getBossBarStyle();
     @Getter(value = AccessLevel.PRIVATE)
-    private final NamespacedKey bossBar = new NamespacedKey(LibsDisguises.getInstance(), UUID.randomUUID().toString());
+    private transient final NamespacedKey bossBar = new NamespacedKey(LibsDisguises.getInstance(), UUID.randomUUID().toString());
     private FlagWatcher watcher;
     /**
      * If set, how long before disguise expires
@@ -114,7 +114,7 @@ public abstract class Disguise {
     }
 
     public int getMultiNameLength() {
-        return multiName.length;
+        return multiName == null ? 0 : multiName.length;
     }
 
     @RandomDefaultValue
