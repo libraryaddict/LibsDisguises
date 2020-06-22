@@ -1788,6 +1788,10 @@ public class DisguiseUtilities {
     }
 
     public static String[] reverse(String[] array) {
+        if (array == null) {
+            return new String[0];
+        }
+
         String[] newArray = new String[array.length];
 
         for (int i = 1; i <= array.length; i++) {

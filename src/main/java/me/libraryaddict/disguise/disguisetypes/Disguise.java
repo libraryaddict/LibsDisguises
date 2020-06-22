@@ -77,7 +77,7 @@ public abstract class Disguise {
     @Getter
     private BarStyle bossBarStyle = DisguiseConfig.getBossBarStyle();
     @Getter(value = AccessLevel.PRIVATE)
-    private transient final NamespacedKey bossBar = new NamespacedKey(LibsDisguises.getInstance(), UUID.randomUUID().toString());
+    private final NamespacedKey bossBar = new NamespacedKey(LibsDisguises.getInstance(), UUID.randomUUID().toString());
     private FlagWatcher watcher;
     /**
      * If set, how long before disguise expires
@@ -114,7 +114,7 @@ public abstract class Disguise {
     }
 
     public int getMultiNameLength() {
-        return multiName == null ? 0 : multiName.length;
+        return multiName.length;
     }
 
     @RandomDefaultValue
@@ -1088,6 +1088,11 @@ public abstract class Disguise {
 
         if (getEntity() == null) {
             throw new IllegalStateException("No entity is assigned to this disguise!");
+        }
+
+        // Fix for old LD updates to new LD where gson hates missing fields
+        if (multiName == null) {
+            multiName = new String[0];
         }
 
         if (LibsPremium.getUserID().equals("123" + "45") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
