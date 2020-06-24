@@ -1446,11 +1446,19 @@ public class ReflectionManager {
 
     public static int getCombinedIdByItemStack(ItemStack itemStack) {
         try {
-            Object nmsItem = getNmsItem(itemStack);
-            Object item = getNmsMethod("ItemStack", "getItem").invoke(nmsItem);
+            Object nmsBlock;
             Class blockClass = getNmsClass("Block");
 
-            Object nmsBlock = getNmsMethod(blockClass, "asBlock", getNmsClass("Item")).invoke(null, item);
+            if (NmsVersion.v1_13.isSupported()) {
+                nmsBlock = getCraftMethod("util.CraftMagicNumbers", "getBlock", Material.class)
+                        .invoke(null, itemStack.getType());
+            } else {
+                Object nmsItem = getNmsItem(itemStack);
+
+                Object item = getNmsMethod("ItemStack", "getItem").invoke(nmsItem);
+
+                nmsBlock = getNmsMethod(blockClass, "asBlock", getNmsClass("Item")).invoke(null, item);
+            }
 
             Object iBlockData = getNmsMethod(blockClass, "getBlockData").invoke(nmsBlock);
 

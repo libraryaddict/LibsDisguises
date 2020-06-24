@@ -12,6 +12,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGro
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +54,7 @@ public class ParamInfoManager {
         }
 
         if (method.getDeclaringClass() == FallingBlockWatcher.class &&
-                method.getParameterTypes()[0] == ItemStack.class) {
+                (method.getParameterTypes()[0] == Material.class || method.getParameterTypes()[0] == ItemStack.class)) {
             return getParamInfoItemBlock();
         }
 

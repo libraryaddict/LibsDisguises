@@ -50,7 +50,7 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
 
         Material material = ReflectionManager.getMaterial(split[0].toLowerCase());
 
-        if (material == null) {
+        if (material == null || material == Material.AIR) {
             material = Material.getMaterial(split[0].toUpperCase());
         }
 
