@@ -14,7 +14,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
-import net.minecraft.server.v1_15_R1.PacketDataSerializer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -141,15 +140,16 @@ public class PacketListenerModdedClient extends PacketAdapter {
         PacketContainer packet1 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
         packet1.getIntegers().write(0, packetId1);
         packet1.getMinecraftKeys().write(0, new com.comphenix.protocol.wrappers.MinecraftKey("fml", "handshake"));
-        packet1.getModifier()
-                .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake())));
+       // packet1.getModifier()
+        //        .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake())));
 
         PacketContainer packet2 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
         packet2.getIntegers().write(0, packetId2);
         packet2.getMinecraftKeys().write(0, new MinecraftKey("fml", "handshake"));
-        packet2.getModifier()
-                .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries())));
+       // packet2.getModifier()
+        //        .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries())));
 
+        //TODO
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet1);
             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet2);

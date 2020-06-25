@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -1988,36 +1989,25 @@ public class DisguiseUtilities {
                                 .createPacket(0, player.getPassenger(), player));
             }
 
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                            ReflectionManager.getNmsItem(player.getInventory().getHelmet())));
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.CHEST),
-                            ReflectionManager.getNmsItem(player.getInventory().getChestplate())));
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.LEGS),
-                            ReflectionManager.getNmsItem(player.getInventory().getLeggings())));
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.FEET),
-                            ReflectionManager.getNmsItem(player.getInventory().getBoots())));
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.HAND),
-                            ReflectionManager.getNmsItem(player.getInventory().getItemInMainHand())));
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                    ReflectionManager.createEnumItemSlot(EquipmentSlot.HEAD),
-                    ReflectionManager.getNmsItem(new ItemStack(Material.STONE)))
-                    .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(EquipmentSlot.OFF_HAND),
-                            ReflectionManager.getNmsItem(player.getInventory().getItemInOffHand())));
+            if (NmsVersion.v1_16.isSupported()) {
+                List<Pair<Object, Object>> list = new ArrayList<>();
+
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    list.add(Pair.of(ReflectionManager.createEnumItemSlot(slot),
+                            ReflectionManager.getNmsItem(player.getInventory().getItem(slot))));
+                }
+
+                sendSelfPacket(player,
+                        manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0, list).createPacket(0, list));
+            } else {
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
+                            ReflectionManager.createEnumItemSlot(slot),
+                            ReflectionManager.getNmsItem(player.getInventory().getItem(slot)))
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(slot),
+                                    ReflectionManager.getNmsItem(player.getInventory().getItem(slot))));
+                }
+            }
 
             Location loc = player.getLocation();
 

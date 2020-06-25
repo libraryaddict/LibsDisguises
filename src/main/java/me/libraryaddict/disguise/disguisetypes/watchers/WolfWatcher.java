@@ -52,6 +52,15 @@ public class WolfWatcher extends TameableWatcher {
         setTameableFlag(2, angry);
     }
 
+    public int getAnger() {
+        return getData(MetaIndex.WOLF_ANGER);
+    }
+
+    public void setAnger(int anger) {
+        setData(MetaIndex.WOLF_ANGER, anger);
+        sendData(MetaIndex.WOLF_ANGER);
+    }
+
     /**
      * Used for tail rotation.
      *

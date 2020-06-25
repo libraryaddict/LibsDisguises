@@ -46,7 +46,7 @@ public class CompileMethods {
 
                 int i = 0;
 
-                for (Map.Entry<Sound, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
+                for (Map.Entry<String, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
                     if (entry.getValue() != type) {
                         continue;
                     }
@@ -55,7 +55,7 @@ public class CompileMethods {
                         sound.append(",");
                     }
 
-                    sound.append(entry.getKey().name());
+                    sound.append(entry.getKey());
                 }
             }
 

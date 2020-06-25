@@ -100,10 +100,15 @@ public class ReflectionManager {
         pingField = getNmsField("EntityPlayer", "ping");
 
         if (NmsVersion.v1_14.isSupported()) {
-            chunkProviderField = getNmsField("World", "chunkProvider");
             chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
             trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
             entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
+
+            if (NmsVersion.v1_16.isSupported()) {
+                chunkProviderField = getNmsField("WorldServer", "chunkProvider");
+            } else {
+                chunkProviderField = getNmsField("World", "chunkProvider");
+            }
         } else {
             trackerField = getNmsField("WorldServer", "tracker");
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
@@ -1348,8 +1353,14 @@ public class ReflectionManager {
 
             Constructor c = getNmsClass("EntityTypes").getConstructors()[0];
 
+            Object entityType;
+
             // UGLY :D
-            Object entityType = c.newInstance(null, null, false, false, false, false, null);
+            if (NmsVersion.v1_16.isSupported()) {
+                entityType = c.newInstance(null, null, false, false, false, false, null, null, 0, 0);
+            } else {
+                entityType = c.newInstance(null, null, false, false, false, false, null);
+            }
 
             for (Field f : entityType.getClass().getDeclaredFields()) {
                 if (f.getType() != String.class) {
@@ -1564,6 +1575,7 @@ public class ReflectionManager {
                 case PIG_ZOMBIE:
                 case HUSK:
                 case DROWNED:
+                case ZOMBIFIED_PIGLIN:
                     watcherClass = ZombieWatcher.class;
                     break;
                 case MAGMA_CUBE:
@@ -1734,6 +1746,9 @@ public class ReflectionManager {
                     break;
                 case TRADER_LLAMA:
                     nmsEntityName = "LLamaTrader"; // Interesting capitalization
+                    break;
+                case ZOMBIFIED_PIGLIN:
+                    nmsEntityName = "PigZombie";
                     break;
                 default:
                     break;

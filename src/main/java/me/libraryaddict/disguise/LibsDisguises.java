@@ -60,6 +60,14 @@ public class LibsDisguises extends JavaPlugin {
             return;
         }
 
+        try {
+            Class cl = Class.forName("org.bukkit.Server$Spigot");
+        }
+        catch (ClassNotFoundException e) {
+            getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
+                    "plugin will continue to load, but it will look like a mugging victim");
+        }
+
         WatcherSanitizer.init();
     }
 

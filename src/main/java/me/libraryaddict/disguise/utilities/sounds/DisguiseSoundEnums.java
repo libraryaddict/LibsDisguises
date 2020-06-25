@@ -91,6 +91,9 @@ public enum DisguiseSoundEnums {
             new Sound[]{Sound.ENTITY_GUARDIAN_DEATH, Sound.ENTITY_GUARDIAN_DEATH_LAND},
             new Sound[]{Sound.ENTITY_GUARDIAN_AMBIENT, Sound.ENTITY_GUARDIAN_AMBIENT_LAND}, Sound.ENTITY_GUARDIAN_FLOP),
 
+    HOGLIN(Sound.ENTITY_HOGLIN_HURT, Sound.ENTITY_HOGLIN_STEP, Sound.ENTITY_HOGLIN_DEATH, Sound.ENTITY_HOGLIN_AMBIENT,
+            Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, Sound.ENTITY_HOGLIN_ANGRY, Sound.ENTITY_HOGLIN_RETREAT),
+
     HORSE(Sound.ENTITY_HORSE_HURT, new Sound[]{Sound.ENTITY_HORSE_STEP, Sound.ENTITY_HORSE_STEP_WOOD},
             Sound.ENTITY_HORSE_DEATH, Sound.ENTITY_HORSE_AMBIENT, Sound.ENTITY_HORSE_GALLOP, Sound.ENTITY_HORSE_SADDLE,
             Sound.ENTITY_DONKEY_ANGRY, Sound.ENTITY_HORSE_ARMOR, Sound.ENTITY_HORSE_LAND, Sound.ENTITY_HORSE_JUMP,
@@ -129,8 +132,12 @@ public enum DisguiseSoundEnums {
 
     PIG(Sound.ENTITY_PIG_HURT, Sound.ENTITY_PIG_STEP, Sound.ENTITY_PIG_DEATH, Sound.ENTITY_PIG_AMBIENT),
 
-    PIG_ZOMBIE(Sound.ENTITY_ZOMBIE_PIGMAN_HURT, null, Sound.ENTITY_ZOMBIE_PIGMAN_DEATH,
-            Sound.ENTITY_ZOMBIE_PIGMAN_AMBIENT, Sound.ENTITY_ZOMBIE_PIGMAN_ANGRY),
+    PIGLIN(Sound.ENTITY_PIGLIN_HURT, Sound.ENTITY_PIGLIN_STEP, Sound.ENTITY_PIGLIN_DEATH, Sound.ENTITY_PIGLIN_AMBIENT,
+            Sound.ENTITY_PIGLIN_RETREAT, Sound.ENTITY_PIGLIN_JEALOUS, Sound.ENTITY_PIGLIN_ADMIRING_ITEM,
+            Sound.ENTITY_PIGLIN_CELEBRATE),
+
+    PIG_ZOMBIE("ENTITY_ZOMBIE_PIGMAN_HURT", null, "ENTITY_ZOMBIE_PIGMAN_DEATH", "ENTITY_ZOMBIE_PIGMAN_AMBIENT",
+            "ENTITY_ZOMBIE_PIGMAN_ANGRY"),
 
     PLAYER(Sound.ENTITY_PLAYER_HURT, Arrays.stream(Sound.values())
             .filter(sound -> sound.name().startsWith("BLOCK_") && sound.name().endsWith("_STEP")).toArray(Sound[]::new),
@@ -185,15 +192,21 @@ public enum DisguiseSoundEnums {
 
     STRAY(Sound.ENTITY_STRAY_HURT, Sound.ENTITY_STRAY_STEP, Sound.ENTITY_STRAY_DEATH, Sound.ENTITY_STRAY_AMBIENT),
 
+    STRIDER(Sound.ENTITY_STRIDER_HURT, new Sound[]{Sound.ENTITY_STRIDER_STEP, Sound.ENTITY_STRIDER_STEP_LAVA},
+            Sound.ENTITY_STRIDER_DEATH, Sound.ENTITY_STRIDER_AMBIENT, Sound.ENTITY_STRIDER_EAT,
+            Sound.ENTITY_STRIDER_HAPPY, Sound.ENTITY_STRIDER_RETREAT, Sound.ENTITY_STRIDER_SADDLE),
+
     SQUID(Sound.ENTITY_SQUID_HURT, null, Sound.ENTITY_SQUID_DEATH, Sound.ENTITY_SQUID_AMBIENT,
             Sound.ENTITY_SQUID_SQUIRT, Sound.ENTITY_FISH_SWIM),
 
     TROPICAL_FISH(Sound.ENTITY_TROPICAL_FISH_HURT, null, Sound.ENTITY_TROPICAL_FISH_DEATH,
             Sound.ENTITY_TROPICAL_FISH_AMBIENT, Sound.ENTITY_TROPICAL_FISH_FLOP, Sound.ENTITY_FISH_SWIM),
 
-    TURTLE(new Sound[]{Sound.ENTITY_TURTLE_HURT, Sound.ENTITY_TURTLE_HURT_BABY},
-            new Sound[]{Sound.ENTITY_TURTLE_SHAMBLE, Sound.ENTITY_TURTLE_SHAMBLE_BABY},
-            new Sound[]{Sound.ENTITY_TURTLE_DEATH, Sound.ENTITY_TURTLE_DEATH_BABY}, Sound.ENTITY_TURTLE_AMBIENT_LAND,
+    TURTLE(new Sound[]{Sound.ENTITY_TURTLE_HURT, Sound.ENTITY_TURTLE_HURT_BABY}, new Sound[]
+
+            {Sound.ENTITY_TURTLE_SHAMBLE, Sound.ENTITY_TURTLE_SHAMBLE_BABY}, new Sound[]
+
+            {Sound.ENTITY_TURTLE_DEATH, Sound.ENTITY_TURTLE_DEATH_BABY}, Sound.ENTITY_TURTLE_AMBIENT_LAND,
             Sound.ENTITY_TURTLE_LAY_EGG),
 
     VEX(Sound.ENTITY_VEX_HURT, null, Sound.ENTITY_VEX_DEATH, Sound.ENTITY_VEX_AMBIENT, Sound.ENTITY_VEX_CHARGE),
@@ -216,6 +229,9 @@ public enum DisguiseSoundEnums {
             Sound.ENTITY_WOLF_GROWL, Sound.ENTITY_WOLF_PANT, Sound.ENTITY_WOLF_HOWL, Sound.ENTITY_WOLF_SHAKE,
             Sound.ENTITY_WOLF_WHINE),
 
+    ZOGLIN(Sound.ENTITY_ZOGLIN_HURT, Sound.ENTITY_ZOGLIN_STEP, Sound.ENTITY_ZOGLIN_DEATH, Sound.ENTITY_ZOGLIN_AMBIENT,
+            Sound.ENTITY_ZOGLIN_ANGRY, Sound.ENTITY_ZOGLIN_ATTACK),
+
     ZOMBIE(Sound.ENTITY_ZOMBIE_HURT, Sound.ENTITY_ZOMBIE_STEP, Sound.ENTITY_ZOMBIE_DEATH, Sound.ENTITY_ZOMBIE_AMBIENT,
             Sound.ENTITY_ZOMBIE_INFECT, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,
             Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR),
@@ -228,9 +244,14 @@ public enum DisguiseSoundEnums {
     ZOMBIE_VILLAGER(Sound.ENTITY_ZOMBIE_VILLAGER_HURT, Sound.ENTITY_ZOMBIE_VILLAGER_STEP,
             Sound.ENTITY_ZOMBIE_VILLAGER_DEATH, Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT, Sound.ENTITY_ZOMBIE_INFECT,
             Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,
-            Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR);
+            Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR),
+
+    ZOMBIIFIED_PIGLIN(Sound.ENTITY_ZOMBIFIED_PIGLIN_HURT, null, Sound.ENTITY_ZOMBIFIED_PIGLIN_DEATH,
+            Sound.ENTITY_ZOMBIFIED_PIGLIN_AMBIENT, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY,
+            Sound.ENTITY_PIGLIN_CONVERTED_TO_ZOMBIFIED);
+
     @Getter
-    private HashMap<Sound, SoundType> sounds = new HashMap<>();
+    private HashMap<String, SoundType> sounds = new HashMap<>();
 
     DisguiseSoundEnums(Object hurt, Object step, Object death, Object idle, Object... sounds) {
         if (LibsDisguises.getInstance() != null) {
@@ -262,12 +283,26 @@ public enum DisguiseSoundEnums {
             }
         } else if (sound instanceof Sound) {
             addSound((Sound) sound, type);
+        } else if (sound instanceof String[]) {
+            for (String s : (String[]) sound) {
+                if (s == null) {
+                    continue;
+                }
+
+                addSound(s, type);
+            }
+        } else if (sound instanceof String) {
+            addSound((String) sound, type);
         } else {
             throw new IllegalArgumentException("Was given an unknown object " + sound);
         }
     }
 
     private void addSound(Sound sound, SoundType type) {
+        addSound(sound.name(), type);
+    }
+
+    private void addSound(String sound, SoundType type) {
         sounds.put(sound, type);
     }
 }

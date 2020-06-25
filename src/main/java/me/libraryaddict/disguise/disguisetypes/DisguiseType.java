@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.omg.CORBA.UNKNOWN;
 
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
@@ -83,6 +84,8 @@ public enum DisguiseType {
 
     GUARDIAN,
 
+    @NmsAddedIn(val = NmsVersion.v1_16) HOGLIN,
+
     HORSE,
 
     HUSK,
@@ -135,7 +138,9 @@ public enum DisguiseType {
 
     PIG,
 
-    PIG_ZOMBIE,
+    @NmsRemovedIn(val = NmsVersion.v1_16) PIG_ZOMBIE,
+
+    @NmsAddedIn(val = NmsVersion.v1_16) PIGLIN,
 
     @NmsAddedIn(val = NmsVersion.v1_14) PILLAGER,
 
@@ -183,6 +188,8 @@ public enum DisguiseType {
 
     STRAY,
 
+    @NmsAddedIn(val = NmsVersion.v1_16) STRIDER,
+
     THROWN_EXP_BOTTLE(75),
 
     @NmsRemovedIn(val = NmsVersion.v1_14) TIPPED_ARROW(60),
@@ -215,11 +222,15 @@ public enum DisguiseType {
 
     WOLF,
 
+    @NmsAddedIn(val = NmsVersion.v1_16) ZOGLIN,
+
     ZOMBIE,
 
     ZOMBIE_HORSE,
 
-    ZOMBIE_VILLAGER;
+    ZOMBIE_VILLAGER,
+
+    @NmsAddedIn(val = NmsVersion.v1_16) ZOMBIFIED_PIGLIN;
 
     public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());

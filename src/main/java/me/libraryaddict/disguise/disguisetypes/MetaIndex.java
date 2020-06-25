@@ -115,6 +115,7 @@ public class MetaIndex<Y> {
      * The shooter of the arrow, no visible effect if set
      */
     @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsRemovedIn(val = NmsVersion.v1_16)
     public static MetaIndex<Optional<UUID>> ARROW_UUID = new MetaIndex<>(ArrowWatcher.class, 1, Optional.empty());
 
     @NmsAddedIn(val = NmsVersion.v1_14)
@@ -296,7 +297,10 @@ public class MetaIndex<Y> {
     @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> FIREWORK_SHOT_AT_ANGLE = new MetaIndex<>(FireworkWatcher.class, 2, false);
 
-    public static MetaIndex<Integer> FISHING_HOOK_HOOKED = new MetaIndex<>(FishingHookWatcher.class, 0, 0);
+    public static MetaIndex<Integer> FISHING_HOOK_HOOKED_ID = new MetaIndex<>(FishingHookWatcher.class, 0, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> FISHING_HOOK_HOOKED = new MetaIndex<>(FishingHookWatcher.class, 1, false);
 
     /**
      * The type of fox, its coloring
@@ -327,6 +331,9 @@ public class MetaIndex<Y> {
      * Play a guardian beam between guardian and target entity id
      */
     public static MetaIndex<Integer> GUARDIAN_TARGET = new MetaIndex<>(GuardianWatcher.class, 1, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> HOGLIN_SHAKING = new MetaIndex<>(HoglinWatcher.class, 0, false);
 
     /**
      * If horse has chest, set for donkey
@@ -495,6 +502,18 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
 
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> PIGLIN_BABY = new MetaIndex<>(PiglinWatcher.class, 0, false);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> PIGLIN_SHAKING = new MetaIndex<>(PiglinWatcher.class, 1, false);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> PIGLIN_CROSSBOW = new MetaIndex<>(PiglinWatcher.class, 2, false);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> PIGLIN_DANCING = new MetaIndex<>(PiglinWatcher.class, 3, false);
+
     @NmsAddedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> PILLAGER_AIMING_BOW = new MetaIndex<>(PillagerWatcher.class, 0, false);
 
@@ -538,6 +557,15 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> SLIME_SIZE = new MetaIndex<>(SlimeWatcher.class, 0, 1);
 
     public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<>(SnowmanWatcher.class, 0, (byte) 16);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Integer> STRIDER_SADDLE_UNKNOWN = new MetaIndex<>(StriderWatcher.class, 0, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> STRIDER_WARM = new MetaIndex<>(StriderWatcher.class, 1, false);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> STRIDER_SADDLED = new MetaIndex<>(StriderWatcher.class, 2, false);
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
@@ -609,6 +637,12 @@ public class MetaIndex<Y> {
     public static MetaIndex<Float> WOLF_DAMAGE = new MetaIndex<>(WolfWatcher.class, 0, 1F);
 
     public static MetaIndex<Integer> WOLF_COLLAR = new MetaIndex<>(WolfWatcher.class, 2, 14);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Integer> WOLF_ANGER = new MetaIndex<>(WolfWatcher.class, 3, 0);
+
+    @NmsAddedIn(val = NmsVersion.v1_16)
+    public static MetaIndex<Boolean> ZOGLIN_BABY = new MetaIndex<>(ZoglinWatcher.class, 0, false);
 
     @NmsRemovedIn(val = NmsVersion.v1_14)
     public static MetaIndex<Boolean> ZOMBIE_AGGRESSIVE = new MetaIndex<>(ZombieWatcher.class, 2, false);
