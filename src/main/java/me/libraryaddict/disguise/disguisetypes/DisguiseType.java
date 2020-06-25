@@ -7,7 +7,6 @@ import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.omg.CORBA.UNKNOWN;
 
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
