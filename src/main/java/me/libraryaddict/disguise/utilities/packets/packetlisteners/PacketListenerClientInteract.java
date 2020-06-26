@@ -48,12 +48,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
         if (packet.getIntegers().read(0) == DisguiseAPI.getSelfDisguiseId()) {
             // Self disguise
             event.setCancelled(true);
-        } else {
-            Entity entity = DisguiseUtilities.getEntity(observer.getWorld(), packet.getIntegers().read(0));
-
-            if (entity instanceof ExperienceOrb || entity instanceof Item || entity instanceof Arrow) {
-                event.setCancelled(true);
-            }
+        } else if (DisguiseUtilities.isNotInteractable(packet.getIntegers().read(0))) {
+            event.setCancelled(true);
         }
 
         if (event.isAsync()) {

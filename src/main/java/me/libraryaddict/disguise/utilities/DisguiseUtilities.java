@@ -109,6 +109,7 @@ public class DisguiseUtilities {
     @Getter
     public static final Random random = new Random();
     private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
+    private static final List<Integer> isNoInteract = new ArrayList<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
@@ -184,6 +185,12 @@ public class DisguiseUtilities {
 
     public static void setSaveDisguiseCommandUsed() {
         saveDisguiseCommandUsed = true;
+    }
+
+    public static boolean isNotInteractable(int entityId) {
+        synchronized (isNoInteract) {
+            return isNoInteract.contains(entityId);
+        }
     }
 
     public static boolean isGrabSkinCommandUsed() {
@@ -402,9 +409,24 @@ public class DisguiseUtilities {
         return false;
     }
 
-    public static void addDisguise(UUID entityId, TargetedDisguise disguise) {
-        if (!getDisguises().containsKey(entityId)) {
-            getDisguises().put(entityId, new HashSet<>());
+    public static void addDisguise(UUID entityUUID, TargetedDisguise disguise) {
+        if (!getDisguises().containsKey(entityUUID)) {
+            getDisguises().put(entityUUID, new HashSet<>());
+
+            synchronized (isNoInteract) {
+                Entity entity = disguise.getEntity();
+
+                switch (entity.getType()) {
+                    case EXPERIENCE_ORB:
+                    case DROPPED_ITEM:
+                    case ARROW:
+                    case SPECTRAL_ARROW:
+                        isNoInteract.add(entity.getEntityId());
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         if ("a%%__USER__%%a".equals("a12345a") || (LibsPremium.getUserID().matches("[0-9]+") &&
@@ -427,7 +449,7 @@ public class DisguiseUtilities {
             }
         }
 
-        getDisguises().get(entityId).add(disguise);
+        getDisguises().get(entityUUID).add(disguise);
 
         checkConflicts(disguise, null);
 
@@ -1263,6 +1285,12 @@ public class DisguiseUtilities {
         if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
             if (getDisguises().get(entityId).isEmpty()) {
                 getDisguises().remove(entityId);
+
+                if (disguise.getEntity() != null) {
+                    synchronized (isNoInteract) {
+                        isNoInteract.remove(disguise.getEntity().getEntityId());
+                    }
+                }
             }
 
             if (disguise.getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS &&
