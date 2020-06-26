@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Strings;
+import com.mojang.datafixers.util.Pair;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -756,8 +757,16 @@ public class FlagWatcher {
         StructureModifier<Object> mods = packet.getModifier();
 
         mods.write(0, getDisguise().getEntity().getEntityId());
-        mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-        mods.write(2, itemToSend);
+
+        if (NmsVersion.v1_16.isSupported()) {
+            List<Pair<Object, Object>> list = new ArrayList<>();
+            list.add(Pair.of(ReflectionManager.createEnumItemSlot(slot), itemToSend));
+
+            mods.write(1, list);
+        } else {
+            mods.write(1, ReflectionManager.createEnumItemSlot(slot));
+            mods.write(2, itemToSend);
+        }
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             try {

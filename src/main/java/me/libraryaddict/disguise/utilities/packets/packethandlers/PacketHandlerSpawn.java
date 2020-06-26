@@ -7,6 +7,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.mojang.datafixers.util.Pair;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
@@ -436,8 +437,17 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 StructureModifier<Object> mods = packet.getModifier();
 
                 mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-                mods.write(2, ReflectionManager.getNmsItem(itemToSend));
+
+                if (NmsVersion.v1_16.isSupported()) {
+                    List<Pair<Object, Object>> list = new ArrayList<>();
+                    list.add(Pair.of(ReflectionManager.createEnumItemSlot(slot),
+                            ReflectionManager.getNmsItem(itemToSend)));
+
+                    mods.write(1, list);
+                } else {
+                    mods.write(1, ReflectionManager.createEnumItemSlot(slot));
+                    mods.write(2, ReflectionManager.getNmsItem(itemToSend));
+                }
 
                 packets.addDelayedPacket(packet);
             }

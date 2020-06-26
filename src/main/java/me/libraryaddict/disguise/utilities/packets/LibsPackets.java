@@ -4,8 +4,10 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.mojang.datafixers.util.Pair;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,10 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -117,8 +116,16 @@ public class LibsPackets {
         StructureModifier<Object> mods = packet.getModifier();
 
         mods.write(0, disguise.getEntity().getEntityId());
-        mods.write(1, ReflectionManager.createEnumItemSlot(slot));
-        mods.write(2, ReflectionManager.getNmsItem(itemToSend));
+
+        if (NmsVersion.v1_16.isSupported()) {
+            List<Pair<Object, Object>> list = new ArrayList<>();
+            list.add(Pair.of(ReflectionManager.createEnumItemSlot(slot), ReflectionManager.getNmsItem(itemToSend)));
+
+            mods.write(1, list);
+        } else {
+            mods.write(1, ReflectionManager.createEnumItemSlot(slot));
+            mods.write(2, ReflectionManager.getNmsItem(itemToSend));
+        }
 
         return packet;
     }
