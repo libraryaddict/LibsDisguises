@@ -1288,7 +1288,7 @@ public class DisguiseUtilities {
 
                 if (disguise.getEntity() != null) {
                     synchronized (isNoInteract) {
-                        isNoInteract.remove(disguise.getEntity().getEntityId());
+                        isNoInteract.remove((Object) disguise.getEntity().getEntityId());
                     }
                 }
             }
