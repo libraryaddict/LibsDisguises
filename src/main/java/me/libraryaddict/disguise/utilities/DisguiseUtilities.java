@@ -2065,6 +2065,35 @@ public class DisguiseUtilities {
         }
     }
 
+    public static int[] getNumericVersion(String version) {
+        int[] v = new int[0];
+        for (String split : version.split("\\.-")) {
+            if (!split.matches("[0-9]+")) {
+                return v;
+            }
+
+            v = Arrays.copyOf(v, v.length + 1);
+            v[v.length - 1] = Integer.parseInt(split);
+        }
+
+        return v;
+    }
+
+    public static boolean isOlderThan(String requiredVersion, String theirVersion) {
+        int[] ourVersion = getNumericVersion(requiredVersion);
+        int[] theirs = getNumericVersion(theirVersion);
+
+        for (int i = 0; i < Math.min(ourVersion.length, theirs.length); i++) {
+            if (ourVersion[i] <= theirs[i]) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static Logger getLogger() {
         return LibsDisguises.getInstance().getLogger();
     }

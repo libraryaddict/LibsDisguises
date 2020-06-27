@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
@@ -76,6 +78,17 @@ public class LibsDisguises extends JavaPlugin {
         if (reloaded) {
             getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " +
                     "reloads gracefully!");
+        }
+
+        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+
+        String requiredProtocolLib = "4.5.1";
+
+        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+            getLogger().severe("!! Attention please !!");
+            getLogger().severe("Update your ProtocolLib! You are running " + version +
+                    " but the minimum version you should be on is " + requiredProtocolLib + "!");
+            getLogger().severe("!! Attention please !!");
         }
 
         try {
