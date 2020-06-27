@@ -35,9 +35,10 @@ public class LDCount implements LDCommand {
         }
 
         if (counts.isEmpty()) {
-            sender.sendMessage(LibsMsg.NO_DISGUISES_IN_USE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_DISGUISES_IN_USE);
         } else {
-            sender.sendMessage(LibsMsg.ACTIVE_DISGUISES_COUNT.get(counts.values().stream().reduce(Integer::sum).get()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.ACTIVE_DISGUISES_COUNT,
+                    counts.values().stream().reduce(Integer::sum).get());
 
             ArrayList<DisguiseType> types = new ArrayList<>(counts.keySet());
             types.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(TranslateType.DISGUISES.get(d1.toReadable()),
@@ -54,7 +55,7 @@ public class LDCount implements LDCommand {
                 }
             }
 
-            sender.sendMessage(LibsMsg.ACTIVE_DISGUISES.get(builder.toString()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.ACTIVE_DISGUISES, builder.toString());
         }
     }
 

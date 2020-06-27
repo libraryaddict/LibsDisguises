@@ -7,5 +7,4 @@ public class ZombieHorseWatcher extends AbstractHorseWatcher {
     public ZombieHorseWatcher(Disguise disguise) {
         super(disguise);
     }
-
 }

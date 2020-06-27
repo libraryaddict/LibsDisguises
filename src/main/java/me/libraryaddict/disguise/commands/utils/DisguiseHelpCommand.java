@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -47,14 +48,16 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                 if (help != null) {
                     if (help.hasValues() && help.canTranslateValues()) {
-                        sender.sendMessage(LibsMsg.DHELP_HELP4.get(help.getName(),
-                                StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get())));
+                        DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_HELP4, help.getName(),
+                                StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
                     } else {
                         if (!help.getName().equals(help.getDescriptiveName())) {
-                            sender.sendMessage(LibsMsg.DHELP_HELP6
-                                    .get(help.getName(), help.getDescriptiveName(), help.getDescription()));
+                            DisguiseUtilities
+                                    .sendMessage(sender, LibsMsg.DHELP_HELP6, help.getName(), help.getDescriptiveName(),
+                                            help.getDescription());
                         } else {
-                            sender.sendMessage(LibsMsg.DHELP_HELP5.get(help.getName(), help.getDescription()));
+                            DisguiseUtilities
+                                    .sendMessage(sender, LibsMsg.DHELP_HELP5, help.getName(), help.getDescription());
                         }
                     }
 
@@ -69,7 +72,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 }
 
                 if (!perms.isAllowedDisguise(type)) {
-                    sender.sendMessage(LibsMsg.NO_PERM_DISGUISE.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM_DISGUISE);
                     return true;
                 }
 
@@ -115,14 +118,14 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                         StringUtils.join(methods, ChatColor.DARK_RED + ", ")));
 
                 if (ignored > 0) {
-                    sender.sendMessage(LibsMsg.NO_PERMS_USE_OPTIONS.get(ignored));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERMS_USE_OPTIONS, ignored);
                 }
 
                 return true;
             }
         }
 
-        sender.sendMessage(LibsMsg.NO_PERM.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
         return true;
     }
 
@@ -158,13 +161,13 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
      */
     @Override
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
-        sender.sendMessage(LibsMsg.DHELP_HELP1.get());
-        sender.sendMessage(LibsMsg.DHELP_HELP2.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_HELP1);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_HELP2);
 
         for (ParamInfo s : ParamInfoManager.getParamInfos()) {
-            sender.sendMessage(LibsMsg.DHELP_HELP3.get(s.getName().replaceAll(" ", "") +
+            DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_HELP3, s.getName().replaceAll(" ", "") +
                             (!s.getName().equals(s.getDescriptiveName()) ? " ~ " + s.getDescriptiveName() : ""),
-                    s.getDescription()));
+                    s.getDescription());
         }
     }
 }

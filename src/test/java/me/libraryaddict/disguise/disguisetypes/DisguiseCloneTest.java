@@ -19,7 +19,7 @@ public class DisguiseCloneTest {
     /**
      * MetaIndex needs ProtocolLib to have initialized so.
      */
-  //  @Test
+    //  @Test
     public void testCloneDisguise() {
         try {
             ReflectionManager.registerValues();

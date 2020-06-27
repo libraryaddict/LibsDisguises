@@ -6,11 +6,9 @@ import org.bukkit.ChatColor;
 
 import java.security.InvalidParameterException;
 
-public class WitherWatcher extends InsentientWatcher
-{
+public class WitherWatcher extends InsentientWatcher {
 
-    public WitherWatcher(Disguise disguise)
-    {
+    public WitherWatcher(Disguise disguise) {
         super(disguise);
     }
 
@@ -19,32 +17,25 @@ public class WitherWatcher extends InsentientWatcher
      *
      * @return
      */
-    public int getInvulnerability()
-    {
+    public int getInvulnerability() {
         return getData(MetaIndex.WITHER_INVUL);
     }
 
-    public int[] getTargets()
-    {
-        return new int[]
-            {
-                    getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2), getData(MetaIndex.WITHER_TARGET_3)
-            };
+    public int[] getTargets() {
+        return new int[]{getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2),
+                getData(MetaIndex.WITHER_TARGET_3)};
     }
 
     /**
      * Sets the amount of time this Wither is invulnerable for
      */
-    public void setInvulnerability(int invulnerability)
-    {
+    public void setInvulnerability(int invulnerability) {
         setData(MetaIndex.WITHER_INVUL, invulnerability);
         sendData(MetaIndex.WITHER_INVUL);
     }
 
-    public void setTargets(int... targets)
-    {
-        if (targets.length != 3)
-        {
+    public void setTargets(int... targets) {
+        if (targets.length != 3) {
             throw new InvalidParameterException(
                     ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
         }
@@ -53,5 +44,4 @@ public class WitherWatcher extends InsentientWatcher
         setData(MetaIndex.WITHER_TARGET_3, targets[2]);
         sendData(MetaIndex.WITHER_TARGET_1, MetaIndex.WITHER_TARGET_2, MetaIndex.WITHER_TARGET_3);
     }
-
 }

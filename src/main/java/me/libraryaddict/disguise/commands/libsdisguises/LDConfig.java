@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +35,7 @@ public class LDConfig implements LDCommand {
         ArrayList<String> returns = DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, true);
 
         if (returns.isEmpty()) {
-            sender.sendMessage(LibsMsg.USING_DEFAULT_CONFIG.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.USING_DEFAULT_CONFIG);
             return;
         }
 

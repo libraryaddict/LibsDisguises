@@ -35,7 +35,7 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         if (!sender.hasPermission("libsdisguises.grabskin")) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
             return true;
         }
 
@@ -69,7 +69,7 @@ public class GrabSkinCommand implements CommandExecutor {
             private BukkitTask runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    sender.sendMessage(LibsMsg.PLEASE_WAIT.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.PLEASE_WAIT);
                 }
             }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
 
@@ -107,7 +107,7 @@ public class GrabSkinCommand implements CommandExecutor {
                 }
 
                 DisguiseAPI.addGameProfile(nName, profile);
-                sender.sendMessage(LibsMsg.GRABBED_SKIN.get(nName));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.GRABBED_SKIN, nName);
 
                 String string = DisguiseUtilities.getGson().toJson(profile);
                 int start = 0;
@@ -140,7 +140,7 @@ public class GrabSkinCommand implements CommandExecutor {
 
                     sender.spigot().sendMessage(builder.create());
                 } else {
-                    sender.sendMessage(LibsMsg.SKIN_DATA.get(string));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.SKIN_DATA, string);
                 }
 
                 DisguiseUtilities.setGrabSkinCommandUsed();
@@ -153,11 +153,11 @@ public class GrabSkinCommand implements CommandExecutor {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_1.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_2.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_3.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_4.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_5.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_6.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_1);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_2);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_3);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_4);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_5);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_6);
     }
 }

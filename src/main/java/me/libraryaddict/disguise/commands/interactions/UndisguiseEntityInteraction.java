@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.interactions;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.entity.Entity;
@@ -25,14 +26,14 @@ public class UndisguiseEntityInteraction implements LibsEntityInteract {
             DisguiseAPI.undisguiseToAll(entity);
 
             if (entity instanceof Player)
-                p.sendMessage(LibsMsg.LISTEN_UNDISG_PLAYER.get(entityName));
+                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_PLAYER, entityName);
             else
-                p.sendMessage(LibsMsg.LISTEN_UNDISG_ENT.get(entityName));
+                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_ENT, entityName);
         } else {
             if (entity instanceof Player)
-                p.sendMessage(LibsMsg.LISTEN_UNDISG_PLAYER_FAIL.get(entityName));
+                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_PLAYER_FAIL, entityName);
             else
-                p.sendMessage(LibsMsg.LISTEN_UNDISG_ENT_FAIL.get(entityName));
+                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_ENT_FAIL, entityName);
         }
     }
 }

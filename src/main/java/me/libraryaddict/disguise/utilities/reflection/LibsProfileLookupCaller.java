@@ -20,5 +20,4 @@ public class LibsProfileLookupCaller implements ProfileLookupCallback {
     public void onProfileLookupSucceeded(GameProfile profile) {
         gameProfile = WrappedGameProfile.fromHandle(profile);
     }
-
 }

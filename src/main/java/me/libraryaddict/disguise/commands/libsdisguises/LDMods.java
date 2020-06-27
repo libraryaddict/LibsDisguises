@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +28,7 @@ public class LDMods implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (ModdedManager.getEntities().isEmpty()) {
-            sender.sendMessage(LibsMsg.NO_MODS_LISTENING.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_MODS_LISTENING);
             return;
         }
 
@@ -43,17 +44,17 @@ public class LDMods implements LDCommand {
         } else if (sender instanceof Player) {
             player = (Player) sender;
         } else {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return;
         }
 
         if (!player.hasMetadata("forge_mods")) {
-            sender.sendMessage(LibsMsg.NO_MODS.get(player.getName()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_MODS, player.getName());
             return;
         }
 
-        sender.sendMessage(LibsMsg.MODS_LIST.get(player.getName(),
-                StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", ")));
+        DisguiseUtilities.sendMessage(sender, LibsMsg.MODS_LIST, player.getName(),
+                StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", "));
     }
 
     @Override

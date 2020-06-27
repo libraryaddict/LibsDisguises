@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -34,7 +35,7 @@ public class LDMetaInfo implements LDCommand {
             MetaIndex index = MetaIndex.getMetaIndexByName(args[1]);
 
             if (index == null) {
-                sender.sendMessage(LibsMsg.META_NOT_FOUND.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.META_NOT_FOUND);
                 return;
             }
 
@@ -68,8 +69,8 @@ public class LDMetaInfo implements LDCommand {
 
                 sender.spigot().sendMessage(builder.create());
             } else {
-                sender.sendMessage(
-                        LibsMsg.META_VALUES_NO_CLICK.get(StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get())));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.META_VALUES_NO_CLICK,
+                        StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get()));
             }
         }
     }

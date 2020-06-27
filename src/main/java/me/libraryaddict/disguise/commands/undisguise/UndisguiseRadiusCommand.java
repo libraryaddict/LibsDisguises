@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -36,7 +37,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return true;
         }
 
@@ -49,7 +50,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                 }
                 radius = Integer.parseInt(args[0]);
                 if (radius > maxRadius) {
-                    sender.sendMessage(LibsMsg.LIMITED_RADIUS.get(maxRadius));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.LIMITED_RADIUS, maxRadius);
                     radius = maxRadius;
                 }
             }
@@ -65,9 +66,9 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                 }
             }
 
-            sender.sendMessage(LibsMsg.UNDISRADIUS.get(disguisedEntitys));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISRADIUS, disguisedEntitys);
         } else {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
         }
         return true;
     }

@@ -40,6 +40,7 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
 import org.bukkit.boss.KeyedBossBar;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -280,10 +281,10 @@ public class DisguiseUtilities {
         if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
             String entityName = DisguiseType.getType(toClone).toReadable();
 
-            player.sendMessage(LibsMsg.MADE_REF.get(entityName, reference));
-            player.sendMessage(LibsMsg.MADE_REF_EXAMPLE.get(reference));
+            DisguiseUtilities.sendMessage(player, LibsMsg.MADE_REF, entityName, reference);
+            DisguiseUtilities.sendMessage(player, LibsMsg.MADE_REF_EXAMPLE, reference);
         } else {
-            player.sendMessage(LibsMsg.REF_TOO_MANY.get());
+            DisguiseUtilities.sendMessage(player, LibsMsg.REF_TOO_MANY);
         }
     }
 
@@ -2054,6 +2055,14 @@ public class DisguiseUtilities {
 
     public static String getPlayerListName(Player player) {
         return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
+    }
+
+    public static void sendMessage(CommandSender sender, LibsMsg msg, Object... args) {
+        if (!NmsVersion.v1_16.isSupported()) {
+            sender.sendMessage(msg.get(args));
+        } else {
+            sender.spigot().sendMessage(msg.getChat(args));
+        }
     }
 
     public static Logger getLogger() {

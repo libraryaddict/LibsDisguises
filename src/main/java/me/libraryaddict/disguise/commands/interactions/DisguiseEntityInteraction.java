@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -52,7 +53,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
 
         if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
                 entity instanceof LivingEntity) {
-            p.sendMessage(LibsMsg.DISABLED_LIVING_TO_MISC.get());
+            DisguiseUtilities.sendMessage(p, LibsMsg.DISABLED_LIVING_TO_MISC);
         } else {
             if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
                     !entity.hasPermission("libsdisguises.hidename")) {
@@ -76,29 +77,37 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
             if (disguise.isDisguiseInUse()) {
                 if (disguise.isPlayerDisguise()) {
                     if (entity instanceof Player) {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER.get(entityName, disguiseName));
+                        DisguiseUtilities
+                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER, entityName, disguiseName);
                     } else {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER.get(entityName, disguiseName));
+                        DisguiseUtilities
+                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER, entityName, disguiseName);
                     }
                 } else {
                     if (entity instanceof Player) {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY.get(entityName, disguiseName));
+                        DisguiseUtilities
+                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY, entityName, disguiseName);
                     } else {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY.get(entityName, disguiseName));
+                        DisguiseUtilities
+                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY, entityName, disguiseName);
                     }
                 }
             } else {
                 if (disguise.isPlayerDisguise()) {
                     if (entity instanceof Player) {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL.get(entityName, disguiseName));
+                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL, entityName,
+                                disguiseName);
                     } else {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL.get(entityName, disguiseName));
+                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL, entityName,
+                                disguiseName);
                     }
                 } else {
                     if (entity instanceof Player) {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL.get(entityName, disguiseName));
+                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL, entityName,
+                                disguiseName);
                     } else {
-                        p.sendMessage(LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL.get(entityName, disguiseName));
+                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL, entityName,
+                                disguiseName);
                     }
                 }
             }

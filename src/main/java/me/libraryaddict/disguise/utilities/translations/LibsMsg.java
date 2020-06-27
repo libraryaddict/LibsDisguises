@@ -1,8 +1,14 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by libraryaddict on 15/06/2017.
@@ -351,6 +357,15 @@ public enum LibsMsg {
     SELF_DISGUISE_HIDDEN(ChatColor.GREEN + "Self disguise hidden as it's too tall..");
 
     private final String string;
+    private static final Pattern hexColor;
+
+    static {
+        if (NmsVersion.v1_16.isSupported()) {
+            hexColor = Pattern.compile("<#[0-9a-fA-F]{6}>");
+        } else {
+            hexColor = null;
+        }
+    }
 
     LibsMsg(String string) {
         this.string = string;
@@ -358,6 +373,35 @@ public enum LibsMsg {
 
     public String getRaw() {
         return string;
+    }
+
+    public BaseComponent[] getChat(Object... strings) {
+        String string = get(strings);
+
+        if (hexColor == null) {
+            return new ComponentBuilder().appendLegacy(string).create();
+        }
+
+        Matcher match = hexColor.matcher(string);
+
+        ComponentBuilder builder = new ComponentBuilder();
+        int lastMatch = 0;
+
+        while (match.find()) {
+            if (match.start() > lastMatch) {
+                builder.appendLegacy(string.substring(lastMatch, match.start()));
+            }
+
+            lastMatch = match.end();
+
+            builder.color(net.md_5.bungee.api.ChatColor.of(match.group().substring(1, 8)));
+        }
+
+        if (lastMatch < string.length()) {
+            builder.appendLegacy(string.substring(lastMatch));
+        }
+
+        return builder.create();
     }
 
     public String get(Object... strings) {

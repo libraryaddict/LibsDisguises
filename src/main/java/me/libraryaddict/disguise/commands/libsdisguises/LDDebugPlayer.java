@@ -29,7 +29,7 @@ public class LDDebugPlayer implements LDCommand {
             Disguise disguise = DisguiseAPI.getDisguise(player, entity);
 
             if (disguise == null) {
-                player.sendMessage(LibsMsg.TARGET_NOT_DISGUISED.get());
+                DisguiseUtilities.sendMessage(player, LibsMsg.TARGET_NOT_DISGUISED);
                 return;
             }
 
@@ -100,7 +100,7 @@ public class LDDebugPlayer implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
         }
 
         LibsDisguises.getInstance().getListener().addInteraction(sender.getName(), new DebugInteraction(), 60);

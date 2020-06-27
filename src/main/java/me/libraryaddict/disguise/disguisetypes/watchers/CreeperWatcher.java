@@ -3,34 +3,27 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
-public class CreeperWatcher extends InsentientWatcher
-{
+public class CreeperWatcher extends InsentientWatcher {
 
-    public CreeperWatcher(Disguise disguise)
-    {
+    public CreeperWatcher(Disguise disguise) {
         super(disguise);
     }
 
-    public boolean isIgnited()
-    {
+    public boolean isIgnited() {
         return getData(MetaIndex.CREEPER_IGNITED);
     }
 
-    public boolean isPowered()
-    {
+    public boolean isPowered() {
         return getData(MetaIndex.CREEPER_POWERED);
     }
 
-    public void setIgnited(boolean ignited)
-    {
+    public void setIgnited(boolean ignited) {
         setData(MetaIndex.CREEPER_IGNITED, ignited);
         sendData(MetaIndex.CREEPER_IGNITED);
     }
 
-    public void setPowered(boolean powered)
-    {
+    public void setPowered(boolean powered) {
         setData(MetaIndex.CREEPER_POWERED, powered);
         sendData(MetaIndex.CREEPER_POWERED);
     }
-
 }

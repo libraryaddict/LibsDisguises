@@ -7,5 +7,4 @@ public class SkeletonHorseWatcher extends AbstractHorseWatcher {
     public SkeletonHorseWatcher(Disguise disguise) {
         super(disguise);
     }
-
 }

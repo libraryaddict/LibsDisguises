@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.bukkit.ChatColor;
@@ -33,12 +34,12 @@ public class LDChangelog implements LDCommand {
         UpdateChecker checker = LibsDisguises.getInstance().getUpdateChecker();
 
         if (checker.isDownloading()) {
-            sender.sendMessage(LibsMsg.UPDATE_IN_PROGRESS.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_IN_PROGRESS);
             return;
         }
 
         if (checker.getUpdate() == null) {
-            sender.sendMessage(LibsMsg.UPDATE_REQUIRED.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_REQUIRED);
             return;
         }
 

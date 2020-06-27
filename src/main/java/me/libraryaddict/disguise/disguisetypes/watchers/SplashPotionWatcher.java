@@ -41,5 +41,4 @@ public class SplashPotionWatcher extends FlagWatcher {
             DisguiseUtilities.refreshTrackers(getDisguise());
         }
     }
-
 }

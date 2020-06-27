@@ -140,13 +140,13 @@ public class PacketListenerModdedClient extends PacketAdapter {
         PacketContainer packet1 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
         packet1.getIntegers().write(0, packetId1);
         packet1.getMinecraftKeys().write(0, new com.comphenix.protocol.wrappers.MinecraftKey("fml", "handshake"));
-       // packet1.getModifier()
+        // packet1.getModifier()
         //        .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake())));
 
         PacketContainer packet2 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
         packet2.getIntegers().write(0, packetId2);
         packet2.getMinecraftKeys().write(0, new MinecraftKey("fml", "handshake"));
-       // packet2.getModifier()
+        // packet2.getModifier()
         //        .write(2, new PacketDataSerializer(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries())));
 
         //TODO

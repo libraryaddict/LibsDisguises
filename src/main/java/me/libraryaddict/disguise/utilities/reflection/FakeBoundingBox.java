@@ -23,5 +23,4 @@ public class FakeBoundingBox {
     public double getZ() {
         return zMod / 2;
     }
-
 }

@@ -35,7 +35,7 @@ public class LDJson implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return;
         }
 

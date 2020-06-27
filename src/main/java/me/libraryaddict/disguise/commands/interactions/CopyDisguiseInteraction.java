@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.commands.utils.CopyDisguiseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -35,7 +36,7 @@ public class CopyDisguiseInteraction implements LibsEntityInteract {
                                 DisguiseParser.parseToString(disguise), true);
             }
         } else {
-            player.sendMessage(LibsMsg.TARGET_NOT_DISGUISED.get());
+            DisguiseUtilities.sendMessage(player, LibsMsg.TARGET_NOT_DISGUISED);
         }
     }
 }

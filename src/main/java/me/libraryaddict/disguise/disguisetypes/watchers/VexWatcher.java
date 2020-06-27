@@ -17,5 +17,4 @@ public class VexWatcher extends InsentientWatcher {
     public boolean isAngry() {
         return getData(MetaIndex.VEX_ANGRY) == 1;
     }
-
 }

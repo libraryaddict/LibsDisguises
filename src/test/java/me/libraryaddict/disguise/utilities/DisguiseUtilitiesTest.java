@@ -16,8 +16,10 @@ public class DisguiseUtilitiesTest {
         Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"},
                 DisguiseUtilities.splitNewLine("Name 1\\\nName 2"));
         Assert.assertArrayEquals(new String[]{"Name 1\\nName 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\nName 2"));
-        Assert.assertArrayEquals(new String[]{"Name 1\\","Name 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\\\nName 2"));
-        Assert.assertArrayEquals(new String[]{"Name 1\\\\nName 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\\\\\nName 2"));
+        Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"},
+                DisguiseUtilities.splitNewLine("Name 1\\\\\\nName 2"));
+        Assert.assertArrayEquals(new String[]{"Name 1\\\\nName 2"},
+                DisguiseUtilities.splitNewLine("Name 1\\\\\\\\nName 2"));
     }
 
     @Test

@@ -7,5 +7,4 @@ public class MuleWatcher extends ChestedHorseWatcher {
     public MuleWatcher(Disguise disguise) {
         super(disguise);
     }
-
 }

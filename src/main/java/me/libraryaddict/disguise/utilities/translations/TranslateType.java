@@ -80,7 +80,7 @@ public enum TranslateType {
         }
 
         if (!getFile().exists()) {
-            DisguiseUtilities.getLogger().info("Translations for " + name() + " missing! Skipping...");
+            DisguiseUtilities.getLogger().info("Translations for " + name() + " missing! Saving..");
             return;
         }
 
@@ -182,6 +182,7 @@ public enum TranslateType {
                     writer.write(
                             "# To translate, follow this example 'Original Message': 'My New Message'\n# The Original" +
                                     " Message is used as a yaml config key to get your new message!");
+                    writer.write("\n# To use hex color codes, use <#hexcolor> where hexcolor is the 6 char code");
                 }
             }
 

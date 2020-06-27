@@ -109,18 +109,18 @@ public class LDScoreboard implements LDCommand {
             }
 
             if (issuesFound == 0) {
-                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_ISSUES.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_NO_ISSUES);
             } else {
-                sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_ISSUES.get(issuesFound));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_ISSUES, issuesFound);
             }
         } else {
-            sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NAMES_DISABLED.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_NAMES_DISABLED);
         }
 
-        sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST);
 
         if (DisguiseConfig.getPushingOption() == DisguiseConfig.DisguisePushing.IGNORE_SCOREBOARD) {
-            sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_DISABLED.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_DISABLED);
         }
 
         Player player;
@@ -134,18 +134,18 @@ public class LDScoreboard implements LDCommand {
             }
 
             if (!DisguiseAPI.isDisguised(player)) {
-                sender.sendMessage(LibsMsg.DMODPLAYER_NODISGUISE.get(player.getName()));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.DMODPLAYER_NODISGUISE, player.getName());
                 return;
             }
         } else if (sender instanceof Player) {
             player = (Player) sender;
 
             if (!DisguiseAPI.isDisguised(player)) {
-                sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_DISGUISED);
                 return;
             }
         } else {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return;
         }
 
@@ -154,17 +154,17 @@ public class LDScoreboard implements LDCommand {
         Team team = board.getEntryTeam(sender.getName());
 
         if (team == null) {
-            sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_TEAM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_NO_TEAM);
             return;
         }
 
         if (team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.NEVER &&
                 team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.FOR_OTHER_TEAMS) {
-            sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_NO_TEAM_PUSH.get(team.getName()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_NO_TEAM_PUSH, team.getName());
             return;
         }
 
-        sender.sendMessage(LibsMsg.LIBS_SCOREBOARD_SUCCESS.get(team.getName()));
+        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_SCOREBOARD_SUCCESS, team.getName());
     }
 
     @Override

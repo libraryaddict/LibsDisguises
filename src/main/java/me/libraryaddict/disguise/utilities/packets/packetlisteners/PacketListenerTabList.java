@@ -54,10 +54,8 @@ public class PacketListenerTabList extends PacketAdapter {
 
         if (list.isEmpty()) {
             event.setCancelled(true);
-        }
-        else {
+        } else {
             event.getPacket().getPlayerInfoDataLists().write(0, list);
         }
     }
-
 }

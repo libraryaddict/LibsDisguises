@@ -5,38 +5,31 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Art;
 
-public class PaintingWatcher extends FlagWatcher
-{
+public class PaintingWatcher extends FlagWatcher {
 
     private Art painting;
 
-    public PaintingWatcher(Disguise disguise)
-    {
+    public PaintingWatcher(Disguise disguise) {
         super(disguise);
     }
 
     @Override
-    public PaintingWatcher clone(Disguise disguise)
-    {
+    public PaintingWatcher clone(Disguise disguise) {
         PaintingWatcher watcher = (PaintingWatcher) super.clone(disguise);
         watcher.setArt(getArt());
 
         return watcher;
     }
 
-    public Art getArt()
-    {
+    public Art getArt() {
         return painting;
     }
 
-    public void setArt(Art newPainting)
-    {
+    public void setArt(Art newPainting) {
         this.painting = newPainting;
 
-        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this)
-        {
+        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());
         }
     }
-
 }

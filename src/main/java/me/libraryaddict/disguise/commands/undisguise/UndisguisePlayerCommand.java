@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Bukkit;
@@ -62,12 +63,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
             return true;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(LibsMsg.UNDISG_PLAYER_HELP.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER_HELP);
             return true;
         }
 

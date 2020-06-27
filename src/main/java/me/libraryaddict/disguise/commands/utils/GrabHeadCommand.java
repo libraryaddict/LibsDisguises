@@ -33,12 +33,12 @@ public class GrabHeadCommand implements CommandExecutor {
         }
 
         if (!sender.hasPermission("libsdisguises.grabhead")) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return true;
         }
 
@@ -61,7 +61,7 @@ public class GrabHeadCommand implements CommandExecutor {
             private BukkitTask runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    sender.sendMessage(LibsMsg.PLEASE_WAIT.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.PLEASE_WAIT);
                 }
             }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
 
@@ -101,7 +101,7 @@ public class GrabHeadCommand implements CommandExecutor {
                         skull.setItemMeta(meta);
 
                         ((Player) sender).getInventory().addItem(skull);
-                        sender.sendMessage(LibsMsg.GRAB_HEAD_SUCCESS.get());
+                        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_HEAD_SUCCESS);
                     }
                 }.runTask(LibsDisguises.getInstance());
             }
@@ -113,11 +113,11 @@ public class GrabHeadCommand implements CommandExecutor {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_1.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_2.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_3.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_4.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_5.get());
-        sender.sendMessage(LibsMsg.GRAB_DISG_HELP_6.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_1);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_2);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_3);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_4);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_5);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.GRAB_DISG_HELP_6);
     }
 }

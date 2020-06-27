@@ -35,7 +35,7 @@ public class LDUpdate implements LDCommand {
         UpdateChecker checker = LibsDisguises.getInstance().getUpdateChecker();
 
         if (checker.isDownloading()) {
-            sender.sendMessage(LibsMsg.UPDATE_IN_PROGRESS.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_IN_PROGRESS);
             return;
         }
 
@@ -47,7 +47,7 @@ public class LDUpdate implements LDCommand {
             } else if (args[1].equalsIgnoreCase("release")) {
                 releaseBuilds = true;
             } else {
-                sender.sendMessage(LibsMsg.LIBS_UPDATE_UNKNOWN_BRANCH.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_UPDATE_UNKNOWN_BRANCH);
                 return;
             }
 
@@ -56,12 +56,12 @@ public class LDUpdate implements LDCommand {
 
         if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && args.length <= 1) {
             if (checker.isServerLatestVersion()) {
-                sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_ON_LATEST);
                 return;
             }
 
             if (checker.isOnLatestUpdate(true)) {
-                sender.sendMessage(LibsMsg.UPDATE_ALREADY_DOWNLOADED.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_ALREADY_DOWNLOADED);
                 return;
             }
         }
@@ -76,15 +76,15 @@ public class LDUpdate implements LDCommand {
                 }
 
                 if (checker.getUpdate() == null) {
-                    sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_FAILED);
                     return;
                 }
 
                 if (checker.isOnLatestUpdate(true)) {
                     if (checker.getLastDownload() != null) {
-                        sender.sendMessage(LibsMsg.UPDATE_ALREADY_DOWNLOADED.get());
+                        DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_ALREADY_DOWNLOADED);
                     } else {
-                        sender.sendMessage(LibsMsg.UPDATE_ON_LATEST.get());
+                        DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_ON_LATEST);
                     }
 
                     return;
@@ -105,7 +105,7 @@ public class LDUpdate implements LDCommand {
                 PluginInformation result = checker.doUpdate();
 
                 if (result == null) {
-                    sender.sendMessage(LibsMsg.UPDATE_FAILED.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_FAILED);
                     return;
                 }
 

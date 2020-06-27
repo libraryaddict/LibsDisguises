@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
@@ -31,7 +32,7 @@ public class LDPermTest implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (!LibsPremium.isPremium()) {
-            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_NON_PREM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_NON_PREM);
         }
 
         Permissible player;
@@ -48,34 +49,34 @@ public class LDPermTest implements LDCommand {
         }
 
         DisguisePermissions permissions = new DisguisePermissions(player, "disguise");
-        sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_INFO_1.get());
-        sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_INFO_2.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_INFO_1);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_INFO_2);
 
         if (player.hasPermission("libsdisguises.disguise.pig")) {
-            sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_SUCCESS.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NORMAL_PERM_CHECK_SUCCESS);
 
             if (permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.PIG))) {
-                sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_SUCCESS.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_SUCCESS);
             } else {
-                sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_FAIL.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_FAIL);
             }
         } else {
-            sender.sendMessage(LibsMsg.NORMAL_PERM_CHECK_FAIL.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NORMAL_PERM_CHECK_FAIL);
         }
 
         if (player.hasPermission("libsdisguises.disguise.zombie") ||
                 permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.ZOMBIE))) {
-            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS);
         }
 
         PluginCommand command = LibsDisguises.getInstance().getCommand("disguise");
 
         if (command == null) {
-            sender.sendMessage(LibsMsg.LIBS_PERM_CHECK_COMMAND_UNREGISTERED.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_COMMAND_UNREGISTERED);
         } else if (player.hasPermission(command.getPermission())) {
-            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_SUCCESS.get(command.getPermission()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_SUCCESS, command.getPermission());
         } else {
-            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_FAIL.get(command.getPermission()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_FAIL, command.getPermission());
         }
 
         if (!sender.hasPermission("libsdisguises.seecmd.disguise")) {

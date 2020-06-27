@@ -9,7 +9,8 @@ import java.lang.reflect.Type;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerWrappedBlockData implements JsonSerializer<WrappedBlockData>, JsonDeserializer<WrappedBlockData> {
+public class SerializerWrappedBlockData implements JsonSerializer<WrappedBlockData>,
+        JsonDeserializer<WrappedBlockData> {
 
     @Override
     public JsonElement serialize(WrappedBlockData src, Type typeOfSrc, JsonSerializationContext context) {

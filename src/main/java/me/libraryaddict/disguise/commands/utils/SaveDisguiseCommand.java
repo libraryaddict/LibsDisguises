@@ -35,7 +35,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
         }
 
         if (!sender.hasPermission("libsdisguises.savedisguise")) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
             return true;
         }
 
@@ -51,14 +51,14 @@ public class SaveDisguiseCommand implements CommandExecutor {
 
         if (args.length == 0) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
                 return true;
             }
 
             Disguise disguise = DisguiseAPI.getDisguise((Entity) sender);
 
             if (disguise == null) {
-                sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_DISGUISED);
                 return true;
             }
 
@@ -67,13 +67,13 @@ public class SaveDisguiseCommand implements CommandExecutor {
             try {
                 DisguiseAPI.addCustomDisguise(name, disguiseString);
 
-                sender.sendMessage(LibsMsg.CUSTOM_DISGUISE_SAVED.get(name));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.CUSTOM_DISGUISE_SAVED, name);
             }
             catch (DisguiseParseException e) {
                 if (e.getMessage() != null) {
                     sender.sendMessage(e.getMessage());
                 } else {
-                    sender.sendMessage(LibsMsg.PARSE_CANT_LOAD.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.PARSE_CANT_LOAD);
                 }
             }
 
@@ -119,7 +119,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                     private BukkitTask runnable = new BukkitRunnable() {
                         @Override
                         public void run() {
-                            sender.sendMessage(LibsMsg.PLEASE_WAIT.get());
+                            DisguiseUtilities.sendMessage(sender, LibsMsg.PLEASE_WAIT);
                         }
                     }.runTaskTimer(LibsDisguises.getInstance(), 100, 100);
 
@@ -163,7 +163,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
 
         try {
             DisguiseAPI.addCustomDisguise(name, disguiseString);
-            sender.sendMessage(LibsMsg.CUSTOM_DISGUISE_SAVED.get(name));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.CUSTOM_DISGUISE_SAVED, name);
 
             DisguiseUtilities.setSaveDisguiseCommandUsed();
         }
@@ -171,17 +171,17 @@ public class SaveDisguiseCommand implements CommandExecutor {
             if (e.getMessage() != null) {
                 sender.sendMessage(e.getMessage());
             } else {
-                sender.sendMessage(LibsMsg.PARSE_CANT_LOAD.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.PARSE_CANT_LOAD);
             }
         }
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_1.get());
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_2.get());
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_3.get());
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_4.get());
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_5.get());
-        sender.sendMessage(LibsMsg.SAVE_DISG_HELP_6.get());
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_1);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_2);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_3);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_4);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_5);
+        DisguiseUtilities.sendMessage(sender, LibsMsg.SAVE_DISG_HELP_6);
     }
 }

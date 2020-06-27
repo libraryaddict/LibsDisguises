@@ -38,7 +38,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
         }
 
         if (!sender.hasPermission("libsdisguises.copydisguise")) {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
             return true;
         }
 
@@ -70,7 +70,8 @@ public class CopyDisguiseCommand implements CommandExecutor {
                     .addInteraction(sender.getName(), new CopyDisguiseInteraction(this),
                             DisguiseConfig.getDisguiseEntityExpire());
 
-            sender.sendMessage(LibsMsg.DISGUISECOPY_INTERACT.get(DisguiseConfig.getDisguiseEntityExpire()));
+            DisguiseUtilities
+                    .sendMessage(sender, LibsMsg.DISGUISECOPY_INTERACT, DisguiseConfig.getDisguiseEntityExpire());
             return true;
         }
 

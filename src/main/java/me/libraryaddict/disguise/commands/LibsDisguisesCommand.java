@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.libsdisguises.*;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -113,13 +114,13 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
             if (command != null) {
                 if (!command.hasPermission(sender)) {
-                    sender.sendMessage(LibsMsg.NO_PERM.get());
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
                     return true;
                 }
 
                 command.onCommand(sender, args);
             } else {
-                sender.sendMessage(LibsMsg.LIBS_COMMAND_WRONG_ARG.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_COMMAND_WRONG_ARG);
             }
         }
 

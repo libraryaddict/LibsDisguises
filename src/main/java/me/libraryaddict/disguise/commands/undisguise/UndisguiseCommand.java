@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -21,19 +22,19 @@ public class UndisguiseCommand implements CommandExecutor {
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            sender.sendMessage(LibsMsg.NO_CONSOLE.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
             return true;
         }
 
         if (sender.hasPermission("libsdisguises.undisguise") && !"%%__USER__%%".equals(12345 + "")) {
             if (DisguiseAPI.isDisguised((Entity) sender)) {
                 DisguiseAPI.undisguiseToAll((Player) sender);
-                sender.sendMessage(LibsMsg.UNDISG.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG);
             } else {
-                sender.sendMessage(LibsMsg.NOT_DISGUISED.get());
+                DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_DISGUISED);
             }
         } else {
-            sender.sendMessage(LibsMsg.NO_PERM.get());
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
         }
 
         return true;
