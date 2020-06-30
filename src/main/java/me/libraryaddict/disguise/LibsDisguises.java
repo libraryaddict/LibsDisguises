@@ -80,17 +80,6 @@ public class LibsDisguises extends JavaPlugin {
                     "reloads gracefully!");
         }
 
-        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
-
-        String requiredProtocolLib = "4.5.1";
-
-        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
-            getLogger().severe("!! Attention please !!");
-            getLogger().severe("Update your ProtocolLib! You are running " + version +
-                    " but the minimum version you should be on is " + requiredProtocolLib + "!");
-            getLogger().severe("!! Attention please !!");
-        }
-
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
         }
@@ -129,6 +118,19 @@ public class LibsDisguises extends JavaPlugin {
                             .collect(Collectors.toList()), " & ") + "!");
             getPluginLoader().disablePlugin(this);
             return;
+        }
+
+        String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+
+        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+            getLogger().severe("!! May I have your attention please !!");
+            getLogger().severe("Update your ProtocolLib! You are running " + version +
+                    " but the minimum version you should be on is " + requiredProtocolLib + "!");
+            getLogger()
+                    .severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" +
+                            ".jar");
+            getLogger().severe("!! May I have your attention please !!");
         }
 
         // If this is a release build, even if jenkins build..

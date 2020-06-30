@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -322,6 +323,20 @@ public class DisguiseListener implements Listener {
 
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
         plugin.getUpdateChecker().notifyUpdate(p);
+
+        if (p.isOp()) {
+            String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+            String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+
+            if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+                p.sendMessage(ChatColor.RED + "Update your ProtocolLib! You are running " + version +
+                        " but the minimum version you should be on is " + requiredProtocolLib + "!");
+                p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                                "/ProtocolLib" +
+                                ".jar");
+                p.sendMessage(ChatColor.RED + "Use /ld updateprotocollib - To update to the latest development build");
+            }
+        }
 
         if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
                 DisguiseUtilities.hasGameProfile(p.getName())) {

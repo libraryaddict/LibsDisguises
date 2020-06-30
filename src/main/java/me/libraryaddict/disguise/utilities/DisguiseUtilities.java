@@ -35,6 +35,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -152,6 +154,7 @@ public class DisguiseUtilities {
     private static boolean invalidFile;
     @Getter
     private static char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+    private static Pattern hexColor;
 
     public static void setPlayerVelocity(Player player) {
         if (player == null) {
@@ -161,6 +164,10 @@ public class DisguiseUtilities {
             velocityID = player.getEntityId();
             velocityTime = player.getWorld().getTime();
         }
+    }
+
+    public static String getProtocolLibRequiredVersion() {
+        return NmsVersion.v1_16.isSupported() ? "4.6.0" : "4.5.1";
     }
 
     /**
@@ -972,7 +979,10 @@ public class DisguiseUtilities {
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         }
         catch (Exception ex) {
+        }
 
+        if (NmsVersion.v1_16.isSupported()) {
+            hexColor = Pattern.compile("<#[0-9a-fA-F]{6}>");
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -2067,7 +2077,7 @@ public class DisguiseUtilities {
 
     public static int[] getNumericVersion(String version) {
         int[] v = new int[0];
-        for (String split : version.split("\\.-")) {
+        for (String split : version.split("\\.|-")) {
             if (!split.matches("[0-9]+")) {
                 return v;
             }
@@ -2077,6 +2087,33 @@ public class DisguiseUtilities {
         }
 
         return v;
+    }
+
+    public static BaseComponent[] getColoredChat(String string) {
+        if (hexColor == null) {
+            return new ComponentBuilder().appendLegacy(string).create();
+        }
+
+        Matcher match = hexColor.matcher(string);
+
+        ComponentBuilder builder = new ComponentBuilder();
+        int lastMatch = 0;
+
+        while (match.find()) {
+            if (match.start() > lastMatch) {
+                builder.appendLegacy(string.substring(lastMatch, match.start()));
+            }
+
+            lastMatch = match.end();
+
+            builder.color(net.md_5.bungee.api.ChatColor.of(match.group().substring(1, 8)));
+        }
+
+        if (lastMatch < string.length()) {
+            builder.appendLegacy(string.substring(lastMatch));
+        }
+
+        return builder.create();
     }
 
     public static boolean isOlderThan(String requiredVersion, String theirVersion) {
@@ -2401,8 +2438,13 @@ public class DisguiseUtilities {
 
                 WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-                Object name = NmsVersion.v1_13.isSupported() ? Optional.of(WrappedChatComponent.fromText(newNames[i])) :
-                        newNames[i];
+                Object name;
+
+                if (NmsVersion.v1_13.isSupported()) {
+                    name = Optional.of(WrappedChatComponent.fromText(newNames[i]));
+                } else {
+                    name = newNames[i];
+                }
 
                 WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(
                         NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME :

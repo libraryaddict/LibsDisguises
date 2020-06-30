@@ -327,6 +327,8 @@ public enum LibsMsg {
     USING_DEFAULT_CONFIG(ChatColor.DARK_GREEN + "Using the default config!"),
     LIBS_SCOREBOARD_ISSUES(ChatColor.GREEN + "Too many issues found, hidden %s"),
     LIBS_SCOREBOARD_NO_ISSUES(ChatColor.GREEN + "No issues found in player disguise scoreboard name teams"),
+    LD_COMMAND_UPDATEPROTOCOLLIB(ChatColor.BLUE + "/libsdisguises updateprotocollib - " + ChatColor.AQUA +
+            "Updates ProtocolLib to the latest development version"),
     LD_COMMAND_HELP(ChatColor.BLUE + "/libsdisguises help - " + ChatColor.AQUA + "Returns this!"),
     LD_COMMAND_COUNT(ChatColor.BLUE + "/libsdisguises count - " + ChatColor.AQUA +
             "Tells you how many active disguises there are"),
@@ -357,15 +359,6 @@ public enum LibsMsg {
     SELF_DISGUISE_HIDDEN(ChatColor.GREEN + "Self disguise hidden as it's too tall..");
 
     private final String string;
-    private static final Pattern hexColor;
-
-    static {
-        if (NmsVersion.v1_16.isSupported()) {
-            hexColor = Pattern.compile("<#[0-9a-fA-F]{6}>");
-        } else {
-            hexColor = null;
-        }
-    }
 
     LibsMsg(String string) {
         this.string = string;
@@ -378,30 +371,7 @@ public enum LibsMsg {
     public BaseComponent[] getChat(Object... strings) {
         String string = get(strings);
 
-        if (hexColor == null) {
-            return new ComponentBuilder().appendLegacy(string).create();
-        }
-
-        Matcher match = hexColor.matcher(string);
-
-        ComponentBuilder builder = new ComponentBuilder();
-        int lastMatch = 0;
-
-        while (match.find()) {
-            if (match.start() > lastMatch) {
-                builder.appendLegacy(string.substring(lastMatch, match.start()));
-            }
-
-            lastMatch = match.end();
-
-            builder.color(net.md_5.bungee.api.ChatColor.of(match.group().substring(1, 8)));
-        }
-
-        if (lastMatch < string.length()) {
-            builder.appendLegacy(string.substring(lastMatch));
-        }
-
-        return builder.create();
+        return DisguiseUtilities.getColoredChat(string);
     }
 
     public String get(Object... strings) {

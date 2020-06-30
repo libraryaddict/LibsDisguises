@@ -14,6 +14,6 @@ public enum NmsVersion {
      * If this nms version isn't newer than the running version
      */
     public boolean isSupported() {
-        return ReflectionManager.getVersion().ordinal() >= ordinal();
+        return ReflectionManager.getVersion() != null && ReflectionManager.getVersion().ordinal() >= ordinal();
     }
 }
