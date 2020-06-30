@@ -40,6 +40,8 @@ public class LDUpdate implements LDCommand {
         }
 
         boolean releaseBuilds = checker.isUsingReleaseBuilds();
+        boolean forceUpdate = args[0].endsWith("!");
+        boolean forceCheck = args[0].endsWith("?") || args.length > 1 || forceUpdate;
 
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("dev")) {
@@ -54,7 +56,8 @@ public class LDUpdate implements LDCommand {
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
 
-        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && args.length <= 1) {
+        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && args.length <= 1 &&
+                !forceCheck) {
             if (checker.isServerLatestVersion()) {
                 DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_ON_LATEST);
                 return;
@@ -71,7 +74,7 @@ public class LDUpdate implements LDCommand {
             public void run() {
                 LibsMsg updateResult = null;
 
-                if (checker.getUpdate() == null || args.length > 1 || checker.isOldUpdate()) {
+                if (checker.getUpdate() == null || args.length > 1 || checker.isOldUpdate() || forceCheck) {
                     updateResult = checker.doUpdateCheck();
                 }
 
@@ -90,7 +93,7 @@ public class LDUpdate implements LDCommand {
                     return;
                 }
 
-                if (!args[0].endsWith("!")) {
+                if (!forceUpdate) {
                     if (updateResult != null) {
                         sender.sendMessage(updateResult.get());
                     } else {
