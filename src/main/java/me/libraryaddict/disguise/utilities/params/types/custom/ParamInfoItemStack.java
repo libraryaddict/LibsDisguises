@@ -24,6 +24,9 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
 
+        if (this instanceof ParamInfoItemBlock)
+            return;
+
         setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%");
     }
 
