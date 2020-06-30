@@ -75,7 +75,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         Disguise disguise = packets.getDisguise();
 
         if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-            if (disguise.getWatcher() instanceof LivingWatcher && !NmsVersion.v1_16.isSupported()) {
+            if (disguise.getWatcher() instanceof LivingWatcher) {
                 ArrayList<WrappedAttribute> attributes = new ArrayList<>();
 
                 WrappedAttribute.Builder builder = WrappedAttribute.newBuilder().attributeKey("generic.maxHealth");

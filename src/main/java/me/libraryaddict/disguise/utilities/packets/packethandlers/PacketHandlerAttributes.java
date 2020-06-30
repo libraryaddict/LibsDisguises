@@ -50,8 +50,7 @@ public class PacketHandlerAttributes implements IPacketHandler {
             return;
         }
 
-        // Skip if its 1.16, PL can't handle it atm
-        if (disguise.isMiscDisguise() || NmsVersion.v1_16.isSupported()) {
+        if (disguise.isMiscDisguise()) {
             return;
         }
 
