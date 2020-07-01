@@ -2117,15 +2117,15 @@ public class DisguiseUtilities {
     }
 
     public static boolean isOlderThan(String requiredVersion, String theirVersion) {
-        int[] ourVersion = getNumericVersion(requiredVersion);
-        int[] theirs = getNumericVersion(theirVersion);
+        int[] required = getNumericVersion(requiredVersion);
+        int[] has = getNumericVersion(theirVersion);
 
-        for (int i = 0; i < Math.min(ourVersion.length, theirs.length); i++) {
-            if (ourVersion[i] <= theirs[i]) {
+        for (int i = 0; i < Math.min(required.length, has.length); i++) {
+            if (required[i] == has[i]) {
                 continue;
             }
 
-            return true;
+            return required[i] >= has[i];
         }
 
         return false;
