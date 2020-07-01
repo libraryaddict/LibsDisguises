@@ -17,7 +17,6 @@ public class InsentientWatcher extends LivingWatcher {
 
     public void setMainHand(MainHand mainHand) {
         setInsentientFlag(2, mainHand == MainHand.RIGHT);
-        sendData(MetaIndex.INSENTIENT_META);
     }
 
     public boolean isAI() {
@@ -26,7 +25,6 @@ public class InsentientWatcher extends LivingWatcher {
 
     public void setAI(boolean ai) {
         setInsentientFlag(1, ai);
-        sendData(MetaIndex.INSENTIENT_META);
     }
 
     private void setInsentientFlag(int i, boolean flag) {
@@ -37,6 +35,8 @@ public class InsentientWatcher extends LivingWatcher {
         } else {
             setData(MetaIndex.INSENTIENT_META, (byte) (b0 & i));
         }
+
+        sendData(MetaIndex.INSENTIENT_META);
     }
 
     private boolean getInsentientFlag(int i) {
@@ -51,6 +51,5 @@ public class InsentientWatcher extends LivingWatcher {
     @NmsAddedIn(val = NmsVersion.v1_14)
     public void setEnraged(boolean enraged) {
         setInsentientFlag(4, enraged);
-        sendData(MetaIndex.INSENTIENT_META);
     }
 }

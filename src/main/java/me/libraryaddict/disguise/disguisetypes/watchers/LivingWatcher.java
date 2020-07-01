@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -11,11 +12,13 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Color;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffectType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -66,6 +69,52 @@ public class LivingWatcher extends FlagWatcher {
     public void setHealth(float health) {
         setData(MetaIndex.LIVING_HEALTH, health);
         sendData(MetaIndex.LIVING_HEALTH);
+    }
+
+    /*@NmsAddedIn(val = NmsVersion.v1_13)
+    public MainHand getMainHand() {
+        return getHandFlag(0) ? MainHand.RIGHT : MainHand.LEFT;
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public void setMainHand(MainHand hand) {
+        setHandFlag(0, hand == MainHand.RIGHT);
+    }*/
+
+    private boolean getHandFlag(int byteValue) {
+        return (getData(MetaIndex.LIVING_HAND) & 1 << byteValue) != 0;
+    }
+
+    private void setHandFlag(int byteValue, boolean flag) {
+        byte b0 = getData(MetaIndex.LIVING_HAND);
+
+        if (flag) {
+            setData(MetaIndex.LIVING_HAND, (byte) (b0 | 1 << byteValue));
+        } else {
+            setData(MetaIndex.LIVING_HAND, (byte) (b0 & ~(1 << byteValue)));
+        }
+
+        sendData(MetaIndex.LIVING_HAND);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public boolean isRightClicking() {
+        return getHandFlag(0);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public void setRightClicking(boolean setRightClicking) {
+        setHandFlag(0, setRightClicking);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public boolean isSpinning() {
+        return getHandFlag(2);
+    }
+
+    @NmsAddedIn(val = NmsVersion.v1_13)
+    public void setSpinning(boolean setSpinning) {
+        setHandFlag(2, setSpinning);
     }
 
     public double getMaxHealth() {

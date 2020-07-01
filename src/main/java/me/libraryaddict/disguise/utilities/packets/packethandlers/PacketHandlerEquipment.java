@@ -84,16 +84,17 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 newSlots.add(pair);
             }
 
-            if (disguise.getWatcher().isRightClicking() && slot == EquipmentSlot.HAND) {
-                ItemStack heldItem = packets.getPackets().get(0).getItemModifier().read(0);
+            if (disguise.getWatcher().isRightClicking() &&
+                    (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
+                itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
 
-                if (heldItem != null && heldItem.getType() != Material.AIR) {
+                if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
                     List<WrappedWatchableObject> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META,
-                                WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
+                        WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.LIVING_HAND,
+                                WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_HAND.getIndex()));
 
                         if (watch != null)
                             list.add(watch);
@@ -101,7 +102,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                         list = disguise.getWatcher().convert(list);
                     } else {
                         for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
-                            if (obj.getIndex() == 0) {
+                            if (obj.getIndex() == MetaIndex.LIVING_HAND.getIndex()) {
                                 list.add(obj);
                                 break;
                             }
@@ -117,7 +118,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     PacketContainer packetUnblock = packetBlock.deepClone();
                     // Make a packet to send the 'unblock'
                     for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
-                        watcher.setValue((byte) ((byte) watcher.getValue() & ~(1 << 4)));
+                        watcher.setValue((byte) 0);
                     }
 
                     // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
@@ -158,16 +159,17 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     .write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
         }
 
-        if (disguise.getWatcher().isRightClicking() && slot == EquipmentSlot.HAND) {
+        if (disguise.getWatcher().isRightClicking() && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
             ItemStack heldItem = packets.getPackets().get(0).getItemModifier().read(0);
 
             if (heldItem != null && heldItem.getType() != Material.AIR) {
                 // Convert the datawatcher
                 List<WrappedWatchableObject> list = new ArrayList<>();
+                MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_HAND : MetaIndex.ENTITY_META;
 
                 if (DisguiseConfig.isMetaPacketsEnabled()) {
-                    WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META,
-                            WrappedDataWatcher.getEntityWatcher(entity).getByte(0));
+                    WrappedWatchableObject watch = ReflectionManager.createWatchable(toUse,
+                            WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
 
                     if (watch != null)
                         list.add(watch);
@@ -175,7 +177,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     list = disguise.getWatcher().convert(list);
                 } else {
                     for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
-                        if (obj.getIndex() == 0) {
+                        if (obj.getIndex() == toUse.getIndex()) {
                             list.add(obj);
                             break;
                         }
@@ -191,7 +193,11 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 PacketContainer packetUnblock = packetBlock.deepClone();
                 // Make a packet to send the 'unblock'
                 for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
-                    watcher.setValue((byte) ((byte) watcher.getValue() & ~(1 << 4)));
+                    if (NmsVersion.v1_13.isSupported()) {
+                        watcher.setValue((byte) 0);
+                    } else {
+                        watcher.setValue((byte) ((byte) watcher.getValue() & ~(1 << 4)));
+                    }
                 }
 
                 // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?

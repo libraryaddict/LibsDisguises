@@ -235,9 +235,10 @@ public class DisguiseParser {
 
             if (!Objects.deepEquals(dObj, object)) {
                 throw new IllegalStateException(String.format(
-                        "%s has conflicting values! This means it expected the same value again but received a " +
+                        "%s has conflicting values in class %s! This means it expected the same value again but " +
+                                "received a " +
                                 "different value on a different disguise! %s is not the same as %s!",
-                        setMethod.getName(), object, dObj));
+                        setMethod.getName(), setMethod.getDeclaringClass().getName(), object, dObj));
             }
 
             return;

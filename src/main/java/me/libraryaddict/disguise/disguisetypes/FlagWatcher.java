@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -52,7 +53,6 @@ public class FlagWatcher {
     private boolean[] modifiedEntityAnimations = new boolean[8];
     private transient List<WrappedWatchableObject> watchableObjects;
     private boolean sleeping;
-    private boolean swimming;
     private transient boolean previouslySneaking;
     @Getter
     private boolean upsideDown;
@@ -88,7 +88,6 @@ public class FlagWatcher {
         cloned.modifiedEntityAnimations = Arrays.copyOf(modifiedEntityAnimations, modifiedEntityAnimations.length);
         cloned.addEntityAnimations = addEntityAnimations;
         cloned.upsideDown = upsideDown;
-        cloned.swimming = swimming;
         cloned.sleeping = sleeping;
 
         return cloned;
@@ -559,11 +558,17 @@ public class FlagWatcher {
         sendData(MetaIndex.ENTITY_NO_GRAVITY);
     }
 
+    //@NmsRemovedIn(val = NmsVersion.v1_13)
     public boolean isRightClicking() {
-        return getEntityFlag(4);
+        return !NmsVersion.v1_13.isSupported() && getEntityFlag(4);
     }
 
+    //@NmsRemovedIn(val = NmsVersion.v1_13)
     public void setRightClicking(boolean setRightClicking) {
+        if (NmsVersion.v1_13.isSupported()) {
+            return;
+        }
+
         setEntityFlag(4, setRightClicking);
         sendData(MetaIndex.ENTITY_META);
     }
@@ -796,7 +801,7 @@ public class FlagWatcher {
 
     @NmsAddedIn(val = NmsVersion.v1_14)
     public boolean isSwimming() {
-        return swimming;
+        return getEntityFlag(4);
     }
 
     @NmsAddedIn(val = NmsVersion.v1_14)
@@ -805,7 +810,7 @@ public class FlagWatcher {
             return;
         }
 
-        this.swimming = swimming;
+        setEntityFlag(4, swimming);
 
         updatePose();
     }
