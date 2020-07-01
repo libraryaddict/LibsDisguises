@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -17,6 +16,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -139,7 +139,7 @@ public class LDUploadLogs implements LDCommand {
         }
 
         try {
-            String latestText = FileUtils.readFileToString(latest, "UTF-8");
+            String latestText = new String(Files.readAllBytes(latest.toPath()));
 
             boolean valid = false;
             int lastFind = 0;
@@ -176,8 +176,8 @@ public class LDUploadLogs implements LDCommand {
                 @Override
                 public void run() {
                     try {
-                        String disguiseText = FileUtils.readFileToString(disguises, "UTF-8");
-                        StringBuilder configText = new StringBuilder(FileUtils.readFileToString(config, "UTF-8"));
+                        String disguiseText = new String(Files.readAllBytes(disguises.toPath()));
+                        StringBuilder configText = new StringBuilder(new String(Files.readAllBytes(config.toPath())));
 
                         configText.append("\n\n");
 
@@ -229,6 +229,7 @@ public class LDUploadLogs implements LDCommand {
             e.printStackTrace();
         }
     }
+
 
     private boolean isTooBig(File file) {
         return file.exists() && file.length() >= 512 * 1024;
