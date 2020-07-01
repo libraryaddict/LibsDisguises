@@ -212,8 +212,8 @@ public class LDUploadLogs implements LDCommand {
                                     sender.spigot().sendMessage(builder.create());
                                 } else {
                                     sender.sendMessage(
-                                            ChatColor.GOLD + "Log: " + latestPaste + "\nConfig: " + configPaste +
-                                                    "\nDisguises: " + disguisesPaste);
+                                            ChatColor.GOLD + "Please provide the three links! Log: " + latestPaste +
+                                                    "\nConfig: " + configPaste + "\nDisguises: " + disguisesPaste);
                                 }
                             }
                         }.runTask(LibsDisguises.getInstance());
@@ -229,7 +229,6 @@ public class LDUploadLogs implements LDCommand {
             e.printStackTrace();
         }
     }
-
 
     private boolean isTooBig(File file) {
         return file.exists() && file.length() >= 512 * 1024;
