@@ -15,7 +15,6 @@ import io.netty.handler.codec.DecoderException;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import net.minecraft.server.v1_16_R1.PacketDataSerializer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;

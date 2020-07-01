@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise;
 
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
