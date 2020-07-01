@@ -73,7 +73,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
                     PacketContainer equipPacket = sentPacket.shallowClone();
 
-                    packets.getPackets().add(1, equipPacket);
+                    packets.getPackets().add(packets.getPackets().size(), equipPacket);
 
                     equipPacket.getModifier().write(1, newSlots);
                 }
