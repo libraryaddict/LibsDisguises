@@ -45,7 +45,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             int radius = maxRadius;
             if (args.length > 0) {
                 if (!isNumeric(args[0])) {
-                    sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[0]));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[0]);
                     return true;
                 }
                 radius = Integer.parseInt(args[0]);

@@ -61,7 +61,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (entityTarget == null) {
-            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
             return true;
         }
 
@@ -81,7 +81,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
+                DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
             return true;
         }
@@ -119,12 +119,13 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
-            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG.get(entityTarget instanceof Player ? entityTarget.getName() :
-                    DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_PLAYER_AS_DISG,
+                    entityTarget instanceof Player ? entityTarget.getName() :
+                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName());
         } else {
-            sender.sendMessage(LibsMsg.DISG_PLAYER_AS_DISG_FAIL
-                    .get(entityTarget instanceof Player ? entityTarget.getName() :
-                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_PLAYER_AS_DISG_FAIL,
+                    entityTarget instanceof Player ? entityTarget.getName() :
+                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName());
         }
 
         return true;

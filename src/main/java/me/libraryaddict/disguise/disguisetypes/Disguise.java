@@ -430,10 +430,8 @@ public abstract class Disguise {
                         disguiseExpires < System.currentTimeMillis())) { // If disguise expired
                     removeDisguise();
 
-                    String expired = LibsMsg.EXPIRED_DISGUISE.get();
-
-                    if (getEntity() instanceof Player && expired.length() > 0) {
-                        getEntity().sendMessage(expired);
+                    if (getEntity() instanceof Player) {
+                        DisguiseUtilities.sendMessage(getEntity(), LibsMsg.EXPIRED_DISGUISE);
                     }
 
                     return;

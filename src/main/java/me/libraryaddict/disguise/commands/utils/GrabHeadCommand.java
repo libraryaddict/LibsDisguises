@@ -67,14 +67,14 @@ public class GrabHeadCommand implements CommandExecutor {
 
             @Override
             public void onError(LibsMsg msg, Object... args) {
-                sender.sendMessage(msg.get(args));
+                DisguiseUtilities.sendMessage(sender, msg, args);
 
                 runnable.cancel();
             }
 
             @Override
             public void onInfo(LibsMsg msg, Object... args) {
-                sender.sendMessage(msg.get(args));
+                DisguiseUtilities.sendMessage(sender, msg, args);
             }
 
             @Override

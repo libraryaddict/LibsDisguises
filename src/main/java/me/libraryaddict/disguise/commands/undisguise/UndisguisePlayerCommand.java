@@ -85,17 +85,19 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (entityTarget == null) {
-            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
             return true;
         }
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
             DisguiseAPI.undisguiseToAll(entityTarget);
-            sender.sendMessage(LibsMsg.UNDISG_PLAYER.get(entityTarget instanceof Player ? entityTarget.getName() :
-                    DisguiseType.getType(entityTarget).toReadable()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER,
+                    entityTarget instanceof Player ? entityTarget.getName() :
+                            DisguiseType.getType(entityTarget).toReadable());
         } else {
-            sender.sendMessage(LibsMsg.UNDISG_PLAYER_FAIL.get(entityTarget instanceof Player ? entityTarget.getName() :
-                    DisguiseType.getType(entityTarget).toReadable()));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER_FAIL,
+                    entityTarget instanceof Player ? entityTarget.getName() :
+                            DisguiseType.getType(entityTarget).toReadable());
         }
 
         return true;

@@ -372,16 +372,20 @@ public enum LibsMsg {
     }
 
     public String get(Object... strings) {
-        if (StringUtils.countMatches(getRaw(), "%s") != strings.length) {
+        int matches = StringUtils.countMatches(getRaw(), "%s");
+
+        if (matches != strings.length) {
             DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
-                    ". Please inform plugin author.");
+                    ". Please inform plugin author if not using translations.");
         }
 
-        if (strings.length == 0) {
-            return TranslateType.MESSAGES.get(getRaw());
+        String trans = TranslateType.MESSAGES.get(getRaw());
+
+        if (trans.isEmpty() || strings.length == 0) {
+            return trans;
         }
 
-        return String.format(TranslateType.MESSAGES.get(getRaw()), strings);
+        return String.format(trans, strings);
     }
 
     public String toString() {

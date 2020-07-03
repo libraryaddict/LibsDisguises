@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
 
@@ -39,7 +40,7 @@ public class LDHelp implements LDCommand {
                 continue;
             }
 
-            sender.sendMessage(cmd.getHelp().get());
+            DisguiseUtilities.sendMessage(sender, cmd.getHelp());
         }
     }
 

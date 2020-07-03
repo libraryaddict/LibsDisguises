@@ -67,7 +67,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 DisguisePerm type = DisguiseParser.getDisguisePerm(args[0]);
 
                 if (type == null) {
-                    sender.sendMessage(LibsMsg.DHELP_CANTFIND.get(args[0]));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_CANTFIND, args[0]);
                     return true;
                 }
 
@@ -114,8 +114,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
                 }
 
-                sender.sendMessage(LibsMsg.DHELP_OPTIONS.get(ChatColor.DARK_RED + type.toReadable(),
-                        StringUtils.join(methods, ChatColor.DARK_RED + ", ")));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.DHELP_OPTIONS, ChatColor.DARK_RED + type.toReadable(),
+                        StringUtils.join(methods, ChatColor.DARK_RED + ", "));
 
                 if (ignored > 0) {
                     DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERMS_USE_OPTIONS, ignored);

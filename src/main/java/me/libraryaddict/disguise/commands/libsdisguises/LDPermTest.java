@@ -41,7 +41,7 @@ public class LDPermTest implements LDCommand {
             player = Bukkit.getPlayer(args[1]);
 
             if (player == null) {
-                sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[1]));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[1]);
                 return;
             }
         } else {
@@ -80,9 +80,9 @@ public class LDPermTest implements LDCommand {
         }
 
         if (!sender.hasPermission("libsdisguises.seecmd.disguise")) {
-            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_FAIL.get("libsdisguises.seecmd.disguise"));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_FAIL, "libsdisguises.seecmd.disguise");
         } else {
-            sender.sendMessage(LibsMsg.LIBS_PERM_COMMAND_SUCCESS.get("libsdisguises.seecmd.disguise"));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_SUCCESS, "libsdisguises.seecmd.disguise");
         }
     }
 

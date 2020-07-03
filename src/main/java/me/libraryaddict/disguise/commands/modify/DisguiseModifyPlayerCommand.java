@@ -50,7 +50,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         }
 
         if (entityTarget == null) {
-            sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
             return true;
         }
 
@@ -92,7 +92,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
+                DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
             return true;
         }

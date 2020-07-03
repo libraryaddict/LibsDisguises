@@ -2148,11 +2148,33 @@ public class DisguiseUtilities {
         return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
     }
 
+    public static void sendMessage(CommandSender sender, String message) {
+        if (!NmsVersion.v1_16.isSupported()) {
+            if (!message.isEmpty()) {
+                sender.sendMessage(message);
+            }
+        } else {
+            BaseComponent[] components = getColoredChat(message);
+
+            if (components.length > 0) {
+                sender.spigot().sendMessage(components);
+            }
+        }
+    }
+
     public static void sendMessage(CommandSender sender, LibsMsg msg, Object... args) {
         if (!NmsVersion.v1_16.isSupported()) {
-            sender.sendMessage(msg.get(args));
+            String message = msg.get(args);
+
+            if (!message.isEmpty()) {
+                sender.sendMessage(message);
+            }
         } else {
-            sender.spigot().sendMessage(msg.getChat(args));
+            BaseComponent[] components = msg.getChat(args);
+
+            if (components.length > 0) {
+                sender.spigot().sendMessage(components);
+            }
         }
     }
 
@@ -2219,6 +2241,10 @@ public class DisguiseUtilities {
      * Modification of TextComponent.fromLegacyText
      */
     public static BaseComponent[] getColoredChat(String message) {
+        if (message.isEmpty()) {
+            return new BaseComponent[0];
+        }
+
         ArrayList<BaseComponent> components = new ArrayList();
         StringBuilder builder = new StringBuilder();
         TextComponent component = new TextComponent();

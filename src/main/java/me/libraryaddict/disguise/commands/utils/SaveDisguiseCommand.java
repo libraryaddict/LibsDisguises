@@ -71,7 +71,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
             }
             catch (DisguiseParseException e) {
                 if (e.getMessage() != null) {
-                    sender.sendMessage(e.getMessage());
+                    DisguiseUtilities.sendMessage(sender, e.getMessage());
                 } else {
                     DisguiseUtilities.sendMessage(sender, LibsMsg.PARSE_CANT_LOAD);
                 }
@@ -109,7 +109,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                 String usable = SkinUtils.getUsableStatus();
 
                 if (usable != null) {
-                    sender.sendMessage(usable);
+                    DisguiseUtilities.sendMessage(sender, usable);
                     return true;
                 }
 
@@ -127,12 +127,12 @@ public class SaveDisguiseCommand implements CommandExecutor {
                     public void onError(LibsMsg msg, Object... args) {
                         runnable.cancel();
 
-                        sender.sendMessage(msg.get(args));
+                        DisguiseUtilities.sendMessage(sender, msg, args);
                     }
 
                     @Override
                     public void onInfo(LibsMsg msg, Object... args) {
-                        sender.sendMessage(msg.get(args));
+                        DisguiseUtilities.sendMessage(sender, msg, args);
                     }
 
                     @Override
@@ -169,7 +169,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
         }
         catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
-                sender.sendMessage(e.getMessage());
+                DisguiseUtilities.sendMessage(sender, e.getMessage());
             } else {
                 DisguiseUtilities.sendMessage(sender, LibsMsg.PARSE_CANT_LOAD);
             }

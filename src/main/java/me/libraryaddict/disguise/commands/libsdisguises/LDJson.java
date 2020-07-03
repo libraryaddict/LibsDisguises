@@ -88,7 +88,7 @@ public class LDJson implements LDCommand {
 
     private void sendMessage(CommandSender sender, LibsMsg prefix, LibsMsg oldVer, String string) {
         if (!NmsVersion.v1_13.isSupported()) {
-            sender.sendMessage(oldVer.get(string));
+            DisguiseUtilities.sendMessage(sender, oldVer, string);
             return;
         }
 

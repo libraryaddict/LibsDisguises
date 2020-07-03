@@ -45,7 +45,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
+                DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
 
             return true;

@@ -125,11 +125,7 @@ public class DisguiseListener implements Listener {
         if (disguises.length > 0) {
             DisguiseAPI.undisguiseToAll(player);
 
-            String blown = LibsMsg.BLOWN_DISGUISE.get();
-
-            if (blown.length() > 0) {
-                player.sendMessage(blown);
-            }
+            DisguiseUtilities.sendMessage(player, LibsMsg.BLOWN_DISGUISE);
         }
     }
 
@@ -202,22 +198,14 @@ public class DisguiseListener implements Listener {
                 if (disguises.length > 0) {
                     event.setCancelled(true);
 
-                    String cantAttack = LibsMsg.CANT_ATTACK_DISGUISED.get();
-
-                    if (cantAttack.length() > 0) {
-                        attacker.sendMessage(cantAttack);
-                    }
+                    DisguiseUtilities.sendMessage(attacker, LibsMsg.CANT_ATTACK_DISGUISED);
                 } else if (DisguiseConfig.getPvPTimer() > 0 && attacker.hasMetadata("LastDisguise")) {
                     long lastDisguised = attacker.getMetadata("LastDisguise").get(0).asLong();
 
                     if (lastDisguised + DisguiseConfig.getPvPTimer() * 1000 > System.currentTimeMillis()) {
                         event.setCancelled(true);
 
-                        String cantAttack = LibsMsg.CANT_ATTACK_DISGUISED_RECENTLY.get();
-
-                        if (cantAttack.length() > 0) {
-                            attacker.sendMessage(cantAttack);
-                        }
+                        DisguiseUtilities.sendMessage(attacker, LibsMsg.CANT_ATTACK_DISGUISED_RECENTLY);
                     }
                 }
             }
@@ -331,9 +319,9 @@ public class DisguiseListener implements Listener {
             if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
                 p.sendMessage(ChatColor.RED + "Update your ProtocolLib! You are running " + version +
                         " but the minimum version you should be on is " + requiredProtocolLib + "!");
-                p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
-                                "/ProtocolLib" +
-                                ".jar");
+                p.sendMessage(
+                        ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                                "/ProtocolLib" + ".jar");
                 p.sendMessage(ChatColor.RED + "Use /ld updateprotocollib - To update to the latest development build");
             }
         }
@@ -563,11 +551,7 @@ public class DisguiseListener implements Listener {
                     disguise.removeDisguise();
                 }
 
-                String msg = LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.get();
-
-                if (msg.length() > 0) {
-                    event.getPlayer().sendMessage(msg);
-                }
+                DisguiseUtilities.sendMessage(event.getPlayer(), LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED);
             }
         }
 
@@ -662,11 +646,7 @@ public class DisguiseListener implements Listener {
                     disguise.removeDisguise();
                 }
 
-                String msg = LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.get();
-
-                if (msg.length() > 0) {
-                    event.getPlayer().sendMessage(msg);
-                }
+                DisguiseUtilities.sendMessage(event.getPlayer(), LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED);
             }
         } else {
             // Stupid hack to fix worldswitch invisibility bug & paper packet bug

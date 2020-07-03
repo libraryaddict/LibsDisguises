@@ -78,8 +78,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             Collections.sort(classes);
 
-            sender.sendMessage(LibsMsg.DRADIUS_ENTITIES
-                    .get(ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN)));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_ENTITIES,
+                    ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
 
@@ -104,15 +104,15 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 if (type == null) {
-                    sender.sendMessage(LibsMsg.DMODRADIUS_UNRECOGNIZED.get(args[0]));
+                    DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_UNRECOGNIZED, args[0]);
                     return true;
                 }
             }
         }
 
         if (args.length == starting + 1) {
-            sender.sendMessage(
-                    (starting == 0 ? LibsMsg.DRADIUS_NEEDOPTIONS : LibsMsg.DRADIUS_NEEDOPTIONS_ENTITY).get());
+            DisguiseUtilities.sendMessage(sender,
+                    starting == 0 ? LibsMsg.DRADIUS_NEEDOPTIONS : LibsMsg.DRADIUS_NEEDOPTIONS_ENTITY);
             return true;
         } else if (args.length < 2) {
             DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_NEEDOPTIONS);
@@ -120,7 +120,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (!isInteger(args[starting])) {
-            sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[starting]));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[starting]);
             return true;
         }
 
@@ -213,7 +213,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
-                sender.sendMessage(ex.getMessage());
+                DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
         }
         catch (Exception ex) {

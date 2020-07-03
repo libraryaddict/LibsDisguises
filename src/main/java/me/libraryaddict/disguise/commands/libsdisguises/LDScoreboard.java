@@ -129,7 +129,7 @@ public class LDScoreboard implements LDCommand {
             player = Bukkit.getPlayer(args[1]);
 
             if (player == null) {
-                sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[1]));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[1]);
                 return;
             }
 

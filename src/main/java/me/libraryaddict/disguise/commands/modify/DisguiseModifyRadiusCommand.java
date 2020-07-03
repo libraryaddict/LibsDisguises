@@ -77,8 +77,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             Collections.sort(classes);
 
-            sender.sendMessage(LibsMsg.DMODRADIUS_USABLE
-                    .get(ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN)));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_USABLE,
+                    ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
 
@@ -99,14 +99,14 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             if (baseType == null) {
-                sender.sendMessage(LibsMsg.DMODRADIUS_UNRECOGNIZED.get(args[0]));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_UNRECOGNIZED, args[0]);
                 return true;
             }
         }
 
         if (args.length == starting + 1) {
-            sender.sendMessage(
-                    (starting == 0 ? LibsMsg.DMODRADIUS_NEEDOPTIONS : LibsMsg.DMODRADIUS_NEEDOPTIONS_ENTITY).get());
+            DisguiseUtilities.sendMessage(sender,
+                    starting == 0 ? LibsMsg.DMODRADIUS_NEEDOPTIONS : LibsMsg.DMODRADIUS_NEEDOPTIONS_ENTITY);
             return true;
         } else if (args.length < 2) {
             DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_NEEDOPTIONS);
@@ -114,7 +114,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         }
 
         if (!isInteger(args[starting])) {
-            sender.sendMessage(LibsMsg.NOT_NUMBER.get(args[starting]));
+            DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[starting]);
             return true;
         }
 
@@ -176,7 +176,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
             catch (DisguiseParseException ex) {
                 if (ex.getMessage() != null) {
-                    sender.sendMessage(ex.getMessage());
+                    DisguiseUtilities.sendMessage(sender, ex.getMessage());
                 }
 
                 return true;

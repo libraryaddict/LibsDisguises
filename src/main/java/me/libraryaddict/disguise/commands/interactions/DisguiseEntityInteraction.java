@@ -41,7 +41,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         }
         catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
-                p.sendMessage(e.getMessage());
+                DisguiseUtilities.sendMessage(p, e.getMessage());
             }
 
             return;

@@ -58,7 +58,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
             }
 
             if (target == null) {
-                sender.sendMessage(LibsMsg.CANNOT_FIND_PLAYER.get(args[0]));
+                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
                 return true;
             }
         }
@@ -91,7 +91,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
 
     public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
         if (!NmsVersion.v1_13.isSupported()) {
-            sender.sendMessage(oldVer.get(string));
+            DisguiseUtilities.sendMessage(sender, oldVer, string);
             return;
         }
 

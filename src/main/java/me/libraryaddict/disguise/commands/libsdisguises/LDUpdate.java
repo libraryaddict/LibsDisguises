@@ -95,10 +95,10 @@ public class LDUpdate implements LDCommand {
 
                 if (!forceUpdate) {
                     if (updateResult != null) {
-                        sender.sendMessage(updateResult.get());
+                        DisguiseUtilities.sendMessage(sender, updateResult);
                     } else {
                         for (String msg : checker.getUpdateMessage()) {
-                            sender.sendMessage(msg);
+                            DisguiseUtilities.sendMessage(sender, msg);
                         }
                     }
 
@@ -113,7 +113,7 @@ public class LDUpdate implements LDCommand {
                 }
 
                 for (String msg : checker.getUpdateMessage()) {
-                    sender.sendMessage(msg);
+                    DisguiseUtilities.sendMessage(sender, msg);
                 }
 
                 if (sender instanceof Player) {
