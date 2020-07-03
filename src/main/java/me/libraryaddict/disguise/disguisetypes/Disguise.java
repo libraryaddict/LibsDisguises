@@ -28,7 +28,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -45,17 +44,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Disguise {
-    private static List<UUID> viewSelf = new ArrayList<>();
-
-    /**
-     * Returns the list of people who have /disguiseViewSelf toggled on
-     *
-     * @return
-     */
-    public static List<UUID> getViewSelf() {
-        return viewSelf;
-    }
-
     private transient boolean disguiseInUse;
     private DisguiseType disguiseType;
     private transient BukkitRunnable runnable;
@@ -358,8 +346,8 @@ public abstract class Disguise {
         if (getNotifyBar() == DisguiseConfig.NotifyBar.ACTION_BAR && getEntity() instanceof Player &&
                 !getEntity().hasPermission("libsdisguises.noactionbar") &&
                 DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
-            ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                    new ComponentBuilder(LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName())).create());
+            ((Player) getEntity()).spigot()
+                    .sendMessage(ChatMessageType.ACTION_BAR, LibsMsg.ACTION_BAR_MESSAGE.getChat(getDisguiseName()));
         }
 
         if (isDynamicName()) {

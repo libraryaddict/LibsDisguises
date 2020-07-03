@@ -96,10 +96,12 @@ public class LDGithub {
 
             for (String s : users) {
                 if (LibsPremium.getPaidInformation() != null &&
-                        LibsPremium.getPaidInformation().getUserID().equals(s)) {
+                        (s.equals(LibsPremium.getPaidInformation().getDownloadID()) ||
+                                s.equals(LibsPremium.getPaidInformation().getUserID()))) {
                     LibsDisguises.getInstance().unregisterCommands(true);
                 } else {
-                    if (LibsPremium.getUserID() == null || !LibsPremium.getUserID().equals(s)) {
+                    if (LibsPremium.getUserID() == null ||
+                            (!s.equals(LibsPremium.getUserID()) && !s.equals(LibsPremium.getDownloadID()))) {
                         continue;
                     }
 

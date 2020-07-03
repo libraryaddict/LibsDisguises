@@ -21,7 +21,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
@@ -373,7 +373,7 @@ public class FlagWatcher {
         if (optional.isPresent()) {
             BaseComponent[] base = ComponentConverter.fromWrapper(optional.get());
 
-            return TextComponent.toLegacyText(base);
+            return DisguiseUtilities.getSimpleChat(base);
         }
 
         return null;
@@ -416,7 +416,8 @@ public class FlagWatcher {
             }
 
             if (NmsVersion.v1_13.isSupported()) {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent.fromText(name)));
+                setData(MetaIndex.ENTITY_CUSTOM_NAME, Optional.of(WrappedChatComponent
+                        .fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(name)))));
             } else {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
             }

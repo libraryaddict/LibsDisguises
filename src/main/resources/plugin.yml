@@ -56,6 +56,11 @@ commands:
     aliases: [dviewself, dvs, disguisevs, disvs, vsd, viewselfdisguise, viewselfd, selfdisguise, selfdisg, selfd]
     permission: libsdisguises.seecmd.viewself
     description: Toggle seeing your own disguise on or off.
+  disguiseviewbar:
+    aliases: [dviewbar, dvb, disguisevb, disvb, vsd, viewdisguisebar, viewbardisguise, bardisguise, bardisg, bard,
+              notifybar, viewnotifybar, disguisenotifybar, disgnotifybar, dnotifybar]
+    permission: libsdisguises.seecmd.viewself
+    description: Toggle seeing your own disguise on or off.
   disguisemodify:
     aliases: [dmodify, dmod, disgmodify]
     permission: libsdisguises.seecmd.disguisemodify
@@ -144,6 +149,7 @@ permissions:
       libsdisguises.seecmd.undisguiseradius: true
       libsdisguises.seecmd.disguiseclone: true
       libsdisguises.seecmd.disguiseviewself: true
+      libsdisguises.seecmd.disguiseviewbar: true
       libsdisguises.seecmd.disguisemodify: true
       libsdisguises.seecmd.disguisemodifyplayer: true
       libsdisguises.seecmd.disguisemodifyradius: true
@@ -154,58 +160,41 @@ permissions:
       libsdisguises.seecmd.grabhead: true
   libsdisguises.seecmd.disguiseviewself:
     description: See the /disguiseviewself command in tab-completion
-    default: true
+  libsdisguises.seecmd.disguiseviewbar:
+    description: See the /disguiseviewbar command in tab-completion
   libsdisguises.seecmd.disguise:
     description: See the /disguise command in tab-completion
-    default: true
   libsdisguises.seecmd.disguiseentity:
     description: See the /disguiseentity command in tab-completion
-    default: true
   libsdisguises.seecmd.disguisehelp:
     description: See the /disguisehelp command in tab-completion
-    default: true
   libsdisguises.seecmd.disguiseplayer:
     description: See the /disguiseplayer command in tab-completion
-    default: true
   libsdisguises.seecmd.disguiseradius:
     description: See the /disguiseradius command in tab-completion
-    default: true
   libsdisguises.seecmd.undisguise:
     description: See the /undisguise command in tab-completion
-    default: true
   libsdisguises.seecmd.undisguiseentity:
     description: See the /undisguiseentity command in tab-completion
-    default: true
   libsdisguises.seecmd.undisguiseplayer:
     description: See the /undisguiseplayer command in tab-completion
-    default: true
   libsdisguises.seecmd.undisguiseradius:
     description: See the /undisguiseradius command in tab-completion
-    default: true
   libsdisguises.seecmd.disguiseclone:
     description: See the /disguiseclone command in tab-completion
-    default: true
   libsdisguises.seecmd.disguisemodify:
     description: See the /disguisemodify command in tab-completion
-    default: true
   libsdisguises.seecmd.disguisemodifyplayer:
     description: See the /disguisemodifyplayer command in tab-completion
-    default: true
   libsdisguises.seecmd.disguisemodifyradius:
     description: See the /disguisemodifyradius command in tab-completion
-    default: true
   libsdisguises.seecmd.disguisemodifyentity:
     description: See the /disguisemodifyentity command in tab-completion
-    default: true
   libsdisguises.seecmd.copydisguise:
     description: See the /copydisguise command in tab-completion
-    default: true
   libsdisguises.seecmd.grabskin:
     description: See the /grabskin command in tab-completion
-    default: true
   libsdisguises.seecmd.savedisguise:
     description: See the /savedisguise command in tab-completion
-    default: true
   libsdisguises.seecmd.grabhead:
     description: See the /grabhead command in tab-completion
-    default: true

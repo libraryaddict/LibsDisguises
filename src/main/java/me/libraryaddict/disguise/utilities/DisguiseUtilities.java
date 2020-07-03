@@ -36,7 +36,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -58,7 +60,10 @@ import org.bukkit.util.Vector;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,29 +116,29 @@ public class DisguiseUtilities {
 
     @Getter
     public static final Random random = new Random();
-    private static LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     private static final List<Integer> isNoInteract = new ArrayList<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
     @Getter
-    private static Map<UUID, Set<TargetedDisguise>> disguises = new HashMap<>();
+    private static final Map<UUID, Set<TargetedDisguise>> disguises = new HashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
      * a max of a second.
      */
     @Getter
-    private static HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
-    private static HashSet<UUID> savedDisguiseList = new HashSet<>();
-    private static HashSet<String> cachedNames = new HashSet<>();
+    private static final HashMap<Integer, HashSet<TargetedDisguise>> futureDisguises = new HashMap<>();
+    private static final HashSet<UUID> savedDisguiseList = new HashSet<>();
+    private static final HashSet<String> cachedNames = new HashSet<>();
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
-    private static HashSet<UUID> selfDisguised = new HashSet<>();
-    private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
-    private static HashMap<UUID, String> disguiseTeam = new HashMap<>();
-    private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
-            "plugins/LibsDisguises/SavedDisguises");
+    private static final HashSet<UUID> selfDisguised = new HashSet<>();
+    private static final HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
+    private static final HashMap<UUID, String> disguiseTeam = new HashMap<>();
+    private static final File profileCache = new File("plugins/LibsDisguises/GameProfiles");
+    private static final File savedDisguises = new File("plugins/LibsDisguises/SavedDisguises");
     @Getter
     private static Gson gson;
     @Getter
@@ -145,16 +150,104 @@ public class DisguiseUtilities {
      */
     private static long velocityTime;
     private static int velocityID;
-    private static HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
+    private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
     private static boolean runningPaper;
     @Getter
-    private static MineSkinAPI mineSkinAPI = new MineSkinAPI();
+    private static final MineSkinAPI mineSkinAPI = new MineSkinAPI();
     @Getter
     private static boolean invalidFile;
     @Getter
-    private static char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
-    private static Pattern hexColor;
+    private static final char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
+    private static final Pattern urlMatcher = Pattern.compile("^(?:(https?)://)?([-\\w_.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    private final static List<UUID> viewSelf = new ArrayList<>();
+    private final static List<UUID> viewBar = new ArrayList<>();
+    private static long lastSavedPreferences;
+
+    /**
+     * Only allow saves every 2 minutes
+     */
+    public static void addSaveAttempt() {
+        if (lastSavedPreferences + TimeUnit.SECONDS.toMillis(120) > System.currentTimeMillis()) {
+            return;
+        }
+
+        lastSavedPreferences = System.currentTimeMillis();
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                saveViewPreferances();
+            }
+        }.runTaskLater(LibsDisguises.getInstance(), 20 * TimeUnit.SECONDS.toMillis(120));
+    }
+
+    /**
+     * Returns the list of people who have /disguiseViewSelf toggled
+     *
+     * @return
+     */
+    public static List<UUID> getViewSelf() {
+        return viewSelf;
+    }
+
+    public static void saveViewPreferances() {
+        if (!DisguiseConfig.isSaveUserPreferences()) {
+            return;
+        }
+
+        File viewPreferences = new File(LibsDisguises.getInstance().getDataFolder(), "preferences.json");
+
+        HashMap<String, List<UUID>> map = new HashMap<>();
+        map.put("selfdisguise", getViewSelf());
+        map.put("notifybar", getViewBar());
+
+        String json = getGson().toJson(map);
+
+        try {
+            Files.write(viewPreferences.toPath(), json.getBytes(), StandardOpenOption.CREATE);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadViewPreferences() {
+        File viewPreferences = new File(LibsDisguises.getInstance().getDataFolder(), "preferences.json");
+
+        if (!viewPreferences.exists()) {
+            return;
+        }
+
+        HashMap<String, Collection<String>> map;
+
+        try {
+            String disguiseText = new String(Files.readAllBytes(viewPreferences.toPath()));
+            map = getGson().fromJson(disguiseText, HashMap.class);
+
+            if (map.containsKey("selfdisguise")) {
+                getViewSelf().clear();
+                map.get("selfdisguise").forEach(uuid -> getViewSelf().add(UUID.fromString(uuid)));
+            }
+
+            if (map.containsKey("notifybar")) {
+                getViewBar().clear();
+                map.get("notifybar").forEach(uuid -> getViewBar().add(UUID.fromString(uuid)));
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns the list of people who have /disguiseviewbar toggled
+     *
+     * @return
+     */
+    public static List<UUID> getViewBar() {
+        return viewBar;
+    }
 
     public static void setPlayerVelocity(Player player) {
         if (player == null) {
@@ -231,6 +324,8 @@ public class DisguiseUtilities {
     }
 
     public static void saveDisguises() {
+        saveViewPreferances();
+
         if (!LibsPremium.isPremium())
             return;
 
@@ -308,8 +403,6 @@ public class DisguiseUtilities {
             if (disguise == null || disguise.length == 0) {
                 if (savedDisguiseList.contains(owningEntity)) {
                     disguiseFile.delete();
-                } else {
-                    return;
                 }
             } else {
                 Disguise[] disguises = new Disguise[disguise.length];
@@ -356,7 +449,7 @@ public class DisguiseUtilities {
         }
 
         try {
-            String cached = null;
+            String cached;
 
             try (FileInputStream input = new FileInputStream(
                     disguiseFile); InputStreamReader inputReader = new InputStreamReader(input,
@@ -829,21 +922,17 @@ public class DisguiseUtilities {
     public static WrappedGameProfile getProfileFromMojang(final PlayerDisguise disguise) {
         final String nameToFetch = disguise.getSkin() != null ? disguise.getSkin() : disguise.getName();
 
-        return getProfileFromMojang(nameToFetch, new LibsProfileLookup() {
+        return getProfileFromMojang(nameToFetch, gameProfile -> {
+            if (gameProfile == null || gameProfile.getProperties().isEmpty()) {
+                return;
+            }
 
-            @Override
-            public void onLookup(WrappedGameProfile gameProfile) {
-                if (gameProfile == null || gameProfile.getProperties().isEmpty()) {
-                    return;
-                }
+            if (DisguiseAPI.isDisguiseInUse(disguise) && (!gameProfile.getName()
+                    .equals(disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) ||
+                    !gameProfile.getProperties().isEmpty())) {
+                disguise.setGameProfile(gameProfile);
 
-                if (DisguiseAPI.isDisguiseInUse(disguise) && (!gameProfile.getName()
-                        .equals(disguise.getSkin() != null ? disguise.getSkin() : disguise.getName()) ||
-                        !gameProfile.getProperties().isEmpty())) {
-                    disguise.setGameProfile(gameProfile);
-
-                    DisguiseUtilities.refreshTrackers(disguise);
-                }
+                DisguiseUtilities.refreshTrackers(disguise);
             }
         }, LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
     }
@@ -902,41 +991,35 @@ public class DisguiseUtilities {
                         runnables.get(playerName).add(runnable);
                     }
 
-                    Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                final WrappedGameProfile gameProfile = lookupGameProfile(origName);
+                    Bukkit.getScheduler().runTaskAsynchronously(LibsDisguises.getInstance(), () -> {
+                        try {
+                            final WrappedGameProfile gameProfile = lookupGameProfile(origName);
 
-                                Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (DisguiseConfig.isSaveGameProfiles()) {
-                                            addGameProfile(playerName, gameProfile);
-                                        }
+                            Bukkit.getScheduler().runTask(LibsDisguises.getInstance(), () -> {
+                                if (DisguiseConfig.isSaveGameProfiles()) {
+                                    addGameProfile(playerName, gameProfile);
+                                }
 
-                                        synchronized (runnables) {
-                                            if (runnables.containsKey(playerName)) {
-                                                for (Object obj : runnables.remove(playerName)) {
-                                                    if (obj instanceof Runnable) {
-                                                        ((Runnable) obj).run();
-                                                    } else if (obj instanceof LibsProfileLookup) {
-                                                        ((LibsProfileLookup) obj).onLookup(gameProfile);
-                                                    }
-                                                }
+                                synchronized (runnables) {
+                                    if (runnables.containsKey(playerName)) {
+                                        for (Object obj : runnables.remove(playerName)) {
+                                            if (obj instanceof Runnable) {
+                                                ((Runnable) obj).run();
+                                            } else if (obj instanceof LibsProfileLookup) {
+                                                ((LibsProfileLookup) obj).onLookup(gameProfile);
                                             }
                                         }
                                     }
-                                });
-                            }
-                            catch (Exception e) {
-                                synchronized (runnables) {
-                                    runnables.remove(playerName);
                                 }
-
-                                getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " +
-                                        e.getMessage());
+                            });
+                        }
+                        catch (Exception e) {
+                            synchronized (runnables) {
+                                runnables.remove(playerName);
                             }
+
+                            getLogger().severe("Error when fetching " + playerName + "'s uuid from mojang: " +
+                                    e.getMessage());
                         }
                     });
                 } else if (runnable != null && contactMojang) {
@@ -978,11 +1061,7 @@ public class DisguiseUtilities {
             // Don't really need this here, but it's insurance!
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         }
-        catch (Exception ex) {
-        }
-
-        if (NmsVersion.v1_16.isSupported()) {
-            hexColor = Pattern.compile("<#[0-9a-fA-F]{6}>");
+        catch (Exception ignored) {
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -1049,7 +1128,7 @@ public class DisguiseUtilities {
                     bar.removeAll();
                     Bukkit.removeBossBar(bar.getKey());
                 }
-                catch (IllegalArgumentException ex) {
+                catch (IllegalArgumentException ignored) {
                 }
             }
         }
@@ -1071,6 +1150,8 @@ public class DisguiseUtilities {
         catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+
+        loadViewPreferences();
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
@@ -2077,7 +2158,7 @@ public class DisguiseUtilities {
 
     public static int[] getNumericVersion(String version) {
         int[] v = new int[0];
-        for (String split : version.split("\\.|-")) {
+        for (String split : version.split("[.\\-]")) {
             if (!split.matches("[0-9]+")) {
                 return v;
             }
@@ -2089,31 +2170,151 @@ public class DisguiseUtilities {
         return v;
     }
 
-    public static BaseComponent[] getColoredChat(String string) {
-        if (hexColor == null) {
-            return new ComponentBuilder().appendLegacy(string).create();
-        }
+    public static String getSimpleChat(BaseComponent[] components) {
+        StringBuilder builder = new StringBuilder();
 
-        Matcher match = hexColor.matcher(string);
+        for (BaseComponent component : components) {
+            net.md_5.bungee.api.ChatColor color = component.getColor();
+            String string = color.toString();
 
-        ComponentBuilder builder = new ComponentBuilder();
-        int lastMatch = 0;
-
-        while (match.find()) {
-            if (match.start() > lastMatch) {
-                builder.appendLegacy(string.substring(lastMatch, match.start()));
+            if (string.length() > 2) {
+                builder.append("<#")
+                        .append(string.substring(2).replace(net.md_5.bungee.api.ChatColor.COLOR_CHAR + "", ""))
+                        .append(">");
+            } else {
+                builder.append(string);
             }
 
-            lastMatch = match.end();
+            if (component.isBold()) {
+                builder.append(net.md_5.bungee.api.ChatColor.BOLD);
+            }
 
-            builder.color(net.md_5.bungee.api.ChatColor.of(match.group().substring(1, 8)));
+            if (component.isItalic()) {
+                builder.append(net.md_5.bungee.api.ChatColor.ITALIC);
+            }
+
+            if (component.isUnderlined()) {
+                builder.append(net.md_5.bungee.api.ChatColor.UNDERLINE);
+            }
+
+            if (component.isStrikethrough()) {
+                builder.append(net.md_5.bungee.api.ChatColor.STRIKETHROUGH);
+            }
+
+            if (component.isObfuscated()) {
+                builder.append(net.md_5.bungee.api.ChatColor.MAGIC);
+            }
+
+            if (!(component instanceof TextComponent)) {
+                continue;
+            }
+
+            builder.append(((TextComponent) component).getText());
         }
 
-        if (lastMatch < string.length()) {
-            builder.appendLegacy(string.substring(lastMatch));
+        return builder.toString();
+    }
+
+    /**
+     * Modification of TextComponent.fromLegacyText
+     */
+    public static BaseComponent[] getColoredChat(String message) {
+        ArrayList<BaseComponent> components = new ArrayList();
+        StringBuilder builder = new StringBuilder();
+        TextComponent component = new TextComponent();
+        Matcher matcher = urlMatcher.matcher(message);
+
+        for (int i = 0; i < message.length(); ++i) {
+            char c = message.charAt(i);
+            TextComponent old;
+
+            if (c == ChatColor.COLOR_CHAR || (c == '<' && i + 9 < message.length() && NmsVersion.v1_16.isSupported() &&
+                    Pattern.matches("<#[0-9a-fA-F]{6}>", message.substring(i, i + 9)))) {
+                // If normal color char
+                if (c == ChatColor.COLOR_CHAR) {
+                    ++i;
+
+                    if (i >= message.length()) {
+                        break;
+                    }
+                }
+
+                net.md_5.bungee.api.ChatColor format;
+
+                if (c != ChatColor.COLOR_CHAR) {
+                    format = net.md_5.bungee.api.ChatColor.of(message.substring(i + 1, i + 8));
+
+                    i += 8;
+                } else {
+                    c = message.charAt(i);
+
+                    if (c >= 'A' && c <= 'Z') {
+                        c = (char) (c + 32);
+                    }
+
+                    format = net.md_5.bungee.api.ChatColor.getByChar(c);
+                }
+
+                if (format != null) {
+                    if (builder.length() > 0) {
+                        old = component;
+                        component = new TextComponent(component);
+                        old.setText(builder.toString());
+                        builder = new StringBuilder();
+                        components.add(old);
+                    }
+
+                    if (format == net.md_5.bungee.api.ChatColor.BOLD) {
+                        component.setBold(true);
+                    } else if (format == net.md_5.bungee.api.ChatColor.ITALIC) {
+                        component.setItalic(true);
+                    } else if (format == net.md_5.bungee.api.ChatColor.UNDERLINE) {
+                        component.setUnderlined(true);
+                    } else if (format == net.md_5.bungee.api.ChatColor.STRIKETHROUGH) {
+                        component.setStrikethrough(true);
+                    } else if (format == net.md_5.bungee.api.ChatColor.MAGIC) {
+                        component.setObfuscated(true);
+                    } else if (format == net.md_5.bungee.api.ChatColor.RESET) {
+                        component = new TextComponent();
+                        component.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+                    } else {
+                        component = new TextComponent();
+                        component.setColor(format);
+                    }
+                }
+            } else {
+                int pos = message.indexOf(32, i);
+                if (pos == -1) {
+                    pos = message.length();
+                }
+
+                if (matcher.region(i, pos).find()) {
+                    if (builder.length() > 0) {
+                        old = component;
+                        component = new TextComponent(component);
+                        old.setText(builder.toString());
+                        builder = new StringBuilder();
+                        components.add(old);
+                    }
+
+                    old = component;
+                    component = new TextComponent(component);
+                    String urlString = message.substring(i, pos);
+                    component.setText(urlString);
+                    component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+                            urlString.startsWith("http") ? urlString : "http://" + urlString));
+                    components.add(component);
+                    i += pos - i - 1;
+                    component = old;
+                } else {
+                    builder.append(c);
+                }
+            }
         }
 
-        return builder.create();
+        component.setText(builder.toString());
+        components.add(component);
+        return components.toArray(new BaseComponent[components.size()]);
     }
 
     public static boolean isOlderThan(String requiredVersion, String theirVersion) {
@@ -2367,12 +2568,11 @@ public class DisguiseUtilities {
             return (byte) -value;
         }
 
-        switch (disguiseType) {
-            case PHANTOM:
-                return (byte) -value;
-            default:
-                return value;
+        if (disguiseType == DisguiseType.PHANTOM) {
+            return (byte) -value;
         }
+
+        return value;
     }
 
     public static byte getYaw(DisguiseType disguiseType, EntityType entityType, byte value) {
@@ -2441,7 +2641,8 @@ public class DisguiseUtilities {
                 Object name;
 
                 if (NmsVersion.v1_13.isSupported()) {
-                    name = Optional.of(WrappedChatComponent.fromText(newNames[i]));
+                    name = Optional.of(WrappedChatComponent
+                            .fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(newNames[i]))));
                 } else {
                     name = newNames[i];
                 }

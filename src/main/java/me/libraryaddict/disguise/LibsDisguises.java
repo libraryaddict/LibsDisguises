@@ -178,6 +178,7 @@ public class LibsDisguises extends JavaPlugin {
             registerCommand("disguisehelp", new DisguiseHelpCommand());
             registerCommand("disguiseclone", new DisguiseCloneCommand());
             registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+            registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
             registerCommand("disguisemodify", new DisguiseModifyCommand());
             registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
             registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());

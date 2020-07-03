@@ -442,8 +442,22 @@ public class DisguiseAPI {
         return hasSelfDisguisePreference(entity) != DisguiseConfig.isViewDisguises();
     }
 
+    /**
+     * Returns true if the entitiy has /disguiseviewself toggled on.
+     *
+     * @param entity
+     * @return
+     */
+    public static boolean isViewBarToggled(Player entity) {
+        return hasViewBarPreference(entity) == (DisguiseConfig.getNotifyBar() != DisguiseConfig.NotifyBar.NONE);
+    }
+
     public static boolean hasSelfDisguisePreference(Entity entity) {
-        return Disguise.getViewSelf().contains(entity.getUniqueId());
+        return DisguiseUtilities.getViewSelf().contains(entity.getUniqueId());
+    }
+
+    public static boolean hasViewBarPreference(Entity entity) {
+        return DisguiseUtilities.getViewSelf().contains(entity.getUniqueId());
     }
 
     /**
@@ -478,10 +492,32 @@ public class DisguiseAPI {
 
         if (!canSeeSelfDisguises == DisguiseConfig.isViewDisguises()) {
             if (!hasSelfDisguisePreference(entity)) {
-                Disguise.getViewSelf().add(entity.getUniqueId());
+                DisguiseUtilities.getViewSelf().add(entity.getUniqueId());
+                DisguiseUtilities.addSaveAttempt();
             }
         } else {
-            Disguise.getViewSelf().remove(entity.getUniqueId());
+            DisguiseUtilities.getViewSelf().remove(entity.getUniqueId());
+            DisguiseUtilities.addSaveAttempt();
+        }
+    }
+
+    public static void setViewBarToggled(Player player, boolean canSeeNotifyBar) {
+        if (isDisguised(player)) {
+            Disguise[] disguises = getDisguises(player);
+
+            for (Disguise disguise : disguises) {
+                disguise.setNotifyBar(canSeeNotifyBar ? DisguiseConfig.getNotifyBar() : DisguiseConfig.NotifyBar.NONE);
+            }
+        }
+
+        if (canSeeNotifyBar == (DisguiseConfig.getNotifyBar() != DisguiseConfig.NotifyBar.NONE)) {
+            if (!hasSelfDisguisePreference(player)) {
+                DisguiseUtilities.getViewBar().add(player.getUniqueId());
+                DisguiseUtilities.addSaveAttempt();
+            }
+        } else {
+            DisguiseUtilities.getViewBar().remove(player.getUniqueId());
+            DisguiseUtilities.addSaveAttempt();
         }
     }
 

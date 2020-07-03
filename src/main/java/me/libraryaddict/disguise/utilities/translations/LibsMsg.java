@@ -208,6 +208,8 @@ public enum LibsMsg {
             " to download the update!"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
     VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!"),
+    VIEW_BAR_ON(ChatColor.GREEN + "Toggled disguised notify bar on!"),
+    VIEW_BAR_OFF(ChatColor.GREEN + "Toggled disguised notify bar off!"),
     CLICK_TO_COPY(ChatColor.GREEN + "Click to Copy:"),
     SKIN_DATA(ChatColor.GREEN + "Skin Data: " + ChatColor.YELLOW + "%s"),
     CLICK_TO_COPY_DATA(ChatColor.YELLOW + "Data"),
