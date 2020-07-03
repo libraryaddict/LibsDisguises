@@ -53,7 +53,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
 
         if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
                 entity instanceof LivingEntity) {
-            DisguiseUtilities.sendMessage(p, LibsMsg.DISABLED_LIVING_TO_MISC);
+            LibsMsg.DISABLED_LIVING_TO_MISC.send(p);
         } else {
             if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
                     !entity.hasPermission("libsdisguises.hidename")) {
@@ -77,37 +77,29 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
             if (disguise.isDisguiseInUse()) {
                 if (disguise.isPlayerDisguise()) {
                     if (entity instanceof Player) {
-                        DisguiseUtilities
-                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER, entityName, disguiseName);
+                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER.send(p, entityName, disguiseName);
                     } else {
-                        DisguiseUtilities
-                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER, entityName, disguiseName);
+                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER.send(p, entityName, disguiseName);
                     }
                 } else {
                     if (entity instanceof Player) {
-                        DisguiseUtilities
-                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY, entityName, disguiseName);
+                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY.send(p, entityName, disguiseName);
                     } else {
-                        DisguiseUtilities
-                                .sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY, entityName, disguiseName);
+                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY.send(p, entityName, disguiseName);
                     }
                 }
             } else {
                 if (disguise.isPlayerDisguise()) {
                     if (entity instanceof Player) {
-                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL, entityName,
-                                disguiseName);
+                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
                     } else {
-                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL, entityName,
-                                disguiseName);
+                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_PLAYER_FAIL.send(p, entityName, disguiseName);
                     }
                 } else {
                     if (entity instanceof Player) {
-                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL, entityName,
-                                disguiseName);
+                        LibsMsg.LISTEN_ENTITY_PLAYER_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
                     } else {
-                        DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL, entityName,
-                                disguiseName);
+                        LibsMsg.LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL.send(p, entityName, disguiseName);
                     }
                 }
             }

@@ -15,7 +15,7 @@ public class DisguiseViewBarCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
@@ -23,10 +23,10 @@ public class DisguiseViewBarCommand implements CommandExecutor {
 
         if (DisguiseAPI.isActionBarShown(player)) {
             DisguiseAPI.setActionBarShown(player, false);
-            DisguiseUtilities.sendMessage(sender, LibsMsg.VIEW_BAR_OFF);
+            LibsMsg.VIEW_BAR_OFF.send(sender);
         } else {
             DisguiseAPI.setActionBarShown(player, true);
-            DisguiseUtilities.sendMessage(sender, LibsMsg.VIEW_BAR_ON);
+            LibsMsg.VIEW_BAR_ON.send(sender);
         }
 
         return true;

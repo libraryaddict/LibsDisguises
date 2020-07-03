@@ -115,13 +115,13 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
 
             if (command != null) {
                 if (!command.hasPermission(sender)) {
-                    DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+                    LibsMsg.NO_PERM.send(sender);
                     return true;
                 }
 
                 command.onCommand(sender, args);
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_COMMAND_WRONG_ARG);
+                LibsMsg.LIBS_COMMAND_WRONG_ARG.send(sender);
             }
         }
 

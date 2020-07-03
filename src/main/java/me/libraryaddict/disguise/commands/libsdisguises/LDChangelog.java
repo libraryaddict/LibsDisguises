@@ -34,12 +34,12 @@ public class LDChangelog implements LDCommand {
         UpdateChecker checker = LibsDisguises.getInstance().getUpdateChecker();
 
         if (checker.isDownloading()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_IN_PROGRESS);
+            LibsMsg.UPDATE_IN_PROGRESS.send(sender);
             return;
         }
 
         if (checker.getUpdate() == null) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UPDATE_REQUIRED);
+            LibsMsg.UPDATE_REQUIRED.send(sender);
             return;
         }
 

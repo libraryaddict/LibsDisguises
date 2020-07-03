@@ -37,7 +37,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
@@ -45,12 +45,12 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
             int radius = maxRadius;
             if (args.length > 0) {
                 if (!isNumeric(args[0])) {
-                    DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[0]);
+                    LibsMsg.NOT_NUMBER.send(sender, args[0]);
                     return true;
                 }
                 radius = Integer.parseInt(args[0]);
                 if (radius > maxRadius) {
-                    DisguiseUtilities.sendMessage(sender, LibsMsg.LIMITED_RADIUS, maxRadius);
+                    LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
                     radius = maxRadius;
                 }
             }
@@ -66,9 +66,9 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                 }
             }
 
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISRADIUS, disguisedEntitys);
+            LibsMsg.UNDISRADIUS.send(sender, disguisedEntitys);
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
         }
         return true;
     }

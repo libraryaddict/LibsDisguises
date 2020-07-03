@@ -40,7 +40,7 @@ public class LDHelp implements LDCommand {
                 continue;
             }
 
-            DisguiseUtilities.sendMessage(sender, cmd.getHelp());
+            cmd.getHelp().send(sender);
         }
     }
 

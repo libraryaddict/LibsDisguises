@@ -22,13 +22,13 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         if (!sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
 
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -53,7 +53,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SPRINT.get())) {
                 doSprint = true;
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.INVALID_CLONE, option);
+                LibsMsg.INVALID_CLONE.send(sender, option);
                 return true;
             }
         }
@@ -67,7 +67,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
                     .addInteraction(sender.getName(), new DisguiseCloneInteraction(options),
                             DisguiseConfig.getDisguiseCloneExpire());
 
-            DisguiseUtilities.sendMessage(sender, LibsMsg.CLICK_TIMER, DisguiseConfig.getDisguiseCloneExpire());
+            LibsMsg.CLICK_TIMER.send(sender, DisguiseConfig.getDisguiseCloneExpire());
         }
 
         return true;
@@ -103,8 +103,8 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
      */
     @Override
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
-        DisguiseUtilities.sendMessage(sender, LibsMsg.CLONE_HELP1);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.CLONE_HELP2);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.CLONE_HELP3);
+        LibsMsg.CLONE_HELP1.send(sender);
+        LibsMsg.CLONE_HELP2.send(sender);
+        LibsMsg.CLONE_HELP3.send(sender);
     }
 }

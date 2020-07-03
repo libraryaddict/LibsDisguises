@@ -35,7 +35,7 @@ public class LDConfig implements LDCommand {
         ArrayList<String> returns = DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, true);
 
         if (returns.isEmpty()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.USING_DEFAULT_CONFIG);
+            LibsMsg.USING_DEFAULT_CONFIG.send(sender);
             return;
         }
 

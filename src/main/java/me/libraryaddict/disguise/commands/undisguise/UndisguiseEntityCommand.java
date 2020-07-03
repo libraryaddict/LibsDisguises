@@ -22,18 +22,18 @@ public class UndisguiseEntityCommand implements CommandExecutor {
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         if (!sender.hasPermission("libsdisguises.undisguiseentity")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
         LibsDisguises.getInstance().getListener().addInteraction(sender.getName(), new UndisguiseEntityInteraction(),
                 DisguiseConfig.getDisguiseEntityExpire());
-        DisguiseUtilities.sendMessage(sender, LibsMsg.UND_ENTITY);
+        LibsMsg.UND_ENTITY.send(sender);
 
         return true;
     }

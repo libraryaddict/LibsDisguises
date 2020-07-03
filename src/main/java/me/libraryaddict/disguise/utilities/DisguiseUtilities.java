@@ -383,10 +383,10 @@ public class DisguiseUtilities {
         if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
             String entityName = DisguiseType.getType(toClone).toReadable();
 
-            DisguiseUtilities.sendMessage(player, LibsMsg.MADE_REF, entityName, reference);
-            DisguiseUtilities.sendMessage(player, LibsMsg.MADE_REF_EXAMPLE, reference);
+            LibsMsg.MADE_REF.send(player, entityName, reference);
+            LibsMsg.MADE_REF_EXAMPLE.send(player, reference);
         } else {
-            DisguiseUtilities.sendMessage(player, LibsMsg.REF_TOO_MANY);
+            LibsMsg.REF_TOO_MANY.send(player);
         }
     }
 
@@ -2170,6 +2170,7 @@ public class DisguiseUtilities {
         }
     }
 
+    @Deprecated
     public static void sendMessage(CommandSender sender, LibsMsg msg, Object... args) {
         if (!NmsVersion.v1_16.isSupported()) {
             String message = msg.get(args);

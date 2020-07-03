@@ -28,7 +28,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         }
 
         if (!(sender instanceof Entity)) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
@@ -81,9 +81,9 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         disguise.startDisguise();
 
         if (disguise.isDisguiseInUse()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DISGUISED, disguise.getDisguiseName());
+            LibsMsg.DISGUISED.send(sender, disguise.getDisguiseName());
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.FAILED_DISGIUSE, disguise.getDisguiseName());
+            LibsMsg.FAILED_DISGIUSE.send(sender, disguise.getDisguiseName());
         }
 
         return true;
@@ -118,22 +118,21 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         if (allowedDisguises.isEmpty()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return;
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_HELP1);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.CAN_USE_DISGS,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.DISG_HELP1.send(sender);
+        LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         if (allowedDisguises.contains("player")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_HELP2);
+            LibsMsg.DISG_HELP2.send(sender);
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_HELP3);
+        LibsMsg.DISG_HELP3.send(sender);
 
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DISG_HELP4);
+            LibsMsg.DISG_HELP4.send(sender);
         }
     }
 }

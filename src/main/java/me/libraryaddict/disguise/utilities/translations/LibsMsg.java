@@ -4,6 +4,8 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Created by libraryaddict on 15/06/2017.
@@ -371,6 +373,11 @@ public enum LibsMsg {
         return DisguiseUtilities.getColoredChat(string);
     }
 
+    public void send(CommandSender player, Object... strings) {
+        DisguiseUtilities.sendMessage(player, this, strings);
+    }
+
+    @Deprecated
     public String get(Object... strings) {
         int matches = StringUtils.countMatches(getRaw(), "%s");
 

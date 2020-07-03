@@ -38,7 +38,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
         }
 
         if (!sender.hasPermission("libsdisguises.copydisguise")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -58,7 +58,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
             }
 
             if (target == null) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
+                LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[0]);
                 return true;
             }
         }
@@ -70,8 +70,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
                     .addInteraction(sender.getName(), new CopyDisguiseInteraction(this),
                             DisguiseConfig.getDisguiseEntityExpire());
 
-            DisguiseUtilities
-                    .sendMessage(sender, LibsMsg.DISGUISECOPY_INTERACT, DisguiseConfig.getDisguiseEntityExpire());
+            LibsMsg.DISGUISECOPY_INTERACT.send(sender, DisguiseConfig.getDisguiseEntityExpire());
             return true;
         }
 
@@ -91,7 +90,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
 
     public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
         if (!NmsVersion.v1_13.isSupported()) {
-            DisguiseUtilities.sendMessage(sender, oldVer, string);
+            oldVer.send(sender, string);
             return;
         }
 

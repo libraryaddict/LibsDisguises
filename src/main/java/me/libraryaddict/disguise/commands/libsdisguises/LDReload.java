@@ -27,7 +27,7 @@ public class LDReload implements LDCommand {
     public void onCommand(CommandSender sender, String[] args) {
         DisguiseConfig.loadConfig();
         new SoundManager().load();
-        DisguiseUtilities.sendMessage(sender, LibsMsg.RELOADED_CONFIG);
+        LibsMsg.RELOADED_CONFIG.send(sender);
     }
 
     @Override

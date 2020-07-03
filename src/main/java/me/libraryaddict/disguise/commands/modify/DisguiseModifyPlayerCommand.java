@@ -28,7 +28,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -50,7 +50,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         }
 
         if (entityTarget == null) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
+            LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[0]);
             return true;
         }
 
@@ -71,14 +71,14 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             disguise = DisguiseAPI.getDisguise(entityTarget);
 
         if (disguise == null) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODPLAYER_NODISGUISE, entityTarget.getName());
+            LibsMsg.DMODPLAYER_NODISGUISE.send(sender, entityTarget.getName());
             return true;
         }
 
         DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
 
         if (!permissions.isAllowedDisguise(disguisePerm)) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODPLAYER_NOPERM);
+            LibsMsg.DMODPLAYER_NOPERM.send(sender);
             return true;
         }
 
@@ -102,7 +102,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODPLAYER_MODIFIED, entityTarget.getName());
+        LibsMsg.DMODPLAYER_MODIFIED.send(sender, entityTarget.getName());
 
         return true;
     }
@@ -161,8 +161,8 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODPLAYER_HELP1);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODIFY_HELP3,
+        LibsMsg.DMODPLAYER_HELP1.send(sender);
+        LibsMsg.DMODIFY_HELP3.send(sender,
                 StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
     }
 }

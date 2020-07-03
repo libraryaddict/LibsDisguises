@@ -26,14 +26,14 @@ public class UndisguiseEntityInteraction implements LibsEntityInteract {
             DisguiseAPI.undisguiseToAll(entity);
 
             if (entity instanceof Player)
-                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_PLAYER, entityName);
+                LibsMsg.LISTEN_UNDISG_PLAYER.send(p, entityName);
             else
-                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_ENT, entityName);
+                LibsMsg.LISTEN_UNDISG_ENT.send(p, entityName);
         } else {
             if (entity instanceof Player)
-                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_PLAYER_FAIL, entityName);
+                LibsMsg.LISTEN_UNDISG_PLAYER_FAIL.send(p, entityName);
             else
-                DisguiseUtilities.sendMessage(p, LibsMsg.LISTEN_UNDISG_ENT_FAIL, entityName);
+                LibsMsg.LISTEN_UNDISG_ENT_FAIL.send(p, entityName);
         }
     }
 }

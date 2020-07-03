@@ -63,12 +63,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (!sender.hasPermission("libsdisguises.undisguiseplayer")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
         if (args.length == 0) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER_HELP);
+            LibsMsg.UNDISG_PLAYER_HELP.send(sender);
             return true;
         }
 
@@ -85,17 +85,17 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (entityTarget == null) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[0]);
+            LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[0]);
             return true;
         }
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
             DisguiseAPI.undisguiseToAll(entityTarget);
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER,
+            LibsMsg.UNDISG_PLAYER.send(sender,
                     entityTarget instanceof Player ? entityTarget.getName() :
                             DisguiseType.getType(entityTarget).toReadable());
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG_PLAYER_FAIL,
+            LibsMsg.UNDISG_PLAYER_FAIL.send(sender,
                     entityTarget instanceof Player ? entityTarget.getName() :
                             DisguiseType.getType(entityTarget).toReadable());
         }

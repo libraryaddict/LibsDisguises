@@ -28,7 +28,7 @@ public class LDMods implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (ModdedManager.getEntities().isEmpty()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_MODS_LISTENING);
+            LibsMsg.NO_MODS_LISTENING.send(sender);
             return;
         }
 
@@ -38,22 +38,22 @@ public class LDMods implements LDCommand {
             player = Bukkit.getPlayer(args[1]);
 
             if (player == null) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[1]);
+                LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[1]);
                 return;
             }
         } else if (sender instanceof Player) {
             player = (Player) sender;
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return;
         }
 
         if (!player.hasMetadata("forge_mods")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_MODS, player.getName());
+            LibsMsg.NO_MODS.send(sender, player.getName());
             return;
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.MODS_LIST, player.getName(),
+        LibsMsg.MODS_LIST.send(sender, player.getName(),
                 StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", "));
     }
 

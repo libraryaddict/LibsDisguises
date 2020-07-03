@@ -22,14 +22,14 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -44,7 +44,7 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
                 new DisguiseModifyInteraction(DisguiseUtilities.split(StringUtils.join(args, " "))),
                 DisguiseConfig.getDisguiseEntityExpire());
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODIFYENT_CLICK, DisguiseConfig.getDisguiseEntityExpire());
+        LibsMsg.DMODIFYENT_CLICK.send(sender, DisguiseConfig.getDisguiseEntityExpire());
         return true;
     }
 
@@ -78,8 +78,8 @@ public class DisguiseModifyEntityCommand extends DisguiseBaseCommand implements 
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODENT_HELP1);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODIFY_HELP3,
+        LibsMsg.DMODENT_HELP1.send(sender);
+        LibsMsg.DMODIFY_HELP3.send(sender,
                 StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
     }
 }

@@ -125,7 +125,7 @@ public class DisguiseListener implements Listener {
         if (disguises.length > 0) {
             DisguiseAPI.undisguiseToAll(player);
 
-            DisguiseUtilities.sendMessage(player, LibsMsg.BLOWN_DISGUISE);
+            LibsMsg.BLOWN_DISGUISE.send(player);
         }
     }
 
@@ -198,14 +198,14 @@ public class DisguiseListener implements Listener {
                 if (disguises.length > 0) {
                     event.setCancelled(true);
 
-                    DisguiseUtilities.sendMessage(attacker, LibsMsg.CANT_ATTACK_DISGUISED);
+                    LibsMsg.CANT_ATTACK_DISGUISED.send(attacker);
                 } else if (DisguiseConfig.getPvPTimer() > 0 && attacker.hasMetadata("LastDisguise")) {
                     long lastDisguised = attacker.getMetadata("LastDisguise").get(0).asLong();
 
                     if (lastDisguised + DisguiseConfig.getPvPTimer() * 1000 > System.currentTimeMillis()) {
                         event.setCancelled(true);
 
-                        DisguiseUtilities.sendMessage(attacker, LibsMsg.CANT_ATTACK_DISGUISED_RECENTLY);
+                        LibsMsg.CANT_ATTACK_DISGUISED_RECENTLY.send(attacker);
                     }
                 }
             }
@@ -551,7 +551,7 @@ public class DisguiseListener implements Listener {
                     disguise.removeDisguise();
                 }
 
-                DisguiseUtilities.sendMessage(event.getPlayer(), LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED);
+                LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.send(event.getPlayer());
             }
         }
 
@@ -646,7 +646,7 @@ public class DisguiseListener implements Listener {
                     disguise.removeDisguise();
                 }
 
-                DisguiseUtilities.sendMessage(event.getPlayer(), LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED);
+                LibsMsg.SWITCH_WORLD_DISGUISE_REMOVED.send(event.getPlayer());
             }
         } else {
             // Stupid hack to fix worldswitch invisibility bug & paper packet bug

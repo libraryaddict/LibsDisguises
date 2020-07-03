@@ -431,7 +431,7 @@ public abstract class Disguise {
                     removeDisguise();
 
                     if (getEntity() instanceof Player) {
-                        DisguiseUtilities.sendMessage(getEntity(), LibsMsg.EXPIRED_DISGUISE);
+                        LibsMsg.EXPIRED_DISGUISE.send(getEntity());
                     }
 
                     return;

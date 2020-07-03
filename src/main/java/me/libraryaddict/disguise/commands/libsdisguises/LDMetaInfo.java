@@ -35,7 +35,7 @@ public class LDMetaInfo implements LDCommand {
             MetaIndex index = MetaIndex.getMetaIndexByName(args[1]);
 
             if (index == null) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.META_NOT_FOUND);
+                LibsMsg.META_NOT_FOUND.send(sender);
                 return;
             }
 
@@ -69,7 +69,7 @@ public class LDMetaInfo implements LDCommand {
 
                 sender.spigot().sendMessage(builder.create());
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.META_VALUES_NO_CLICK,
+                LibsMsg.META_VALUES_NO_CLICK.send(sender,
                         StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get()));
             }
         }

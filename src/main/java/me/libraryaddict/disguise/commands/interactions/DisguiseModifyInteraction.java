@@ -38,7 +38,7 @@ public class DisguiseModifyInteraction implements LibsEntityInteract {
         Disguise disguise = DisguiseAPI.getDisguise(p, entity);
 
         if (disguise == null) {
-            DisguiseUtilities.sendMessage(p, LibsMsg.UNDISG_PLAYER_FAIL, entityName);
+            LibsMsg.UNDISG_PLAYER_FAIL.send(p, entityName);
             return;
         }
 
@@ -48,7 +48,7 @@ public class DisguiseModifyInteraction implements LibsEntityInteract {
         DisguisePerm disguisePerm = new DisguisePerm(disguise.getType());
 
         if (!perms.isAllowedDisguise(disguisePerm, Arrays.asList(options))) {
-            DisguiseUtilities.sendMessage(p, LibsMsg.DMODPLAYER_NOPERM);
+            LibsMsg.DMODPLAYER_NOPERM.send(p);
             return;
         }
 
@@ -56,7 +56,7 @@ public class DisguiseModifyInteraction implements LibsEntityInteract {
             DisguiseParser
                     .callMethods(p, disguise, perms, disguisePerm, new ArrayList<>(Arrays.asList(options)), options,
                             "DisguiseModifyEntity");
-            DisguiseUtilities.sendMessage(p, LibsMsg.LISTENER_MODIFIED_DISG);
+            LibsMsg.LISTENER_MODIFIED_DISG.send(p);
         }
         catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {

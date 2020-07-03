@@ -52,14 +52,14 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -78,7 +78,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             Collections.sort(classes);
 
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_ENTITIES,
+            LibsMsg.DRADIUS_ENTITIES.send(sender,
                     ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
@@ -104,30 +104,34 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 }
 
                 if (type == null) {
-                    DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_UNRECOGNIZED, args[0]);
+                    LibsMsg.DMODRADIUS_UNRECOGNIZED.send(sender, args[0]);
                     return true;
                 }
             }
         }
 
         if (args.length == starting + 1) {
-            DisguiseUtilities.sendMessage(sender,
-                    starting == 0 ? LibsMsg.DRADIUS_NEEDOPTIONS : LibsMsg.DRADIUS_NEEDOPTIONS_ENTITY);
+            if (starting == 0) {
+                LibsMsg.DRADIUS_NEEDOPTIONS.send(sender);
+            } else {
+                LibsMsg.DRADIUS_NEEDOPTIONS_ENTITY.send(sender);
+            }
+
             return true;
         } else if (args.length < 2) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_NEEDOPTIONS);
+            LibsMsg.DRADIUS_NEEDOPTIONS.send(sender);
             return true;
         }
 
         if (!isInteger(args[starting])) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[starting]);
+            LibsMsg.NOT_NUMBER.send(sender, args[starting]);
             return true;
         }
 
         int radius = Integer.parseInt(args[starting]);
 
         if (radius > maxRadius) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIMITED_RADIUS, maxRadius);
+            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
             radius = maxRadius;
         }
 
@@ -206,13 +210,13 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             }
 
             if (disguisedEntitys > 0) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.DISRADIUS, disguisedEntitys);
+                LibsMsg.DISRADIUS.send(sender, disguisedEntitys);
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.DISRADIUS_FAIL);
+                LibsMsg.DISRADIUS_FAIL.send(sender);
             }
 
             if (miscDisguises > 0) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_MISCDISG, miscDisguises);
+                LibsMsg.DRADIUS_MISCDISG.send(sender, miscDisguises);
             }
         }
         catch (DisguiseParseException ex) {
@@ -282,24 +286,23 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         if (allowedDisguises.isEmpty()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return;
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_HELP1, maxRadius);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.CAN_USE_DISGS,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.DRADIUS_HELP1.send(sender, maxRadius);
+        LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         if (allowedDisguises.contains("player")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_HELP3);
+            LibsMsg.DRADIUS_HELP3.send(sender);
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_HELP4);
+        LibsMsg.DRADIUS_HELP4.send(sender);
 
         if (allowedDisguises.contains("dropped_item") || allowedDisguises.contains("falling_block")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_HELP5);
+            LibsMsg.DRADIUS_HELP5.send(sender);
         }
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DRADIUS_HELP6);
+        LibsMsg.DRADIUS_HELP6.send(sender);
     }
 }

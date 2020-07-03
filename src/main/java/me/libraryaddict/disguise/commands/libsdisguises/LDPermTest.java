@@ -32,7 +32,7 @@ public class LDPermTest implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (!LibsPremium.isPremium()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_NON_PREM);
+            LibsMsg.LIBS_PERM_CHECK_NON_PREM.send(sender);
         }
 
         Permissible player;
@@ -41,7 +41,7 @@ public class LDPermTest implements LDCommand {
             player = Bukkit.getPlayer(args[1]);
 
             if (player == null) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.CANNOT_FIND_PLAYER, args[1]);
+                LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[1]);
                 return;
             }
         } else {
@@ -49,40 +49,40 @@ public class LDPermTest implements LDCommand {
         }
 
         DisguisePermissions permissions = new DisguisePermissions(player, "disguise");
-        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_INFO_1);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_INFO_2);
+        LibsMsg.LIBS_PERM_CHECK_INFO_1.send(sender);
+        LibsMsg.LIBS_PERM_CHECK_INFO_2.send(sender);
 
         if (player.hasPermission("libsdisguises.disguise.pig")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NORMAL_PERM_CHECK_SUCCESS);
+            LibsMsg.NORMAL_PERM_CHECK_SUCCESS.send(sender);
 
             if (permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.PIG))) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_SUCCESS);
+                LibsMsg.LIBS_PERM_CHECK_SUCCESS.send(sender);
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_FAIL);
+                LibsMsg.LIBS_PERM_CHECK_FAIL.send(sender);
             }
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NORMAL_PERM_CHECK_FAIL);
+            LibsMsg.NORMAL_PERM_CHECK_FAIL.send(sender);
         }
 
         if (player.hasPermission("libsdisguises.disguise.zombie") ||
                 permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.ZOMBIE))) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS);
+            LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS.send(sender);
         }
 
         PluginCommand command = LibsDisguises.getInstance().getCommand("disguise");
 
         if (command == null) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_CHECK_COMMAND_UNREGISTERED);
+            LibsMsg.LIBS_PERM_CHECK_COMMAND_UNREGISTERED.send(sender);
         } else if (player.hasPermission(command.getPermission())) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_SUCCESS, command.getPermission());
+            LibsMsg.LIBS_PERM_COMMAND_SUCCESS.send(sender, command.getPermission());
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_FAIL, command.getPermission());
+            LibsMsg.LIBS_PERM_COMMAND_FAIL.send(sender, command.getPermission());
         }
 
         if (!sender.hasPermission("libsdisguises.seecmd.disguise")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_FAIL, "libsdisguises.seecmd.disguise");
+            LibsMsg.LIBS_PERM_COMMAND_FAIL.send(sender, "libsdisguises.seecmd.disguise");
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIBS_PERM_COMMAND_SUCCESS, "libsdisguises.seecmd.disguise");
+            LibsMsg.LIBS_PERM_COMMAND_SUCCESS.send(sender, "libsdisguises.seecmd.disguise");
         }
     }
 

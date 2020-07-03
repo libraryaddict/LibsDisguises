@@ -47,14 +47,14 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         DisguisePermissions permissions = getPermissions(sender);
 
         if (!permissions.hasPermissions()) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
             return true;
         }
 
@@ -77,7 +77,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             Collections.sort(classes);
 
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_USABLE,
+            LibsMsg.DMODRADIUS_USABLE.send(sender,
                     ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
@@ -99,29 +99,33 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             if (baseType == null) {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_UNRECOGNIZED, args[0]);
+                LibsMsg.DMODRADIUS_UNRECOGNIZED.send(sender, args[0]);
                 return true;
             }
         }
 
         if (args.length == starting + 1) {
-            DisguiseUtilities.sendMessage(sender,
-                    starting == 0 ? LibsMsg.DMODRADIUS_NEEDOPTIONS : LibsMsg.DMODRADIUS_NEEDOPTIONS_ENTITY);
+            if (starting == 0) {
+                LibsMsg.DMODRADIUS_NEEDOPTIONS.send(sender);
+            } else {
+                LibsMsg.DMODRADIUS_NEEDOPTIONS_ENTITY.send(sender);
+            }
+
             return true;
         } else if (args.length < 2) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_NEEDOPTIONS);
+            LibsMsg.DMODRADIUS_NEEDOPTIONS.send(sender);
             return true;
         }
 
         if (!isInteger(args[starting])) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_NUMBER, args[starting]);
+            LibsMsg.NOT_NUMBER.send(sender, args[starting]);
             return true;
         }
 
         int radius = Integer.parseInt(args[starting]);
 
         if (radius > maxRadius) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIMITED_RADIUS, maxRadius);
+            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
             radius = maxRadius;
         }
 
@@ -188,13 +192,13 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         }
 
         if (noPermission > 0) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_NOPERM, noPermission);
+            LibsMsg.DMODRADIUS_NOPERM.send(sender, noPermission);
         }
 
         if (modifiedDisguises > 0) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS, modifiedDisguises);
+            LibsMsg.DMODRADIUS.send(sender, modifiedDisguises);
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_NOENTS);
+            LibsMsg.DMODRADIUS_NOENTS.send(sender);
         }
 
         return true;
@@ -245,7 +249,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         int radius = Integer.parseInt(args[starting]);
 
         if (radius > maxRadius) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.LIMITED_RADIUS, maxRadius);
+            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
             radius = maxRadius;
         }
 
@@ -287,11 +291,10 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_HELP1, maxRadius);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODIFY_HELP3,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.DMODRADIUS_HELP1.send(sender, maxRadius);
+        LibsMsg.DMODIFY_HELP3.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_HELP2);
-        DisguiseUtilities.sendMessage(sender, LibsMsg.DMODRADIUS_HELP3);
+        LibsMsg.DMODRADIUS_HELP2.send(sender);
+        LibsMsg.DMODRADIUS_HELP3.send(sender);
     }
 }

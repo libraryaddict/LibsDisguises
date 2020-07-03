@@ -22,19 +22,19 @@ public class UndisguiseCommand implements CommandExecutor {
         }
 
         if (sender.getName().equals("CONSOLE")) {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_CONSOLE);
+            LibsMsg.NO_CONSOLE.send(sender);
             return true;
         }
 
         if (sender.hasPermission("libsdisguises.undisguise") && !"%%__USER__%%".equals(12345 + "")) {
             if (DisguiseAPI.isDisguised((Entity) sender)) {
                 DisguiseAPI.undisguiseToAll((Player) sender);
-                DisguiseUtilities.sendMessage(sender, LibsMsg.UNDISG);
+                LibsMsg.UNDISG.send(sender);
             } else {
-                DisguiseUtilities.sendMessage(sender, LibsMsg.NOT_DISGUISED);
+                LibsMsg.NOT_DISGUISED.send(sender);
             }
         } else {
-            DisguiseUtilities.sendMessage(sender, LibsMsg.NO_PERM);
+            LibsMsg.NO_PERM.send(sender);
         }
 
         return true;
