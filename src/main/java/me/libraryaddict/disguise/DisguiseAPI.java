@@ -461,7 +461,7 @@ public class DisguiseAPI {
     }
 
     public static boolean hasActionBarPreference(Entity entity) {
-        return DisguiseUtilities.getViewSelf().contains(entity.getUniqueId());
+        return DisguiseUtilities.getViewBar().contains(entity.getUniqueId());
     }
 
     /**
@@ -516,7 +516,7 @@ public class DisguiseAPI {
 
         // If default is view and we want the opposite
         if (!isShown) {
-            if (!hasSelfDisguisePreference(player)) {
+            if (!hasActionBarPreference(player)) {
                 DisguiseUtilities.getViewBar().add(player.getUniqueId());
                 DisguiseUtilities.addSaveAttempt();
             }

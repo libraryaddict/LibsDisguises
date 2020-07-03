@@ -396,6 +396,6 @@ public enum LibsMsg {
     }
 
     public String toString() {
-        throw new RuntimeException("Dont call this");
+        throw new IllegalStateException("Dont call this");
     }
 }
