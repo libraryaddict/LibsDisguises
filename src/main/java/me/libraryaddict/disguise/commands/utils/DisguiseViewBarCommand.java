@@ -21,11 +21,11 @@ public class DisguiseViewBarCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (DisguiseAPI.isViewBarToggled(player)) {
-            DisguiseAPI.setViewBarToggled(player, false);
+        if (DisguiseAPI.isActionBarShown(player)) {
+            DisguiseAPI.setActionBarShown(player, false);
             DisguiseUtilities.sendMessage(sender, LibsMsg.VIEW_BAR_OFF);
         } else {
-            DisguiseAPI.setViewBarToggled(player, true);
+            DisguiseAPI.setActionBarShown(player, true);
             DisguiseUtilities.sendMessage(sender, LibsMsg.VIEW_BAR_ON);
         }
 

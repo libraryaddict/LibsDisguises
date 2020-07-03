@@ -373,7 +373,7 @@ public class FlagWatcher {
         if (optional.isPresent()) {
             BaseComponent[] base = ComponentConverter.fromWrapper(optional.get());
 
-            return DisguiseUtilities.getSimpleChat(base);
+            return DisguiseUtilities.getSimpleString(base);
         }
 
         return null;

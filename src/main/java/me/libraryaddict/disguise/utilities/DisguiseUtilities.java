@@ -2148,6 +2148,14 @@ public class DisguiseUtilities {
         return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
     }
 
+    public static String quoteHex(String string) {
+        return string.replaceAll("(<)(#[0-9a-fA-F]{6}>)", "$1\\$2");
+    }
+
+    public static String unquoteHex(String string) {
+        return string.replaceAll("(<)\\\\(#[0-9a-fA-F]{6}>)", "$1$2");
+    }
+
     public static void sendMessage(CommandSender sender, String message) {
         if (!NmsVersion.v1_16.isSupported()) {
             if (!message.isEmpty()) {
@@ -2192,7 +2200,7 @@ public class DisguiseUtilities {
         return v;
     }
 
-    public static String getSimpleChat(BaseComponent[] components) {
+    public static String getSimpleString(BaseComponent[] components) {
         StringBuilder builder = new StringBuilder();
 
         for (BaseComponent component : components) {
@@ -2231,7 +2239,7 @@ public class DisguiseUtilities {
                 continue;
             }
 
-            builder.append(((TextComponent) component).getText());
+            builder.append(quoteHex(((TextComponent) component).getText()));
         }
 
         return builder.toString();
@@ -2318,7 +2326,7 @@ public class DisguiseUtilities {
                     if (builder.length() > 0) {
                         old = component;
                         component = new TextComponent(component);
-                        old.setText(builder.toString());
+                        old.setText(unquoteHex(builder.toString()));
                         builder = new StringBuilder();
                         components.add(old);
                     }
@@ -2326,7 +2334,7 @@ public class DisguiseUtilities {
                     old = component;
                     component = new TextComponent(component);
                     String urlString = message.substring(i, pos);
-                    component.setText(urlString);
+                    component.setText(unquoteHex(urlString));
                     component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
                             urlString.startsWith("http") ? urlString : "http://" + urlString));
                     components.add(component);
@@ -2338,9 +2346,9 @@ public class DisguiseUtilities {
             }
         }
 
-        component.setText(builder.toString());
+        component.setText(unquoteHex(builder.toString()));
         components.add(component);
-        return components.toArray(new BaseComponent[components.size()]);
+        return components.toArray(new BaseComponent[0]);
     }
 
     public static boolean isOlderThan(String requiredVersion, String theirVersion) {

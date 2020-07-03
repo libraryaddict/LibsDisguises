@@ -231,6 +231,10 @@ public class DisguiseAPI {
         if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
             disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
 
+        if (hasActionBarPreference(entity) && !isActionBarShown(entity)) {
+            disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
+        }
+
         disguise.startDisguise();
     }
 
@@ -448,15 +452,15 @@ public class DisguiseAPI {
      * @param entity
      * @return
      */
-    public static boolean isViewBarToggled(Player entity) {
-        return hasViewBarPreference(entity) == (DisguiseConfig.getNotifyBar() != DisguiseConfig.NotifyBar.NONE);
+    public static boolean isActionBarShown(Entity entity) {
+        return !hasActionBarPreference(entity);
     }
 
     public static boolean hasSelfDisguisePreference(Entity entity) {
         return DisguiseUtilities.getViewSelf().contains(entity.getUniqueId());
     }
 
-    public static boolean hasViewBarPreference(Entity entity) {
+    public static boolean hasActionBarPreference(Entity entity) {
         return DisguiseUtilities.getViewSelf().contains(entity.getUniqueId());
     }
 
@@ -501,16 +505,17 @@ public class DisguiseAPI {
         }
     }
 
-    public static void setViewBarToggled(Player player, boolean canSeeNotifyBar) {
+    public static void setActionBarShown(Player player, boolean isShown) {
         if (isDisguised(player)) {
             Disguise[] disguises = getDisguises(player);
 
             for (Disguise disguise : disguises) {
-                disguise.setNotifyBar(canSeeNotifyBar ? DisguiseConfig.getNotifyBar() : DisguiseConfig.NotifyBar.NONE);
+                disguise.setNotifyBar(isShown ? DisguiseConfig.getNotifyBar() : DisguiseConfig.NotifyBar.NONE);
             }
         }
 
-        if (canSeeNotifyBar == (DisguiseConfig.getNotifyBar() != DisguiseConfig.NotifyBar.NONE)) {
+        // If default is view and we want the opposite
+        if (!isShown) {
             if (!hasSelfDisguisePreference(player)) {
                 DisguiseUtilities.getViewBar().add(player.getUniqueId());
                 DisguiseUtilities.addSaveAttempt();
