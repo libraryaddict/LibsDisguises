@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -279,10 +280,10 @@ public class PlayerDisguise extends TargetedDisguise {
 
         switch (DisguiseConfig.getPlayerNameType()) {
             case TEAMS:
-                cLimit = 16 * 2;
+                cLimit = (NmsVersion.v1_13.isSupported() ? 64 : 16) * 2;
                 break;
             case EXTENDED:
-                cLimit = 16 * 3;
+                cLimit = ((NmsVersion.v1_13.isSupported() ? 64 : 16) * 2) + 16;
                 break;
             case ARMORSTANDS:
                 cLimit = 256;

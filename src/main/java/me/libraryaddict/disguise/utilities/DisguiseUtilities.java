@@ -1601,27 +1601,29 @@ public class DisguiseUtilities {
             throw new IllegalStateException("This can only be used for names longer than 16 characters!");
         }
 
-        if (name.length() > 48) {
-            name = name.substring(0, 48);
+        int limit = NmsVersion.v1_13.isSupported() ? 64 : 16;
+
+        if (name.length() > (16 + (limit * 2))) {
+            name = name.substring(0, (16 + (limit * 2)));
         }
 
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
 
         // If name is short enough to be used outside of player name
-        if (DisguiseConfig.isScoreboardNames() && name.length() <= 32) {
+        if (DisguiseConfig.isScoreboardNames() && name.length() <= limit * 2) {
             String[] newName = new String[]{name, playerName, ""};
 
-            if (name.length() > 16) {
-                if (name.charAt(15) == ChatColor.COLOR_CHAR) {
-                    newName[0] = name.substring(0, 15);
+            if (name.length() > limit) {
+                if (name.charAt(limit - 1) == ChatColor.COLOR_CHAR) {
+                    newName[0] = name.substring(0, limit - 1);
                 } else {
-                    newName[0] = name.substring(0, 16);
+                    newName[0] = name.substring(0, limit);
                 }
 
                 String suffix = ChatColor.getLastColors(newName[0]) + name.substring(newName[0].length());
 
-                if (suffix.length() > 16) {
-                    suffix = suffix.substring(0, 16);
+                if (suffix.length() > limit) {
+                    suffix = suffix.substring(0, limit);
                 }
                 // Don't allow second name to hit 17 chars
                 newName[2] = suffix;
@@ -1652,7 +1654,7 @@ public class DisguiseUtilities {
             return newName;
         }
 
-        for (int prefixLen = 16; prefixLen >= 0; prefixLen--) {
+        for (int prefixLen = limit; prefixLen >= 0; prefixLen--) {
             String prefix = name.substring(0, prefixLen);
 
             if (prefix.endsWith("" + ChatColor.COLOR_CHAR)) {
@@ -1662,7 +1664,7 @@ public class DisguiseUtilities {
             String colors = ChatColor.getLastColors(prefix);
 
             // We found our prefix. Now we check about seperating it between name and suffix
-            for (int nameLen = Math.min(name.length() - (prefixLen + colors.length()), 16 - colors.length());
+            for (int nameLen = Math.min(name.length() - (prefixLen + colors.length()), limit - colors.length());
                  nameLen > 0; nameLen--) {
                 String nName = colors + name.substring(prefixLen, nameLen + prefixLen);
 
@@ -1672,8 +1674,8 @@ public class DisguiseUtilities {
 
                 String suffix = name.substring(nameLen + prefixLen);
 
-                if (suffix.length() > 16) {
-                    suffix = suffix.substring(0, 16);
+                if (suffix.length() > limit) {
+                    suffix = suffix.substring(0, limit);
                 }
 
                 String[] extended = new String[]{prefix, nName, suffix};
@@ -1688,10 +1690,10 @@ public class DisguiseUtilities {
 
         // Failed to find a unique name.. Ah well.
 
-        String prefix = name.substring(0, 16);
+        String prefix = name.substring(0, limit);
 
         if (prefix.endsWith(ChatColor.COLOR_CHAR + "")) {
-            prefix = prefix.substring(0, 15);
+            prefix = prefix.substring(0, limit - 1);
         }
 
         String nName = name.substring(prefix.length(), prefix.length() + Math.min(16, prefix.length()));
@@ -1702,8 +1704,8 @@ public class DisguiseUtilities {
 
         String suffix = name.substring(prefix.length() + nName.length());
 
-        if (suffix.length() > 16) {
-            suffix = suffix.substring(0, 16);
+        if (suffix.length() > limit) {
+            suffix = suffix.substring(0, limit);
         }
 
         return new String[]{prefix, nName, suffix};
@@ -2025,7 +2027,6 @@ public class DisguiseUtilities {
 
         return list.toArray(new String[0]);
     }
-
 
     public static ItemStack getSlot(PlayerInventory equip, EquipmentSlot slot) {
         switch (slot) {
