@@ -207,6 +207,9 @@ public abstract class Disguise {
         disguise.multiName = Arrays.copyOf(multiName, multiName.length);
         disguise.setDynamicName(isDynamicName());
         disguise.setSoundGroup(getSoundGroup());
+        disguise.notifyBar = getNotifyBar();
+        disguise.bossBarColor = getBossBarColor();
+        disguise.bossBarStyle = getBossBarStyle();
 
         if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
