@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.*;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -26,6 +27,7 @@ public class PacketsManager {
     private static boolean viewDisguisesListenerEnabled;
     private static PacketsHandler packetsHandler;
     private static PacketListener destroyListener;
+    private static PacketListener scoreboardTeamListener;
 
     public static void addPacketListeners() {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
@@ -166,6 +168,11 @@ public class PacketsManager {
 
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
             ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
+
+            if (NmsVersion.v1_16.isSupported()) {
+                scoreboardTeamListener = new PacketListenerScoreboardTeam();
+                ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
+            }
         }
     }
 

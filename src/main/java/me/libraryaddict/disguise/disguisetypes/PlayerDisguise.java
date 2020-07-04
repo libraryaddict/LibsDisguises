@@ -29,7 +29,7 @@ public class PlayerDisguise extends TargetedDisguise {
      * Has someone set name visible explicitly?
      */
     private boolean explicitNameVisible = false;
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     private volatile DisguiseUtilities.DScoreTeam scoreboardName;
 
     private PlayerDisguise() {
