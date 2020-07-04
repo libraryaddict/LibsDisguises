@@ -83,7 +83,7 @@ PlayerNames: TEAMS
 OverrideCustomNames: true
 
 # How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
-TablistRemoveDelay: 2
+TablistRemoveDelay: 3
 
 # Does the player keep their disguise after they die?
 KeepDisguises:
