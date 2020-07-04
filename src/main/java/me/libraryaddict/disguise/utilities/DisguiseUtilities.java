@@ -111,8 +111,13 @@ public class DisguiseUtilities {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             }
 
-            team.setPrefix(getPrefix());
-            team.setSuffix(getSuffix());
+            if (NmsVersion.v1_13.isSupported()) {
+                team.setPrefix("Colorize");
+                team.setSuffix("Colorize");
+            } else {
+                team.setPrefix(getPrefix());
+                team.setSuffix(getSuffix());
+            }
         }
     }
 
@@ -1601,7 +1606,7 @@ public class DisguiseUtilities {
             throw new IllegalStateException("This can only be used for names longer than 16 characters!");
         }
 
-        int limit = NmsVersion.v1_13.isSupported() ? 64 : 16;
+        int limit = NmsVersion.v1_13.isSupported() ? 1024 : 16;
 
         if (name.length() > (16 + (limit * 2))) {
             name = name.substring(0, (16 + (limit * 2)));

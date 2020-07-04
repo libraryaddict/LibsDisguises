@@ -169,7 +169,7 @@ public class PacketsManager {
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
             ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
 
-            if (NmsVersion.v1_16.isSupported()) {
+            if (NmsVersion.v1_13.isSupported()) {
                 scoreboardTeamListener = new PacketListenerScoreboardTeam();
                 ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
             }

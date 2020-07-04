@@ -13,7 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.plugin.Plugin;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
         PacketContainer packet = event.getPacket();
         String name = packet.getStrings().read(0);
 
-        if (!name.startsWith("LD_")) {
+        if (!name.startsWith("LD_") || name.equals("LD_NoName") || name.equals("LD_Pushing")) {
             return;
         }
 
@@ -53,6 +53,7 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
         }
 
         StructureModifier<WrappedChatComponent> chats = packet.getChatComponents();
+
         BaseComponent[] prefix = DisguiseUtilities.getColoredChat(team.getPrefix());
         BaseComponent[] suffix = DisguiseUtilities.getColoredChat(team.getSuffix());
 
