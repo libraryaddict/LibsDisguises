@@ -272,13 +272,24 @@ public abstract class Disguise {
         }
     }
 
+    private void removeBossBar() {
+        BossBar bossBar = Bukkit.getBossBar(getBossBar());
+
+        if (bossBar == null) {
+            return;
+        }
+
+        bossBar.removeAll();
+        Bukkit.removeBossBar(getBossBar());
+    }
+
     public void setNotifyBar(DisguiseConfig.NotifyBar bar) {
         if (getNotifyBar() == bar) {
             return;
         }
 
         if (getNotifyBar() == DisguiseConfig.NotifyBar.BOSS_BAR) {
-            Bukkit.removeBossBar(getBossBar());
+            removeBossBar();
         }
 
         this.notifyBar = bar;
@@ -323,7 +334,7 @@ public abstract class Disguise {
             return;
         }
 
-        Bukkit.removeBossBar(getBossBar());
+        removeBossBar();
 
         BossBar bar = Bukkit
                 .createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()), getBossBarColor(),
@@ -973,12 +984,7 @@ public abstract class Disguise {
                 new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
 
         if (NmsVersion.v1_13.isSupported()) {
-            BossBar bar = Bukkit.getBossBar(getBossBar());
-
-            if (bar != null) {
-                bar.removeAll();
-                Bukkit.removeBossBar(getBossBar());
-            }
+            removeBossBar();
         }
 
         return true;
