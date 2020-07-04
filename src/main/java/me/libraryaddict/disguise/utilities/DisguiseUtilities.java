@@ -46,8 +46,10 @@ import org.bukkit.*;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -2024,6 +2026,28 @@ public class DisguiseUtilities {
         return list.toArray(new String[0]);
     }
 
+
+    public static ItemStack getSlot(PlayerInventory equip, EquipmentSlot slot) {
+        switch (slot) {
+            case HAND:
+                return equip.getItemInMainHand();
+            case OFF_HAND:
+                return equip.getItemInOffHand();
+            case HEAD:
+                return equip.getHelmet();
+            case CHEST:
+                return equip.getChestplate();
+            case LEGS:
+                return equip.getLeggings();
+            case FEET:
+                return equip.getBoots();
+            default:
+                break;
+        }
+
+        return null;
+    }
+
     /**
      * Sends the self disguise to the player
      */
@@ -2122,11 +2146,11 @@ public class DisguiseUtilities {
                         manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0, list).createPacket(0, list));
             } else {
                 for (EquipmentSlot slot : EquipmentSlot.values()) {
+                    Object item = ReflectionManager.getNmsItem(getSlot(player.getInventory(), slot));
+
                     sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_EQUIPMENT, 0,
-                            ReflectionManager.createEnumItemSlot(slot),
-                            ReflectionManager.getNmsItem(player.getInventory().getItem(slot)))
-                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(slot),
-                                    ReflectionManager.getNmsItem(player.getInventory().getItem(slot))));
+                            ReflectionManager.createEnumItemSlot(slot), item)
+                            .createPacket(player.getEntityId(), ReflectionManager.createEnumItemSlot(slot), item));
                 }
             }
 

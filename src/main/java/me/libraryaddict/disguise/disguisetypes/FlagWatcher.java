@@ -729,30 +729,7 @@ public class FlagWatcher {
             return;
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
-            EntityEquipment equip = ((LivingEntity) getDisguise().getEntity()).getEquipment();
-
-            switch (slot) {
-                case HAND:
-                    itemStack = equip.getItemInMainHand();
-                    break;
-                case OFF_HAND:
-                    itemStack = equip.getItemInOffHand();
-                    break;
-                case HEAD:
-                    itemStack = equip.getHelmet();
-                    break;
-                case CHEST:
-                    itemStack = equip.getChestplate();
-                    break;
-                case LEGS:
-                    itemStack = equip.getLeggings();
-                    break;
-                case FEET:
-                    itemStack = equip.getBoots();
-                    break;
-                default:
-                    break;
-            }
+            itemStack = ReflectionManager.getEquipment(slot, getDisguise().getEntity());
         }
 
         Object itemToSend = ReflectionManager.getNmsItem(itemStack);

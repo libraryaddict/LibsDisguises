@@ -1121,7 +1121,9 @@ public class ReflectionManager {
                 Method toMinecraft = getCraftMethod("util.CraftMagicNumbers", "getMaterialFromInternalName",
                         String.class);
 
-                return (Material) toMinecraft.invoke(null, name);
+                Object instance = toMinecraft.getDeclaringClass().getField("INSTANCE").get(null);
+
+                return (Material) toMinecraft.invoke(instance, name);
             }
 
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name);
@@ -1140,7 +1142,12 @@ public class ReflectionManager {
             return (Material) getMaterial.invoke(null, item);
         }
         catch (Exception ex) {
+            DisguiseUtilities.getLogger().severe("Error when trying to convert '" + name + "' into a Material");
             ex.printStackTrace();
+
+            if (ex.getCause() != null) {
+                ex.getCause().printStackTrace();
+            }
         }
 
         return null;
