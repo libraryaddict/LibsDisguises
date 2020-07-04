@@ -205,6 +205,7 @@ public class DisguiseUtilities {
         String json = getGson().toJson(map);
 
         try {
+            viewPreferences.delete();
             Files.write(viewPreferences.toPath(), json.getBytes(), StandardOpenOption.CREATE);
         }
         catch (IOException e) {
