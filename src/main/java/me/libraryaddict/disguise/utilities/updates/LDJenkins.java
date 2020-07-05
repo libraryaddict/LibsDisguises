@@ -88,6 +88,22 @@ public class LDJenkins {
         for (Map map : (List<Map>) lastBuild.get("builds")) {
             String result = (String) map.get("result");
 
+            if (result == null || result.equalsIgnoreCase("null")) {
+                if (version == null) {
+                    DisguiseUtilities.getLogger()
+                            .info("Jenkins build is pending.. Sleeping and checking again in 10 seconds");
+
+                    try {
+                        Thread.sleep(10000);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    return getLatestSnapshot();
+                }
+            }
+
             Object items = ((Map) map.get("changeSet")).get("items");
             boolean release = false;
 
