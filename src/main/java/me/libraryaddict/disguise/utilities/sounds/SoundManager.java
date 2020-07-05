@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -61,8 +62,27 @@ public class SoundManager {
 
                 for (String sound : list) {
                     if (!sound.matches(".+:.+")) {
-                        DisguiseUtilities.getLogger()
-                                .warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name");
+                        SoundGroup subGroup = SoundGroup.getGroup(sound);
+
+                        if (subGroup == null) {
+                            DisguiseUtilities.getLogger().warning("Invalid sound '" + sound +
+                                    "'! Must be a minecraft:sound.name or SoundGroup name!");
+                            continue;
+                        }
+
+                        Object[] sounds = subGroup.getDisguiseSounds().get(type);
+
+                        if (sounds == null) {
+                            DisguiseUtilities.getLogger().warning(
+                                    "Sound group '" + sound + "' does not contain a category for " + type +
+                                            "! Can't use as default in " + key);
+                            continue;
+                        }
+
+                        for (Object obj : sounds) {
+                            group.addSound(obj, type);
+                        }
+
                         continue;
                     }
 

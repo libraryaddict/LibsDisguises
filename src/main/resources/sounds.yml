@@ -7,6 +7,9 @@
 GroupName:
   # If you don't set one of these options, or it is empty. Then no sound will be played for that sound type
   # So if hurt is missing, it won't play a hurt noise
+  # Alternatively, you could use "COW" which refers to the "COW" soundgroup, and loads the category from that!
+  # Idle:
+  #   - COW
   Idle:
     - minecraft:some.idle.sound
   Hurt:

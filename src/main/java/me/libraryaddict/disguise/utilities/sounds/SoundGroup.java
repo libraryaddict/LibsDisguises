@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Sound;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,7 +27,9 @@ public class SoundGroup {
     private final static LinkedHashMap<String, SoundGroup> groups = new LinkedHashMap<>();
     private float damageSoundVolume = 1F;
     @Getter
-    private final LinkedHashMap<Object, SoundType> disguiseSounds = new LinkedHashMap<>();
+    private final LinkedHashMap<Object, SoundType> disguiseSoundTypes = new LinkedHashMap<>();
+    @Getter
+    private final LinkedHashMap<SoundType, Object[]> disguiseSounds = new LinkedHashMap<>();
     private boolean customSounds;
 
     public SoundGroup(String name) {
@@ -53,7 +56,18 @@ public class SoundGroup {
             return;
         }
 
-        disguiseSounds.put(sound, type);
+        disguiseSoundTypes.putIfAbsent(sound, type);
+
+        if (disguiseSounds.containsKey(type)) {
+            Object[] array = disguiseSounds.get(type);
+
+            array = Arrays.copyOf(array, array.length + 1);
+            array[array.length - 1] = sound;
+
+            disguiseSounds.put(type, array);
+        } else {
+            disguiseSounds.put(type, new Object[]{sound});
+        }
     }
 
     public float getDamageAndIdleSoundVolume() {
@@ -73,15 +87,13 @@ public class SoundGroup {
             return getRandomSound(type);
         }
 
-        for (Map.Entry<Object, SoundType> entry : disguiseSounds.entrySet()) {
-            if (entry.getValue() != type) {
-                continue;
-            }
+        Object[] sounds = disguiseSounds.get(type);
 
-            return entry.getKey();
+        if (sounds == null) {
+            return null;
         }
 
-        return null;
+        return sounds[0];
     }
 
     private Object getRandomSound(SoundType type) {
@@ -89,22 +101,13 @@ public class SoundGroup {
             return null;
         }
 
-        Object[] sounds = new Object[disguiseSounds.size()];
-        int i = 0;
+        Object[] sounds = disguiseSounds.get(type);
 
-        for (Map.Entry<Object, SoundType> entry : disguiseSounds.entrySet()) {
-            if (entry.getValue() != type) {
-                continue;
-            }
-
-            sounds[i++] = entry.getKey();
-        }
-
-        if (i == 0) {
+        if (sounds == null) {
             return null;
         }
 
-        return sounds[RandomUtils.nextInt(i)];
+        return sounds[RandomUtils.nextInt(sounds.length)];
     }
 
     public SoundType getSound(Object sound) {
@@ -112,7 +115,7 @@ public class SoundGroup {
             return null;
         }
 
-        return disguiseSounds.get(sound);
+        return disguiseSoundTypes.get(sound);
     }
 
     /**
