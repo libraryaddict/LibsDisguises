@@ -156,6 +156,9 @@ public class UpdateChecker {
     }
 
     public LibsMsg doUpdateCheck() {
+        DisguiseConfig.setLastUpdateRequest(System.currentTimeMillis());
+        DisguiseConfig.saveInternalConfig();
+
         downloading.set(true);
 
         try {
