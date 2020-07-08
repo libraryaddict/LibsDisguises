@@ -43,7 +43,13 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
                     continue;
                 }
 
-                team = ((PlayerDisguise) disguise).getScoreboardName();
+                DisguiseUtilities.DScoreTeam t = ((PlayerDisguise) disguise).getScoreboardName();
+
+                if (!t.getTeamName().equals(name)) {
+                    continue;
+                }
+
+                team = t;
                 break loop;
             }
         }
