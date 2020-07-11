@@ -135,13 +135,14 @@ public class LDScoreboard implements LDCommand {
 
             if (!DisguiseAPI.isDisguised(player)) {
                 LibsMsg.DMODPLAYER_NODISGUISE.send(sender, player.getName());
+                LibsMsg.DISGUISE_REQUIRED.send(sender);
                 return;
             }
         } else if (sender instanceof Player) {
             player = (Player) sender;
 
             if (!DisguiseAPI.isDisguised(player)) {
-                LibsMsg.NOT_DISGUISED.send(sender);
+                LibsMsg.DISGUISE_REQUIRED.send(sender);
                 return;
             }
         } else {

@@ -160,6 +160,7 @@ public enum LibsMsg {
             "Ignored %s methods you do not have permission to use. Add 'show' to view unusable methods."),
     OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),
     NOT_DISGUISED(ChatColor.RED + "You are not disguised!"),
+    DISGUISE_REQUIRED(ChatColor.RED + "You must be disguised to run this command!"),
     TARGET_NOT_DISGUISED(ChatColor.RED + "That entity is not disguised!"),
     NOT_NUMBER(ChatColor.RED + "Error! %s is not a number"),
     PARSE_CANT_DISG_UNKNOWN(ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!"),
@@ -315,7 +316,8 @@ public enum LibsMsg {
             "On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right" +
             " now, then " +
             "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
-            "name above head, or the tablist. Check their configs for pushing disabling options"),
+            "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the end' if you " +
+            "still need help with this, or we'll assume you can't read."),
     LIBS_SCOREBOARD_DISABLED(
             "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
                     "."),
