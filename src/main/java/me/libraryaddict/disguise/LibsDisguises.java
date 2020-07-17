@@ -94,6 +94,8 @@ public class LibsDisguises extends JavaPlugin {
         YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
         buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
 
+        getLogger().info("File Name: " + getFile().getName());
+
         getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
 
         getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
