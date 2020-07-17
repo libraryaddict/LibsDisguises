@@ -222,6 +222,12 @@ public class LibsPremium {
                 DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
                 DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
 
+                // >.>
+                if (plugin.getBuildNumber() == null || !plugin.getBuildNumber().matches("[0-9]+") ||
+                        Integer.parseInt(plugin.getBuildNumber()) < 300) {
+                    file.delete();
+                    continue;
+                }
                 break;
             } else {
                 // You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
