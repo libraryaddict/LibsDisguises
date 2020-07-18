@@ -166,6 +166,10 @@ public class LDScoreboard implements LDCommand {
         }
 
         LibsMsg.LIBS_SCOREBOARD_SUCCESS.send(sender, team.getName());
+
+        if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
+            LibsMsg.PLUGIN_TAB_DETECTED.send(sender);
+        }
     }
 
     @Override
