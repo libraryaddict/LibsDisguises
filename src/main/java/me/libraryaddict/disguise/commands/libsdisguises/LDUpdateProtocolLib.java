@@ -32,7 +32,7 @@ public class LDUpdateProtocolLib implements LDCommand {
 
     @Override
     public boolean hasPermission(CommandSender sender) {
-        return sender.isOp();
+        return sender.isOp() || sender.hasPermission("minecraft.command.op");
     }
 
     @Override

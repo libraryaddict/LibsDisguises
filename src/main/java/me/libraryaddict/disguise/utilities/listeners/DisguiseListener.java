@@ -312,7 +312,7 @@ public class DisguiseListener implements Listener {
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
         plugin.getUpdateChecker().notifyUpdate(p);
 
-        if (p.isOp()) {
+        if (p.isOp() || p.hasPermission("minecraft.command.op")) {
             String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
             String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
