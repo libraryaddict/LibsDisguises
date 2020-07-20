@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.commands.interactions;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.entity.Entity;

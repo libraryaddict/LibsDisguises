@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;

@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;

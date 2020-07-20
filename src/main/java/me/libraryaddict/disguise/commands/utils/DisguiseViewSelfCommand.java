@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

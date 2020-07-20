@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
 

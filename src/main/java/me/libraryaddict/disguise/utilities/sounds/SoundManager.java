@@ -10,7 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
