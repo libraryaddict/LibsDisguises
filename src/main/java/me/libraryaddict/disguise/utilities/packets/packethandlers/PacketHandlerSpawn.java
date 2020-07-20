@@ -311,7 +311,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
                     // Center the block
                     x = loc.getBlockX() + 0.5;
-                    y = loc.getBlockY();
+                    y = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
                     z = loc.getBlockZ() + 0.5;
                 }
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {

@@ -51,7 +51,8 @@ public class FallingBlockWatcher extends FlagWatcher {
 
             relMove.getModifier().write(0, getDisguise().getEntity().getEntityId());
             shorts.write(0, conRel(loc.getX(), loc.getBlockX() + 0.5));
-            shorts.write(1, conRel(loc.getY(), loc.getBlockY()));
+            shorts.write(1, conRel(loc.getY(),
+                    loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
             shorts.write(2, conRel(loc.getZ(), loc.getBlockZ() + 0.5));
 
             try {

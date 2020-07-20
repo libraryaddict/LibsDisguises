@@ -33,7 +33,7 @@ public class PacketHandlerMovement implements IPacketHandler {
                 PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.REL_ENTITY_MOVE};
     }
 
-    private short conRel(int oldCord, int newCord) {
+    private short conRel(double oldCord, double newCord) {
         return (short) ((oldCord - newCord) * 4096);
     }
 
@@ -87,21 +87,24 @@ public class PacketHandlerMovement implements IPacketHandler {
             if (sentPacket.getType() != PacketType.Play.Server.ENTITY_TELEPORT) {
                 StructureModifier<Short> shorts = movePacket.getShorts();
 
-                Location current = entity.getLocation();
+                Location origLoc = entity.getLocation();
                 Vector diff = new Vector(shorts.read(0) / 4096D, shorts.read(1) / 4096D, shorts.read(2) / 4096D);
-                Location newLoc = current.clone().subtract(diff);
+                Location newLoc = origLoc.clone().subtract(diff);
 
-                boolean sameBlock =
-                        current.getBlockX() == newLoc.getBlockX() && current.getBlockY() == newLoc.getBlockY() &&
-                                current.getBlockZ() == newLoc.getBlockZ();
+                double origY =
+                        origLoc.getBlockY() + (origLoc.getY() % 1 >= 0.85 ? 1 : origLoc.getY() % 1 >= 0.35 ? .5 : 0);
+                double newY = newLoc.getBlockY() + (newLoc.getY() % 1 >= 0.85 ? 1 : newLoc.getY() % 1 >= 0.35 ? .5 : 0);
+
+                boolean sameBlock = origLoc.getBlockX() == newLoc.getBlockX() && newY == origY &&
+                        origLoc.getBlockZ() == newLoc.getBlockZ();
 
                 if (sameBlock) {
-                    // Make no modifications
+                    // Make no modifications but don't send anything
                     return;
                 } else {
-                    shorts.write(0, conRel(current.getBlockX(), newLoc.getBlockX()));
-                    shorts.write(1, conRel(current.getBlockY(), newLoc.getBlockY()));
-                    shorts.write(2, conRel(current.getBlockZ(), newLoc.getBlockZ()));
+                    shorts.write(0, conRel(origLoc.getBlockX(), newLoc.getBlockX()));
+                    shorts.write(1, conRel(origY, newY));
+                    shorts.write(2, conRel(origLoc.getBlockZ(), newLoc.getBlockZ()));
                 }
             } else {
                 Location loc = entity.getLocation();
@@ -109,7 +112,13 @@ public class PacketHandlerMovement implements IPacketHandler {
                 StructureModifier<Double> doubles = movePacket.getDoubles();
                 // Center the block
                 doubles.write(0, loc.getBlockX() + 0.5);
-                doubles.write(1, (double) loc.getBlockY());
+
+                double y = loc.getBlockY();
+
+                // Force into a multiple of 0.25
+                y += Math.floor((loc.getY() % 1) * 4) / 4D;
+
+                doubles.write(1, y);
                 doubles.write(2, loc.getBlockZ() + 0.5);
             }
 
