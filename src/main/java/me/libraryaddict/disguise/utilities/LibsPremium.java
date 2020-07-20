@@ -223,8 +223,8 @@ public class LibsPremium {
                 DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
 
                 // >.>
-                if (plugin.getBuildNumber() == null || !plugin.getBuildNumber().matches("[0-9]+") ||
-                        Integer.parseInt(plugin.getBuildNumber()) < 300) {
+                if (plugin.getBuildNumber() == null || !plugin.getBuildNumber().matches("#[0-9]+") ||
+                        Integer.parseInt(plugin.getBuildNumber().substring(1)) < 300) {
                     file.delete();
                     continue;
                 }
