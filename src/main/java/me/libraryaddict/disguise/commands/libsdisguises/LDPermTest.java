@@ -43,8 +43,11 @@ public class LDPermTest implements LDCommand {
                 LibsMsg.CANNOT_FIND_PLAYER.send(sender, args[1]);
                 return;
             }
+
+            LibsMsg.LIBS_PERM_CHECK_USING_TARGET.send(sender, args[1]);
         } else {
             player = sender;
+            LibsMsg.LIBS_PERM_CHECK_CAN_TARGET.send(sender);
         }
 
         DisguisePermissions permissions = new DisguisePermissions(player, "disguise");

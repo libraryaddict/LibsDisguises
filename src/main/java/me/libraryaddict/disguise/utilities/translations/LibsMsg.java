@@ -280,16 +280,17 @@ public enum LibsMsg {
     META_CLICK_SHOW(ChatColor.GOLD + "Click to show %s"),
     LIBS_PERM_CHECK_NON_PREM(
             ChatColor.RED + "This server is not premium, non-admins should not be able to use commands"),
+    LIBS_PERM_CHECK_CAN_TARGET(ChatColor.GOLD + "You can specify a player target with /ld permtest <Target> instead!"),
+    LIBS_PERM_CHECK_USING_TARGET(ChatColor.GOLD + "Running the permission test on '%s'"),
     LIBS_PERM_CHECK_INFO_1(ChatColor.AQUA + "Now checking for the permission 'libsdisguises.disguise.pig'"),
-    LIBS_PERM_CHECK_INFO_2(ChatColor.AQUA +
-            "If you did not give this permission, please set it. You can supply a player name to test another player."),
+    LIBS_PERM_CHECK_INFO_2(ChatColor.AQUA + "If you did not give this permission, please set it."),
     NORMAL_PERM_CHECK_SUCCESS(ChatColor.GOLD + "Normal permission check, success."),
     NORMAL_PERM_CHECK_FAIL(ChatColor.RED + "Normal permission check, fail."),
     LIBS_PERM_CHECK_SUCCESS(
             ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
     LIBS_PERM_CHECK_FAIL(
             ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!"),
-    LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS(ChatColor.RED +
+    LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS(ChatColor.GOLD +
             "Tested libsdisguises.disguise.zombie, which your player seems to have! There may be a problem in your " +
             "permissions setup!"),
     LIBS_PERM_CHECK_COMMAND_UNREGISTERED(
@@ -319,8 +320,7 @@ public enum LibsMsg {
             " now, then " +
             "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
             "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the " +
-            "end' if you " +
-            "still need help with this, or we'll assume you can't read."),
+            "end' if you " + "still need help with this, or we'll assume you can't read."),
     LIBS_SCOREBOARD_DISABLED(
             "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
                     "."),
