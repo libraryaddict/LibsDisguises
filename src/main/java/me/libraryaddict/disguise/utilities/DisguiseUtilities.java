@@ -267,7 +267,7 @@ public class DisguiseUtilities {
     }
 
     public static String getProtocolLibRequiredVersion() {
-        return NmsVersion.v1_16.isSupported() ? "4.6.0" : "4.5.1";
+        return !NmsVersion.v1_13.isSupported() ? "4.4.0" : NmsVersion.v1_16.isSupported() ? "4.6.0" : "4.5.1";
     }
 
     /**
