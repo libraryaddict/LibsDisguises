@@ -326,15 +326,6 @@ public class DisguiseListener implements Listener {
             }
         }
 
-        if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
-                DisguiseUtilities.hasGameProfile(p.getName())) {
-            WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
-
-            if (!profile.getProperties().isEmpty()) {
-                DisguiseUtilities.addGameProfile(p.getName(), profile);
-            }
-        }
-
         if (DisguiseConfig.isSavePlayerDisguises()) {
             Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p.getUniqueId(), true);
 
@@ -391,6 +382,15 @@ public class DisguiseListener implements Listener {
                             .filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
+                }
+
+                if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
+                        DisguiseUtilities.hasGameProfile(p.getName())) {
+                    WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
+
+                    if (!profile.getProperties().isEmpty()) {
+                        DisguiseUtilities.addGameProfile(p.getName(), profile);
+                    }
                 }
             }
         }.runTaskLater(LibsDisguises.getInstance(), 20);
