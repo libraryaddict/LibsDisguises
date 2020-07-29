@@ -87,10 +87,10 @@ public class LDJson implements LDCommand {
     }
 
     private void sendMessage(CommandSender sender, LibsMsg prefix, LibsMsg oldVer, String string) {
-        if (!NmsVersion.v1_13.isSupported()) {
+       /* if (!NmsVersion.v1_13.isSupported()) {
             oldVer.send(sender, string);
             return;
-        }
+        }*/
 
         int start = 0;
         int msg = 1;

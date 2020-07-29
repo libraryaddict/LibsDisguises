@@ -89,10 +89,10 @@ public class CopyDisguiseCommand implements CommandExecutor {
     }
 
     public void sendMessage(CommandSender sender, LibsMsg msg, LibsMsg oldVer, String string, boolean forceAbbrev) {
-        if (!NmsVersion.v1_13.isSupported()) {
+     /*   if (!NmsVersion.v1_13.isSupported()) {
             oldVer.send(sender, string);
             return;
-        }
+        }*/
 
         ComponentBuilder builder = new ComponentBuilder("").appendLegacy(msg.get()).append(" ");
 

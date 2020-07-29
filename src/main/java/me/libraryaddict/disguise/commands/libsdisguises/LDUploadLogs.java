@@ -202,27 +202,21 @@ public class LDUploadLogs implements LDCommand {
                             public void run() {
                                 sender.sendMessage(ChatColor.GOLD + "Upload successful!");
 
-                                if (NmsVersion.v1_13.isSupported()) {
-                                    // Console can't click :(
-                                    if (sender instanceof Player) {
-                                        sender.sendMessage(ChatColor.GOLD +
-                                                "Click on the below message to have it appear in your chat input");
-                                    }
-
-                                    String text = "My log file: " + latestPaste + ", my config file: " + configPaste +
-                                            " and my disguises file: " + disguisesPaste;
-
-                                    ComponentBuilder builder = new ComponentBuilder("");
-                                    builder.appendLegacy(ChatColor.AQUA + "");
-                                    builder.append(text);
-                                    builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, text));
-
-                                    sender.spigot().sendMessage(builder.create());
-                                } else {
-                                    sender.sendMessage(
-                                            ChatColor.GOLD + "Please provide the three links! Log: " + latestPaste +
-                                                    "\nConfig: " + configPaste + "\nDisguises: " + disguisesPaste);
+                                // Console can't click :(
+                                if (sender instanceof Player) {
+                                    sender.sendMessage(ChatColor.GOLD +
+                                            "Click on the below message to have it appear in your chat input");
                                 }
+
+                                String text = "My log file: " + latestPaste + ", my config file: " + configPaste +
+                                        " and my disguises file: " + disguisesPaste;
+
+                                ComponentBuilder builder = new ComponentBuilder("");
+                                builder.appendLegacy(ChatColor.AQUA + "");
+                                builder.append(text);
+                                builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, text));
+
+                                sender.spigot().sendMessage(builder.create());
                             }
                         }.runTask(LibsDisguises.getInstance());
                     }
