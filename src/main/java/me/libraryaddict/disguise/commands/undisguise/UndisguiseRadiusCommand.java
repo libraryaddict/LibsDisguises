@@ -4,6 +4,8 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,11 +56,21 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                 }
             }
 
+            Location center;
+
+            if (sender instanceof Player) {
+                center = ((Player) sender).getLocation();
+            } else {
+                center = ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0, 0.5);
+            }
+
             int disguisedEntitys = 0;
-            for (Entity entity : ((Player) sender).getNearbyEntities(radius, radius, radius)) {
+
+            for (Entity entity : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
                 if (entity == sender) {
                     continue;
                 }
+
                 if (DisguiseAPI.isDisguised(entity)) {
                     DisguiseAPI.undisguiseToAll(entity);
                     disguisedEntitys++;
