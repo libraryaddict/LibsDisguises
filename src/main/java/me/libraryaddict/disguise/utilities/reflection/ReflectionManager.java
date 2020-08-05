@@ -36,10 +36,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -66,6 +63,10 @@ public class ReflectionManager {
     private static NmsVersion version;
 
     public static void init() {
+        // Sometimes it doesn't like me if I don't set this :\
+        // Weird characters in toLowerCase() for example
+        Locale.setDefault(Locale.ENGLISH);
+
         try {
             Object entity = createEntityInstance(DisguiseType.COW, "Cow");
 
@@ -1678,6 +1679,7 @@ public class ReflectionManager {
 
     private static void createNMSValues(DisguiseType disguiseType) {
         String nmsEntityName = toReadable(disguiseType.name());
+
         Class nmsClass = ReflectionManager.getNmsClassIgnoreErrors("Entity" + nmsEntityName);
 
         if (nmsClass == null || Modifier.isAbstract(nmsClass.getModifiers())) {
@@ -1934,7 +1936,7 @@ public class ReflectionManager {
         String[] split = string.split("_");
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+            split[i] = split[i].charAt(0) + split[i].substring(1).toLowerCase();
         }
 
         return split;
