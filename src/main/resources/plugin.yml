@@ -62,23 +62,26 @@ commands:
     permission: libsdisguises.seecmd.viewself
     description: Toggle seeing your own disguise on or off.
   disguisemodify:
-    aliases: [dmodify, dmod, disgmodify]
+    aliases: [dmodify, dmod, disgmodify, modifydisguise, moddisguise, mdisguise]
     permission: libsdisguises.seecmd.disguisemodify
     description: Modify your own disguise
   disguisemodifyplayer:
-    aliases: [dmodifyplayer, dmodplayer, disgmodifyplayer, dismodplayer, disgmodplayer]
+    aliases: [dmodifyplayer, dmodplayer, disgmodifyplayer, dismodplayer, disgmodplayer, modifydisguiseplayer,
+              moddisguiseplayer, mdisguiseplayer, mdisgplayer]
     permission: libsdisguises.seecmd.disguisemodifyplayer
     description: Modify the disguise of a player
   disguisemodifyradius:
-    aliases: [dmodifyradius, dmodradius, disgmodradius, dismodradius]
+    aliases: [dmodifyradius, dmodradius, disgmodradius, dismodradius, modifydisguiseradius, modifydisgradius,
+              moddisguiseradius, mdisguiseradius, moddisgradius]
     permission: libsdisguises.seecmd.disguisemodifyradius
     description: Modify disguises in a radius
   disguisemodifyentity:
-    aliases: [dmodifyentity, dmodentity, disgmodentity, dismodentity]
+    aliases: [dmodifyentity, dmodentity, disgmodentity, dismodentity, modifydisguiseentity, modifydisgentity,
+              modifydentity, moddisguiseentity, moddisgentity, mdisguiseentity, mdisgentity]
     permission: libsdisguises.seecmd.disguisemodifyentity
     description: Modify a disguise by right clicking them
   copydisguise:
-    aliases: [disguisecopy, disgcopy, dcopy, copydisg, copyd]
+    aliases: [disguisecopy, disgcopy, dcopy, copydisg, copyd, parsedisguise, disguiseparse]
     permission: libsdisguises.seecmd.copydisguise
     description: Output a disguise to a usable string
   grabskin:
