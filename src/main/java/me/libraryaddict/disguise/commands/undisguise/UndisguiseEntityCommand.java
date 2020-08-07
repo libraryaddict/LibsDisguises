@@ -16,7 +16,7 @@ public class UndisguiseEntityCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "Please purchase Lib's Disguises to enable player commands");
+            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
             return true;
         }
 
