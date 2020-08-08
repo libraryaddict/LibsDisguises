@@ -236,8 +236,7 @@ public class DisguiseParser {
             if (!Objects.deepEquals(dObj, object)) {
                 throw new IllegalStateException(String.format(
                         "%s has conflicting values in class %s! This means it expected the same value again but " +
-                                "received a " +
-                                "different value on a different disguise! %s is not the same as %s!",
+                                "received a " + "different value on a different disguise! %s is not the same as %s!",
                         setMethod.getName(), setMethod.getDeclaringClass().getName(), object, dObj));
             }
 
@@ -710,7 +709,10 @@ public class DisguiseParser {
                     } else {
                         // If they can't use this name, throw error
                         if (!hasPermissionOption(disguiseOptions, "setname", args[1].toLowerCase())) {
-                            throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
+                            if (!args[1].equalsIgnoreCase(sender.getName()) ||
+                                    !hasPermissionOption(disguiseOptions, "setname", "themselves")) {
+                                throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
+                            }
                         }
 
                         args[1] = args[1].replace("\\_", " ");
