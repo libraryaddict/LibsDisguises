@@ -13,11 +13,13 @@
 
 # You can also use placeholders in the disguises to create disguises that have the command users skin
 
-# %user-name% - Replaces %user-name% with the command user's name.
-# %user-skin% - Replaces %user-skin% with the command user's skin for use with player disguises.
+# %name% - Replaces %name% with the command user's name.
+# %skin% - Replaces %skin% with the command user's skin for use with player disguises.
+# %displayname% - Replaces %displayname% with the command users displayname
 
 # %target-name% - Finds first viable name from: Player name, entity custom nametag, then entity type (Pig, Horse, Cow)
 # %target-skin% - If target is a player, replaces %target-skin% with their skin for use with player disguises
+# %target-displayname% - Similar as above
 # If target is not a player, will silently fail
 
 # %held-item% - The currently held item in the main item slot
@@ -30,6 +32,7 @@
 # than just the amount.
 
 # These can be used again for the 'target' by prepending 'target-' to the above. So %target-armor% %target-held-item%
+# Finally, you can use %libraryaddict-name% to do all this, but fetch it from the ONLINE player libraryaddict! Case sensitive.
 
 #  The below disguise would give a disguised sheep the nametag; Me: libraryaddict, Them: Sheep
 #  Example: 'cow setCustomName "Me: %user-name%, Them: %target-name%"'
