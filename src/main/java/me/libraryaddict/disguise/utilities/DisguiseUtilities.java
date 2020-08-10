@@ -198,6 +198,10 @@ public class DisguiseUtilities {
     }
 
     public static String getDisplayName(CommandSender player) {
+        if (!(player instanceof Player)) {
+            return player.getName();
+        }
+
         Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
 
         if (team == null) {
