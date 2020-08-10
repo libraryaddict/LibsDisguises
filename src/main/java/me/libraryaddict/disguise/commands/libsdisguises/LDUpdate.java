@@ -40,10 +40,12 @@ public class LDUpdate implements LDCommand {
         }
 
         boolean releaseBuilds = checker.isUsingReleaseBuilds();
-        boolean forceUpdate = args[0].endsWith("!");
-        boolean forceCheck = args[0].endsWith("?") || args.length > 1 || forceUpdate;
+        boolean wantsDownload = args[0].endsWith("!");
+        boolean wantsCheck = args[0].endsWith("?");
 
         if (args.length > 1) {
+            boolean previous = releaseBuilds;
+
             if (args[1].equalsIgnoreCase("dev")) {
                 releaseBuilds = false;
             } else if (args[1].equalsIgnoreCase("release")) {
@@ -53,11 +55,16 @@ public class LDUpdate implements LDCommand {
                 return;
             }
 
+            if (previous != releaseBuilds && !wantsCheck) {
+                wantsDownload = true;
+            }
+
+            wantsCheck = true;
+
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
 
-        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && args.length <= 1 &&
-                !forceCheck) {
+        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && !wantsCheck) {
             if (checker.isServerLatestVersion()) {
                 LibsMsg.UPDATE_ON_LATEST.send(sender);
                 return;
@@ -69,12 +76,15 @@ public class LDUpdate implements LDCommand {
             }
         }
 
+        boolean finalWantsCheck = wantsCheck;
+        boolean finalWantsDownload = wantsDownload;
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 LibsMsg updateResult = null;
 
-                if (checker.getUpdate() == null || args.length > 1 || checker.isOldUpdate() || forceCheck) {
+                if (checker.getUpdate() == null || args.length > 1 || checker.isOldUpdate() || finalWantsCheck) {
                     updateResult = checker.doUpdateCheck();
                 }
 
@@ -83,7 +93,7 @@ public class LDUpdate implements LDCommand {
                     return;
                 }
 
-                if (checker.isOnLatestUpdate(true)) {
+                if (checker.isOnLatestUpdate(true) && !finalWantsDownload) {
                     if (checker.getLastDownload() != null) {
                         LibsMsg.UPDATE_ALREADY_DOWNLOADED.send(sender);
                     } else {
@@ -93,7 +103,7 @@ public class LDUpdate implements LDCommand {
                     return;
                 }
 
-                if (!forceUpdate) {
+                if (!finalWantsDownload) {
                     if (updateResult != null) {
                         updateResult.send(sender);
                     } else {

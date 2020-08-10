@@ -197,6 +197,26 @@ public class DisguiseUtilities {
         return viewSelf;
     }
 
+    public static String getDisplayName(CommandSender player) {
+        Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
+
+        if (team == null) {
+            team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
+        }
+
+        if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
+            String name = ((Player) player).getDisplayName();
+
+            if (name.equals(player.getName())) {
+                return ((Player) player).getPlayerListName();
+            }
+
+            return name;
+        }
+
+        return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+    }
+
     public static void saveViewPreferances() {
         if (!DisguiseConfig.isSaveUserPreferences()) {
             return;

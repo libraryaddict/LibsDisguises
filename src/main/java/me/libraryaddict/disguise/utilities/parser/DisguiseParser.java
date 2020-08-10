@@ -436,7 +436,8 @@ public class DisguiseParser {
     }
 
     public static String[] parsePlaceholders(String[] args, CommandSender user, CommandSender target) {
-        return parsePlaceholders(args, getName(user), getSkin(user), getName(target), DisguiseParser.getSkin(target),
+        return parsePlaceholders(args, getName(user), DisguiseUtilities.getDisplayName(user), getSkin(user),
+                getName(target), DisguiseUtilities.getDisplayName(target), DisguiseParser.getSkin(target),
                 getEntityEquipment(user), getEntityEquipment(target));
     }
 
@@ -446,13 +447,22 @@ public class DisguiseParser {
 
     public static String[] parsePlaceholders(String[] args, String userName, String userSkin, String targetName,
             String targetSkin, EntityEquipment equip, EntityEquipment targetEquip) {
+        return parsePlaceholders(args, userName, userName, userSkin, targetName, targetName, targetSkin, equip,
+                targetEquip);
+    }
+
+    public static String[] parsePlaceholders(String[] args, String userName, String userDisplayname, String userSkin,
+            String targetName, String targetDisplayname, String targetSkin, EntityEquipment equip,
+            EntityEquipment targetEquip) {
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
             arg = replace(arg, "%user-name%", userName);
+            arg = replace(arg, "%user-displayname%", userDisplayname);
             arg = replace(arg, "%user-skin%", userSkin);
             arg = replace(arg, "%target-name%", targetName);
+            arg = replace(arg, "%target-displayname%", targetDisplayname);
             arg = replace(arg, "%target-skin%", targetSkin);
             arg = replace(arg, "%held-item%", equip == null ? null : equip.getItemInMainHand());
             arg = replace(arg, "%offhand-item%", equip == null ? null : equip.getItemInOffHand());

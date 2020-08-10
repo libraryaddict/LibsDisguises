@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.commands.modify.DisguiseModifyEntityCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyPlayerCommand;
 import me.libraryaddict.disguise.commands.modify.DisguiseModifyRadiusCommand;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
@@ -210,17 +211,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected String getDisplayName(CommandSender player) {
-        Team team = ((Player) player).getScoreboard().getEntryTeam(player.getName());
-
-        if (team == null) {
-            team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
-        }
-
-        if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
-            return ((Player) player).getDisplayName();
-        }
-
-        return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+        return DisguiseUtilities.getDisplayName(player);
     }
 
     protected ArrayList<String> getAllowedDisguises(DisguisePermissions permissions) {
