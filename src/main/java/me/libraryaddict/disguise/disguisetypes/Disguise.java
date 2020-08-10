@@ -837,7 +837,7 @@ public abstract class Disguise {
      * @return viewSelfDisguise
      */
     public boolean isSelfDisguiseVisible() {
-        return viewSelfDisguise;
+        return DisguiseConfig.isViewDisguises() && viewSelfDisguise;
     }
 
     public void setSelfDisguiseVisible(boolean selfDisguiseVisible) {
@@ -1055,20 +1055,18 @@ public abstract class Disguise {
      */
     @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
-        if (viewSelfDisguise && !isTallDisguisesVisible()) {
-            setTallDisguisesVisible(true);
+        if (isSelfDisguiseVisible() == viewSelfDisguise || !DisguiseConfig.isViewDisguises()) {
+            return this;
         }
 
-        if (isSelfDisguiseVisible() != viewSelfDisguise) {
-            this.viewSelfDisguise = viewSelfDisguise;
+        this.viewSelfDisguise = viewSelfDisguise;
 
-            if (getEntity() != null && getEntity() instanceof Player) {
-                if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
-                    if (isSelfDisguiseVisible()) {
-                        DisguiseUtilities.setupFakeDisguise(this);
-                    } else {
-                        DisguiseUtilities.removeSelfDisguise(this);
-                    }
+        if (getEntity() != null && getEntity() instanceof Player) {
+            if (DisguiseAPI.getDisguise((Player) getEntity(), getEntity()) == this) {
+                if (isSelfDisguiseVisible()) {
+                    DisguiseUtilities.setupFakeDisguise(this);
+                } else {
+                    DisguiseUtilities.removeSelfDisguise(this);
                 }
             }
         }
