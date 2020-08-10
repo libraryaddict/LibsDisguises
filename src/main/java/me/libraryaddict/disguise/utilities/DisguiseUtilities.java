@@ -2717,7 +2717,7 @@ public class DisguiseUtilities {
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
-                if (newNames[i].equals(internalOldNames[i]) || newNames[i].isEmpty()) {
+                if (newNames[i].equals(internalOldNames[i])) {
                     continue;
                 }
 
