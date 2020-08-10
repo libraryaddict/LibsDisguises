@@ -458,12 +458,12 @@ public class DisguiseParser {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
+            arg = replace(arg, "%name%", userName);
+            arg = replace(arg, "%displayname%", userDisplayname);
+            arg = replace(arg, "%skin%", userSkin);
             arg = replace(arg, "%user-name%", userName);
             arg = replace(arg, "%user-displayname%", userDisplayname);
             arg = replace(arg, "%user-skin%", userSkin);
-            arg = replace(arg, "%target-name%", targetName);
-            arg = replace(arg, "%target-displayname%", targetDisplayname);
-            arg = replace(arg, "%target-skin%", targetSkin);
             arg = replace(arg, "%held-item%", equip == null ? null : equip.getItemInMainHand());
             arg = replace(arg, "%offhand-item%", equip == null ? null : equip.getItemInOffHand());
             arg = replace(arg, "%armor%", equip == null ? null : equip.getArmorContents());
@@ -472,6 +472,31 @@ public class DisguiseParser {
             arg = replace(arg, "%leggings%%", equip == null ? null : equip.getLeggings());
             arg = replace(arg, "%boots%", equip == null ? null : equip.getBoots());
 
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (!arg.contains("%" + p.getName() + "-")) {
+                    continue;
+                }
+
+                String name = p.getName();
+
+                arg = replace(arg, "%" + name + "-name%", targetName);
+                arg = replace(arg, "%" + name + "-displayname%", targetDisplayname);
+                arg = replace(arg, "%" + name + "-skin%", targetSkin);
+
+                EntityEquipment pEquip = p.getEquipment();
+
+                arg = replace(arg, "%" + name + "-held-item%", pEquip == null ? null : pEquip.getItemInMainHand());
+                arg = replace(arg, "%" + name + "-offhand-item%", pEquip == null ? null : pEquip.getItemInOffHand());
+                arg = replace(arg, "%" + name + "-armor%", pEquip == null ? null : pEquip.getArmorContents());
+                arg = replace(arg, "%" + name + "-helmet%", pEquip == null ? null : pEquip.getHelmet());
+                arg = replace(arg, "%" + name + "-chestplate%", pEquip == null ? null : pEquip.getChestplate());
+                arg = replace(arg, "%" + name + "-leggings%%", pEquip == null ? null : pEquip.getLeggings());
+                arg = replace(arg, "%" + name + "-boots%", pEquip == null ? null : pEquip.getBoots());
+            }
+
+            arg = replace(arg, "%target-name%", targetName);
+            arg = replace(arg, "%target-displayname%", targetDisplayname);
+            arg = replace(arg, "%target-skin%", targetSkin);
             arg = replace(arg, "%target-held-item%", targetEquip == null ? null : targetEquip.getItemInMainHand());
             arg = replace(arg, "%target-offhand-item%", targetEquip == null ? null : targetEquip.getItemInOffHand());
             arg = replace(arg, "%target-armor%", targetEquip == null ? null : targetEquip.getArmorContents());
