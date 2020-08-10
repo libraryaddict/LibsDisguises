@@ -17,11 +17,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by libraryaddict on 18/06/2020.
@@ -101,7 +98,7 @@ public class LDUploadLogs implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Collections.singletonList("uploadlogs");
+        return Arrays.asList("uploadlog", "uploadlogs", "uploadconfig", "uploadconfigs");
     }
 
     @Override

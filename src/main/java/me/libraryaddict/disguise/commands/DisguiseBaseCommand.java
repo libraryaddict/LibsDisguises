@@ -15,6 +15,7 @@ import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -50,7 +51,9 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     protected boolean isNotPremium(CommandSender sender) {
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            sender.sendMessage(ChatColor.RED +
+                    "This is the free version of Lib's Disguises, player commands are limited to console and " +
+                    "Operators only! Purchase the plugin for non-admin usage!");
             return true;
         }
 
@@ -211,10 +214,10 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
         if (team == null) {
             team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
+        }
 
-            if (team == null) {
-                return player.getName();
-            }
+        if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
+            return ((Player) player).getDisplayName();
         }
 
         return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
