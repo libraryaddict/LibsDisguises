@@ -40,8 +40,8 @@ public class LDUpdate implements LDCommand {
         }
 
         boolean releaseBuilds = checker.isUsingReleaseBuilds();
-        boolean wantsDownload = args[0].endsWith("!");
         boolean wantsCheck = args[0].endsWith("?");
+        boolean wantsDownload = args[0].endsWith("!") || !wantsCheck;
 
         if (args.length > 1) {
             boolean previous = releaseBuilds;

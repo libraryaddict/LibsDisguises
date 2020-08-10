@@ -479,9 +479,9 @@ public class DisguiseParser {
 
                 String name = p.getName();
 
-                arg = replace(arg, "%" + name + "-name%", targetName);
-                arg = replace(arg, "%" + name + "-displayname%", targetDisplayname);
-                arg = replace(arg, "%" + name + "-skin%", targetSkin);
+                arg = replace(arg, "%" + name + "-name%", name);
+                arg = replace(arg, "%" + name + "-displayname%", DisguiseUtilities.getDisplayName(p));
+                arg = replace(arg, "%" + name + "-skin%", getSkin(p));
 
                 EntityEquipment pEquip = p.getEquipment();
 
