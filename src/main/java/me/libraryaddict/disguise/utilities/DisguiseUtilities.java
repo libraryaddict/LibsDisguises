@@ -2807,39 +2807,46 @@ public class DisguiseUtilities {
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {
+        Entity entity = null;
+
         // If the entity ID is the same as self disguises id, then it needs to be set to the observers id
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
-            entityId = observer.getEntityId();
+            entity = observer;
+        } else {
+            for (Entity e : observer.getWorld().getEntities()) {
+                if (e.getEntityId() != entityId) {
+                    continue;
+                }
+
+                entity = e;
+                break;
+            }
+
+            if (entity == null) {
+                return null;
+            }
         }
 
         if (getFutureDisguises().containsKey(entityId)) {
-            for (World world : Bukkit.getWorlds()) {
-                for (Entity entity : world.getEntities()) {
-                    if (entity.getEntityId() != entityId) {
-                        continue;
-                    }
-
-                    onFutureDisguise(entity);
-                }
-            }
+            onFutureDisguise(entity);
         }
 
-        for (Set<TargetedDisguise> disguises : getDisguises().values()) {
-            for (TargetedDisguise dis : disguises) {
-                if (dis.getEntity() == null || !dis.isDisguiseInUse()) {
-                    continue;
-                }
+        TargetedDisguise[] disguises = getDisguises(entity.getUniqueId());
 
-                if (dis.getEntity().getEntityId() != entityId) {
-                    continue;
-                }
+        if (disguises == null) {
+            return null;
+        }
 
-                if (!dis.canSee(observer)) {
-                    continue;
-                }
-
-                return dis;
+        for (TargetedDisguise dis : disguises) {
+            if (!dis.isDisguiseInUse()) {
+                continue;
             }
+
+            if (!dis.canSee(observer)) {
+                continue;
+            }
+
+            return dis;
         }
 
         return null;
