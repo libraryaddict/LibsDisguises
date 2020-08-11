@@ -17,13 +17,13 @@ public enum DisguiseType {
 
     BAT,
 
-    @NmsAddedIn(val = NmsVersion.v1_15) BEE,
+    @NmsAddedIn(value = NmsVersion.v1_15) BEE,
 
     BLAZE,
 
     BOAT(1),
 
-    @NmsAddedIn(val = NmsVersion.v1_14) CAT,
+    @NmsAddedIn(value = NmsVersion.v1_14) CAT,
 
     CAVE_SPIDER,
 
@@ -75,7 +75,7 @@ public enum DisguiseType {
 
     FISHING_HOOK(90),
 
-    @NmsAddedIn(val = NmsVersion.v1_14) FOX,
+    @NmsAddedIn(value = NmsVersion.v1_14) FOX,
 
     GHAST,
 
@@ -83,7 +83,7 @@ public enum DisguiseType {
 
     GUARDIAN,
 
-    @NmsAddedIn(val = NmsVersion.v1_16) HOGLIN,
+    @NmsAddedIn(value = NmsVersion.v1_16) HOGLIN,
 
     HORSE,
 
@@ -129,7 +129,7 @@ public enum DisguiseType {
 
     PAINTING,
 
-    @NmsAddedIn(val = NmsVersion.v1_14) PANDA,
+    @NmsAddedIn(value = NmsVersion.v1_14) PANDA,
 
     PARROT,
 
@@ -139,9 +139,9 @@ public enum DisguiseType {
 
     @NmsRemovedIn(val = NmsVersion.v1_16) PIG_ZOMBIE,
 
-    @NmsAddedIn(val = NmsVersion.v1_16) PIGLIN,
+    @NmsAddedIn(value = NmsVersion.v1_16) PIGLIN,
 
-    @NmsAddedIn(val = NmsVersion.v1_14) PILLAGER,
+    @NmsAddedIn(value = NmsVersion.v1_14) PILLAGER,
 
     PLAYER,
 
@@ -153,7 +153,7 @@ public enum DisguiseType {
 
     RABBIT,
 
-    @NmsAddedIn(val = NmsVersion.v1_14) RAVAGER,
+    @NmsAddedIn(value = NmsVersion.v1_14) RAVAGER,
 
     SALMON,
 
@@ -187,7 +187,7 @@ public enum DisguiseType {
 
     STRAY,
 
-    @NmsAddedIn(val = NmsVersion.v1_16) STRIDER,
+    @NmsAddedIn(value = NmsVersion.v1_16) STRIDER,
 
     THROWN_EXP_BOTTLE(75),
 
@@ -195,7 +195,7 @@ public enum DisguiseType {
 
     TRIDENT(94, 0),
 
-    @NmsAddedIn(val = NmsVersion.v1_14) TRADER_LLAMA,
+    @NmsAddedIn(value = NmsVersion.v1_14) TRADER_LLAMA,
 
     TROPICAL_FISH,
 
@@ -209,7 +209,7 @@ public enum DisguiseType {
 
     VINDICATOR,
 
-    @NmsAddedIn(val = NmsVersion.v1_14) WANDERING_TRADER,
+    @NmsAddedIn(value = NmsVersion.v1_14) WANDERING_TRADER,
 
     WITCH,
 
@@ -221,7 +221,7 @@ public enum DisguiseType {
 
     WOLF,
 
-    @NmsAddedIn(val = NmsVersion.v1_16) ZOGLIN,
+    @NmsAddedIn(value = NmsVersion.v1_16) ZOGLIN,
 
     ZOMBIE,
 
@@ -229,7 +229,7 @@ public enum DisguiseType {
 
     ZOMBIE_VILLAGER,
 
-    @NmsAddedIn(val = NmsVersion.v1_16) ZOMBIFIED_PIGLIN;
+    @NmsAddedIn(value = NmsVersion.v1_16) ZOMBIFIED_PIGLIN;
 
     public static DisguiseType getType(Entity entity) {
         DisguiseType disguiseType = getType(entity.getType());

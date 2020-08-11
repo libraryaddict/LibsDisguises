@@ -43,6 +43,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
@@ -1111,6 +1112,10 @@ public class DisguiseUtilities {
 
         gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher(gsonBuilder.create()));
         gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
+
+        if (NmsVersion.v1_13.isSupported()) {
+            gsonBuilder.registerTypeAdapter(BlockData.class, new SerializerBlockData());
+        }
 
         gson = gsonBuilder.create();
 

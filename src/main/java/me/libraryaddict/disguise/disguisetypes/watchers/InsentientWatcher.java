@@ -43,12 +43,12 @@ public class InsentientWatcher extends LivingWatcher {
         return (getData(MetaIndex.INSENTIENT_META) & i) != 0;
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public boolean isEnraged() {
         return getInsentientFlag(4);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setEnraged(boolean enraged) {
         setInsentientFlag(4, enraged);
     }

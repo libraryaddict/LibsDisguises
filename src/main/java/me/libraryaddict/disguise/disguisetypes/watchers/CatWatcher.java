@@ -15,7 +15,7 @@ import java.util.Random;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
-@NmsAddedIn(val = NmsVersion.v1_14)
+@NmsAddedIn(value = NmsVersion.v1_14)
 public class CatWatcher extends TameableWatcher {
     public CatWatcher(Disguise disguise) {
         super(disguise);

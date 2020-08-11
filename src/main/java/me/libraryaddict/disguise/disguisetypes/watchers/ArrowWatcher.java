@@ -20,12 +20,12 @@ public class ArrowWatcher extends FlagWatcher {
         sendData(MetaIndex.ARROW_CRITICAL);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public int getPierceLevel() {
         return getData(MetaIndex.ARROW_PIERCE_LEVEL);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setPierceLevel(int pierceLevel) {
         setData(MetaIndex.ARROW_PIERCE_LEVEL, (byte) pierceLevel);
         sendData(MetaIndex.ARROW_PIERCE_LEVEL);

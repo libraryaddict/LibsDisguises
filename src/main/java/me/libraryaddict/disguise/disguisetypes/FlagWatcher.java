@@ -282,12 +282,12 @@ public class FlagWatcher {
         updateNameHeight();
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public EntityPose getEntityPose() {
         return getData(MetaIndex.ENTITY_POSE);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setEntityPose(EntityPose entityPose) {
         setData(MetaIndex.ENTITY_POSE, entityPose);
         sendData(MetaIndex.ENTITY_POSE);
@@ -760,12 +760,12 @@ public class FlagWatcher {
         }
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public boolean isSleeping() {
         return sleeping;
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setSleeping(boolean sleeping) {
         if (isSleeping() == sleeping) {
             return;
@@ -776,12 +776,12 @@ public class FlagWatcher {
         updatePose();
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public boolean isSwimming() {
         return getEntityFlag(4);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setSwimming(boolean swimming) {
         if (isSwimming() == swimming) {
             return;
@@ -792,7 +792,7 @@ public class FlagWatcher {
         updatePose();
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     protected void updatePose() {
         if (isSleeping()) {
             setEntityPose(EntityPose.SLEEPING);

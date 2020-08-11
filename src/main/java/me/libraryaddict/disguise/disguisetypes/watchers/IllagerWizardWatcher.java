@@ -12,12 +12,12 @@ public class IllagerWizardWatcher extends IllagerWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public Spellcaster.Spell getSpell() {
         return Spellcaster.Spell.values()[getData(MetaIndex.ILLAGER_SPELL)];
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setSpell(Spellcaster.Spell spell) {
         setData(MetaIndex.ILLAGER_SPELL, (byte) spell.ordinal());
         sendData(MetaIndex.ILLAGER_SPELL);

@@ -20,12 +20,12 @@ public class EnderSignalWatcher extends FlagWatcher {
         }
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public ItemStack getItemStack() {
         return getData(MetaIndex.ENDER_SIGNAL_ITEM);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.ENDER_SIGNAL_ITEM, item);
         sendData(MetaIndex.ENDER_SIGNAL_ITEM);

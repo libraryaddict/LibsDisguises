@@ -20,12 +20,12 @@ public class FireballWatcher extends FlagWatcher {
         }
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public ItemStack getItemStack() {
         return getData(MetaIndex.FIREBALL_ITEM);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.FIREBALL_ITEM, item);
         sendData(MetaIndex.FIREBALL_ITEM);

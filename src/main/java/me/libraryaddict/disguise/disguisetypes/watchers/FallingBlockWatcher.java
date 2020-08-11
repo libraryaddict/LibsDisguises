@@ -8,10 +8,13 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class FallingBlockWatcher extends FlagWatcher {
     private ItemStack block = new ItemStack(Material.STONE);
+    private BlockData blockData;
     private boolean gridLocked;
 
     public FallingBlockWatcher(Disguise disguise) {
@@ -28,7 +32,12 @@ public class FallingBlockWatcher extends FlagWatcher {
     @Override
     public FallingBlockWatcher clone(Disguise disguise) {
         FallingBlockWatcher watcher = (FallingBlockWatcher) super.clone(disguise);
-        watcher.setBlock(getBlock().clone());
+
+        if (NmsVersion.v1_13.isSupported()) {
+            watcher.setBlockData(getBlockData().clone());
+        } else {
+            watcher.setBlock(getBlock().clone());
+        }
 
         return watcher;
     }
@@ -87,6 +96,36 @@ public class FallingBlockWatcher extends FlagWatcher {
         }
 
         this.block = block;
+
+        if (!getDisguise().isCustomDisguiseName()) {
+            getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
+                            .get(ReflectionManager.toReadable(block.getType().name())));
+        }
+
+        if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
+            DisguiseUtilities.refreshTrackers(getDisguise());
+        }
+    }
+
+    @NmsAddedIn(NmsVersion.v1_13)
+    public BlockData getBlockData() {
+        if (block != null && blockData == null) {
+            return block.getType().createBlockData();
+        }
+
+        return blockData;
+    }
+
+    @NmsAddedIn(NmsVersion.v1_13)
+    public void setBlockData(BlockData data) {
+        if (data == null || data.getMaterial() == Material.AIR && data.getMaterial().isBlock()) {
+            setBlock(null);
+            return;
+        }
+
+        this.block = new ItemStack(data.getMaterial());
+        this.blockData = data;
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +

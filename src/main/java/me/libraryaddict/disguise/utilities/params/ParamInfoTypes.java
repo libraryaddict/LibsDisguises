@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.*;
@@ -77,6 +78,8 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle",
                     "The different particles of Minecraft", Particle.values(), getMaterials()));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
+            paramInfos.add(new ParamInfoBlockData(BlockData.class, "BlockData",
+                    "The block data states, barrel[facing=north,open=false] as example"));
         } else {
             paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
         }

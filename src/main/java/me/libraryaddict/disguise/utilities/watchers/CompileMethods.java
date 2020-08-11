@@ -116,9 +116,9 @@ public class CompileMethods {
                 int removed = -1;
 
                 if (method.isAnnotationPresent(NmsAddedIn.class)) {
-                    added = method.getAnnotation(NmsAddedIn.class).val().ordinal();
+                    added = method.getAnnotation(NmsAddedIn.class).value().ordinal();
                 } else if (method.getDeclaringClass().isAnnotationPresent(NmsAddedIn.class)) {
-                    added = method.getDeclaringClass().getAnnotation(NmsAddedIn.class).val().ordinal();
+                    added = method.getDeclaringClass().getAnnotation(NmsAddedIn.class).value().ordinal();
                 }
 
                 if (method.isAnnotationPresent(NmsRemovedIn.class)) {

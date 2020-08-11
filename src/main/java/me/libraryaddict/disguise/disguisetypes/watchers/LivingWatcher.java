@@ -40,12 +40,12 @@ public class LivingWatcher extends FlagWatcher {
         return clone;
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public BlockPosition getBedPosition() {
         return getData(MetaIndex.LIVING_BED_POSITION).orElse(null);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setBedPosition(BlockPosition blockPosition) {
         Optional<BlockPosition> optional;
 
@@ -94,22 +94,22 @@ public class LivingWatcher extends FlagWatcher {
         sendData(MetaIndex.LIVING_HAND);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public boolean isRightClicking() {
         return getHandFlag(0);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public void setRightClicking(boolean setRightClicking) {
         setHandFlag(0, setRightClicking);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public boolean isSpinning() {
         return getHandFlag(2);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public void setSpinning(boolean setSpinning) {
         setHandFlag(2, setSpinning);
     }

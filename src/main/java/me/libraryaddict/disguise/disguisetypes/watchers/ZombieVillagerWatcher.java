@@ -44,12 +44,12 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         }
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public VillagerData getVillagerData() {
         return getData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setVillagerData(VillagerData villagerData) {
         setData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION, villagerData);
         sendData(MetaIndex.ZOMBIE_VILLAGER_PROFESSION);
@@ -69,34 +69,34 @@ public class ZombieVillagerWatcher extends ZombieWatcher {
         }
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public Villager.Type getType() {
         return getVillagerData().getType();
     }
 
     @Deprecated
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setType(Villager.Type type) {
         setVillagerData(new VillagerData(type, getProfession(), getLevel()));
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public int getLevel() {
         return getVillagerData().getLevel();
     }
 
     @Deprecated
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setLevel(int level) {
         setVillagerData(new VillagerData(getType(), getProfession(), getLevel()));
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public Villager.Type getBiome() {
         return getType();
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setBiome(Villager.Type type) {
         setType(type);
     }

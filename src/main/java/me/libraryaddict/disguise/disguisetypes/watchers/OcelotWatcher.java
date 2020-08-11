@@ -16,12 +16,12 @@ public class OcelotWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public boolean isTrusting() {
         return getData(MetaIndex.OCELOT_TRUST);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_14)
+    @NmsAddedIn(value = NmsVersion.v1_14)
     public void setTrusting(boolean trusting) {
         setData(MetaIndex.OCELOT_TRUST, trusting);
         sendData(MetaIndex.OCELOT_TRUST);

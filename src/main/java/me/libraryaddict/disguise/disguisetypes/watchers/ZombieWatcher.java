@@ -33,12 +33,12 @@ public class ZombieWatcher extends InsentientWatcher {
         setBaby(true);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public boolean isConverting() {
         return getData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
     }
 
-    @NmsAddedIn(val = NmsVersion.v1_13)
+    @NmsAddedIn(value = NmsVersion.v1_13)
     public void setConverting(boolean converting) {
         setData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
         sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);

@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
-@NmsAddedIn(val = NmsVersion.v1_14)
+@NmsAddedIn(value = NmsVersion.v1_14)
 public class FoxWatcher extends AgeableWatcher {
     public FoxWatcher(Disguise disguise) {
         super(disguise);
