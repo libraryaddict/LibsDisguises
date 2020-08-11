@@ -11,6 +11,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -60,7 +61,7 @@ public class PacketListenerInventory extends PacketAdapter {
         Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
         // If player is disguised, views self disguises and has a inventory modifier
-        if (disguise != null && disguise.isSelfDisguiseVisible() &&
+        if (disguise != null && DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId()) &&
                 (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
             // If they are in creative and clicked on a slot
             if (event.getPacketType() == PacketType.Play.Client.SET_CREATIVE_SLOT) {
@@ -256,7 +257,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
         Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
-        if (disguise == null || !disguise.isSelfDisguiseVisible() ||
+        if (disguise == null || !DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId()) ||
                 (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
             return;
         }

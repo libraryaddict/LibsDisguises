@@ -55,7 +55,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
                     Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
 
-                    if (disguise != null && disguise.isSelfDisguiseVisible()) {
+                    if (disguise != null && DisguiseUtilities.getSelfDisguised().contains(observer.getUniqueId())) {
                         event.setCancelled(true);
                     }
                 }
