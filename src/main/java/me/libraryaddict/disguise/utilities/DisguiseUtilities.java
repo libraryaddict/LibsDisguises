@@ -198,6 +198,10 @@ public class DisguiseUtilities {
     }
 
     public static String getDisplayName(CommandSender player) {
+        if (player == null) {
+            return "???";
+        }
+
         if (!(player instanceof Player)) {
             return player.getName();
         }
