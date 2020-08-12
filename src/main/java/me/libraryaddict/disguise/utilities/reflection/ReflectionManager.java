@@ -1511,11 +1511,8 @@ public class ReflectionManager {
             Object iBlockData = idMethod.invoke(null, id);
             Class iBlockClass = getNmsClass("IBlockData");
 
-            Method getBlock = getNmsMethod(iBlockClass, "getBlock");
-            Object block = getBlock.invoke(iBlockData);
-
             return (BlockData) getCraftMethod("block.data.type.CraftBlockData", "fromData", iBlockClass)
-                    .invoke(null, block);
+                    .invoke(null, iBlockData);
         }
         catch (Exception ex) {
             ex.printStackTrace();
