@@ -79,7 +79,7 @@ public class ParamInfoTypes {
                     "The different particles of Minecraft", Particle.values(), getMaterials()));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
             paramInfos.add(new ParamInfoBlockData(BlockData.class, "BlockData",
-                    "The block data states, barrel[facing=north,open=false] as example"));
+                    "The block data states, barrel[facing=north,open=false] as example", getMaterials()));
         } else {
             paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
         }

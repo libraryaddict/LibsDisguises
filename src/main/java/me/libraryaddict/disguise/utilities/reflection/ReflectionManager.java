@@ -1505,6 +1505,25 @@ public class ReflectionManager {
         return 0;
     }
 
+    public static BlockData getBlockDataByCombinedId(int id) {
+        try {
+            Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
+            Object iBlockData = idMethod.invoke(null, id);
+            Class iBlockClass = getNmsClass("IBlockData");
+
+            Method getBlock = getNmsMethod(iBlockClass, "getBlock");
+            Object block = getBlock.invoke(iBlockData);
+
+            return (BlockData) getCraftMethod("block.data.type.CraftBlockData", "fromData", iBlockClass)
+                    .invoke(null, block);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static ItemStack getItemStackByCombinedId(int id) {
         try {
             Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
