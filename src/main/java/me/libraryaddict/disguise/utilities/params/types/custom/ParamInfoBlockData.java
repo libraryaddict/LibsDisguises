@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ParamInfoBlockData extends ParamInfo {
     private Material[] materials;
-    private Cache<Material, Map.Entry<String, String[]>> blockDatas = CacheBuilder.newBuilder()
-            .expireAfterAccess(30, TimeUnit.MINUTES).maximumSize(20).build();
 
     public ParamInfoBlockData(Class paramClass, String name, String description, Material[] possibleValues) {
         super(paramClass, name, "BlockData[State=Something]", description);
@@ -77,10 +75,7 @@ public class ParamInfoBlockData extends ParamInfo {
         return getParamClass().isAssignableFrom(paramClass);
     }
 
-    private Material getMaterial(String name) {
-        return Material.matchMaterial(name, false);
-    }
-
+    @Override
     public Set<String> getEnums(String tabComplete) {
         String s = tabComplete.toLowerCase();
         HashSet<String> returns = new HashSet<>();
@@ -107,17 +102,13 @@ public class ParamInfoBlockData extends ParamInfo {
             return returns;
         }
 
-        Material mat = getMaterial(s);
-
-        if (mat == null) {
-            return returns;
-        }
-
         // TODO Maybe auto complete blockstate states
         // Then again, it means I need to get the block states on a new IBlockData
         // Then call toBukkit with the block states then turn them into strings
         // Then handle the edge cases where they are not enums.. Idk, I think I'm going to ignore this.
         // No one cares about auto completion of this either
+
+        //  Material.matchMaterial(name, false);
 
         return returns;
     }
