@@ -18,7 +18,7 @@ public enum LibsMsg {
     BLOWN_DISGUISE(ChatColor.RED + "Your disguise was blown!"),
     EXPIRED_DISGUISE(ChatColor.RED + "Your disguise has expired!"),
     CAN_USE_DISGS(ChatColor.DARK_GREEN + "You can use the disguises:" + ChatColor.GREEN + " %s"),
-    CAN_USE_DISGS_SEPERATOR(ChatColor.RED + "," + ChatColor.GREEN),
+    CAN_USE_DISGS_SEPERATOR(ChatColor.RED + ", " + ChatColor.GREEN),
     CANNOT_FIND_PLAYER(ChatColor.RED + "Cannot find the player/uuid '%s'"),
     CANNOT_FIND_PLAYER_NAME(ChatColor.RED + "Cannot find the player '%s'"),
     CANNOT_FIND_PLAYER_UUID(ChatColor.RED + "Cannot find the uuid '%s'"),

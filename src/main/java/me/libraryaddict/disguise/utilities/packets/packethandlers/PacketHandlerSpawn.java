@@ -24,6 +24,7 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -305,12 +306,13 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
                 if (NmsVersion.v1_13.isSupported()) {
+                    BlockData block = ((FallingBlockWatcher) disguise.getWatcher()).getBlockData();
 
+                    data = ReflectionManager.getCombinedIdByBlockData(block);
                 } else {
                     ItemStack block = ((FallingBlockWatcher) disguise.getWatcher()).getBlock();
                     data = ReflectionManager.getCombinedIdByItemStack(block);
                 }
-
 
                 if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
                     // Center the block

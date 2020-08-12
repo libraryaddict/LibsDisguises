@@ -22,6 +22,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 public class PacketListenerSounds extends PacketAdapter {
@@ -31,6 +32,7 @@ public class PacketListenerSounds extends PacketAdapter {
      */
     private static boolean cancelSound;
     private Object stepSoundEffect;
+    private Method getHealth, getSomething;
 
     public PacketListenerSounds(LibsDisguises plugin) {
         super(plugin, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT, Server.ENTITY_STATUS);
@@ -95,25 +97,7 @@ public class PacketListenerSounds extends PacketAdapter {
                         continue;
                     }
 
-                    Object obj = null;
-
-                    if (entity instanceof LivingEntity) {
-                        try {
-                            // Use reflection so that this works for either int or double methods
-                            obj = LivingEntity.class.getMethod("getHealth").invoke(entity);
-
-                            if (obj instanceof Double ? (Double) obj == 0 : (Integer) obj == 0) {
-                                soundType = SoundType.DEATH;
-                            } else {
-                                obj = null;
-                            }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (obj == null) {
+                    if ((!(entity instanceof LivingEntity)) || ((LivingEntity) entity).getHealth() > 0) {
                         boolean hasInvun = false;
 
                         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
@@ -134,6 +118,8 @@ public class PacketListenerSounds extends PacketAdapter {
                         }
 
                         soundType = entitySound.getType(soundEffectObj, !hasInvun);
+                    } else {
+                        soundType = SoundType.DEATH;
                     }
 
                     if (soundType != null) {
