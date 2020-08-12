@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -29,6 +30,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
@@ -298,6 +300,7 @@ public class DisguiseConfig {
                     for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                         for (Disguise disguise : disguises) {
                             disguise.getWatcher().setSprinting(true);
+                            disguise.getWatcher().setHelmet(new ItemStack(Material.LEATHER_HELMET));
                         }
                     }
                 }

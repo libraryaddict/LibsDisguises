@@ -363,7 +363,7 @@ public class DisguiseAPI {
             return null;
         }
 
-        return DisguiseUtilities.getMainDisguise(disguised.getUniqueId());
+        return DisguiseUtilities.getMainDisguise(disguised.getEntityId());
     }
 
     public static String parseToString(Disguise disguise, boolean outputSkin) {
@@ -400,7 +400,7 @@ public class DisguiseAPI {
             return null;
         }
 
-        return DisguiseUtilities.getDisguises(disguised.getUniqueId());
+        return DisguiseUtilities.getDisguises(disguised.getEntityId());
     }
 
     public static int getSelfDisguiseId() {

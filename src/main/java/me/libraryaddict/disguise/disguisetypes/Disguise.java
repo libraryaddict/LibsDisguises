@@ -1144,7 +1144,7 @@ public abstract class Disguise {
         }
 
         // Stick the disguise in the disguises bin
-        DisguiseUtilities.addDisguise(entity.getUniqueId(), (TargetedDisguise) this);
+        DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) this);
 
         if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
             DisguiseUtilities.removeSelfDisguise(this);

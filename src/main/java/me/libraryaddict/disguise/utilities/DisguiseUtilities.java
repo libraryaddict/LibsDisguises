@@ -129,7 +129,7 @@ public class DisguiseUtilities {
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
     @Getter
-    private static final Map<UUID, Set<TargetedDisguise>> disguises = new HashMap<>();
+    private static final Map<Integer, Set<TargetedDisguise>> disguises = new HashMap<>();
     /**
      * Disguises which are stored ready for a entity to be seen by a player Preferably, disguises in this should only
      * stay in for
@@ -546,9 +546,9 @@ public class DisguiseUtilities {
         return false;
     }
 
-    public static void addDisguise(UUID entityUUID, TargetedDisguise disguise) {
-        if (!getDisguises().containsKey(entityUUID)) {
-            getDisguises().put(entityUUID, new HashSet<>());
+    public static void addDisguise(Integer entityId, TargetedDisguise disguise) {
+        if (!getDisguises().containsKey(entityId)) {
+            getDisguises().put(entityId, new HashSet<>());
 
             synchronized (isNoInteract) {
                 Entity entity = disguise.getEntity();
@@ -586,7 +586,7 @@ public class DisguiseUtilities {
             }
         }
 
-        getDisguises().get(entityUUID).add(disguise);
+        getDisguises().get(entityId).add(disguise);
 
         checkConflicts(disguise, null);
 
@@ -601,10 +601,8 @@ public class DisguiseUtilities {
             return;
         }
 
-        UUID uniqueId = entity.getUniqueId();
-
         for (TargetedDisguise disguise : getFutureDisguises().remove(entity.getEntityId())) {
-            addDisguise(uniqueId, disguise);
+            addDisguise(entity.getEntityId(), disguise);
         }
     }
 
@@ -673,7 +671,7 @@ public class DisguiseUtilities {
             return;
         }
 
-        Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getUniqueId()).iterator();
+        Iterator<TargetedDisguise> disguiseItel = getDisguises().get(disguise.getEntity().getEntityId()).iterator();
 
         // Iterate through the disguises
         while (disguiseItel.hasNext()) {
@@ -832,11 +830,11 @@ public class DisguiseUtilities {
     }
 
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
-        UUID entityId = entity.getUniqueId();
+        int entityId = entity.getEntityId();
 
-        if (futureDisguises.containsKey(entity.getEntityId())) {
-            for (TargetedDisguise disguise : futureDisguises.remove(entity.getEntityId())) {
-                addDisguise(entityId, disguise);
+        if (futureDisguises.containsKey(entityId)) {
+            for (TargetedDisguise disguise : futureDisguises.remove(entityId)) {
+                addDisguise(entity.getEntityId(), disguise);
             }
         }
 
@@ -853,7 +851,7 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static TargetedDisguise[] getDisguises(UUID entityId) {
+    public static TargetedDisguise[] getDisguises(Integer entityId) {
         if (getDisguises().containsKey(entityId)) {
             Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
@@ -899,7 +897,7 @@ public class DisguiseUtilities {
         return null;
     }
 
-    public static TargetedDisguise getMainDisguise(UUID entityId) {
+    public static TargetedDisguise getMainDisguise(Integer entityId) {
         TargetedDisguise toReturn = null;
 
         if (getDisguises().containsKey(entityId)) {
@@ -1195,8 +1193,8 @@ public class DisguiseUtilities {
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {
-        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getUniqueId()) &&
-                getDisguises().get(disguise.getEntity().getUniqueId()).contains(disguise);
+        return disguise.getEntity() != null && getDisguises().containsKey(disguise.getEntity().getEntityId()) &&
+                getDisguises().get(disguise.getEntity().getEntityId()).contains(disguise);
     }
 
     /**
@@ -1412,7 +1410,7 @@ public class DisguiseUtilities {
     }
 
     public static boolean removeDisguise(TargetedDisguise disguise) {
-        UUID entityId = disguise.getEntity().getUniqueId();
+        int entityId = disguise.getEntity().getEntityId();
 
         if (getDisguises().containsKey(entityId) && getDisguises().get(entityId).remove(disguise)) {
             if (getDisguises().get(entityId).isEmpty()) {
@@ -2484,8 +2482,8 @@ public class DisguiseUtilities {
         Entity e = disguise.getEntity();
 
         // If the disguises entity is null, or the disguised entity isn't a player; return
-        if (!(e instanceof Player) || !getDisguises().containsKey(e.getUniqueId()) ||
-                !getDisguises().get(e.getUniqueId()).contains(disguise)) {
+        if (!(e instanceof Player) || !getDisguises().containsKey(e.getEntityId()) ||
+                !getDisguises().get(e.getEntityId()).contains(disguise)) {
             return;
         }
 
@@ -2816,31 +2814,23 @@ public class DisguiseUtilities {
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {
-        Entity entity = null;
-
         // If the entity ID is the same as self disguises id, then it needs to be set to the observers id
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
-            entity = observer;
-        } else {
+            entityId = observer.getEntityId();
+        }
+
+        if (getFutureDisguises().containsKey(entityId)) {
             for (Entity e : observer.getWorld().getEntities()) {
                 if (e.getEntityId() != entityId) {
                     continue;
                 }
 
-                entity = e;
-                break;
+                onFutureDisguise(e);
             }
 
-            if (entity == null) {
-                return null;
-            }
         }
 
-        if (getFutureDisguises().containsKey(entityId)) {
-            onFutureDisguise(entity);
-        }
-
-        TargetedDisguise[] disguises = getDisguises(entity.getUniqueId());
+        TargetedDisguise[] disguises = getDisguises(entityId);
 
         if (disguises == null) {
             return null;
