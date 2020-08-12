@@ -3,17 +3,20 @@ package me.libraryaddict.disguise.utilities.parser;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.*;
+import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -787,21 +790,36 @@ public class DisguiseParser {
                 } else if (disguisePerm.isMisc()) {
                     // Its a misc, we are going to use the MiscDisguise constructor.
                     ItemStack itemStack = new ItemStack(Material.STONE);
+                    // The steps I go through for 1.12..
+                    Object blockData = null;
                     int miscId = -1;
 
                     if (args.length > 1) {
                         switch (disguisePerm.getType()) {
                             case FALLING_BLOCK:
                             case DROPPED_ITEM:
-                                ParamInfo info = disguisePerm.getType() == DisguiseType.FALLING_BLOCK ?
-                                        ParamInfoManager.getParamInfoItemBlock() :
-                                        ParamInfoManager.getParamInfo(ItemStack.class);
+                                ParamInfo info;
 
                                 try {
-                                    itemStack = (ItemStack) info
-                                            .fromString(new ArrayList<>(Collections.singletonList(args[1])));
+                                    if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
+                                        if (NmsVersion.v1_13.isSupported()) {
+                                            info = ParamInfoManager.getParamInfo(BlockData.class);
+                                            blockData = info
+                                                    .fromString(new ArrayList<>(Collections.singletonList(args[1])));
+                                        } else {
+                                            info = ParamInfoManager.getParamInfoItemBlock();
+
+                                            itemStack = (ItemStack) info
+                                                    .fromString(new ArrayList<>(Collections.singletonList(args[1])));
+                                        }
+                                    } else {
+                                        info = ParamInfoManager.getParamInfo(ItemStack.class);
+
+                                        itemStack = (ItemStack) info
+                                                .fromString(new ArrayList<>(Collections.singletonList(args[1])));
+                                    }
                                 }
-                                catch (IllegalArgumentException ex) {
+                                catch (Exception ex) {
                                     break;
                                 }
 
@@ -861,6 +879,10 @@ public class DisguiseParser {
 
                         if (!customName) {
                             name = disguise.getDisguiseName();
+                        }
+
+                        if (blockData != null && disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
+                            ((FallingBlockWatcher) disguise.getWatcher()).setBlockData((BlockData) blockData);
                         }
                     } else {
                         disguise = new MiscDisguise(disguisePerm.getType(), miscId);
