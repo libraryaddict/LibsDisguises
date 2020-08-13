@@ -101,6 +101,9 @@ public class ReflectionManager {
     private static Constructor mobEffectConstructor;
     private static Method boundingBoxMethod;
     private static Method bukkitEntityMethod;
+    private static Field noDamageTicks;
+    private static Method isInvul;
+    private static Object genericDamage;
 
     public static void init() {
         // Sometimes it doesn't like me if I don't set this :\
@@ -176,6 +179,10 @@ public class ReflectionManager {
             deserializedItemMeta =
                     getCraftMethod(getCraftClass("inventory.CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
 
+            noDamageTicks = getNmsField("Entity", "noDamageTicks");
+            isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
+            genericDamage = getNmsField("DamageSource", "GENERIC");
+
             Method method = getNmsMethod("SoundCategory", "a");
 
             for (Enum anEnum : (Enum[]) getNmsClass("SoundCategory").getEnumConstants()) {
@@ -234,6 +241,22 @@ public class ReflectionManager {
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
             ihmGet = getNmsMethod("IntHashMap", "get", int.class);
         }
+    }
+
+    public static boolean hasInvul(Entity entity) {
+        Object nmsEntity = ReflectionManager.getNmsEntity(entity);
+
+        try {
+            if (entity instanceof LivingEntity) {
+                return noDamageTicks.getInt(nmsEntity) > 0;
+            } else {
+                return (boolean) isInvul.invoke(nmsEntity, genericDamage);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
     }
 
     public static boolean isSupported(AccessibleObject obj) {
