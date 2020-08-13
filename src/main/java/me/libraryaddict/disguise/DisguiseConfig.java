@@ -380,8 +380,8 @@ public class DisguiseConfig {
     public static void saveInternalConfig() {
         File internalFile = new File(LibsDisguises.getInstance().getDataFolder(), "internal.yml");
 
-        String internalConfig = ReflectionManager
-                .getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
+        String internalConfig =
+                ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(),
@@ -393,15 +393,13 @@ public class DisguiseConfig {
 
         try {
             internalFile.createNewFile();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         try (PrintWriter writer = new PrintWriter(internalFile, "UTF-8")) {
             writer.write(internalConfig);
-        }
-        catch (FileNotFoundException | UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -439,9 +437,7 @@ public class DisguiseConfig {
 
     public static Entry<DisguisePerm, Disguise> getCustomDisguise(String disguise) {
         if (!Bukkit.isPrimaryThread()) {
-            DisguiseUtilities.getLogger().warning(
-                    "Custom Disguises should not be called async! This operation will become impossible in the " +
-                            "future!");
+            throw new IllegalStateException("Custom Disguises should not be called async!");
         }
 
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
@@ -452,8 +448,7 @@ public class DisguiseConfig {
 
         try {
             return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(entry.getValue()));
-        }
-        catch (IllegalAccessException | InvocationTargetException | DisguiseParseException e) {
+        } catch (IllegalAccessException | InvocationTargetException | DisguiseParseException e) {
             DisguiseUtilities.getLogger().warning("Error when attempting to grab the custom disguise " + disguise);
             e.printStackTrace();
         }
@@ -461,12 +456,10 @@ public class DisguiseConfig {
         return null;
     }
 
-    public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target,
-            String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+    public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target, String disguise)
+            throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
         if (!Bukkit.isPrimaryThread()) {
-            DisguiseUtilities.getLogger().warning(
-                    "Custom Disguises should not be called async! This operation will become impossible in the " +
-                            "future!");
+            throw new IllegalStateException("Custom Disguises should not be called async!");
         }
 
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
@@ -479,12 +472,10 @@ public class DisguiseConfig {
                 DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), target, entry.getValue()));
     }
 
-    public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target,
-            String disguise) throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+    public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target, String disguise)
+            throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
         if (!Bukkit.isPrimaryThread()) {
-            DisguiseUtilities.getLogger().warning(
-                    "Custom Disguises should not be called async! This operation will become impossible in the " +
-                            "future!");
+            throw new IllegalStateException("Custom Disguises should not be called async!");
         }
 
         Entry<DisguisePerm, String> entry = getRawCustomDisguise(disguise);
@@ -504,8 +495,9 @@ public class DisguiseConfig {
         for (DisguisePerm entry : customDisguises.keySet()) {
             String name = entry.toReadable();
 
-            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise))
+            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise)) {
                 continue;
+            }
 
             customDisguises.remove(entry);
             break;
@@ -516,8 +508,9 @@ public class DisguiseConfig {
         for (Entry<DisguisePerm, String> entry : customDisguises.entrySet()) {
             String name = entry.getKey().toReadable();
 
-            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise))
+            if (!name.equalsIgnoreCase(disguise) && !name.replaceAll("_", "").equalsIgnoreCase(disguise)) {
                 continue;
+            }
 
             return entry;
         }
@@ -533,8 +526,8 @@ public class DisguiseConfig {
 
     public static void saveDefaultConfig() {
         DisguiseUtilities.getLogger().info("Config is out of date! Now updating it!");
-        String[] string = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "config.yml")
-                .split("\n");
+        String[] string =
+                ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "config.yml").split("\n");
         FileConfiguration savedConfig = LibsDisguises.getInstance().getConfig();
 
         StringBuilder section = new StringBuilder();
@@ -591,8 +584,7 @@ public class DisguiseConfig {
             try (PrintWriter out = new PrintWriter(config)) {
                 out.write(StringUtils.join(string, "\n"));
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -620,8 +612,7 @@ public class DisguiseConfig {
                     out.println("This folder is used to store .png files for uploading with the /savedisguise or " +
                             "/grabskin " + "commands");
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -700,8 +691,7 @@ public class DisguiseConfig {
 
         try {
             setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase()));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
         }
@@ -716,46 +706,42 @@ public class DisguiseConfig {
 
                 setNotifyBar(NotifyBar.ACTION_BAR);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger()
                     .warning("Cannot parse '" + config.getString("NotifyBar") + "' to a valid option for NotifyBar");
         }
 
         try {
             setBossBarColor(BarColor.valueOf(config.getString("BossBarColor").toUpperCase()));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("BossBarColor") + "' to a valid option for BossBarColor");
         }
 
         try {
             setBossBarStyle(BarStyle.valueOf(config.getString("BossBarStyle").toUpperCase()));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("BossBarStyle") + "' to a valid option for BossBarStyle");
         }
 
         try {
             setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase()));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
         }
 
         try {
-            String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name())
-                    .toUpperCase();
+            String option =
+                    config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
 
-            if (!option.endsWith("_SCOREBOARD"))
+            if (!option.endsWith("_SCOREBOARD")) {
                 option += "_SCOREBOARD";
+            }
 
             pushingOption = DisguisePushing.valueOf(option);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("SelfDisguisesScoreboard") +
                     "' to a valid option for SelfDisguisesScoreboard");
         }
@@ -843,8 +829,9 @@ public class DisguiseConfig {
     public static void loadModdedDisguiseTypes() {
         File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
 
-        if (!disguisesFile.exists())
+        if (!disguisesFile.exists()) {
             return;
+        }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(disguisesFile);
 
@@ -914,8 +901,7 @@ public class DisguiseConfig {
 
                 DisguiseUtilities.getLogger()
                         .info("Modded entity " + name + " has been " + (register ? "registered" : "added"));
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 DisguiseUtilities.getLogger().severe("Error while trying to register modded entity " + name);
                 ex.printStackTrace();
             }
@@ -925,7 +911,7 @@ public class DisguiseConfig {
     }
 
     public static ArrayList<String> doOutput(ConfigurationSection config, boolean informChangedUnknown,
-            boolean informMissing) {
+                                             boolean informMissing) {
         HashMap<String, Object> configs = new HashMap<>();
         ConfigurationSection defaultSection = config.getDefaultSection();
         ArrayList<String> returns = new ArrayList<>();
@@ -973,8 +959,9 @@ public class DisguiseConfig {
 
         File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
 
-        if (!disguisesFile.exists())
+        if (!disguisesFile.exists()) {
             return;
+        }
 
         YamlConfiguration disguisesConfig = YamlConfiguration.loadConfiguration(disguisesFile);
 
@@ -996,8 +983,7 @@ public class DisguiseConfig {
 
             try {
                 addCustomDisguise(key, toParse);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 failedCustomDisguises++;
 
                 if (e instanceof DisguiseParseException) {
@@ -1024,9 +1010,7 @@ public class DisguiseConfig {
 
     public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {
         if (!Bukkit.isPrimaryThread()) {
-            DisguiseUtilities.getLogger().warning(
-                    "Custom Disguises should not be called async! This operation will become impossible in the " +
-                            "future!");
+            throw new IllegalStateException("Custom Disguises should not be called async!");
         }
 
         if (getRawCustomDisguise(toParse) != null) {
@@ -1044,12 +1028,10 @@ public class DisguiseConfig {
             customDisguises.put(perm, toParse);
 
             DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
-        }
-        catch (DisguiseParseException e) {
+        } catch (DisguiseParseException e) {
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName,
                     (e.getMessage() == null ? "" : ": " + e.getMessage()));
-        }
-        catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, "");
         }

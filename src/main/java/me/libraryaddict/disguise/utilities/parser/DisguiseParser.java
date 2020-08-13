@@ -641,8 +641,8 @@ public class DisguiseParser {
             DisguisePermissions permissions) throws DisguiseParseException, IllegalAccessException,
             InvocationTargetException {
         if (!Bukkit.isPrimaryThread()) {
-            DisguiseUtilities.getLogger().warning(
-                    "DisguiseParser should not be called async! This operation will become impossible in the future!");
+            throw new IllegalStateException(
+                    "DisguiseParser should not be called async!");
         }
 
         if (sender instanceof Player) {
