@@ -17,12 +17,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Set;
 
 public class PacketListenerSounds extends PacketAdapter {

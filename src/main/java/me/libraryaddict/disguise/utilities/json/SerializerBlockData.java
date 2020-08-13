@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.json;
 
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.gson.*;
 import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
