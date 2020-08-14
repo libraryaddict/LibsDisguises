@@ -14,13 +14,13 @@ public class SkeletonWatcher extends InsentientWatcher {
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public boolean isSwingArms() {
         return getData(MetaIndex.SKELETON_SWING_ARMS);
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setSwingArms(boolean swingingArms) {
         setData(MetaIndex.SKELETON_SWING_ARMS, swingingArms);
         sendData(MetaIndex.SKELETON_SWING_ARMS);

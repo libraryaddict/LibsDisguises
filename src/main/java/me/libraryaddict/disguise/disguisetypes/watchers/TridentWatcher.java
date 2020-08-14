@@ -13,12 +13,12 @@ public class TridentWatcher extends ArrowWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_15)
+    @NmsAddedIn(NmsVersion.v1_15)
     public boolean isEnchanted() {
         return getData(MetaIndex.TRIDENT_ENCHANTED);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_15)
+    @NmsAddedIn(NmsVersion.v1_15)
     public void setEnchanted(boolean enchanted) {
         setData(MetaIndex.TRIDENT_ENCHANTED, enchanted);
         sendData(MetaIndex.TRIDENT_ENCHANTED);

@@ -13,17 +13,17 @@ public class AbstractVillagerWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public int getAngry() {
         return getData(MetaIndex.ABSTRACT_VILLAGER_ANGRY);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public boolean isAngry() {
         return getAngry() > 0;
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setAngry(int ticks) {
         setData(MetaIndex.ABSTRACT_VILLAGER_ANGRY, ticks);
         sendData(MetaIndex.ABSTRACT_VILLAGER_ANGRY);

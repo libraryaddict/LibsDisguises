@@ -57,12 +57,12 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         sendData(MetaIndex.AREA_EFFECT_IGNORE_RADIUS);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public <T> void setParticle(Particle particle, T particleData) {
         setParticle(WrappedParticle.create(particle, particleData));
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public WrappedParticle getParticle() {
         if (NmsVersion.v1_13.isSupported()) {
             return getData(MetaIndex.AREA_EFFECT_PARTICLE);
@@ -75,7 +75,7 @@ public class AreaEffectCloudWatcher extends FlagWatcher {
         }
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public void setParticle(WrappedParticle particle) {
         if (NmsVersion.v1_13.isSupported()) {
             setData(MetaIndex.AREA_EFFECT_PARTICLE, particle);

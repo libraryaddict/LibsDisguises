@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
-@NmsAddedIn(value = NmsVersion.v1_14)
+@NmsAddedIn(NmsVersion.v1_14)
 public class PandaWatcher extends AgeableWatcher {
     public PandaWatcher(Disguise disguise) {
         super(disguise);

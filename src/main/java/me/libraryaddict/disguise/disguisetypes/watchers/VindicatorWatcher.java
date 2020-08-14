@@ -12,13 +12,13 @@ public class VindicatorWatcher extends IllagerWatcher {
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public boolean isJohnny() {
         return getData(MetaIndex.ILLAGER_META) == 1;
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setJohnny(boolean isJohnny) {
         setData(MetaIndex.ILLAGER_META, (byte) (isJohnny ? 1 : 0));
         sendData(MetaIndex.ILLAGER_META);

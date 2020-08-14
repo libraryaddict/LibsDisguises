@@ -41,12 +41,12 @@ public class BoatWatcher extends FlagWatcher {
         sendData(MetaIndex.BOAT_LEFT_PADDLING);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public int getBoatShake() {
         return getData(MetaIndex.BOAT_SHAKE);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public void setBoatShake(int number) {
         setData(MetaIndex.BOAT_SHAKE, number);
         sendData(MetaIndex.BOAT_SHAKE);

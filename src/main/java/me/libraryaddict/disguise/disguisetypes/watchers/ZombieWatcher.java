@@ -33,25 +33,25 @@ public class ZombieWatcher extends InsentientWatcher {
         setBaby(true);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public boolean isConverting() {
         return getData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_13)
+    @NmsAddedIn(NmsVersion.v1_13)
     public void setConverting(boolean converting) {
         setData(MetaIndex.ZOMBIE_CONVERTING_DROWNED, converting);
         sendData(MetaIndex.ZOMBIE_CONVERTING_DROWNED);
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public boolean isAggressive() {
         return getData(MetaIndex.ZOMBIE_AGGRESSIVE);
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setAggressive(boolean handsup) {
         setData(MetaIndex.ZOMBIE_AGGRESSIVE, handsup);
         sendData(MetaIndex.ZOMBIE_AGGRESSIVE);

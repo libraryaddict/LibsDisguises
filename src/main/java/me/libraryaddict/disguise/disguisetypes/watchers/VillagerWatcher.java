@@ -21,12 +21,12 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
         }
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public VillagerData getVillagerData() {
         return getData(MetaIndex.VILLAGER_DATA);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setVillagerData(VillagerData villagerData) {
         setData(MetaIndex.VILLAGER_DATA, villagerData);
         sendData(MetaIndex.VILLAGER_DATA);
@@ -51,33 +51,33 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
     }
 
     @Deprecated
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public Villager.Type getType() {
         return getVillagerData().getType();
     }
 
     @Deprecated
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setType(Villager.Type type) {
         setVillagerData(new VillagerData(type, getProfession(), getLevel()));
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public Villager.Type getBiome() {
         return getType();
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setBiome(Villager.Type type) {
         setType(type);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public int getLevel() {
         return getVillagerData().getLevel();
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setLevel(int level) {
         setVillagerData(new VillagerData(getType(), getProfession(), level));
     }

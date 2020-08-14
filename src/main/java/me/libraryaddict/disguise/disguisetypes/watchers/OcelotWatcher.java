@@ -16,67 +16,67 @@ public class OcelotWatcher extends AgeableWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public boolean isTrusting() {
         return getData(MetaIndex.OCELOT_TRUST);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setTrusting(boolean trusting) {
         setData(MetaIndex.OCELOT_TRUST, trusting);
         sendData(MetaIndex.OCELOT_TRUST);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     @Deprecated
     public Ocelot.Type getType() {
         return Ocelot.Type.getType(getData(MetaIndex.OCELOT_TYPE));
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     @Deprecated
     public void setType(Ocelot.Type newType) {
         setData(MetaIndex.OCELOT_TYPE, newType.getId());
         sendData(MetaIndex.OCELOT_TYPE);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public Optional<UUID> getOwner() {
         return getData(MetaIndex.TAMEABLE_OWNER);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setOwner(UUID owner) {
         setData(MetaIndex.TAMEABLE_OWNER, Optional.of(owner));
         sendData(MetaIndex.TAMEABLE_OWNER);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public boolean isSitting() {
         return isTameableFlag(1);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setSitting(boolean sitting) {
         setTameableFlag(1, sitting);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public boolean isTamed() {
         return isTameableFlag(4);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setTamed(boolean tamed) {
         setTameableFlag(4, tamed);
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     protected boolean isTameableFlag(int no) {
         return (getData(MetaIndex.TAMEABLE_META) & no) != 0;
     }
 
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     protected void setTameableFlag(int no, boolean flag) {
         byte value = getData(MetaIndex.TAMEABLE_META);
 

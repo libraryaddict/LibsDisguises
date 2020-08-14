@@ -12,25 +12,25 @@ public class IllagerWizardWatcher extends IllagerWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public Spellcaster.Spell getSpell() {
         return Spellcaster.Spell.values()[getData(MetaIndex.ILLAGER_SPELL)];
     }
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setSpell(Spellcaster.Spell spell) {
         setData(MetaIndex.ILLAGER_SPELL, (byte) spell.ordinal());
         sendData(MetaIndex.ILLAGER_SPELL);
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public int getSpellTicks() {
         return getData(MetaIndex.ILLAGER_SPELL_TICKS);
     }
 
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     public void setSpellTicks(int spellTicks) {
         setData(MetaIndex.ILLAGER_SPELL_TICKS, (byte) spellTicks);
         sendData(MetaIndex.ILLAGER_SPELL_TICKS);

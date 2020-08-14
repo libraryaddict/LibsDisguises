@@ -22,13 +22,13 @@ public abstract class ThrowableWatcher extends FlagWatcher {
 
     protected abstract ItemStack getDefaultItemStack();
 
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public ItemStack getItemStack() {
         return getData(MetaIndex.THROWABLE_ITEM);
     }
 
     @RandomDefaultValue
-    @NmsAddedIn(value = NmsVersion.v1_14)
+    @NmsAddedIn(NmsVersion.v1_14)
     public void setItemStack(ItemStack item) {
         setData(MetaIndex.THROWABLE_ITEM, item);
         sendData(MetaIndex.THROWABLE_ITEM);

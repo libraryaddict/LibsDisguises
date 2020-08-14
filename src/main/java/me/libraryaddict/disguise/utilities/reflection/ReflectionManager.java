@@ -58,11 +58,11 @@ public class ReflectionManager {
     private static Field chunkProviderField;
     private static Field entityTrackerField;
     private static Field trackedEntitiesField;
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     private static Method ihmGet;
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     private static Field trackerField;
-    @NmsRemovedIn(val = NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_14)
     private static Field entitiesField;
     private static NmsVersion version;
     private static Method itemAsBukkitMethod;
@@ -272,7 +272,7 @@ public class ReflectionManager {
         if (obj.isAnnotationPresent(NmsRemovedIn.class)) {
             NmsRemovedIn removed = obj.getAnnotation(NmsRemovedIn.class);
 
-            return !removed.val().isSupported();
+            return !removed.value().isSupported();
         }
 
         return true;

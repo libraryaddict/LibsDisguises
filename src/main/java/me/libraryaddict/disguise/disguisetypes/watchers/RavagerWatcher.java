@@ -7,7 +7,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 /**
  * Created by libraryaddict on 6/05/2019.
  */
-@NmsAddedIn(value = NmsVersion.v1_14)
+@NmsAddedIn(NmsVersion.v1_14)
 public class RavagerWatcher extends RaiderWatcher {
     public RavagerWatcher(Disguise disguise) {
         super(disguise);

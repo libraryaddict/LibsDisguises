@@ -66,7 +66,7 @@ public class WolfWatcher extends TameableWatcher {
      *
      * @return
      */
-    @NmsRemovedIn(val = NmsVersion.v1_15)
+    @NmsRemovedIn(NmsVersion.v1_15)
     @Deprecated
     public float getDamageTaken() {
         return getData(MetaIndex.WOLF_DAMAGE);
@@ -78,7 +78,7 @@ public class WolfWatcher extends TameableWatcher {
      * @param damage
      */
     @Deprecated
-    @NmsRemovedIn(val = NmsVersion.v1_15)
+    @NmsRemovedIn(NmsVersion.v1_15)
     public void setDamageTaken(float damage) {
         setData(MetaIndex.WOLF_DAMAGE, damage);
         sendData(MetaIndex.WOLF_DAMAGE);

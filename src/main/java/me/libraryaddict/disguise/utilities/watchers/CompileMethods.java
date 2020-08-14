@@ -122,9 +122,9 @@ public class CompileMethods {
                 }
 
                 if (method.isAnnotationPresent(NmsRemovedIn.class)) {
-                    removed = method.getAnnotation(NmsRemovedIn.class).val().ordinal();
+                    removed = method.getAnnotation(NmsRemovedIn.class).value().ordinal();
                 } else if (method.getDeclaringClass().isAnnotationPresent(NmsRemovedIn.class)) {
-                    removed = method.getDeclaringClass().getAnnotation(NmsRemovedIn.class).val().ordinal();
+                    removed = method.getDeclaringClass().getAnnotation(NmsRemovedIn.class).value().ordinal();
                 }
 
                 String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : "";
