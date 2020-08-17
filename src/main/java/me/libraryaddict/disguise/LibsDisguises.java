@@ -30,15 +30,18 @@ import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
@@ -63,8 +66,7 @@ public class LibsDisguises extends JavaPlugin {
 
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
                     "plugin will continue to load, but it will look like a mugging victim");
         }
@@ -81,8 +83,7 @@ public class LibsDisguises extends JavaPlugin {
 
         try {
             Class cl = Class.forName("org.bukkit.Server$Spigot");
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
                     "plugin will continue to load, but it will look like a mugging victim");
         }
@@ -131,7 +132,24 @@ public class LibsDisguises extends JavaPlugin {
             getLogger()
                     .severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" +
                             ".jar");
+            getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
             getLogger().severe("!! May I have your attention please !!");
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    getLogger().severe("!! May I have your attention please !!");
+                    getLogger().severe("Update your ProtocolLib! You are running " + version +
+                            " but the minimum version you should be on is " + requiredProtocolLib + "!");
+                    getLogger()
+                            .severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                                    "/ProtocolLib" +
+                                    ".jar");
+                    getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
+                    getLogger()
+                            .severe("This message is on repeat due to the sheer number of people who don't see this.");
+                }
+            }.runTaskTimer(this, 20, 10 * 60 * 20);
         }
 
         // If this is a release build, even if jenkins build..

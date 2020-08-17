@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
@@ -47,6 +48,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class DisguiseListener implements Listener {
     private HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
@@ -63,15 +65,17 @@ public class DisguiseListener implements Listener {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
 
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
                 Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
 
-                if (disguises.length <= 0)
+                if (disguises.length <= 0) {
                     continue;
+                }
 
                 DisguiseUtilities.resetPluginTimer();
 
@@ -129,7 +133,8 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onVelocity(PlayerVelocityEvent event) {
         DisguiseUtilities.setPlayerVelocity(event.getPlayer());
 
@@ -138,7 +143,8 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH,
+            ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
         Entity attacker = event.getDamager();
 
@@ -234,14 +240,16 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         for (Entity entity : event.getChunk().getEntities()) {
             Disguise[] disguises = DisguiseAPI.getDisguises(entity);
 
-            if (disguises.length <= 0)
+            if (disguises.length <= 0) {
                 continue;
+            }
 
             DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
         }
@@ -249,17 +257,20 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(WorldUnloadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         for (Entity entity : event.getWorld().getEntities()) {
-            if (entity instanceof Player)
+            if (entity instanceof Player) {
                 continue;
+            }
 
             Disguise[] disguises = DisguiseAPI.getDisguises(entity);
 
-            if (disguises.length <= 0)
+            if (disguises.length <= 0) {
                 continue;
+            }
 
             DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
         }
@@ -267,14 +278,16 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         for (Entity entity : event.getChunk().getEntities()) {
             Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
 
-            if (disguises.length <= 0)
+            if (disguises.length <= 0) {
                 continue;
+            }
 
             DisguiseUtilities.resetPluginTimer();
 
@@ -287,14 +300,16 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         for (Entity entity : event.getWorld().getEntities()) {
             Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
 
-            if (disguises.length <= 0)
+            if (disguises.length <= 0) {
                 continue;
+            }
 
             DisguiseUtilities.resetPluginTimer();
 
@@ -312,17 +327,32 @@ public class DisguiseListener implements Listener {
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
         plugin.getUpdateChecker().notifyUpdate(p);
 
-        if (p.isOp() || p.hasPermission("minecraft.command.op")) {
+        if (p.isOp() || p.hasPermission("minecraft.command.op") ||
+                new DisguisePermissions(p, "disguiseradius").hasPermissions()) {
             String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
             String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
             if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
-                p.sendMessage(ChatColor.RED + "Update your ProtocolLib! You are running " + version +
-                        " but the minimum version you should be on is " + requiredProtocolLib + "!");
-                p.sendMessage(
-                        ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!p.isOnline()) {
+                            cancel();
+                            return;
+                        }
+
+                        p.sendMessage(ChatColor.RED + "Update your ProtocolLib! You are running " + version +
+                                " but the minimum version you should be on is " + requiredProtocolLib + "!");
+                        p.sendMessage(ChatColor.RED +
+                                "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
                                 "/ProtocolLib" + ".jar");
-                p.sendMessage(ChatColor.RED + "Use /ld updateprotocollib - To update to the latest development build");
+                        p.sendMessage(ChatColor.RED +
+                                "Or! Use /ld updateprotocollib - To update to the latest development build");
+                        p.sendMessage(ChatColor.DARK_GREEN +
+                                "This message is `kindly` provided by Lib's Disguises on repeat due to the sheer " +
+                                "number of people who don't see it");
+                    }
+                }.runTaskTimer(LibsDisguises.getInstance(), 10, 10 * 60 * 20); // Run every 10 minutes
             }
         }
 
@@ -341,14 +371,17 @@ public class DisguiseListener implements Listener {
 
         for (Set<TargetedDisguise> disguiseList : DisguiseUtilities.getDisguises().values()) {
             for (TargetedDisguise targetedDisguise : disguiseList) {
-                if (targetedDisguise.getEntity() == null)
+                if (targetedDisguise.getEntity() == null) {
                     continue;
+                }
 
-                if (!targetedDisguise.canSee(p))
+                if (!targetedDisguise.canSee(p)) {
                     continue;
+                }
 
-                if (!(targetedDisguise instanceof PlayerDisguise))
+                if (!(targetedDisguise instanceof PlayerDisguise)) {
                     continue;
+                }
 
                 PlayerDisguise disguise = (PlayerDisguise) targetedDisguise;
 
@@ -356,8 +389,7 @@ public class DisguiseListener implements Listener {
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(p,
                                 DisguiseUtilities.getTabPacket(disguise, PlayerInfoAction.ADD_PLAYER));
-                    }
-                    catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -415,7 +447,8 @@ public class DisguiseListener implements Listener {
     /**
      * Most likely faster if we don't bother doing checks if he sees a player disguise
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         // If yer a pirate with a pirated jar, sometimes you can't move
         if (("%%__USER__%%".isEmpty() || DisguiseUtilities.isInvalidFile()) && !event.getPlayer().isOp() &&
@@ -462,13 +495,15 @@ public class DisguiseListener implements Listener {
 
         DisguiseUtilities.removeSelfDisguiseScoreboard(player);
 
-        if (!DisguiseConfig.isSavePlayerDisguises())
+        if (!DisguiseConfig.isSavePlayerDisguises()) {
             return;
+        }
 
         Disguise[] disguises = DisguiseAPI.getDisguises(player);
 
-        if (disguises.length <= 0)
+        if (disguises.length <= 0) {
             return;
+        }
 
         DisguiseUtilities.saveDisguises(player.getUniqueId(), disguises);
     }
@@ -532,7 +567,8 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         Location to = event.getTo();
@@ -565,8 +601,7 @@ public class DisguiseListener implements Listener {
 
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
@@ -597,7 +632,8 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onVehicleEnter(VehicleEnterEvent event) {
         if (!(event.getEntered() instanceof Player)) {
             return;
@@ -614,7 +650,8 @@ public class DisguiseListener implements Listener {
         ((Player) event.getEntered()).updateInventory();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onVehicleLeave(VehicleExitEvent event) {
         if (event.getExited() instanceof Player) {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
@@ -632,7 +669,8 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR,
+            ignoreCancelled = true)
     public void onWorldSwitch(final PlayerChangedWorldEvent event) {
         if (!DisguiseAPI.isDisguised(event.getPlayer())) {
             return;
