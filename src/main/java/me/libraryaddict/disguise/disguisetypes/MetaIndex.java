@@ -503,16 +503,16 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> PIG_BOOST = new MetaIndex<>(PigWatcher.class, 1, 0);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Boolean> PIGLIN_ABSTRACT_BABY = new MetaIndex<>(PiglinWatcher.class, 0, false);
+    public static MetaIndex<Boolean> PIGLIN_ABSTRACT_BABY = new MetaIndex<>(PiglinAbstractWatcher.class, 0, false);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Boolean> PIGLIN_SHAKING = new MetaIndex<>(PiglinWatcher.class, 1, false);
+    public static MetaIndex<Boolean> PIGLIN_SHAKING = new MetaIndex<>(PiglinWatcher.class, 0, false);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Boolean> PIGLIN_CROSSBOW = new MetaIndex<>(PiglinWatcher.class, 2, false);
+    public static MetaIndex<Boolean> PIGLIN_CROSSBOW = new MetaIndex<>(PiglinWatcher.class, 1, false);
 
     @NmsAddedIn(NmsVersion.v1_16)
-    public static MetaIndex<Boolean> PIGLIN_DANCING = new MetaIndex<>(PiglinWatcher.class, 3, false);
+    public static MetaIndex<Boolean> PIGLIN_DANCING = new MetaIndex<>(PiglinWatcher.class, 2, false);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> PILLAGER_AIMING_BOW = new MetaIndex<>(PillagerWatcher.class, 0, false);
