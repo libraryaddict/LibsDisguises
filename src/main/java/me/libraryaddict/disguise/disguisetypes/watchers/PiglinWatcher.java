@@ -6,20 +6,11 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 /**
  * Created by libraryaddict on 25/06/2020.
  */
-public class PiglinWatcher extends InsentientWatcher {
+public class PiglinWatcher extends PiglinAbstractWatcher {
     public PiglinWatcher(Disguise disguise) {
         super(disguise);
 
         setShaking(false);
-    }
-
-    public boolean isBaby() {
-        return getData(MetaIndex.PIGLIN_BABY);
-    }
-
-    public void setBaby(boolean baby) {
-        setData(MetaIndex.PIGLIN_BABY, baby);
-        sendData(MetaIndex.PIGLIN_BABY);
     }
 
     public boolean isDancing() {

@@ -141,6 +141,8 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) PIGLIN,
 
+    @NmsAddedIn(NmsVersion.v1_16) PIGLIN_BRUTE,
+
     @NmsAddedIn(NmsVersion.v1_14) PILLAGER,
 
     PLAYER,
