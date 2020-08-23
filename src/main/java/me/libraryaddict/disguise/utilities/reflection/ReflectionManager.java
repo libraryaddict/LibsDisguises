@@ -1965,6 +1965,10 @@ public class ReflectionManager {
     }
 
     public static String toReadable(String string) {
-        return StringUtils.join(splitReadable(string));
+        return toReadable(string, "");
+    }
+
+    public static String toReadable(String string, String joiner) {
+        return StringUtils.join(splitReadable(string), joiner);
     }
 }

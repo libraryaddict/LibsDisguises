@@ -75,8 +75,7 @@ public class FallingBlockWatcher extends FlagWatcher {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, relMove, isGridLocked());
                     }
                 }
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -100,7 +99,7 @@ public class FallingBlockWatcher extends FlagWatcher {
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
                     TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                            .get(ReflectionManager.toReadable(block.getType().name())));
+                            .get(ReflectionManager.toReadable(block.getType().name(), " ")));
         }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
@@ -130,7 +129,7 @@ public class FallingBlockWatcher extends FlagWatcher {
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
                     TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                            .get(ReflectionManager.toReadable(block.getType().name())));
+                            .get(ReflectionManager.toReadable(block.getType().name(), " ")));
         }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {

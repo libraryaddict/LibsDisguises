@@ -24,8 +24,8 @@ public class DroppedItemWatcher extends FlagWatcher {
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISES.get(DisguiseType.DROPPED_ITEM.toReadable()) + " " +
-                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                            .get(ReflectionManager.toReadable((item == null ? Material.AIR : item.getType()).name())));
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager
+                            .toReadable((item == null ? Material.AIR : item.getType()).name(), " ")));
         }
     }
 }
