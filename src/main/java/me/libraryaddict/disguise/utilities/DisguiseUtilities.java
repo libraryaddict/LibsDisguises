@@ -2729,7 +2729,11 @@ public class DisguiseUtilities {
             internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
 
             if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
-                newNames = new String[]{StringUtils.join(newNames, "\\n")};
+                if (disguise.getMultiName().length > 1) {
+                    getLogger().info("Multiline names is a premium feature, sorry!");
+                }
+
+                newNames = new String[]{StringUtils.join(disguise.getMultiName(), "\\n")};
             }
         } else {
             newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ?
