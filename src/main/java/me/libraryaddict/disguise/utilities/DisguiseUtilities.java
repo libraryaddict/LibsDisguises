@@ -2721,11 +2721,20 @@ public class DisguiseUtilities {
 
     public static ArrayList<PacketContainer> getNamePackets(Disguise disguise, String[] internalOldNames) {
         ArrayList<PacketContainer> packets = new ArrayList<>();
-        String[] newNames =
-                (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
-                        reverse(disguise.getMultiName());
+        String[] newNames = new String[0];
         int[] standIds = disguise.getArmorstandIds();
         int[] destroyIds = new int[0];
+
+        if (!LibsPremium.isPremium()) {
+            internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
+
+            if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
+                newNames = new String[]{StringUtils.join(newNames, "\\n")};
+            }
+        } else {
+            newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ?
+                    new String[0] : reverse(disguise.getMultiName());
+        }
 
         if (internalOldNames.length > newNames.length) {
             // Destroy packet
