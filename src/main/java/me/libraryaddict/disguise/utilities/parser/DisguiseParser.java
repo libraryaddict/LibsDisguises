@@ -470,7 +470,7 @@ public class DisguiseParser {
             arg = replace(arg, "%armor%", equip == null ? null : equip.getArmorContents());
             arg = replace(arg, "%helmet%", equip == null ? null : equip.getHelmet());
             arg = replace(arg, "%chestplate%", equip == null ? null : equip.getChestplate());
-            arg = replace(arg, "%leggings%%", equip == null ? null : equip.getLeggings());
+            arg = replace(arg, "%leggings%", equip == null ? null : equip.getLeggings());
             arg = replace(arg, "%boots%", equip == null ? null : equip.getBoots());
 
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -491,7 +491,7 @@ public class DisguiseParser {
                 arg = replace(arg, "%" + name + "-armor%", pEquip == null ? null : pEquip.getArmorContents());
                 arg = replace(arg, "%" + name + "-helmet%", pEquip == null ? null : pEquip.getHelmet());
                 arg = replace(arg, "%" + name + "-chestplate%", pEquip == null ? null : pEquip.getChestplate());
-                arg = replace(arg, "%" + name + "-leggings%%", pEquip == null ? null : pEquip.getLeggings());
+                arg = replace(arg, "%" + name + "-leggings%", pEquip == null ? null : pEquip.getLeggings());
                 arg = replace(arg, "%" + name + "-boots%", pEquip == null ? null : pEquip.getBoots());
             }
 
@@ -503,7 +503,7 @@ public class DisguiseParser {
             arg = replace(arg, "%target-armor%", targetEquip == null ? null : targetEquip.getArmorContents());
             arg = replace(arg, "%target-helmet%", targetEquip == null ? null : targetEquip.getHelmet());
             arg = replace(arg, "%target-chestplate%", targetEquip == null ? null : targetEquip.getChestplate());
-            arg = replace(arg, "%target-leggings%%", targetEquip == null ? null : targetEquip.getLeggings());
+            arg = replace(arg, "%target-leggings%", targetEquip == null ? null : targetEquip.getLeggings());
             arg = replace(arg, "%target-boots%", targetEquip == null ? null : targetEquip.getBoots());
 
             args[i] = arg;
