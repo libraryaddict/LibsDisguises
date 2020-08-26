@@ -9,14 +9,16 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 public abstract class PiglinAbstractWatcher extends InsentientWatcher {
     public PiglinAbstractWatcher(Disguise disguise) {
         super(disguise);
+
+        setShaking(false);
     }
 
-    public boolean isBaby() {
-        return getData(MetaIndex.PIGLIN_ABSTRACT_BABY);
+    public boolean isShaking() {
+        return !getData(MetaIndex.PIGLIN_ABSTRACT_SHAKING);
     }
 
-    public void setBaby(boolean baby) {
-        setData(MetaIndex.PIGLIN_ABSTRACT_BABY, baby);
-        sendData(MetaIndex.PIGLIN_ABSTRACT_BABY);
+    public void setShaking(boolean shaking) {
+        setData(MetaIndex.PIGLIN_ABSTRACT_SHAKING, !shaking);
+        sendData(MetaIndex.PIGLIN_ABSTRACT_SHAKING);
     }
 }

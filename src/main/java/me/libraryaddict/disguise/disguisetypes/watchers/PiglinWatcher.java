@@ -9,8 +9,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 public class PiglinWatcher extends PiglinAbstractWatcher {
     public PiglinWatcher(Disguise disguise) {
         super(disguise);
-
-        setShaking(false);
     }
 
     public boolean isDancing() {
@@ -31,12 +29,12 @@ public class PiglinWatcher extends PiglinAbstractWatcher {
         sendData(MetaIndex.PIGLIN_CROSSBOW);
     }
 
-    public boolean isShaking() {
-        return !getData(MetaIndex.PIGLIN_SHAKING);
+    public boolean isBaby() {
+        return getData(MetaIndex.PIGLIN_BABY);
     }
 
-    public void setShaking(boolean shaking) {
-        setData(MetaIndex.PIGLIN_SHAKING, !shaking);
-        sendData(MetaIndex.PIGLIN_SHAKING);
+    public void setBaby(boolean baby) {
+        setData(MetaIndex.PIGLIN_BABY, baby);
+        sendData(MetaIndex.PIGLIN_BABY);
     }
 }
