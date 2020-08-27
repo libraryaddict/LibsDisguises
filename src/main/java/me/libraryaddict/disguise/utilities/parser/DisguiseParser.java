@@ -799,7 +799,7 @@ public class DisguiseParser {
 
                                 try {
                                     if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
-                                        if (NmsVersion.v1_13.isSupported()) {
+                                        if (NmsVersion.v1_13.isSupported() && args[1].contains("[")) {
                                             info = ParamInfoManager.getParamInfo(BlockData.class);
                                             blockData = info.fromString(
                                                     new ArrayList<>(Collections.singletonList(args[1])));
