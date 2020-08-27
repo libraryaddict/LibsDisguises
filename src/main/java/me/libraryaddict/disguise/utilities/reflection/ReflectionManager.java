@@ -457,7 +457,7 @@ public class ReflectionManager {
             int stage = 0;
 
             for (Field field : boundingBox.getClass().getDeclaredFields()) {
-                if (!field.getType().getSimpleName().equals("double")) {
+                if (!field.getType().getSimpleName().equals("double") || Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
 
