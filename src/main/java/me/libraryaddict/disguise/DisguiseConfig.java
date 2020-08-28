@@ -286,7 +286,9 @@ public class DisguiseConfig {
     }
 
     private static void doUpdaterTask() {
-        boolean startTask = isAutoUpdate() || isNotifyUpdate();
+        boolean startTask = isAutoUpdate() || isNotifyUpdate() || "1592".equals(
+                (LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() :
+                        LibsPremium.getPaidInformation()).getUserID());
 
         // Don't ever run the auto updater on a custom build..
         if (!LibsDisguises.getInstance().isNumberedBuild()) {

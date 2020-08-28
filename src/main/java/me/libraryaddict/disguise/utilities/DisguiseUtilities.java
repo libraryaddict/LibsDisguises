@@ -62,7 +62,9 @@ import org.bukkit.util.Vector;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -232,6 +234,7 @@ public class DisguiseUtilities {
         }
 
         File viewPreferences = new File(LibsDisguises.getInstance().getDataFolder(), "preferences.json");
+        File viewPreferencesTemp = new File(LibsDisguises.getInstance().getDataFolder(), "preferences-temp.json");
 
         HashMap<String, List<UUID>> map = new HashMap<>();
         map.put("selfdisguise", getViewSelf());
@@ -240,8 +243,9 @@ public class DisguiseUtilities {
         String json = getGson().toJson(map);
 
         try {
-            viewPreferences.delete();
-            Files.write(viewPreferences.toPath(), json.getBytes(), StandardOpenOption.CREATE);
+            Files.write(viewPreferencesTemp.toPath(), json.getBytes());
+            Files.move(viewPreferencesTemp.toPath(), viewPreferences.toPath(), StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -274,8 +278,10 @@ public class DisguiseUtilities {
                 getViewBar().clear();
                 map.get("notifybar").forEach(uuid -> getViewBar().add(UUID.fromString(uuid)));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            getLogger().warning("preferences.json has been deleted as its corrupt");
+            viewPreferences.delete();
         }
     }
 
