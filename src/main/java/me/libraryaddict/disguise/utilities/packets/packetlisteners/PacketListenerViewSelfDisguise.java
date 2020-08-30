@@ -34,8 +34,9 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
 
     @Override
     public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         try {
             final Player observer = event.getPlayer();
@@ -70,15 +71,15 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             }
 
             // Here I grab the packets to convert them to, So I can display them as if the disguise sent them.
-            LibsPackets transformed = PacketsManager.getPacketsHandler()
-                    .transformPacket(packet, disguise, observer, observer);
+            LibsPackets transformed =
+                    PacketsManager.getPacketsHandler().transformPacket(packet, disguise, observer, observer);
 
             if (transformed.isUnhandled()) {
                 transformed.getPackets().add(packet);
             }
 
             for (PacketContainer newPacket : transformed.getPackets()) {
-                if (newPacket.getType() != Server.PLAYER_INFO &&
+                if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
                         newPacket.getIntegers().read(0) == observer.getEntityId()) {
                     if (newPacket == packet) {
                         newPacket = newPacket.shallowClone();
@@ -89,15 +90,14 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
 
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket, false);
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
 
             for (ArrayList<PacketContainer> packets : transformed.getDelayedPackets()) {
                 for (PacketContainer newPacket : packets) {
-                    if (newPacket.getType() == Server.PLAYER_INFO) {
+                    if (newPacket.getType() == Server.PLAYER_INFO || newPacket.getType() == Server.ENTITY_DESTROY) {
                         continue;
                     }
 
@@ -139,20 +139,21 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 List<WrappedWatchableObject> watchableList = new ArrayList<>();
                 byte b = 1 << 5;
 
-                if (observer.isSprinting())
+                if (observer.isSprinting()) {
                     b = (byte) (b | 1 << 3);
+                }
 
                 WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META, b);
 
-                if (watch != null)
+                if (watch != null) {
                     watchableList.add(watch);
+                }
 
                 metaPacket.getWatchableCollectionModifier().write(0, watchableList);
 
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(observer, metaPacket);
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             } else if (event.getPacketType() == Server.ANIMATION) {
@@ -179,8 +180,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 // Clear old velocity, this should only occur once.
                 DisguiseUtilities.setPlayerVelocity(null);
             }
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             event.setCancelled(true);
             ex.printStackTrace();
         }
