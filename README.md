@@ -11,7 +11,7 @@ There are a few features which you need to pay for, but none of it is needed to 
 
 
 Spigot page: <a href="https://www.spigotmc.org/resources/32453/">Link</a>
-
+Jenkins Downloads: <a href="https://ci.md-5.net/job/LibsDisguises/">Link</a>
 
 NOTE: These versions will NOT work with older versions of Minecraft. There is no support for older versions of this plugin.
 
