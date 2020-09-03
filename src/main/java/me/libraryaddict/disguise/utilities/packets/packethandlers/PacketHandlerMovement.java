@@ -39,7 +39,7 @@ public class PacketHandlerMovement implements IPacketHandler {
 
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+                       Entity entity) {
         handle2(disguise, sentPacket, packets, observer, entity);
 
         int len = disguise.getMultiNameLength();
@@ -69,7 +69,7 @@ public class PacketHandlerMovement implements IPacketHandler {
     }
 
     public void handle2(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+                        Entity entity) {
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();
             return;
@@ -115,8 +115,7 @@ public class PacketHandlerMovement implements IPacketHandler {
 
                 double y = loc.getBlockY();
 
-                // Force into a multiple of 0.25
-                y += Math.floor((loc.getY() % 1) * 4) / 4D;
+                y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
 
                 doubles.write(1, y);
                 doubles.write(2, loc.getBlockZ() + 0.5);
