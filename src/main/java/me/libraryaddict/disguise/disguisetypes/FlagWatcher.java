@@ -24,11 +24,13 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -55,6 +57,7 @@ public class FlagWatcher {
     private transient boolean previouslySneaking;
     @Getter
     private boolean upsideDown;
+    private ChatColor glowColor;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -76,8 +79,7 @@ public class FlagWatcher {
 
         try {
             cloned = getClass().getConstructor(Disguise.class).newInstance(owningDisguise);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             cloned = new FlagWatcher(owningDisguise);
         }
@@ -88,6 +90,7 @@ public class FlagWatcher {
         cloned.addEntityAnimations = addEntityAnimations;
         cloned.upsideDown = upsideDown;
         cloned.sleeping = sleeping;
+        cloned.glowColor = glowColor;
 
         return cloned;
     }
@@ -185,8 +188,9 @@ public class FlagWatcher {
 
                 watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), value);
 
-                if (watch == null)
+                if (watch == null) {
                     continue;
+                }
 
                 if (!isDirty) {
                     watch.setDirtyState(false);
@@ -196,8 +200,9 @@ public class FlagWatcher {
 
                 watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), watch.getValue());
 
-                if (watch == null)
+                if (watch == null) {
                     continue;
+                }
 
                 if (!isDirty) {
                     watch.setDirtyState(false);
@@ -224,11 +229,12 @@ public class FlagWatcher {
                     continue;
                 }
 
-                WrappedWatchableObject watch = ReflectionManager
-                        .createWatchable(MetaIndex.getMetaIndex(this, id), value);
+                WrappedWatchableObject watch =
+                        ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), value);
 
-                if (watch == null)
+                if (watch == null) {
                     continue;
+                }
 
                 newList.add(watch);
             }
@@ -251,8 +257,7 @@ public class FlagWatcher {
                                 try {
                                     DisguiseUtilities
                                             .sendSelfDisguise((Player) getDisguise().getEntity(), getDisguise());
-                                }
-                                catch (Exception ex) {
+                                } catch (Exception ex) {
                                     ex.printStackTrace();
                                 }
                             }, 2);
@@ -344,8 +349,7 @@ public class FlagWatcher {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
             }
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -464,8 +468,9 @@ public class FlagWatcher {
     }
 
     protected <Y> Y getData(MetaIndex<Y> flagType) {
-        if (flagType == null)
+        if (flagType == null) {
             return null;
+        }
 
         if (entityValues.containsKey(flagType.getIndex())) {
             return (Y) entityValues.get(flagType.getIndex());
@@ -487,8 +492,9 @@ public class FlagWatcher {
     }
 
     public boolean hasValue(MetaIndex no) {
-        if (no == null)
+        if (no == null) {
             return false;
+        }
 
         return entityValues.containsKey(no.getIndex());
     }
@@ -537,6 +543,28 @@ public class FlagWatcher {
     public void setGlowing(boolean glowing) {
         setEntityFlag(6, glowing);
         sendData(MetaIndex.ENTITY_META);
+    }
+
+    public ChatColor getGlowColor() {
+        return glowColor;
+    }
+
+    public void setGlowColor(ChatColor glowColor) {
+        if (getGlowColor() == glowColor) {
+            return;
+        }
+
+        this.glowColor = glowColor;
+
+        if (!getDisguise().isDisguiseInUse() || getDisguise().getEntity() == null) {
+            return;
+        }
+
+        if (getDisguise().isPlayerDisguise()) {
+            DisguiseUtilities.updateExtendedName((PlayerDisguise) getDisguise());
+        } else {
+            // TODO
+        }
     }
 
     public boolean isInvisible() {
@@ -608,14 +636,15 @@ public class FlagWatcher {
             if (entityValues.containsKey(i) && entityValues.get(i) != null) {
                 watchable = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, i), entityValues.get(i));
             } else if (backupEntityValues.containsKey(i) && backupEntityValues.get(i) != null) {
-                watchable = ReflectionManager
-                        .createWatchable(MetaIndex.getMetaIndex(this, i), backupEntityValues.get(i));
+                watchable =
+                        ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, i), backupEntityValues.get(i));
             } else {
                 continue;
             }
 
-            if (watchable == null)
+            if (watchable == null) {
                 continue;
+            }
 
             watchableObjects.add(watchable);
         }
@@ -630,8 +659,9 @@ public class FlagWatcher {
         List<WrappedWatchableObject> list = new ArrayList<>();
 
         for (MetaIndex data : dataValues) {
-            if (data == null)
+            if (data == null) {
                 continue;
+            }
 
             if (!entityValues.containsKey(data.getIndex()) || entityValues.get(data.getIndex()) == null) {
                 continue;
@@ -646,8 +676,9 @@ public class FlagWatcher {
 
             WrappedWatchableObject watch = ReflectionManager.createWatchable(data, value);
 
-            if (watch == null)
+            if (watch == null) {
                 continue;
+            }
 
             list.add(watch);
         }
@@ -670,8 +701,7 @@ public class FlagWatcher {
                     } else {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                     }
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -687,8 +717,9 @@ public class FlagWatcher {
     }
 
     protected void setBackupValue(MetaIndex no, Object value) {
-        if (no == null)
+        if (no == null) {
             return;
+        }
 
         backupEntityValues.put(no.getIndex(), value);
     }
@@ -725,8 +756,9 @@ public class FlagWatcher {
 
     protected void sendItemStack(EquipmentSlot slot, ItemStack itemStack) {
         if (!DisguiseAPI.isDisguiseInUse(getDisguise()) || getDisguise().getWatcher() != this ||
-                getDisguise().getEntity() == null)
+                getDisguise().getEntity() == null) {
             return;
+        }
 
         if (itemStack == null && getDisguise().getEntity() instanceof LivingEntity) {
             itemStack = ReflectionManager.getEquipment(slot, getDisguise().getEntity());
@@ -753,8 +785,7 @@ public class FlagWatcher {
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -806,16 +837,18 @@ public class FlagWatcher {
     }
 
     protected <Y> void setData(MetaIndex<Y> id, Y value) {
-        if (id == null)
+        if (id == null) {
             return;
+        }
 
         if (id.getIndex() == -1) {
             throw new IllegalArgumentException(
                     "You can't do that in this version of Minecraft! I can't use " + MetaIndex.getName(id) + "!");
         }
 
-        if (value == null && id.getDefault() instanceof ItemStack)
+        if (value == null && id.getDefault() instanceof ItemStack) {
             throw new IllegalArgumentException("Cannot use null ItemStacks");
+        }
 
         entityValues.put(id.getIndex(), value);
 

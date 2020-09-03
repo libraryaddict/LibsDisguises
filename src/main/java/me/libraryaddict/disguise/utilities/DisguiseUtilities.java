@@ -113,6 +113,14 @@ public class DisguiseUtilities {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             }
 
+            ChatColor color = disguise.getWatcher().getGlowColor();
+
+            if (color == null) {
+                color = ChatColor.WHITE;
+            }
+
+            team.setColor(color);
+
             if (NmsVersion.v1_13.isSupported()) {
                 team.setPrefix("Colorize");
                 team.setSuffix("Colorize");
