@@ -76,7 +76,8 @@ import java.util.stream.Collectors;
 public class DisguiseUtilities {
     @Setter
     public static class DScoreTeam {
-        public DScoreTeam(String[] name) {
+        public DScoreTeam(PlayerDisguise disguise, String[] name) {
+            this.disguise = disguise;
             this.split = name;
         }
 
@@ -1547,10 +1548,10 @@ public class DisguiseUtilities {
         return boards;
     }
 
-    public static DScoreTeam createExtendedName(String name) {
-        String[] split = getExtendedNameSplit(null, name);
+    public static DScoreTeam createExtendedName(PlayerDisguise disguise) {
+        String[] split = getExtendedNameSplit(null, disguise.getName());
 
-        return new DScoreTeam(split);
+        return new DScoreTeam(disguise, split);
     }
 
     public static String getUniqueTeam() {

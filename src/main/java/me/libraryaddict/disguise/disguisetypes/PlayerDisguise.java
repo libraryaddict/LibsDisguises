@@ -111,9 +111,9 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (scoreboardName == null) {
             if (isUpsideDown()) {
-                scoreboardName = new DisguiseUtilities.DScoreTeam(new String[]{"", getProfileName(), ""});
+                scoreboardName = new DisguiseUtilities.DScoreTeam(this, new String[]{"", getProfileName(), ""});
             } else {
-                scoreboardName = DisguiseUtilities.createExtendedName(getName());
+                scoreboardName = DisguiseUtilities.createExtendedName(this);
             }
         }
 
