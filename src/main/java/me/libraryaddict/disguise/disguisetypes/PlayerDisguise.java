@@ -30,7 +30,7 @@ public class PlayerDisguise extends TargetedDisguise {
      */
     private boolean explicitNameVisible = false;
     private final UUID uuid = UUID.randomUUID();
-    private volatile DisguiseUtilities.DScoreTeam scoreboardName;
+    private transient DisguiseUtilities.DScoreTeam scoreboardName;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
