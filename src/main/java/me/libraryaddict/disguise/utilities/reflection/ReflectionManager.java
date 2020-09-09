@@ -147,11 +147,11 @@ public class ReflectionManager {
             soundGetMethod = getCraftMethod("CraftSound", "getSound", Sound.class);
             vector3FConstructor = getNmsConstructor("Vector3f", float.class, float.class, float.class);
             enumDirectionFrom = getNmsMethod("EnumDirection", "fromType1", int.class);
+            getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
 
             if (NmsVersion.v1_13.isSupported()) {
                 craftBlockDataGetState = getCraftMethod("block.data.CraftBlockData", "getState");
                 magicGetBlock = getCraftMethod("util.CraftMagicNumbers", "getBlock", Material.class);
-                getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
                 entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
 
                 if (NmsVersion.v1_14.isSupported()) {
