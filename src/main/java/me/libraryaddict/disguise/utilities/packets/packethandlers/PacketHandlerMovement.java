@@ -122,14 +122,6 @@ public class PacketHandlerMovement implements IPacketHandler {
             }
 
             packets.addPacket(movePacket);
-
-            StructureModifier<Byte> bytes = movePacket.getBytes();
-
-            byte yawValue = bytes.read(0);
-            byte pitchValue = bytes.read(1);
-
-            bytes.write(0, DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), yawValue));
-            bytes.write(1, DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), pitchValue));
         } else if (disguise.getType() == DisguiseType.RABBIT &&
                 (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE ||
                         sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
@@ -157,7 +149,9 @@ public class PacketHandlerMovement implements IPacketHandler {
                 statusPacket.getIntegers().write(0, entity.getEntityId());
                 statusPacket.getBytes().write(0, (byte) 1);
             }
-        } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK &&
+        }
+
+        if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK &&
                 disguise.getType() == DisguiseType.WITHER_SKULL) {
             // Stop wither skulls from looking
             packets.clear();
@@ -174,8 +168,26 @@ public class PacketHandlerMovement implements IPacketHandler {
                 byte yawValue = bytes.read(0);
                 byte pitchValue = bytes.read(1);
 
-                bytes.write(0, DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), yawValue));
-                bytes.write(1, DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), pitchValue));
+                Float pitchLock = disguise.getWatcher().getPitchLock();
+                Float yawLock = disguise.getWatcher().getYawLock();
+
+                if (pitchLock != null) {
+                    pitchValue = (byte) (int) (pitchLock * 256.0F / 360.0F);
+                    pitchValue = DisguiseUtilities.getPitch(disguise.getType(), pitchValue);
+                } else {
+                    pitchValue = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), pitchValue);
+
+                }
+
+                if (yawLock != null) {
+                    yawValue = (byte) (int) (yawLock * 256.0F / 360.0F);
+                    yawValue = DisguiseUtilities.getYaw(disguise.getType(), yawValue);
+                } else {
+                    yawValue = DisguiseUtilities.getYaw(disguise.getType(), entity.getType(), yawValue);
+                }
+
+                bytes.write(0, yawValue);
+                bytes.write(1, pitchValue);
 
                 if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT &&
                         disguise.getType() == DisguiseType.ITEM_FRAME) {

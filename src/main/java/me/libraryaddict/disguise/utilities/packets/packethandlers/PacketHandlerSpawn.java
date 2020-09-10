@@ -58,7 +58,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+                       Entity entity) {
 
         packets.clear();
 
@@ -106,12 +106,24 @@ public class PacketHandlerSpawn implements IPacketHandler {
         Location loc = disguisedEntity.getLocation().clone()
                 .add(0, DisguiseUtilities.getYModifier(disguisedEntity, disguise), 0);
 
-        byte yaw = (byte) (int) (loc.getYaw() * 256.0F / 360.0F);
-        byte pitch = (byte) (int) (loc.getPitch() * 256.0F / 360.0F);
+        Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
+        Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
+
+        byte yaw = (byte) (int) ((yawLock == null ? loc.getYaw() : yawLock) * 256.0F / 360.0F);
+        byte pitch = (byte) (int) ((pitchLock == null ? loc.getPitch() : pitchLock) * 256.0F / 360.0F);
 
         if (DisguiseConfig.isMovementPacketsEnabled()) {
-            yaw = DisguiseUtilities.getYaw(disguise.getType(), disguisedEntity.getType(), yaw);
-            pitch = DisguiseUtilities.getPitch(disguise.getType(), disguisedEntity.getType(), pitch);
+            if (yawLock == null) {
+                yaw = DisguiseUtilities.getYaw(DisguiseType.getType(disguisedEntity.getType()), yaw);
+            }
+
+            if (pitchLock == null) {
+                pitch = DisguiseUtilities.getPitch(DisguiseType.getType(disguisedEntity.getType()), pitch);
+            }
+
+            yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
+            pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
+
         }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
@@ -261,18 +273,24 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double d2 = vec.getX();
             double d3 = vec.getY();
             double d4 = vec.getZ();
-            if (d2 < -d1)
+            if (d2 < -d1) {
                 d2 = -d1;
-            if (d3 < -d1)
+            }
+            if (d3 < -d1) {
                 d3 = -d1;
-            if (d4 < -d1)
+            }
+            if (d4 < -d1) {
                 d4 = -d1;
-            if (d2 > d1)
+            }
+            if (d2 > d1) {
                 d2 = d1;
-            if (d3 > d1)
+            }
+            if (d3 > d1) {
                 d3 = d1;
-            if (d4 > d1)
+            }
+            if (d4 > d1) {
                 d4 = d1;
+            }
             // endregion
 
             mods.write(3, loc.getX());

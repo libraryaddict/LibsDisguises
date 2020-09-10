@@ -7,12 +7,7 @@ import me.libraryaddict.disguise.utilities.params.ParamInfo;
  */
 public class ParamInfoFloat extends ParamInfo {
     public ParamInfoFloat(String name, String description) {
-        super(Number.class, name, description);
-    }
-
-    @Override
-    public boolean isParam(Class classType) {
-        return classType == Float.class || classType == Float.TYPE;
+        super(float.class, name, description);
     }
 
     @Override

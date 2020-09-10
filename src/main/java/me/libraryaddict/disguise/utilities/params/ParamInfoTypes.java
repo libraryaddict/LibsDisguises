@@ -135,6 +135,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoString(String.class, "Text", "A line of text"));
         paramInfos.add(new ParamInfoInteger("Number", "A whole number without decimals"));
         paramInfos.add(new ParamInfoFloat("Number.0", "A number which can have decimal places"));
+        paramInfos.add(new ParamInfoFloatNullable("Number.0", "A number which can have decimal places or be null"));
         paramInfos.add(new ParamInfoDouble("Number.0", "A number which can have decimal places"));
         paramInfos.add(new ParamInfoSoundGroup());
 

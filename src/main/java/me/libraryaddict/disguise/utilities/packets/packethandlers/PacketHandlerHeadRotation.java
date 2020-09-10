@@ -24,8 +24,12 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
 
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
-        if (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER) {
+                       Entity entity) {
+        Float pitchLock = disguise.getWatcher().getPitchLock();
+        Float yawLock = disguise.getWatcher().getYawLock();
+
+        if (pitchLock == null && yawLock == null &&
+                (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER)) {
             return;
         }
 
@@ -33,8 +37,16 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
 
         DisguiseType entityType = DisguiseType.getType(entity);
 
-        byte pitch;
-        byte yaw;
+        byte pitch = 0;
+        byte yaw = 0;
+
+        if (pitchLock != null) {
+            pitch = (byte) (int) (pitchLock * 256.0F / 360.0F);
+        }
+
+        if (yawLock != null) {
+            yaw = (byte) (int) (yawLock * 256.0F / 360.0F);
+        }
 
         switch (entityType) {
             case LLAMA_SPIT:
@@ -61,21 +73,37 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
             case SNOWBALL:
             case PAINTING:
             case PRIMED_TNT:
-                if (sentPacket.getBytes().read(0) == 0 && entity.getVelocity().lengthSquared() > 0) {
+                if ((pitchLock == null || yawLock == null) && sentPacket.getBytes().read(0) == 0 &&
+                        entity.getVelocity().lengthSquared() > 0) {
                     loc.setDirection(entity.getVelocity());
-                    pitch = DisguiseUtilities.getPitch(disguise.getType(), DisguiseType.PLAYER,
-                            (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-                    yaw = DisguiseUtilities.getYaw(disguise.getType(), DisguiseType.PLAYER,
-                            (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+
+                    if (pitchLock == null) {
+                        pitch = DisguiseUtilities
+                                .getPitch(DisguiseType.PLAYER, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                    }
+
+                    if (yawLock == null) {
+                        yaw = DisguiseUtilities
+                                .getYaw(DisguiseType.PLAYER, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+                    }
+
                     break;
                 }
             default:
-                pitch = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(),
-                        (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-                yaw = DisguiseUtilities
-                        .getYaw(disguise.getType(), entity.getType(), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+                if (pitchLock == null) {
+                    pitch = DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()),
+                            (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                }
+
+                if (yawLock == null) {
+                    yaw = DisguiseUtilities.getYaw(DisguiseType.getType(entity.getType()),
+                            (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+                }
                 break;
         }
+
+        pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
+        yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
 
         PacketContainer rotation = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 

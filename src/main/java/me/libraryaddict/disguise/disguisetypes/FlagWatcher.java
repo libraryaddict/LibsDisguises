@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -25,12 +26,12 @@ import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Team;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -58,10 +59,78 @@ public class FlagWatcher {
     @Getter
     private boolean upsideDown;
     private ChatColor glowColor;
+    @Getter
+    private Float pitchLock;
+    @Getter
+    private Float yawLock;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
+    }
+
+    public boolean isPitchLocked() {
+        return pitchLock != null;
+    }
+
+    public void setPitchLocked(boolean pitchLocked) {
+        if (isPitchLocked() == pitchLocked) {
+            return;
+        }
+
+        setPitchLock(pitchLocked ? 0F : null);
+    }
+
+    public boolean isYawLocked() {
+        return yawLock != null;
+    }
+
+    public void setYawLocked(boolean yawLocked) {
+        if (isYawLocked() == yawLocked) {
+            return;
+        }
+
+        setYawLock(yawLocked ? 0F : null);
+    }
+
+    public void setPitchLock(Float pitch) {
+        this.pitchLock = pitch;
+
+        if (!getDisguise().isDisguiseInUse()) {
+            return;
+        }
+
+        sendHeadPacket();
+    }
+
+    private void sendHeadPacket() {
+        PacketContainer rotateHead = new PacketContainer(Server.ENTITY_HEAD_ROTATION);
+
+        StructureModifier<Object> mods = rotateHead.getModifier();
+
+        mods.write(0, getDisguise().getEntity().getEntityId());
+
+        Location loc = getDisguise().getEntity().getLocation();
+
+        mods.write(1, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+
+        try {
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, rotateHead);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setYawLock(Float yaw) {
+        this.yawLock = yaw;
+
+        if (!getDisguise().isDisguiseInUse()) {
+            return;
+        }
+
+        sendHeadPacket();
     }
 
     private byte addEntityAnimations(byte originalValue, byte entityValue) {
