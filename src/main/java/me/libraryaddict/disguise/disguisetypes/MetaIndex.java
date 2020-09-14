@@ -855,7 +855,7 @@ public class MetaIndex<Y> {
     }
 
     public static MetaIndex getMetaIndexByName(String name) {
-        name = name.toUpperCase();
+        name = name.toUpperCase(Locale.ENGLISH);
 
         try {
             for (Field field : MetaIndex.class.getFields()) {

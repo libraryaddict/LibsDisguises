@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -31,7 +32,7 @@ public class ClassGetter {
         if (src != null) {
             URL resource = src.getLocation();
 
-            if (resource.getPath().toLowerCase().endsWith(".jar")) {
+            if (resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".jar")) {
                 processJarfile(resource, pkgname, classes);
             } else {
                 for (File f : new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles()) {

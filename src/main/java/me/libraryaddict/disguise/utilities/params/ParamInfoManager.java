@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ParamInfoManager {
     private static List<ParamInfo> paramList;
@@ -79,7 +80,7 @@ public class ParamInfoManager {
 
     public static ParamInfo getParamInfo(DisguiseType disguiseType, String methodName) {
         for (Method method : getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
-            if (!method.getName().toLowerCase().equals(methodName.toLowerCase()))
+            if (!method.getName().toLowerCase(Locale.ENGLISH).equals(methodName.toLowerCase(Locale.ENGLISH)))
                 continue;
 
             return getParamInfo(method);

@@ -106,7 +106,7 @@ public class DisguisePermissions {
      * @param commandName      A lowercase string consisting of the name of one of Lib's Disguises commands
      */
     public DisguisePermissions(Permissible permissionHolder, String commandName) {
-        loadPermissions(permissionHolder, commandName.toLowerCase());
+        loadPermissions(permissionHolder, commandName.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -197,7 +197,7 @@ public class DisguisePermissions {
         }
 
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-            String perm = permission.getPermission().toLowerCase();
+            String perm = permission.getPermission().toLowerCase(Locale.ENGLISH);
 
             String[] split = perm.split("\\.");
 
@@ -467,14 +467,14 @@ public class DisguisePermissions {
             if (!storage.permittedOptions.isEmpty() || storage.negatedOptions.isEmpty()) {
                 // Check if they're trying to use anything they shouldn't
                 if (!disguiseOptions.stream()
-                        .allMatch(option -> storage.permittedOptions.contains(option.toLowerCase()))) {
+                        .allMatch(option -> storage.permittedOptions.contains(option.toLowerCase(Locale.ENGLISH)))) {
                     return false;
                 }
             }
         }
 
         // If the user is using a forbidden option, return false. Otherwise true
-        return disguiseOptions.stream().noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase()));
+        return disguiseOptions.stream().noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {

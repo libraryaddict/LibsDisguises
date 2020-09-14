@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -165,7 +166,7 @@ public class SkinUtils {
     }
 
     public static void grabSkin(String param, SkinCallback callback) {
-        ModelType modelType = param.toLowerCase().endsWith(":slim") ? ModelType.SLIM : ModelType.NORMAL;
+        ModelType modelType = param.toLowerCase(Locale.ENGLISH).endsWith(":slim") ? ModelType.SLIM : ModelType.NORMAL;
 
         if (modelType == ModelType.SLIM) {
             param = param.substring(0, param.length() - ":slim".length());
@@ -184,12 +185,12 @@ public class SkinUtils {
             }
 
             File file = new File(LibsDisguises.getInstance().getDataFolder(),
-                    "/Skins/" + param + (param.toLowerCase().endsWith(".png") ? "" : ".png"));
+                    "/Skins/" + param + (param.toLowerCase(Locale.ENGLISH).endsWith(".png") ? "" : ".png"));
 
             if (!file.exists()) {
                 file = null;
 
-                if (param.toLowerCase().endsWith(".png")) {
+                if (param.toLowerCase(Locale.ENGLISH).endsWith(".png")) {
                     callback.onError(LibsMsg.SKIN_API_BAD_FILE_NAME);
                     return;
                 }

@@ -410,7 +410,7 @@ public class DisguiseUtilities {
     }
 
     public static boolean hasGameProfile(String playername) {
-        return cachedNames.contains(playername.toLowerCase());
+        return cachedNames.contains(playername.toLowerCase(Locale.ENGLISH));
     }
 
     public static void createClonedDisguise(Player player, Entity toClone, Boolean[] options) {
@@ -674,12 +674,12 @@ public class DisguiseUtilities {
                 profileCache.mkdirs();
             }
 
-            File file = new File(profileCache, string.toLowerCase());
+            File file = new File(profileCache, string.toLowerCase(Locale.ENGLISH));
             PrintWriter writer = new PrintWriter(file);
             writer.write(gson.toJson(gameProfile));
             writer.close();
 
-            cachedNames.add(string.toLowerCase());
+            cachedNames.add(string.toLowerCase(Locale.ENGLISH));
         } catch (StackOverflowError | Exception e) {
             e.printStackTrace();
         }
@@ -888,7 +888,7 @@ public class DisguiseUtilities {
     }
 
     public static WrappedGameProfile getGameProfile(String playerName) {
-        playerName = playerName.toLowerCase();
+        playerName = playerName.toLowerCase(Locale.ENGLISH);
 
         if (!hasGameProfile(playerName)) {
             return null;
@@ -914,7 +914,7 @@ public class DisguiseUtilities {
         } catch (JsonSyntaxException ex) {
             DisguiseUtilities.getLogger()
                     .warning("Gameprofile " + file.getName() + " had invalid gson and has been deleted");
-            cachedNames.remove(playerName.toLowerCase());
+            cachedNames.remove(playerName);
             file.delete();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1019,7 +1019,7 @@ public class DisguiseUtilities {
 
     private static WrappedGameProfile getProfileFromMojang(final String origName, final Object runnable,
                                                            boolean contactMojang) {
-        final String playerName = origName.toLowerCase();
+        final String playerName = origName.toLowerCase(Locale.ENGLISH);
 
         if (DisguiseConfig.isSaveGameProfiles() && hasGameProfile(playerName)) {
             WrappedGameProfile profile = getGameProfile(playerName);
@@ -1153,7 +1153,7 @@ public class DisguiseUtilities {
         cachedNames.addAll(Arrays.asList(profileCache.list()));
 
         invalidFile =
-                LibsDisguises.getInstance().getFile().getName().toLowerCase().matches(".*((crack)|(null)|(leak)).*");
+                LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
 
         for (String key : savedDisguises.list()) {
             try {
@@ -1457,13 +1457,13 @@ public class DisguiseUtilities {
     }
 
     public static void removeGameProfile(String string) {
-        cachedNames.remove(string.toLowerCase());
+        cachedNames.remove(string.toLowerCase(Locale.ENGLISH));
 
         if (!profileCache.exists()) {
             profileCache.mkdirs();
         }
 
-        File file = new File(profileCache, string.toLowerCase());
+        File file = new File(profileCache, string.toLowerCase(Locale.ENGLISH));
 
         file.delete();
     }

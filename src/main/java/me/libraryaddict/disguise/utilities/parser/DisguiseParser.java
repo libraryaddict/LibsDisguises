@@ -264,7 +264,7 @@ public class DisguiseParser {
 
         // libsdisguises.options.<command>.<disguise>.<method>.<options>
         for (PermissionAttachmentInfo permission : sender.getEffectivePermissions()) {
-            String lowerPerm = permission.getPermission().toLowerCase();
+            String lowerPerm = permission.getPermission().toLowerCase(Locale.ENGLISH);
 
             if (!lowerPerm.startsWith("libsdisguises.options.")) {
                 continue;
@@ -382,7 +382,7 @@ public class DisguiseParser {
      */
     private static boolean hasPermissionOption(HashMap<String, HashMap<String, Boolean>> disguiseOptions, String method,
                                                String value) {
-        method = method.toLowerCase();
+        method = method.toLowerCase(Locale.ENGLISH);
 
         // If no permissions were defined, return true
         if (!disguiseOptions.containsKey(method)) {
@@ -391,7 +391,7 @@ public class DisguiseParser {
 
         HashMap<String, Boolean> map = disguiseOptions.get(method);
 
-        value = value.toLowerCase();
+        value = value.toLowerCase(Locale.ENGLISH);
 
         // If they were explictly defined, can just return the value
         if (map.containsKey(value)) {
@@ -529,7 +529,7 @@ public class DisguiseParser {
     }
 
     public static long parseStringToTime(String string) throws DisguiseParseException {
-        string = string.toLowerCase();
+        string = string.toLowerCase(Locale.ENGLISH);
 
         if (!string.matches("([0-9]+[a-z]+)+")) {
             throw new DisguiseParseException(LibsMsg.PARSE_INVALID_TIME_SEQUENCE, string);
@@ -666,7 +666,7 @@ public class DisguiseParser {
 
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
-                disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase());
+                disguise = DisguiseUtilities.getClonedDisguise(args[0].toLowerCase(Locale.ENGLISH));
 
                 if (disguise == null) {
                     throw new DisguiseParseException(LibsMsg.PARSE_NO_REF, args[0]);
@@ -743,7 +743,7 @@ public class DisguiseParser {
                         throw new DisguiseParseException(LibsMsg.PARSE_SUPPLY_PLAYER);
                     } else {
                         // If they can't use this name, throw error
-                        if (!hasPermissionOption(disguiseOptions, "setname", args[1].toLowerCase())) {
+                        if (!hasPermissionOption(disguiseOptions, "setname", args[1].toLowerCase(Locale.ENGLISH))) {
                             if (!args[1].equalsIgnoreCase(sender.getName()) ||
                                     !hasPermissionOption(disguiseOptions, "setname", "themselves")) {
                                 throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
@@ -829,7 +829,7 @@ public class DisguiseParser {
 
                                 usedOptions.add(optionName);
                                 doCheck(sender, permissions, disguisePerm, usedOptions);
-                                String itemName = itemStack == null ? "null" : itemStack.getType().name().toLowerCase();
+                                String itemName = itemStack == null ? "null" : itemStack.getType().name().toLowerCase(Locale.ENGLISH);
 
                                 if (!hasPermissionOption(disguiseOptions, optionName, itemName)) {
                                     throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, itemName,
@@ -964,8 +964,8 @@ public class DisguiseParser {
                 throw new DisguiseParseException(LibsMsg.PARSE_OPTION_NA, methodNameProvided);
             }
 
-            if (!usedOptions.contains(methodToUse.getName().toLowerCase())) {
-                usedOptions.add(methodToUse.getName().toLowerCase());
+            if (!usedOptions.contains(methodToUse.getName().toLowerCase(Locale.ENGLISH))) {
+                usedOptions.add(methodToUse.getName().toLowerCase(Locale.ENGLISH));
             }
 
             doCheck(sender, disguisePermission, disguisePerm, usedOptions);

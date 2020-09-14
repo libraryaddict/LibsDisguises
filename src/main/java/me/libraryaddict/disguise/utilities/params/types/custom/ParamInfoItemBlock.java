@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Created by libraryaddict on 16/02/2020.
@@ -48,10 +49,10 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
             throw new IllegalArgumentException();
         }
 
-        Material material = ReflectionManager.getMaterial(split[0].toLowerCase());
+        Material material = ReflectionManager.getMaterial(split[0].toLowerCase(Locale.ENGLISH));
 
         if (material == null || material == Material.AIR) {
-            material = Material.getMaterial(split[0].toUpperCase());
+            material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
         }
 
         if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {

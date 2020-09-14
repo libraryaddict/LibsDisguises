@@ -207,7 +207,7 @@ public class ParamInfoTypes {
         String[] split = string.split("_");
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase(Locale.ENGLISH);
         }
 
         return StringUtils.join(split, "_");

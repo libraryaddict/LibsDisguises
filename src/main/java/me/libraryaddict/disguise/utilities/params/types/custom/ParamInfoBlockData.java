@@ -9,6 +9,7 @@ import org.bukkit.block.data.BlockData;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -72,7 +73,7 @@ public class ParamInfoBlockData extends ParamInfo {
 
     @Override
     public Set<String> getEnums(String tabComplete) {
-        String s = tabComplete.toLowerCase();
+        String s = tabComplete.toLowerCase(Locale.ENGLISH);
         HashSet<String> returns = new HashSet<>();
 
         if (s.matches("[a-z_:]+\\[.*")) {
@@ -83,11 +84,11 @@ public class ParamInfoBlockData extends ParamInfo {
                     continue;
                 }
 
-                if (!m.name().toLowerCase().startsWith(s) && !m.getKey().toString().startsWith(s)) {
+                if (!m.name().toLowerCase(Locale.ENGLISH).startsWith(s) && !m.getKey().toString().startsWith(s)) {
                     continue;
                 }
 
-                if (m.name().toLowerCase().startsWith(s)) {
+                if (m.name().toLowerCase(Locale.ENGLISH).startsWith(s)) {
                     returns.add(m.name());
                 } else {
                     returns.add(m.getKey().toString());

@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -38,7 +39,7 @@ public class ParamInfoParticle extends ParamInfoEnum {
 
         enums = new HashSet<>(enums);
 
-        tabComplete = tabComplete.toUpperCase();
+        tabComplete = tabComplete.toUpperCase(Locale.ENGLISH);
 
         for (Particle particle : new Particle[]{Particle.BLOCK_CRACK, Particle.BLOCK_DUST, Particle.ITEM_CRACK}) {
             for (Material mat : materials) {

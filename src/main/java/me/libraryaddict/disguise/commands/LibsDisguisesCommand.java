@@ -14,6 +14,7 @@ import org.bukkit.command.TabCompleter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     @Getter
@@ -41,12 +42,12 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             return list;
 
         Iterator<String> itel = list.iterator();
-        String label = origArgs[origArgs.length - 1].toLowerCase();
+        String label = origArgs[origArgs.length - 1].toLowerCase(Locale.ENGLISH);
 
         while (itel.hasNext()) {
             String name = itel.next();
 
-            if (name.toLowerCase().startsWith(label))
+            if (name.toLowerCase(Locale.ENGLISH).startsWith(label))
                 continue;
 
             itel.remove();
@@ -104,7 +105,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             LDCommand command = null;
 
             for (LDCommand c : getCommands()) {
-                if (!c.getTabComplete().contains(args[0].toLowerCase())) {
+                if (!c.getTabComplete().contains(args[0].toLowerCase(Locale.ENGLISH))) {
                     continue;
                 }
 

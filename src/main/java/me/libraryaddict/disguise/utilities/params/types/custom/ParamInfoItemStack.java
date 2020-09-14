@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Created by libraryaddict on 7/09/2018.
@@ -130,10 +131,10 @@ public class ParamInfoItemStack extends ParamInfoEnum {
                 split = string.split("[ -]");
             }
 
-            Material material = ReflectionManager.getMaterial(split[0].toLowerCase());
+            Material material = ReflectionManager.getMaterial(split[0].toLowerCase(Locale.ENGLISH));
 
             if (material == null) {
-                material = Material.getMaterial(split[0].toUpperCase());
+                material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
             }
 
             if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
@@ -164,7 +165,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             return null;
         }
 
-        Material material = Material.getMaterial(split[0].toUpperCase());
+        Material material = Material.getMaterial(split[0].toUpperCase(Locale.ENGLISH));
 
         if (material == null || (material == Material.AIR && !split[0].equalsIgnoreCase("air"))) {
             throw new IllegalArgumentException();

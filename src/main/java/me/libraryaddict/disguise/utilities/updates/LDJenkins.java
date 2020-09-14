@@ -157,7 +157,7 @@ public class LDJenkins {
 
                     changelog.add("#" + map.get("id") + ": " + ChatColor.YELLOW + msg);
 
-                    release = release || msg.toLowerCase().matches("(re)?.?release.? .*");
+                    release = release || msg.toLowerCase(Locale.ENGLISH).matches("(re)?.?release.? .*");
                 }
             }
 

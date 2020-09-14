@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private int maxRadius = 30;
@@ -98,7 +99,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             if (starting == 0) {
                 try {
-                    type = EntityType.valueOf(args[0].toUpperCase());
+                    type = EntityType.valueOf(args[0].toUpperCase(Locale.ENGLISH));
                 }
                 catch (Exception ignored) {
                 }

@@ -692,14 +692,14 @@ public class DisguiseConfig {
         }
 
         try {
-            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase()));
+            setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
         }
 
         try {
-            setNotifyBar(NotifyBar.valueOf(config.getString("NotifyBar").toUpperCase()));
+            setNotifyBar(NotifyBar.valueOf(config.getString("NotifyBar").toUpperCase(Locale.ENGLISH)));
 
             if (getNotifyBar() == NotifyBar.BOSS_BAR && !NmsVersion.v1_13.isSupported()) {
                 DisguiseUtilities.getLogger().warning(
@@ -714,21 +714,21 @@ public class DisguiseConfig {
         }
 
         try {
-            setBossBarColor(BarColor.valueOf(config.getString("BossBarColor").toUpperCase()));
+            setBossBarColor(BarColor.valueOf(config.getString("BossBarColor").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("BossBarColor") + "' to a valid option for BossBarColor");
         }
 
         try {
-            setBossBarStyle(BarStyle.valueOf(config.getString("BossBarStyle").toUpperCase()));
+            setBossBarStyle(BarStyle.valueOf(config.getString("BossBarStyle").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("BossBarStyle") + "' to a valid option for BossBarStyle");
         }
 
         try {
-            setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase()));
+            setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(
                     "Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
@@ -736,7 +736,7 @@ public class DisguiseConfig {
 
         try {
             String option =
-                    config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase();
+                    config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase(Locale.ENGLISH);
 
             if (!option.endsWith("_SCOREBOARD")) {
                 option += "_SCOREBOARD";

@@ -106,10 +106,6 @@ public class ReflectionManager {
     private static Object genericDamage;
 
     public static void init() {
-        // Sometimes it doesn't like me if I don't set this :\
-        // Weird characters in toLowerCase() for example
-        Locale.setDefault(Locale.ENGLISH);
-
         try {
             boundingBoxConstructor =
                     getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class,
@@ -1373,7 +1369,7 @@ public class ReflectionManager {
     public static Object getEntityType(EntityType entityType) {
         try {
             Object val = entityTypesAMethod.invoke(null,
-                    entityType.getName() == null ? entityType.name().toLowerCase() : entityType.getName());
+                    entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName());
 
             if (NmsVersion.v1_14.isSupported()) {
                 return ((Optional<Object>) val).orElse(null);
@@ -1958,7 +1954,7 @@ public class ReflectionManager {
         String[] split = string.split("_");
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].charAt(0) + split[i].substring(1).toLowerCase();
+            split[i] = split[i].charAt(0) + split[i].substring(1).toLowerCase(Locale.ENGLISH);
         }
 
         return split;

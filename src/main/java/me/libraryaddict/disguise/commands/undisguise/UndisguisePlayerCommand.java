@@ -13,10 +13,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
@@ -24,12 +21,12 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
             return list;
 
         Iterator<String> itel = list.iterator();
-        String label = origArgs[origArgs.length - 1].toLowerCase();
+        String label = origArgs[origArgs.length - 1].toLowerCase(Locale.ENGLISH);
 
         while (itel.hasNext()) {
             String name = itel.next();
 
-            if (name.toLowerCase().startsWith(label))
+            if (name.toLowerCase(Locale.ENGLISH).startsWith(label))
                 continue;
 
             itel.remove();

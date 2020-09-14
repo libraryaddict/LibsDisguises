@@ -194,12 +194,12 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             return list;
 
         Iterator<String> itel = list.iterator();
-        String label = origArgs[origArgs.length - 1].toLowerCase();
+        String label = origArgs[origArgs.length - 1].toLowerCase(Locale.ENGLISH);
 
         while (itel.hasNext()) {
             String name = itel.next();
 
-            if (name.toLowerCase().startsWith(label))
+            if (name.toLowerCase(Locale.ENGLISH).startsWith(label))
                 continue;
 
             itel.remove();

@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompleter {
 
@@ -80,7 +81,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 try {
                     for (Method method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
                         if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
-                            if (!perms.isAllowedDisguise(type, Collections.singleton(method.getName().toLowerCase()))) {
+                            if (!perms.isAllowedDisguise(type, Collections.singleton(method.getName().toLowerCase(
+                                    Locale.ENGLISH)))) {
                                 ignored++;
                                 continue;
                             }

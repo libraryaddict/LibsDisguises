@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -185,7 +186,7 @@ public class ModdedManager {
                 continue;
             }
 
-            if (mods.contains(e.getMod().toLowerCase())) {
+            if (mods.contains(e.getMod().toLowerCase(Locale.ENGLISH))) {
                 continue;
             }
 

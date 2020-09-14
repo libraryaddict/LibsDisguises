@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -53,7 +54,7 @@ public class SoundManager {
                 }
 
                 List<String> list = section
-                        .getStringList(type.name().charAt(0) + type.name().substring(1).toLowerCase());
+                        .getStringList(type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
 
                 if (list == null || list.isEmpty()) {
                     continue;

@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import java.util.Locale;
+
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),
 
@@ -364,7 +366,7 @@ public enum DisguiseType {
         String[] split = name().split("_");
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase();
+            split[i] = split[i].charAt(0) + split[i].substring(1).toLowerCase(Locale.ENGLISH);
         }
 
         return TranslateType.DISGUISES.get(StringUtils.join(split, " "));
