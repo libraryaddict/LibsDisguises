@@ -85,7 +85,7 @@ commands:
     permission: libsdisguises.seecmd.copydisguise
     description: Output a disguise to a usable string
   grabskin:
-    aliases: [uploadskin, skin, saveskin]
+    aliases: [uploadskin, skin, saveskin, cacheskin, downloadskin, skincache]
     permission: libsdisguises.seecmd.grabskin
     description: Grab a skin from file, url or player name/uuid
   savedisguise:

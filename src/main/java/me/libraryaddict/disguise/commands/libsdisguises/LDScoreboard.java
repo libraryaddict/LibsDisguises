@@ -79,8 +79,9 @@ public class LDScoreboard implements LDCommand {
                             continue;
                         }
 
-                        if (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
-                                !team.getSuffix().equals(scoreboardName.getSuffix())) {
+                        if (!team.getPrefix().equals("Colorize") &&
+                                (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
+                                        !team.getSuffix().equals(scoreboardName.getSuffix()))) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage("The player disguise " +
                                         ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
