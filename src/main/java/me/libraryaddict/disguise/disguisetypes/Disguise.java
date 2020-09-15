@@ -209,6 +209,7 @@ public abstract class Disguise {
         disguise.notifyBar = getNotifyBar();
         disguise.bossBarColor = getBossBarColor();
         disguise.bossBarStyle = getBossBarStyle();
+        disguise.setExpires(getExpires());
 
         if (getWatcher() != null) {
             disguise.setWatcher(getWatcher().clone(disguise));
