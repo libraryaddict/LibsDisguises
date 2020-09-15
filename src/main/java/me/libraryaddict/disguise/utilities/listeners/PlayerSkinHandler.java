@@ -145,7 +145,7 @@ public class PlayerSkinHandler implements Listener {
                 return false;
             }
 
-            doPacketRemoval(event.getPlayer(), skin.getDisguise().get());
+            doPacketRemoval(player, skin.getDisguise().get());
             return true;
         });
 
