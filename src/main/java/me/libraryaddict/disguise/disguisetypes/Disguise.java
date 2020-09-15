@@ -157,8 +157,7 @@ public abstract class Disguise {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
             }
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -240,8 +239,7 @@ public abstract class Disguise {
             try {
                 // Construct the FlagWatcher from the stored class
                 setWatcher(getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
@@ -339,8 +337,8 @@ public abstract class Disguise {
 
         removeBossBar();
 
-        BossBar bar = Bukkit
-                .createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()), getBossBarColor(),
+        BossBar bar =
+                Bukkit.createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()), getBossBarColor(),
                         getBossBarStyle());
         bar.setProgress(1);
         bar.addPlayer((Player) getEntity());
@@ -440,7 +438,7 @@ public abstract class Disguise {
                 // If entity is no longer valid. Remove it.
                 if (getEntity() instanceof Player && !((Player) getEntity()).isOnline()) {
                     removeDisguise();
-                } else if (disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? --disguiseExpires == 1 :
+                } else if (disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? disguiseExpires-- == 1 :
                         disguiseExpires < System.currentTimeMillis())) { // If disguise expired
                     removeDisguise();
 
@@ -505,13 +503,11 @@ public abstract class Disguise {
                             try {
                                 ProtocolLibrary.getProtocolManager()
                                         .sendServerPacket((Player) getEntity(), selfPacket, false);
-                            }
-                            catch (InvocationTargetException e) {
+                            } catch (InvocationTargetException e) {
                                 e.printStackTrace();
                             }
                         }
-                    }
-                    catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -559,8 +555,7 @@ public abstract class Disguise {
                         try {
                             ProtocolLibrary.getProtocolManager()
                                     .sendServerPacket((Player) getEntity(), selfLookPacket, false);
-                        }
-                        catch (InvocationTargetException e) {
+                        } catch (InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
@@ -599,8 +594,7 @@ public abstract class Disguise {
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, tempVelocityPacket, false);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -727,8 +721,9 @@ public abstract class Disguise {
     }
 
     public void setHidePlayer(boolean hidePlayerInTab) {
-        if (isDisguiseInUse())
+        if (isDisguiseInUse()) {
             throw new IllegalStateException("Cannot set this while disguise is in use!"); // Cos I'm lazy
+        }
 
         playerHiddenFromTab = hidePlayerInTab;
     }
@@ -874,16 +869,18 @@ public abstract class Disguise {
      * @return
      */
     public boolean removeDisguise(boolean disguiseBeingReplaced) {
-        if (!isDisguiseInUse())
+        if (!isDisguiseInUse()) {
             return false;
+        }
 
         UndisguiseEvent event = new UndisguiseEvent(entity, this, disguiseBeingReplaced);
 
         Bukkit.getPluginManager().callEvent(event);
 
         // If this disguise is not in use, and the entity isnt a player that's offline
-        if (event.isCancelled() && (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline()))
+        if (event.isCancelled() && (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline())) {
             return false;
+        }
 
         disguiseInUse = false;
 
@@ -915,13 +912,13 @@ public abstract class Disguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player))
+                        if (!((TargetedDisguise) this).canSee(player)) {
                             continue;
+                        }
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                     }
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -935,8 +932,7 @@ public abstract class Disguise {
                 for (Player player : getEntity().getWorld().getPlayers()) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -968,13 +964,13 @@ public abstract class Disguise {
 
             try {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player))
+                    if (!((TargetedDisguise) this).canSee(player)) {
                         continue;
+                    }
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                 }
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
@@ -1016,18 +1012,20 @@ public abstract class Disguise {
      */
     private void setupWatcher() {
         ArrayList<MetaIndex> disguiseFlags = MetaIndex.getMetaIndexes(getType().getWatcherClass());
-        ArrayList<MetaIndex> entityFlags = MetaIndex
-                .getMetaIndexes(DisguiseType.getType(getEntity().getType()).getWatcherClass());
+        ArrayList<MetaIndex> entityFlags =
+                MetaIndex.getMetaIndexes(DisguiseType.getType(getEntity().getType()).getWatcherClass());
 
         for (MetaIndex flag : entityFlags) {
-            if (disguiseFlags.contains(flag))
+            if (disguiseFlags.contains(flag)) {
                 continue;
+            }
 
             MetaIndex backup = null;
 
             for (MetaIndex flagType : disguiseFlags) {
-                if (flagType.getIndex() == flag.getIndex())
+                if (flagType.getIndex() == flag.getIndex()) {
                     backup = flagType;
+                }
             }
 
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
@@ -1131,13 +1129,13 @@ public abstract class Disguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player))
+                        if (!((TargetedDisguise) this).canSee(player)) {
                             continue;
+                        }
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                     }
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -1171,13 +1169,13 @@ public abstract class Disguise {
 
             try {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player))
+                    if (!((TargetedDisguise) this).canSee(player)) {
                         continue;
+                    }
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                 }
-            }
-            catch (InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }
