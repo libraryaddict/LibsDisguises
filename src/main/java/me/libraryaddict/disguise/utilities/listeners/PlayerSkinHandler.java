@@ -53,7 +53,7 @@ public class PlayerSkinHandler implements Listener {
 
     @Getter
     private final Cache<Player, List<PlayerSkin>> cache =
-            CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.MINUTES).removalListener((event) -> {
+            CacheBuilder.newBuilder().weakKeys().expireAfterWrite(30, TimeUnit.SECONDS).removalListener((event) -> {
                 if (event.getCause() != RemovalCause.EXPIRED) {
                     return;
                 }
@@ -74,6 +74,8 @@ public class PlayerSkinHandler implements Listener {
             }).build();
 
     public void addPlayerSkin(Player player, PlayerDisguise disguise) {
+        tryProcess(player);
+
         List<PlayerSkin> skins = getCache().getIfPresent(player);
 
         if (skins == null) {
@@ -117,6 +119,10 @@ public class PlayerSkinHandler implements Listener {
     }
 
     private void doPacketRemoval(Player player, PlayerDisguise disguise) {
+        if (disguise == null) {
+            return;
+        }
+
         PacketContainer packetContainer =
                 DisguiseUtilities.getTabPacket(disguise, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
@@ -127,9 +133,8 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    @EventHandler
-    public void onMove(PlayerMoveEvent event) {
-        List<PlayerSkin> skins = getCache().getIfPresent(event.getPlayer());
+    private void tryProcess(Player player) {
+        List<PlayerSkin> skins = getCache().getIfPresent(player);
 
         if (skins == null) {
             return;
@@ -148,6 +153,12 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
-        getCache().invalidate(event.getPlayer());
+        getCache().invalidate(player);
+
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent event) {
+        tryProcess(event.getPlayer());
     }
 }
