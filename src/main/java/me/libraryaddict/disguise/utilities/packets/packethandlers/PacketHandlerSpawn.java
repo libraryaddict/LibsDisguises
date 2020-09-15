@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.datafixers.util.Pair;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
@@ -16,12 +17,14 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -31,7 +34,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -44,9 +46,15 @@ import java.util.UUID;
  */
 public class PacketHandlerSpawn implements IPacketHandler {
     private PacketsHandler packetsHandler;
+    @Getter
+    private PlayerSkinHandler skinHandler;
 
     public PacketHandlerSpawn(PacketsHandler packetsHandler) {
         this.packetsHandler = packetsHandler;
+
+        skinHandler = new PlayerSkinHandler();
+
+        Bukkit.getPluginManager().registerEvents(skinHandler, LibsDisguises.getInstance());
     }
 
     @Override
@@ -193,22 +201,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 if (LibsPremium.getPaidInformation() == null ||
                         LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    if (!observer.hasMetadata("ld_loggedin")) {
-                        ArrayList<PacketContainer> toSend;
-
-                        if (observer.hasMetadata("ld_tabsend") && !observer.getMetadata("ld_tabsend").isEmpty()) {
-                            toSend = (ArrayList<PacketContainer>) observer.getMetadata("ld_tabsend").get(0).value();
-                        } else {
-                            toSend = new ArrayList<>();
-
-                            observer.setMetadata("ld_tabsend",
-                                    new FixedMetadataValue(LibsDisguises.getInstance(), toSend));
-                        }
-
-                        toSend.add(deleteTab);
-                    } else {
-                        packets.addDelayedPacket(deleteTab, DisguiseConfig.getTablistRemoveDelay());
-                    }
+                    getSkinHandler().addPlayerSkin(observer, playerDisguise);
                 }
             }
 
