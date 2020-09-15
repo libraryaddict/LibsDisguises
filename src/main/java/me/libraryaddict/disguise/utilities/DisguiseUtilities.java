@@ -2186,12 +2186,12 @@ public class DisguiseUtilities {
             // Why the hell would he even need this. Meh.
             if (player.getVehicle() != null && player.getEntityId() > player.getVehicle().getEntityId()) {
                 sendSelfPacket(player,
-                        manager.createPacketConstructor(Server.ATTACH_ENTITY, 0, player, player.getVehicle())
-                                .createPacket(0, player, player.getVehicle()));
+                        manager.createPacketConstructor(Server.ATTACH_ENTITY, player, player.getVehicle())
+                                .createPacket(player, player.getVehicle()));
             } else if (player.getPassenger() != null && player.getEntityId() > player.getPassenger().getEntityId()) {
                 sendSelfPacket(player,
-                        manager.createPacketConstructor(Server.ATTACH_ENTITY, 0, player.getPassenger(), player)
-                                .createPacket(0, player.getPassenger(), player));
+                        manager.createPacketConstructor(Server.ATTACH_ENTITY, player.getPassenger(), player)
+                                .createPacket(player.getPassenger(), player));
             }
 
             if (NmsVersion.v1_16.isSupported()) {
