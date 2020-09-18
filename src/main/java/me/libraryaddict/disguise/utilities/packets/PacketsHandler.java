@@ -31,6 +31,7 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerCollect());
         packetHandlers.add(new PacketHandlerEntityStatus());
         packetHandlers.add(new PacketHandlerEquipment(this));
+        packetHandlers.add(new PacketHandlerAttachEntity());
 
         packetHandlers.add(new PacketHandlerHeadRotation());
 
@@ -72,8 +73,7 @@ public class PacketsHandler {
             }
 
             packets.setUnhandled();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

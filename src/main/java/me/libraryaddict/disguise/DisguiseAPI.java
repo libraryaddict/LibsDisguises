@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
@@ -31,6 +32,8 @@ import java.util.Map;
 
 public class DisguiseAPI {
     private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
+    @Getter
+    private static int entityAttachmentId = ReflectionManager.getNewEntityId(true);
 
     public static void addCustomDisguise(String disguiseName, String disguiseInfo) throws DisguiseParseException {
         // Dirty fix for anyone that somehow got this far with a . in the name, invalid yaml!
@@ -58,8 +61,7 @@ public class DisguiseAPI {
             configuration.save(disguisesFile);
 
             DisguiseUtilities.getLogger().info("Added new Custom Disguise " + disguiseName);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -71,8 +73,9 @@ public class DisguiseAPI {
     public static String getRawCustomDisguise(String disguiseName) {
         Map.Entry<DisguisePerm, String> entry = DisguiseConfig.getRawCustomDisguise(disguiseName);
 
-        if (entry == null)
+        if (entry == null) {
             return null;
+        }
 
         return entry.getValue();
     }
@@ -193,8 +196,7 @@ public class DisguiseAPI {
                                             }
                                         }
                                         watcherMethod.invoke(watcher, value);
-                                    }
-                                    catch (Exception ex) {
+                                    } catch (Exception ex) {
                                         ex.printStackTrace();
                                     }
                                 }
@@ -228,8 +230,9 @@ public class DisguiseAPI {
         }
 
         // They prefer to have the opposite of whatever the view disguises option is
-        if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+        if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises()) {
             disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
+        }
 
         if (hasActionBarPreference(entity) && !isActionBarShown(entity)) {
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);

@@ -65,8 +65,9 @@ public class LDUploadLogs implements LDCommand {
 
             StringBuilder output = new StringBuilder();
             for (SimpleEntry<String, String> entry : params) {
-                if (output.length() > 0)
+                if (output.length() > 0) {
                     output.append('&');
+                }
 
                 output.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                 output.append('=');
@@ -100,7 +101,7 @@ public class LDUploadLogs implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("uploadlog", "uploadlogs", "uploadconfig", "uploadconfigs");
+        return Arrays.asList("uploadlog", "uploadlogs", "uploadconfig", "uploadconfigs", "logs");
     }
 
     @Override
@@ -181,8 +182,8 @@ public class LDUploadLogs implements LDCommand {
 
                         configText.append("\n================\n");
 
-                        ArrayList<String> modified = DisguiseConfig
-                                .doOutput(LibsDisguises.getInstance().getConfig(), true, true);
+                        ArrayList<String> modified =
+                                DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, true);
 
                         for (String s : modified) {
                             configText.append("\n").append(s);
@@ -218,15 +219,13 @@ public class LDUploadLogs implements LDCommand {
                                 sender.spigot().sendMessage(builder.create());
                             }
                         }.runTask(LibsDisguises.getInstance());
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         sender.sendMessage(ChatColor.RED + "Unexpected error! Upload failed! " + e.getMessage());
                     }
                 }
             }.runTaskAsynchronously(LibsDisguises.getInstance());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

@@ -146,6 +146,7 @@ public class PacketsManager {
                 packetsToListen.add(Server.ENTITY_TELEPORT);
                 packetsToListen.add(Server.REL_ENTITY_MOVE);
                 packetsToListen.add(Server.ENTITY_VELOCITY);
+                packetsToListen.add(Server.MOUNT);
             }
 
             // Add equipment packet

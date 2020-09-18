@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -12,6 +13,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -27,9 +30,15 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
                        Entity entity) {
         Float pitchLock = disguise.getWatcher().getPitchLock();
         Float yawLock = disguise.getWatcher().getYawLock();
+        boolean riding = observer.getVehicle() == entity;
 
         if (pitchLock == null && yawLock == null &&
                 (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER)) {
+            if (riding) {
+                sentPacket = sentPacket.shallowClone();
+                sentPacket.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
+                packets.addPacket(sentPacket);
+            }
             return;
         }
 
@@ -122,5 +131,13 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
 
         packets.addPacket(look);
         packets.addPacket(rotation);
+
+        if (riding) {
+            for (PacketContainer c : new ArrayList<>(packets.getPackets())) {
+                c = c.shallowClone();
+                c.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
+                packets.addPacket(c);
+            }
+        }
     }
 }

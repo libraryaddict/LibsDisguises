@@ -62,10 +62,8 @@ import org.bukkit.util.Vector;
 import java.io.*;
 import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -256,6 +254,71 @@ public class DisguiseUtilities {
             Files.move(viewPreferencesTemp.toPath(), viewPreferences.toPath(), StandardCopyOption.REPLACE_EXISTING,
                     StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeInvisibleSlime(Player player) {
+        PacketContainer container = new PacketContainer(Server.ENTITY_DESTROY);
+        container.getIntegerArrays().write(0, new int[]{DisguiseAPI.getEntityAttachmentId()});
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, false);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendInvisibleSlime(Player player, int horseId) {
+        PacketContainer packet =
+                ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, player)
+                        .createPacket(player);
+
+        packet.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
+        packet.getModifier().write(1, UUID.randomUUID());
+        packet.getModifier().write(2, DisguiseType.SLIME.getTypeId());
+
+        WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+        WrappedDataWatcher.WrappedDataWatcherObject obj =
+                ReflectionManager.createDataWatcherObject(MetaIndex.SLIME_SIZE, 0);
+
+        watcher.setObject(obj, 0);
+
+        if (NmsVersion.v1_15.isSupported()) {
+            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA,
+                            DisguiseAPI.getEntityAttachmentId(), watcher, true)
+                    .createPacket(DisguiseAPI.getEntityAttachmentId(), watcher, true);
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        } else {
+            packet.getDataWatcherModifier().write(0, watcher);
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
+        PacketContainer attachHorse = new PacketContainer(Server.MOUNT);
+        attachHorse.getModifier().write(0, horseId);
+        attachHorse.getModifier().write(1, new int[]{DisguiseAPI.getEntityAttachmentId()});
+
+        PacketContainer attachPlayer = new PacketContainer(Server.MOUNT);
+        attachPlayer.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
+        attachPlayer.getModifier().write(1, new int[]{player.getEntityId()});
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachHorse, false);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachPlayer, false);
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -1152,8 +1215,8 @@ public class DisguiseUtilities {
 
         cachedNames.addAll(Arrays.asList(profileCache.list()));
 
-        invalidFile =
-                LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH).matches(".*((crack)|(null)|(leak)).*");
+        invalidFile = LibsDisguises.getInstance().getFile().getName().toLowerCase(Locale.ENGLISH)
+                .matches(".*((crack)|(null)|(leak)).*");
 
         for (String key : savedDisguises.list()) {
             try {
