@@ -410,6 +410,12 @@ public class ReflectionManager {
                 }
             }
 
+            // Workaround for paper being 2 smart 4 me
+            getNmsMethod("Entity", "setPosition", double.class, double.class, double.class)
+                    .invoke(entityObject, 1, 1, 1);
+            getNmsMethod("Entity", "setPosition", double.class, double.class, double.class)
+                    .invoke(entityObject, 0, 0, 0);
+
             return entityObject;
         } catch (Exception e) {
             DisguiseUtilities.getLogger()
@@ -1369,7 +1375,8 @@ public class ReflectionManager {
     public static Object getEntityType(EntityType entityType) {
         try {
             Object val = entityTypesAMethod.invoke(null,
-                    entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName());
+                    entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) :
+                            entityType.getName());
 
             if (NmsVersion.v1_14.isSupported()) {
                 return ((Optional<Object>) val).orElse(null);
