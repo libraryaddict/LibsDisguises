@@ -40,8 +40,6 @@ public class LDUpdate implements LDCommand {
         }
 
         boolean releaseBuilds = checker.isUsingReleaseBuilds();
-        boolean wantsCheck = args[0].endsWith("?");
-        boolean wantsDownload = args[0].endsWith("!") || !wantsCheck;
 
         if (args.length > 1) {
             boolean previous = releaseBuilds;
@@ -55,45 +53,20 @@ public class LDUpdate implements LDCommand {
                 return;
             }
 
-            if (previous != releaseBuilds && !wantsCheck) {
-                wantsDownload = true;
-            }
-
-            wantsCheck = true;
-
             DisguiseConfig.setUsingReleaseBuilds(releaseBuilds);
         }
-
-        if (checker.getUpdate() != null && checker.getUpdate().isReleaseBuild() == releaseBuilds && !wantsCheck) {
-            if (checker.isServerLatestVersion()) {
-                LibsMsg.UPDATE_ON_LATEST.send(sender);
-                return;
-            }
-
-            if (checker.isOnLatestUpdate(true)) {
-                LibsMsg.UPDATE_ALREADY_DOWNLOADED.send(sender);
-                return;
-            }
-        }
-
-        boolean finalWantsCheck = wantsCheck;
-        boolean finalWantsDownload = wantsDownload;
 
         new BukkitRunnable() {
             @Override
             public void run() {
-                LibsMsg updateResult = null;
-
-                if (checker.getUpdate() == null || args.length > 1 || checker.isOldUpdate() || finalWantsCheck) {
-                    updateResult = checker.doUpdateCheck();
-                }
+                LibsMsg updateResult = checker.doUpdateCheck();
 
                 if (checker.getUpdate() == null) {
                     LibsMsg.UPDATE_FAILED.send(sender);
                     return;
                 }
 
-                if (checker.isOnLatestUpdate(true) && !finalWantsDownload) {
+                if (checker.isOnLatestUpdate(true)) {
                     if (checker.getLastDownload() != null) {
                         LibsMsg.UPDATE_ALREADY_DOWNLOADED.send(sender);
                     } else {
@@ -103,7 +76,7 @@ public class LDUpdate implements LDCommand {
                     return;
                 }
 
-                if (!finalWantsDownload) {
+                /*if (!finalWantsDownload) {
                     if (updateResult != null) {
                         updateResult.send(sender);
                     } else {
@@ -113,7 +86,7 @@ public class LDUpdate implements LDCommand {
                     }
 
                     return;
-                }
+                }*/
 
                 PluginInformation result = checker.doUpdate();
 
