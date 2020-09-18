@@ -75,7 +75,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                     PacketsManager.getPacketsHandler().transformPacket(packet, disguise, observer, observer);
 
             if (transformed.isUnhandled()) {
-                transformed.getPackets().add(packet);
+                transformed.addPacket(packet);
             }
 
             for (PacketContainer newPacket : transformed.getPackets()) {

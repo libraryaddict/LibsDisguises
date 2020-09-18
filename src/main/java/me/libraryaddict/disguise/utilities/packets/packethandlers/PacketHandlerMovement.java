@@ -54,6 +54,10 @@ public class PacketHandlerMovement implements IPacketHandler {
         double height = disguise.getHeight();
 
         for (PacketContainer packet : packets.getPackets()) {
+            if (packet.getType() == PacketType.Play.Server.ENTITY_LOOK) {
+                continue;
+            }
+
             for (int i = 0; i < len; i++) {
                 int standId = disguise.getArmorstandIds()[i];
                 PacketContainer packet2 = packet.shallowClone();
@@ -193,8 +197,12 @@ public class PacketHandlerMovement implements IPacketHandler {
 
                 if (entity == observer.getVehicle() &&
                         AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
-                    PacketContainer packet = movePacket.shallowClone();
-                    packet.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
+                    PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+
+                    packet.getIntegers().write(0, DisguiseAPI.getEntityAttachmentId());
+                    packet.getBytes().write(0, yawValue);
+                    packet.getBytes().write(1, pitchValue);
+
                     packets.addPacket(packet);
                 } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT &&
                         disguise.getType() == DisguiseType.ITEM_FRAME) {
