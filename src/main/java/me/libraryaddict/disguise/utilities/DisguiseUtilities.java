@@ -2804,14 +2804,18 @@ public class DisguiseUtilities {
         int[] destroyIds = new int[0];
 
         if (!LibsPremium.isPremium()) {
-            internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
+            if (internalOldNames.length > 0) {
+                internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
+            }
 
             if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
                 if (disguise.getMultiName().length > 1) {
                     getLogger().info("Multiline names is a premium feature, sorry!");
                 }
 
-                newNames = new String[]{StringUtils.join(disguise.getMultiName(), "\\n")};
+                if (disguise.getMultiName().length > 0) {
+                    newNames = new String[]{StringUtils.join(disguise.getMultiName(), "\\n")};
+                }
             }
         } else {
             newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ?
