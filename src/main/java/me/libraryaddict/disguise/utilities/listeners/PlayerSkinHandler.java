@@ -140,14 +140,18 @@ public class PlayerSkinHandler implements Listener {
             return;
         }
 
+        ArrayList<PlayerDisguise> removed = new ArrayList<>();
+
         skins.removeIf(skin -> {
             if (!skin.canRemove()) {
                 return false;
             }
 
-            doPacketRemoval(player, skin.getDisguise().get());
+            removed.add(skin.getDisguise().get());
             return true;
         });
+
+        removed.forEach(disguise -> doPacketRemoval(player, disguise));
 
         if (!skins.isEmpty()) {
             return;
