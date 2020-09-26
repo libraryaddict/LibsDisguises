@@ -272,6 +272,12 @@ public class PlayerDisguise extends TargetedDisguise {
             }
         }
 
+        if (DisguiseConfig.isCopyPlayerTeamInfo() &&
+                (DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.TEAMS ||
+                        DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.ARMORSTANDS)) {
+            name = DisguiseUtilities.getDisplayName(name);
+        }
+
         if (name.equals(playerName)) {
             return;
         }
@@ -337,13 +343,13 @@ public class PlayerDisguise extends TargetedDisguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!canSee(player))
+                        if (!canSee(player)) {
                             continue;
+                        }
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                     }
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -436,8 +442,9 @@ public class PlayerDisguise extends TargetedDisguise {
                 currentLookup = new LibsProfileLookup() {
                     @Override
                     public void onLookup(WrappedGameProfile gameProfile) {
-                        if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
+                        if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty()) {
                             return;
+                        }
 
                         setSkin(gameProfile);
 
@@ -485,8 +492,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 string.contains(",\"name\":")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, WrappedGameProfile.class);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 throw new IllegalStateException(
                         "Tried to parse " + string + " to a GameProfile, but it has been formatted incorrectly!");
             }
@@ -505,14 +511,14 @@ public class PlayerDisguise extends TargetedDisguise {
 
                 try {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!canSee(player))
+                        if (!canSee(player)) {
                             continue;
+                        }
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                     }
-                }
-                catch (InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -604,8 +610,9 @@ public class PlayerDisguise extends TargetedDisguise {
             currentLookup = new LibsProfileLookup() {
                 @Override
                 public void onLookup(WrappedGameProfile gameProfile) {
-                    if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty())
+                    if (currentLookup != this || gameProfile == null || gameProfile.getProperties().isEmpty()) {
                         return;
+                    }
 
                     setSkin(gameProfile);
 

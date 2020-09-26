@@ -158,7 +158,6 @@ public class PlayerSkinHandler implements Listener {
         }
 
         getCache().invalidate(player);
-
     }
 
     @EventHandler

@@ -258,6 +258,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static long lastUpdateRequest;
+    @Getter
+    @Setter
+    private static boolean copyPlayerTeamInfo;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -678,6 +681,7 @@ public class DisguiseConfig {
         setVelocitySent(config.getBoolean("SendVelocity"));
         setViewDisguises(config.getBoolean("ViewSelfDisguises"));
         setWarnScoreboardConflict(config.getBoolean("Scoreboard.WarnConflict"));
+        setCopyPlayerTeamInfo(config.getBoolean("Scoreboard.CopyPlayerTeamInfo"));
         setWitherSkullPacketsEnabled(config.getBoolean("PacketsEnabled.WitherSkull"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setTablistRemoveDelay(config.getInt("TablistRemoveDelay"));

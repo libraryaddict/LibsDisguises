@@ -235,6 +235,38 @@ public class DisguiseUtilities {
         return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
     }
 
+    public static String getDisplayName(String playerName) {
+        if (StringUtils.isEmpty(playerName)) {
+            return playerName;
+        }
+
+        Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(playerName);
+
+        if (team != null && (!StringUtils.isEmpty(team.getPrefix()) || !StringUtils.isEmpty(team.getSuffix()))) {
+            return team.getPrefix() + team.getColor() + playerName + team.getSuffix();
+        }
+
+        Player player = Bukkit.getPlayer(playerName);
+
+        if (player == null) {
+            return playerName;
+        }
+
+        team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getUniqueId().toString());
+
+        if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
+            String name = player.getDisplayName();
+
+            if (name.equals(playerName)) {
+                return player.getPlayerListName();
+            }
+
+            return name;
+        }
+
+        return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+    }
+
     public static void saveViewPreferances() {
         if (!DisguiseConfig.isSaveUserPreferences()) {
             return;

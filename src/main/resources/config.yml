@@ -109,6 +109,9 @@ Scoreboard:
   # Should the scoreboard warn you if it detects a potential conflict?
   # If self disguises are disabled, or the scoreboard is using IGNORE_SCOREBOARD then this does nothing.
   WarnConflict: true
+  # When disguising as a player, should the prefix/suffix of the player disguise name copy the team info?
+  # Only takes effect if using PlayerNames TEAMS or ARMORSTANDS
+  CopyPlayerTeamInfo: true
 
 # Shall I notify those with the correct permission when there's a LibsDisguises update?
 # Disabling this will also disable notifications when the plugin updated
