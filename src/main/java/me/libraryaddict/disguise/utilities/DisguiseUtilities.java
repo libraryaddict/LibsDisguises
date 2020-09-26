@@ -242,7 +242,7 @@ public class DisguiseUtilities {
 
         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(playerName);
 
-        if (team != null && (!StringUtils.isEmpty(team.getPrefix()) || !StringUtils.isEmpty(team.getSuffix()))) {
+        if (team != null && (team.getColor() != ChatColor.RESET || !StringUtils.isEmpty(team.getPrefix()) || !StringUtils.isEmpty(team.getSuffix()))) {
             return team.getPrefix() + team.getColor() + playerName + team.getSuffix();
         }
 
@@ -254,7 +254,7 @@ public class DisguiseUtilities {
 
         team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getUniqueId().toString());
 
-        if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
+        if (team == null || (team.getColor() != ChatColor.RESET || StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
             String name = player.getDisplayName();
 
             if (name.equals(playerName)) {
