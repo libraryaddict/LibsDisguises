@@ -80,6 +80,7 @@ PlayerNames: TEAMS
 
 # If doing ARMORSTANDS in the above option, should CustomNames be overridden to use armorstands too?
 # This allows multiline names if you have purchased the plugin
+# Use \n for a new line, though if you're doing it in a config you may need to use \\n as " and ' are treated differently.
 OverrideCustomNames: true
 
 # How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
