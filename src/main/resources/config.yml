@@ -79,7 +79,7 @@ SaveDisguises:
 PlayerNames: TEAMS
 
 # If doing ARMORSTANDS in the above option, should CustomNames be overridden to use armorstands too?
-# This allows multiline names
+# This allows multiline names if you have purchased the plugin
 OverrideCustomNames: true
 
 # How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
