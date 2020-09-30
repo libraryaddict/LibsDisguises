@@ -20,6 +20,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
+import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
@@ -50,6 +51,8 @@ public class LibsDisguises extends JavaPlugin {
     private boolean reloaded;
     @Getter
     private final UpdateChecker updateChecker = new UpdateChecker();
+    @Getter
+    private final PlayerSkinHandler skinHandler = new PlayerSkinHandler();
 
     @Override
     public void onLoad() {
@@ -139,10 +142,8 @@ public class LibsDisguises extends JavaPlugin {
                     getLogger().severe("!! May I have your attention please !!");
                     getLogger().severe("Update your ProtocolLib! You are running " + version +
                             " but the minimum version you should be on is " + requiredProtocolLib + "!");
-                    getLogger()
-                            .severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
-                                    "/ProtocolLib" +
-                                    ".jar");
+                    getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                            "/ProtocolLib" + ".jar");
                     getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
                     getLogger()
                             .severe("This message is on repeat due to the sheer number of people who don't see this.");
@@ -177,6 +178,8 @@ public class LibsDisguises extends JavaPlugin {
         PacketsManager.addPacketListeners();
 
         listener = new DisguiseListener(this);
+
+        Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
 
         if (DisguiseUtilities.isRunningPaper()) {
             Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);

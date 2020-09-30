@@ -9,6 +9,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
@@ -50,6 +51,11 @@ public class PacketListenerMain extends PacketAdapter {
         try {
             packets = PacketsManager.getPacketsHandler()
                     .transformPacket(event.getPacket(), disguise, observer, disguise.getEntity());
+
+            if (disguise.isPlayerDisguise()) {
+                LibsDisguises.getInstance().getSkinHandler()
+                        .handlePackets(observer, (PlayerDisguise) disguise, packets);
+            }
         }
         catch (Throwable ex) {
             ex.printStackTrace();

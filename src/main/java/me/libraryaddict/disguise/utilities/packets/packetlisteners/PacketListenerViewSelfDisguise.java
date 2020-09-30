@@ -13,16 +13,19 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PacketListenerViewSelfDisguise extends PacketAdapter {
     public PacketListenerViewSelfDisguise(LibsDisguises plugin) {
@@ -53,14 +56,6 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             }
 
             if (!DisguiseAPI.isSelfDisguised(observer)) {
-                if (event.getPacketType() == PacketType.Play.Server.ENTITY_METADATA) {
-                    Disguise disguise = DisguiseAPI.getDisguise(observer, observer);
-
-                    if (disguise != null && DisguiseUtilities.getSelfDisguised().contains(observer.getUniqueId())) {
-                        event.setCancelled(true);
-                    }
-                }
-
                 return;
             }
 
@@ -78,38 +73,45 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 transformed.addPacket(packet);
             }
 
+            LibsPackets selfTransformed = new LibsPackets(disguise);
+
             for (PacketContainer newPacket : transformed.getPackets()) {
                 if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
                         newPacket.getIntegers().read(0) == observer.getEntityId()) {
+                    newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                }
+
+                selfTransformed.addPacket(newPacket);
+            }
+
+            for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : transformed.getDelayedPacketsMap().entrySet()) {
+                for (PacketContainer newPacket : entry.getValue()) {
                     if (newPacket == packet) {
                         newPacket = newPacket.shallowClone();
                     }
 
-                    newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                }
+                    if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY) {
+                        newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                    }
 
-                try {
+                    selfTransformed.addDelayedPacket(newPacket, entry.getKey());
+                }
+            }
+
+            if (disguise.isPlayerDisguise()) {
+                LibsDisguises.getInstance().getSkinHandler()
+                        .handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
+            }
+
+            try {
+                for (PacketContainer newPacket : selfTransformed.getPackets()) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket, false);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
                 }
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
 
-            for (ArrayList<PacketContainer> packets : transformed.getDelayedPackets()) {
-                for (PacketContainer newPacket : packets) {
-                    if (newPacket.getType() == Server.PLAYER_INFO || newPacket.getType() == Server.ENTITY_DESTROY) {
-                        continue;
-                    }
-
-                    if (newPacket.equals(packet)) {
-                        newPacket = newPacket.shallowClone();
-                    }
-
-                    newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                }
-            }
-
-            transformed.sendDelayed(observer);
+            selfTransformed.sendDelayed(observer);
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
                 if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
@@ -118,14 +120,16 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 }
 
                 for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
-                    if (watch.getIndex() == 0) {
-                        byte b = (byte) watch.getValue();
-
-                        // Add invisibility, remove glowing
-                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
-
-                        watch.setValue(a);
+                    if (watch.getIndex() != 0) {
+                        continue;
                     }
+
+                    byte b = (byte) watch.getValue();
+
+                    // Add invisibility, remove glowing
+                    byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
+
+                    watch.setValue(a);
                 }
             } else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN) {
                 event.setCancelled(true);

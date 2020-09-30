@@ -72,7 +72,7 @@ public class PacketsHandler {
                 }
             }
 
-            packets.setUnhandled();
+            packets.setUnhandled(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

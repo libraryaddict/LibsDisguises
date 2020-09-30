@@ -8,7 +8,6 @@ import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.datafixers.util.Pair;
-import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
@@ -24,7 +23,6 @@ import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -46,15 +44,9 @@ import java.util.UUID;
  */
 public class PacketHandlerSpawn implements IPacketHandler {
     private PacketsHandler packetsHandler;
-    @Getter
-    private PlayerSkinHandler skinHandler;
 
     public PacketHandlerSpawn(PacketsHandler packetsHandler) {
         this.packetsHandler = packetsHandler;
-
-        skinHandler = new PlayerSkinHandler();
-
-        Bukkit.getPluginManager().registerEvents(skinHandler, LibsDisguises.getInstance());
     }
 
     @Override
@@ -181,6 +173,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                             playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();
+            PlayerSkinHandler.PlayerSkin skin;
 
             if (!playerDisguise.isDisplayedInTab() || !playerDisguise.isNameVisible()) {
                 // Send player info along with the disguise
@@ -199,10 +192,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 PacketContainer deleteTab = sendTab.shallowClone();
                 deleteTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(4));
 
-                if (LibsPremium.getPaidInformation() == null ||
-                        LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
-                    getSkinHandler().addPlayerSkin(observer, playerDisguise);
+                skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
+
+                if (LibsPremium.getPaidInformation() != null &&
+                        !LibsPremium.getPaidInformation().getBuildNumber().matches("#[0-9]+")) {
+                    skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>())
+                            .add(new PacketContainer(PacketType.Play.Server.HELD_ITEM_SLOT));
                 }
+            } else {
+                skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
+                skin.setDoTabList(false);
             }
 
             // Spawn the player
@@ -211,9 +210,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
             spawnPlayer.getIntegers().write(0, entityId); // Id
             spawnPlayer.getModifier().write(1, spawnProfile.getUUID());
 
-            Location spawnAt = disguisedEntity.getLocation();
+            boolean spawnFarAway = observer == disguisedEntity ||
+                    observer.getLocation().distanceSquared(disguisedEntity.getLocation()) >
+                            observer.getLocation().add(observer.getLocation().getDirection())
+                                    .distanceSquared(disguisedEntity.getLocation());
 
-            boolean selfDisguise = observer == disguisedEntity;
+            skin.setSleepPackets(!spawnFarAway);
+
+            Location spawnAt = spawnFarAway ? disguisedEntity.getLocation() :
+                    observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(50));
 
             // Spawn him in front of the observer
             StructureModifier<Double> doubles = spawnPlayer.getDoubles();
@@ -227,18 +232,49 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(spawnPlayer);
 
-            WrappedDataWatcher newWatcher = DisguiseUtilities
+            WrappedDataWatcher dataWatcher = DisguiseUtilities
                     .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
                             disguise.getWatcher());
 
+            WrappedDataWatcher toSend = dataWatcher;
+
+            if (!spawnFarAway) {
+                toSend = new WrappedDataWatcher();
+                WrappedDataWatcher.WrappedDataWatcherObject obj =
+                        ReflectionManager.createDataWatcherObject(MetaIndex.ENTITY_META, (byte) 32);
+
+                // Set invis
+                toSend.setObject(obj, (byte) 32);
+            }
+
             if (NmsVersion.v1_15.isSupported()) {
                 PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, newWatcher, true)
-                        .createPacket(entityId, newWatcher, true);
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, toSend, true)
+                        .createPacket(entityId, toSend, true);
 
                 packets.addPacket(metaPacket);
             } else {
-                spawnPlayer.getDataWatcherModifier().write(0, newWatcher);
+                spawnPlayer.getDataWatcherModifier().write(0, toSend);
+            }
+
+            if (!spawnFarAway) {
+                PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, dataWatcher, true)
+                        .createPacket(entityId, dataWatcher, true);
+
+                PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+
+                StructureModifier<Object> mods = teleport.getModifier();
+
+                mods.write(0, disguisedEntity.getEntityId());
+                mods.write(1, loc.getX());
+                mods.write(2, loc.getY());
+                mods.write(3, loc.getZ());
+                mods.write(4, yaw);
+                mods.write(5, pitch);
+
+                skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
+                skin.getSleptPackets().computeIfAbsent(2, (a) -> new ArrayList<>()).add(metaPacket);
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();

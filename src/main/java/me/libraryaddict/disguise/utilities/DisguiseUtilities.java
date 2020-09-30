@@ -242,7 +242,8 @@ public class DisguiseUtilities {
 
         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(playerName);
 
-        if (team != null && (team.getColor() != ChatColor.RESET || !StringUtils.isEmpty(team.getPrefix()) || !StringUtils.isEmpty(team.getSuffix()))) {
+        if (team != null && (team.getColor() != ChatColor.RESET || !StringUtils.isEmpty(team.getPrefix()) ||
+                !StringUtils.isEmpty(team.getSuffix()))) {
             return team.getPrefix() + team.getColor() + playerName + team.getSuffix();
         }
 
@@ -254,7 +255,8 @@ public class DisguiseUtilities {
 
         team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(player.getUniqueId().toString());
 
-        if (team == null || (team.getColor() != ChatColor.RESET || StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
+        if (team == null || (team.getColor() != ChatColor.RESET ||
+                StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
             String name = player.getDisplayName();
 
             if (name.equals(playerName)) {
@@ -2568,13 +2570,35 @@ public class DisguiseUtilities {
                 transformed.addPacket(packet);
             }
 
+            LibsPackets newPackets = new LibsPackets(disguise);
+
             for (PacketContainer p : transformed.getPackets()) {
-                p = p.deepClone();
                 p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+
+                newPackets.addPacket(p);
+            }
+
+            for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : transformed.getDelayedPacketsMap().entrySet()) {
+                for (PacketContainer newPacket : entry.getValue()) {
+                    if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
+                            newPacket.getIntegers().read(0) == player.getEntityId()) {
+                        newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                    }
+
+                    newPackets.addDelayedPacket(newPacket, entry.getKey());
+                }
+            }
+
+            if (disguise.isPlayerDisguise()) {
+                LibsDisguises.getInstance().getSkinHandler()
+                        .handlePackets(player, (PlayerDisguise) disguise, newPackets);
+            }
+
+            for (PacketContainer p : newPackets.getPackets()) {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
             }
 
-            transformed.sendDelayed(player);
+            newPackets.sendDelayed(player);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
