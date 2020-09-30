@@ -132,7 +132,7 @@ public class PlayerSkinHandler implements Listener {
 
         // Only do equip atm
         if (type == Server.ENTITY_EQUIPMENT) {
-            skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(packetContainer);
+            skin.getSleptPackets().computeIfAbsent(3, (a) -> new ArrayList<>()).add(packetContainer);
         }
 
         return true;

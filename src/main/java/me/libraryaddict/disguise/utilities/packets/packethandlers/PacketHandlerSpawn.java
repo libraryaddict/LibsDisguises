@@ -274,7 +274,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 mods.write(5, pitch);
 
                 skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
-                skin.getSleptPackets().computeIfAbsent(2, (a) -> new ArrayList<>()).add(metaPacket);
+                skin.getSleptPackets().computeIfAbsent(3, (a) -> new ArrayList<>()).add(metaPacket);
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();
