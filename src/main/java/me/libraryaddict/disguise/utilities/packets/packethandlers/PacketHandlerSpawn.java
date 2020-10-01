@@ -210,10 +210,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
             spawnPlayer.getIntegers().write(0, entityId); // Id
             spawnPlayer.getModifier().write(1, spawnProfile.getUUID());
 
-            boolean spawnFarAway = observer == disguisedEntity ||
-                    observer.getLocation().distanceSquared(disguisedEntity.getLocation()) >
-                            observer.getLocation().add(observer.getLocation().getDirection())
-                                    .distanceSquared(disguisedEntity.getLocation());
+            double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
+
+            // If self disguise, or further than 64 blocks, or not in front of entity
+            boolean spawnFarAway = observer == disguisedEntity || dist > (64 * 64) ||
+                    (observer.getLocation().add(observer.getLocation().getDirection().normalize())
+                            .distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
 
             skin.setSleepPackets(!spawnFarAway);
 
