@@ -212,8 +212,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
 
-            // If self disguise, or further than 64 blocks, or not in front of entity
-            boolean spawnFarAway = observer == disguisedEntity || dist > (64 * 64) ||
+            // If self disguise, or further than 50 blocks, or not in front of entity
+            boolean spawnFarAway = observer == disguisedEntity || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize())
                             .distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
 
@@ -276,7 +276,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 mods.write(5, pitch);
 
                 skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
-                skin.getSleptPackets().computeIfAbsent(3, (a) -> new ArrayList<>()).add(metaPacket);
+                skin.getSleptPackets().computeIfAbsent(4, (a) -> new ArrayList<>()).add(metaPacket);
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();
