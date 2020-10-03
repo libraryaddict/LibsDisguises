@@ -1,3 +1,10 @@
+# The best way to use this is with /savedisguise or /saveskin
+# /saveskin MyCustomSkin <SkinName> - Where <SkinName> can be an url, file in LibsDisguises/skins or player name
+# Then use /disguise player MyCustomSkin - To test it
+
+# You can also use /savedisguise MyCustomDisguise player KingKiller setskin <SkinName> - With the same 3 types of skin
+# as above
+
 # It is strongly recommended you use /savedisguise instead of editing this file!
 # You can use that command in console or ingame! This helps eliminate user error!
 

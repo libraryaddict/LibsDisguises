@@ -282,8 +282,8 @@ ShowPlayerDisguisesInTab: false
 
 # On player disguise, a fake player is added to tablist so the skin can load properly.
 # This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
-# 2 ticks should easily be enough.
-PlayerDisguisesTablistExpires: 2
+# 3 ticks should easily be enough.
+PlayerDisguisesTablistExpires: 3
 
 # Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
 DisableInvisibility: false
