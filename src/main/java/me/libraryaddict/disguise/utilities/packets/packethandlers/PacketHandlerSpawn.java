@@ -103,8 +103,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             }
         }
 
-        Location loc = disguisedEntity.getLocation().clone()
-                .add(0, DisguiseUtilities.getYModifier(disguisedEntity, disguise), 0);
+        Location loc = disguisedEntity.getLocation().clone().add(0, DisguiseUtilities.getYModifier(disguise), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
@@ -123,7 +122,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
             pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
-
         }
 
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
@@ -213,14 +211,14 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
 
             // If self disguise, or further than 50 blocks, or not in front of entity
-            boolean spawnFarAway = observer == disguisedEntity || dist > (50 * 50) ||
+            boolean normalPlayerDisguise = observer == disguisedEntity || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize())
                             .distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
 
-            skin.setSleepPackets(!spawnFarAway);
+            skin.setSleepPackets(!normalPlayerDisguise);
 
-            Location spawnAt = spawnFarAway ? disguisedEntity.getLocation() :
-                    observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(50));
+            Location spawnAt = normalPlayerDisguise ? disguisedEntity.getLocation() :
+                    observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10));
 
             // Spawn him in front of the observer
             StructureModifier<Double> doubles = spawnPlayer.getDoubles();
@@ -240,7 +238,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             WrappedDataWatcher toSend = dataWatcher;
 
-            if (!spawnFarAway) {
+            if (!normalPlayerDisguise) {
                 toSend = new WrappedDataWatcher();
                 WrappedDataWatcher.WrappedDataWatcherObject obj =
                         ReflectionManager.createDataWatcherObject(MetaIndex.ENTITY_META, (byte) 32);
@@ -259,23 +257,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 spawnPlayer.getDataWatcherModifier().write(0, toSend);
             }
 
-            if (!spawnFarAway) {
+            if (!normalPlayerDisguise) {
                 PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
                         .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, dataWatcher, true)
                         .createPacket(entityId, dataWatcher, true);
 
-                PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-
-                StructureModifier<Object> mods = teleport.getModifier();
-
-                mods.write(0, disguisedEntity.getEntityId());
-                mods.write(1, loc.getX());
-                mods.write(2, loc.getY());
-                mods.write(3, loc.getZ());
-                mods.write(4, yaw);
-                mods.write(5, pitch);
-
-                skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
                 skin.getSleptPackets().computeIfAbsent(4, (a) -> new ArrayList<>()).add(metaPacket);
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {

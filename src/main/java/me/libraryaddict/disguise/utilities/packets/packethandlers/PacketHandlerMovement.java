@@ -82,15 +82,31 @@ public class PacketHandlerMovement implements IPacketHandler {
         }
 
         // If falling block should be appearing in center of blocks
-        if (sentPacket.getType() != PacketType.Play.Server.ENTITY_LOOK &&
-                disguise.getType() == DisguiseType.FALLING_BLOCK &&
+        if (disguise.getType() == DisguiseType.FALLING_BLOCK &&
                 ((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
             packets.clear();
 
+            if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK) {
+                return;
+            }
+
             PacketContainer movePacket = sentPacket.shallowClone();
 
-            // If relational movement
-            if (sentPacket.getType() != PacketType.Play.Server.ENTITY_TELEPORT) {
+            // If not relational movement
+            if (movePacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
+                Location loc = entity.getLocation();
+
+                StructureModifier<Double> doubles = movePacket.getDoubles();
+                // Center the block
+                doubles.write(0, loc.getBlockX() + 0.5);
+
+                double y = loc.getBlockY();
+
+                y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
+
+                doubles.write(1, y);
+                doubles.write(2, loc.getBlockZ() + 0.5);
+            } else {
                 StructureModifier<Short> shorts = movePacket.getShorts();
 
                 Location origLoc = entity.getLocation();
@@ -112,22 +128,10 @@ public class PacketHandlerMovement implements IPacketHandler {
                     shorts.write(1, conRel(origY, newY));
                     shorts.write(2, conRel(origLoc.getBlockZ(), newLoc.getBlockZ()));
                 }
-            } else {
-                Location loc = entity.getLocation();
-
-                StructureModifier<Double> doubles = movePacket.getDoubles();
-                // Center the block
-                doubles.write(0, loc.getBlockX() + 0.5);
-
-                double y = loc.getBlockY();
-
-                y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
-
-                doubles.write(1, y);
-                doubles.write(2, loc.getBlockZ() + 0.5);
             }
 
             packets.addPacket(movePacket);
+            return;
         } else if (disguise.getType() == DisguiseType.RABBIT &&
                 (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE ||
                         sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
@@ -220,7 +224,7 @@ public class PacketHandlerMovement implements IPacketHandler {
                         }
                     }
 
-                    double y = DisguiseUtilities.getYModifier(entity, disguise);
+                    double y = DisguiseUtilities.getYModifier(disguise);
 
                     if (y != 0) {
                         doubles.write(2, doubles.read(2) + y);

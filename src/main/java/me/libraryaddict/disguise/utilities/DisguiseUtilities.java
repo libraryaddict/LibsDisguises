@@ -3025,7 +3025,8 @@ public class DisguiseUtilities {
     /**
      * Get the Y level to add to the disguise for realism.
      */
-    public static double getYModifier(Entity entity, Disguise disguise) {
+    public static double getYModifier(Disguise disguise) {
+        Entity entity = disguise.getEntity();
         double yMod = 0;
 
         if (disguise.getType() != DisguiseType.PLAYER && entity.getType() == EntityType.DROPPED_ITEM) {

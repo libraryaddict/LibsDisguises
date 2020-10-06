@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -11,12 +12,15 @@ import com.google.common.cache.RemovalCause;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -84,6 +88,15 @@ public class PlayerSkinHandler implements Listener {
                 skins.clear();
             }).build();
 
+    public PlayerSkinHandler() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                getCache().asMap().forEach((key, value) -> doTeleport(key, value));
+            }
+        }.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
+    }
+
     public PlayerSkin addPlayerSkin(Player player, PlayerDisguise disguise) {
         tryProcess(player, false);
 
@@ -101,7 +114,53 @@ public class PlayerSkinHandler implements Listener {
         return toReturn;
     }
 
+    private void doTeleport(Player player, List<PlayerSkin> value) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+
+        Location loc = player.getLocation();
+        loc.add(loc.getDirection().normalize().multiply(10));
+
+        PacketContainer packet = new PacketContainer(Server.ENTITY_TELEPORT);
+        packet.getModifier().write(1, loc.getX());
+        packet.getModifier().write(2, loc.getY());
+        packet.getModifier().write(3, loc.getZ());
+
+        for (PlayerSkin skin : value) {
+            if (!skin.isSleepPackets()) {
+                continue;
+            }
+
+            PlayerDisguise disguise = skin.getDisguise().get();
+
+            if (disguise == null || !disguise.isDisguiseInUse()) {
+                continue;
+            }
+
+            packet = packet.shallowClone();
+
+            int id = disguise.getEntity().getEntityId();
+
+            if (id == player.getEntityId()) {
+                id = DisguiseAPI.getSelfDisguiseId();
+            }
+
+            packet.getModifier().write(0, id);
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void handlePackets(Player player, PlayerDisguise disguise, LibsPackets packets) {
+        if (packets.getPackets().stream().anyMatch(p -> p.getType() == Server.NAMED_ENTITY_SPAWN)) {
+            return;
+        }
+
         List<PlayerSkin> skins = getCache().getIfPresent(player);
 
         if (skins == null) {
@@ -170,11 +229,58 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
+    private void addTeleport(Player player, PlayerSkin skin) {
+        PlayerDisguise disguise = skin.getDisguise().get();
+
+        PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+
+        StructureModifier<Object> mods = teleport.getModifier();
+        Location loc = disguise.getEntity().getLocation();
+
+        Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
+        Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
+
+        byte yaw = (byte) (int) ((yawLock == null ? loc.getYaw() : yawLock) * 256.0F / 360.0F);
+        byte pitch = (byte) (int) ((pitchLock == null ? loc.getPitch() : pitchLock) * 256.0F / 360.0F);
+
+        if (DisguiseConfig.isMovementPacketsEnabled()) {
+            if (yawLock == null) {
+                yaw = DisguiseUtilities.getYaw(DisguiseType.getType(disguise.getEntity().getType()), yaw);
+            }
+
+            if (pitchLock == null) {
+                pitch = DisguiseUtilities.getPitch(DisguiseType.getType(disguise.getEntity().getType()), pitch);
+            }
+
+            yaw = DisguiseUtilities.getYaw(disguise.getType(), yaw);
+            pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
+        }
+
+        int id = disguise.getEntity().getEntityId();
+
+        if (id == player.getEntityId()) {
+            id = DisguiseAPI.getSelfDisguiseId();
+        }
+
+        mods.write(0, id);
+        mods.write(1, loc.getX());
+        mods.write(2, loc.getY() + DisguiseUtilities.getYModifier(disguise));
+        mods.write(3, loc.getZ());
+        mods.write(4, yaw);
+        mods.write(5, pitch);
+
+        skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
+    }
+
     private void doPacketRemoval(Player player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         if (disguise == null) {
             return;
+        }
+
+        if (skin.isSleepPackets()) {
+            addTeleport(player, skin);
         }
 
         try {

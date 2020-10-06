@@ -28,6 +28,11 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
                        Entity entity) {
+        if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
+            packets.clear();
+            return;
+        }
+
         Float pitchLock = disguise.getWatcher().getPitchLock();
         Float yawLock = disguise.getWatcher().getYawLock();
         boolean riding = observer.getVehicle() == entity;
