@@ -11,6 +11,8 @@ import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -38,15 +40,13 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         try {
             disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs,
                     DisguiseParser.getPermissions(p, "disguiseentity"));
-        }
-        catch (DisguiseParseException e) {
+        } catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
                 DisguiseUtilities.sendMessage(p, e.getMessage());
             }
 
             return;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -58,10 +58,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
             if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
                     !entity.hasPermission("libsdisguises.hidename")) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
-                    Team team = ((Player) entity).getScoreboard().getEntryTeam(entity.getName());
-
-                    disguise.getWatcher().setCustomName((team == null ? "" : team.getPrefix()) + entity.getName() +
-                            (team == null ? "" : team.getSuffix()));
+                    disguise.getWatcher().setCustomName(getDisplayName(entity));
 
                     if (DisguiseConfig.isNameAboveHeadAlwaysVisible()) {
                         disguise.getWatcher().setCustomNameVisible(true);
@@ -104,5 +101,15 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
                 }
             }
         }
+    }
+
+    protected String getDisplayName(CommandSender player) {
+        String name = DisguiseConfig.getNameAboveDisguise().replace("%simple%", player.getName());
+
+        if (name.contains("%complex%")) {
+            name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', name);
     }
 }

@@ -261,6 +261,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean copyPlayerTeamInfo;
+    @Getter
+    @Setter
+    private static String nameAboveDisguise;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -663,6 +666,7 @@ public class DisguiseConfig {
         setMovementPacketsEnabled(config.getBoolean("PacketsEnabled.Movement"));
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
+        setNameAboveDisguise(config.getString("NameAboveDisguise"));
         setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpiry"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));

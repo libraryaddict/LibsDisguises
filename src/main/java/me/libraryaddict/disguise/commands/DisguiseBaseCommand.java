@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands;
 
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
@@ -209,7 +210,13 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected String getDisplayName(CommandSender player) {
-        return DisguiseUtilities.getDisplayName(player);
+        String name = DisguiseConfig.getNameAboveDisguise().replace("%simple%", player.getName());
+
+        if (name.contains("%complex%")) {
+            name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', name);
     }
 
     protected ArrayList<String> getAllowedDisguises(DisguisePermissions permissions) {
