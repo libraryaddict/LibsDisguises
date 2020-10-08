@@ -57,9 +57,11 @@ public class InsentientWatcher extends LivingWatcher {
 
         setInsentientFlag(4, enraged);
 
-        // TODO Check if a less hacky fix is possible
-        if (!enraged) {
-            DisguiseUtilities.refreshTrackers(getDisguise());
+        if (!getDisguise().isDisguiseInUse() || enraged) {
+            return;
         }
+
+        // TODO Check if a less hacky fix is possible
+        DisguiseUtilities.refreshTrackers(getDisguise());
     }
 }
