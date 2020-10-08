@@ -63,12 +63,19 @@ public class DisguiseParser {
 
                 for (Method setMethod : methods) {
                     // Invalidate methods that can't be handled normally
-                    if (setMethod.getName().equals("addPotionEffect") || (setMethod.getName().equals("setSkin") &&
-                            setMethod.getParameterTypes()[0] == String.class) ||
-                            (setMethod.getName().equals("setTarget") &&
-                                    setMethod.getParameterTypes()[0] != int.class) ||
-                            (setMethod.getName().equals("setItemInMainHand") &&
-                                    setMethod.getParameterTypes()[0] == Material.class)) {
+                    if (setMethod.getName().equals("addPotionEffect")) {
+                        continue;
+                    } else if (setMethod.getName().equals("setSkin") &&
+                            setMethod.getParameterTypes()[0] == String.class) {
+                        continue;
+                    } else if (setMethod.getName().equals("setTarget") &&
+                            setMethod.getParameterTypes()[0] != int.class) {
+                        continue;
+                    } else if (setMethod.getName().equals("setItemInMainHand") &&
+                            setMethod.getParameterTypes()[0] == Material.class) {
+                        continue;
+                    } else if (setMethod.getName().matches("setArmor") &&
+                            setMethod.getParameterTypes()[0] == ItemStack[].class) {
                         continue;
                     }
 
@@ -829,7 +836,8 @@ public class DisguiseParser {
 
                                 usedOptions.add(optionName);
                                 doCheck(sender, permissions, disguisePerm, usedOptions);
-                                String itemName = itemStack == null ? "null" : itemStack.getType().name().toLowerCase(Locale.ENGLISH);
+                                String itemName = itemStack == null ? "null" :
+                                        itemStack.getType().name().toLowerCase(Locale.ENGLISH);
 
                                 if (!hasPermissionOption(disguiseOptions, optionName, itemName)) {
                                     throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, itemName,

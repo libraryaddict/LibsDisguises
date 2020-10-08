@@ -2735,10 +2735,24 @@ public class DisguiseUtilities {
                 String[] str = new String[Array.getLength(base.getValue())];
 
                 for (int i = 0; i < str.length; i++) {
-                    str[i] = Array.get(base.getValue(),i).toString();//+ getChar(base.getType());
+                    str[i] = Array.get(base.getValue(), i).toString();//+ getChar(base.getType());
                 }
 
-                return "[" + StringUtils.join(str, ",") + "]";
+                String c = "";
+
+                switch (base.getType()) {
+                    case TAG_BYTE_ARRAY:
+                        c = "B;";
+                        break;
+                    case TAG_INT_ARRAY:
+                        c = "I;";
+                        break;
+                    case TAG_LONG_ARRAY:
+                        c = "L;";
+                        break;
+                }
+
+                return "[" + c + StringUtils.join(str, ",") + "]";
             case TAG_BYTE:
             case TAG_INT:
             case TAG_LONG:

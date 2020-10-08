@@ -114,11 +114,11 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             String[] split;
 
             // If it matches /give @p stone {data}
-            if (string.matches("[^{]+?[ -]\\{.+?}")) {
+            if (string.matches("^[^{]+?[ -]\\{[.].+?}$")) {
                 split = string.substring(0, string.indexOf("{") - 1).split("[ -]");
                 split = Arrays.copyOf(split, split.length + 1);
                 split[split.length - 1] = string.substring(string.indexOf("{"));
-            } else if (string.matches("[^{ ]+?\\{.+?}( [0-9]+)?")) { // /give @p stone[data] <amount?>
+            } else if (string.matches("^[^{ -]+?\\{.+?}([ -][0-9]+)?$")) { // /give @p stone[data] <amount?>
                 split = new String[string.endsWith("}") ? 2 : 3];
                 split[0] = string.substring(0, string.indexOf("{"));
                 split[string.endsWith("}") ? 1 : 2] = string
