@@ -103,7 +103,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
             }
         }
 
-        Location loc = disguisedEntity.getLocation().clone().add(0, DisguiseUtilities.getYModifier(disguise), 0);
+        Location loc = disguisedEntity.getLocation().clone()
+                .add(0, DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier(), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
@@ -350,9 +351,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 }
 
                 if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
+                    double yMod = disguise.getWatcher().getYModifier();
+                    y -= yMod;
+
                     // Center the block
                     x = loc.getBlockX() + 0.5;
-                    y = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
+                    y = Math.floor(y) + yMod + (y % 1 >= 0.85 ? 1 : y % 1 >= 0.35 ? .5 : 0);
                     z = loc.getBlockZ() + 0.5;
                 }
             } else if (disguise.getType() == DisguiseType.FISHING_HOOK && data == -1) {

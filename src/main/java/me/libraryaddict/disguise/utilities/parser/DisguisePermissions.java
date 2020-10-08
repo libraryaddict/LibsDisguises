@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -44,7 +45,7 @@ public class DisguisePermissions {
         private boolean wildcardCommand;
 
         public ParsedPermission(DisguisePerm[] disguisePerm, HashMap<String, Boolean> options, byte inheritance,
-                boolean wildcardCommand) {
+                                boolean wildcardCommand) {
             this.disguisePerm = new Vector<>(Arrays.asList(disguisePerm));
             this.options = options;
             this.inheritance = inheritance;
@@ -381,6 +382,11 @@ public class DisguisePermissions {
                 storage.negatedOptions.add("setinvisible");
             }
 
+            if (sender instanceof Player && !sender.isOp()) {
+                storage.permittedOptions.remove("setYModifier");
+                storage.negatedOptions.add("setYModifier");
+            }
+
             disguises.add(storage);
         }
     }
@@ -474,7 +480,8 @@ public class DisguisePermissions {
         }
 
         // If the user is using a forbidden option, return false. Otherwise true
-        return disguiseOptions.stream().noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
+        return disguiseOptions.stream()
+                .noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {

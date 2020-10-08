@@ -81,6 +81,8 @@ public class PacketHandlerMovement implements IPacketHandler {
             return;
         }
 
+        double yMod = disguise.getWatcher().getYModifier();
+
         // If falling block should be appearing in center of blocks
         if (disguise.getType() == DisguiseType.FALLING_BLOCK &&
                 ((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
@@ -91,11 +93,10 @@ public class PacketHandlerMovement implements IPacketHandler {
             }
 
             PacketContainer movePacket = sentPacket.shallowClone();
+            Location loc = entity.getLocation();
 
             // If not relational movement
             if (movePacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
-                Location loc = entity.getLocation();
-
                 StructureModifier<Double> doubles = movePacket.getDoubles();
                 // Center the block
                 doubles.write(0, loc.getBlockX() + 0.5);
@@ -104,29 +105,27 @@ public class PacketHandlerMovement implements IPacketHandler {
 
                 y += (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
 
-                doubles.write(1, y);
+                doubles.write(1, y + yMod);
                 doubles.write(2, loc.getBlockZ() + 0.5);
             } else {
                 StructureModifier<Short> shorts = movePacket.getShorts();
 
-                Location origLoc = entity.getLocation();
                 Vector diff = new Vector(shorts.read(0) / 4096D, shorts.read(1) / 4096D, shorts.read(2) / 4096D);
-                Location newLoc = origLoc.clone().subtract(diff);
+                Location newLoc = loc.clone().subtract(diff);
 
-                double origY =
-                        origLoc.getBlockY() + (origLoc.getY() % 1 >= 0.85 ? 1 : origLoc.getY() % 1 >= 0.35 ? .5 : 0);
+                double origY = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
                 double newY = newLoc.getBlockY() + (newLoc.getY() % 1 >= 0.85 ? 1 : newLoc.getY() % 1 >= 0.35 ? .5 : 0);
 
-                boolean sameBlock = origLoc.getBlockX() == newLoc.getBlockX() && newY == origY &&
-                        origLoc.getBlockZ() == newLoc.getBlockZ();
+                boolean sameBlock =
+                        loc.getBlockX() == newLoc.getBlockX() && newY == origY && loc.getBlockZ() == newLoc.getBlockZ();
 
                 if (sameBlock) {
                     // Make no modifications but don't send anything
                     return;
                 } else {
-                    shorts.write(0, conRel(origLoc.getBlockX(), newLoc.getBlockX()));
+                    shorts.write(0, conRel(loc.getBlockX(), newLoc.getBlockX()));
                     shorts.write(1, conRel(origY, newY));
-                    shorts.write(2, conRel(origLoc.getBlockZ(), newLoc.getBlockZ()));
+                    shorts.write(2, conRel(loc.getBlockZ(), newLoc.getBlockZ()));
                 }
             }
 
@@ -186,7 +185,6 @@ public class PacketHandlerMovement implements IPacketHandler {
                     pitchValue = DisguiseUtilities.getPitch(disguise.getType(), pitchValue);
                 } else {
                     pitchValue = DisguiseUtilities.getPitch(disguise.getType(), entity.getType(), pitchValue);
-
                 }
 
                 if (yawLock != null) {
@@ -241,6 +239,21 @@ public class PacketHandlerMovement implements IPacketHandler {
                 packets.addPacket(movePacket);
 
                 movePacket.getBooleans().write(0, false);
+            }
+
+            if (yMod != 0 && sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT) {
+                PacketContainer packet = packets.getPackets().get(0);
+
+                if (packet == sentPacket) {
+                    packet = packet.shallowClone();
+
+                    packets.clear();
+                    packets.addPacket(packet);
+                }
+
+                StructureModifier<Double> doubles = packet.getDoubles();
+
+                doubles.write(1, doubles.read(1) + yMod);
             }
         }
     }

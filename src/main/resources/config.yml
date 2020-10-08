@@ -210,7 +210,7 @@ NameAboveHeadAlwaysVisible: true
 # Two placeholders can be used.
 # %simple% = The very basic name, 'libraryaddict'
 # %complex% = Name will be grabbed from scoreboard or display name if scoreboard fails.
-NameAboveDisguise: %complex%
+NameAboveDisguise: '%complex%'
 
 # This modifies the bounding box, This is stuff like can a arrow hit them.
 # If you turn this to true, arrows will act like they hit the disguise in the right place!
