@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.inventory.MainHand;
@@ -50,6 +51,15 @@ public class InsentientWatcher extends LivingWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setEnraged(boolean enraged) {
+        if (hasValue(MetaIndex.INSENTIENT_META) && getInsentientFlag(4) == enraged) {
+            return;
+        }
+
         setInsentientFlag(4, enraged);
+
+        // TODO Check if a less hacky fix is possible
+        if (!enraged) {
+            DisguiseUtilities.refreshTrackers(getDisguise());
+        }
     }
 }
