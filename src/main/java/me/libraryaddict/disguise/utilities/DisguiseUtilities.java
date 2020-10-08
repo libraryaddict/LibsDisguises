@@ -2732,11 +2732,10 @@ public class DisguiseUtilities {
             case TAG_BYTE_ARRAY:
             case TAG_INT_ARRAY:
             case TAG_LONG_ARRAY:
-                Object[] array = (Object[]) base.getValue();
-                String[] str = new String[array.length];
+                String[] str = new String[Array.getLength(base.getValue())];
 
-                for (int i = 0; i < array.length; i++) {
-                    str[i] = array[i].toString();//+ getChar(base.getType());
+                for (int i = 0; i < str.length; i++) {
+                    str[i] = Array.get(base.getValue(),i).toString();//+ getChar(base.getType());
                 }
 
                 return "[" + StringUtils.join(str, ",") + "]";
