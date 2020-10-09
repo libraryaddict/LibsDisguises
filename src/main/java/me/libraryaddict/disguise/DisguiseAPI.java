@@ -56,7 +56,7 @@ public class DisguiseAPI {
             }
 
             ConfigurationSection section = configuration.getConfigurationSection("Disguises");
-            section.set(disguiseName, disguiseInfo);
+            section.set(disguiseName, disguiseInfo.replace("\n", "\\n").replace("\r", "\\r"));
 
             configuration.save(disguisesFile);
 
