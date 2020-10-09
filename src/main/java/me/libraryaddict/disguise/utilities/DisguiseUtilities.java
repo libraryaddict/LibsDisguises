@@ -2866,7 +2866,9 @@ public class DisguiseUtilities {
 
     public static ArrayList<PacketContainer> getNamePackets(Disguise disguise, String[] internalOldNames) {
         ArrayList<PacketContainer> packets = new ArrayList<>();
-        String[] newNames = new String[0];
+        String[] newNames =
+                (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ? new String[0] :
+                        reverse(disguise.getMultiName());
         int[] standIds = disguise.getArmorstandIds();
         int[] destroyIds = new int[0];
 
@@ -2875,18 +2877,15 @@ public class DisguiseUtilities {
                 internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
             }
 
+            if (newNames.length > 0) {
+                newNames = new String[]{StringUtils.join(newNames, "\\n")};
+            }
+
             if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
                 if (disguise.getMultiName().length > 1) {
                     getLogger().info("Multiline names is a premium feature, sorry!");
                 }
-
-                if (disguise.getMultiName().length > 0) {
-                    newNames = new String[]{StringUtils.join(disguise.getMultiName(), "\\n")};
-                }
             }
-        } else {
-            newNames = (disguise instanceof PlayerDisguise && !((PlayerDisguise) disguise).isNameVisible()) ?
-                    new String[0] : reverse(disguise.getMultiName());
         }
 
         if (internalOldNames.length > newNames.length) {
