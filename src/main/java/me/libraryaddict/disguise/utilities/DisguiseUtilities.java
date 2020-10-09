@@ -2873,17 +2873,17 @@ public class DisguiseUtilities {
         int[] destroyIds = new int[0];
 
         if (!LibsPremium.isPremium()) {
-            if (internalOldNames.length > 0) {
+            if (internalOldNames.length > 1) {
                 internalOldNames = new String[]{StringUtils.join(internalOldNames, "\\n")};
             }
 
-            if (newNames.length > 0) {
+            if (newNames.length > 1) {
                 newNames = new String[]{StringUtils.join(newNames, "\\n")};
-            }
 
-            if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
-                if (disguise.getMultiName().length > 1) {
-                    getLogger().info("Multiline names is a premium feature, sorry!");
+                if (!disguise.isPlayerDisguise() || ((PlayerDisguise) disguise).isNameVisible()) {
+                    if (disguise.getMultiName().length > 1) {
+                        getLogger().info("Multiline names is a premium feature, sorry!");
+                    }
                 }
             }
         }
