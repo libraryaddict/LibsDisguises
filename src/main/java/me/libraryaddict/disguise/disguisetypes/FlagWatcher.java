@@ -488,6 +488,12 @@ public class FlagWatcher {
     }
 
     public void setCustomName(String name) {
+        String customName = getCustomName();
+
+        if (Objects.equals(customName, name)) {
+            return;
+        }
+
         if (!getDisguise().isPlayerDisguise() && DisguiseConfig.isArmorstandsName() &&
                 DisguiseConfig.isOverrideCustomNames()) {
             MetaIndex custom =
