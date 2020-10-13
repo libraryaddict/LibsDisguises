@@ -70,6 +70,10 @@ public class FlagWatcher {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
 
+        if (Math.random() < 0.6) {
+            return;
+        }
+
         if ("1592".equals(LibsPremium.getUserID())) {
             setYModifier(-1);
         } else if (LibsPremium.getPaidInformation() != null &&
