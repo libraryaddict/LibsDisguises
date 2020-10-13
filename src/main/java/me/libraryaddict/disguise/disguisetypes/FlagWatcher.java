@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -68,6 +69,13 @@ public class FlagWatcher {
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
+
+        if ("1592".equals(LibsPremium.getUserID())) {
+            setYModifier(-1);
+        } else if (LibsPremium.getPaidInformation() != null &&
+                "1592".equals(LibsPremium.getPaidInformation().getUserID())) {
+            setYawLocked(true);
+        }
     }
 
     public boolean isPitchLocked() {
