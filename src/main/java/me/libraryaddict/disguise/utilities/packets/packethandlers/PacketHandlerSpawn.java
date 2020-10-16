@@ -233,11 +233,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(spawnPlayer);
 
-            WrappedDataWatcher dataWatcher = DisguiseUtilities
-                    .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
-                            disguise.getWatcher());
-
-            WrappedDataWatcher toSend = dataWatcher;
+            WrappedDataWatcher toSend;
 
             if (!normalPlayerDisguise) {
                 toSend = new WrappedDataWatcher();
@@ -246,6 +242,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 // Set invis
                 toSend.setObject(obj, (byte) 32);
+            } else {
+                toSend = DisguiseUtilities
+                        .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity),
+                                disguise.getWatcher());
             }
 
             if (NmsVersion.v1_15.isSupported()) {
@@ -256,14 +256,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 packets.addPacket(metaPacket);
             } else {
                 spawnPlayer.getDataWatcherModifier().write(0, toSend);
-            }
-
-            if (!normalPlayerDisguise) {
-                PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                        .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entityId, dataWatcher, true)
-                        .createPacket(entityId, dataWatcher, true);
-
-                skin.getSleptPackets().computeIfAbsent(4, (a) -> new ArrayList<>()).add(metaPacket);
             }
         } else if (disguise.isMobDisguise() || disguise.getType() == DisguiseType.ARMOR_STAND) {
             Vector vec = disguisedEntity.getVelocity();

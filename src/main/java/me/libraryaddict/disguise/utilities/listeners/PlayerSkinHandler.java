@@ -6,6 +6,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
@@ -21,6 +22,7 @@ import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -229,6 +231,19 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
+    private void addMetadata(Player player, PlayerSkin skin) {
+        PlayerDisguise disguise = skin.getDisguise().get();
+        Entity entity = disguise.getEntity();
+        WrappedDataWatcher watcher = DisguiseUtilities
+                .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
+
+        PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
+                .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)
+                .createPacket(entity.getEntityId(), watcher, true);
+
+        skin.getSleptPackets().computeIfAbsent(4, (a) -> new ArrayList<>()).add(metaPacket);
+    }
+
     private void addTeleport(Player player, PlayerSkin skin) {
         PlayerDisguise disguise = skin.getDisguise().get();
 
@@ -281,6 +296,7 @@ public class PlayerSkinHandler implements Listener {
 
         if (skin.isSleepPackets()) {
             addTeleport(player, skin);
+            addMetadata(player, skin);
         }
 
         try {
