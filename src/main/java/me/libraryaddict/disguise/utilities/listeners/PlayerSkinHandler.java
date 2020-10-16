@@ -231,7 +231,7 @@ public class PlayerSkinHandler implements Listener {
         }
     }
 
-    private void addMetadata(Player player, PlayerSkin skin) {
+    private void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
         Entity entity = disguise.getEntity();
         WrappedDataWatcher watcher = DisguiseUtilities
@@ -241,10 +241,11 @@ public class PlayerSkinHandler implements Listener {
                 .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)
                 .createPacket(entity.getEntityId(), watcher, true);
 
-        skin.getSleptPackets().computeIfAbsent(4, (a) -> new ArrayList<>()).add(metaPacket);
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
+
     }
 
-    private void addTeleport(Player player, PlayerSkin skin) {
+    private void addTeleport(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
 
         PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
@@ -284,7 +285,7 @@ public class PlayerSkinHandler implements Listener {
         mods.write(4, yaw);
         mods.write(5, pitch);
 
-        skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(teleport);
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, teleport, false);
     }
 
     private void doPacketRemoval(Player player, PlayerSkin skin) {
@@ -292,11 +293,6 @@ public class PlayerSkinHandler implements Listener {
 
         if (disguise == null) {
             return;
-        }
-
-        if (skin.isSleepPackets()) {
-            addTeleport(player, skin);
-            addMetadata(player, skin);
         }
 
         try {
@@ -323,6 +319,11 @@ public class PlayerSkinHandler implements Listener {
                         }
                     }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
                 }
+            }
+
+            if (skin.isSleepPackets()) {
+                addTeleport(player, skin);
+                addMetadata(player, skin);
             }
 
             if (skin.isDoTabList()) {
