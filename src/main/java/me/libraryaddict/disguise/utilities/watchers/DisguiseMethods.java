@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.asm.WatcherInfo;
 
@@ -99,7 +100,8 @@ public class DisguiseMethods {
                     continue;
                 } else if (method.getName().startsWith("get")) {
                     continue;
-                } else if (method.isAnnotationPresent(Deprecated.class)) {
+                } else if (method.isAnnotationPresent(Deprecated.class) &&
+                        !method.isAnnotationPresent(NmsRemovedIn.class)) {
                     continue;
                 } else if (!method.getReturnType().equals(Void.TYPE)) {
                     continue;
@@ -109,8 +111,7 @@ public class DisguiseMethods {
 
                 watcherMethods.computeIfAbsent(watcher, (a) -> new ArrayList<>()).add(method);
             }
-        }
-        catch (IOException | ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException e) {
+        } catch (IOException | ClassNotFoundException | NoClassDefFoundError | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
