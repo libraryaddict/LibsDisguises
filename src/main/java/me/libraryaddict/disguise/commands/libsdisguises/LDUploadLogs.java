@@ -212,8 +212,8 @@ public class LDUploadLogs implements LDCommand {
                                         " and my disguises file: " + disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
-                                builder.appendLegacy(ChatColor.AQUA + "");
                                 builder.append(text);
+                                builder.color(net.md_5.bungee.api.ChatColor.AQUA);
                                 builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, text));
 
                                 sender.spigot().sendMessage(builder.create());
