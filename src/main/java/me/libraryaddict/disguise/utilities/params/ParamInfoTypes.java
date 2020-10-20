@@ -95,6 +95,8 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
             paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant",
                     "The different variants for mushroom cows"));
+        } else {
+            paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type", "The type of ocelot"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar",
@@ -156,8 +158,7 @@ public class ParamInfoTypes {
             }
 
             return map;
-        }
-        catch (ClassNotFoundException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -181,8 +182,7 @@ public class ParamInfoTypes {
                 }
 
                 list.add(material);
-            }
-            catch (NoSuchFieldException e) {
+            } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
         }
@@ -194,8 +194,9 @@ public class ParamInfoTypes {
         Map<String, Object> map = new HashMap<>();
 
         for (PotionEffectType effectType : PotionEffectType.values()) {
-            if (effectType == null)
+            if (effectType == null) {
                 continue;
+            }
 
             map.put(toReadable(effectType.getName()), effectType);
         }
