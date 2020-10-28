@@ -493,7 +493,7 @@ public abstract class Disguise {
                         for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                             if (getEntity() != player) {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                            } else if (!isSelfDisguiseVisible()) {
+                            } else if (!isSelfDisguiseVisible() || !(getEntity() instanceof Player)) {
                                 continue;
                             }
 
