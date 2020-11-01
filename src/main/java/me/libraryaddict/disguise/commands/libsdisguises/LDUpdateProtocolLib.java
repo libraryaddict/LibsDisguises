@@ -27,7 +27,7 @@ public class LDUpdateProtocolLib implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("updateprotocollib");
+        return Arrays.asList("updateprotocollib", "updatepl");
     }
 
     @Override
@@ -61,8 +61,9 @@ public class LDUpdateProtocolLib implements LDCommand {
                     File dest = new File("plugins/update/" + theirFile.getName());
 
                     // We're connecting to spigot's API
-                    URL url = new URL(
-                            "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" +
+                    URL url =
+                            new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
+                                    "/ProtocolLib" +
                                     ".jar");
                     // Creating a connection
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -79,8 +80,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                             sender.sendMessage(ChatColor.RED + "Update success! Restart server to finish update!");
                         }
                     }.runTask(LibsDisguises.getInstance());
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
 
                     new BukkitRunnable() {
@@ -89,8 +89,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                             sender.sendMessage(ChatColor.RED + "Update failed, " + ex.getMessage());
                         }
                     }.runTask(LibsDisguises.getInstance());
-                }
-                finally {
+                } finally {
                     updateInProgress.set(false);
                 }
             }
