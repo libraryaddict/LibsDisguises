@@ -1858,7 +1858,7 @@ public class ReflectionManager {
                 indexes.remove(flagType);
 
                 Object ourValue = ReflectionManager.convertInvalidMeta(flagType.getDefault());
-                Object nmsValue = ReflectionManager.convertInvalidMeta(watch.getValue());
+                Object nmsValue = ReflectionManager.convertInvalidMeta(watch.getRawValue());
 
                 if (ourValue.getClass() != nmsValue.getClass()) {
                     if (!loggedName) {

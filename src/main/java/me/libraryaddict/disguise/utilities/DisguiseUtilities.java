@@ -2786,16 +2786,18 @@ public class DisguiseUtilities {
                     continue;
                 }
 
-                if (watchableObject.getValue() == null) {
+                Object object = watchableObject.getRawValue();
+
+                if (object == null) {
                     continue;
                 }
 
                 MetaIndex metaIndex = MetaIndex.getMetaIndex(disguiseWatcher, watchableObject.getIndex());
 
                 WrappedDataWatcher.WrappedDataWatcherObject obj =
-                        ReflectionManager.createDataWatcherObject(metaIndex, watchableObject.getValue());
+                        ReflectionManager.createDataWatcherObject(metaIndex, object);
 
-                newWatcher.setObject(obj, watchableObject.getValue());
+                newWatcher.setObject(obj, object);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

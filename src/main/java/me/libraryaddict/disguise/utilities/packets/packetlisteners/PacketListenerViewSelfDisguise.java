@@ -122,7 +122,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                         continue;
                     }
 
-                    byte b = (byte) watch.getValue();
+                    byte b = (byte) watch.getRawValue();
 
                     // Add invisibility, remove glowing
                     byte a = (byte) ((b | 1 << 5) & ~(1 << 6));

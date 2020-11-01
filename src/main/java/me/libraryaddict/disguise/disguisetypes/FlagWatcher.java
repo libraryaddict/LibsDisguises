@@ -295,7 +295,7 @@ public class FlagWatcher {
 
             if (value != null) {
                 if (isEntityAnimationsAdded() && id == MetaIndex.ENTITY_META.getIndex()) {
-                    value = addEntityAnimations((byte) value, (byte) watch.getValue());
+                    value = addEntityAnimations((byte) value, (byte) watch.getRawValue());
 
                     doSneakCheck((Byte) value);
                 }
@@ -314,7 +314,7 @@ public class FlagWatcher {
             } else {
                 boolean isDirty = watch.getDirtyState();
 
-                watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), watch.getValue());
+                watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), watch.getRawValue());
 
                 if (watch == null) {
                     continue;
@@ -325,7 +325,7 @@ public class FlagWatcher {
                 }
 
                 if (id == MetaIndex.ENTITY_META.getIndex()) {
-                    doSneakCheck((Byte) watch.getValue());
+                    doSneakCheck((Byte) watch.getRawValue());
                 }
             }
 
@@ -361,7 +361,7 @@ public class FlagWatcher {
             for (WrappedWatchableObject watch : newList) {
                 // Its a health packet
                 if (watch.getIndex() == MetaIndex.LIVING_HEALTH.getIndex()) {
-                    Object value = watch.getValue();
+                    Object value = watch.getRawValue();
 
                     if (value instanceof Float) {
                         float newHealth = (Float) value;

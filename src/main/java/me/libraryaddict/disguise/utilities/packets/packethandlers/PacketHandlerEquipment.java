@@ -196,7 +196,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     if (NmsVersion.v1_13.isSupported()) {
                         watcher.setValue((byte) 0);
                     } else {
-                        watcher.setValue((byte) ((byte) watcher.getValue() & ~(1 << 4)));
+                        watcher.setValue((byte) ((byte) watcher.getRawValue() & ~(1 << 4)));
                     }
                 }
 
