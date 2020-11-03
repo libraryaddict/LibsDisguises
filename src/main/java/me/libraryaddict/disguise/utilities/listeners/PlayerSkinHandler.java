@@ -159,9 +159,7 @@ public class PlayerSkinHandler implements Listener {
     }
 
     public void handlePackets(Player player, PlayerDisguise disguise, LibsPackets packets) {
-        if (packets.getPackets().stream().anyMatch(p -> p.getType() == Server.NAMED_ENTITY_SPAWN)) {
-            return;
-        }
+        boolean spawn = packets.getPackets().stream().anyMatch(p -> p.getType() == Server.NAMED_ENTITY_SPAWN);
 
         List<PlayerSkin> skins = getCache().getIfPresent(player);
 
@@ -172,6 +170,17 @@ public class PlayerSkinHandler implements Listener {
         PlayerSkin skin = skins.stream().filter(s -> s.getDisguise().get() == disguise).findAny().orElse(null);
 
         if (skin == null || !skin.isSleepPackets()) {
+            return;
+        }
+
+        if (spawn) {
+            packets.getDelayedPacketsMap().entrySet().removeIf(entry -> {
+                entry.getValue()
+                        .removeIf(packet -> packet.getType() == Server.ENTITY_EQUIPMENT && isRemove(skin, packet));
+
+                return entry.getValue().isEmpty();
+            });
+
             return;
         }
 

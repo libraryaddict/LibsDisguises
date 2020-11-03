@@ -74,6 +74,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
      */
     private void constructSpawnPackets(final Player observer, LibsPackets packets, Entity disguisedEntity) {
         Disguise disguise = packets.getDisguise();
+        boolean sendArmor = true;
 
         if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
@@ -215,6 +216,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             boolean normalPlayerDisguise = observer == disguisedEntity || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize())
                             .distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
+            sendArmor = normalPlayerDisguise;
 
             skin.setSleepPackets(!normalPlayerDisguise);
 
