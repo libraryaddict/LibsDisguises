@@ -76,6 +76,10 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             for (PacketContainer newPacket : transformed.getPackets()) {
                 if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
                         newPacket.getIntegers().read(0) == observer.getEntityId()) {
+                    if (newPacket == packet) {
+                        newPacket = newPacket.shallowClone();
+                    }
+
                     newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
                 }
 
