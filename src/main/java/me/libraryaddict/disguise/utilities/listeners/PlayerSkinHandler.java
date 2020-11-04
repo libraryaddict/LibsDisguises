@@ -217,7 +217,9 @@ public class PlayerSkinHandler implements Listener {
 
         PlayerDisguise disguise = (PlayerDisguise) event.getDisguise();
 
-        for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+        ArrayList<Player> players = new ArrayList<>(getCache().asMap().keySet());
+
+        for (Player player : players) {
             List<PlayerSkin> skins = getCache().getIfPresent(player);
 
             if (skins == null) {
