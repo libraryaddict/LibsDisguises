@@ -21,11 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by libraryaddict on 18/06/2020.
  */
 public class LDUploadLogs implements LDCommand {
+    private long lastUsed;
+
     /**
      * Small modification of https://gist.github.com/jamezrin/12de49643d7be7150da362e86407113f
      */
@@ -116,6 +119,13 @@ public class LDUploadLogs implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        if (lastUsed + TimeUnit.MINUTES.toMillis(3) < System.currentTimeMillis()) {
+            sender.sendMessage(ChatColor.RED +
+                    "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " +
+                    "disappear!");
+            return;
+        }
+
         File latest = new File("logs/latest.log");
         File disguises = new File(LibsDisguises.getInstance().getDataFolder(), "disguises.yml");
         File config = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
@@ -196,6 +206,8 @@ public class LDUploadLogs implements LDCommand {
                         URL latestPaste = new GuestPaste("latest.log", latestText).paste();
                         URL configPaste = new GuestPaste("LibsDisguises config.yml", configText.toString()).paste();
                         URL disguisesPaste = new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste();
+
+                        lastUsed = System.currentTimeMillis();
 
                         new BukkitRunnable() {
                             @Override
