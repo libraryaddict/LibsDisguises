@@ -330,7 +330,8 @@ public class DisguiseListener implements Listener {
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
         if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
-            sendUpdateMessage(p, version, requiredProtocolLib);
+            DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
+
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -339,7 +340,7 @@ public class DisguiseListener implements Listener {
                         return;
                     }
 
-                    sendUpdateMessage(p, version, requiredProtocolLib);
+                    DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
                 }
             }.runTaskTimer(LibsDisguises.getInstance(), 10, 10 * 60 * 20); // Run every 10 minutes
         }
@@ -430,18 +431,6 @@ public class DisguiseListener implements Listener {
                 }
             }
         }.runTaskLater(LibsDisguises.getInstance(), 60);
-    }
-
-    private void sendUpdateMessage(Player p, String version, String requiredProtocolLib) {
-        p.sendMessage(ChatColor.RED + "Please ask the server owner to update ProtocolLib! You are running " + version +
-                " but the minimum version you should be on is " + requiredProtocolLib + "!");
-        p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
-                "/ProtocolLib" + ".jar");
-        p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld updateprotocollib" + ChatColor.RED +
-                " - To update to the latest development build");
-        p.sendMessage(ChatColor.DARK_GREEN +
-                "This message is `kindly` provided by Lib's Disguises on repeat to all players due to the sheer " +
-                "number of people who don't see it");
     }
 
     /**

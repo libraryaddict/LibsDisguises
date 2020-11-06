@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.commands;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguisePlayerCommand;
@@ -23,6 +25,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -49,6 +52,13 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected boolean isNotPremium(CommandSender sender) {
+        String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+
+        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+            DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
+        }
+
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED +
