@@ -58,7 +58,7 @@ public class PlayerSkinHandler implements Listener {
 
         public boolean canRemove(boolean onMoved) {
             return firstPacketSent + (DisguiseConfig.getTablistRemoveDelay() * 50) +
-                    (onMoved ? 0 : TimeUnit.SECONDS.toMillis(5)) < System.currentTimeMillis();
+                    (onMoved ? 0 : DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50) < System.currentTimeMillis();
         }
 
         @Override
@@ -75,8 +75,9 @@ public class PlayerSkinHandler implements Listener {
     }
 
     @Getter
-    private final Cache<Player, List<PlayerSkin>> cache =
-            CacheBuilder.newBuilder().weakKeys().expireAfterWrite(30, TimeUnit.SECONDS).removalListener((event) -> {
+    private final Cache<Player, List<PlayerSkin>> cache = CacheBuilder.newBuilder().weakKeys()
+            .expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50, TimeUnit.MILLISECONDS)
+            .removalListener((event) -> {
                 if (event.getCause() != RemovalCause.EXPIRED) {
                     return;
                 }

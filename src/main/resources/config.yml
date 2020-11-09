@@ -291,6 +291,11 @@ ShowPlayerDisguisesInTab: false
 # 3 ticks should easily be enough.
 PlayerDisguisesTablistExpires: 3
 
+# To prevent skins from defaulting to alex/steve, there is a timer that only expires after X ticks or when the player moves
+# You shouldn't actually touch this, but eh. Your server.
+# Default is 5 seconds
+PlayerDisguisesTablistExpiresMove: 100
+
 # Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
 DisableInvisibility: false
 
