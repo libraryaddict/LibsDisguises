@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
@@ -31,6 +32,8 @@ public class PlayerDisguise extends TargetedDisguise {
     private boolean explicitNameVisible = false;
     private final UUID uuid = UUID.randomUUID();
     private transient DisguiseUtilities.DScoreTeam scoreboardName;
+    @Getter
+    private boolean deadmau5Ears;
 
     private PlayerDisguise() {
         super(DisguiseType.PLAYER);
@@ -110,7 +113,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (scoreboardName == null) {
-            if (isUpsideDown()) {
+            if (isUpsideDown() || isDeadmau5Ears()) {
                 scoreboardName = new DisguiseUtilities.DScoreTeam(this, new String[]{"", getProfileName(), ""});
             } else {
                 scoreboardName = DisguiseUtilities.createExtendedName(this);
@@ -121,7 +124,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     private void setScoreboardName(String[] split) {
-        if (isUpsideDown()) {
+        if (isUpsideDown() || isDeadmau5Ears()) {
             return;
         }
 
@@ -141,7 +144,8 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public String getProfileName() {
-        return isUpsideDown() ? "Dinnerbone" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
+        return isUpsideDown() ? "Dinnerbone" :
+                isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
     }
 
     public UUID getUUID() {
@@ -216,6 +220,22 @@ public class PlayerDisguise extends TargetedDisguise {
         return this;
     }
 
+    public PlayerDisguise setDeadmau5Ears(boolean deadmau5Ears) {
+        if (deadmau5Ears == isDeadmau5Ears()) {
+            return this;
+        }
+
+        this.deadmau5Ears = deadmau5Ears;
+
+        if (isDisguiseInUse()) {
+            resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "deadmau5", true);
+        } else {
+            scoreboardName = null;
+        }
+
+        return this;
+    }
+
     @Override
     public PlayerDisguise clone() {
         PlayerDisguise disguise = new PlayerDisguise();
@@ -236,6 +256,7 @@ public class PlayerDisguise extends TargetedDisguise {
         disguise.nameVisible = isNameVisible();
         disguise.explicitNameVisible = explicitNameVisible;
         disguise.setUpsideDown(isUpsideDown());
+        disguise.setDeadmau5Ears(isDeadmau5Ears());
 
         clone(disguise);
 

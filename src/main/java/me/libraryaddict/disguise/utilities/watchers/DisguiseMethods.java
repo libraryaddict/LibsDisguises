@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +54,7 @@ public class DisguiseMethods {
 
     private void loadMethods() {
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
-            List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
-                    .collect(Collectors.toList());
+            String[] lines = new String(ReflectionManager.readFully(stream), StandardCharsets.UTF_8).split("\n");
 
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
             classes.put(FlagWatcher.class.getSimpleName(), FlagWatcher.class);
@@ -68,6 +68,11 @@ public class DisguiseMethods {
 
                 while (!classes.containsKey(c.getSimpleName())) {
                     classes.put(c.getSimpleName(), c);
+
+                    if (c == FlagWatcher.class) {
+                        break;
+                    }
+
                     c = ReflectionManager.getSuperClass(c);
                 }
             }

@@ -8,16 +8,17 @@ import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -63,11 +64,16 @@ public class CompileMethods {
 
         File soundsFile = new File("target/classes/ANTI_PIRACY_ENCODED_WITH_SOUNDS");
 
-        try (PrintWriter writer = new PrintWriter(soundsFile, "UTF-8")) {
-            writer.write(StringUtils.join(list, "\n"));
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
+            byte[] array = StringUtils.join(list, "\n").getBytes(StandardCharsets.UTF_8);
+
+            for (int i = 0; i < array.length; i++) {
+                array[i] = (byte) (Byte.MAX_VALUE - array[i]);
+            }
+
+            fos.write(array);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -84,8 +90,8 @@ public class CompileMethods {
     }
 
     private static void doMethods() {
-        ArrayList<Class<?>> classes = ClassGetter
-                .getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
+        ArrayList<Class<?>> classes =
+                ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
         ArrayList<Class> sorted = new ArrayList<>();
 
@@ -147,40 +153,55 @@ public class CompileMethods {
 
         File methodsFile = new File("target/classes/ANTI_PIRACY_ENCRYPTION");
 
-        try (PrintWriter writer = new PrintWriter(methodsFile, "UTF-8")) {
-            writer.write(StringUtils.join(methods, "\n"));
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+        try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
+            byte[] array = StringUtils.join(methods, "\n").getBytes(StandardCharsets.UTF_8);
+
+            for (int i = 0; i < array.length; i++) {
+                array[i] = (byte) (Byte.MAX_VALUE - array[i]);
+            }
+
+            fos.write(array);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     static String getDescriptorForClass(final Class c) {
         if (c.isPrimitive()) {
-            if (c == byte.class)
+            if (c == byte.class) {
                 return "B";
-            if (c == char.class)
+            }
+            if (c == char.class) {
                 return "C";
-            if (c == double.class)
+            }
+            if (c == double.class) {
                 return "D";
-            if (c == float.class)
+            }
+            if (c == float.class) {
                 return "F";
-            if (c == int.class)
+            }
+            if (c == int.class) {
                 return "I";
-            if (c == long.class)
+            }
+            if (c == long.class) {
                 return "J";
-            if (c == short.class)
+            }
+            if (c == short.class) {
                 return "S";
-            if (c == boolean.class)
+            }
+            if (c == boolean.class) {
                 return "Z";
-            if (c == void.class)
+            }
+            if (c == void.class) {
                 return "V";
+            }
 
             throw new RuntimeException("Unrecognized primitive " + c);
         }
 
-        if (c.isArray())
+        if (c.isArray()) {
             return c.getName().replace('.', '/');
+        }
 
         return ('L' + c.getName() + ';').replace('.', '/');
     }

@@ -31,10 +31,7 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -1715,6 +1712,24 @@ public class ReflectionManager {
 
             createNMSValues(disguiseType);
         }
+    }
+
+    public static byte[] readFully(InputStream input) throws IOException {
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+
+        byte[] array = output.toByteArray();
+
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) (Byte.MAX_VALUE - array[i]);
+        }
+
+        return array;
     }
 
     private static void createNMSValues(DisguiseType disguiseType) {

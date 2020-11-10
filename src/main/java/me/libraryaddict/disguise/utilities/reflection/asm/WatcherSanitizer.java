@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.reflection.asm;
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -13,8 +14,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by libraryaddict on 17/02/2020.
@@ -72,8 +75,7 @@ public class WatcherSanitizer {
     public static void init() {
         try {
             checkPreLoaded();
-        }
-        catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -92,8 +94,7 @@ public class WatcherSanitizer {
                 asm = new Asm13();
             }
 
-            List<String> lines = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
-                    .collect(Collectors.toList());
+            String[] lines = new String(ReflectionManager.readFully(stream), StandardCharsets.UTF_8).split("\n");
 
             LinkedHashMap<String, ArrayList<Map.Entry<String, String>>> toRemove = new LinkedHashMap<>();
 
@@ -118,8 +119,7 @@ public class WatcherSanitizer {
                 Class result = asm.createClassWithoutMethods(entry.getKey(), entry.getValue());
                 mapped.add(entry.getKey());
             }
-        }
-        catch (IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException | LinkageError e) {
+        } catch (IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException | LinkageError e) {
             e.printStackTrace();
             LibsDisguises.getInstance().getLogger().severe("Registered: " + new Gson().toJson(mapped));
         }
