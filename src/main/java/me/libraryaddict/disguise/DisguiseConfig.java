@@ -314,8 +314,6 @@ public class DisguiseConfig {
             return;
         }
 
-        int timer = (int) (TimeUnit.HOURS.toSeconds(isHittingRateLimit() ? 36 : 6) * 20);
-
         if (!LibsDisguises.getInstance().getConfig().getDefaults().getBoolean("AutoUpdate")) {
             updaterTask = Bukkit.getScheduler().runTaskTimer(LibsDisguises.getInstance(), new Runnable() {
                 @Override
@@ -342,11 +340,13 @@ public class DisguiseConfig {
             return;
         }
 
+        int timer = (int) (TimeUnit.HOURS.toSeconds(isHittingRateLimit() ? 36 : 6) * 20);
+
         // Get the ticks since last update
         long timeSinceLast = (System.currentTimeMillis() - getLastUpdateRequest()) / 50;
 
-        // Next update check will be in 30 seconds, or the timer - elapsed time. Whatever is greater
-        timeSinceLast = Math.max(30 * 20, timer - timeSinceLast);
+        // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
+        timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
 
         updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(LibsDisguises.getInstance(), new Runnable() {
             @Override
