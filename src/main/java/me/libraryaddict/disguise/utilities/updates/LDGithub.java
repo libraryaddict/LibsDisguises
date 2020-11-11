@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.updates;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -83,8 +84,7 @@ public class LDGithub {
             }
 
             return ((String) map.get("body")).split("(\\r|\\n)+");
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
         }
 
         return new String[0];
@@ -129,15 +129,18 @@ public class LDGithub {
                         .collect(Collectors.joining("\n"));
 
                 gitData = new Gson().fromJson(json, GithubData.class);
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 try (InputStream error = con.getErrorStream()) {
                     String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines()
                             .collect(Collectors.joining("\n"));
 
                     DisguiseUtilities.getLogger().severe("Error with Github! " + line);
-                }
-                catch (Exception ex1) {
+
+                    if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
+                        DisguiseConfig.setHittingRateLimit(true);
+                        DisguiseUtilities.getLogger().severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
+                    }
+                } catch (Exception ex1) {
                     DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
                     ex1.printStackTrace();
                 }
@@ -162,8 +165,7 @@ public class LDGithub {
 
             return new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"),
                     download);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Failed to check for a release on Github");
             ex.printStackTrace();
         }
