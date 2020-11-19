@@ -116,6 +116,8 @@ public enum DisguiseSoundEnums {
             new Sound[]{Sound.ENTITY_MAGMA_CUBE_DEATH, Sound.ENTITY_MAGMA_CUBE_DEATH_SMALL}, null,
             Sound.ENTITY_MAGMA_CUBE_SQUISH, Sound.ENTITY_MAGMA_CUBE_SQUISH_SMALL),
 
+    MINECART(null, Sound.ENTITY_MINECART_RIDING, null, null, Sound.ENTITY_MINECART_INSIDE),
+
     MULE(Sound.ENTITY_MULE_HURT, Sound.BLOCK_GRASS_STEP, Sound.ENTITY_MULE_DEATH, Sound.ENTITY_MULE_AMBIENT,
             Sound.ENTITY_MULE_CHEST),
 
