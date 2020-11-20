@@ -27,7 +27,7 @@ public class LDUpdateProtocolLib implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("updateprotocollib", "updatepl");
+        return Arrays.asList("updateprotocollib", "updatepl", "protocollib");
     }
 
     @Override
