@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -121,14 +122,15 @@ public class PacketListenerSounds extends PacketAdapter {
                 if (sound == null) {
                     event.setCancelled(true);
                 } else {
-                    mods.write(0, sound);
-                    mods.write(1, ReflectionManager.getSoundCategory(disguise.getType()));
+                    Enum soundCat = ReflectionManager.getSoundCategory(disguise.getType());
+                    float volume = (float) mods.read(5);
+                    float pitch = (float) mods.read(6);
 
                     // Time to change the pitch and volume
                     if (soundType == SoundType.HURT || soundType == SoundType.DEATH || soundType == SoundType.IDLE) {
                         // If the volume is the default
-                        if (mods.read(5).equals(entitySound.getDamageAndIdleSoundVolume())) {
-                            mods.write(5, disguiseSound.getDamageAndIdleSoundVolume());
+                        if (volume == entitySound.getDamageAndIdleSoundVolume()) {
+                            volume = disguiseSound.getDamageAndIdleSoundVolume();
                         }
 
                         // Here I assume its the default pitch as I can't calculate if its real.
@@ -143,8 +145,6 @@ public class PacketListenerSounds extends PacketAdapter {
                             }
 
                             if (((MobDisguise) disguise).isAdult() == baby) {
-                                float pitch = (Float) mods.read(6);
-
                                 if (baby) {
                                     // If the pitch is not the expected
                                     if (pitch < 1.5 || pitch > 1.7) {
@@ -153,10 +153,6 @@ public class PacketListenerSounds extends PacketAdapter {
 
                                     pitch = (DisguiseUtilities.random.nextFloat() -
                                             DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
-                                    // Min = 1.5
-                                    // Cap = 97.5
-                                    // Max = 1.7
-                                    // Cap = 110.5
                                 } else {
                                     // If the pitch is not the expected
                                     if (pitch < 1 || pitch > 1.2) {
@@ -165,24 +161,30 @@ public class PacketListenerSounds extends PacketAdapter {
 
                                     pitch = (DisguiseUtilities.random.nextFloat() -
                                             DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
-                                    // Min = 1
-                                    // Cap = 63
-                                    // Max = 1.2
-                                    // Cap = 75.6
                                 }
-
-                                    /*pitch *= 63;
-
-                                    if (pitch < 0)
-                                        pitch = 0;
-
-                                    if (pitch > 255)
-                                        pitch = 255;*/
-
-                                mods.write(6, pitch);
                             }
                         }
 
+                        if (sound.getClass().getSimpleName().equals("MinecraftKey")) {
+                            PacketContainer newPacket = new PacketContainer(Server.CUSTOM_SOUND_EFFECT);
+                            StructureModifier<Object> newModifs = newPacket.getModifier();
+
+                            newModifs.write(0, sound);
+                            newModifs.write(1, soundCat);
+
+                            newModifs.write(2, mods.read(2));
+                            newModifs.write(3, mods.read(3));
+                            newModifs.write(4, mods.read(4));
+                            newModifs.write(5, volume);
+                            newModifs.write(6, pitch);
+
+                            event.setPacket(newPacket);
+                        } else {
+                            mods.write(0, sound);
+                            mods.write(1, soundCat);
+                            mods.write(5, volume);
+                            mods.write(6, pitch);
+                        }
                     }
                 }
             }
@@ -232,8 +234,9 @@ public class PacketListenerSounds extends PacketAdapter {
 
                         if (sound != null) {
                             Location loc = entity.getLocation();
-
-                            PacketContainer packet = new PacketContainer(Server.NAMED_SOUND_EFFECT);
+                            PacketContainer packet = new PacketContainer(
+                                    sound.getClass().getSimpleName().equals("MinecraftKey") ?
+                                            Server.CUSTOM_SOUND_EFFECT : Server.NAMED_SOUND_EFFECT);
 
                             mods = packet.getModifier();
 

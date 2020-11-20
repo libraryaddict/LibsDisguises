@@ -1338,6 +1338,7 @@ public class ReflectionManager {
         return null;
     }
 
+    @Deprecated
     public static Object createSoundEffect(String minecraftKey) {
         try {
             return getNmsConstructor("SoundEffect", getNmsClass("MinecraftKey"))
