@@ -2536,7 +2536,7 @@ public class DisguiseUtilities {
                 " but the minimum version you should be on is " + requiredProtocolLib + "!");
         p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
                 "/ProtocolLib" + ".jar");
-        p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld updateprotocollib" + ChatColor.RED +
+        p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld updatepl" + ChatColor.RED +
                 " - To update to the latest development build");
         p.sendMessage(ChatColor.DARK_GREEN +
                 "This message is `kindly` provided by Lib's Disguises on repeat to all players due to the sheer " +
