@@ -70,7 +70,7 @@ public class FlagWatcher {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
 
-        if (Math.random() < 0.6) {
+        if (Math.random() < 0.9) {
             return;
         }
 
