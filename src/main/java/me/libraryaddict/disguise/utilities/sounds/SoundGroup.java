@@ -47,8 +47,8 @@ public class SoundGroup {
             sound = ReflectionManager.getCraftSound((Sound) sound);
         } else if (sound instanceof String) {
             sound = ReflectionManager.createSoundEffect((String) sound);
-        } else if (!sound.getClass().getName().equals("SoundEffect")) {
-            throw new IllegalArgumentException();
+        } else if (!sound.getClass().getSimpleName().equals("SoundEffect")) {
+            throw new IllegalArgumentException("Unexpected " + sound.getClass());
         }
 
         if (sound == null) {
