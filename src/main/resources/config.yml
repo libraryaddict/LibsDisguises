@@ -135,6 +135,9 @@ UndisguiseRadiusMax: 50
 # Shall the players view their disguises?
 # Best used when viewing yourself in 3rd person
 ViewSelfDisguises: true
+# Are self disguises enabled by default
+# Default is true
+ViewSelfDisguisesDefault: true
 
 # Some disguises are rather big and tall and block your vision
 # By default those disguises are enabled despite misgivings, such as zombies, players, etc.

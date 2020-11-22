@@ -268,6 +268,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static int playerDisguisesSkinExpiresMove;
+    @Getter
+    @Setter
+    private static boolean viewSelfDisguisesDefault;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -716,6 +719,7 @@ public class DisguiseConfig {
         setRandomDisguises(config.getBoolean("RandomDisguiseOptions"));
         setSaveUserPreferences(config.getBoolean("SaveUserPreferences"));
         setPlayerDisguisesSkinExpiresMove(config.getInt("PlayerDisguisesTablistExpiresMove"));
+        setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

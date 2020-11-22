@@ -57,7 +57,7 @@ public abstract class Disguise {
     private boolean replaceSounds = DisguiseConfig.isSoundEnabled();
     private boolean mobsIgnoreDisguise;
     private boolean velocitySent = DisguiseConfig.isVelocitySent();
-    private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises();
+    private boolean viewSelfDisguise = DisguiseConfig.isViewDisguises() && DisguiseConfig.isViewSelfDisguisesDefault();
     @Getter
     private DisguiseConfig.NotifyBar notifyBar = DisguiseConfig.getNotifyBar();
     @Getter
