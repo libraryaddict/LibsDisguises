@@ -119,7 +119,7 @@ public class LDUploadLogs implements LDCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        if (lastUsed + TimeUnit.MINUTES.toMillis(3) < System.currentTimeMillis()) {
+        if (lastUsed + TimeUnit.MINUTES.toMillis(3) > System.currentTimeMillis()) {
             sender.sendMessage(ChatColor.RED +
                     "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " +
                     "disappear!");
