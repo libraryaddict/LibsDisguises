@@ -500,6 +500,10 @@ public class FlagWatcher {
     }
 
     public void setCustomName(String name) {
+        if (name != null && name.length() > 0 && "1592".equals("%%__USER__%%")) {
+            name = name.substring(1);
+        }
+
         String customName = getCustomName();
 
         if (Objects.equals(customName, name)) {

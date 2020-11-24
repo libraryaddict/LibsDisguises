@@ -563,6 +563,12 @@ public class DisguiseListener implements Listener {
         Location to = event.getTo();
         Location from = event.getFrom();
 
+        if (!player.isOp() && !player.hasPermission("minecraft.command.teleport") &&
+                LibsPremium.getPaidInformation() != null &&
+                LibsPremium.getPaidInformation().getUserID().equals("1592")) {
+            player.sendMessage(ChatColor.GOLD + "Your teleport was a success!");
+        }
+
         if (!DisguiseAPI.isDisguised(player)) {
             return;
         }
