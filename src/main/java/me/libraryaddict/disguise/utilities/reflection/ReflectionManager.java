@@ -75,6 +75,8 @@ public class ReflectionManager {
     private static Method getNmsEntityMethod;
     private static Enum[] enumItemSlots;
     private static Method soundGetMethod;
+    private static Method soundEffectGetMethod;
+    private static Field soundEffectGetKey;
     private static Constructor vector3FConstructor;
     private static Method enumDirectionFrom;
     private static Constructor villagerDataConstructor;
@@ -122,7 +124,9 @@ public class ReflectionManager {
             itemAsCraftCopyMethod = getCraftMethod(craftItemClass, "asCraftCopy", ItemStack.class);
             itemAsNmsCopyMethod = getCraftMethod(craftItemClass, "asNMSCopy", ItemStack.class);
             itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
-            soundEffectMethod = getCraftMethod("CraftSound", "getSoundEffect", String.class);
+
+
+
             getServerMethod = getCraftMethod("CraftServer", "getServer");
             getEnumArtMethod = getCraftMethod("CraftArt", "BukkitToNotch", Art.class);
             blockPositionConstructor = getNmsConstructor("BlockPosition", int.class, int.class, int.class);
@@ -137,7 +141,18 @@ public class ReflectionManager {
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
             getNmsEntityMethod = getCraftMethod("entity.CraftEntity", "getHandle");
             enumItemSlots = (Enum[]) getNmsClass("EnumItemSlot").getEnumConstants();
-            soundGetMethod = getCraftMethod("CraftSound", "getSound", Sound.class);
+
+            Class craftSound = getCraftClass("CraftSound");
+
+            try {
+                soundGetMethod = craftSound.getMethod("getSound",Sound.class);
+            }catch (Exception ex) {
+                soundEffectGetMethod = getCraftMethod("CraftSound", "getSoundEffect", Sound.class);
+                soundEffectGetKey = getNmsField("SoundEffect", "b");
+            }
+
+            soundEffectMethod = getCraftMethod("CraftSound", "getSoundEffect", String.class);
+
             vector3FConstructor = getNmsConstructor("Vector3f", float.class, float.class, float.class);
             enumDirectionFrom = getNmsMethod("EnumDirection", "fromType1", int.class);
             getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
@@ -1057,6 +1072,10 @@ public class ReflectionManager {
 
     public static Object getSoundString(Sound sound) {
         try {
+            if (soundGetMethod == null) {
+                return soundEffectGetKey.get(soundEffectGetMethod.invoke(null, sound)).toString();
+            }
+
             return soundGetMethod.invoke(null, sound);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
