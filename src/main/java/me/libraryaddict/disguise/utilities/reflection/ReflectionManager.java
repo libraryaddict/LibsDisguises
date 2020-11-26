@@ -74,7 +74,8 @@ public class ReflectionManager {
     private static Enum[] enumGamemode;
     private static Method getNmsEntityMethod;
     private static Enum[] enumItemSlots;
-    private static Method soundGetMethod;
+    private static Enum[] craftSounds;
+    private static Field craftSound;
     private static Constructor vector3FConstructor;
     private static Method enumDirectionFrom;
     private static Constructor villagerDataConstructor;
@@ -137,7 +138,9 @@ public class ReflectionManager {
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
             getNmsEntityMethod = getCraftMethod("entity.CraftEntity", "getHandle");
             enumItemSlots = (Enum[]) getNmsClass("EnumItemSlot").getEnumConstants();
-            soundGetMethod = getCraftMethod("CraftSound", "getSound", Sound.class);
+            craftSounds = (Enum[]) getCraftClass("CraftSound").getEnumConstants();
+            craftSound =  getCraftClass("CraftSound").getDeclaredField("minecraftKey");
+            craftSound.setAccessible(true);
             vector3FConstructor = getNmsConstructor("Vector3f", float.class, float.class, float.class);
             enumDirectionFrom = getNmsMethod("EnumDirection", "fromType1", int.class);
             getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
@@ -1057,9 +1060,15 @@ public class ReflectionManager {
 
     public static Object getSoundString(Sound sound) {
         try {
-            return soundGetMethod.invoke(null, sound);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            for (Enum e : craftSounds) {
+                if (!e.name().equals(sound.name())) {
+                    continue;
+                }
+
+                return craftSound.get(e);
+            }
+        } catch (IllegalAccessException illegalAccessException) {
+            illegalAccessException.printStackTrace();
         }
 
         return null;
