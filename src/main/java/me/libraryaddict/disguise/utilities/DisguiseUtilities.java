@@ -486,6 +486,7 @@ public class DisguiseUtilities {
         }
 
         getLogger().info("Now saving disguises..");
+        int disguisesSaved = 0;
 
         for (Set<TargetedDisguise> list : getDisguises().values()) {
             for (TargetedDisguise disg : list) {
@@ -495,15 +496,16 @@ public class DisguiseUtilities {
 
                 if (disg.getEntity() instanceof Player ? !DisguiseConfig.isSavePlayerDisguises() :
                         !DisguiseConfig.isSaveEntityDisguises()) {
-                    continue;
+                    break;
                 }
 
+                disguisesSaved++;
                 saveDisguises(disg.getEntity().getUniqueId(), list.toArray(new Disguise[0]));
                 break;
             }
         }
 
-        getLogger().info("Saved disguises.");
+        getLogger().info("Saved " + disguisesSaved + " disguises.");
     }
 
     public static boolean hasGameProfile(String playername) {
