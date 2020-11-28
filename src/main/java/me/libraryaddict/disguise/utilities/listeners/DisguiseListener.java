@@ -255,10 +255,12 @@ public class DisguiseListener implements Listener {
     }
 
     @EventHandler
-    public void onChunkUnload(WorldUnloadEvent event) {
+    public void onWorldUnload(WorldUnloadEvent event) {
         if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
         }
+
+        int disguisesSaved = 0;
 
         for (Entity entity : event.getWorld().getEntities()) {
             if (entity instanceof Player) {
@@ -271,7 +273,12 @@ public class DisguiseListener implements Listener {
                 continue;
             }
 
+            disguisesSaved++;
             DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
+        }
+
+        if (disguisesSaved > 0) {
+            DisguiseUtilities.getLogger().info("World unloaded, saved " + disguisesSaved + " disguises");
         }
     }
 
