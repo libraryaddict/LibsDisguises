@@ -1223,6 +1223,7 @@ public class DisguiseUtilities {
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
+
         gsonBuilder.disableHtmlEscaping();
 
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
@@ -1232,12 +1233,13 @@ public class DisguiseUtilities {
         gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
         gsonBuilder.registerTypeHierarchyAdapter(ItemStack.class, new SerializerItemStack());
 
+        if (NmsVersion.v1_13.isSupported()) {
+            gsonBuilder.registerTypeHierarchyAdapter(BlockData.class, new SerializerBlockData());
+        }
+
+        // Gotta register all the flag watcher stuff before I make this one
         gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher(gsonBuilder.create()));
         gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
-
-        if (NmsVersion.v1_13.isSupported()) {
-            gsonBuilder.registerTypeAdapter(BlockData.class, new SerializerBlockData());
-        }
 
         gson = gsonBuilder.create();
 
