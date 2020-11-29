@@ -50,6 +50,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
             event.setCancelled(true);
         } else if (DisguiseUtilities.isNotInteractable(packet.getIntegers().read(0))) {
             event.setCancelled(true);
+        }else if (DisguiseUtilities.isSpecialInteract(packet.getIntegers().read(0)) && packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+            event.setCancelled(true);
         }
 
         if (event.isAsync()) {

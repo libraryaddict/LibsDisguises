@@ -134,6 +134,7 @@ public class DisguiseUtilities {
     public static final Random random = new Random();
     private static final LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
     private static final List<Integer> isNoInteract = new ArrayList<>();
+    private static final List<Integer> isSpecialInteract = new ArrayList<>();
     /**
      * A hashmap of the uuid's of entitys, alive and dead. And their disguises in use
      */
@@ -445,6 +446,12 @@ public class DisguiseUtilities {
         }
     }
 
+    public static boolean isSpecialInteract(int entityId) {
+        synchronized (isSpecialInteract) {
+            return isSpecialInteract.contains(entityId);
+        }
+    }
+
     public static boolean isGrabSkinCommandUsed() {
         return grabSkinCommandUsed;
     }
@@ -686,6 +693,12 @@ public class DisguiseUtilities {
                         break;
                     default:
                         break;
+                }
+            }
+
+            synchronized (isSpecialInteract) {
+                if (disguise.getEntity() instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
+                    isSpecialInteract.add(entityId);
                 }
             }
         }
@@ -1542,6 +1555,10 @@ public class DisguiseUtilities {
                 if (disguise.getEntity() != null) {
                     synchronized (isNoInteract) {
                         isNoInteract.remove((Object) disguise.getEntity().getEntityId());
+                    }
+
+                    synchronized (isSpecialInteract) {
+                        isSpecialInteract.remove((Object) disguise.getEntity().getEntityId());
                     }
                 }
             }
