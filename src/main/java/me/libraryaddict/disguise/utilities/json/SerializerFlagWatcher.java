@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,8 +17,8 @@ import java.util.Optional;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, JsonSerializer<FlagWatcher>,
-        InstanceCreator<FlagWatcher> {
+public class SerializerFlagWatcher
+        implements JsonDeserializer<FlagWatcher>, JsonSerializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
     private Gson gson;
 
     public SerializerFlagWatcher(Gson gson) {
@@ -25,11 +26,11 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
     }
 
     @Override
-    public FlagWatcher deserialize(JsonElement json, Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+    public FlagWatcher deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
         try {
-            FlagWatcher watcher = (FlagWatcher) gson
-                    .fromJson(json, Class.forName(((JsonObject) json).get("flagType").getAsString()));
+            FlagWatcher watcher =
+                    (FlagWatcher) gson.fromJson(json, Class.forName(((JsonObject) json).get("flagType").getAsString()));
 
             DisguiseType entity = DisguiseType.valueOf(((JsonObject) json).get("entityType").getAsString());
 
@@ -37,16 +38,15 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
             correct(watcher, entity.getWatcherClass(), "backupEntityValues");
 
             return watcher;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    private void correct(FlagWatcher watcher, Class<? extends FlagWatcher> flagWatcher,
-            String name) throws NoSuchFieldException, IllegalAccessException {
+    private void correct(FlagWatcher watcher, Class<? extends FlagWatcher> flagWatcher, String name)
+            throws NoSuchFieldException, IllegalAccessException {
         Field field = FlagWatcher.class.getDeclaredField(name);
         field.setAccessible(true);
         HashMap<Integer, Object> map = (HashMap<Integer, Object>) field.get(watcher);
@@ -58,29 +58,28 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
             if (entry.getValue() instanceof Double) {
                 Object def = index.getDefault();
 
-                if (def instanceof Long)
+                if (def instanceof Long) {
                     entry.setValue(((Double) entry.getValue()).longValue());
-                else if (def instanceof Float)
+                } else if (def instanceof Float) {
                     entry.setValue(((Double) entry.getValue()).floatValue());
-                else if (def instanceof Integer)
+                } else if (def instanceof Integer) {
                     entry.setValue(((Double) entry.getValue()).intValue());
-                else if (def instanceof Short)
+                } else if (def instanceof Short) {
                     entry.setValue(((Double) entry.getValue()).shortValue());
-                else if (def instanceof Byte)
+                } else if (def instanceof Byte) {
                     entry.setValue(((Double) entry.getValue()).byteValue());
+                }
             } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
                 // If the default value is not VillagerData
                 if (index.getDefault() instanceof VillagerData) {
                     entry.setValue(new Gson().fromJson(new Gson().toJson(entry.getValue()), VillagerData.class));
                 } else if (index.getDefault() instanceof Optional) {
-
                     for (Field f : MetaIndex.class.getFields()) {
                         try {
                             if (f.get(null) != index) {
                                 continue;
                             }
-                        }
-                        catch (IllegalAccessException e) {
+                        } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
 
@@ -95,14 +94,16 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
                             if (((LinkedTreeMap) entry.getValue()).isEmpty()) {
                                 value = Optional.empty();
                             } else {
-                                value = Optional
-                                        .of(gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")),
+                                value = Optional.of(
+                                        gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")),
                                                 val));
                             }
 
                             entry.setValue(value);
                         }
                     }
+                } else if (index.getDefault() instanceof ItemStack) {
+                    entry.setValue(gson.fromJson(gson.toJson(entry.getValue()), ItemStack.class));
                 }
             }
 
@@ -122,8 +123,7 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
     public FlagWatcher createInstance(Type type) {
         try {
             return (FlagWatcher) type.getClass().getConstructor(Disguise.class).newInstance(null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -141,8 +141,7 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
             method.setAccessible(true);
             Disguise disguise = (Disguise) method.invoke(src);
             obj.addProperty("entityType", disguise.getType().name());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
