@@ -189,7 +189,7 @@ public class ReflectionManager {
 
             noDamageTicks = getNmsField("Entity", "noDamageTicks");
             isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
-            genericDamage = getNmsField("DamageSource", "GENERIC");
+            genericDamage = getNmsField("DamageSource", "GENERIC").get(null);
 
             Method method = getNmsMethod("SoundCategory", "a");
 
