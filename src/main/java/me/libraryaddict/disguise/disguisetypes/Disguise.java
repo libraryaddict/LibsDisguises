@@ -790,10 +790,10 @@ public abstract class Disguise {
     }
 
     public Disguise setModifyBoundingBox(boolean modifyBox) {
-        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-            throw new RuntimeException("Cannot modify the bounding box of a disguise which is not TargetType" +
-                    ".SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
-        }
+//        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+//            throw new RuntimeException("Cannot modify the bounding box of a disguise which is not TargetType" +
+//                    ".SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
+//        }
 
         if (isModifyBoundingBox() != modifyBox) {
             this.modifyBoundingBox = modifyBox;
