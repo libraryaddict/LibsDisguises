@@ -1,9 +1,13 @@
 package me.libraryaddict.disguise.utilities.json;
 
+import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
@@ -46,7 +50,7 @@ public class SerializerFlagWatcher
     }
 
     private void correct(FlagWatcher watcher, Class<? extends FlagWatcher> flagWatcher, String name)
-            throws NoSuchFieldException, IllegalAccessException {
+            throws NoSuchFieldException, IllegalAccessException, DisguiseParseException {
         Field field = FlagWatcher.class.getDeclaredField(name);
         field.setAccessible(true);
         HashMap<Integer, Object> map = (HashMap<Integer, Object>) field.get(watcher);
@@ -68,6 +72,11 @@ public class SerializerFlagWatcher
                     entry.setValue(((Double) entry.getValue()).shortValue());
                 } else if (def instanceof Byte) {
                     entry.setValue(((Double) entry.getValue()).byteValue());
+                }
+            } else if (entry.getValue() instanceof String) {
+                if (index.getDefault() instanceof WrappedParticle) {
+                    entry.setValue(((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class))
+                            .fromString((String) entry.getValue()));
                 }
             } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
                 // If the default value is not VillagerData

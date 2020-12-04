@@ -1238,11 +1238,13 @@ public class DisguiseUtilities {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
         gsonBuilder.disableHtmlEscaping();
+        gsonBuilder.setPrettyPrinting();
 
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
         gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
         gsonBuilder.registerTypeAdapter(WrappedChatComponent.class, new SerializerChatComponent());
+        gsonBuilder.registerTypeAdapter(WrappedParticle.class, new SerializerParticle());
         gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
         gsonBuilder.registerTypeHierarchyAdapter(ItemStack.class, new SerializerItemStack());
 
