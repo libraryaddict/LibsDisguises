@@ -1238,7 +1238,6 @@ public class DisguiseUtilities {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
         gsonBuilder.disableHtmlEscaping();
-        gsonBuilder.setPrettyPrinting();
 
         gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
         gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
