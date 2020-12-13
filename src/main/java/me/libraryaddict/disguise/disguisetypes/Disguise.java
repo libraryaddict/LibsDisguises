@@ -489,10 +489,12 @@ public abstract class Disguise {
                     PacketContainer packet = new PacketContainer(Server.REL_ENTITY_MOVE);
 
                     packet.getIntegers().write(0, getEntity().getEntityId());
+
                     try {
                         for (Player player : DisguiseUtilities.getPerverts(disguise)) {
                             if (getEntity() != player) {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                                continue;
                             } else if (!isSelfDisguiseVisible() || !(getEntity() instanceof Player)) {
                                 continue;
                             }
