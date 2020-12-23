@@ -30,16 +30,18 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         Player observer = event.getPlayer();
 
         if (observer == null || observer.getName().contains("UNKNOWN[")) // If the player is temporary
+        {
             return;
+        }
 
-        if (!observer.isOp() &&
-                ("%%__USER__%%".equals(123 + "45") || LibsDisguises.getInstance().getUpdateChecker().isGoSilent())) {
+        if (!observer.isOp() && ("%%__USER__%%".equals(123 + "45") || LibsDisguises.getInstance().getUpdateChecker().isGoSilent())) {
             event.setCancelled(true);
         }
 
@@ -50,7 +52,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
             event.setCancelled(true);
         } else if (DisguiseUtilities.isNotInteractable(packet.getIntegers().read(0))) {
             event.setCancelled(true);
-        }else if (DisguiseUtilities.isSpecialInteract(packet.getIntegers().read(0)) && packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+        } else if (DisguiseUtilities.isSpecialInteract(packet.getIntegers().read(0)) && packet.getModifier().read(3) != null &&
+                packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
             event.setCancelled(true);
         }
 
@@ -82,8 +85,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
             // Attack has a null hand, which throws an error if you attempt to fetch
             // If the hand used wasn't their main hand
-            if (interactType != EnumWrappers.EntityUseAction.ATTACK &&
-                    packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+            if (interactType != EnumWrappers.EntityUseAction.ATTACK && packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
                 handUsed = EquipmentSlot.OFF_HAND;
             } else {
                 handUsed = EquipmentSlot.HAND;
@@ -93,8 +95,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
                 @Override
                 public void run() {
                     // Fire self interact event
-                    DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
-                            interactType == EnumWrappers.EntityUseAction.ATTACK);
+                    DisguiseInteractEvent selfEvent =
+                            new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, interactType == EnumWrappers.EntityUseAction.ATTACK);
 
                     Bukkit.getPluginManager().callEvent(selfEvent);
                 }
@@ -134,8 +136,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                        observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
 
                     if (item == null || item.getType() != Material.SADDLE) {
                         continue;
@@ -156,8 +157,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                        observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
                     if (item == null || !item.getType().name().endsWith("_CARPET")) {
                         continue;
                     }
@@ -183,8 +183,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
-                        observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
                     if (item == null) {
                         continue;
                     }
@@ -203,14 +202,12 @@ public class PacketListenerClientInteract extends PacketAdapter {
                     } else if (disguise.getType() == DisguiseType.WOLF) {
                         WolfWatcher watcher = (WolfWatcher) disguise.getWatcher();
 
-                        watcher.setCollarColor(
-                                DisguiseConfig.isWolfDyeable() ? color.getDyeColor() : watcher.getCollarColor());
+                        watcher.setCollarColor(DisguiseConfig.isWolfDyeable() ? color.getDyeColor() : watcher.getCollarColor());
                         break;
                     } else if (disguise.getType() == DisguiseType.CAT) {
                         CatWatcher watcher = (CatWatcher) disguise.getWatcher();
 
-                        watcher.setCollarColor(
-                                DisguiseConfig.isCatDyeable() ? color.getDyeColor() : watcher.getCollarColor());
+                        watcher.setCollarColor(DisguiseConfig.isCatDyeable() ? color.getDyeColor() : watcher.getCollarColor());
                         break;
                     }
                 }
