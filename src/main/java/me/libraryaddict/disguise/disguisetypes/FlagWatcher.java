@@ -257,7 +257,14 @@ public class FlagWatcher {
 
         for (WrappedWatchableObject watch : list) {
             int id = watch.getIndex();
+            MetaIndex index = MetaIndex.getMetaIndex(this, id);
             sentValues.add(id);
+
+            if (index == null) {
+                DisguiseUtilities.getLogger()
+                        .severe("Failed to find a registered ID for " + id + " of " + getClass().getSimpleName() + " with data value " + watch.getRawValue());
+                continue;
+            }
 
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
@@ -290,7 +297,7 @@ public class FlagWatcher {
 
                 boolean isDirty = watch.getDirtyState();
 
-                watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), value);
+                watch = ReflectionManager.createWatchable(index, value);
 
                 if (watch == null) {
                     continue;
@@ -302,7 +309,7 @@ public class FlagWatcher {
             } else {
                 boolean isDirty = watch.getDirtyState();
 
-                watch = ReflectionManager.createWatchable(MetaIndex.getMetaIndex(this, id), watch.getRawValue());
+                watch = ReflectionManager.createWatchable(index, watch.getRawValue());
 
                 if (watch == null) {
                     continue;
