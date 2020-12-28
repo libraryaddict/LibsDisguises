@@ -261,8 +261,6 @@ public class FlagWatcher {
             sentValues.add(id);
 
             if (index == null) {
-                DisguiseUtilities.getLogger()
-                        .severe("Failed to find a registered ID for " + id + " of " + getClass().getSimpleName() + " with data value " + watch.getRawValue());
                 continue;
             }
 
