@@ -8,7 +8,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.utility.ByteBuddyGenerated;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -37,15 +36,12 @@ public class PacketListenerInventory extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(final PacketEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled() || event.isPlayerTemporary())
             return;
 
         final Player player = event.getPlayer();
 
-        if (player.getName().contains("UNKNOWN[")) // If the player is temporary
-            return;
-
-        if (player instanceof ByteBuddyGenerated || player.getVehicle() != null) {
+        if (player.getVehicle() != null) {
             return;
         }
 
@@ -251,7 +247,7 @@ public class PacketListenerInventory extends PacketAdapter {
         Player player = event.getPlayer();
 
         // If the inventory is the players inventory
-        if (player instanceof ByteBuddyGenerated || player.getVehicle() != null ||
+        if (event.isPlayerTemporary() || player.getVehicle() != null ||
                 event.getPacket().getIntegers().read(0) != 0) {
             return;
         }
