@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -55,24 +56,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                 File protocolLibFile = null;
 
                 try {
-                    Method getFile = JavaPlugin.class.getDeclaredMethod("getFile");
-                    getFile.setAccessible(true);
-                    File theirFile = (File) getFile.invoke(ProtocolLibrary.getPlugin());
-                    File dest = new File("plugins/update/" + theirFile.getName());
-
-                    // We're connecting to spigot's API
-                    URL url =
-                            new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" +
-                                    "/ProtocolLib" +
-                                    ".jar");
-                    // Creating a connection
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
-
-                    // Get the input stream, what we receive
-                    try (InputStream input = con.getInputStream()) {
-                        Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    }
+                    DisguiseUtilities.updateProtocolLib();
 
                     new BukkitRunnable() {
                         @Override

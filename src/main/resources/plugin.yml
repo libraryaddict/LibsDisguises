@@ -6,7 +6,7 @@ build-date: ${timestamp}
 build-number: ${build.number}
 author: libraryaddict
 authors: [Byteflux, Navid K.]
-depend: [ProtocolLib]
+softdepend: [ProtocolLib]
 api-version: '1.13'
 commands:
   libsdisguises:
