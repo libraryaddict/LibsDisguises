@@ -420,7 +420,7 @@ public class DisguiseUtilities {
             dest = new File("plugins/update/" + theirFile.getName());
         }
 
-        // We're connecting to spigot's API
+        // We're connecting to jenkins's API for ProtocolLib
         URL url = new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib.jar");
         // Creating a connection
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
