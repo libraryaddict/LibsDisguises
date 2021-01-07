@@ -61,52 +61,59 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
+        <asm.version>7.3.1</asm.version>
+        <lombok.version>1.18.10</lombok.version>
+        <protocollib.version>master-SNAPSHOT</protocollib.version>
+        <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
+        <junit.version>4.13.1</junit.version>
+        <paper-api.version>1.15.2-R0.1-SNAPSHOT</paper-api.version>
+        <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>7.3.1</version>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.10</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.dmulloy2</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>${protocollib.version}</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
         </dependency>
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>${paper-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>${bungeecord-chat.version}</version>
         </dependency>
     </dependencies>
 
