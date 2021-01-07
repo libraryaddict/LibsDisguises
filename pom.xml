@@ -53,7 +53,6 @@
         </plugins>
     </build>
 
-
     <properties>
         <build.number>unknown</build.number>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -76,26 +75,31 @@
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
             <version>${asm.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.github.dmulloy2</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>${protocollib.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>${spigot.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>${spigot.version}</version>
+            <optional>true</optional>
         </dependency>
         <!-- testing -->
         <dependency>
@@ -103,17 +107,20 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper-api.version}</version>
             <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
             <version>${bungeecord-chat.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

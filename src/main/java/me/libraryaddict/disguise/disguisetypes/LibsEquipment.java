@@ -34,8 +34,9 @@ public class LibsEquipment implements EntityEquipment {
         for (int i = 0; i < equipment.length; i++) {
             ItemStack item = equipment[i];
 
-            if (item == null)
+            if (item == null) {
                 continue;
+            }
 
             newEquip.equipment[i] = item.clone();
         }
@@ -48,8 +49,9 @@ public class LibsEquipment implements EntityEquipment {
     }
 
     public void setItem(EquipmentSlot slot, ItemStack item) {
-        if (getItem(slot) == item)
+        if (getItem(slot) == item) {
             return;
+        }
 
         equipment[slot.ordinal()] = item;
         flagWatcher.sendItemStack(slot, item);
@@ -215,5 +217,47 @@ public class LibsEquipment implements EntityEquipment {
     @Override
     public Entity getHolder() {
         throw new UnsupportedOperationException("This is not supported on a disguise");
+    }
+
+    @Override
+    @Deprecated
+    public void setBoots(ItemStack boots, boolean silent) {
+        setBoots(boots);
+    }
+
+    @Override
+    @Deprecated
+    public void setChestplate(ItemStack chestplate, boolean silent) {
+        setChestplate(chestplate);
+    }
+
+    @Override
+    @Deprecated
+    public void setLeggings(ItemStack leggings, boolean silent) {
+        setLeggings(leggings);
+    }
+
+    @Override
+    @Deprecated
+    public void setHelmet(ItemStack helmet, boolean silent) {
+        setHelmet(helmet);
+    }
+
+    @Override
+    @Deprecated
+    public void setItem(EquipmentSlot equipmentSlot, ItemStack itemStack, boolean silent) {
+        setItem(equipmentSlot, itemStack);
+    }
+
+    @Override
+    @Deprecated
+    public void setItemInMainHand(ItemStack itemStack, boolean silent) {
+        setItemInMainHand(itemStack);
+    }
+
+    @Override
+    @Deprecated
+    public void setItemInOffHand(ItemStack itemStack, boolean silent) {
+        setItemInOffHand(itemStack);
     }
 }
