@@ -57,8 +57,8 @@ public class PlayerSkinHandler implements Listener {
         private boolean sleepPackets;
 
         public boolean canRemove(boolean onMoved) {
-            return firstPacketSent + (DisguiseConfig.getTablistRemoveDelay() * 50) +
-                    (onMoved ? 0 : DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50) < System.currentTimeMillis();
+            return firstPacketSent + (DisguiseConfig.getTablistRemoveDelay() * 50) + (onMoved ? 0 : DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50) <
+                    System.currentTimeMillis();
         }
 
         @Override
@@ -75,21 +75,21 @@ public class PlayerSkinHandler implements Listener {
     }
 
     @Getter
-    private final Cache<Player, List<PlayerSkin>> cache = CacheBuilder.newBuilder().weakKeys()
-            .expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50, TimeUnit.MILLISECONDS)
-            .removalListener((event) -> {
-                if (event.getCause() != RemovalCause.EXPIRED) {
-                    return;
-                }
+    private final Cache<Player, List<PlayerSkin>> cache =
+            CacheBuilder.newBuilder().weakKeys().expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50, TimeUnit.MILLISECONDS)
+                    .removalListener((event) -> {
+                        if (event.getCause() != RemovalCause.EXPIRED) {
+                            return;
+                        }
 
-                List<PlayerSkin> skins = (List<PlayerSkin>) event.getValue();
+                        List<PlayerSkin> skins = (List<PlayerSkin>) event.getValue();
 
-                for (PlayerSkin skin : skins) {
-                    doPacketRemoval((Player) event.getKey(), skin);
-                }
+                        for (PlayerSkin skin : skins) {
+                            doPacketRemoval((Player) event.getKey(), skin);
+                        }
 
-                skins.clear();
-            }).build();
+                        skins.clear();
+                    }).build();
 
     public PlayerSkinHandler() {
         new BukkitRunnable() {
@@ -130,8 +130,8 @@ public class PlayerSkinHandler implements Listener {
         packet.getModifier().write(2, loc.getY());
         packet.getModifier().write(3, loc.getZ());
 
-        for (PlayerSkin skin : value) {
-            if (!skin.isSleepPackets()) {
+        for (PlayerSkin skin : new ArrayList<>(value)) {
+            if (!value.contains(skin) || !skin.isSleepPackets()) {
                 continue;
             }
 
@@ -176,8 +176,7 @@ public class PlayerSkinHandler implements Listener {
 
         if (spawn) {
             packets.getDelayedPacketsMap().entrySet().removeIf(entry -> {
-                entry.getValue()
-                        .removeIf(packet -> packet.getType() == Server.ENTITY_EQUIPMENT && isRemove(skin, packet));
+                entry.getValue().removeIf(packet -> packet.getType() == Server.ENTITY_EQUIPMENT && isRemove(skin, packet));
 
                 return entry.getValue().isEmpty();
             });
@@ -209,8 +208,7 @@ public class PlayerSkinHandler implements Listener {
         return true;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR,
-            ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onUndisguise(UndisguiseEvent event) {
         if (!event.getDisguise().isPlayerDisguise()) {
             return;
@@ -246,12 +244,11 @@ public class PlayerSkinHandler implements Listener {
     private void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
         Entity entity = disguise.getEntity();
-        WrappedDataWatcher watcher = DisguiseUtilities
-                .createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
+        WrappedDataWatcher watcher = DisguiseUtilities.createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
 
-        PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)
-                .createPacket(entity.getEntityId(), watcher, true);
+        PacketContainer metaPacket =
+                ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)
+                        .createPacket(entity.getEntityId(), watcher, true);
 
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
 
@@ -339,8 +336,7 @@ public class PlayerSkinHandler implements Listener {
             }
 
             if (skin.isDoTabList()) {
-                PacketContainer packetContainer =
-                        DisguiseUtilities.getTabPacket(disguise, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+                PacketContainer packetContainer = DisguiseUtilities.getTabPacket(disguise, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
             }
