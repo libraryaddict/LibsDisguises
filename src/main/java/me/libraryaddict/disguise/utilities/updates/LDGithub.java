@@ -139,6 +139,7 @@ public class LDGithub {
                     if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
                         DisguiseConfig.setHittingRateLimit(true);
                         DisguiseUtilities.getLogger().severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
+                        return null;
                     }
                 } catch (Exception ex1) {
                     DisguiseUtilities.getLogger().severe("Error when trying to read error stream! Inception!");
