@@ -343,7 +343,7 @@ public class DisguiseConfig {
             return;
         }
 
-        int timer = (int) (TimeUnit.HOURS.toSeconds(isHittingRateLimit() ? 36 : 6) * 20);
+        int timer = (int) (TimeUnit.HOURS.toSeconds(isHittingRateLimit() ? 36 : 12) * 20);
 
         // Get the ticks since last update
         long timeSinceLast = (System.currentTimeMillis() - getLastUpdateRequest()) / 50;
