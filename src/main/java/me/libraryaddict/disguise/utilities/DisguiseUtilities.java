@@ -417,7 +417,7 @@ public class DisguiseUtilities {
             getFile.setAccessible(true);
 
             File theirFile = (File) getFile.invoke(ProtocolLibrary.getPlugin());
-            dest = new File("plugins/update/" + theirFile.getName());
+            dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
         }
 
         // We're connecting to jenkins's API for ProtocolLib
