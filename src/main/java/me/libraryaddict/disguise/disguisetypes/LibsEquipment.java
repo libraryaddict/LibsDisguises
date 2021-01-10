@@ -219,43 +219,43 @@ public class LibsEquipment implements EntityEquipment {
         throw new UnsupportedOperationException("This is not supported on a disguise");
     }
 
-    @Override
+    //@Override
     @Deprecated
     public void setBoots(ItemStack boots, boolean silent) {
         setBoots(boots);
     }
 
-    @Override
+    //@Override
     @Deprecated
     public void setChestplate(ItemStack chestplate, boolean silent) {
         setChestplate(chestplate);
     }
 
-    @Override
+    //@Override
     @Deprecated
     public void setLeggings(ItemStack leggings, boolean silent) {
         setLeggings(leggings);
     }
 
-    @Override
+    //@Override
     @Deprecated
     public void setHelmet(ItemStack helmet, boolean silent) {
         setHelmet(helmet);
     }
 
-    @Override
+  // @Override
     @Deprecated
     public void setItem(EquipmentSlot equipmentSlot, ItemStack itemStack, boolean silent) {
         setItem(equipmentSlot, itemStack);
     }
 
-    @Override
+   // @Override
     @Deprecated
     public void setItemInMainHand(ItemStack itemStack, boolean silent) {
         setItemInMainHand(itemStack);
     }
 
-    @Override
+    //@Override
     @Deprecated
     public void setItemInOffHand(ItemStack itemStack, boolean silent) {
         setItemInOffHand(itemStack);
