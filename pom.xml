@@ -64,9 +64,9 @@
         <asm.version>9.0</asm.version>
         <lombok.version>1.18.16</lombok.version>
         <protocollib.version>master-SNAPSHOT</protocollib.version>
-        <spigot.version>1.16.4-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.1</junit.version>
-        <paper-api.version>1.16.4-R0.1-SNAPSHOT</paper-api.version>
+        <paper-api.version>1.16.1-R0.1-SNAPSHOT</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
     </properties>
 
