@@ -149,6 +149,10 @@ public abstract class Disguise {
     public abstract double getHeight();
 
     protected void sendArmorStands(String[] oldName) {
+        if (!isDisguiseInUse()) {
+            return;
+        }
+
         ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(this, oldName);
 
         try {
