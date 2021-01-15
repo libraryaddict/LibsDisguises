@@ -122,6 +122,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
             pitch = DisguiseUtilities.getPitch(disguise.getType(), pitch);
         }
 
+        boolean normalPlayerDisguise = true;
+
         if (disguise.getType() == DisguiseType.EXPERIENCE_ORB) {
             PacketContainer spawnOrb = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB);
             packets.addPacket(spawnOrb);
@@ -205,7 +207,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
 
             // If self disguise, or further than 50 blocks, or not in front of entity
-            boolean normalPlayerDisguise = observer == disguisedEntity || dist > (50 * 50) ||
+            normalPlayerDisguise = observer == disguisedEntity || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize()).distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
             sendArmor = normalPlayerDisguise;
 
@@ -433,7 +435,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             packets.addPacket(newPacket);
         }
 
-        if (!disguise.isPlayerDisguise()) {
+        if (!disguise.isPlayerDisguise() || normalPlayerDisguise) {
             DisguiseUtilities.getNamePackets(disguise, new String[0]).forEach(packets::addPacket);
         }
 
