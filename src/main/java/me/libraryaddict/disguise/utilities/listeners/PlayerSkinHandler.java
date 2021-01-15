@@ -100,6 +100,16 @@ public class PlayerSkinHandler implements Listener {
         }.runTaskTimer(LibsDisguises.getInstance(), 1, 1);
     }
 
+    public boolean isSleeping(Player player, PlayerDisguise disguise) {
+        List<PlayerSkin> disguises = getCache().getIfPresent(player);
+
+        if (disguises == null) {
+            return false;
+        }
+
+        return disguises.stream().anyMatch(d -> d.getDisguise().get() == disguise);
+    }
+
     public PlayerSkin addPlayerSkin(Player player, PlayerDisguise disguise) {
         tryProcess(player, false);
 
@@ -333,6 +343,14 @@ public class PlayerSkinHandler implements Listener {
             if (skin.isSleepPackets()) {
                 addTeleport(player, skin);
                 addMetadata(player, skin);
+            }
+
+            if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {
+                ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(disguise, new String[0]);
+
+                for (PacketContainer p : packets) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, p);
+                }
             }
 
             if (skin.isDoTabList()) {

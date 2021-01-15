@@ -153,6 +153,10 @@ public abstract class Disguise {
 
         try {
             for (Player player : DisguiseUtilities.getPerverts(this)) {
+                if (isPlayerDisguise() && LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
+                    continue;
+                }
+
                 for (PacketContainer packet : packets) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
