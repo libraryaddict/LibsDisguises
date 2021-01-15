@@ -451,6 +451,10 @@ public class FlagWatcher {
 
         try {
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                if (getDisguise().isPlayerDisguise() && LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
+                    continue;
+                }
+
                 for (PacketContainer packet : packets) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
                 }
