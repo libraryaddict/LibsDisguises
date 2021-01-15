@@ -420,6 +420,10 @@ public class DisguiseUtilities {
             dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
         }
 
+        if (!dest.exists()) {
+            dest.createNewFile();
+        }
+
         // We're connecting to jenkins's API for ProtocolLib
         URL url = new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib.jar");
         // Creating a connection
