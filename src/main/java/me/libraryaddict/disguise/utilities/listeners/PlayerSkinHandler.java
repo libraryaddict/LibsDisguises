@@ -261,7 +261,6 @@ public class PlayerSkinHandler implements Listener {
                         .createPacket(entity.getEntityId(), watcher, true);
 
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
-
     }
 
     private void addTeleport(Player player, PlayerSkin skin) throws InvocationTargetException {
@@ -342,7 +341,17 @@ public class PlayerSkinHandler implements Listener {
 
             if (skin.isSleepPackets()) {
                 addTeleport(player, skin);
-                addMetadata(player, skin);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            addMetadata(player, skin);
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.runTask(LibsDisguises.getInstance());
             }
 
             if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {
