@@ -146,7 +146,7 @@ public class LDGithub {
                     ex1.printStackTrace();
                 }
 
-                throw ex;
+                return null;
             }
 
             String download = null;
