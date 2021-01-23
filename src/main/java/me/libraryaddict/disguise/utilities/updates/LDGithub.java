@@ -17,6 +17,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +59,10 @@ public class LDGithub {
     private UpdateChecker checker;
 
     private String[] getBadUsers() {
+        if (!LibsPremium.isPremium() || (LibsPremium.isBisectHosted() && (LibsPremium.getPaidInformation() == null || LibsPremium.getUserID().contains("%")))) {
+            return new String[0];
+        }
+
         // List of bad users that need to redownload Libs Disguises
 
         try {
@@ -73,8 +78,7 @@ public class LDGithub {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("\n"));
+                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 map = new Gson().fromJson(json, HashMap.class);
             }
@@ -96,18 +100,18 @@ public class LDGithub {
 
             for (String s : users) {
                 if (LibsPremium.getPaidInformation() != null &&
-                        (s.equals(LibsPremium.getPaidInformation().getDownloadID()) ||
-                                s.equals(LibsPremium.getPaidInformation().getUserID()))) {
+                        (s.equals(LibsPremium.getPaidInformation().getDownloadID()) || s.equals(LibsPremium.getPaidInformation().getUserID()))) {
                     LibsDisguises.getInstance().unregisterCommands(true);
                 } else {
-                    if (LibsPremium.getUserID() == null ||
-                            (!s.equals(LibsPremium.getUserID()) && !s.equals(LibsPremium.getDownloadID()))) {
+                    if (LibsPremium.getUserID() == null || (!s.equals(LibsPremium.getUserID()) && !s.equals(LibsPremium.getDownloadID()))) {
                         continue;
                     }
 
                     getChecker().setGoSilent(true);
                 }
             }
+
+            String ourVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
             if (!getChecker().isGoSilent()) {
                 DisguiseUtilities.getLogger().info("Now looking for update on Github..");
@@ -120,19 +124,27 @@ public class LDGithub {
             con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
             con.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
+            // We believe we're on the latest version and know what the last etag was
+            if (Objects.equals(ourVersion, DisguiseConfig.getLastPluginUpdateVersion()) && DisguiseConfig.getLastGithubUpdateETag() != null) {
+                con.setRequestProperty("If-None-Match", DisguiseConfig.getLastGithubUpdateETag());
+            }
+
+            if (con.getResponseCode() == 304) {
+                // Its the same as the last one we checked
+                return null;
+            }
+
             GithubData gitData;
 
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("\n"));
+                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 gitData = new Gson().fromJson(json, GithubData.class);
             } catch (IOException ex) {
                 try (InputStream error = con.getErrorStream()) {
-                    String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines()
-                            .collect(Collectors.joining("\n"));
+                    String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                     DisguiseUtilities.getLogger().severe("Error with Github! " + line);
 
@@ -164,8 +176,15 @@ public class LDGithub {
                 throw new IllegalStateException("Download url is missing");
             }
 
-            return new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"),
-                    download);
+            GithubUpdate update = new GithubUpdate(gitData.getTag_name().replace("v", ""), gitData.getBody().split("(\\r|\\n)+"), download);
+
+            if (Objects.equals(update.getVersion(), ourVersion)) {
+                DisguiseConfig.setLastGithubUpdateETag(con.getHeaderField("ETag"));
+                DisguiseConfig.setLastPluginUpdateVersion(ourVersion);
+                DisguiseConfig.saveInternalConfig();
+            }
+
+            return update;
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Failed to check for a release on Github");
             ex.printStackTrace();
