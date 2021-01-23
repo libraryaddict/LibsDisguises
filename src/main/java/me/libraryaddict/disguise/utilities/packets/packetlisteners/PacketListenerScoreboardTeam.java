@@ -33,25 +33,7 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
             return;
         }
 
-        DisguiseUtilities.DScoreTeam team = null;
-
-        loop:
-        for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-            for (Disguise disguise : disguises) {
-                if (!disguise.isPlayerDisguise() || !((PlayerDisguise) disguise).hasScoreboardName()) {
-                    continue;
-                }
-
-                DisguiseUtilities.DScoreTeam t = ((PlayerDisguise) disguise).getScoreboardName();
-
-                if (!name.equals(t.getTeamName())) {
-                    continue;
-                }
-
-                team = t;
-                break loop;
-            }
-        }
+        DisguiseUtilities.DScoreTeam team = DisguiseUtilities.getTeams().get(name);
 
         if (team == null) {
             return;

@@ -68,6 +68,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -91,12 +92,16 @@ public class DisguiseUtilities {
             return split[1];
         }
 
-        public String getPrefix() {
+        public synchronized String getPrefix() {
             return split[0];
         }
 
-        public String getSuffix() {
+        public synchronized String getSuffix() {
             return split[2];
+        }
+
+        public synchronized void setSplit(String[] split) {
+            this.split = split;
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
@@ -181,6 +186,8 @@ public class DisguiseUtilities {
     private final static List<UUID> viewSelf = new ArrayList<>();
     private final static List<UUID> viewBar = new ArrayList<>();
     private static long lastSavedPreferences;
+    @Getter
+    private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
 
     /**
      * Only allow saves every 2 minutes
@@ -1710,6 +1717,8 @@ public class DisguiseUtilities {
             exName.setTeamName(getUniqueTeam());
         }
 
+        getTeams().put(exName.getTeamName(), exName);
+
         for (Scoreboard board : getAllScoreboards()) {
             exName.handleTeam(board, disguise.isNameVisible());
         }
@@ -1748,6 +1757,7 @@ public class DisguiseUtilities {
             t.unregister();
         }
 
+        getTeams().remove(removed.getScoreboardName().getTeamName());
         removed.getScoreboardName().setTeamName(null);
     }
 
