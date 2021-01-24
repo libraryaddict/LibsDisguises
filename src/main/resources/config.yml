@@ -76,6 +76,8 @@ SaveDisguises:
 # ARMORSTANDS - Names are limited to 256 chars, uses a mix of armorstands and teams to do this. Slightly hacky.
 # Downside of armorstand names is that there's a chance of it becoming desynced from the player disguise
 # And names will always display even if the entity is invisible using potion effects
+# With ArmorStands & the Premium version, you can also use multiple lines in the nametag, use \n as a seperator.
+# Read the next option for more information.
 PlayerNames: TEAMS
 
 # If doing ARMORSTANDS in the above option, should CustomNames be overridden to use armorstands too?
