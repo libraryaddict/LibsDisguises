@@ -173,7 +173,8 @@ public class PacketsManager {
             if (NmsVersion.v1_13.isSupported() &&
                     DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
                 scoreboardTeamListener = new PacketListenerScoreboardTeam();
-                ProtocolLibrary.getProtocolManager().getAsynchronousManager().registerAsyncHandler(scoreboardTeamListener);
+
+                ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
             }
         }
     }

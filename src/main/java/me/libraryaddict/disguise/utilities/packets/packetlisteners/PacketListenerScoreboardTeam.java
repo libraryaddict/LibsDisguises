@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.ListenerOptions;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public class PacketListenerScoreboardTeam extends PacketAdapter {
     public PacketListenerScoreboardTeam() {
-        super(LibsDisguises.getInstance(), PacketType.Play.Server.SCOREBOARD_TEAM);
+        super(new AdapterParameteters().optionAsync().plugin(LibsDisguises.getInstance()).types(PacketType.Play.Server.SCOREBOARD_TEAM));
     }
 
     @Override
