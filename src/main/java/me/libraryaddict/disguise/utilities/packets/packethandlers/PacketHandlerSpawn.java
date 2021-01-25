@@ -57,7 +57,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
     @Override
     public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
-
         packets.clear();
 
         if (disguise.getType() == DisguiseType.UNKNOWN) {

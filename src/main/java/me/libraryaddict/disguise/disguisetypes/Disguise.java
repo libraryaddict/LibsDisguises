@@ -1081,6 +1081,15 @@ public abstract class Disguise {
             multiName = new String[0];
         }
 
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission("libsdisguises.seethrough") ||
+                    ((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+                continue;
+            }
+
+            ((TargetedDisguise) this).addPlayer(player);
+        }
+
         if (LibsPremium.getUserID().equals("123" + "45") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
             ((TargetedDisguise) this).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
 
