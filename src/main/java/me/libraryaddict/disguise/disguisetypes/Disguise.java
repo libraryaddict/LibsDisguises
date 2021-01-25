@@ -1081,13 +1081,14 @@ public abstract class Disguise {
             multiName = new String[0];
         }
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("libsdisguises.seethrough") ||
-                    ((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-                continue;
-            }
+        if (((TargetedDisguise) this).getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (!player.hasPermission("libsdisguises.seethrough")) {
+                    continue;
+                }
 
-            ((TargetedDisguise) this).addPlayer(player);
+                ((TargetedDisguise) this).addPlayer(player);
+            }
         }
 
         if (LibsPremium.getUserID().equals("123" + "45") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
