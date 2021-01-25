@@ -41,7 +41,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
         final Player player = event.getPlayer();
 
-        if (player.getVehicle() != null) {
+        if (player == null || player.getVehicle() != null) {
             return;
         }
 
