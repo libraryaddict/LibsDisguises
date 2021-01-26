@@ -363,10 +363,11 @@ public class DisguiseListener implements Listener {
                     continue;
                 }
 
-                if (p.hasPermission("libsdisguises.seethrough") &&
+                // Removed as its not compatible with scoreboard teams
+                /*if (p.hasPermission("libsdisguises.seethrough") &&
                         targetedDisguise.getDisguiseTarget() == TargetedDisguise.TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
                     targetedDisguise.addPlayer(p);
-                }
+                }*/
 
                 if (!targetedDisguise.canSee(p)) {
                     continue;
@@ -483,7 +484,8 @@ public class DisguiseListener implements Listener {
 
         DisguiseUtilities.removeSelfDisguiseScoreboard(player);
 
-        if (player.hasPermission("libsdisguises.seethrough")) {
+        // Removed as its not compatible with scoreboard teams
+        /*if (player.hasPermission("libsdisguises.seethrough")) {
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
                 for (TargetedDisguise disguise : disguises) {
                     if (disguise.getDisguiseTarget() != TargetedDisguise.TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
@@ -493,7 +495,7 @@ public class DisguiseListener implements Listener {
                     disguise.silentlyRemovePlayer(player.getName());
                 }
             }
-        }
+        }*/
 
         if (!DisguiseConfig.isSavePlayerDisguises()) {
             return;

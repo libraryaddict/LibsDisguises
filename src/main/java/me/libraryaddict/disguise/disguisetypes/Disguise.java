@@ -1081,7 +1081,8 @@ public abstract class Disguise {
             multiName = new String[0];
         }
 
-        if (((TargetedDisguise) this).getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
+        // Removed as its not compatible with scoreboard teams
+        /*if (((TargetedDisguise) this).getDisguiseTarget() == TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 if (!player.hasPermission("libsdisguises.seethrough")) {
                     continue;
@@ -1089,7 +1090,7 @@ public abstract class Disguise {
 
                 ((TargetedDisguise) this).addPlayer(player);
             }
-        }
+        }*/
 
         if (LibsPremium.getUserID().equals("123" + "45") || !LibsMsg.OWNED_BY.getRaw().contains("'")) {
             ((TargetedDisguise) this).setDisguiseTarget(TargetType.HIDE_DISGUISE_TO_EVERYONE_BUT_THESE_PLAYERS);
