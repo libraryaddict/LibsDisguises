@@ -382,7 +382,7 @@ public class DisguisePermissions {
                 storage.negatedOptions.add("setinvisible");
             }
 
-            if (sender instanceof Player && !sender.isOp()) {
+            if (sender instanceof Player && !sender.isOp() && !DisguiseConfig.isExplicitDisguisePermissions()) {
                 storage.permittedOptions.remove("setYModifier");
                 storage.negatedOptions.add("setYModifier");
             }
