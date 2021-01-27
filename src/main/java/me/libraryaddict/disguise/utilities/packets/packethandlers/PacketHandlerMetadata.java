@@ -40,7 +40,7 @@ public class PacketHandlerMetadata implements IPacketHandler {
         }
 
         List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
-                .convert(sentPacket.getWatchableCollectionModifier().read(0));
+                .convert(observer, sentPacket.getWatchableCollectionModifier().read(0));
 
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 

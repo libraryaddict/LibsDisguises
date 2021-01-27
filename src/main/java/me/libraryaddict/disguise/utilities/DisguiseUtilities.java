@@ -2778,11 +2778,11 @@ public class DisguiseUtilities {
     /**
      * Create a new datawatcher but with the 'correct' values
      */
-    public static WrappedDataWatcher createSanitizedDataWatcher(WrappedDataWatcher entityWatcher, FlagWatcher disguiseWatcher) {
+    public static WrappedDataWatcher createSanitizedDataWatcher(Player player, WrappedDataWatcher entityWatcher, FlagWatcher disguiseWatcher) {
         WrappedDataWatcher newWatcher = new WrappedDataWatcher();
 
         try {
-            List<WrappedWatchableObject> list = DisguiseConfig.isMetaPacketsEnabled() ? disguiseWatcher.convert(entityWatcher.getWatchableObjects()) :
+            List<WrappedWatchableObject> list = DisguiseConfig.isMetaPacketsEnabled() ? disguiseWatcher.convert(player, entityWatcher.getWatchableObjects()) :
                     disguiseWatcher.getWatchableObjects();
 
             for (WrappedWatchableObject watchableObject : list) {

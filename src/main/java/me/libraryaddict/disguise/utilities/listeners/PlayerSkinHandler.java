@@ -254,7 +254,7 @@ public class PlayerSkinHandler implements Listener {
     private void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
         Entity entity = disguise.getEntity();
-        WrappedDataWatcher watcher = DisguiseUtilities.createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
+        WrappedDataWatcher watcher = DisguiseUtilities.createSanitizedDataWatcher(player, WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
 
         PacketContainer metaPacket =
                 ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)

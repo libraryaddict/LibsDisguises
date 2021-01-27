@@ -99,7 +99,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                         if (watch != null)
                             list.add(watch);
 
-                        list = disguise.getWatcher().convert(list);
+                        list = disguise.getWatcher().convert(observer, list);
                     } else {
                         for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
                             if (obj.getIndex() == MetaIndex.LIVING_HAND.getIndex()) {
@@ -174,7 +174,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     if (watch != null)
                         list.add(watch);
 
-                    list = disguise.getWatcher().convert(list);
+                    list = disguise.getWatcher().convert(observer, list);
                 } else {
                     for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
                         if (obj.getIndex() == toUse.getIndex()) {

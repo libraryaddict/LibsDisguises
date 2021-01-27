@@ -236,7 +236,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 // Set invis
                 toSend.setObject(obj, (byte) 32);
             } else {
-                toSend = DisguiseUtilities.createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
+                toSend = DisguiseUtilities.createSanitizedDataWatcher(observer, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
             }
 
             if (NmsVersion.v1_15.isSupported()) {
@@ -305,7 +305,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(11, yaw);
 
             WrappedDataWatcher newWatcher =
-                    DisguiseUtilities.createSanitizedDataWatcher(WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
+                    DisguiseUtilities.createSanitizedDataWatcher(observer, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
 
             if (NmsVersion.v1_15.isSupported()) {
                 PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
