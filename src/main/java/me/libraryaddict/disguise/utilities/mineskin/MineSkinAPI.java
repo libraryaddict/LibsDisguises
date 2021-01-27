@@ -180,8 +180,8 @@ public class MineSkinAPI {
 
             callback.onError(LibsMsg.SKIN_API_FAIL);
         } finally {
-            lock.unlock();
             nextRequest = System.currentTimeMillis() + nextRequestIn + 1000;
+            lock.unlock();
         }
 
         return null;
@@ -189,6 +189,18 @@ public class MineSkinAPI {
 
     public MineSkinResponse generateFromUUID(UUID uuid, SkinUtils.ModelType modelType) throws IllegalArgumentException {
         lock.lock();
+
+        long sleep = nextRequest - System.currentTimeMillis();
+
+        if (sleep > 0) {
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        long nextRequestIn = TimeUnit.SECONDS.toMillis(10);
 
         try {
             String siteUrl = "https://api.mineskin.org/generate/user/:" + uuid.toString();
@@ -210,13 +222,11 @@ public class MineSkinAPI {
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
-                nextRequest = System.currentTimeMillis() + (long) (skinResponse.getNextRequest() * 1000);
+                nextRequestIn = (long) (skinResponse.getNextRequest() * 1000);
 
                 return skinResponse;
             }
         } catch (Exception ex) {
-            nextRequest = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
-
             if (ex.getMessage() != null && ex.getMessage().contains("Server returned HTTP response code: 400 for URL")) {
                 throw new IllegalArgumentException();
             }
@@ -224,6 +234,7 @@ public class MineSkinAPI {
             DisguiseUtilities.getLogger().warning("Failed to access MineSkin.org");
             ex.printStackTrace();
         } finally {
+            nextRequest = System.currentTimeMillis() + nextRequestIn + 1000;
             lock.unlock();
         }
 
