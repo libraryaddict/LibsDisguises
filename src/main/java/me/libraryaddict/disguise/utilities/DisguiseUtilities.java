@@ -1758,6 +1758,10 @@ public class DisguiseUtilities {
                 continue;
             }
 
+            for (String name : t.getEntries()) {
+                board.resetScores(name);
+            }
+
             t.unregister();
         }
 

@@ -699,12 +699,6 @@ public class PlayerDisguise extends TargetedDisguise {
             return result;
         }
 
-        String name = !DisguiseConfig.isScoreboardNames() ? getName() : getScoreboardName().getPlayer();
-
-        if (Bukkit.getPlayer(name) == null) {
-            DisguiseUtilities.getAllScoreboards().forEach(s -> s.resetScores(name));
-        }
-
         if (hasScoreboardName()) {
             if (disguiseBeingReplaced) {
                 new BukkitRunnable() {
