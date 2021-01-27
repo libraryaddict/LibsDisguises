@@ -1297,6 +1297,10 @@ public class DisguiseUtilities {
                     continue;
                 }
 
+                for (String name : team.getEntries()) {
+                    board.resetScores(name);
+                }
+
                 team.unregister();
             }
 
