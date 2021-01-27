@@ -52,16 +52,25 @@ public class MineSkinAPI {
      *
      * @param url
      */
-    public MineSkinResponse generateFromUrl(SkinUtils.SkinCallback callback, String url,
-            SkinUtils.ModelType modelType) {
+    public MineSkinResponse generateFromUrl(SkinUtils.SkinCallback callback, String url, SkinUtils.ModelType modelType) {
         return doPost(callback, "/generate/url", url, null, modelType);
     }
 
-    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file,
-            SkinUtils.ModelType modelType) {
+    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file, SkinUtils.ModelType modelType) {
         lock.lock();
 
+        long sleep = nextRequest - System.currentTimeMillis();
+
+        if (sleep > 0) {
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         HttpURLConnection connection = null;
+        long nextRequestIn = TimeUnit.SECONDS.toMillis(10);
 
         try {
             URL url = new URL("https://api.mineskin.org" + path);
@@ -78,8 +87,7 @@ public class MineSkinAPI {
             String charset = "UTF-8";
             String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
-            try (OutputStream output = connection.getOutputStream(); PrintWriter writer = new PrintWriter(
-                    new OutputStreamWriter(output, charset), true)) {
+            try (OutputStream output = connection.getOutputStream(); PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true)) {
                 // Send normal param.
                 writer.append("--").append(boundary).append(CRLF);
                 writer.append("Content-Disposition: form-data; name=\"visibility\"").append(CRLF);
@@ -89,8 +97,7 @@ public class MineSkinAPI {
                 if (file != null) {
                     // Send binary file.
                     writer.append("--").append(boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(file.getName())
-                            .append("\"").append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(file.getName()).append("\"").append(CRLF);
                     writer.append("Content-Type: image/png").append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
@@ -115,9 +122,8 @@ public class MineSkinAPI {
             }
 
             if (connection.getResponseCode() == 500) {
-                APIError error = new Gson().fromJson(
-                        new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))
-                                .lines().collect(Collectors.joining("\n")), APIError.class);
+                APIError error = new Gson().fromJson(new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n")), APIError.class);
 
                 if (error.code == 403) {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_403.get());
@@ -129,8 +135,7 @@ public class MineSkinAPI {
                     callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_TIMEOUT.get());
                     return null;
                 } else {
-                    callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code,
-                            LibsMsg.SKIN_API_IMAGE_HAS_ERROR.get(error.error));
+                    callback.onError(LibsMsg.SKIN_API_FAIL_CODE, "" + error.code, LibsMsg.SKIN_API_IMAGE_HAS_ERROR.get(error.error));
                     return null;
                 }
             } else if (connection.getResponseCode() == 400) {
@@ -141,45 +146,42 @@ public class MineSkinAPI {
                     callback.onError(LibsMsg.SKIN_API_BAD_FILE);
                     return null;
                 }
+            } else if (connection.getResponseCode() == 429) {
+                callback.onError(LibsMsg.SKIN_API_FAIL_TOO_FAST);
+                return null;
             }
 
             // Get the input stream, what we receive
             try (InputStream input = connection.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("\n"));
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
-                nextRequest = System.currentTimeMillis() + (long) (skinResponse.getNextRequest() * 1000);
+                nextRequestIn = (long) (skinResponse.getNextRequest() * 1000);
 
                 return skinResponse;
             }
-        }
-        catch (SocketTimeoutException ex) {
+        } catch (SocketTimeoutException ex) {
             callback.onError(skinUrl == null ? LibsMsg.SKIN_API_TIMEOUT_ERROR : LibsMsg.SKIN_API_IMAGE_TIMEOUT);
             return null;
-        }
-        catch (Exception ex) {
-            nextRequest = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
-
+        } catch (Exception ex) {
             try {
-                if (connection != null && (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 ||
-                        connection.getResponseCode() == 504 || connection.getResponseCode() == 599)) {
+                if (connection != null && (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
+                        connection.getResponseCode() == 599)) {
                     callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
                     return null;
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
             }
 
             DisguiseUtilities.getLogger().warning("Failed to access MineSkin.org");
             ex.printStackTrace();
 
             callback.onError(LibsMsg.SKIN_API_FAIL);
-        }
-        finally {
+        } finally {
             lock.unlock();
+            nextRequest = System.currentTimeMillis() + nextRequestIn + 1000;
         }
 
         return null;
@@ -204,8 +206,7 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("\n"));
+                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 
@@ -213,19 +214,16 @@ public class MineSkinAPI {
 
                 return skinResponse;
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             nextRequest = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
 
-            if (ex.getMessage() != null &&
-                    ex.getMessage().contains("Server returned HTTP response code: 400 for URL")) {
+            if (ex.getMessage() != null && ex.getMessage().contains("Server returned HTTP response code: 400 for URL")) {
                 throw new IllegalArgumentException();
             }
 
             DisguiseUtilities.getLogger().warning("Failed to access MineSkin.org");
             ex.printStackTrace();
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
 
@@ -237,8 +235,7 @@ public class MineSkinAPI {
      *
      * @param file
      */
-    public MineSkinResponse generateFromFile(SkinUtils.SkinCallback callback, File file,
-            SkinUtils.ModelType modelType) {
+    public MineSkinResponse generateFromFile(SkinUtils.SkinCallback callback, File file, SkinUtils.ModelType modelType) {
         return doPost(callback, "/generate/upload", null, file, modelType);
     }
 }

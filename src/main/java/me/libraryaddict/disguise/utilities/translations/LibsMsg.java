@@ -223,6 +223,7 @@ public enum LibsMsg {
     SKIN_API_IN_USE(ChatColor.RED + "mineskin.org is currently in use, please try again"),
     SKIN_API_TIMER(ChatColor.RED + "mineskin.org can be used again in %s seconds"),
     SKIN_API_FAIL(ChatColor.RED + "Unexpected error while accessing mineskin.org, please try again"),
+    SKIN_API_FAIL_TOO_FAST(ChatColor.RED + "Too many requests accessing mineskin.org, please slow down!"),
     SKIN_API_BAD_URL(ChatColor.RED + "Invalid url provided! Please ensure it is a .png file download!"),
     SKIN_API_FAILED_URL(ChatColor.RED + "Invalid url provided! mineskin.org failed to grab it!"),
     SKIN_API_FAIL_CODE(ChatColor.RED + "Error %s! %s"),
