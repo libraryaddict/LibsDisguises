@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
 import me.libraryaddict.disguise.commands.utils.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.config.DisguiseCommandConfig;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
@@ -54,6 +55,7 @@ public class LibsDisguises extends JavaPlugin {
     private final UpdateChecker updateChecker = new UpdateChecker();
     @Getter
     private PlayerSkinHandler skinHandler;
+    private DisguiseCommandConfig commandConfig;
 
     @Override
     public void onLoad() {
@@ -93,6 +95,12 @@ public class LibsDisguises extends JavaPlugin {
         } catch (ClassNotFoundException e) {
             getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
                     "plugin will continue to load, but it will look like a mugging victim");
+        }
+
+        commandConfig = new DisguiseCommandConfig();
+
+        if (!reloaded) {
+            commandConfig.load();
         }
 
         WatcherSanitizer.init();
@@ -239,7 +247,7 @@ public class LibsDisguises extends JavaPlugin {
         for (String command : getDescription().getCommands().keySet()) {
             PluginCommand cmd = getCommand("libsdisguises:" + command);
 
-            if (cmd.getExecutor() != this && !force) {
+            if (cmd == null || (cmd.getExecutor() != this && !force)) {
                 continue;
             }
 
@@ -292,7 +300,17 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {
-        PluginCommand command = getCommand("libsdisguises:" + commandName);
+        String name = commandConfig.getCommand(commandName);
+
+        if (name == null) {
+            return;
+        }
+
+        PluginCommand command = getCommand("libsdisguises:" + name);
+
+        if (command == null) {
+            return;
+        }
 
         command.setExecutor(executioner);
 
