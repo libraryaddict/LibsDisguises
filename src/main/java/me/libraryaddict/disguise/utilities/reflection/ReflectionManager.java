@@ -184,11 +184,16 @@ public class ReflectionManager {
             noDamageTicks = getNmsField("Entity", "noDamageTicks");
             isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
             genericDamage = getNmsField("DamageSource", "GENERIC").get(null);
-             boardField = getCraftClass("scoreboard.CraftScoreboard").getDeclaredField("board");
+            boardField = getCraftClass("scoreboard.CraftScoreboard").getDeclaredField("board");
             boardField.setAccessible(true);
             scoreboardCrtieriaHealth = getNmsField("IScoreboardCriteria", "HEALTH").get(null);
             setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
-            getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"), String.class, Consumer.class);
+
+            if (!NmsVersion.v1_13.isSupported()) {
+                getObjectives = getNmsMethod("Scoreboard", "getScoreboardScores", getNmsClass("IScoreboardCriteria"), String.class, ArrayList.class);
+            } else {
+                getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"), String.class, Consumer.class);
+            }
 
             Method method = getNmsMethod("SoundCategory", "a");
 
@@ -1931,6 +1936,16 @@ public class ReflectionManager {
     public static void setScore(Scoreboard scoreboard, Object criteria, String name, int score) {
         try {
             Object board = boardField.get(scoreboard);
+
+            if (!NmsVersion.v1_13.isSupported()) {
+                Collection scores = (Collection) getObjectives.invoke(board, criteria, name, new ArrayList<>());
+
+                for (Object obj : scores) {
+                    setScore.invoke(obj, score);
+                }
+
+                return;
+            }
 
             Consumer con = o -> {
                 try {
