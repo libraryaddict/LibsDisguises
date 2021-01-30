@@ -206,7 +206,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
 
             // If self disguise, or further than 50 blocks, or not in front of entity
-            normalPlayerDisguise = observer == disguisedEntity || dist > (50 * 50) ||
+            normalPlayerDisguise = observer == disguisedEntity || disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
                     (observer.getLocation().add(observer.getLocation().getDirection().normalize()).distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
             sendArmor = normalPlayerDisguise;
 
