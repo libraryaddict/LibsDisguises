@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import lombok.Data;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.config.ConfigLoader;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 18/06/2020.
@@ -120,32 +122,39 @@ public class LDUploadLogs implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (lastUsed + TimeUnit.MINUTES.toMillis(3) > System.currentTimeMillis()) {
-            sender.sendMessage(ChatColor.RED +
-                    "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " +
-                    "disappear!");
+            sender.sendMessage(ChatColor.RED + "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " + "disappear!");
             return;
         }
 
         File latest = new File("logs/latest.log");
-        File disguises = new File(LibsDisguises.getInstance().getDataFolder(), "disguises.yml");
-        File config = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
+        File disguises = new File(LibsDisguises.getInstance().getDataFolder(), "configs/disguises.yml");
+
+        List<File> configs =
+                new ConfigLoader().getConfigs().stream().map(f -> new File(LibsDisguises.getInstance().getDataFolder(), f)).collect(Collectors.toList());
+
+        StringBuilder configText = new StringBuilder();
+
+        for (File config : configs) {
+            if (configText.length() != 0) {
+                configText.append("\n\n================\n\n");
+            }
+
+            try {
+                configText.append(new String(Files.readAllBytes(config.toPath())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (isTooBig(latest)) {
-            sender.sendMessage(ChatColor.RED +
-                    "Your latest.log file is too big! It should be less than 512kb! Please restart and run this " +
-                    "command again!");
+            sender.sendMessage(
+                    ChatColor.RED + "Your latest.log file is too big! It should be less than 512kb! Please restart and run this " + "command again!");
             return;
         }
 
         if (isTooBig(disguises)) {
-            sender.sendMessage(ChatColor.RED +
-                    "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
+            sender.sendMessage(ChatColor.RED + "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
                     "should be less than 512kb!");
-            return;
-        }
-
-        if (isTooBig(config)) {
-            sender.sendMessage(ChatColor.RED + "Your config.yml is too big! It should be less than 512kb!");
             return;
         }
 
@@ -166,8 +175,7 @@ public class LDUploadLogs implements LDCommand {
 
                 lastFind = nextLine + 2;
 
-                if (!str.contains("Starting minecraft server version") && !str.contains("Loading properties") &&
-                        !str.contains("This server is running")) {
+                if (!str.contains("Starting minecraft server version") && !str.contains("Loading properties") && !str.contains("This server is running")) {
                     continue;
                 }
 
@@ -176,8 +184,7 @@ public class LDUploadLogs implements LDCommand {
             }
 
             if (!valid) {
-                sender.sendMessage(
-                        ChatColor.RED + "Your latest.log is too old! Please restart the server and try again!");
+                sender.sendMessage(ChatColor.RED + "Your latest.log is too old! Please restart the server and try again!");
                 return;
             }
 
@@ -188,12 +195,10 @@ public class LDUploadLogs implements LDCommand {
                 public void run() {
                     try {
                         String disguiseText = new String(Files.readAllBytes(disguises.toPath()));
-                        StringBuilder configText = new StringBuilder(new String(Files.readAllBytes(config.toPath())));
 
-                        configText.append("\n================\n");
+                        configText.append("\n\n================\n");
 
-                        ArrayList<String> modified =
-                                DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, true);
+                        ArrayList<String> modified = DisguiseConfig.doOutput(true, true);
 
                         for (String s : modified) {
                             configText.append("\n").append(s);
@@ -203,8 +208,10 @@ public class LDUploadLogs implements LDCommand {
                             configText.append("\nUsing default config!");
                         }
 
+                        String ctext = configText.toString().replaceAll("\n? *#[^\n]*", "");
+
                         URL latestPaste = new GuestPaste("latest.log", latestText).paste();
-                        URL configPaste = new GuestPaste("LibsDisguises config.yml", configText.toString()).paste();
+                        URL configPaste = new GuestPaste("LibsDisguises config.yml", ctext).paste();
                         URL disguisesPaste = new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste();
 
                         lastUsed = System.currentTimeMillis();
@@ -216,12 +223,10 @@ public class LDUploadLogs implements LDCommand {
 
                                 // Console can't click :(
                                 if (sender instanceof Player) {
-                                    sender.sendMessage(ChatColor.GOLD +
-                                            "Click on the below message to have it appear in your chat input");
+                                    sender.sendMessage(ChatColor.GOLD + "Click on the below message to have it appear in your chat input");
                                 }
 
-                                String text = "My log file: " + latestPaste + ", my config file: " + configPaste +
-                                        " and my disguises file: " + disguisesPaste;
+                                String text = "My log file: " + latestPaste + ", my config file: " + configPaste + " and my disguises file: " + disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);
@@ -243,7 +248,11 @@ public class LDUploadLogs implements LDCommand {
     }
 
     private boolean isTooBig(File file) {
-        return file.exists() && file.length() >= 512 * 1024;
+        return file.exists() && isTooBig(file.length());
+    }
+
+    private boolean isTooBig(long length) {
+        return length >= 512 * 1024;
     }
 
     @Override

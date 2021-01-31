@@ -1,0 +1,54 @@
+# This config file is for settings that effect commands only!
+
+# Don't like players able to set themselves invisible when using the disguise commands? Toggle this to true and no one can use setInvisible! Plugins can still use this however.
+DisableInvisibility: false
+
+# By the default the plugin saves the users of the /viewdisguisebar and /viewselfdisguises to a file
+# So that it persists after restart
+SaveUserPreferences: true
+
+Permissions:
+  # By default "libsdisguises.disguise.cow" will allow all options for cow disguise unless another permission has
+  # defined otherwise.
+  # If given "libsdisguises.disguise.animals.setburning" then "libsdisguises.disguise.cow" they will still be able to
+  # use other options like "setbaby". This was provided for backwards compatibility.
+  # By turning this from 'false' to 'true' the plugin will no longer give them the options unless the player was
+  # explicitly granted it. Even if by wildcard. The above example means they can only use "setburning"
+
+  # To summarize, "libsdisguises.disguise.cow" will no longer let them do any options on the cow disguise unless it
+  # was added to their permissions
+
+  # You can read more about permissions here: https://www.spigotmc.org/wiki/lib-s-disguises-setting-up-permissions/
+  # The permission used to check OPs who may not have permissions defined, is "libsdisguises.*.*.*" which you can
+  # negate with your permissions plugin
+  ExplicitDisguises: false
+
+  # What should the default permissions be for seeing commands?
+  # This is a config option because I can't verify if they should be able to see commands normally due to my
+  # permissions system. My system is complex, but its a ton of control.
+  # This isn't an issue normally, but I recently received complaints from someone who doesn't believe in permissions...
+  # Some of you may also wish to hide these commands!
+  # The permissions for commands are a simple 'libsdisguises.seecmd.command' where 'command' can be
+  # 'disguise', 'undisguise' etc. A simple 'libsdisguises.seecmd' permission may also work for children
+  # If you change this while the server is running, players may need to rejoin for it to take effect
+  # Remember that command blocks need 'TRUE' or 'OP' to use the commands.
+  # TRUE = Everyone can see this, the default. Can be negated with permissions
+  # FALSE = No one can see this without permissions to allow it
+  # OP = Only operators can see this
+  # NOT_OP = Only non operators can see this
+  SeeCommands: TRUE
+
+# Whats the max size allowed for command disguiseradius
+DisguiseRadiusMax: 50
+
+# Whats the max size allowed for command undisguiseradius
+UndisguiseRadiusMax: 50
+
+# A option to choose how many seconds a DisguiseEntity command is valid for people to right click a entity to disguise it before expiring
+DisguiseEntityExpire: 10
+
+# Another option to choose the same thing for DisguiseClone command
+DisguiseCloneExpire: 10
+
+# Max disguises to store at a time with the DisguiseClone command
+DisguiseCloneSize: 3

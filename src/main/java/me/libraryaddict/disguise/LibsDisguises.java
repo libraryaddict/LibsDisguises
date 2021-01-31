@@ -82,7 +82,7 @@ public class LibsDisguises extends JavaPlugin {
 
                     Bukkit.getPluginManager().enablePlugin(plugin);
                 } else {
-                    getLogger().severe("Please restar the server to complete the ProtocolLib update!");
+                    getLogger().severe("Please restart the server to complete the ProtocolLib update!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,8 +119,18 @@ public class LibsDisguises extends JavaPlugin {
                     "plugin will continue to load, but it will look like a mugging victim");
         }
 
-        if (!new File(getDataFolder(), "disguises.yml").exists()) {
-            saveResource("disguises.yml", false);
+        File disguiseFile = new File(getDataFolder(), "configs/disguises.yml");
+
+        if (!disguiseFile.exists()) {
+            disguiseFile.getParentFile().mkdirs();
+
+            File oldFile = new File(getDataFolder(), "disguises.yml");
+
+            if (oldFile.exists()) {
+                oldFile.renameTo(disguiseFile);
+            } else {
+                saveResource("configs/disguises.yml", false);
+            }
         }
 
         YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
@@ -209,31 +219,26 @@ public class LibsDisguises extends JavaPlugin {
         }
 
         registerCommand("libsdisguises", new LibsDisguisesCommand());
-
-        if (!DisguiseConfig.isDisableCommands()) {
-            registerCommand("disguise", new DisguiseCommand());
-            registerCommand("undisguise", new UndisguiseCommand());
-            registerCommand("disguiseplayer", new DisguisePlayerCommand());
-            registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
-            registerCommand("undisguiseentity", new UndisguiseEntityCommand());
-            registerCommand("disguiseentity", new DisguiseEntityCommand());
-            registerCommand("disguiseradius", new DisguiseRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
-            registerCommand("undisguiseradius", new UndisguiseRadiusCommand(getConfig().getInt("UndisguiseRadiusMax")));
-            registerCommand("disguisehelp", new DisguiseHelpCommand());
-            registerCommand("disguiseclone", new DisguiseCloneCommand());
-            registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-            registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
-            registerCommand("disguisemodify", new DisguiseModifyCommand());
-            registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
-            registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
-            registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand(getConfig().getInt("DisguiseRadiusMax")));
-            registerCommand("copydisguise", new CopyDisguiseCommand());
-            registerCommand("grabskin", new GrabSkinCommand());
-            registerCommand("savedisguise", new SaveDisguiseCommand());
-            registerCommand("grabhead", new GrabHeadCommand());
-        } else {
-            getLogger().info("Commands has been disabled, as per config");
-        }
+        registerCommand("disguise", new DisguiseCommand());
+        registerCommand("undisguise", new UndisguiseCommand());
+        registerCommand("disguiseplayer", new DisguisePlayerCommand());
+        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
+        registerCommand("disguiseentity", new DisguiseEntityCommand());
+        registerCommand("disguiseradius", new DisguiseRadiusCommand());
+        registerCommand("undisguiseradius", new UndisguiseRadiusCommand());
+        registerCommand("disguisehelp", new DisguiseHelpCommand());
+        registerCommand("disguiseclone", new DisguiseCloneCommand());
+        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+        registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
+        registerCommand("disguisemodify", new DisguiseModifyCommand());
+        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
+        registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+        registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand());
+        registerCommand("copydisguise", new CopyDisguiseCommand());
+        registerCommand("grabskin", new GrabSkinCommand());
+        registerCommand("savedisguise", new SaveDisguiseCommand());
+        registerCommand("grabhead", new GrabHeadCommand());
 
         unregisterCommands(false);
 

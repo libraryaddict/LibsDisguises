@@ -469,7 +469,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 };
 
                 WrappedGameProfile gameProfile = DisguiseUtilities
-                        .getProfileFromMojang(this.skinToUse, currentLookup, LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+                        .getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
 
                 if (gameProfile != null) {
                     setSkin(gameProfile);
@@ -635,7 +635,7 @@ public class PlayerDisguise extends TargetedDisguise {
             };
 
             WrappedGameProfile gameProfile = DisguiseUtilities
-                    .getProfileFromMojang(this.skinToUse, currentLookup, LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+                    .getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
 
             if (gameProfile != null) {
                 setSkin(gameProfile);

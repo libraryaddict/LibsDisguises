@@ -27,7 +27,7 @@ public class DisguiseCommandConfig {
         private boolean enabled;
     }
 
-    private File commandConfig = new File(LibsDisguises.getInstance().getDataFolder(), "commands.yml");
+    private File commandConfig = new File(LibsDisguises.getInstance().getDataFolder(), "configs/plugin-commands.yml");
     private HashMap<String, DisguiseCommand> commands = new HashMap<>();
     private boolean modifyCommands = false;
 
@@ -87,13 +87,19 @@ public class DisguiseCommandConfig {
             section.set("aliases", command.getAliases());
         }
 
+        String configString = config.saveToString();
+
+        configString = configString.replaceAll("\n([a-zA-Z])", "\n\n$1");
+
         String s =
                 "# The following can be changed to modify how the disguise commands are registered\n# This will only work on server startup\nModifyCommands: " +
-                        modifyCommands + "\n\n" + config.saveToString();
+                        modifyCommands + "\n\n" + configString;
 
         commandConfig.delete();
 
         try {
+            commandConfig.getParentFile().mkdirs();
+
             commandConfig.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();

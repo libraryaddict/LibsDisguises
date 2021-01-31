@@ -1,0 +1,30 @@
+# This config is for options that are about Libs Disguises itself, not the disguises.
+
+# Contact Mojang's servers? Disabling this option will disable player disguises if there's no skin to use!
+ContactMojangServers: true
+
+# Should the plugin use translations? Note that a player must see the message before it will appear in translations.yml
+Translations: false
+
+# Shall I notify those with the correct permission when there's a LibsDisguises update?
+# Disabling this will also disable notifications when the plugin updated
+NotifyUpdate: true
+# Should the plugin automatically update?
+AutoUpdate: true
+
+# Where should the plugin check for updates?
+# SAME_BUILDS - Will check snapshots if you're not using a release build
+# RELEASES - Only check for actual releases
+# SNAPSHOTS - Only check for new snapshots
+UpdatesBranch: SAME_BUILDS
+
+# You can also get this information through /libsdisguises config
+# Should the plugin output missing config options instead of just counting them
+VerboseConfig: false
+
+# Should the plugin output changed config options? Will also list unknown extra options
+ChangedConfig: false
+
+# Should the config automatically update itself each time there's a config entry missing?
+# The old config will have any custom comments or invalid config entries wiped.
+UpdateConfig: true

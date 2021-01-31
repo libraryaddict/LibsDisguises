@@ -95,6 +95,7 @@ public class Metrics {
                             "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
             try {
                 config.save(configFile);
+                DisguiseUtilities.getLogger().info("Saved bStats config");
             }
             catch (IOException ignored) {
             }

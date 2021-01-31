@@ -95,18 +95,14 @@ public class DisguiseListener implements Listener {
 
         // If build number is null, or not a number. Then we can't check snapshots regardless
         return !plugin.isNumberedBuild();
-
-        // Check snapshots
     }
 
     private void runUpdateScheduler() {
-        boolean autoUpdate = plugin.getConfig().getBoolean("AutoUpdateDev");
-
-        if (!plugin.getConfig().getBoolean("NotifyUpdate")) {
+        if (!DisguiseConfig.isNotifyUpdate()) {
             return;
         }
 
-        if (autoUpdate && !isCheckReleases()) {
+        if (DisguiseConfig.isAutoUpdate() && !isCheckReleases()) {
             DisguiseUtilities.getLogger().info("Plugin will attempt to auto update when new builds are ready! Check config to disable.");
         }
     }

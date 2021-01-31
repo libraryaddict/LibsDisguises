@@ -161,7 +161,7 @@ public class DisguiseUtilities {
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
     private static final HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
     private static final HashMap<UUID, String> disguiseTeam = new HashMap<>();
-    private static final File profileCache = new File("plugins/LibsDisguises/GameProfiles");
+    private static final File profileCache = new File("plugins/LibsDisguises/SavedSkins");
     private static final File savedDisguises = new File("plugins/LibsDisguises/SavedDisguises");
     @Getter
     private static Gson gson;
@@ -1124,7 +1124,7 @@ public class DisguiseUtilities {
 
                 DisguiseUtilities.refreshTrackers(disguise);
             }
-        }, LibsDisguises.getInstance().getConfig().getBoolean("ContactMojangServers", true));
+        }, DisguiseConfig.isContactMojangServers());
     }
 
     /**
@@ -1271,7 +1271,13 @@ public class DisguiseUtilities {
         gson = gsonBuilder.create();
 
         if (!profileCache.exists()) {
-            profileCache.mkdirs();
+            File old = new File(profileCache.getParentFile(), "GameProfiles");
+
+            if (old.exists() && old.isDirectory()) {
+                old.renameTo(profileCache);
+            } else {
+                profileCache.mkdirs();
+            }
         }
 
         if (!savedDisguises.exists()) {
@@ -1331,13 +1337,7 @@ public class DisguiseUtilities {
             Method m = CompileMethods.class.getMethod("main", String[].class);
 
             if ((!m.isAnnotationPresent(CompileMethods.CompileMethodsIntfer.class) ||
-                    m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("[0-9]+")) &&
-                    !DisguiseConfig.doOutput(LibsDisguises.getInstance().getConfig(), true, false).isEmpty()) {
-                /*File f = new File(LibsDisguises.getInstance().getDataFolder(), "config.yml");
-                File f2 = new File(f.getParentFile(), "config-older.yml");
-                f2.delete();
-                f.renameTo(f2);
-                LibsDisguises.getInstance().saveDefaultConfig();*/
+                    m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("[0-9]+")) && !DisguiseConfig.doOutput(true, false).isEmpty()) {
                 DisguiseConfig.setViewDisguises(false);
             }
         } catch (NoSuchMethodException e) {

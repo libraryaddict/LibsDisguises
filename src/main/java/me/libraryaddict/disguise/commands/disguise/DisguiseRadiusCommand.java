@@ -29,12 +29,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
-    private int maxRadius = 30;
     private ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
 
-    public DisguiseRadiusCommand(int maxRadius) {
-        this.maxRadius = maxRadius;
-
+    public DisguiseRadiusCommand() {
         for (EntityType type : EntityType.values()) {
             Class c = type.getEntityClass();
 
@@ -131,9 +128,9 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         int radius = Integer.parseInt(args[starting]);
 
-        if (radius > maxRadius) {
-            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
-            radius = maxRadius;
+        if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
+            LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
+            radius = DisguiseConfig.getDisguiseRadiusMax();
         }
 
         String[] newArgs = new String[args.length - (starting + 1)];
@@ -291,7 +288,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return;
         }
 
-        LibsMsg.DRADIUS_HELP1.send(sender, maxRadius);
+        LibsMsg.DRADIUS_HELP1.send(sender, DisguiseConfig.getDisguiseRadiusMax());
         LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         if (allowedDisguises.contains("player")) {

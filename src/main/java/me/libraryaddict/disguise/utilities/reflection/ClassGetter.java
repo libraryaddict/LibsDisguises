@@ -22,8 +22,31 @@ public class ClassGetter {
         return getClassesForPackage(Entity.class, pkgname);
     }
 
+    public static ArrayList<String> getEntriesForPackage(String pkgname) {
+        return getEntriesForPackage(Entity.class, pkgname);
+    }
+
     public static ArrayList<Class<?>> getClassesForPackage(Class runFrom, String pkgname) {
-        ArrayList<Class<?>> classes = new ArrayList<>();
+        ArrayList<String> list = getEntriesForPackage(runFrom, pkgname);
+        ArrayList<Class<?>> classList = new ArrayList<>();
+
+        for (String s : list) {
+            if (!s.endsWith(".class")) {
+                continue;
+            }
+
+            Class<?> c = loadClass(s.replace(".class", "").replace('/', '.'));
+
+            if (c != null) {
+                classList.add(c);
+            }
+        }
+
+        return classList;
+    }
+
+    public static ArrayList<String> getEntriesForPackage(Class runFrom, String pkgname) {
+        ArrayList<String> classes = new ArrayList<>();
         // String relPath = pkgname.replace('.', '/');
 
         // Get a File object for the package
@@ -36,16 +59,11 @@ public class ClassGetter {
                 processJarfile(resource, pkgname, classes);
             } else {
                 for (File f : new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles()) {
-                    if (!f.getName().endsWith(".class") || f.getName().contains("$")) {
+                    if (f.getName().contains("$")) {
                         continue;
                     }
 
-                    try {
-                        classes.add(Class.forName(pkgname + "." + f.getName().replace(".class", "")));
-                    }
-                    catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    classes.add(pkgname + "/" + f.getName());
                 }
             }
         }
@@ -56,16 +74,12 @@ public class ClassGetter {
     private static Class<?> loadClass(String className) {
         try {
             return Class.forName(className);
-        }
-        catch (ClassNotFoundException e) {
-            throw new RuntimeException("Unexpected ClassNotFoundException loading class '" + className + "'");
-        }
-        catch (NoClassDefFoundError e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
             return null;
         }
     }
 
-    private static void processJarfile(URL resource, String pkgname, ArrayList<Class<?>> classes) {
+    private static void processJarfile(URL resource, String pkgname, ArrayList<String> classes) {
         try {
             String relPath = pkgname.replace('.', '/');
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
@@ -79,22 +93,18 @@ public class ClassGetter {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 String className = null;
-                if (entryName.endsWith(".class") && entryName.startsWith(relPath) &&
-                        entryName.length() > (relPath.length() + "/".length())) {
-                    className = entryName.replace('/', '.').replace('\\', '.').replace(".class", "");
-                }
-                if (className != null) {
-                    Class<?> c = loadClass(className);
 
-                    if (c != null) {
-                        classes.add(c);
-                    }
+                if (entryName.startsWith(relPath) && entryName.length() > (relPath.length() + "/".length())) {
+                    className = entryName.replace('\\', '/');
+                }
+
+                if (className != null) {
+                    classes.add(className);
                 }
             }
 
             jarFile.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

@@ -1,0 +1,29 @@
+# This config file is for settings that effects combat!
+
+# This prevents disguised players from being targeted by monsters.
+# This doesn't prevent their targeting you if already targeting when disguised
+# They will just ignore you unless provoked.
+MonstersIgnoreDisguises: false
+
+# Should PvP be disabled when disguised?
+DisablePvP: false
+# Should PvE be disabled when disguised? (Eg, fighting zombie)
+DisablePvE: false
+
+# This works only for players, disguised monsters and the like will not be undisguised
+# Should the player's disguises be removed if they attacks something?
+# Blown Disguise message can be changed in translations
+# Message can be hidden with an empty translation
+BlowDisguisesWhenAttacking: false
+
+# Should the player's disguises be removed if they're attacked by something?
+BlowDisguisesWhenAttacked: false
+
+# This works with 'DisablePvP' that if attacked by another entity, they have 'PvPTimer' amount of time
+# to attack back. Timer is reset with every successful attack
+RetaliationCombat: false
+
+# If pvp or pve is disabled, this takes effect.
+# If RetaliationCombat is false, or it's true but they haven't fought back in PvPTimer seconds, then they can't fight back.
+# This also controls it so they can't fight back PvPTimer seconds after applying a disguise
+PvPTimer: 5

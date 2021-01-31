@@ -43,9 +43,10 @@ public class DisguiseAPI {
             DisguiseConfig.removeCustomDisguise(disguiseName);
             DisguiseConfig.addCustomDisguise(disguiseName, disguiseInfo);
 
-            File disguisesFile = new File("plugins/LibsDisguises/disguises.yml");
+            File disguisesFile = new File(LibsDisguises.getInstance().getDataFolder(), "configs/disguises.yml");
 
             if (!disguisesFile.exists()) {
+                disguisesFile.getParentFile().mkdirs();
                 disguisesFile.createNewFile();
             }
 
@@ -143,9 +144,8 @@ public class DisguiseAPI {
             }
         }
         for (Method method : entity.getClass().getMethods()) {
-            if ((doSneak || !method.getName().equals("setSneaking")) &&
-                    (doSprint || !method.getName().equals("setSprinting")) && method.getParameterTypes().length == 0 &&
-                    method.getReturnType() != void.class) {
+            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName().equals("setSprinting")) &&
+                    method.getParameterTypes().length == 0 && method.getReturnType() != void.class) {
                 Class methodReturn = method.getReturnType();
 
                 if (methodReturn == float.class || methodReturn == Float.class || methodReturn == Double.class) {
@@ -160,12 +160,11 @@ public class DisguiseAPI {
                                 watcherMethod.getParameterTypes().length == 1) {
                             int firstCapitalWatcher = firstCapital(watcherMethod.getName());
 
-                            if (firstCapitalWatcher > 0 && method.getName().substring(firstCapitalMethod)
-                                    .equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
+                            if (firstCapitalWatcher > 0 &&
+                                    method.getName().substring(firstCapitalMethod).equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
                                 Class methodParam = watcherMethod.getParameterTypes()[0];
 
-                                if (methodParam == float.class || methodParam == Float.class ||
-                                        methodParam == Double.class) {
+                                if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
                                     methodParam = double.class;
                                 } else if (methodParam == AnimalColor.class) {
                                     methodParam = DyeColor.class;
@@ -190,8 +189,7 @@ public class DisguiseAPI {
                                                     value = AnimalColor.valueOf(((DyeColor) value).name());
                                                 }
                                             }
-                                            if (value instanceof Boolean && !(Boolean) value &&
-                                                    watcherMethod.getDeclaringClass() == FlagWatcher.class) {
+                                            if (value instanceof Boolean && !(Boolean) value && watcherMethod.getDeclaringClass() == FlagWatcher.class) {
                                                 continue;
                                             }
                                         }

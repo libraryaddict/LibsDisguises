@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.modify;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -26,12 +27,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
-    private int maxRadius = 30;
-
-    public DisguiseModifyRadiusCommand(int maxRadius) {
-        this.maxRadius = maxRadius;
-    }
-
     private Collection<Entity> getNearbyEntities(CommandSender sender, int radius) {
         Location center;
 
@@ -77,8 +72,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             Collections.sort(classes);
 
-            LibsMsg.DMODRADIUS_USABLE.send(sender,
-                    ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
+            LibsMsg.DMODRADIUS_USABLE.send(sender, ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
 
@@ -124,9 +118,9 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         int radius = Integer.parseInt(args[starting]);
 
-        if (radius > maxRadius) {
-            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
-            radius = maxRadius;
+        if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
+            LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
+            radius = DisguiseConfig.getDisguiseRadiusMax();
         }
 
         String[] newArgs = new String[args.length - (starting + 1)];
@@ -154,10 +148,11 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             Disguise disguise;
 
-            if (sender instanceof Player)
+            if (sender instanceof Player) {
                 disguise = DisguiseAPI.getDisguise((Player) sender, entity);
-            else
+            } else {
                 disguise = DisguiseAPI.getDisguise(entity);
+            }
 
             if (disguise == null) {
                 continue;
@@ -174,18 +169,15 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender, entity);
 
             try {
-                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs,
-                        "DisguiseModifyRadius");
+                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs, "DisguiseModifyRadius");
                 modifiedDisguises++;
-            }
-            catch (DisguiseParseException ex) {
+            } catch (DisguiseParseException ex) {
                 if (ex.getMessage() != null) {
                     DisguiseUtilities.sendMessage(sender, ex.getMessage());
                 }
 
                 return true;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return true;
             }
@@ -238,8 +230,9 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             // Not a valid radius
-            if (starting == 1 || args.length == 1 || !isInteger(args[1]))
+            if (starting == 1 || args.length == 1 || !isInteger(args[1])) {
                 return filterTabs(tabs, origArgs);
+            }
         }
 
         if (args.length <= starting || !isInteger(args[starting])) {
@@ -248,9 +241,9 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         int radius = Integer.parseInt(args[starting]);
 
-        if (radius > maxRadius) {
-            LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
-            radius = maxRadius;
+        if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
+            LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
+            radius = DisguiseConfig.getDisguiseRadiusMax();
         }
 
         starting++;
@@ -260,15 +253,17 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         for (Entity entity : getNearbyEntities(sender, radius)) {
             Disguise disguise = DisguiseAPI.getDisguise(entity);
 
-            if (disguise == null)
+            if (disguise == null) {
                 continue;
+            }
 
             DisguiseType disguiseType = disguise.getType();
 
             for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (String arg : args) {
-                    if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg))
+                    if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg)) {
                         continue;
+                    }
 
                     usedOptions.add(arg);
                 }
@@ -291,7 +286,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
     protected void sendCommandUsage(CommandSender sender, DisguisePermissions permissions) {
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
-        LibsMsg.DMODRADIUS_HELP1.send(sender, maxRadius);
+        LibsMsg.DMODRADIUS_HELP1.send(sender, DisguiseConfig.getDisguiseRadiusMax());
         LibsMsg.DMODIFY_HELP3.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         LibsMsg.DMODRADIUS_HELP2.send(sender);

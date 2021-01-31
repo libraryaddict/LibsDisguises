@@ -359,7 +359,7 @@ public enum LibsMsg {
     LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA +
             "Used to help debug scoreboard issues on a player disguise"),
     LD_COMMAND_UPLOAD_LOGS(ChatColor.BLUE + "/libsdisguises uploadlogs - " + ChatColor.AQUA +
-            "Uploads latest.log, disguises.yml and config.yml and gives you the link to share. Used when seeking " +
+            "Uploads latest.log, disguises.yml and configs and gives you the link to share. Used when seeking " +
             "assistance."),
     SELF_DISGUISE_HIDDEN(ChatColor.GREEN + "Self disguise hidden as it's too tall..");
 

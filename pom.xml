@@ -17,6 +17,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>*</include>
+                    <include>configs/*</include>
                 </includes>
             </resource>
             <resource>

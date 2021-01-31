@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -13,12 +14,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class UndisguiseRadiusCommand implements CommandExecutor {
-    private int maxRadius = 30;
-
-    public UndisguiseRadiusCommand(int maxRadius) {
-        this.maxRadius = maxRadius;
-    }
-
     private boolean isNumeric(String string) {
         try {
             Integer.parseInt(string);
@@ -43,16 +38,19 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         }
 
         if (sender.hasPermission("libsdisguises.undisguiseradius")) {
-            int radius = maxRadius;
+            int radius = DisguiseConfig.getDisguiseRadiusMax();
+
             if (args.length > 0) {
                 if (!isNumeric(args[0])) {
                     LibsMsg.NOT_NUMBER.send(sender, args[0]);
                     return true;
                 }
+
                 radius = Integer.parseInt(args[0]);
-                if (radius > maxRadius) {
-                    LibsMsg.LIMITED_RADIUS.send(sender, maxRadius);
-                    radius = maxRadius;
+
+                if (radius > DisguiseConfig.getDisguiseRadiusMax()) {
+                    LibsMsg.LIMITED_RADIUS.send(sender, DisguiseConfig.getDisguiseRadiusMax());
+                    radius = DisguiseConfig.getDisguiseRadiusMax();
                 }
             }
 

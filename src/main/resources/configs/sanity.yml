@@ -1,0 +1,41 @@
+# This config is called sanity, because you shouldn't need to change the stuff in here
+
+#Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
+StopShulkerDisguisesFromMoving: true
+
+# This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
+# However some people may prefer to disable this.
+# Even if you disable this, if there was disguises in the cache already then it will use them
+SaveGameProfiles: true
+
+# This option is useless if you don't enable SaveGameProfiles!
+# If a player has been disguised before and their skin saved into the cache
+# When they join the server will automatically update the cache in case they changed their skin
+UpdateGameProfiles: true
+
+# This modifies the bounding box, This is stuff like can a arrow hit them.
+# If you turn this to true, arrows will act like they hit the disguise in the right place!
+# Clients will not see any difference in the hitboxes they are attacking, this is a server-sided calculation!
+# So someone disguised as a enderdragon will easily get shot down by arrows!
+# This WILL conflict with NoCheatPlus. Other plugins may also get problems.
+# This shouldn't really be enabled for players as it also interferes with their movement because the server thinks
+# the player is larger than they really are.
+# That makes the player unable to approach this building because the server thinks they are trying to glitch inside
+# blocks.
+# This feature is highly experimental and is guaranteed to cause problems for players who are disguised
+ModifyBoundingBox: false
+
+# When a sheep or wolf is right clicked with dye. The client automatically assumes it was successful and displays the sheep's wool or the wolfs collar as dyed.
+# This is a option that either prevents that happening, or it changes their color officially in the plugin so that everyone sees it changed.
+# Its currently set to false which means that the color is not changed and will refresh itself to the player.
+# Please note that this will not remove the dye from their hands. This also does not check if the disguised entity is actually a sheep/wolf and wants a say in its color.
+DyeableSheep: false
+DyeableWolf: false
+DyeableCat: false
+
+# Can a player interact with a llama with carpet to set or change their carpet color?
+CarpetableLlama: false
+
+# Can a player interact with a non-saddled horse of any type, to give it a saddle?
+# This does not change what you can ride or control!
+SaddleableHorse: false

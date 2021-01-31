@@ -29,10 +29,18 @@ public class SoundManager {
     }
 
     private void loadCustomSounds() {
-        File f = new File(LibsDisguises.getInstance().getDataFolder(), "sounds.yml");
+        File f = new File(LibsDisguises.getInstance().getDataFolder(), "configs/sounds.yml");
 
         if (!f.exists()) {
-            LibsDisguises.getInstance().saveResource("sounds.yml", false);
+            f.getParentFile().mkdirs();
+
+            File old = new File(LibsDisguises.getInstance().getDataFolder(), "sounds.yml");
+
+            if (old.exists()) {
+                old.renameTo(f);
+            } else {
+                LibsDisguises.getInstance().saveResource("configs/sounds.yml", false);
+            }
         }
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
@@ -55,8 +63,7 @@ public class SoundManager {
                     continue;
                 }
 
-                List<String> list = section.getStringList(
-                        type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
+                List<String> list = section.getStringList(type.name().charAt(0) + type.name().substring(1).toLowerCase(Locale.ENGLISH));
 
                 if (list == null || list.isEmpty()) {
                     continue;
@@ -67,17 +74,15 @@ public class SoundManager {
                         SoundGroup subGroup = SoundGroup.getGroup(sound);
 
                         if (subGroup == null) {
-                            DisguiseUtilities.getLogger().warning("Invalid sound '" + sound +
-                                    "'! Must be a minecraft:sound.name or SoundGroup name!");
+                            DisguiseUtilities.getLogger().warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
                             continue;
                         }
 
                         Object[] sounds = subGroup.getDisguiseSounds().get(type);
 
                         if (sounds == null) {
-                            DisguiseUtilities.getLogger().warning(
-                                    "Sound group '" + sound + "' does not contain a category for " + type +
-                                            "! Can't use as default in " + key);
+                            DisguiseUtilities.getLogger()
+                                    .warning("Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
                             continue;
                         }
 

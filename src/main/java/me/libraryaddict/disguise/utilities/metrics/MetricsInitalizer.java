@@ -221,12 +221,12 @@ public class MetricsInitalizer {
             }
         });
 
-        metrics.addCustomChart(new Metrics.SimplePie("commands") {
+        /*metrics.addCustomChart(new Metrics.SimplePie("commands") {
             @Override
             public String getValue() {
                 return DisguiseConfig.isDisableCommands() ? "Enabled" : "Disabled";
             }
-        });
+        });*/
 
         metrics.addCustomChart(new Metrics.SimplePie("spigot") {
             @Override
@@ -241,7 +241,7 @@ public class MetricsInitalizer {
             }
         });
 
-        final boolean updates = plugin.getConfig().getBoolean("NotifyUpdate");
+        final boolean updates = DisguiseConfig.isNotifyUpdate();
 
         metrics.addCustomChart(new Metrics.SimplePie("updates") {
             @Override

@@ -1,0 +1,74 @@
+# This config is for options that should only be touched if you're having compatibility issues with other plugins
+
+# Some players have issues with conflicting plugins where disguised entities will show the wrong armor
+# This should be left alone unless you're trying to solve this issue. Such as MM and stone blocks.
+# When true, the plugin will hide player disguises armor to prevent a minor visual bug for half a second
+PlayerHideArmor: true
+
+# Some disguises have randomized options on disguise, such as a fox type or a villager breed.
+# This may be problematic for some server owners, so you can disable it below
+RandomDisguiseOptions: true
+
+# For self disguises, they need to have the armor and the held item removed
+# Else they see floating armor, floating held items.
+# This turns the items invisible in the disguised players inventory. It does not actually remove them!
+# Be warned that in creative this can actually delete the item from the inventory due to a weird bug
+RemoveArmor: true
+RemoveHeldItem: false
+
+# If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
+# Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
+# This is only valid if you set a animation on the disguise itself. Because the entity's animations are applied otherwise.
+AddEntityAnimations: true
+
+# This controls if a entity's max health is determined by the entity, or by the disguise.
+# Wither is 200, a player is 20. With this enabled, a player disguised as a wither will have the boss bar health accurate to the players health.
+# Else it will be 1/20 of the boss bar when they are full health.
+# Setting this in LivingWatcher overrides both values.
+MaxHealthDeterminedByEntity: true
+
+# This here is a option to turn off misc disguises.
+# This means you can not have a living entity disguise as a non-living entity.
+# This disables the Attributes packet, Non-living entities can still disguise as other non-living
+# This means that the above option will not work as it uses the attribute packet.
+MiscDisguisesForLiving: true
+
+# Shall I send the velocity packets? I REALLY recommend you don't disable.
+# This is the only thing allowing the mobs to fly without glitching out.
+SendVelocity: true
+
+# This will help performance, especially with CPU
+# Due to safety reasons, self disguises can never have their packets disabled.
+PacketsEnabled:
+  # This disables the animation packet. If a disguised entity sends a animation packet and they are using a non-living disguise. People will crash.
+  # Disabling this also means that if a player disguised as a non-player leaves a bug. People will crash
+  Animation: true
+  # This disguises the collect packet. If a living entity disguised as a non-living entity picks up a item. People will crash. This fixes it
+  # This also fixes people crashing if a item disguised as a sleeping player is picked up - Only true if Bed is enabled as well
+  Collect: true
+  # This disables a fix for when a disguised entity wearing armor dies, if the disguise can wear armor. It drops unpickupable items to anyone watching.
+  EntityStatus: true
+  # Entity equipment is the packets that are sent to ensure that a disguise has or doesn't have armor, and their held item.
+  # Disabling this means that any disguises which can wear armor or hold items will show the armor/held item that the disguised is wearing.
+  Equipment: true
+  # This doesn't actually disable the packet. It would introduce problems. Instead it does the next best thing and caches the data.
+  # This means that entity metadata will not change, and will only be sent in the spawn packet.
+  # This is good if performance is extremely in need.
+  # This is bad to disable unless you are ONLY going to use the disguises for decorations.
+  # To be honest. This is basically "Disable entity animations". That option is called 'AddEntityAnimations' in the config but unlike that, this is always in effect.
+  # Animations set by use of the api or through the disguise command are still in effect.
+  Metadata: true
+  # Movement packets are the biggest cpu hit. These are majorly used to ensure that the disguises facing direction isn't bugged up.
+  # If you are using the Item_Frame disguise, when a packet is sent (Roughly every 2min) the disguise will bug up until they move.
+  Movement: true
+  # Disable this if you don't mind crashing everytime you see someone riding something disguised as a non-living entity
+  Riding: true
+  # When disguised as a wither skull, it sends a look packet every tick so that the wither skull is facing the right way.
+  WitherSkull: true
+  # This is only used when using a modded disguises thingy, check disguises.yml for more info
+  # This is used as a hack to bypass bungeecord issues
+  LoginPayload: true
+
+# Added to support a Chinese Minecraft Server which uses their own skin server unless the UUID is not version 4.
+# Changing this from 4 to say, 3. Means their server will fetch skins from Mojang instead.
+UUIDVersion: 4
