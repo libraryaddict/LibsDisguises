@@ -41,8 +41,12 @@ public class DisguiseCommandConfig {
         for (String name : config.getKeys(false)) {
             DisguiseCommand command = commands.get(name);
 
+            if (!config.isConfigurationSection(name)) {
+                continue;
+            }
+
             if (command == null) {
-                DisguiseUtilities.getLogger().warning("Unable to find a command '" + name + "'");
+                DisguiseUtilities.getLogger().warning("Config defines '" + name + "' as a command but that command doesn't exist?");
                 continue;
             }
 
