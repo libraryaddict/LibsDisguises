@@ -106,7 +106,7 @@ public class LDUploadLogs implements LDCommand {
 
     @Override
     public List<String> getTabComplete() {
-        return Arrays.asList("uploadlog", "uploadlogs", "uploadconfig", "uploadconfigs", "logs");
+        return Arrays.asList("uploadlog", "uploadlogs", "uploadconfig", "uploadconfigs", "logs", "log");
     }
 
     @Override
