@@ -1,11 +1,5 @@
 # This config file is for features that are something the server might want to customize!
 
-# Disguises have a 'setExpires' option which removes the disguise after a set amount of time
-# By default, this is set to false which means it expires 9 minutes afterwards, even if they logged off.
-# If true, it means they will experience the full 9 minutes, even if they log on for just a minute per day
-# Expired message can be hidden with an empty translation message
-DynamicExpiry: false
-
 # THIS IS A PREMIUM ONLY FEATURE. TO USE IT, PURCHASE THE PLUGIN.
 # Saves disguises so that they persist after server shutdown, chunks unload, player logouts and so on.
 # As such, this completely replaces the KeepDisguises aspect which has been removed except for the player death.
@@ -29,6 +23,11 @@ DisguiseSounds: true
 # Turn this to true to have players undisguised when switching worlds
 UndisguiseOnWorldChange: false
 
+# Disguises have a 'setExpires' option which removes the disguise after a set amount of time
+# By default, this is set to false which means it expires 9 minutes afterwards, even if they logged off.
+# If true, it means they will experience the full 9 minutes, even if they log on for just a minute per day
+# Expired message can be hidden with an empty translation message
+DynamicExpiry: false
 
 # When disguised, should a message be displayed to the player? If so, where?
 # The message can be customized in translations

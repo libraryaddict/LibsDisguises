@@ -1,3 +1,5 @@
+# This config file is for saving disguises so that you can reuse them without typing the entire disguise out.
+
 # The best way to use this is with /savedisguise or /saveskin
 # /saveskin MyCustomSkin <SkinName> - Where <SkinName> can be an url, file in LibsDisguises/skins or player name
 # Then use /disguise player MyCustomSkin - To test it

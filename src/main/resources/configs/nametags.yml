@@ -36,6 +36,7 @@ PlayerNames: TEAMS
 OverrideCustomNames: true
 
 # More options in case you want to disable a specific setting of the scoreboard
+# You can customize self disguises scoreboard in players.yml
 Scoreboard:
   # Should it modify the scoreboard to turn collisions off?
   Collisions: true
