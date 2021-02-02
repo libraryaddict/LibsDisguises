@@ -13,7 +13,7 @@ commands:
     aliases: [libsdisg, ld]
     description: Main command for libsdisguises.
   disguise:
-    aliases: [dis, disg]
+    aliases: [d, dis, disg]
     permission: libsdisguises.seecmd.disguise
     description: Disguise yourself as an entity.
   disguiseentity:
@@ -33,7 +33,7 @@ commands:
     permission: libsdisguises.seecmd.disguiseradius
     description: Disguise all entities within a radius as an entity.
   undisguise:
-    aliases: [und, undis, undisg]
+    aliases: [u, und, undis, undisg]
     permission: libsdisguises.seecmd.undisguise
     description: Undisguise yourself.
   undisguiseentity:
