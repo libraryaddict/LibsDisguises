@@ -107,6 +107,7 @@ public class ReflectionManager {
     private static Field boardField;
     public static Object scoreboardCrtieriaHealth;
     private static Method getObjectives;
+    private static Method getPlayerScoreObjective;
     private static Method setScore;
 
     public static void init() {
@@ -189,7 +190,8 @@ public class ReflectionManager {
             setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
 
             if (!NmsVersion.v1_13.isSupported()) {
-                getObjectives = getNmsMethod("Scoreboard", "getScoreboardScores", getNmsClass("IScoreboardCriteria"), String.class, ArrayList.class);
+                getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"));
+                getPlayerScoreObjective = getNmsMethod("Scoreboard", "getObjectivesForCriteria", String.class, getNmsClass("IScoreboardCriteria"));
             } else {
                 getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"), String.class, Consumer.class);
             }
@@ -1937,9 +1939,9 @@ public class ReflectionManager {
             Object board = boardField.get(scoreboard);
 
             if (!NmsVersion.v1_13.isSupported()) {
-                Collection scores = (Collection) getObjectives.invoke(board, criteria, name, new ArrayList<>());
+                Collection scores = (Collection) getObjectives.invoke(board, criteria);
 
-                for (Object obj : scores) {
+                for (Object obj : (Collection) getPlayerScoreObjective.invoke(board, name, criteria)) {
                     setScore.invoke(obj, score);
                 }
 
