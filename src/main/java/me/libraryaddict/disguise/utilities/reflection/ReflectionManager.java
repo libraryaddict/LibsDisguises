@@ -191,7 +191,7 @@ public class ReflectionManager {
 
             if (!NmsVersion.v1_13.isSupported()) {
                 getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"));
-                getPlayerScoreObjective = getNmsMethod("Scoreboard", "getObjectivesForCriteria", String.class, getNmsClass("IScoreboardCriteria"));
+                getPlayerScoreObjective = getNmsMethod("Scoreboard", "getPlayerScoreForObjective", String.class, getNmsClass("ScoreboardObjective"));
             } else {
                 getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"), String.class, Consumer.class);
             }
@@ -1941,8 +1941,8 @@ public class ReflectionManager {
             if (!NmsVersion.v1_13.isSupported()) {
                 Collection scores = (Collection) getObjectives.invoke(board, criteria);
 
-                for (Object obj : (Collection) getPlayerScoreObjective.invoke(board, name, criteria)) {
-                    setScore.invoke(obj, score);
+                for (Object obj : scores) {
+                    setScore.invoke(getPlayerScoreObjective.invoke(board, name, obj), score);
                 }
 
                 return;
