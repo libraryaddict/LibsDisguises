@@ -185,7 +185,7 @@ public class ReflectionManager {
             genericDamage = getNmsField("DamageSource", "GENERIC").get(null);
             boardField = getCraftClass("scoreboard.CraftScoreboard").getDeclaredField("board");
             boardField.setAccessible(true);
-            scoreboardCrtieriaHealth = getNmsField("IScoreboardCriteria", "HEALTH").get(null);
+            scoreboardCrtieriaHealth = getNmsField("IScoreboardCriteria", NmsVersion.v1_13.isSupported() ? "HEALTH" : "g").get(null);
             setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
 
             if (!NmsVersion.v1_13.isSupported()) {
