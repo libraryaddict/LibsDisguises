@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 
@@ -1935,6 +1936,16 @@ public class ReflectionManager {
     }
 
     public static void setScore(Scoreboard scoreboard, Object criteria, String name, int score) {
+        if (!Bukkit.isPrimaryThread()) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    setScore(scoreboard, criteria, name, score);
+                }
+            }.runTask(LibsDisguises.getInstance());
+            return;
+        }
+
         try {
             Object board = boardField.get(scoreboard);
 
