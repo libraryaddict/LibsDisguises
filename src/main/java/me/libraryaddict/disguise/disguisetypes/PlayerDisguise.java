@@ -661,8 +661,8 @@ public class PlayerDisguise extends TargetedDisguise {
         if (isDynamicName()) {
             String name = getEntity().getCustomName();
 
-            if (name == null) {
-                name = "";
+            if (name == null || name.isEmpty()) {
+                name = "LD_NoName";
             }
 
             if (!getName().equals(name)) {
