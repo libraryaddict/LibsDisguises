@@ -113,7 +113,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (scoreboardName == null) {
-            if (isUpsideDown() || isDeadmau5Ears()) {
+            if (isUpsideDown() || isDeadmau5Ears() || !isNameVisible()) {
                 scoreboardName = new DisguiseUtilities.DScoreTeam(this, new String[]{"", getProfileName(), ""});
             } else {
                 scoreboardName = DisguiseUtilities.createExtendedName(this);
@@ -148,7 +148,7 @@ public class PlayerDisguise extends TargetedDisguise {
      */
     public String getProfileName() {
         return isUpsideDown() ? "Dinnerbone" : isDeadmau5Ears() ? "deadmau5" :
-                hasScoreboardName() ? getScoreboardName().getPlayer() : DisguiseConfig.isScoreboardNames() && getName().isEmpty() ? "LD_NoName" : getName();
+                !isNameVisible() || getName().isEmpty() ? "LD_NoName" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
     }
 
     public UUID getUUID() {
@@ -305,10 +305,6 @@ public class PlayerDisguise extends TargetedDisguise {
         if (DisguiseConfig.isCopyPlayerTeamInfo() && (DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.TEAMS ||
                 DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.ARMORSTANDS)) {
             name = DisguiseUtilities.getDisplayName(name);
-        }
-
-        if (name.equals("")) {
-            name = "LD_NoName";
         }
 
         if (name.equals(playerName)) {
@@ -661,8 +657,8 @@ public class PlayerDisguise extends TargetedDisguise {
         if (isDynamicName()) {
             String name = getEntity().getCustomName();
 
-            if (name == null || name.isEmpty()) {
-                name = "LD_NoName";
+            if (name == null) {
+                name = "";
             }
 
             if (!getName().equals(name)) {

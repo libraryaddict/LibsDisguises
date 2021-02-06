@@ -163,10 +163,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(5, pitch);
         } else if (disguise.getType().isPlayer()) {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
-            boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardNames();
+            boolean visibleOrNewCompat = playerDisguise.isNameVisible() && DisguiseConfig.isScoreboardNames();
 
             WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
-                    .getGameProfileWithThisSkin(UUID.randomUUID(), visibleOrNewCompat ? playerDisguise.getName() : "LD_NoName", playerDisguise.getGameProfile());
+                    .getGameProfileWithThisSkin(UUID.randomUUID(), playerDisguise.isNameVisible() ? playerDisguise.getProfileName() : "LD_NoName",
+                            playerDisguise.getGameProfile());
 
             int entityId = disguisedEntity.getEntityId();
             PlayerSkinHandler.PlayerSkin skin;
