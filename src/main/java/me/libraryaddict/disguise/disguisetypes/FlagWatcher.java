@@ -196,6 +196,9 @@ public class FlagWatcher {
         cloned.upsideDown = upsideDown;
         cloned.sleeping = sleeping;
         cloned.glowColor = glowColor;
+        cloned.pitchLock = pitchLock;
+        cloned.yawLock = yawLock;
+        cloned.yModifier = yModifier;
 
         return cloned;
     }
