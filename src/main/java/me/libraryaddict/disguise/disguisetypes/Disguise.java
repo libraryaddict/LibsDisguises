@@ -368,8 +368,8 @@ public abstract class Disguise {
         if (isDynamicName()) {
             String name = getEntity().getCustomName();
 
-            if (name == null) {
-                name = "";
+            if (name == null || name.isEmpty()) {
+                name = isPlayerDisguise() ? "LD_NoName" : "";
             }
 
             if (isPlayerDisguise()) {

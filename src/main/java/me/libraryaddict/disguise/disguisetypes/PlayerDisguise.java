@@ -307,6 +307,10 @@ public class PlayerDisguise extends TargetedDisguise {
             name = DisguiseUtilities.getDisplayName(name);
         }
 
+        if (name.equals("")) {
+            name = "LD_NoName";
+        }
+
         if (name.equals(playerName)) {
             return;
         }
