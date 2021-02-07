@@ -371,8 +371,8 @@ public class FlagWatcher {
                     health = MetaIndex.LIVING_HEALTH.getDefault();
                 }
 
-                String name = !DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
-                        ((PlayerDisguise) getDisguise()).getName() : ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer();
+                String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
+                        ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
 
                 ReflectionManager.setScore(player.getScoreboard(), ReflectionManager.scoreboardCrtieriaHealth, name, (int) Math.ceil(health));
             }
