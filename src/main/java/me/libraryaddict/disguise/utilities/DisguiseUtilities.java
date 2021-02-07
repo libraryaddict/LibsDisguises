@@ -105,7 +105,7 @@ public class DisguiseUtilities {
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
-            nameVisible = !DisguiseConfig.isArmorstandsName() && nameVisible;
+            nameVisible = !getPlayer().equals("LD_NoName") && !DisguiseConfig.isArmorstandsName() && nameVisible;
             Team team = board.getTeam(getTeamName());
 
             if (team == null) {
