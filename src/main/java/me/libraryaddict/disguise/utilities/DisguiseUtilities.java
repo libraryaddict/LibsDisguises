@@ -105,7 +105,7 @@ public class DisguiseUtilities {
         }
 
         public void handleTeam(Scoreboard board, boolean nameVisible) {
-            nameVisible = !getPlayer().equals("LD_NoName") && !DisguiseConfig.isArmorstandsName() && nameVisible;
+            nameVisible = !DisguiseConfig.isArmorstandsName() && nameVisible;
             Team team = board.getTeam(getTeamName());
 
             if (team == null) {
@@ -1775,9 +1775,9 @@ public class DisguiseUtilities {
         if (mainTeam == null) {
             mainTeam = scoreboard.registerNewTeam("LD_NoName");
             mainTeam.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
-            mainTeam.addEntry("LD_NoName");
-        } else if (!mainTeam.hasEntry("LD_NoName")) {
-            mainTeam.addEntry("LD_NoName");
+            mainTeam.addEntry("");
+        } else if (!mainTeam.hasEntry("")) {
+            mainTeam.addEntry("");
         }
     }
 

@@ -113,7 +113,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (scoreboardName == null) {
-            if (isUpsideDown() || isDeadmau5Ears() || !isNameVisible()) {
+            if (isUpsideDown() || isDeadmau5Ears()) {
                 scoreboardName = new DisguiseUtilities.DScoreTeam(this, new String[]{"", getProfileName(), ""});
             } else {
                 scoreboardName = DisguiseUtilities.createExtendedName(this);
@@ -147,8 +147,7 @@ public class PlayerDisguise extends TargetedDisguise {
      * The actual name that'll be sent in the game profile, not the name that they're known as
      */
     public String getProfileName() {
-        return isUpsideDown() ? "Dinnerbone" : isDeadmau5Ears() ? "deadmau5" :
-                !isNameVisible() || getName().isEmpty() ? "LD_NoName" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
+        return isUpsideDown() ? "Dinnerbone" : isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
     }
 
     public UUID getUUID() {
@@ -214,10 +213,6 @@ public class PlayerDisguise extends TargetedDisguise {
 
         getWatcher().setInternalUpsideDown(upsideDown);
 
-        if (gameProfile != null) {
-            gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
-        }
-
         if (isDisguiseInUse()) {
             resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "Dinnerbone", true);
         } else {
@@ -233,10 +228,6 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         this.deadmau5Ears = deadmau5Ears;
-
-        if (gameProfile != null) {
-            gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
-        }
 
         if (isDisguiseInUse()) {
             resendDisguise(DisguiseConfig.isArmorstandsName() ? getName() : "deadmau5", true);
