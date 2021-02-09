@@ -117,7 +117,7 @@ public class LDGithub {
                 DisguiseUtilities.getLogger().info("Now looking for update on Github..");
             }
 
-            // We're connecting to md_5's jenkins REST api
+            // We're connecting to githubs REST api
             URL url = new URL("https://api.github.com/repos/libraryaddict/LibsDisguises/releases/latest");
             // Creating a connection
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
