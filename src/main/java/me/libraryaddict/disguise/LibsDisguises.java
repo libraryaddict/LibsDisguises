@@ -59,13 +59,13 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        instance = this;
-
-        if (!Bukkit.getServer().getWorlds().isEmpty()) {
+        if (instance != null || !Bukkit.getServer().getWorlds().isEmpty() || !Bukkit.getOnlinePlayers().isEmpty()) {
             reloaded = true;
             getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             return;
         }
+
+        instance = this;
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
 
@@ -286,6 +286,8 @@ public class LibsDisguises extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             DisguiseUtilities.removeSelfDisguiseScoreboard(player);
         }
+
+        reloaded = true;
     }
 
     public boolean isReleaseBuild() {
