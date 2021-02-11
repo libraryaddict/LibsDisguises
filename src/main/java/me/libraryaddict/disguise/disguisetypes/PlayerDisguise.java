@@ -30,7 +30,7 @@ public class PlayerDisguise extends TargetedDisguise {
      * Has someone set name visible explicitly?
      */
     private boolean explicitNameVisible = false;
-    private final UUID uuid = UUID.randomUUID();
+    private final UUID uuid = ReflectionManager.getRandomUUID();
     private transient DisguiseUtilities.DScoreTeam scoreboardName;
     @Getter
     private boolean deadmau5Ears;
@@ -147,7 +147,8 @@ public class PlayerDisguise extends TargetedDisguise {
      * The actual name that'll be sent in the game profile, not the name that they're known as
      */
     public String getProfileName() {
-        return isUpsideDown() ? "Dinnerbone" : isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName();
+        return isUpsideDown() ? "Dinnerbone" :
+                isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
     }
 
     public UUID getUUID() {

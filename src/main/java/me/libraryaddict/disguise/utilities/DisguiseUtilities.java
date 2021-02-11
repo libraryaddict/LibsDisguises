@@ -1775,9 +1775,9 @@ public class DisguiseUtilities {
         if (mainTeam == null) {
             mainTeam = scoreboard.registerNewTeam("LD_NoName");
             mainTeam.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
-            mainTeam.addEntry("");
-        } else if (!mainTeam.hasEntry("")) {
-            mainTeam.addEntry("");
+            mainTeam.addEntry("§r");
+        } else if (!mainTeam.hasEntry("§r")) {
+            mainTeam.addEntry("§r");
         }
     }
 

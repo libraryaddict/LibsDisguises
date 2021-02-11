@@ -720,7 +720,7 @@ public class ReflectionManager {
     /**
      * Used for generating a UUID with a custom version instead of the default 4. Workaround for China's NetEase servers
      */
-    private static UUID getRandomUUID() {
+    public static UUID getRandomUUID() {
         UUID uuid = UUID.randomUUID();
 
         if (DisguiseConfig.getUUIDGeneratedVersion() == 4) {

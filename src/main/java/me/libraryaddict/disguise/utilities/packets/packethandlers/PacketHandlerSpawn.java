@@ -165,9 +165,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
             PlayerDisguise playerDisguise = (PlayerDisguise) disguise;
             boolean visibleOrNewCompat = playerDisguise.isNameVisible() || DisguiseConfig.isScoreboardNames();
 
-            WrappedGameProfile spawnProfile = visibleOrNewCompat ? playerDisguise.getGameProfile() : ReflectionManager
-                    .getGameProfileWithThisSkin(UUID.randomUUID(), playerDisguise.isNameVisible() ? playerDisguise.getName() : "", playerDisguise.getGameProfile());
-
             int entityId = disguisedEntity.getEntityId();
             PlayerSkinHandler.PlayerSkin skin;
 
@@ -178,7 +175,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 // Add player to the list, necessary to spawn them
                 sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
 
-                List playerList = Collections.singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), spawnProfile));
+                List playerList = Collections.singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), ReflectionManager
+                    .getGameProfileWithThisSkin(playerDisguise.getUUID(), playerDisguise.getProfileName(), playerDisguise.getGameProfile())));
                 sendTab.getModifier().write(1, playerList);
 
                 packets.addPacket(sendTab);
@@ -201,7 +199,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             PacketContainer spawnPlayer = new PacketContainer(PacketType.Play.Server.NAMED_ENTITY_SPAWN);
 
             spawnPlayer.getIntegers().write(0, entityId); // Id
-            spawnPlayer.getModifier().write(1, spawnProfile.getUUID());
+            spawnPlayer.getModifier().write(1, playerDisguise.getUUID());
 
             double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
 

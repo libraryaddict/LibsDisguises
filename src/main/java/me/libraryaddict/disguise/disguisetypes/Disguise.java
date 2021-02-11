@@ -1167,9 +1167,9 @@ public abstract class Disguise {
                 }, 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
-            PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-            addTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-            addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
+            PacketContainer removeTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+            removeTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
+            removeTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
                     new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0, NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
 
             try {
@@ -1178,7 +1178,7 @@ public abstract class Disguise {
                         continue;
                     }
 
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, removeTab);
                 }
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
