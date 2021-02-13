@@ -57,7 +57,7 @@ commands:
     permission: libsdisguises.seecmd.viewself
     description: Toggle seeing your own disguise on or off.
   disguiseviewbar:
-    aliases: [dviewbar, dvb, disguisevb, disvb, vsd, viewdisguisebar, viewbardisguise, bardisguise, bardisg, bard,
+    aliases: [dviewbar, dvb, disguisevb, disvb, viewdisguisebar, viewbardisguise, bardisguise, bardisg, bard,
               notifybar, viewnotifybar, disguisenotifybar, disgnotifybar, dnotifybar]
     permission: libsdisguises.seecmd.viewself
     description: Toggle seeing your own disguise on or off.
