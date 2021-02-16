@@ -226,7 +226,7 @@ public class LDUploadLogs implements LDCommand {
                                     sender.sendMessage(ChatColor.GOLD + "Click on the below message to have it appear in your chat input");
                                 }
 
-                                String text = "My log file: " + latestPaste + ", my config file: " + configPaste + " and my disguises file: " + disguisesPaste;
+                                String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " + disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);
