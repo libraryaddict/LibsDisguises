@@ -62,7 +62,6 @@ public class LibsDisguises extends JavaPlugin {
         if (instance != null || !Bukkit.getServer().getWorlds().isEmpty() || !Bukkit.getOnlinePlayers().isEmpty()) {
             reloaded = true;
             getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
-            return;
         }
 
         instance = this;
