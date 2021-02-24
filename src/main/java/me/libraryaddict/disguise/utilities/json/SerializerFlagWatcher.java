@@ -21,8 +21,7 @@ import java.util.Optional;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerFlagWatcher
-        implements JsonDeserializer<FlagWatcher>, JsonSerializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
+public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, JsonSerializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
     private Gson gson;
 
     public SerializerFlagWatcher(Gson gson) {
@@ -30,11 +29,9 @@ public class SerializerFlagWatcher
     }
 
     @Override
-    public FlagWatcher deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+    public FlagWatcher deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         try {
-            FlagWatcher watcher =
-                    (FlagWatcher) gson.fromJson(json, Class.forName(((JsonObject) json).get("flagType").getAsString()));
+            FlagWatcher watcher = (FlagWatcher) gson.fromJson(json, Class.forName(((JsonObject) json).get("flagType").getAsString()));
 
             DisguiseType entity = DisguiseType.valueOf(((JsonObject) json).get("entityType").getAsString());
 
@@ -75,8 +72,7 @@ public class SerializerFlagWatcher
                 }
             } else if (entry.getValue() instanceof String) {
                 if (index.getDefault() instanceof WrappedParticle) {
-                    entry.setValue(((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class))
-                            .fromString((String) entry.getValue()));
+                    entry.setValue(((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class)).fromString((String) entry.getValue()));
                 }
             } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
                 // If the default value is not VillagerData
@@ -103,9 +99,7 @@ public class SerializerFlagWatcher
                             if (((LinkedTreeMap) entry.getValue()).isEmpty()) {
                                 value = Optional.empty();
                             } else {
-                                value = Optional.of(
-                                        gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")),
-                                                val));
+                                value = Optional.of(gson.fromJson(gson.toJson(((LinkedTreeMap) entry.getValue()).get("value")), val));
                             }
 
                             entry.setValue(value);
@@ -131,7 +125,7 @@ public class SerializerFlagWatcher
     @Override
     public FlagWatcher createInstance(Type type) {
         try {
-            return (FlagWatcher) type.getClass().getConstructor(Disguise.class).newInstance(null);
+            return (FlagWatcher) ((Class) type).getConstructor(Disguise.class).newInstance(new Object[]{null});
         } catch (Exception e) {
             e.printStackTrace();
         }
