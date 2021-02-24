@@ -46,9 +46,8 @@ public class UpdateChecker {
             return false;
         }
 
-        boolean isRelease =
-                includeDownloaded && getLastDownload() != null ? !getLastDownload().getVersion().contains("-SNAPSHOT") :
-                        LibsDisguises.getInstance().isReleaseBuild();
+        boolean isRelease = includeDownloaded && getLastDownload() != null ? !getLastDownload().getVersion().contains("-SNAPSHOT") :
+                LibsDisguises.getInstance().isReleaseBuild();
 
         if (getUpdate().isReleaseBuild() != isRelease) {
             return false;
@@ -78,15 +77,13 @@ public class UpdateChecker {
     }
 
     public boolean isOldUpdate() {
-        return getUpdate() == null ||
-                getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)));
+        return getUpdate() == null || getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)));
     }
 
     public boolean isUsingReleaseBuilds() {
         DisguiseConfig.UpdatesBranch builds = DisguiseConfig.getUpdatesBranch();
 
-        return builds == DisguiseConfig.UpdatesBranch.RELEASES ||
-                (builds == DisguiseConfig.UpdatesBranch.SAME_BUILDS && DisguiseConfig.isUsingReleaseBuild());
+        return builds == DisguiseConfig.UpdatesBranch.RELEASES || (builds == DisguiseConfig.UpdatesBranch.SAME_BUILDS && DisguiseConfig.isUsingReleaseBuild());
     }
 
     public void notifyUpdate(CommandSender player) {
@@ -116,8 +113,7 @@ public class UpdateChecker {
 
             doUpdateCheck();
 
-            if (isOnLatestUpdate(true) ||
-                    (oldUpdate != null && oldUpdate.getVersion().equals(getUpdate().getVersion()))) {
+            if (isOnLatestUpdate(true) || (oldUpdate != null && oldUpdate.getVersion().equals(getUpdate().getVersion()))) {
                 return;
             }
 
@@ -135,16 +131,14 @@ public class UpdateChecker {
                     notifyUpdate(p);
                 }
             });
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning(String.format("Failed to check for update: %s", ex.getMessage()));
         }
     }
 
     public PluginInformation doUpdate() {
         // If no update on file, or more than 6 hours hold. Check for update
-        if (getUpdate() == null ||
-                getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(6)))) {
+        if (getUpdate() == null || getUpdate().getFetched().before(new Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(6)))) {
             doUpdateCheck();
         }
 
@@ -169,8 +163,7 @@ public class UpdateChecker {
             } else {
                 update = jenkinsUpdater.getLatestSnapshot();
             }
-        }
-        finally {
+        } finally {
             downloading.set(false);
         }
 
@@ -181,13 +174,11 @@ public class UpdateChecker {
         if (getUpdate().isReleaseBuild()) {
             String currentVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
-            if (LibsDisguises.getInstance().isReleaseBuild() &&
-                    !isNewerVersion(currentVersion, getUpdate().getVersion())) {
+            if (LibsDisguises.getInstance().isReleaseBuild() && !isNewerVersion(currentVersion, getUpdate().getVersion())) {
                 return LibsMsg.UPDATE_ON_LATEST;
             }
 
-            updateMessage = new String[]{LibsMsg.UPDATE_READY.get(currentVersion, getUpdate().getVersion()),
-                    LibsMsg.UPDATE_HOW.get()};
+            updateMessage = new String[]{LibsMsg.UPDATE_READY.get(currentVersion, getUpdate().getVersion()), LibsMsg.UPDATE_HOW.get()};
         } else {
             if (!getUpdate().getVersion().matches("[0-9]+")) {
                 return LibsMsg.UPDATE_FAILED;
@@ -201,9 +192,7 @@ public class UpdateChecker {
 
             String build = LibsDisguises.getInstance().getBuildNo();
 
-            updateMessage = new String[]{
-                    LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("[0-9]+") ? "#" : "") + build, newBuild),
-                    LibsMsg.UPDATE_HOW.get()};
+            updateMessage = new String[]{LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("[0-9]+") ? "#" : "") + build, newBuild), LibsMsg.UPDATE_HOW.get()};
         }
 
         return null;
@@ -215,8 +204,7 @@ public class UpdateChecker {
         File dest = new File(Bukkit.getUpdateFolderFile(), LibsDisguises.getInstance().getFile().getName());
 
         if (!isGoSilent()) {
-            DisguiseUtilities.getLogger()
-                    .info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
+            DisguiseUtilities.getLogger().info("Now downloading build of Lib's Disguises from " + urlString + " to " + dest.getName());
         }
 
         if (dest.exists()) {
@@ -245,18 +233,15 @@ public class UpdateChecker {
             lastDownload = result;
 
             updateMessage = new String[]{LibsMsg.UPDATE_SUCCESS.get(),
-                    LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(),
-                            result.getParsedBuildDate().toString(), result.getSize() / 1024)};
+                    LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(), result.getSize() / 1024)};
 
             return result;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             // Failed, set the last download back to previous build
             dest.delete();
             DisguiseUtilities.getLogger().warning("Failed to download snapshot build.");
             ex.printStackTrace();
-        }
-        finally {
+        } finally {
             downloading.set(false);
         }
 
@@ -268,8 +253,8 @@ public class UpdateChecker {
         newVersion = newVersion.replaceAll("(v)|(-SNAPSHOT)", "");
 
         // If the server has been online for less than 6 hours and both versions are 1.1.1 kind of versions
-        if (started + TimeUnit.HOURS.toMillis(6) > System.currentTimeMillis() &&
-                currentVersion.matches("[0-9]+(\\.[0-9]+)*") && newVersion.matches("[0-9]+(\\.[0-9]+)*")) {
+        if (started + TimeUnit.HOURS.toMillis(6) > System.currentTimeMillis() && currentVersion.matches("[0-9]+(\\.[0-9]+)*") &&
+                newVersion.matches("[0-9]+(\\.[0-9]+)*")) {
 
             int cVersion = Integer.parseInt(currentVersion.replace(".", ""));
             int nVersion = Integer.parseInt(newVersion.replace(".", ""));

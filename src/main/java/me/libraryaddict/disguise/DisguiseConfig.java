@@ -272,6 +272,9 @@ public class DisguiseConfig {
     @Getter
     @Setter(AccessLevel.PROTECTED)
     private static int disguiseRadiusMax;
+    @Getter
+    @Setter
+    private static String data;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -388,6 +391,7 @@ public class DisguiseConfig {
         hittingRateLimit = configuration.getBoolean("HittingRateLimit", false);
         lastGithubUpdateETag = configuration.getString("LastGithubETag", null);
         lastPluginUpdateVersion = configuration.getString("LastPluginVersion", null);
+        data = configuration.getString("Data", null);
 
         if (!configuration.contains("Bisect-Hosted") || !configuration.contains("Server-IP") || !configuration.contains("ReleaseBuild")) {
             saveInternalConfig();
@@ -401,7 +405,7 @@ public class DisguiseConfig {
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(), isHittingRateLimit(),
-                getLastGithubUpdateETag(), getLastPluginUpdateVersion()}) {
+                getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 

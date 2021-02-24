@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities.sounds;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Sound;

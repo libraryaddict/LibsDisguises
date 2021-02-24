@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;

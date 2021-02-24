@@ -4,6 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -52,6 +54,9 @@ public class DisguiseListener implements Listener {
     private HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
     private LibsDisguises plugin;
+    @Getter
+    @Setter
+    private boolean isDodgyUser;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
@@ -210,13 +215,16 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageEvent event) {
-        if (!"%%__USER__%%".equals(12 + "345")) {
+        if (!isDodgyUser() && !"%%__USER__%%".equals(12 + "345")) {
             return;
         }
 
-        event.setCancelled(false);
+        if (event.isCancelled()) {
+            event.setCancelled(false);
+            return;
+        }
 
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             event.setDamage(event.getDamage() * 3);

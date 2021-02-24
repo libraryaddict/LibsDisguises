@@ -137,6 +137,11 @@ public class DisguiseUtilities {
         }
     }
 
+    private static class UsersData {
+        String[] users;
+        long fetched;
+    }
+
     @Getter
     public static final Random random = new Random();
     private static final LinkedHashMap<String, Disguise> clonedDisguises = new LinkedHashMap<>();
@@ -1346,6 +1351,98 @@ public class DisguiseUtilities {
         }
 
         loadViewPreferences();
+
+        if (LibsPremium.isPremium()) {
+            boolean fetch = true;
+
+            try {
+                if (DisguiseConfig.getData() != null) {
+                    UsersData data =
+                            getGson().fromJson(new String(Base64.getDecoder().decode(DisguiseConfig.getData()), StandardCharsets.UTF_8), UsersData.class);
+
+                    if (data != null && data.fetched < System.currentTimeMillis() && data.fetched + TimeUnit.DAYS.toMillis(3) > System.currentTimeMillis()) {
+                        doCheck(data.users);
+                        fetch = false;
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+
+            if (fetch) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String[] users = getBadUsers();
+
+                            if (users != null) {
+                                UsersData data = new UsersData();
+                                data.users = users;
+                                data.fetched = System.currentTimeMillis();
+
+                                DisguiseConfig.setData(Base64.getEncoder().encodeToString(getGson().toJson(data).getBytes(StandardCharsets.UTF_8)));
+                                DisguiseConfig.saveInternalConfig();
+                            }
+
+                            doCheck(users);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }.runTaskAsynchronously(LibsDisguises.getInstance());
+            }
+        }
+    }
+
+    private static void doCheck(String[] users) {
+        for (String s : users) {
+            if (LibsPremium.getPaidInformation() != null &&
+                    (s.equals(LibsPremium.getPaidInformation().getDownloadID()) || s.equals(LibsPremium.getPaidInformation().getUserID()))) {
+                LibsDisguises.getInstance().getListener().setDodgyUser(true);
+                continue;
+            }
+
+            if (LibsPremium.getUserID() == null || (!s.equals(LibsPremium.getUserID()) && !s.equals(LibsPremium.getDownloadID()))) {
+                continue;
+            }
+
+            LibsDisguises.getInstance().getUpdateChecker().setGoSilent(true);
+        }
+    }
+
+    private static String[] getBadUsers() {
+        if (LibsPremium.isBisectHosted() && (LibsPremium.getPaidInformation() == null || LibsPremium.getUserID().contains("%"))) {
+            return new String[0];
+        }
+
+        // List of bad users that need to redownload Libs Disguises
+
+        try {
+            // We're connecting to md_5's jenkins REST api
+            URL url = new URL("https://api.github.com/repos/libraryaddict/libsdisguises/issues/469");
+            // Creating a connection
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
+            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
+
+            HashMap<String, Object> map;
+
+            // Get the input stream, what we receive
+            try (InputStream input = con.getInputStream()) {
+                // Read it to string
+                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+
+                map = new Gson().fromJson(json, HashMap.class);
+            }
+
+            if (!map.containsKey("body")) {
+                return new String[0];
+            }
+
+            return ((String) map.get("body")).split("(\\r|\\n)+");
+        } catch (Exception ignored) {
+        }
+
+        return new String[0];
     }
 
     public static boolean isDisguiseInUse(Disguise disguise) {

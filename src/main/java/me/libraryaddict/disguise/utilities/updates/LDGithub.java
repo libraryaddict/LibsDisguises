@@ -6,7 +6,6 @@ import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.LibsPremium;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -58,59 +56,8 @@ public class LDGithub {
     @Getter
     private UpdateChecker checker;
 
-    private String[] getBadUsers() {
-        if (!LibsPremium.isPremium() || (LibsPremium.isBisectHosted() && (LibsPremium.getPaidInformation() == null || LibsPremium.getUserID().contains("%")))) {
-            return new String[0];
-        }
-
-        // List of bad users that need to redownload Libs Disguises
-
-        try {
-            // We're connecting to md_5's jenkins REST api
-            URL url = new URL("https://api.github.com/repos/libraryaddict/libsdisguises/issues/469");
-            // Creating a connection
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
-            con.setRequestProperty("Accept", "application/vnd.github.v3+json");
-
-            HashMap<String, Object> map;
-
-            // Get the input stream, what we receive
-            try (InputStream input = con.getInputStream()) {
-                // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-
-                map = new Gson().fromJson(json, HashMap.class);
-            }
-
-            if (!map.containsKey("body")) {
-                return new String[0];
-            }
-
-            return ((String) map.get("body")).split("(\\r|\\n)+");
-        } catch (Exception ignored) {
-        }
-
-        return new String[0];
-    }
-
     public DisguiseUpdate getLatestRelease() {
         try {
-            String[] users = getBadUsers();
-
-            for (String s : users) {
-                if (LibsPremium.getPaidInformation() != null &&
-                        (s.equals(LibsPremium.getPaidInformation().getDownloadID()) || s.equals(LibsPremium.getPaidInformation().getUserID()))) {
-                    LibsDisguises.getInstance().unregisterCommands(true);
-                } else {
-                    if (LibsPremium.getUserID() == null || (!s.equals(LibsPremium.getUserID()) && !s.equals(LibsPremium.getDownloadID()))) {
-                        continue;
-                    }
-
-                    getChecker().setGoSilent(true);
-                }
-            }
-
             String ourVersion = LibsDisguises.getInstance().getDescription().getVersion();
 
             if (!getChecker().isGoSilent()) {

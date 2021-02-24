@@ -36,7 +36,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
         Player observer = event.getPlayer();
 
-        if (observer == null || observer.getName().contains("UNKNOWN[")) // If the player is temporary
+        if (observer == null || event.isPlayerTemporary() || observer.getName().contains("UNKNOWN[")) // If the player is temporary
         {
             return;
         }
