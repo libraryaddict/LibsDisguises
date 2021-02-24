@@ -422,7 +422,7 @@ public abstract class Disguise {
             private int blockX, blockY, blockZ, facing;
             private int deadTicks = 0;
             private int actionBarTicks = -1;
-            private long lastRefreshed;
+            private long lastRefreshed = System.currentTimeMillis();
 
             @Override
             public void run() {
@@ -469,8 +469,8 @@ public abstract class Disguise {
 
                 // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
                 if (getType() == DisguiseType.FIREWORK || getType() == DisguiseType.EVOKER_FANGS) {
-                    if (lastRefreshed < System.currentTimeMillis()) {
-                        lastRefreshed = System.currentTimeMillis() + ((getType() == DisguiseType.FIREWORK ? 40 : 23) * 50);
+                    if (lastRefreshed + ((getType() == DisguiseType.FIREWORK ? 40 : 23) * 50) < System.currentTimeMillis()) {
+                        lastRefreshed = System.currentTimeMillis();
 
                         DisguiseUtilities.refreshTrackers(disguise);
                     }
