@@ -1372,15 +1372,8 @@ public class DisguiseUtilities {
         }
 
         try {
-            PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
-
             if (disguise.isDisguiseInUse() && disguise.getEntity() instanceof Player && disguise.getEntity().getName().equalsIgnoreCase(player)) {
-                removeSelfDisguise(disguise);
-
-                if (disguise.isSelfDisguiseVisible()) {
-                    selfDisguised.add(disguise.getEntity().getUniqueId());
-                }
-
+                PacketContainer destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
@@ -1404,6 +1397,8 @@ public class DisguiseUtilities {
 
                 final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
                         ReflectionManager.getNmsClass("EntityPlayer"));
+
+                PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
@@ -1498,13 +1493,10 @@ public class DisguiseUtilities {
 
         try {
             if (selfDisguised.contains(disguise.getEntity().getUniqueId()) && disguise.isDisguiseInUse()) {
-                removeSelfDisguise(disguise);
-
-                selfDisguised.add(disguise.getEntity().getUniqueId());
-
                 PacketContainer destroyPacket = getDestroyPacket(DisguiseAPI.getSelfDisguiseId());
-
                 ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), destroyPacket);
+
+                removeSelfTracker((Player) disguise.getEntity());
 
                 Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                     try {
@@ -1623,6 +1615,21 @@ public class DisguiseUtilities {
         selfDisguised.remove(player.getUniqueId());
         // Get the entity tracker
 
+        removeSelfTracker(player);
+
+        // Resend entity metadata else he will be invisible to himself until its resent
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, ProtocolLibrary.getProtocolManager()
+                    .createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true)
+                    .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        player.updateInventory();
+    }
+
+    private static void removeSelfTracker(Player player) {
         try {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(player);
 
@@ -1641,17 +1648,6 @@ public class DisguiseUtilities {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        // Resend entity metadata else he will be invisible to himself until its resent
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, ProtocolLibrary.getProtocolManager()
-                    .createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true)
-                    .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        player.updateInventory();
     }
 
     public static List<Scoreboard> getAllScoreboards() {
