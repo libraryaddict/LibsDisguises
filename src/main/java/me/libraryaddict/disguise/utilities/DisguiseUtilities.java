@@ -424,7 +424,7 @@ public class DisguiseUtilities {
             getFile.setAccessible(true);
 
             File theirFile = (File) getFile.invoke(ProtocolLibrary.getPlugin());
-            dest = new File(Bukkit.getUpdateFolderFile().getParentFile(), theirFile.getName());
+            dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
         }
 
         if (!dest.exists()) {
