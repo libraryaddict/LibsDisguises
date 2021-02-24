@@ -140,7 +140,10 @@ public class LDUploadLogs implements LDCommand {
             }
 
             try {
-                configText.append(new String(Files.readAllBytes(config.toPath())));
+                String text = new String(Files.readAllBytes(config.toPath()));
+                text = text.replaceAll("\n? *#[^\n]*", "").replaceAll("[\n\r]+", "\n");
+
+                configText.append("File: ").append(config.getName()).append("\n\n").append(text);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -208,10 +211,8 @@ public class LDUploadLogs implements LDCommand {
                             configText.append("\nUsing default config!");
                         }
 
-                        String ctext = configText.toString().replaceAll("\n? *#[^\n]*", "");
-
                         URL latestPaste = new GuestPaste("latest.log", latestText).paste();
-                        URL configPaste = new GuestPaste("LibsDisguises config.yml", ctext).paste();
+                        URL configPaste = new GuestPaste("LibsDisguises config.yml", configText.toString()).paste();
                         URL disguisesPaste = new GuestPaste("LibsDisguises disguises.yml", disguiseText).paste();
 
                         lastUsed = System.currentTimeMillis();
@@ -226,7 +227,8 @@ public class LDUploadLogs implements LDCommand {
                                     sender.sendMessage(ChatColor.GOLD + "Click on the below message to have it appear in your chat input");
                                 }
 
-                                String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " + disguisesPaste;
+                                String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " +
+                                        disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);
