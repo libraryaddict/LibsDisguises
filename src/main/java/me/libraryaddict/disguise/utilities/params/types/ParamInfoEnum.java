@@ -26,7 +26,7 @@ public class ParamInfoEnum extends ParamInfo {
     }
 
     @Override
-    protected Object fromString(String string) throws DisguiseParseException {
+    public Object fromString(String string) throws DisguiseParseException {
         string = string.replace("_", "");
 
         for (Map.Entry<String, Object> entry : getValues().entrySet()) {

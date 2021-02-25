@@ -6,6 +6,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import org.bukkit.inventory.ItemStack;
@@ -73,6 +74,8 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
             } else if (entry.getValue() instanceof String) {
                 if (index.getDefault() instanceof WrappedParticle) {
                     entry.setValue(((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class)).fromString((String) entry.getValue()));
+                } else if (index.getDefault() instanceof EntityPose) {
+                    entry.setValue(((ParamInfoEnum) ParamInfoManager.getParamInfo(EntityPose.class)).fromString((String) entry.getValue()));
                 }
             } else if (entry.getValue() instanceof LinkedTreeMap) { // If it's deserialized incorrectly as a map
                 // If the default value is not VillagerData
