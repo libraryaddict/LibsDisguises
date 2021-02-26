@@ -24,14 +24,10 @@ public class AsmDownloader {
     /**
      * Using maven
      */
-    private String urlToGrab = "https://search.maven.org/remotecontent?filepath=org/ow2/asm/asm/7.3.1/asm-7.3.1.jar";
-    private File filePath = new File(LibsDisguises.getInstance().getDataFolder(), "libs/org-ow2-asm-7.3.1.jar");
+    private String urlToGrab = "https://search.maven.org/remotecontent?filepath=org/ow2/asm/asm/9.1/asm-9.1.jar";
+    private File filePath = new File(LibsDisguises.getInstance().getDataFolder(), "libs/org-ow2-asm-9.1.jar");
 
     public AsmDownloader() {
-        if (NmsVersion.v1_13.isSupported()) {
-            throw new IllegalStateException("Sorry, this shouldn't have been started!");
-        }
-
         try {
             Class.forName("org.objectweb.asm.ClassReader");
             return;
@@ -41,7 +37,7 @@ public class AsmDownloader {
         }
 
         if (!hasASM()) {
-            LibsDisguises.getInstance().getLogger().info("Downloading required library for 1.12 support!");
+            LibsDisguises.getInstance().getLogger().info("Downloading required library for asm!");
 
             downloadASM();
 

@@ -57,7 +57,7 @@ public class ParamInfoColor extends ParamInfoEnum {
     }
 
     @Override
-    protected Object fromString(String string) {
+    public Object fromString(String string) {
         return parseToColor(string);
     }
 
