@@ -253,6 +253,11 @@ public class PlayerSkinHandler implements Listener {
 
     private void addMetadata(Player player, PlayerSkin skin) throws InvocationTargetException {
         PlayerDisguise disguise = skin.getDisguise().get();
+
+        if (!disguise.isDisguiseInUse()) {
+            return;
+        }
+
         Entity entity = disguise.getEntity();
         WrappedDataWatcher watcher = DisguiseUtilities.createSanitizedDataWatcher(player, WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
 
