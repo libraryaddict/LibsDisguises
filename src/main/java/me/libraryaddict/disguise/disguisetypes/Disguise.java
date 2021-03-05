@@ -932,7 +932,7 @@ public abstract class Disguise {
 
         // If this disguise is active
         // Remove the disguise from the current disguises.
-        if (DisguiseUtilities.removeDisguise((TargetedDisguise) this)) {
+        if (DisguiseUtilities.removeDisguise((TargetedDisguise) this) && !disguiseBeingReplaced) {
             if (getEntity() instanceof Player) {
                 DisguiseUtilities.removeSelfDisguise(this);
             }
