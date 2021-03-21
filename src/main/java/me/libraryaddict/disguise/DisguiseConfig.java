@@ -186,9 +186,6 @@ public class DisguiseConfig {
     private static int maxClonedDisguises;
     @Getter
     @Setter
-    private static int playerDisguisesTablistExpires;
-    @Getter
-    @Setter
     private static int uuidGeneratedVersion;
     @Getter
     @Setter
@@ -606,7 +603,6 @@ public class DisguiseConfig {
         setNameAboveHeadAlwaysVisible(config.getBoolean("NameAboveHeadAlwaysVisible"));
         setNameOfPlayerShownAboveDisguise(config.getBoolean("ShowNamesAboveDisguises"));
         setNameAboveDisguise(config.getString("NameAboveDisguise"));
-        setPlayerDisguisesTablistExpires(config.getInt("PlayerDisguisesTablistExpiry"));
         setPlayerHideArmor(config.getBoolean("PlayerHideArmor"));
         setRetaliationCombat(config.getBoolean("RetaliationCombat"));
         setSaveGameProfiles(config.getBoolean("SaveGameProfiles"));

@@ -33,9 +33,6 @@ ShowPlayerDisguisesInTab: false
 
 # On player disguise, a fake player is added to tablist so the skin can load properly.
 # This option is ignored if 'ShowPlayerDisguisesInTab' is enabled.
-# 3 ticks should easily be enough.
-PlayerDisguisesTablistExpires: 3
-
 # How many ticks before tab packet is sent to remove from tablist. This shouldn't need to be touched
 TablistRemoveDelay: 3
 
