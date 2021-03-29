@@ -200,7 +200,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                     disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
                 }
 
-                disguise.startDisguise();
+                disguise.startDisguise(sender);
 
                 if (disguise.isDisguiseInUse()) {
                     disguisedEntitys++;

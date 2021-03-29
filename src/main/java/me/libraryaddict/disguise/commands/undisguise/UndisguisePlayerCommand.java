@@ -86,7 +86,7 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         }
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
-            DisguiseAPI.undisguiseToAll(entityTarget);
+            DisguiseAPI.undisguiseToAll(sender, entityTarget);
             LibsMsg.UNDISG_PLAYER.send(sender,
                     entityTarget instanceof Player ? entityTarget.getName() :
                             DisguiseType.getType(entityTarget).toReadable());

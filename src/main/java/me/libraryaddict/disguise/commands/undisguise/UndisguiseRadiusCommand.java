@@ -70,7 +70,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
                 }
 
                 if (DisguiseAPI.isDisguised(entity)) {
-                    DisguiseAPI.undisguiseToAll(entity);
+                    DisguiseAPI.undisguiseToAll(sender, entity);
                     disguisedEntitys++;
                 }
             }

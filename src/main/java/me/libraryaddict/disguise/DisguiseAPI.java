@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
@@ -209,6 +210,10 @@ public class DisguiseAPI {
     }
 
     public static void disguiseEntity(Entity entity, Disguise disguise) {
+        disguiseEntity(null, entity, disguise);
+    }
+
+    public static void disguiseEntity(CommandSender commandSender, Entity entity, Disguise disguise) {
         // If they are trying to disguise a null entity or use a null disguise
         // Just return.
         if (entity == null || disguise == null) {
@@ -236,7 +241,7 @@ public class DisguiseAPI {
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 
-        disguise.startDisguise();
+        disguise.startDisguise(commandSender);
     }
 
     public static void disguiseIgnorePlayers(Entity entity, Disguise disguise, Collection playersToNotSeeDisguise) {
@@ -473,10 +478,21 @@ public class DisguiseAPI {
      * @param entity
      */
     public static void undisguiseToAll(Entity entity) {
+        undisguiseToAll(null, entity);
+    }
+
+    /**
+     * Undisguise the entity. This doesn't let you cancel the UndisguiseEvent if the entity is no longer valid. Aka
+     * removed from
+     * the world.
+     *
+     * @param entity
+     */
+    public static void undisguiseToAll(CommandSender sender, Entity entity) {
         Disguise[] disguises = getDisguises(entity);
 
         for (Disguise disguise : disguises) {
-            disguise.removeDisguise();
+            disguise.removeDisguise(sender);
         }
     }
 

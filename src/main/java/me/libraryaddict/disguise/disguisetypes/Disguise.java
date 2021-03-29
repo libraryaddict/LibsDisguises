@@ -34,6 +34,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -857,18 +858,26 @@ public abstract class Disguise {
         return removeDisguise(false);
     }
 
+    public boolean removeDisguise(CommandSender sender) {
+        return removeDisguise(sender, false);
+    }
+
+    public boolean removeDisguise(boolean disguiseBeingReplaced) {
+        return removeDisguise(null, disguiseBeingReplaced);
+    }
+
     /**
      * Removes the disguise and undisguises the entity if it's using this disguise.
      *
      * @param disguiseBeingReplaced If the entity's disguise is being replaced with another
      * @return
      */
-    public boolean removeDisguise(boolean disguiseBeingReplaced) {
+    public boolean removeDisguise(CommandSender sender, boolean disguiseBeingReplaced) {
         if (!isDisguiseInUse()) {
             return false;
         }
 
-        UndisguiseEvent event = new UndisguiseEvent(entity, this, disguiseBeingReplaced);
+        UndisguiseEvent event = new UndisguiseEvent(sender, entity, this, disguiseBeingReplaced);
 
         Bukkit.getPluginManager().callEvent(event);
 
@@ -1068,6 +1077,10 @@ public abstract class Disguise {
     }
 
     public boolean startDisguise() {
+        return startDisguise(null);
+    }
+
+    public boolean startDisguise(CommandSender commandSender) {
         if (isDisguiseInUse() || isDisguiseExpired()) {
             return false;
         }
@@ -1111,7 +1124,7 @@ public abstract class Disguise {
         DisguiseUtilities.setPluginsUsed();
 
         // Fire a disguise event
-        DisguiseEvent event = new DisguiseEvent(entity, this);
+        DisguiseEvent event = new DisguiseEvent(commandSender, entity, this);
 
         Bukkit.getPluginManager().callEvent(event);
 

@@ -27,7 +27,7 @@ public class UndisguiseCommand implements CommandExecutor {
 
         if (sender.hasPermission("libsdisguises.undisguise") && !"%%__USER__%%".equals(12345 + "")) {
             if (DisguiseAPI.isDisguised((Entity) sender)) {
-                DisguiseAPI.undisguiseToAll((Player) sender);
+                DisguiseAPI.undisguiseToAll(sender, (Player) sender);
                 LibsMsg.UNDISG.send(sender);
             } else {
                 LibsMsg.NOT_DISGUISED.send(sender);

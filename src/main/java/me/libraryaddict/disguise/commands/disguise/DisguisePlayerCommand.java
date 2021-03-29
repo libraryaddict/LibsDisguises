@@ -120,7 +120,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 
-        disguise.startDisguise();
+        disguise.startDisguise(sender);
 
         if (disguise.isDisguiseInUse()) {
             LibsMsg.DISG_PLAYER_AS_DISG.send(sender,

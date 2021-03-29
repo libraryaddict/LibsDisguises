@@ -65,7 +65,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
                 }
             }
 
-            DisguiseAPI.disguiseEntity(entity, disguise);
+            DisguiseAPI.disguiseEntity(p, entity, disguise);
 
             String disguiseName = disguise.getDisguiseName();
 

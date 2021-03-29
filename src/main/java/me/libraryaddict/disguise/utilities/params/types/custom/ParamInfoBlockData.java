@@ -54,7 +54,7 @@ public class ParamInfoBlockData extends ParamInfo {
             return null;
         }
 
-        return Bukkit.createBlockData(string.toLowerCase());
+        return Bukkit.createBlockData(string.toLowerCase(Locale.ROOT));
     }
 
     @Override

@@ -22,7 +22,7 @@ public class UndisguiseEntityInteraction implements LibsEntityInteract {
         }
 
         if (DisguiseAPI.isDisguised(entity)) {
-            DisguiseAPI.undisguiseToAll(entity);
+            DisguiseAPI.undisguiseToAll(p, entity);
 
             if (entity instanceof Player)
                 LibsMsg.LISTEN_UNDISG_PLAYER.send(p, entityName);

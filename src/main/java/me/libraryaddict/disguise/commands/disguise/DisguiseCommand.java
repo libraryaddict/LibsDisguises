@@ -78,7 +78,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 
-        disguise.startDisguise();
+        disguise.startDisguise(sender);
 
         if (disguise.isDisguiseInUse()) {
             LibsMsg.DISGUISED.send(sender, disguise.getDisguiseName());

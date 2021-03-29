@@ -1,48 +1,37 @@
 package me.libraryaddict.disguise.events;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
+@Setter
 public class DisguiseEvent extends Event implements Cancellable {
+    @Getter
+    private static final HandlerList handlerList = new HandlerList();
 
-    private static final HandlerList handlers = new HandlerList();
+    private final CommandSender commandSender;
+    private final Disguise disguise;
+    private final Entity entity;
+    private boolean cancelled;
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    private Disguise disguise;
-    private Entity disguised;
-    private boolean isCancelled;
-
-    public DisguiseEvent(Entity entity, Disguise disguise) {
-        this.disguised = entity;
+    public DisguiseEvent(CommandSender sender, Entity entity, Disguise disguise) {
+        commandSender = sender;
+        this.entity = entity;
         this.disguise = disguise;
     }
 
-    public Disguise getDisguise() {
-        return disguise;
-    }
-
-    public Entity getEntity() {
-        return disguised;
+    public DisguiseEvent(Entity entity, Disguise disguise) {
+        this(null, entity, disguise);
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        isCancelled = cancelled;
+        return handlerList;
     }
 }

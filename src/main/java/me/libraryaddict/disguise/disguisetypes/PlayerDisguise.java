@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -177,7 +178,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 this.nameVisible = nameVisible;
                 sendArmorStands(isNameVisible() ? DisguiseUtilities.reverse(getMultiName()) : new String[0]);
             } else if (!DisguiseConfig.isScoreboardNames()) {
-                if (stopDisguise()) {
+                if (removeDisguise()) {
                     this.nameVisible = nameVisible;
 
                     if (!startDisguise()) {
@@ -395,7 +396,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     private void resendDisguise(String name, boolean updateTeams) {
-        if (stopDisguise()) {
+        if (removeDisguise()) {
             if (getName().isEmpty() && !name.isEmpty()) {
                 setNameVisible(true, true);
             } else if (!getName().isEmpty() && name.isEmpty()) {
@@ -621,6 +622,11 @@ public class PlayerDisguise extends TargetedDisguise {
 
     @Override
     public boolean startDisguise() {
+        return startDisguise(null);
+    }
+
+    @Override
+    public boolean startDisguise(CommandSender sender) {
         if (isDisguiseInUse()) {
             return false;
         }
@@ -666,7 +672,7 @@ public class PlayerDisguise extends TargetedDisguise {
             setName(name);
         }
 
-        boolean result = super.startDisguise();
+        boolean result = super.startDisguise(sender);
 
         if (result && hasScoreboardName()) {
             DisguiseUtilities.registerExtendedName(this);
