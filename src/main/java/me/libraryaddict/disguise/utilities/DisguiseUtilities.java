@@ -715,24 +715,26 @@ public class DisguiseUtilities {
         if (!getDisguises().containsKey(entityId)) {
             getDisguises().put(entityId, new HashSet<>());
 
-            synchronized (isNoInteract) {
-                Entity entity = disguise.getEntity();
+            if (disguise.getEntity() != null) {
+                synchronized (isNoInteract) {
+                    Entity entity = disguise.getEntity();
 
-                switch (entity.getType()) {
-                    case EXPERIENCE_ORB:
-                    case DROPPED_ITEM:
-                    case ARROW:
-                    case SPECTRAL_ARROW:
-                        isNoInteract.add(entity.getEntityId());
-                        break;
-                    default:
-                        break;
+                    switch (entity.getType()) {
+                        case EXPERIENCE_ORB:
+                        case DROPPED_ITEM:
+                        case ARROW:
+                        case SPECTRAL_ARROW:
+                            isNoInteract.add(entity.getEntityId());
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            synchronized (isSpecialInteract) {
-                if (disguise.getEntity() instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
-                    isSpecialInteract.add(entityId);
+                synchronized (isSpecialInteract) {
+                    if (disguise.getEntity() instanceof Wolf && disguise.getType() != DisguiseType.WOLF) {
+                        isSpecialInteract.add(entityId);
+                    }
                 }
             }
         }
@@ -771,6 +773,7 @@ public class DisguiseUtilities {
         }
 
         for (TargetedDisguise disguise : getFutureDisguises().remove(entity.getEntityId())) {
+            disguise.setEntity(entity);
             addDisguise(entity.getEntityId(), disguise);
         }
     }
