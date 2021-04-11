@@ -774,7 +774,7 @@ public class DisguiseUtilities {
 
         for (TargetedDisguise disguise : getFutureDisguises().remove(entity.getEntityId())) {
             disguise.setEntity(entity);
-            addDisguise(entity.getEntityId(), disguise);
+            disguise.startDisguise();
         }
     }
 
