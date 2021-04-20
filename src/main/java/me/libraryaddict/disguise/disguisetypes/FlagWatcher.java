@@ -990,6 +990,11 @@ public class FlagWatcher {
         }
     }
 
+    @Deprecated
+    public <Y> void setUnsafeData(MetaIndex<Y> id, Y value) {
+        setData(id, value);
+    }
+
     protected <Y> void setData(MetaIndex<Y> id, Y value) {
         if (id == null) {
             return;

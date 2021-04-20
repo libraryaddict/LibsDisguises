@@ -1895,7 +1895,7 @@ public class ReflectionManager {
 
             for (MetaIndex index : indexes) {
                 DisguiseUtilities.getLogger()
-                        .warning(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
+                        .severe(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
 
             SoundGroup sound = SoundGroup.getGroup(disguiseType.name());

@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
@@ -94,11 +96,11 @@ public class DisguiseAPI {
 
     @Deprecated
     public static Disguise constructDisguise(Entity entity) {
-        return constructDisguise(entity, true, true, true);
+        return constructDisguise(entity, true, false);
     }
 
     @Deprecated
-    public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean doSneak, boolean doSprint) {
+    public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean doAddedAnimations) {
         DisguiseType disguiseType = DisguiseType.getType(entity);
         Disguise disguise;
 
@@ -112,98 +114,38 @@ public class DisguiseAPI {
 
         FlagWatcher watcher = disguise.getWatcher();
 
-        if (entity instanceof LivingEntity) {
-            for (PotionEffect effect : ((LivingEntity) entity).getActivePotionEffects()) {
-                ((LivingWatcher) watcher).addPotionEffect(effect.getType());
-
-                if (effect.getType() == PotionEffectType.INVISIBILITY) {
-                    watcher.setInvisible(true);
-                } else if (effect.getType() == PotionEffectType.GLOWING) {
-                    watcher.setGlowing(true);
-                }
-            }
-        }
-
-        if (entity.getFireTicks() > 0) {
-            watcher.setBurning(true);
-        }
-
         if (doEquipment && entity instanceof LivingEntity) {
             EntityEquipment equip = ((LivingEntity) entity).getEquipment();
 
             watcher.setArmor(equip.getArmorContents());
-            watcher.setItemInMainHand(equip.getItemInMainHand());
 
-            if (disguiseType.getEntityType() == EntityType.HORSE) {
-                Horse horse = (Horse) entity;
-                HorseInventory horseInventory = horse.getInventory();
-                ItemStack saddle = horseInventory.getSaddle();
+            ItemStack mainItem = equip.getItemInMainHand();
 
-                if (saddle != null && saddle.getType() == Material.SADDLE) {
-                    ((AbstractHorseWatcher) watcher).setSaddled(true);
-                }
+            if (mainItem != null && mainItem.getType() != Material.AIR) {
+                watcher.setItemInMainHand(mainItem);
+            }
+
+            ItemStack offItem = equip.getItemInMainHand();
+
+            if (offItem != null && offItem.getType() != Material.AIR) {
+                watcher.setItemInOffHand(offItem);
             }
         }
-        for (Method method : entity.getClass().getMethods()) {
-            if ((doSneak || !method.getName().equals("setSneaking")) && (doSprint || !method.getName().equals("setSprinting")) &&
-                    method.getParameterTypes().length == 0 && method.getReturnType() != void.class) {
-                Class methodReturn = method.getReturnType();
 
-                if (methodReturn == float.class || methodReturn == Float.class || methodReturn == Double.class) {
-                    methodReturn = double.class;
-                }
+        WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(entity);
 
-                int firstCapitalMethod = firstCapital(method.getName());
+        for (WrappedWatchableObject obj : dataWatcher.getWatchableObjects()) {
+            MetaIndex index = MetaIndex.getMetaIndex(watcher.getClass(), obj.getIndex());
 
-                if (firstCapitalMethod > 0) {
-                    for (Method watcherMethod : watcher.getClass().getMethods()) {
-                        if (!watcherMethod.getName().startsWith("get") && watcherMethod.getReturnType() == void.class &&
-                                watcherMethod.getParameterTypes().length == 1) {
-                            int firstCapitalWatcher = firstCapital(watcherMethod.getName());
-
-                            if (firstCapitalWatcher > 0 &&
-                                    method.getName().substring(firstCapitalMethod).equalsIgnoreCase(watcherMethod.getName().substring(firstCapitalWatcher))) {
-                                Class methodParam = watcherMethod.getParameterTypes()[0];
-
-                                if (methodParam == float.class || methodParam == Float.class || methodParam == Double.class) {
-                                    methodParam = double.class;
-                                } else if (methodParam == AnimalColor.class) {
-                                    methodParam = DyeColor.class;
-                                }
-                                if (methodReturn == methodParam) {
-                                    try {
-                                        Object value = method.invoke(entity);
-                                        if (value != null) {
-                                            Class toCast = watcherMethod.getParameterTypes()[0];
-                                            if (!(toCast.isInstance(value))) {
-                                                if (toCast == float.class) {
-                                                    if (!(value instanceof Float)) {
-                                                        double d = (Double) value;
-                                                        value = (float) d;
-                                                    }
-                                                } else if (toCast == double.class) {
-                                                    if (!(value instanceof Double)) {
-                                                        float d = (Float) value;
-                                                        value = (double) d;
-                                                    }
-                                                } else if (toCast == AnimalColor.class) {
-                                                    value = AnimalColor.valueOf(((DyeColor) value).name());
-                                                }
-                                            }
-                                            if (value instanceof Boolean && !(Boolean) value && watcherMethod.getDeclaringClass() == FlagWatcher.class) {
-                                                continue;
-                                            }
-                                        }
-                                        watcherMethod.invoke(watcher, value);
-                                    } catch (Exception ex) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            if (index == null) {
+                continue;
             }
+
+            if (index.getDefault() == obj.getValue() || index.getDefault() == obj.getRawValue()) {
+                continue;
+            }
+
+            watcher.setUnsafeData(index, obj.getRawValue());
         }
 
         return disguise;

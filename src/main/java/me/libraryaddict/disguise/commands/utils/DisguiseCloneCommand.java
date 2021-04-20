@@ -33,8 +33,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
         }
 
         boolean doEquipment = true;
-        boolean doSneak = false;
-        boolean doSprint = false;
+        boolean doAdded = false;
         Player player = null;
 
         if (args.length > 0) {
@@ -45,20 +44,15 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             String option = args[i];
             if (StringUtils.startsWithIgnoreCase(option, LibsMsg.DCLONE_EQUIP.get())) {
                 doEquipment = false;
-            } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SNEAKSPRINT.get())) {
-                doSneak = true;
-                doSprint = true;
-            } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SNEAK.get())) {
-                doSneak = true;
-            } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_SPRINT.get())) {
-                doSprint = true;
-            } else {
+            } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_ADDEDANIMATIONS.get())) {
+                doAdded = true;
+            }  else {
                 LibsMsg.INVALID_CLONE.send(sender, option);
                 return true;
             }
         }
 
-        Boolean[] options = new Boolean[]{doEquipment, doSneak, doSprint};
+        Boolean[] options = new Boolean[]{doEquipment, doAdded};
 
         if (player != null) {
             DisguiseUtilities.createClonedDisguise((Player) sender, player, options);
@@ -91,9 +85,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
         }
 
         tabs.add(LibsMsg.DCLONE_EQUIP.get());
-        tabs.add(LibsMsg.DCLONE_SNEAKSPRINT.get());
-        tabs.add(LibsMsg.DCLONE_SNEAK.get());
-        tabs.add(LibsMsg.DCLONE_SPRINT.get());
+        tabs.add(LibsMsg.DCLONE_ADDEDANIMATIONS.get());
 
         return filterTabs(tabs, origArgs);
     }

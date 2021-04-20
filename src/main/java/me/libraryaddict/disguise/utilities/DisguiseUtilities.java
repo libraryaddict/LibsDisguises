@@ -558,7 +558,7 @@ public class DisguiseUtilities {
         Disguise disguise = DisguiseAPI.getDisguise(player, toClone);
 
         if (disguise == null) {
-            disguise = DisguiseAPI.constructDisguise(toClone, options[0], options[1], options[2]);
+            disguise = DisguiseAPI.constructDisguise(toClone, options[0], options[1]);
         } else {
             disguise = disguise.clone();
         }

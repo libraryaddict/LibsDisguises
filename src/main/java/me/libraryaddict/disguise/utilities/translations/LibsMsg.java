@@ -82,9 +82,7 @@ public enum LibsMsg {
     DHELP_SHOW("Show"),
     DHELP_NO_OPTIONS(ChatColor.RED + "No options with permission to use"),
     DCLONE_EQUIP("ignoreEquip"),
-    DCLONE_SNEAKSPRINT("doSneakSprint"),
-    DCLONE_SNEAK("doSneak"),
-    DCLONE_SPRINT("doSprint"),
+    DCLONE_ADDEDANIMATIONS("doAddedAnimations"),
     DMODRADIUS_HELP2((ChatColor.DARK_GREEN + "/disguisemodifyradius <DisguiseType" + ChatColor.DARK_GREEN + "(" +
             ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Disguise Methods>")
             .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
