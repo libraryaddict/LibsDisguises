@@ -94,13 +94,11 @@ public class DisguiseAPI {
         return disguise.getValue();
     }
 
-    @Deprecated
     public static Disguise constructDisguise(Entity entity) {
         return constructDisguise(entity, true, false);
     }
 
-    @Deprecated
-    public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean doAddedAnimations) {
+    public static Disguise constructDisguise(Entity entity, boolean doEquipment, boolean displayExtraAnimations) {
         DisguiseType disguiseType = DisguiseType.getType(entity);
         Disguise disguise;
 
@@ -145,7 +143,23 @@ public class DisguiseAPI {
                 continue;
             }
 
-            watcher.setUnsafeData(index, obj.getRawValue());
+                watcher.setUnsafeData(index, obj.getRawValue());
+
+            // Update the meta for 0, otherwise boolean be weird
+            if (index == MetaIndex.ENTITY_META) {
+                watcher.setSprinting(watcher.isSprinting() && displayExtraAnimations);
+                watcher.setFlyingWithElytra(watcher.isFlyingWithElytra() && displayExtraAnimations);
+                watcher.setRightClicking(watcher.isRightClicking() && displayExtraAnimations);
+                watcher.setSneaking(watcher.isSneaking() && displayExtraAnimations);
+                watcher.setSwimming(watcher.isSwimming() && displayExtraAnimations);
+
+                if (!displayExtraAnimations) {
+                    Arrays.fill(watcher.getModifiedEntityAnimations(), false);
+                }
+
+                watcher.setGlowing(watcher.isGlowing());
+                watcher.setInvisible(watcher.isInvisible());
+            }
         }
 
         return disguise;
