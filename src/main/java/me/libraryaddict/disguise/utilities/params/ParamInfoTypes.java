@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
+import me.libraryaddict.disguise.disguisetypes.GolemCrack;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.*;
@@ -129,6 +130,7 @@ public class ParamInfoTypes {
                         "etc. 30m20secs = 30 minutes, 20 seconds"));
 
         paramInfos.add(new ParamInfoEnum(ChatColor.class, "ChatColor", "A chat color"));
+        paramInfos.add(new ParamInfoEnum(GolemCrack.class, "Golem Cracked", "The stage a golem has been cracked"));
 
         // Register base types
         Map<String, Object> booleanMap = new HashMap<>();

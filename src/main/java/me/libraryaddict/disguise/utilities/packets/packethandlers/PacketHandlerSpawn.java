@@ -71,33 +71,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
         Disguise disguise = packets.getDisguise();
         boolean sendArmor = true;
 
-        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
-            if (disguise.getWatcher() instanceof LivingWatcher) {
-                ArrayList<WrappedAttribute> attributes = new ArrayList<>();
-
-                WrappedAttribute.Builder builder = WrappedAttribute.newBuilder().attributeKey("generic.maxHealth");
-
-                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
-                    builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
-                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity() && disguisedEntity instanceof Damageable) {
-                    builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
-                } else {
-                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
-                }
-
-                PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-
-                builder.packet(packet);
-
-                attributes.add(builder.build());
-
-                packet.getIntegers().write(0, disguisedEntity.getEntityId());
-                packet.getAttributeCollectionModifier().write(0, attributes);
-
-                packets.addPacket(packet);
-            }
-        }
-
         Location loc = disguisedEntity.getLocation().clone().add(0, DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier(), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
@@ -174,7 +147,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(0));
 
                 List playerList = Collections.singletonList(ReflectionManager.getPlayerInfoData(sendTab.getHandle(), ReflectionManager
-                    .getGameProfileWithThisSkin(playerDisguise.getUUID(), playerDisguise.getProfileName(), playerDisguise.getGameProfile())));
+                        .getGameProfileWithThisSkin(playerDisguise.getUUID(), playerDisguise.getProfileName(), playerDisguise.getGameProfile())));
                 sendTab.getModifier().write(1, playerList);
 
                 packets.addPacket(sendTab);
@@ -356,9 +329,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
                 }
 
-                Object[] params =
-                        new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
-                                ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
+                Object[] params = new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
+                        ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
                 spawnEntity = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, params).createPacket(params);
             } else {
@@ -428,6 +400,34 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(1, (byte) 4);
 
             packets.addPacket(newPacket);
+        }
+
+        if (DisguiseConfig.isMiscDisguisesForLivingEnabled()) {
+            if (disguise.getWatcher() instanceof LivingWatcher) {
+                ArrayList<WrappedAttribute> attributes = new ArrayList<>();
+
+                WrappedAttribute.Builder builder =
+                        WrappedAttribute.newBuilder().attributeKey(NmsVersion.v1_16.isSupported() ? "generic.max_health" : "generic.maxHealth");
+
+                if (((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                    builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
+                } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity() && disguisedEntity instanceof Damageable) {
+                    builder.baseValue(((Damageable) disguisedEntity).getMaxHealth());
+                } else {
+                    builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
+                }
+
+                PacketContainer packet = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
+
+                builder.packet(packet);
+
+                attributes.add(builder.build());
+
+                packet.getIntegers().write(0, disguisedEntity.getEntityId());
+                packet.getAttributeCollectionModifier().write(0, attributes);
+
+                packets.addPacket(packet);
+            }
         }
 
         if (!disguise.isPlayerDisguise() || normalPlayerDisguise) {

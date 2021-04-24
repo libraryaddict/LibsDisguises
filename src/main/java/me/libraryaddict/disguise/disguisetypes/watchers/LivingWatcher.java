@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Color;
@@ -129,7 +130,7 @@ public class LivingWatcher extends FlagWatcher {
 
             Builder builder;
             builder = WrappedAttribute.newBuilder();
-            builder.attributeKey("generic.maxHealth");
+            builder.attributeKey(NmsVersion.v1_16.isSupported() ? "generic.max_health" : "generic.maxHealth");
             builder.baseValue(getMaxHealth());
             builder.packet(packet);
 
@@ -142,9 +143,14 @@ public class LivingWatcher extends FlagWatcher {
 
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
                 try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                }
-                catch (InvocationTargetException e) {
+                    if (player == getDisguise().getEntity()) {
+                        PacketContainer p = packet.shallowClone();
+                        p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+                    } else {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                    }
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }

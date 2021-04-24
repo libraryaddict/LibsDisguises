@@ -23,16 +23,14 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerAttributes implements IPacketHandler {
-    private boolean skipAttributes = !NmsVersion.v1_14.isSupported() &&
-            ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
+    private boolean skipAttributes = !NmsVersion.v1_14.isSupported() && ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
 
     public PacketHandlerAttributes() {
         if (!skipAttributes) {
             return;
         }
 
-        DisguiseUtilities.getLogger()
-                .info("You are running ProtocolLib 4.5.0, attributes will not be handled; Update if you can.");
+        DisguiseUtilities.getLogger().info("You are running ProtocolLib 4.5.0, attributes will not be handled; Update if you can.");
     }
 
     @Override
@@ -41,8 +39,7 @@ public class PacketHandlerAttributes implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         packets.clear();
 
         // Skip due to a bug in ProtocolLib
@@ -58,27 +55,25 @@ public class PacketHandlerAttributes implements IPacketHandler {
         PacketContainer updateAttributes = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 
         for (WrappedAttribute attribute : sentPacket.getAttributeCollectionModifier().read(0)) {
-            if (attribute.getAttributeKey().equals("generic.maxHealth")) {
+            if (attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.max_health" : "generic.maxHealth")) {
                 WrappedAttribute.Builder builder;
 
-                if (disguise.getWatcher() instanceof LivingWatcher &&
-                        ((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
+                if (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isMaxHealthSet()) {
                     builder = WrappedAttribute.newBuilder();
-                    builder.attributeKey("generic.maxHealth");
+                    builder.attributeKey(attribute.getAttributeKey());
                     builder.baseValue(((LivingWatcher) disguise.getWatcher()).getMaxHealth());
                 } else if (DisguiseConfig.isMaxHealthDeterminedByDisguisedEntity()) {
                     builder = WrappedAttribute.newBuilder(attribute);
                 } else {
                     builder = WrappedAttribute.newBuilder();
-                    builder.attributeKey("generic.maxHealth");
+                    builder.attributeKey(attribute.getAttributeKey());
                     builder.baseValue(DisguiseValues.getDisguiseValues(disguise.getType()).getMaxHealth());
                 }
 
                 builder.packet(updateAttributes);
 
                 attributes.add(builder.build());
-            } else if (attribute.getAttributeKey().equals("generic.movementSpeed") &&
-                    disguise.getWatcher() instanceof AbstractHorseWatcher) {
+            } else if (attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.movement_speed" : "generic.movementSpeed") && disguise.getWatcher() instanceof AbstractHorseWatcher) {
                 WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
                 builder.packet(updateAttributes);
 

@@ -282,6 +282,10 @@ public class FlagWatcher {
                 }
 
                 value = entityValues.get(id);
+
+                if (id == MetaIndex.LIVING_HEALTH.getIndex() && (float) watch.getRawValue() <= 0) {
+                    value = watch.getRawValue();
+                }
             } else if (backupEntityValues.containsKey(id)) {
                 if (backupEntityValues.get(id) == null) {
                     continue;
