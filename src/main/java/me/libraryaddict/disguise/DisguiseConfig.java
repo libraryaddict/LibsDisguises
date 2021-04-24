@@ -39,9 +39,6 @@ import java.util.concurrent.TimeUnit;
 public class DisguiseConfig {
     @Getter
     @Setter
-    private static DisguisePushing pushingOption = DisguisePushing.MODIFY_SCOREBOARD;
-    @Getter
-    @Setter
     private static HashMap<DisguisePerm, String> customDisguises = new HashMap<>();
     @Getter
     @Setter
@@ -673,19 +670,6 @@ public class DisguiseConfig {
             setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
-        }
-
-        try {
-            String option = config.getString("SelfDisguisesScoreboard", DisguisePushing.MODIFY_SCOREBOARD.name()).toUpperCase(Locale.ENGLISH);
-
-            if (!option.endsWith("_SCOREBOARD")) {
-                option += "_SCOREBOARD";
-            }
-
-            pushingOption = DisguisePushing.valueOf(option);
-        } catch (Exception ex) {
-            DisguiseUtilities.getLogger()
-                    .warning("Cannot parse '" + config.getString("SelfDisguisesScoreboard") + "' to a valid option for SelfDisguisesScoreboard");
         }
 
         PermissionDefault commandVisibility = PermissionDefault.getByName(config.getString("Permissions.SeeCommands"));

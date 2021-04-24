@@ -96,10 +96,20 @@ public abstract class Disguise {
     @Getter
     @Setter
     private String soundGroup;
+    private UUID uuid = ReflectionManager.getRandomUUID();
 
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
         this.disguiseName = disguiseType.toReadable();
+    }
+
+    public UUID getUUID() {
+        // Partial fix for disguises serialized in older versions
+        if (this.uuid == null) {
+            this.uuid = ReflectionManager.getRandomUUID();
+        }
+
+        return uuid;
     }
 
     public int getMultiNameLength() {
@@ -939,6 +949,10 @@ public abstract class Disguise {
             }
         }
 
+        if (!isPlayerDisguise()) {
+            DisguiseUtilities.setGlowColor(this, null);
+        }
+
         // If this disguise is active
         // Remove the disguise from the current disguises.
         if (DisguiseUtilities.removeDisguise((TargetedDisguise) this) && !disguiseBeingReplaced) {
@@ -1162,6 +1176,10 @@ public abstract class Disguise {
 
         // Stick the disguise in the disguises bin
         DisguiseUtilities.addDisguise(entity.getEntityId(), (TargetedDisguise) this);
+
+        if (!isPlayerDisguise()) {
+            DisguiseUtilities.setGlowColor(this, getWatcher().getGlowColor());
+        }
 
         if (isSelfDisguiseVisible() && getEntity() instanceof Player) {
             DisguiseUtilities.removeSelfDisguise(this);

@@ -139,7 +139,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             StructureModifier<Object> mods = spawnPainting.getModifier();
 
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, disguisedEntity.getUniqueId());
+            mods.write(1, disguise.getUUID());
             mods.write(2, ReflectionManager.getBlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             mods.write(3, ReflectionManager.getEnumDirection(((int) loc.getYaw()) % 4));
 
@@ -257,7 +257,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             StructureModifier<Object> mods = spawnEntity.getModifier();
 
             mods.write(0, disguisedEntity.getEntityId());
-            mods.write(1, disguisedEntity.getUniqueId());
+            mods.write(1, disguise.getUUID());
 
             if (!disguise.getType().isCustom()) {
                 mods.write(2, disguise.getType().getTypeId());
@@ -357,7 +357,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 }
 
                 Object[] params =
-                        new Object[]{disguisedEntity.getEntityId(), disguisedEntity.getUniqueId(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
+                        new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
                                 ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
                 spawnEntity = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, params).createPacket(params);

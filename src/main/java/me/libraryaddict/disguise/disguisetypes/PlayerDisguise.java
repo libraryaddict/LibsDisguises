@@ -31,7 +31,6 @@ public class PlayerDisguise extends TargetedDisguise {
      * Has someone set name visible explicitly?
      */
     private boolean explicitNameVisible = false;
-    private final UUID uuid = ReflectionManager.getRandomUUID();
     private transient DisguiseUtilities.DScoreTeam scoreboardName;
     @Getter
     private boolean deadmau5Ears;
@@ -77,7 +76,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(gameProfile.getName());
 
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), gameProfile.getName(), gameProfile);
 
         createDisguise();
     }
@@ -87,7 +86,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         setName(gameProfile.getName());
 
-        this.gameProfile = ReflectionManager.getGameProfile(uuid, gameProfile.getName());
+        this.gameProfile = ReflectionManager.getGameProfile(getUUID(), gameProfile.getName());
 
         setSkin(skinToUse);
 
@@ -152,9 +151,6 @@ public class PlayerDisguise extends TargetedDisguise {
                 isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
     }
 
-    public UUID getUUID() {
-        return uuid;
-    }
 
     public boolean isNameVisible() {
         return nameVisible;
@@ -250,7 +246,7 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.uuid, getGameProfile().getName(), getGameProfile());
+            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.getUUID(), getGameProfile().getName(), getGameProfile());
         } else {
             disguise.setSkin(getSkin());
         }
@@ -269,9 +265,9 @@ public class PlayerDisguise extends TargetedDisguise {
     public WrappedGameProfile getGameProfile() {
         if (gameProfile == null) {
             if (getSkin() != null) {
-                gameProfile = ReflectionManager.getGameProfile(uuid, getProfileName());
+                gameProfile = ReflectionManager.getGameProfile(getUUID(), getProfileName());
             } else {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), DisguiseUtilities.getProfileFromMojang(this));
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), DisguiseUtilities.getProfileFromMojang(this));
             }
         }
 
@@ -279,7 +275,7 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     public void setGameProfile(WrappedGameProfile gameProfile) {
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, gameProfile.getName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), gameProfile.getName(), gameProfile);
     }
 
     public String getName() {
@@ -390,7 +386,7 @@ public class PlayerDisguise extends TargetedDisguise {
             playerName = name;
 
             if (gameProfile != null) {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), getGameProfile());
             }
         }
     }
@@ -410,7 +406,7 @@ public class PlayerDisguise extends TargetedDisguise {
             }
 
             if (gameProfile != null) {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), getGameProfile());
+                gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), getGameProfile());
             }
 
             if (!startDisguise()) {
@@ -500,7 +496,7 @@ public class PlayerDisguise extends TargetedDisguise {
         currentLookup = null;
 
         this.skinToUse = gameProfile.getName();
-        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(uuid, getProfileName(), gameProfile);
+        this.gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), gameProfile);
 
         refreshDisguise();
 

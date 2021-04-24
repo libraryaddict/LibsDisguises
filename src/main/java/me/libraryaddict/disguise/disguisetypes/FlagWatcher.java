@@ -59,7 +59,7 @@ public class FlagWatcher {
     private transient boolean previouslySneaking;
     @Getter
     private boolean upsideDown;
-    private ChatColor glowColor;
+    private ChatColor glowColor = ChatColor.WHITE;
     @Getter
     private Float pitchLock;
     @Getter
@@ -708,7 +708,7 @@ public class FlagWatcher {
     }
 
     public void setGlowColor(ChatColor glowColor) {
-        if (getGlowColor() == glowColor) {
+        if (getGlowColor() == glowColor || glowColor == null || !glowColor.isColor()) {
             return;
         }
 
@@ -721,7 +721,7 @@ public class FlagWatcher {
         if (getDisguise().isPlayerDisguise()) {
             DisguiseUtilities.updateExtendedName((PlayerDisguise) getDisguise());
         } else {
-            // TODO
+            DisguiseUtilities.setGlowColor(getDisguise(), getGlowColor());
         }
     }
 

@@ -404,6 +404,7 @@ public class DisguiseListener implements Listener {
 
                 if (p.getScoreboard() != Bukkit.getScoreboardManager().getMainScoreboard()) {
                     DisguiseUtilities.registerAllExtendedNames(p.getScoreboard());
+                    DisguiseUtilities.registerColors(p.getScoreboard());
                 }
 
                 if (!p.hasMetadata("forge_mods")) {
@@ -485,8 +486,6 @@ public class DisguiseListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-
-        DisguiseUtilities.removeSelfDisguiseScoreboard(player);
 
         // Removed as its not compatible with scoreboard teams
         /*if (player.hasPermission("libsdisguises.seethrough")) {

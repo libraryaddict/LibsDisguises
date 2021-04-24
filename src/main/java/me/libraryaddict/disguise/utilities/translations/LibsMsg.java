@@ -310,19 +310,12 @@ public enum LibsMsg {
     ITEM_SERIALIZED_MC_LD_NO_COPY(ChatColor.GOLD + "MC Serialized for LD: " + ChatColor.YELLOW + "%s"),
     ITEM_SIMPLE_STRING_NO_COPY(ChatColor.GOLD + "Simple: " + ChatColor.YELLOW + "%s"),
     LIBS_SCOREBOARD_NO_TEAM(ChatColor.RED + "Not on a scoreboard team!"),
-    LIBS_SCOREBOARD_NO_TEAM_PUSH(ChatColor.RED + "On scoreboard team '%s' and pushing is enabled! (That's bad)"),
-    PLUGIN_TAB_DETECTED(ChatColor.RED + "TAB has been detected! This is a huge culprit! Check the TAB config and set " +
-            ChatColor.GREEN + "enable-collision: true" + ChatColor.RED + " to " + ChatColor.DARK_GREEN +
-            "enable-collision: false"),
     LIBS_SCOREBOARD_SUCCESS(ChatColor.GOLD +
             "On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right" +
             " now, then " +
             "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
             "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the " +
             "end' if you " + "still need help with this, or we'll assume you can't read."),
-    LIBS_SCOREBOARD_DISABLED(
-            "The scoreboard modification has been disabled in config, will continue the debug incase this is intended" +
-                    "."),
     LIBS_SCOREBOARD_NAMES_DISABLED(ChatColor.RED +
             "Scoreboard names has been disabled, the test for player disguises has failed before it started"),
     LIBS_SCOREBOARD_IGNORE_TEST(

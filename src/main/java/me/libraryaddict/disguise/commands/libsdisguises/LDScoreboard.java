@@ -121,11 +121,11 @@ public class LDScoreboard implements LDCommand {
         }
 
         List<PacketListener> listeners = ProtocolLibrary.getProtocolManager().getPacketListeners().stream()
-                .filter(listener -> listener.getPlugin() != LibsDisguises.getInstance() && listener.getSendingWhitelist().getTypes().contains(PacketType.Play.Server.SCOREBOARD_TEAM)).collect(Collectors.toList());
+                .filter(listener -> listener.getPlugin() != LibsDisguises.getInstance() &&
+                        listener.getSendingWhitelist().getTypes().contains(PacketType.Play.Server.SCOREBOARD_TEAM)).collect(Collectors.toList());
 
         if (!listeners.isEmpty()) {
-            ComponentBuilder builder =
-                    new ComponentBuilder("");
+            ComponentBuilder builder = new ComponentBuilder("");
             builder.append("The following plugins are listening for scoreboard teams using ProtocolLib, and could be modifying collisions: ");
             builder.color(net.md_5.bungee.api.ChatColor.BLUE);
 
@@ -160,9 +160,8 @@ public class LDScoreboard implements LDCommand {
 
         LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.send(sender);
 
-        if (DisguiseConfig.getPushingOption() == DisguiseConfig.DisguisePushing.IGNORE_SCOREBOARD) {
-            LibsMsg.LIBS_SCOREBOARD_DISABLED.send(sender);
-        }
+        sender.sendMessage(ChatColor.RED +
+                "This command is somewhat outdated and needs to be changed, pushing is now disabled on the entities themselves and not players");
 
         Player player;
 
@@ -200,18 +199,7 @@ public class LDScoreboard implements LDCommand {
             return;
         }
 
-        if (team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.NEVER &&
-                team.getOption(Team.Option.COLLISION_RULE) != Team.OptionStatus.FOR_OTHER_TEAMS) {
-            LibsMsg.LIBS_SCOREBOARD_NO_TEAM_PUSH.send(sender, team.getName());
-            return;
-        }
-
         LibsMsg.LIBS_SCOREBOARD_SUCCESS.send(sender, team.getName());
-
-        if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
-            LibsMsg.PLUGIN_TAB_DETECTED.send(sender);
-        }
-
     }
 
     @Override

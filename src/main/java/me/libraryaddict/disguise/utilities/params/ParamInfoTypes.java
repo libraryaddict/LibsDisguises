@@ -128,6 +128,8 @@ public class ParamInfoTypes {
                 "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
                         "etc. 30m20secs = 30 minutes, 20 seconds"));
 
+        paramInfos.add(new ParamInfoEnum(ChatColor.class, "ChatColor", "A chat color"));
+
         // Register base types
         Map<String, Object> booleanMap = new HashMap<>();
         booleanMap.put("true", true);
