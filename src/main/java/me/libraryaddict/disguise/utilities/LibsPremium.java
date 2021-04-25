@@ -349,8 +349,10 @@ public class LibsPremium {
 
                     foundBetter = true;
                     break;
-                }
-                catch (Exception e) {
+                } catch (ClassNotFoundException e) {
+                    DisguiseUtilities.getLogger().info("Ew, error about invalid Libs Disguises jar. Deleting " + f.getName());
+                    f.delete();
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
