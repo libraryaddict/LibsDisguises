@@ -285,10 +285,6 @@ public class LibsDisguises extends JavaPlugin {
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            DisguiseUtilities.removeSelfDisguiseScoreboard(player);
-        }
-
         reloaded = true;
     }
 
