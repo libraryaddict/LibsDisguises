@@ -121,7 +121,9 @@ public class DisguiseUtilities {
 
             team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 
-            team.setColor(disguise.getWatcher().getGlowColor());
+            if (disguise.getWatcher().getGlowColor() != null) {
+                team.setColor(disguise.getWatcher().getGlowColor());
+            }
 
             if (NmsVersion.v1_13.isSupported()) {
                 team.setPrefix("Colorize");
