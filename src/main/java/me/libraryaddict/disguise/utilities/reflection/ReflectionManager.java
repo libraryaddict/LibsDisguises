@@ -30,6 +30,7 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.io.*;
@@ -1089,6 +1090,8 @@ public class ReflectionManager {
             return getNmsClass("IChatBaseComponent");
         } else if (Vector3F.class.isAssignableFrom(cl)) {
             return getNmsClass("Vector3f");
+        } else if (EulerAngle.class.isAssignableFrom(cl)) {
+            return getNmsClass("Vector3f");
         } else if (Direction.class.isAssignableFrom(cl)) {
             return getNmsClass("EnumDirection");
         } else if (WrappedParticle.class.isAssignableFrom(cl)) {
@@ -1149,6 +1152,14 @@ public class ReflectionManager {
 
             try {
                 return vector3FConstructor.newInstance(angle.getX(), angle.getY(), angle.getZ());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (value instanceof EulerAngle) {
+            EulerAngle angle = (EulerAngle) value;
+
+            try {
+                return vector3FConstructor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
