@@ -796,7 +796,7 @@ public class DisguiseConfig {
                 }
 
                 if (requireMessage != null) {
-                    requireMessage = ChatColor.translateAlternateColorCodes('&', requireMessage);
+                    requireMessage = DisguiseUtilities.translateAlternateColorCodes(requireMessage);
                 }
 
                 ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);

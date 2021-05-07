@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.params.types.base;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import org.bukkit.ChatColor;
 
@@ -15,7 +16,7 @@ public class ParamInfoString extends ParamInfo {
 
     @Override
     protected Object fromString(String string) {
-        return ChatColor.translateAlternateColorCodes('&', string);
+        return DisguiseUtilities.translateAlternateColorCodes(string);
     }
 
     @Override

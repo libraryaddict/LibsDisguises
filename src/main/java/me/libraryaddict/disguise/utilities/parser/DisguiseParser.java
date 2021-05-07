@@ -744,7 +744,7 @@ public class DisguiseParser {
                         }
 
                         // Construct the player disguise
-                        disguise = new PlayerDisguise(ChatColor.translateAlternateColorCodes('&', args[1]));
+                        disguise = new PlayerDisguise(DisguiseUtilities.translateAlternateColorCodes(args[1]));
 
                         if (!customName) {
                             name = ((PlayerDisguise) disguise).getName();

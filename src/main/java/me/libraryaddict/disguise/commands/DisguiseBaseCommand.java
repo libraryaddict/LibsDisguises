@@ -224,7 +224,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
         }
 
-        return ChatColor.translateAlternateColorCodes('&', name);
+        return DisguiseUtilities.translateAlternateColorCodes(name);
     }
 
     protected ArrayList<String> getAllowedDisguises(DisguisePermissions permissions) {

@@ -96,7 +96,7 @@ public enum TranslateType {
                     DisguiseUtilities.getLogger()
                             .severe("Translation for " + name() + " has a null value for the key '" + key + "'");
                 } else {
-                    String newKey = ChatColor.translateAlternateColorCodes('&', key);
+                    String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
 
                     if (translated.containsKey(newKey)) {
                         if (dupes++ < 5) {
@@ -115,7 +115,7 @@ public enum TranslateType {
                         }
                     }
 
-                    translated.put(newKey, ChatColor.translateAlternateColorCodes('&', value));
+                    translated.put(newKey, DisguiseUtilities.translateAlternateColorCodes(value));
 
                     if (!newKey.equals(translated.get(newKey))) {
                         diff++;

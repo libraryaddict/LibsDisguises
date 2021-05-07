@@ -109,6 +109,6 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
             name = name.replace("%complex%", DisguiseUtilities.getDisplayName(player));
         }
 
-        return ChatColor.translateAlternateColorCodes('&', name);
+        return DisguiseUtilities.translateAlternateColorCodes(name);
     }
 }

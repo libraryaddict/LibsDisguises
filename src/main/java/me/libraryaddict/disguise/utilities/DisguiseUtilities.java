@@ -2444,6 +2444,16 @@ public class DisguiseUtilities {
         return builder.toString();
     }
 
+    public static String translateAlternateColorCodes(String string) {
+        string = DisguiseUtilities.translateAlternateColorCodes(string);
+
+        if (NmsVersion.v1_16.isSupported()) {
+            return string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
+        }
+
+        return string;
+    }
+
     /**
      * Modification of TextComponent.fromLegacyText
      */
@@ -2461,23 +2471,20 @@ public class DisguiseUtilities {
             char c = message.charAt(i);
             TextComponent old;
 
-            if (c == ChatColor.COLOR_CHAR || (c == '<' && i + 9 < message.length() && NmsVersion.v1_16.isSupported() &&
-                    Pattern.matches("<#[0-9a-fA-F]{6}>", message.substring(i, i + 9)))) {
-                // If normal color char
-                if (c == ChatColor.COLOR_CHAR) {
-                    ++i;
+            if (c == ChatColor.COLOR_CHAR && i + 1 >= message.length()) {
+                break;
+            }
 
-                    if (i >= message.length()) {
-                        break;
-                    }
-                }
+            if (c == ChatColor.COLOR_CHAR || (NmsVersion.v1_16.isSupported() && c == '<' && i + 9 < message.length() &&
+                    Pattern.matches("<#[0-9a-fA-F]{6}>", message.substring(i, i + 9)))) {
+                i++;
 
                 net.md_5.bungee.api.ChatColor format;
 
-                if (c != ChatColor.COLOR_CHAR) {
-                    format = net.md_5.bungee.api.ChatColor.of(message.substring(i + 1, i + 8));
+                if (c != ChatColor.COLOR_CHAR || (message.length() - i >= 7 && Pattern.matches("#[0-9a-fA-F]{6}", message.substring(i, i + 7)))) {
+                    format = net.md_5.bungee.api.ChatColor.of(message.substring(i, i + 7));
 
-                    i += 8;
+                    i += c == ChatColor.COLOR_CHAR ? 7 : 8;
                 } else {
                     c = message.charAt(i);
 
