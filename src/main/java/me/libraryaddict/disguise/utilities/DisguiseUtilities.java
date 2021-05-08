@@ -2445,7 +2445,7 @@ public class DisguiseUtilities {
     }
 
     public static String translateAlternateColorCodes(String string) {
-        string = DisguiseUtilities.translateAlternateColorCodes(string);
+        string = ChatColor.translateAlternateColorCodes('&', string);
 
         if (NmsVersion.v1_16.isSupported()) {
             return string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
