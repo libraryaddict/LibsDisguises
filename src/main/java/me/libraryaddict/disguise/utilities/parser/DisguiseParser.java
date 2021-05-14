@@ -451,16 +451,12 @@ public class DisguiseParser {
 
     public static String[] parsePlaceholders(String[] args, String userName, String userDisplayname, String userSkin, String targetName,
                                              String targetDisplayname, String targetSkin, EntityEquipment equip, EntityEquipment targetEquip) {
-
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
             arg = replace(arg, "%name%", userName);
             arg = replace(arg, "%displayname%", userDisplayname);
             arg = replace(arg, "%skin%", userSkin);
-            arg = replace(arg, "%user-name%", userName);
-            arg = replace(arg, "%user-displayname%", userDisplayname);
-            arg = replace(arg, "%user-skin%", userSkin);
             arg = replace(arg, "%held-item%", equip == null ? null : equip.getItemInMainHand());
             arg = replace(arg, "%offhand-item%", equip == null ? null : equip.getItemInOffHand());
             arg = replace(arg, "%armor%", equip == null ? null : equip.getArmorContents());
