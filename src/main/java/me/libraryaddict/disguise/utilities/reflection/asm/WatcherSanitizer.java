@@ -2,15 +2,13 @@ package me.libraryaddict.disguise.utilities.reflection.asm;
 
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -75,8 +73,22 @@ public class WatcherSanitizer {
         ArrayList<String> mapped = new ArrayList<>();
 
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
-            new AsmDownloader();
-            IAsm asm = new Asm13();
+            AsmLoader loader = new AsmLoader();
+            loader.load();
+
+            Object obj;
+            Method getBytes;
+
+            if (!loader.isAsmExists()) {
+                loader.doDownloadIfRequired();
+                loader.loadClassloader();
+
+                obj = Class.forName("me.libraryaddict.disguise.utilities.reflection.asm.Asm13", true, loader.getClassLoader()).newInstance();
+            } else {
+                obj = new Asm13();
+            }
+
+            getBytes = obj.getClass().getMethod("createClassWithoutMethods", String.class, ArrayList.class);
 
             String[] lines = new String(ReflectionManager.readFully(stream), StandardCharsets.UTF_8).split("\n");
 
@@ -99,8 +111,16 @@ public class WatcherSanitizer {
             }
 
             for (Map.Entry<String, ArrayList<Map.Entry<String, String>>> entry : toRemove.entrySet()) {
-                asm.createClassWithoutMethods(entry.getKey(), entry.getValue());
+                byte[] bytes = (byte[]) getBytes.invoke(obj, entry.getKey(), entry.getValue());
                 mapped.add(entry.getKey());
+
+                String name = entry.getKey().replace(".", "/") + ".class";
+
+                loader.getLibsJarFile().addClass(name, bytes);
+            }
+
+            if (!loader.isAsmExists()) {
+                loader.unload();
             }
         } catch (Throwable e) {
             e.printStackTrace();
