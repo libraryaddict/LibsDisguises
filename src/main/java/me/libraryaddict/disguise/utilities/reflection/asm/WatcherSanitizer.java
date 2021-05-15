@@ -99,10 +99,10 @@ public class WatcherSanitizer {
             }
 
             for (Map.Entry<String, ArrayList<Map.Entry<String, String>>> entry : toRemove.entrySet()) {
-                Class result = asm.createClassWithoutMethods(entry.getKey(), entry.getValue());
+                asm.createClassWithoutMethods(entry.getKey(), entry.getValue());
                 mapped.add(entry.getKey());
             }
-        } catch (IOException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException | LinkageError e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             LibsDisguises.getInstance().getLogger().severe("Registered: " + new Gson().toJson(mapped));
         }

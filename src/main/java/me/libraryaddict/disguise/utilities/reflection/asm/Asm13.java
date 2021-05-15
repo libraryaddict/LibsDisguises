@@ -3,10 +3,11 @@ package me.libraryaddict.disguise.utilities.reflection.asm;
 import lombok.Getter;
 import org.objectweb.asm.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -15,25 +16,38 @@ import java.util.Map;
  */
 public class Asm13 implements IAsm {
     @Getter
-    private Method defineMethod;
+    private final LibsJarFile libsJarFile;
 
-    public Asm13() throws NoSuchMethodException {
-        defineMethod = getDefineClassMethod();
+    public Asm13() throws Throwable {
+        ClassLoader pluginClassLoader = getClass().getClassLoader();
+        Class c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+        Field file = c.getDeclaredField("file");
+        file.setAccessible(true);
+
+        libsJarFile = new LibsJarFile((File) file.get(pluginClassLoader));
+
+        Field field = c.getDeclaredField("jar");
+        field.setAccessible(true);
+
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(pluginClassLoader, libsJarFile);
     }
 
-    public Class<?> createClassWithoutMethods(String className,
-            ArrayList<Map.Entry<String, String>> illegalMethods) throws IOException, InvocationTargetException,
-            IllegalAccessException, NoSuchFieldException {
-        ClassReader cr = new ClassReader(
-                getClass().getClassLoader().getResourceAsStream(className.replace(".", "/") + ".class"));
+    public void createClassWithoutMethods(String className, ArrayList<Map.Entry<String, String>> illegalMethods)
+            throws IOException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+        className = className.replace(".", "/") + ".class";
+
+        ClassReader cr = new ClassReader(getClass().getClassLoader().getResourceAsStream(className));
         ClassWriter writer = new ClassWriter(cr, 0);
 
         cr.accept(new ClassVisitor(Opcodes.ASM5, writer) {
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature,
-                    String[] exceptions) {
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
-                Map.Entry<String, String> entry = illegalMethods.stream()
-                        .filter(e -> e.getKey().equals(name) && e.getValue().equals(desc)).findFirst().orElse(null);
+                Map.Entry<String, String> entry =
+                        illegalMethods.stream().filter(e -> e.getKey().equals(name) && e.getValue().equals(desc)).findFirst().orElse(null);
 
                 if (entry != null) {
                     return null;
@@ -43,23 +57,6 @@ public class Asm13 implements IAsm {
             }
         }, 0);
 
-        byte[] bytes = writer.toByteArray();
-
-        ClassLoader loader = getClass().getClassLoader();
-        Field field = loader.getClass().getDeclaredField("classes");
-        field.setAccessible(true);
-        Map<String, Class<?>> map = (Map<String, Class<?>>) field.get(loader);
-        Class newClass = (Class<?>) defineMethod.invoke(getClass().getClassLoader(), className, bytes, 0, bytes.length);
-
-        map.put(className, newClass);
-        return newClass;
-    }
-
-    private Method getDefineClassMethod() throws NoSuchMethodException {
-        Method defineClass = ClassLoader.class
-                .getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-        defineClass.setAccessible(true);
-
-        return defineClass;
+        libsJarFile.addClass(className, writer.toByteArray());
     }
 }
