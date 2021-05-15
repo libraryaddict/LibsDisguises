@@ -80,7 +80,7 @@ public class MineSkinAPI {
             connection.setConnectTimeout(19000);
             connection.setReadTimeout(19000);
 
-            String boundary = Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
+            String boundary = "LD@" + Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
