@@ -50,7 +50,9 @@ public class IronGolemWatcher extends InsentientWatcher {
     public IronGolemWatcher clone(Disguise disguise) {
         IronGolemWatcher watcher = (IronGolemWatcher) super.clone(disguise);
 
-        watcher.setCracks(getCracks());
+        if (NmsVersion.v1_16.isSupported()) {
+            watcher.setCracks(getCracks());
+        }
 
         return watcher;
     }
