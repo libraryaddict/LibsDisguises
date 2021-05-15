@@ -59,192 +59,206 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (instance != null || !Bukkit.getServer().getWorlds().isEmpty() || !Bukkit.getOnlinePlayers().isEmpty()) {
-            reloaded = true;
-            getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
-        }
-
-        instance = this;
-
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-
-        if (plugin == null || DisguiseUtilities.isOlderThan(DisguiseUtilities.getProtocolLibRequiredVersion(), plugin.getDescription().getVersion())) {
-            getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
-
-            try {
-                File dest = DisguiseUtilities.updateProtocolLib();
-
-                if (plugin == null) {
-                    getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
-                    plugin = Bukkit.getPluginManager().loadPlugin(dest);
-                    plugin.onLoad();
-
-                    Bukkit.getPluginManager().enablePlugin(plugin);
-                } else {
-                    getLogger().severe("Please restart the server to complete the ProtocolLib update!");
-                }
-            } catch (Exception e) {
-                getLogger()
-                        .severe("Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you can " +
-                                "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
-                e.printStackTrace();
+        try {
+            if (instance != null || !Bukkit.getServer().getWorlds().isEmpty() || !Bukkit.getOnlinePlayers().isEmpty()) {
+                reloaded = true;
+                getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             }
 
+            instance = this;
+
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+
+            if (plugin == null || DisguiseUtilities.isOlderThan(DisguiseUtilities.getProtocolLibRequiredVersion(), plugin.getDescription().getVersion())) {
+                getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
+
+                try {
+                    File dest = DisguiseUtilities.updateProtocolLib();
+
+                    if (plugin == null) {
+                        getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
+                        plugin = Bukkit.getPluginManager().loadPlugin(dest);
+                        plugin.onLoad();
+
+                        Bukkit.getPluginManager().enablePlugin(plugin);
+                    } else {
+                        getLogger().severe("Please restart the server to complete the ProtocolLib update!");
+                    }
+                } catch (Exception e) {
+                    getLogger()
+                            .severe("Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" +
+                                    " can " + "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
+                    e.printStackTrace();
+                }
+
+            }
+
+            try {
+                Class cl = Class.forName("org.bukkit.Server$Spigot");
+            } catch (ClassNotFoundException e) {
+                getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
+                        "plugin will continue to load, but it will look like a mugging victim");
+            }
+
+            commandConfig = new DisguiseCommandConfig();
+
+            if (!reloaded) {
+                commandConfig.load();
+            }
+
+            WatcherSanitizer.init();
+        } catch (Throwable throwable) {
+            getUpdateChecker().doUpdate();
+
+            throw throwable;
         }
-
-        try {
-            Class cl = Class.forName("org.bukkit.Server$Spigot");
-        } catch (ClassNotFoundException e) {
-            getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
-                    "plugin will continue to load, but it will look like a mugging victim");
-        }
-
-        commandConfig = new DisguiseCommandConfig();
-
-        if (!reloaded) {
-            commandConfig.load();
-        }
-
-        WatcherSanitizer.init();
     }
 
     @Override
     public void onEnable() {
-        if (reloaded) {
-            getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
-        }
-
         try {
-            Class cl = Class.forName("org.bukkit.Server$Spigot");
-        } catch (ClassNotFoundException e) {
-            getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
-                    "plugin will continue to load, but it will look like a mugging victim");
-        }
-
-        File disguiseFile = new File(getDataFolder(), "configs/disguises.yml");
-
-        if (!disguiseFile.exists()) {
-            disguiseFile.getParentFile().mkdirs();
-
-            File oldFile = new File(getDataFolder(), "disguises.yml");
-
-            if (oldFile.exists()) {
-                oldFile.renameTo(disguiseFile);
-            } else {
-                saveResource("configs/disguises.yml", false);
+            if (reloaded) {
+                getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             }
-        }
 
-        YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
-        buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
+            try {
+                Class cl = Class.forName("org.bukkit.Server$Spigot");
+            } catch (ClassNotFoundException e) {
+                getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
+                        "plugin will continue to load, but it will look like a mugging victim");
+            }
 
-        getLogger().info("File Name: " + getFile().getName());
+            File disguiseFile = new File(getDataFolder(), "configs/disguises.yml");
 
-        getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
+            if (!disguiseFile.exists()) {
+                disguiseFile.getParentFile().mkdirs();
 
-        getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
+                File oldFile = new File(getDataFolder(), "disguises.yml");
 
-        getLogger().info("Build Date: " + pluginYml.getString("build-date"));
-
-        DisguiseConfig.loadInternalConfig();
-
-        LibsPremium.check(getDescription().getVersion(), getFile());
-
-        if (!LibsPremium.isPremium()) {
-            getLogger().info("You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
-        }
-
-        if (ReflectionManager.getVersion() == null) {
-            getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
-                    StringUtils.join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", ".")).collect(Collectors.toList()), " & ") + "!");
-            getPluginLoader().disablePlugin(this);
-            return;
-        }
-
-        String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
-        String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
-
-        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
-            getLogger().severe("!! May I have your attention please !!");
-            getLogger().severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
-                    "!");
-            getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" + ".jar");
-            getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
-            getLogger().severe("!! May I have your attention please !!");
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    getLogger().severe("!! May I have your attention please !!");
-                    getLogger().severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
-                            requiredProtocolLib + "!");
-                    getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
-                    getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
-                    getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
+                if (oldFile.exists()) {
+                    oldFile.renameTo(disguiseFile);
+                } else {
+                    saveResource("configs/disguises.yml", false);
                 }
-            }.runTaskTimer(this, 20, 10 * 60 * 20);
-        }
-
-        // If this is a release build, even if jenkins build..
-        if (isReleaseBuild()) {
-            // If downloaded from spigot, forcibly set release build to true
-            if (LibsPremium.getUserID().matches("[0-9]+")) {
-                DisguiseConfig.setUsingReleaseBuilds(true);
             }
-            // Otherwise leave it untouched as they might've just happened to hit a dev build, which is a release build
-        } else {
-            DisguiseConfig.setUsingReleaseBuilds(false);
+
+            YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
+            buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
+
+            getLogger().info("File Name: " + getFile().getName());
+
+            getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
+
+            getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
+
+            getLogger().info("Build Date: " + pluginYml.getString("build-date"));
+
+            DisguiseConfig.loadInternalConfig();
+
+            LibsPremium.check(getDescription().getVersion(), getFile());
+
+            if (!LibsPremium.isPremium()) {
+                getLogger()
+                        .info("You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
+            }
+
+            if (ReflectionManager.getVersion() == null) {
+                getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
+                        StringUtils.join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", ".")).collect(Collectors.toList()), " & ") + "!");
+                getPluginLoader().disablePlugin(this);
+                return;
+            }
+
+            String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+            String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
+
+            if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+                getLogger().severe("!! May I have your attention please !!");
+                getLogger()
+                        .severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
+                                "!");
+                getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" + ".jar");
+                getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
+                getLogger().severe("!! May I have your attention please !!");
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        getLogger().severe("!! May I have your attention please !!");
+                        getLogger().severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
+                                requiredProtocolLib + "!");
+                        getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
+                        getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
+                        getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
+                    }
+                }.runTaskTimer(this, 20, 10 * 60 * 20);
+            }
+
+            // If this is a release build, even if jenkins build..
+            if (isReleaseBuild()) {
+                // If downloaded from spigot, forcibly set release build to true
+                if (LibsPremium.getUserID().matches("[0-9]+")) {
+                    DisguiseConfig.setUsingReleaseBuilds(true);
+                }
+                // Otherwise leave it untouched as they might've just happened to hit a dev build, which is a release build
+            } else {
+                DisguiseConfig.setUsingReleaseBuilds(false);
+            }
+
+            ReflectionManager.init();
+
+            PacketsManager.init();
+            DisguiseUtilities.init();
+
+            ReflectionManager.registerValues();
+
+            new SoundManager().load();
+
+            DisguiseConfig.loadConfig();
+
+            DisguiseParser.createDefaultMethods();
+
+            PacketsManager.addPacketListeners();
+
+            listener = new DisguiseListener(this);
+            skinHandler = new PlayerSkinHandler();
+
+            Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
+
+            if (DisguiseUtilities.isRunningPaper()) {
+                Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);
+            }
+
+            registerCommand("libsdisguises", new LibsDisguisesCommand());
+            registerCommand("disguise", new DisguiseCommand());
+            registerCommand("undisguise", new UndisguiseCommand());
+            registerCommand("disguiseplayer", new DisguisePlayerCommand());
+            registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
+            registerCommand("undisguiseentity", new UndisguiseEntityCommand());
+            registerCommand("disguiseentity", new DisguiseEntityCommand());
+            registerCommand("disguiseradius", new DisguiseRadiusCommand());
+            registerCommand("undisguiseradius", new UndisguiseRadiusCommand());
+            registerCommand("disguisehelp", new DisguiseHelpCommand());
+            registerCommand("disguiseclone", new DisguiseCloneCommand());
+            registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
+            registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
+            registerCommand("disguisemodify", new DisguiseModifyCommand());
+            registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
+            registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
+            registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand());
+            registerCommand("copydisguise", new CopyDisguiseCommand());
+            registerCommand("grabskin", new GrabSkinCommand());
+            registerCommand("savedisguise", new SaveDisguiseCommand());
+            registerCommand("grabhead", new GrabHeadCommand());
+
+            unregisterCommands(false);
+
+            new MetricsInitalizer();
+        } catch (Throwable throwable) {
+            getUpdateChecker().doUpdate();
+
+            throw throwable;
         }
-
-        ReflectionManager.init();
-
-        PacketsManager.init();
-        DisguiseUtilities.init();
-
-        ReflectionManager.registerValues();
-
-        new SoundManager().load();
-
-        DisguiseConfig.loadConfig();
-
-        DisguiseParser.createDefaultMethods();
-
-        PacketsManager.addPacketListeners();
-
-        listener = new DisguiseListener(this);
-        skinHandler = new PlayerSkinHandler();
-
-        Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
-
-        if (DisguiseUtilities.isRunningPaper()) {
-            Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);
-        }
-
-        registerCommand("libsdisguises", new LibsDisguisesCommand());
-        registerCommand("disguise", new DisguiseCommand());
-        registerCommand("undisguise", new UndisguiseCommand());
-        registerCommand("disguiseplayer", new DisguisePlayerCommand());
-        registerCommand("undisguiseplayer", new UndisguisePlayerCommand());
-        registerCommand("undisguiseentity", new UndisguiseEntityCommand());
-        registerCommand("disguiseentity", new DisguiseEntityCommand());
-        registerCommand("disguiseradius", new DisguiseRadiusCommand());
-        registerCommand("undisguiseradius", new UndisguiseRadiusCommand());
-        registerCommand("disguisehelp", new DisguiseHelpCommand());
-        registerCommand("disguiseclone", new DisguiseCloneCommand());
-        registerCommand("disguiseviewself", new DisguiseViewSelfCommand());
-        registerCommand("disguiseviewbar", new DisguiseViewBarCommand());
-        registerCommand("disguisemodify", new DisguiseModifyCommand());
-        registerCommand("disguisemodifyentity", new DisguiseModifyEntityCommand());
-        registerCommand("disguisemodifyplayer", new DisguiseModifyPlayerCommand());
-        registerCommand("disguisemodifyradius", new DisguiseModifyRadiusCommand());
-        registerCommand("copydisguise", new CopyDisguiseCommand());
-        registerCommand("grabskin", new GrabSkinCommand());
-        registerCommand("savedisguise", new SaveDisguiseCommand());
-        registerCommand("grabhead", new GrabHeadCommand());
-
-        unregisterCommands(false);
-
-        new MetricsInitalizer();
     }
 
     public void unregisterCommands(boolean force) {
