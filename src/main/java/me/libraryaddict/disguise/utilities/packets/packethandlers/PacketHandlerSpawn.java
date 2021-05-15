@@ -292,14 +292,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double z = loc.getZ();
 
             if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
-                if (NmsVersion.v1_13.isSupported()) {
-                    BlockData block = ((FallingBlockWatcher) disguise.getWatcher()).getBlockData();
-
-                    data = ReflectionManager.getCombinedIdByBlockData(block);
-                } else {
-                    ItemStack block = ((FallingBlockWatcher) disguise.getWatcher()).getBlock();
-                    data = ReflectionManager.getCombinedIdByItemStack(block);
-                }
+                data = ((FallingBlockWatcher) disguise.getWatcher()).getBlockCombinedId();
 
                 if (((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
                     double yMod = disguise.getWatcher().getYModifier();

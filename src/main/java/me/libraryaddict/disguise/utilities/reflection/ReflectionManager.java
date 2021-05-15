@@ -26,6 +26,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -94,6 +95,7 @@ public class ReflectionManager {
     private static Method craftBlockDataGetState;
     private static Method getOldItemAsBlock;
     private static Method magicGetBlock;
+    private static Method magicGetMaterial;
     private static Method getNmsItem;
     private static Method getBlockData;
     private static Method getBlockDataAsId;
@@ -160,6 +162,7 @@ public class ReflectionManager {
             if (NmsVersion.v1_13.isSupported()) {
                 craftBlockDataGetState = getCraftMethod("block.data.CraftBlockData", "getState");
                 magicGetBlock = getCraftMethod("util.CraftMagicNumbers", "getBlock", Material.class);
+                magicGetMaterial = getCraftMethod("util.CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
                 entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
 
                 if (NmsVersion.v1_14.isSupported()) {
@@ -1566,12 +1569,17 @@ public class ReflectionManager {
         try {
             Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
             Object iBlockData = idMethod.invoke(null, id);
+
             Class iBlockClass = getNmsClass("IBlockData");
 
-            Method getBlock = getNmsMethod(iBlockClass, "getBlock");
+            Method getBlock = getNmsMethod(NmsVersion.v1_16.isSupported() ? iBlockClass.getSuperclass() : iBlockClass, "getBlock");
             Object block = getBlock.invoke(iBlockData);
 
-            Method getItem = getNmsMethod("Block", "t", iBlockClass);
+            if (NmsVersion.v1_13.isSupported()) {
+                return new ItemStack((Material) magicGetMaterial.invoke(null, block));
+            }
+
+            Method getItem = getNmsMethod("Block", "u", iBlockClass);
 
             return getBukkitItem(getItem.invoke(block, iBlockData));
         } catch (Exception ex) {
