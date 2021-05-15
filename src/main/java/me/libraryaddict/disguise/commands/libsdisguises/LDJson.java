@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -95,7 +96,7 @@ public class LDJson implements LDCommand {
         int start = 0;
         int msg = 1;
 
-        ComponentBuilder builder = new ComponentBuilder("").appendLegacy(prefix.get());
+        ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(prefix.get()));
 
         while (start < string.length()) {
             int end = Math.min(256, string.length() - start);
@@ -105,10 +106,10 @@ public class LDJson implements LDCommand {
             builder.append(" ");
 
             if (string.length() <= 256) {
-                builder.appendLegacy(LibsMsg.CLICK_TO_COPY_DATA.get());
+                builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY_DATA.get()));
             } else {
                 builder.reset();
-                builder.appendLegacy(LibsMsg.CLICK_COPY.get(msg));
+                builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(msg)));
             }
 
             start += end;

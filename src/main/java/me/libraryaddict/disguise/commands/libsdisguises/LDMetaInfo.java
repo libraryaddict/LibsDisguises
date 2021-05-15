@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -47,20 +48,19 @@ public class LDMetaInfo implements LDCommand {
             names.sort(String::compareToIgnoreCase);
 
            // if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.META_VALUES.get());
+                ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(LibsMsg.META_VALUES.get()));
 
                 Iterator<String> itel = names.iterator();
 
                 while (itel.hasNext()) {
                     String name = itel.next();
 
-                    builder.appendLegacy(name);
+                    builder.append(TextComponent.fromLegacyText(name));
                     builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/libsdisguises metainfo " + name));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new ComponentBuilder("").appendLegacy(LibsMsg.META_CLICK_SHOW.get(name)).create()));
+                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(LibsMsg.META_CLICK_SHOW.get(name))));
 
                     if (itel.hasNext()) {
-                        builder.appendLegacy(LibsMsg.META_VALUE_SEPERATOR.get());
+                        builder.append(TextComponent.fromLegacyText(LibsMsg.META_VALUE_SEPERATOR.get()));
                     }
                 }
 

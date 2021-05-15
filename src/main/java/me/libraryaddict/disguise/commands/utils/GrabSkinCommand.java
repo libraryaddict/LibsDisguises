@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -114,7 +115,7 @@ public class GrabSkinCommand implements CommandExecutor {
                 int msg = 1;
 
                 //if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").appendLegacy(LibsMsg.CLICK_TO_COPY.get());
+                ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY.get()));
 
                 while (start < string.length()) {
                     int end = Math.min(256, string.length() - start);
@@ -124,10 +125,10 @@ public class GrabSkinCommand implements CommandExecutor {
                     builder.append(" ");
 
                     if (string.length() <= 256) {
-                        builder.appendLegacy(LibsMsg.CLICK_TO_COPY_DATA.get());
+                        builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY_DATA.get()));
                     } else {
                         builder.reset();
-                        builder.appendLegacy(LibsMsg.CLICK_COPY.get(msg));
+                        builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(msg)));
                     }
 
                     start += end;
