@@ -119,18 +119,23 @@ public class DisguiseUtilities {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             }
 
-            team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            if (team.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
+                team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+            }
 
-            if (disguise.getWatcher().getGlowColor() != null) {
+            if (disguise.getWatcher().getGlowColor() != team.getColor()) {
                 team.setColor(disguise.getWatcher().getGlowColor());
             }
 
-            if (NmsVersion.v1_13.isSupported()) {
-                team.setPrefix("Colorize");
-                team.setSuffix("Colorize");
-            } else {
-                team.setPrefix(getPrefix());
-                team.setSuffix(getSuffix());
+            String prefix = NmsVersion.v1_13.isSupported() ? "Colorize" : getPrefix();
+            String suffix = NmsVersion.v1_13.isSupported() ? "Colorize" : getSuffix();
+
+            if (!prefix.equals(team.getPrefix())) {
+                team.setPrefix(prefix);
+            }
+
+            if (!suffix.equals(team.getSuffix())) {
+                team.setSuffix(suffix);
             }
         }
     }
