@@ -21,22 +21,22 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
     }
 
+    public DyeColor getCarpet() {
+        if (!hasValue(MetaIndex.LLAMA_CARPET) || getData(MetaIndex.LLAMA_CARPET) == -1) {
+            return null;
+        }
+
+        return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET)).getDyeColor();
+    }
+
     public void setCarpet(DyeColor dyeColor) {
-        setData(MetaIndex.LLAMA_CARPET, (int) dyeColor.getWoolData());
+        setData(MetaIndex.LLAMA_CARPET, dyeColor == null ? -1 : (int) dyeColor.getWoolData());
         sendData(MetaIndex.LLAMA_CARPET);
     }
 
     @Deprecated
     public void setCarpet(AnimalColor color) {
         setCarpet(color.getDyeColor());
-    }
-
-    public DyeColor getCarpet() {
-        if (!hasValue(MetaIndex.LLAMA_CARPET)) {
-            return null;
-        }
-
-        return AnimalColor.getColorByWool(getData(MetaIndex.LLAMA_CARPET)).getDyeColor();
     }
 
     public void setStrength(int strength) {
