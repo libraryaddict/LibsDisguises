@@ -123,7 +123,7 @@ public class DisguiseUtilities {
                 team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
             }
 
-            if (disguise.getWatcher().getGlowColor() != team.getColor()) {
+            if (disguise.getWatcher().getGlowColor() != null && disguise.getWatcher().getGlowColor() != team.getColor()) {
                 team.setColor(disguise.getWatcher().getGlowColor());
             }
 
