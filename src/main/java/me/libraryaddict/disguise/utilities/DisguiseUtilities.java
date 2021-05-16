@@ -119,7 +119,7 @@ public class DisguiseUtilities {
                 team.setOption(Option.NAME_TAG_VISIBILITY, nameVisible ? OptionStatus.ALWAYS : OptionStatus.NEVER);
             }
 
-            if (team.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
+            if (DisguiseConfig.isModifyCollisions() && team.getOption(Option.COLLISION_RULE) != OptionStatus.NEVER) {
                 team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
             }
 
