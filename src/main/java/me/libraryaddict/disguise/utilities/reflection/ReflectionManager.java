@@ -694,7 +694,8 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
         try {
-            return new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(), playerName);
+            return new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(),
+                    playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -707,7 +708,8 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
         try {
-            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(), playerName);
+            WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(),
+                    playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
 
             if (profileWithSkin != null) {
                 gameProfile.getProperties().putAll(profileWithSkin.getProperties());
