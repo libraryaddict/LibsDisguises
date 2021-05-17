@@ -172,11 +172,11 @@ public class PacketHandlerSpawn implements IPacketHandler {
             spawnPlayer.getIntegers().write(0, entityId); // Id
             spawnPlayer.getModifier().write(1, playerDisguise.getUUID());
 
-            double dist = observer.getLocation().distanceSquared(disguisedEntity.getLocation());
+            double dist = observer.getLocation().toVector().distanceSquared(disguisedEntity.getLocation().toVector());
 
             // If self disguise, or further than 50 blocks, or not in front of entity
             normalPlayerDisguise = observer == disguisedEntity || disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
-                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).distanceSquared(disguisedEntity.getLocation()) - dist) < 0.3;
+                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector().distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
             sendArmor = normalPlayerDisguise;
 
             skin.setSleepPackets(!normalPlayerDisguise);
