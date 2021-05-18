@@ -66,7 +66,7 @@ public class WatcherSanitizer {
     public static void init() {
         try {
             checkPreLoaded();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
         }
 
         ArrayList<String> mapped = new ArrayList<>();
