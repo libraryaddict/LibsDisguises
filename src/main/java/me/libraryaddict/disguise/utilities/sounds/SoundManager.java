@@ -103,7 +103,7 @@ public class SoundManager {
 
     private void loadSounds() {
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_SECRET_FILE")) {
-            String[] lines = new String(ReflectionManager.readFully(stream), StandardCharsets.UTF_8).split("\n");
+            String[] lines = new String(ReflectionManager.readFuzzyFully(stream), StandardCharsets.UTF_8).split("\n");
 
             for (String line : lines) {
                 String[] groups = line.split("/", -1);

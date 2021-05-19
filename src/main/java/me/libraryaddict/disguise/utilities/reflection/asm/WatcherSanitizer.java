@@ -89,7 +89,7 @@ public class WatcherSanitizer {
 
             getBytes = obj.getClass().getMethod("createClassWithoutMethods", String.class, ArrayList.class);
 
-            String[] lines = new String(ReflectionManager.readFully(stream), StandardCharsets.UTF_8).split("\n");
+            String[] lines = new String(ReflectionManager.readFuzzyFully(stream), StandardCharsets.UTF_8).split("\n");
 
             LinkedHashMap<String, ArrayList<Map.Entry<String, String>>> toRemove = new LinkedHashMap<>();
 

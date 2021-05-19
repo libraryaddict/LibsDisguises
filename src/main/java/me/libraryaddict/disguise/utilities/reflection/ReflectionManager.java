@@ -1734,7 +1734,7 @@ public class ReflectionManager {
         }
     }
 
-    public static byte[] readFully(InputStream input) throws IOException {
+    public static byte[] readFuzzyFully(InputStream input) throws IOException {
         byte[] buffer = new byte[8192];
         int bytesRead;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
