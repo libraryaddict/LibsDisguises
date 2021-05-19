@@ -30,6 +30,8 @@ class DisguiseRunnable extends BukkitRunnable {
     final boolean alwaysSendVelocity;
 
     public DisguiseRunnable(Disguise disguise) {
+        this.disguise = disguise;
+
         switch (disguise.getType()) {
             case FIREWORK:
             case WITHER_SKULL:
