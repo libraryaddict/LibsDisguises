@@ -7,8 +7,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -28,7 +26,6 @@ public class AsmLoader {
     private final File filePath = new File(LibsDisguises.getInstance().getDataFolder(), "libs/org-ow2-asm-9.1.jar");
     private boolean asmExists;
     private URLClassLoader classLoader;
-    private LibsJarFile libsJarFile;
 
     public AsmLoader() {
         try {
@@ -43,28 +40,6 @@ public class AsmLoader {
         try {
             classLoader = URLClassLoader.newInstance(new URL[]{filePath.toURI().toURL(), LibsDisguises.getInstance().getFile().toURI().toURL()});
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void load() {
-        try {
-            ClassLoader pluginClassLoader = getClass().getClassLoader();
-            Class c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
-            Field file = c.getDeclaredField("file");
-            file.setAccessible(true);
-
-            libsJarFile = new LibsJarFile((File) file.get(pluginClassLoader));
-
-            Field field = c.getDeclaredField("jar");
-            field.setAccessible(true);
-
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-            field.set(pluginClassLoader, libsJarFile);
-        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

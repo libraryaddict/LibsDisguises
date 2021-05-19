@@ -3,9 +3,12 @@ package me.libraryaddict.disguise.utilities.reflection.asm;
 import com.google.gson.Gson;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -69,11 +72,29 @@ public class WatcherSanitizer {
         } catch (NoSuchFieldException | IllegalAccessException ignored) {
         }
 
+        if (Bukkit.getPluginManager().getPlugin("LibsDisguisesVersioning") != null) {
+            throw new IllegalStateException("Why is LibsDisguisesVersioning already active? Did the server owner do something.. Weird?");
+        }
+
+        FakePluginCreator fakePluginCreator = new FakePluginCreator();
+
+        String ourVers = fakePluginCreator.getOurVersion();
+
+        try {
+            if (ourVers != null && ourVers.equals(fakePluginCreator.getVersion()) && !ourVers.contains(" CUSTOM")) {
+                loadPlugin(fakePluginCreator);
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        LibsDisguises.getInstance().getLogger().info("Creating a new version compatibility jar");
+
         ArrayList<String> mapped = new ArrayList<>();
 
         try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
             AsmLoader loader = new AsmLoader();
-            loader.load();
 
             Object obj;
             Method getBytes;
@@ -109,14 +130,17 @@ public class WatcherSanitizer {
                 list.add(new HashMap.SimpleEntry(info.getMethod(), info.getDescriptor()));
             }
 
+            Map<String, byte[]> classes = new HashMap<>();
+
             for (Map.Entry<String, ArrayList<Map.Entry<String, String>>> entry : toRemove.entrySet()) {
                 byte[] bytes = (byte[]) getBytes.invoke(obj, entry.getKey(), entry.getValue());
                 mapped.add(entry.getKey());
 
-                String name = entry.getKey().replace(".", "/") + ".class";
-
-                loader.getLibsJarFile().addClass(name, bytes);
+                classes.put(entry.getKey().replace(".", "/") + ".class", bytes);
             }
+
+            fakePluginCreator.createJar(ourVers, classes);
+            loadPlugin(fakePluginCreator);
 
             if (!loader.isAsmExists()) {
                 loader.unload();
@@ -124,6 +148,34 @@ public class WatcherSanitizer {
         } catch (Throwable e) {
             e.printStackTrace();
             LibsDisguises.getInstance().getLogger().severe("Registered: " + new Gson().toJson(mapped));
+        }
+    }
+
+    private static void loadPlugin(FakePluginCreator fakePluginCreator) throws Exception {
+        LibsDisguises.getInstance().getLogger().info("Starting version support plugin: LibsDisguisesVersioning");
+        Method method = Class.forName("org.bukkit.plugin.PluginManager", false, WatcherSanitizer.class.getClassLoader().getParent())
+                .getMethod("loadPlugin", File.class);
+
+        Plugin plugin = (Plugin) method.invoke(Bukkit.getPluginManager(), fakePluginCreator.getDestination());
+
+        Class pluginClassLoader = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+
+        Field loaderField = JavaPluginLoader.class.getDeclaredField("loaders");
+        loaderField.setAccessible(true);
+        List loaderList = (List) loaderField.get(LibsDisguises.getInstance().getPluginLoader());
+
+        Field pluginOwner = pluginClassLoader.getDeclaredField("plugin");
+        pluginOwner.setAccessible(true);
+
+        // Move Lib's Disguises to load its classes after the new plugin
+        for (Object o : loaderList) {
+            if (pluginOwner.get(o) != LibsDisguises.getInstance()) {
+                continue;
+            }
+
+            loaderList.remove(o);
+            loaderList.add(o);
+            break;
         }
     }
 }

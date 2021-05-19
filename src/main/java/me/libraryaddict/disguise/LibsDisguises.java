@@ -67,6 +67,8 @@ public class LibsDisguises extends JavaPlugin {
 
             instance = this;
 
+            WatcherSanitizer.init();
+
             Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
 
             if (plugin == null || DisguiseUtilities.isOlderThan(DisguiseUtilities.getProtocolLibRequiredVersion(), plugin.getDescription().getVersion())) {
@@ -105,8 +107,6 @@ public class LibsDisguises extends JavaPlugin {
             if (!reloaded) {
                 commandConfig.load();
             }
-
-            WatcherSanitizer.init();
         } catch (Throwable throwable) {
             getUpdateChecker().doUpdate();
 

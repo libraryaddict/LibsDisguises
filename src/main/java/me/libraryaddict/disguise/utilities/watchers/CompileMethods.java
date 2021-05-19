@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
+import me.libraryaddict.disguise.utilities.reflection.asm.FakePluginCreator;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +35,14 @@ public class CompileMethods {
     public static void main(String[] args) {
         doMethods();
         doSounds();
+        moveCompat();
+    }
+
+    private static void moveCompat() {
+        FakePluginCreator creator = new FakePluginCreator();
+
+        File compatFile = new File("target/classes/" + creator.getPluginClassPath());
+        compatFile.renameTo(new File(compatFile.getParentFile(), compatFile.getName().replace(".class", "")));
     }
 
     private static void doSounds() {
@@ -91,8 +100,7 @@ public class CompileMethods {
     }
 
     private static void doMethods() {
-        ArrayList<Class<?>> classes =
-                ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
+        ArrayList<Class<?>> classes = ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
         ArrayList<Class> sorted = new ArrayList<>();
 
@@ -106,12 +114,10 @@ public class CompileMethods {
             for (Method method : c.getMethods()) {
                 if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
-                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) &&
-                        !method.isAnnotationPresent(NmsRemovedIn.class)) {
+                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) && !method.isAnnotationPresent(NmsRemovedIn.class)) {
                     continue;
-                } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) &&
-                        !method.getName().startsWith("get") && !method.getName().startsWith("has") &&
-                        !method.getName().startsWith("is")) {
+                } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) && !method.getName().startsWith("get") &&
+                        !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
                     continue;
                 } else if (method.getName().equals("removePotionEffect")) {
                     continue;
@@ -141,8 +147,7 @@ public class CompileMethods {
                     descriptor = ":" + getMethodDescriptor(method) + ":" + added + ":" + removed;
                 }
 
-                String s =
-                        method.getDeclaringClass().getSimpleName() + ":" + method.getName() + ":" + param + descriptor;
+                String s = method.getDeclaringClass().getSimpleName() + ":" + method.getName() + ":" + param + descriptor;
 
                 if (methods.contains(s)) {
                     continue;
