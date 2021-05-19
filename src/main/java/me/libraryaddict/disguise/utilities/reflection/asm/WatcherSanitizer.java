@@ -76,6 +76,8 @@ public class WatcherSanitizer {
             throw new IllegalStateException("Why is LibsDisguisesVersioning already active? Did the server owner do something.. Weird?");
         }
 
+        LibsDisguises.getInstance().getLogger().info("Due to issues with Java 16, you may notice harmless errors saying plugin loaded another plugin that isnt a soft depend or so on");
+
         FakePluginCreator fakePluginCreator = new FakePluginCreator();
 
         String ourVers = fakePluginCreator.getOurVersion();
