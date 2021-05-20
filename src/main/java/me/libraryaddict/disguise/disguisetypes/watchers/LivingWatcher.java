@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Color;

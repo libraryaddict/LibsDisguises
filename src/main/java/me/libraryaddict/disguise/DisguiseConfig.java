@@ -18,7 +18,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -31,7 +30,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -462,7 +460,7 @@ public class DisguiseConfig {
 
         try {
             return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(entry.getValue()));
-        } catch (IllegalAccessException | InvocationTargetException | DisguiseParseException e) {
+        } catch (Throwable e) {
             DisguiseUtilities.getLogger().warning("Error when attempting to grab the custom disguise " + disguise);
             e.printStackTrace();
         }
@@ -470,8 +468,7 @@ public class DisguiseConfig {
         return null;
     }
 
-    public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target, String disguise)
-            throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+    public static Entry<DisguisePerm, Disguise> getCustomDisguise(Entity target, String disguise) throws Throwable {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Custom Disguises should not be called async!");
         }
@@ -485,8 +482,7 @@ public class DisguiseConfig {
         return new HashMap.SimpleEntry(entry.getKey(), DisguiseParser.parseDisguise(Bukkit.getConsoleSender(), target, entry.getValue()));
     }
 
-    public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target, String disguise)
-            throws IllegalAccessException, DisguiseParseException, InvocationTargetException {
+    public static Entry<DisguisePerm, Disguise> getCustomDisguise(CommandSender invoker, Entity target, String disguise) throws Throwable {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Custom Disguises should not be called async!");
         }
@@ -946,7 +942,7 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
         } catch (DisguiseParseException e) {
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, (e.getMessage() == null ? "" : ": " + e.getMessage()));
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, "");
         }

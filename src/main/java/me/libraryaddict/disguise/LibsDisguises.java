@@ -27,14 +27,12 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import me.libraryaddict.disguise.utilities.reflection.asm.WatcherSanitizer;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -66,8 +64,6 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             instance = this;
-
-            WatcherSanitizer.init();
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
 

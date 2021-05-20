@@ -3,11 +3,11 @@ package me.libraryaddict.disguise.utilities.translations;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -58,9 +58,9 @@ public class TranslateFiller {
                 continue;
             }
 
-            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass())) {
-                Class para = method.getParameterTypes()[0];
-                String className = method.getDeclaringClass().getSimpleName().replace("Watcher", "");
+            for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass())) {
+                Class para = method.getParam();
+                String className = method.getWatcherClass().getSimpleName().replace("Watcher", "");
 
                 if (className.equals("Flag") || className.equals("Disguise"))
                     className = "Entity";

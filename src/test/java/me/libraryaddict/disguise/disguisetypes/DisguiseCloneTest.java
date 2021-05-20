@@ -2,13 +2,13 @@ package me.libraryaddict.disguise.disguisetypes;
 
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 import java.util.Map;
 
 /**
@@ -37,8 +37,7 @@ public class DisguiseCloneTest {
                     disguise = new MiscDisguise(type);
                 }
 
-                for (Map.Entry<Method, Map.Entry<Method, Object>> entry : DisguiseParser.getMethodDefaults()
-                        .entrySet()) {
+                for (Map.Entry<WatcherMethod, Map.Entry<WatcherMethod, Object>> entry : DisguiseParser.getMethodDefaults().entrySet()) {
                     Object dValue = entry.getValue().getValue();
 
                     if (dValue instanceof String) {
@@ -74,21 +73,19 @@ public class DisguiseCloneTest {
                         continue;
                     }
 
-                    Method m = entry.getKey();
+                    WatcherMethod m = entry.getKey();
 
                     Object invokeWith = disguise;
 
-                    if (FlagWatcher.class.isAssignableFrom(entry.getKey().getDeclaringClass())) {
+                    if (FlagWatcher.class.isAssignableFrom(entry.getKey().getWatcherClass())) {
                         invokeWith = disguise.getWatcher();
                     }
 
                     try {
-                        entry.getKey().invoke(invokeWith, dValue);
-                    }
-                    catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                    catch (InvocationTargetException e) {
+                        MethodHandle handle = entry.getKey().getMethod();
+                        handle.bindTo(invokeWith);
+                        handle.invoke(dValue);
+                    } catch (Throwable e) {
                         e.printStackTrace();
                     }
                 }
@@ -103,8 +100,7 @@ public class DisguiseCloneTest {
                     Assert.fail("Cloned disguise is not the same!");
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
 
             if (ex.getCause() != null) {

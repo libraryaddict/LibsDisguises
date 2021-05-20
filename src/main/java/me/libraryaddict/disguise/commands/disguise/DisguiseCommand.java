@@ -50,7 +50,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
             return true;
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }

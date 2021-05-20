@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.UUID;
 
 public class PlayerDisguise extends TargetedDisguise {
     private transient LibsProfileLookup currentLookup;

@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -25,7 +26,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -118,11 +118,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             DisguisePerm disguisePerm, String[] allArgs, int startsAt, String currentArg) {
         ArrayList<String> usedOptions = new ArrayList<>();
 
-        Method[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass());
+        WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass());
 
         // Find which methods the disguiser has already used
         for (int i = startsAt; i < allArgs.length; i++) {
-            for (Method method : methods) {
+            for (WatcherMethod method : methods) {
                 String arg = allArgs[i];
 
                 if (!method.getName().equalsIgnoreCase(arg)) {
@@ -186,7 +186,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
         if (addMethods) {
             // If this is a method, add. Else if it can be a param of the previous argument, add.
-            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass())) {
+            for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass())) {
                 if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getName()))) {
                     continue;
                 }

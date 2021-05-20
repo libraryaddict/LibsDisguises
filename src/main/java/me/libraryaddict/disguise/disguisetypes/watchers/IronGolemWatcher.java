@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;

@@ -24,7 +24,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

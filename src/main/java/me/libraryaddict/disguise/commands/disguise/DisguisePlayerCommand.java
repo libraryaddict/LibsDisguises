@@ -54,8 +54,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             if (args[0].contains("-")) {
                 try {
                     entityTarget = Bukkit.getEntity(UUID.fromString(args[0]));
-                }
-                catch (Exception ignored) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -76,17 +75,13 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(),
-                    DisguiseUtilities.split(StringUtils.join(newArgs, " ")), permissions);
-        }
-        catch (DisguiseParseException ex) {
+            disguise = DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")), permissions);
+        } catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
                 DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
             return true;
-        }
-
-        catch (Exception ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }
@@ -96,8 +91,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
-                !entityTarget.hasPermission("libsdisguises.hidename")) {
+        if (DisguiseConfig.isNameOfPlayerShownAboveDisguise() && !entityTarget.hasPermission("libsdisguises.hidename")) {
             if (disguise.getWatcher() instanceof LivingWatcher) {
                 disguise.getWatcher().setCustomName(getDisplayName(entityTarget));
 
@@ -111,9 +105,9 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         if (!setViewDisguise(args)) {
             // They prefer to have the opposite of whatever the view disguises option is
-            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
-                    disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises())
+            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises()) {
                 disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
+            }
         }
 
         if (!DisguiseAPI.isActionBarShown(disguise.getEntity())) {
@@ -123,13 +117,12 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         disguise.startDisguise(sender);
 
         if (disguise.isDisguiseInUse()) {
-            LibsMsg.DISG_PLAYER_AS_DISG.send(sender,
-                    entityTarget instanceof Player ? entityTarget.getName() :
-                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName());
+            LibsMsg.DISG_PLAYER_AS_DISG.send(sender, entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
+                    disguise.getDisguiseName());
         } else {
-            LibsMsg.DISG_PLAYER_AS_DISG_FAIL.send(sender,
-                    entityTarget instanceof Player ? entityTarget.getName() :
-                            DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName());
+            LibsMsg.DISG_PLAYER_AS_DISG_FAIL
+                    .send(sender, entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
+                            disguise.getDisguiseName());
         }
 
         return true;
@@ -137,8 +130,9 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
     private boolean setViewDisguise(String[] strings) {
         for (String string : strings) {
-            if (!string.equalsIgnoreCase("setSelfDisguiseVisible"))
+            if (!string.equalsIgnoreCase("setSelfDisguiseVisible")) {
                 continue;
+            }
 
             return true;
         }
@@ -182,8 +176,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         }
 
         LibsMsg.D_HELP1.send(sender);
-        LibsMsg.CAN_USE_DISGS.send(sender,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         if (allowedDisguises.contains("player")) {
             LibsMsg.D_HELP3.send(sender);

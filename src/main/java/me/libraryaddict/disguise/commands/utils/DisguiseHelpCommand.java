@@ -6,6 +6,7 @@ import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +15,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +79,7 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                 int ignored = 0;
 
                 try {
-                    for (Method method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
+                    for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
                         if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
                             if (!perms.isAllowedDisguise(type, Collections.singleton(method.getName().toLowerCase(
                                     Locale.ENGLISH)))) {

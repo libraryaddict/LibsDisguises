@@ -7,10 +7,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
-import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
-import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
+import me.libraryaddict.disguise.utilities.parser.*;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +20,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
@@ -177,7 +173,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 }
 
                 return true;
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 ex.printStackTrace();
                 return true;
             }
@@ -259,7 +255,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             DisguiseType disguiseType = disguise.getType();
 
-            for (Method method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
+            for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(disguiseType.getWatcherClass())) {
                 for (String arg : args) {
                     if (!method.getName().equalsIgnoreCase(arg) || usedOptions.contains(arg)) {
                         continue;

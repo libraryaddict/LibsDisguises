@@ -68,7 +68,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
 
             return true;
         }
-        catch (Exception ex) {
+        catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }

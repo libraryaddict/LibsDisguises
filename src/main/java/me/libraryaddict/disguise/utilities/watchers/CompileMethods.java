@@ -1,11 +1,13 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
+import com.google.gson.Gson;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.reflection.asm.FakePluginCreator;
+import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import org.apache.commons.lang.StringUtils;
@@ -35,14 +37,6 @@ public class CompileMethods {
     public static void main(String[] args) {
         doMethods();
         doSounds();
-        moveCompat();
-    }
-
-    private static void moveCompat() {
-        FakePluginCreator creator = new FakePluginCreator();
-
-        File compatFile = new File("target/classes/" + creator.getPluginClassPath());
-        compatFile.renameTo(new File(compatFile.getParentFile(), compatFile.getName().replace(".class", "")));
     }
 
     private static void doSounds() {
@@ -140,14 +134,20 @@ public class CompileMethods {
                     removed = method.getDeclaringClass().getAnnotation(NmsRemovedIn.class).value().ordinal();
                 }
 
-                String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : "";
-                String descriptor = "";
+                String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : null;
 
-                if (added >= 0 || removed >= 0) {
-                    descriptor = ":" + getMethodDescriptor(method) + ":" + added + ":" + removed;
-                }
+                WatcherInfo info = new WatcherInfo();
+                info.setMethod(method.getName());
+                info.setAdded(added);
+                info.setRemoved(removed);
+                info.setDeprecated(method.isAnnotationPresent(Deprecated.class));
+                info.setParam(param);
+                info.setDescriptor(getMethodDescriptor(method));
+                info.setWatcher(method.getDeclaringClass().getSimpleName());
+                info.setReturnType(method.getReturnType().getName());
+                info.setRandomDefault(method.isAnnotationPresent(RandomDefaultValue.class));
 
-                String s = method.getDeclaringClass().getSimpleName() + ":" + method.getName() + ":" + param + descriptor;
+                String s = new Gson().toJson(info);
 
                 if (methods.contains(s)) {
                     continue;

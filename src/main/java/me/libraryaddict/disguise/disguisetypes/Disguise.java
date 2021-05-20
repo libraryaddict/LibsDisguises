@@ -262,7 +262,7 @@ public abstract class Disguise {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
+        } else if (getWatcher().getDisguise() != this) {
             getWatcher().setDisguise((TargetedDisguise) this);
         }
 

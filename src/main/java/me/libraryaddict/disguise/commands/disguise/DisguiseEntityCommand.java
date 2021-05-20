@@ -16,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,27 +45,22 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         Disguise testDisguise;
 
         try {
-            testDisguise = DisguiseParser
-                    .parseTestDisguise(sender, getPermNode(), disguiseArgs, getPermissions(sender));
-        }
-        catch (DisguiseParseException ex) {
+            testDisguise = DisguiseParser.parseTestDisguise(sender, getPermNode(), disguiseArgs, getPermissions(sender));
+        } catch (DisguiseParseException ex) {
             if (ex.getMessage() != null) {
                 DisguiseUtilities.sendMessage(sender, ex.getMessage());
             }
 
             return true;
-        }
-        catch (IllegalAccessException | InvocationTargetException ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }
 
         LibsDisguises.getInstance().getListener()
-                .addInteraction(sender.getName(), new DisguiseEntityInteraction(disguiseArgs),
-                        DisguiseConfig.getDisguiseEntityExpire());
+                .addInteraction(sender.getName(), new DisguiseEntityInteraction(disguiseArgs), DisguiseConfig.getDisguiseEntityExpire());
 
-        LibsMsg.DISG_ENT_CLICK.send(sender, DisguiseConfig.getDisguiseEntityExpire(),
-                testDisguise.getDisguiseName());
+        LibsMsg.DISG_ENT_CLICK.send(sender, DisguiseConfig.getDisguiseEntityExpire(), testDisguise.getDisguiseName());
         return true;
     }
 
@@ -98,8 +92,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         }
 
         LibsMsg.DISG_ENT_HELP1.send(sender);
-        LibsMsg.CAN_USE_DISGS.send(sender,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
         if (allowedDisguises.contains("player")) {
             LibsMsg.DISG_ENT_HELP3.send(sender);

@@ -97,7 +97,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        catch (Exception ex) {
+        catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }

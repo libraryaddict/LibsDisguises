@@ -586,11 +586,16 @@ public class FlagWatcher {
         }
     }
 
-    protected TargetedDisguise getDisguise() {
+    public TargetedDisguise getDisguise() {
         return disguise;
     }
 
-    protected void setDisguise(TargetedDisguise disguise) {
+    @Deprecated
+    public void setDisguise(TargetedDisguise disguise) {
+        if (this.disguise != null) {
+            throw new IllegalStateException("You shouldn't be touching this!");
+        }
+
         this.disguise = disguise;
         equipment.setFlagWatcher(this);
 

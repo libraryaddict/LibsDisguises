@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.DisguiseConfig.DisguisePushing;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
@@ -29,6 +28,7 @@ import me.libraryaddict.disguise.utilities.json.*;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -194,6 +194,25 @@ public class DisguiseUtilities {
     private static long lastSavedPreferences;
     @Getter
     private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
+    private final static boolean java16;
+    private static boolean criedOverJava16;
+
+    static {
+        final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
+
+        if (!matcher.find()) {
+            java16 = true;
+        } else {
+            int vers = 16;
+
+            try {
+                vers = Integer.parseInt(matcher.group(1));
+            } catch (NumberFormatException ignored) {
+            }
+
+            java16 = vers >= 16;
+        }
+    }
 
     /**
      * Only allow saves every 2 minutes
@@ -607,19 +626,19 @@ public class DisguiseUtilities {
                     disguiseFile.delete();
                 }
             } else {
-                Disguise[] disguises = new Disguise[disguise.length];
-
-                for (int i = 0; i < disguise.length; i++) {
-                    Disguise dis = disguise[i].clone();
-                    dis.setEntity(null);
-
-                    disguises[i] = dis;
-                }
 
                 // I hear pirates don't obey standards
                 @SuppressWarnings("MismatchedStringCase")
                 PrintWriter writer = new PrintWriter(disguiseFile, "12345".equals("%%__USER__%%") ? "US-ASCII" : "UTF-8");
-                writer.write(gson.toJson(disguises));
+
+                for (int i = 0; i < disguise.length; i++) {
+                    writer.write(DisguiseParser.parseToString(disguise[i]));
+
+                    if (i + 1 < disguise.length) {
+                        writer.write("\n");
+                    }
+                }
+
                 writer.close();
 
                 savedDisguiseList.add(owningEntity);
@@ -662,14 +681,36 @@ public class DisguiseUtilities {
                 removeSavedDisguise(entityUUID);
             }
 
-            Disguise[] disguises = gson.fromJson(cached, Disguise[].class);
+            Disguise[] disguises;
+
+            if (cached.isEmpty()) {
+                return new Disguise[0];
+            }
+
+            if (Character.isAlphabetic(cached.charAt(0))) {
+                String[] spl = cached.split("\n");
+                disguises = new Disguise[spl.length];
+
+                for (int i = 0; i < disguises.length; i++) {
+                    disguises[i] = DisguiseParser.parseDisguise(spl[i]);
+                }
+            } else if (!java16) {
+                disguises = gson.fromJson(cached, Disguise[].class);
+            } else {
+                if (!criedOverJava16) {
+                    criedOverJava16 = true;
+                    getLogger().warning("Failed to load a disguise using old format, this is due to Java 16 breaking stuff. This error will only print once.");
+                }
+
+                return new Disguise[0];
+            }
 
             if (disguises == null) {
                 return new Disguise[0];
             }
 
             return disguises;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             getLogger().severe("Malformed disguise for " + entityUUID);
             e.printStackTrace();
         }

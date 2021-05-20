@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -37,25 +36,22 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs,
-                    DisguiseParser.getPermissions(p, "disguiseentity"));
+            disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs, DisguiseParser.getPermissions(p, "disguiseentity"));
         } catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
                 DisguiseUtilities.sendMessage(p, e.getMessage());
             }
 
             return;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return;
         }
 
-        if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() &&
-                entity instanceof LivingEntity) {
+        if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             LibsMsg.DISABLED_LIVING_TO_MISC.send(p);
         } else {
-            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
-                    !entity.hasPermission("libsdisguises.hidename")) {
+            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() && !entity.hasPermission("libsdisguises.hidename")) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
                     disguise.getWatcher().setCustomName(getDisplayName(entity));
 
