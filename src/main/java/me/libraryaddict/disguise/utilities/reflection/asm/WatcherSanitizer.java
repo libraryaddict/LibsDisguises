@@ -69,14 +69,16 @@ public class WatcherSanitizer {
     public static void init() {
         try {
             checkPreLoaded();
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LibsDisguises.getInstance().getLogger().info("Failed to check for early class access, this shouldn't be an issue");
         }
 
         if (Bukkit.getPluginManager().getPlugin("LibsDisguisesVersioning") != null) {
             throw new IllegalStateException("Why is LibsDisguisesVersioning already active? Did the server owner do something.. Weird?");
         }
 
-        LibsDisguises.getInstance().getLogger().info("Due to issues with Java 16, you may notice harmless errors saying plugin loaded another plugin that isnt a soft depend or so on");
+        LibsDisguises.getInstance().getLogger()
+                .info("Due to issues with Java 16, you may notice harmless errors saying plugin loaded another plugin that isnt a soft depend or so on");
 
         FakePluginCreator fakePluginCreator = new FakePluginCreator();
 
