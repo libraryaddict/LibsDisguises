@@ -50,8 +50,9 @@ public enum TranslateType {
         while (itel.hasNext()) {
             Map.Entry<String, String> entry = itel.next();
 
-            if (!entry.getKey().equals(entry.getValue()))
+            if (!entry.getKey().equals(entry.getValue())) {
                 continue;
+            }
 
             itel.remove();
         }
@@ -63,8 +64,7 @@ public enum TranslateType {
                 writer.close();
                 writer = null;
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -84,33 +84,28 @@ public enum TranslateType {
         YamlConfiguration config = new YamlConfiguration();
         config.options().pathSeparator(Character.toChars(0)[0]);
 
+        int diff = 0;
+
         try {
             config.load(getFile());
             int dupes = 0;
-            int diff = 0;
 
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
 
                 if (value == null) {
-                    DisguiseUtilities.getLogger()
-                            .severe("Translation for " + name() + " has a null value for the key '" + key + "'");
+                    DisguiseUtilities.getLogger().severe("Translation for " + name() + " has a null value for the key '" + key + "'");
                 } else {
                     String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
 
                     if (translated.containsKey(newKey)) {
                         if (dupes++ < 5) {
-                            DisguiseUtilities.getLogger()
-                                    .severe("Alert! Duplicate translation entry for " + key + " in " + name() +
-                                            " translations!");
+                            DisguiseUtilities.getLogger().severe("Alert! Duplicate translation entry for " + key + " in " + name() + " translations!");
                             continue;
                         } else {
                             DisguiseUtilities.getLogger()
-                                    .severe("Too many duplicated keys! It's likely that this file was mildly " +
-                                            "corrupted by a previous bug!");
-                            DisguiseUtilities.getLogger()
-                                    .severe("Delete the file, or you can remove every line after the first " +
-                                            "duplicate message!");
+                                    .severe("Too many duplicated keys! It's likely that this file was mildly " + "corrupted by a previous bug!");
+                            DisguiseUtilities.getLogger().severe("Delete the file, or you can remove every line after the first " + "duplicate message!");
                             break;
                         }
                     }
@@ -124,16 +119,14 @@ public enum TranslateType {
             }
 
             if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
-                DisguiseUtilities.getLogger().info(diff +
-                        " translated strings, but translations has been disabled in config. Is this intended?");
+                DisguiseUtilities.getLogger().info(diff + " translated strings, but translations has been disabled in config. Is this intended?");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name());
+            DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         }
     }
 
@@ -142,8 +135,9 @@ public enum TranslateType {
     }
 
     public void save(String msg) {
-        if (this != TranslateType.MESSAGES)
+        if (this != TranslateType.MESSAGES) {
             throw new IllegalArgumentException("Can't set no comment for '" + msg + "'");
+        }
 
         save(msg, null);
     }
@@ -172,34 +166,32 @@ public enum TranslateType {
                     writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
 
                     if (this == TranslateType.MESSAGES) {
-                        writer.write(
-                                "# %s is where text is inserted, look up printf format codes if you're interested\n");
+                        writer.write("# %s is where text is inserted, look up printf format codes if you're interested\n");
                     }
 
-                    writer.write(
-                            "# To translate, follow this example 'Original Message': 'My New Message'\n# The Original" +
-                                    " Message is used as a yaml config key to get your new message!");
+                    writer.write("# To translate, follow this example 'Original Message': 'My New Message'\n# The Original" +
+                            " Message is used as a yaml config key to get your new message!");
                     writer.write("\n# To use hex color codes, use <#hexcolor> where hexcolor is the 6 char code");
                 }
             }
 
-            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + message + "\": \"" + message +
-                    "\"\n");
-        }
-        catch (Exception ex) {
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + message + "\": \"" + message + "\"\n");
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     public String reverseGet(String translated) {
-        if (translated == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
+        if (translated == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations()) {
             return translated;
+        }
 
         String lowerCase = translated.toLowerCase(Locale.ENGLISH);
 
         for (Map.Entry<String, String> entry : this.translated.entrySet()) {
-            if (!Objects.equals(entry.getValue().toLowerCase(Locale.ENGLISH), lowerCase))
+            if (!Objects.equals(entry.getValue().toLowerCase(Locale.ENGLISH), lowerCase)) {
                 continue;
+            }
 
             return entry.getKey();
         }
@@ -208,8 +200,9 @@ public enum TranslateType {
     }
 
     public String get(String msg) {
-        if (msg == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations())
+        if (msg == null || !LibsPremium.isPremium() || !DisguiseConfig.isUseTranslations()) {
             return msg;
+        }
 
         String toReturn = translated.get(msg);
 
