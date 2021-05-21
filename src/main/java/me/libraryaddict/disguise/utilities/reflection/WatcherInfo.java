@@ -17,7 +17,7 @@ public class WatcherInfo {
     private String watcher;
     private String method;
     private String param;
-    String descriptor;
+    private String descriptor;
 
     public boolean isSupported() {
         if (getAdded() >= 0 && added > ReflectionManager.getVersion().ordinal()) {

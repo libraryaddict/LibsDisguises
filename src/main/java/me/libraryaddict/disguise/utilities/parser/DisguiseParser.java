@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
+import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -149,10 +150,14 @@ public class DisguiseParser {
         return parseToString(disguise, true);
     }
 
+    public static String parseToString(Disguise disguise, boolean outputSkinData) {
+        return parseToString(disguise, outputSkinData, false);
+    }
+
     /**
      * Not outputting skin information is not garanteed to display the correct player name
      */
-    public static String parseToString(Disguise disguise, boolean outputSkinData) {
+    public static String parseToString(Disguise disguise, boolean outputSkinData, boolean includeCustomData) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -242,6 +247,40 @@ public class DisguiseParser {
                 }
 
                 stringBuilder.append(" ").append(valueString);
+            }
+
+            if (includeCustomData) {
+                LinkedHashMap<String, Object> meta = disguise.getCustomData();
+                LinkedHashMap<String, String> serializedMeta = new LinkedHashMap<>();
+
+                for (Entry<String, Object> entry : meta.entrySet()) {
+                    Object val = entry.getValue();
+
+                    try {
+                        if (val == null) {
+                            serializedMeta.put(entry.getKey(), "null");
+                            continue;
+                        }
+
+                        String serialized = DisguiseUtilities.getGson().toJson(val);
+
+                        serializedMeta.put(entry.getKey(), val.getClass().getName() + ":" + serialized);
+                    } catch (Throwable throwable) {
+                        DisguiseUtilities.getLogger()
+                                .warning("Unable to properly serialize the metadata on a disguise, the metadata was saved under name '" + entry.getKey() + "'");
+
+                        if (!(throwable instanceof StackOverflowError)) {
+                            throwable.printStackTrace();
+                        }
+                        continue;
+                    }
+                }
+
+                if (!serializedMeta.isEmpty()) {
+                    String serialized = DisguiseUtilities.getGson().toJson(serializedMeta);
+
+                    stringBuilder.append(" ").append("setCustomData").append(" ").append(DisguiseUtilities.quote(serialized));
+                }
             }
 
             return stringBuilder.toString();
@@ -913,6 +952,28 @@ public class DisguiseParser {
             WatcherMethod methodToUse = null;
             Object valueToSet = null;
             DisguiseParseException parseException = null;
+
+            if (!list.isEmpty() && methodNameProvided.equalsIgnoreCase("setCustomData") && (sender == null || sender.isOp())) {
+                argIndex++;
+                String data = list.remove(0);
+                Map<String, String> deserial = DisguiseUtilities.getGson().fromJson(data, LinkedHashMap.class);
+
+                for (Entry<String, String> entry : deserial.entrySet()) {
+                    String val = entry.getValue();
+
+                    if (!val.contains(":")) {
+                        disguise.addCustomData(entry.getKey(), null);
+                        continue;
+                    }
+
+                    String className = val.substring(0, val.indexOf(":"));
+                    val = val.substring(className.length() + 1);
+
+                    disguise.addCustomData(entry.getKey(), DisguiseUtilities.getGson().fromJson(val, DisguiseMethods.parseType(className)));
+                }
+
+                continue;
+            }
 
             for (WatcherMethod method : methods) {
                 if (!method.getName().equalsIgnoreCase(methodNameJava)) {
