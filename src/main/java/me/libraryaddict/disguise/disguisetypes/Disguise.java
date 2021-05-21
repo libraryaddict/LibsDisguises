@@ -76,7 +76,7 @@ public abstract class Disguise {
      * For when plugins may want to assign custom data to a disguise, such as who owns it
      */
     @Getter
-    private final HashMap<String, Object> customData = new HashMap<>();
+    private final LinkedHashMap<String, Object> customData = new LinkedHashMap<>();
     @Getter
     private String disguiseName;
     /**

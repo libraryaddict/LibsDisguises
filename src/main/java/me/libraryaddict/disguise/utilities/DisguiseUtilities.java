@@ -632,7 +632,7 @@ public class DisguiseUtilities {
                 PrintWriter writer = new PrintWriter(disguiseFile, "12345".equals("%%__USER__%%") ? "US-ASCII" : "UTF-8");
 
                 for (int i = 0; i < disguise.length; i++) {
-                    writer.write(DisguiseParser.parseToString(disguise[i]));
+                    writer.write(DisguiseParser.parseToString(disguise[i], true, true));
 
                     if (i + 1 < disguise.length) {
                         writer.write("\n");

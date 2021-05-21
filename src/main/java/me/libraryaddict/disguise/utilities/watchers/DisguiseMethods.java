@@ -182,7 +182,7 @@ public class DisguiseMethods {
      * @param className The class name, never `null`
      * @throws IllegalArgumentException if no class can be loaded
      */
-    private Class<?> parseType(final String className) throws ClassNotFoundException {
+    public static Class<?> parseType(final String className) throws ClassNotFoundException {
         if (className == null) {
             return null;
         }
