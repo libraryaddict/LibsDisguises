@@ -256,17 +256,19 @@ public class DisguiseUtilities {
             team = ((Player) player).getScoreboard().getEntryTeam(((Player) player).getUniqueId().toString());
         }
 
+        String name;
+
         if (team == null || (StringUtils.isEmpty(team.getPrefix()) && StringUtils.isEmpty(team.getSuffix()))) {
-            String name = ((Player) player).getDisplayName();
+            name = ((Player) player).getDisplayName();
 
             if (name.equals(player.getName())) {
-                return ((Player) player).getPlayerListName();
+                name = ((Player) player).getPlayerListName();
             }
-
-            return name;
+        } else {
+            name = team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
         }
 
-        return team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
+        return name.replaceAll("§x§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])", "<#$1$2$3$4$5$6>");
     }
 
     public static String getDisplayName(String playerName) {
@@ -2491,11 +2493,11 @@ public class DisguiseUtilities {
     }
 
     public static String translateAlternateColorCodes(String string) {
-        string = ChatColor.translateAlternateColorCodes('&', string);
-
         if (NmsVersion.v1_16.isSupported()) {
             return string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
         }
+
+        string = ChatColor.translateAlternateColorCodes('&', string);
 
         return string;
     }
@@ -2530,7 +2532,7 @@ public class DisguiseUtilities {
                 if (c != ChatColor.COLOR_CHAR || (message.length() - i >= 7 && Pattern.matches("#[0-9a-fA-F]{6}", message.substring(i, i + 7)))) {
                     format = net.md_5.bungee.api.ChatColor.of(message.substring(i, i + 7));
 
-                    i += c == ChatColor.COLOR_CHAR ? 7 : 8;
+                    i += c == '<' ? 7 : 8;
                 } else {
                     c = message.charAt(i);
 
@@ -2980,7 +2982,7 @@ public class DisguiseUtilities {
                 if (NmsVersion.v1_13.isSupported()) {
                     name = Optional.of(WrappedChatComponent.fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(newNames[i]))));
                 } else {
-                    name = newNames[i];
+                    name = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                 }
 
                 WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager
@@ -3020,9 +3022,9 @@ public class DisguiseUtilities {
                     } else if (index == MetaIndex.ARMORSTAND_META) {
                         val = (byte) 19;
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME) {
-                        val = Optional.of(WrappedChatComponent.fromText(newNames[i]));
+                        val = Optional.of(WrappedChatComponent.fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(newNames[i]))));
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_OLD) {
-                        val = newNames[i];
+                        val = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                     } else if (index == MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE) {
                         val = true;
                     }
