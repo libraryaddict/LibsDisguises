@@ -35,6 +35,7 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         getCommands().add(new LDDebugPlayer());
         getCommands().add(new LDUploadLogs());
         getCommands().add(new LDUpdateProtocolLib());
+        getCommands().add(new LDDebugMineSkin());
     }
 
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {

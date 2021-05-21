@@ -337,6 +337,8 @@ public enum LibsMsg {
             " release build update and 'update!' will download that update!"),
     LD_COMMAND_CHANGELOG(ChatColor.BLUE + "/libsdisguises changelog - " + ChatColor.AQUA +
             "Gives you the changelog of the current update fetched"),
+    LD_DEBUG_MINESKIN(ChatColor.BLUE + "/libsdisguises mineskin - " + ChatColor.AQUA + "Prints debug information about MineSkin to console"),
+    LD_DEBUG_MINESKIN_TOGGLE(ChatColor.BLUE + "MineSkin debug is now %s, this command toggles the printing of MineSkin information to console"),
     LD_COMMAND_JSON(ChatColor.BLUE + "/libsdisguises json - " + ChatColor.AQUA +
             "Turns the current held item into a string format"),
     LD_COMMAND_MODS(ChatColor.BLUE + "/libsdisguises mods <Player?> - " + ChatColor.AQUA +
