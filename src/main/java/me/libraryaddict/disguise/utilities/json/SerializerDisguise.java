@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSerializer<Disguise>, InstanceCreator<Disguise> {
+public class SerializerDisguise implements JsonDeserializer<Disguise>, InstanceCreator<Disguise> {
 
     @Override
     public Disguise deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -43,21 +43,6 @@ public class SerializerDisguise implements JsonDeserializer<Disguise>, JsonSeria
             return new MobDisguise(DisguiseType.SHEEP);
         } else if (type == MiscDisguise.class) {
             return new MiscDisguise(DisguiseType.BOAT);
-        }
-
-        return null;
-    }
-
-    @Override
-    public JsonElement serialize(Disguise src, Type typeOfSrc, JsonSerializationContext context) {
-        if (src.isCustomDisguise()) {
-            return context.serialize(src, ModdedDisguise.class);
-        } else if (src.isPlayerDisguise()) {
-            return context.serialize(src, PlayerDisguise.class);
-        } else if (src.isMobDisguise()) {
-            return context.serialize(src, MobDisguise.class);
-        } else if (src.isMiscDisguise()) {
-            return context.serialize(src, MiscDisguise.class);
         }
 
         return null;

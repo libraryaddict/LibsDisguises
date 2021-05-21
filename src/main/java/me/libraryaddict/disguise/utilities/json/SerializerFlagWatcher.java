@@ -25,7 +25,7 @@ import java.util.Optional;
 /**
  * Created by libraryaddict on 1/06/2017.
  */
-public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, JsonSerializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
+public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
     private Gson gson;
 
     public SerializerFlagWatcher(Gson gson) {
@@ -137,15 +137,5 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Jso
         }
 
         return null;
-    }
-
-    @Override
-    public JsonElement serialize(FlagWatcher src, Type typeOfSrc, JsonSerializationContext context) {
-        JsonObject obj = (JsonObject) gson.toJsonTree(src);
-
-        obj.addProperty("flagType", src.getClass().getName());
-        obj.addProperty("entityType", src.getDisguise().getType().name());
-
-        return obj;
     }
 }
