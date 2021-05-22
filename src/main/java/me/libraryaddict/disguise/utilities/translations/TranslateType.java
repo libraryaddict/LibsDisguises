@@ -117,16 +117,15 @@ public enum TranslateType {
                     }
                 }
             }
-
-            if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
-                DisguiseUtilities.getLogger().info(diff + " translated strings, but translations has been disabled in config. Is this intended?");
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
             DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
+        } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
+            DisguiseUtilities.getLogger()
+                    .info("Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations. Is this intended?");
         }
     }
 
