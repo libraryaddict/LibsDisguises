@@ -196,6 +196,7 @@ public class DisguiseUtilities {
     private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
     private final static boolean java16;
     private static boolean criedOverJava16;
+    private static HashSet<UUID> warnedSkin = new HashSet<>();
 
     static {
         final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
@@ -212,6 +213,21 @@ public class DisguiseUtilities {
 
             java16 = vers >= 16;
         }
+    }
+
+    public static void doSkinUUIDWarning(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+
+        UUID uuid = ((Player) sender).getUniqueId();
+
+        if (uuid.version() == 4 || warnedSkin.contains(uuid)) {
+            return;
+        }
+
+        warnedSkin.add(uuid);
+        LibsMsg.SKIN_API_UUID_3.send(sender);
     }
 
     /**

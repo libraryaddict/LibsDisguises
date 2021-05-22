@@ -80,6 +80,7 @@ public class GrabHeadCommand implements CommandExecutor {
             @Override
             public void onSuccess(WrappedGameProfile profile) {
                 runnable.cancel();
+                DisguiseUtilities.doSkinUUIDWarning(sender);
 
                 DisguiseUtilities.setGrabHeadCommandUsed();
 

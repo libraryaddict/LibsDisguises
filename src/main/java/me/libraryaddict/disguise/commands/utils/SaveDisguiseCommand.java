@@ -30,7 +30,9 @@ public class SaveDisguiseCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            sender.sendMessage(ChatColor.RED +
+                    "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
+                    "non-admin usage!");
             return true;
         }
 
@@ -68,8 +70,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                 DisguiseAPI.addCustomDisguise(name, disguiseString);
 
                 LibsMsg.CUSTOM_DISGUISE_SAVED.send(sender, name);
-            }
-            catch (DisguiseParseException e) {
+            } catch (DisguiseParseException e) {
                 if (e.getMessage() != null) {
                     DisguiseUtilities.sendMessage(sender, e.getMessage());
                 } else {
@@ -85,8 +86,9 @@ public class SaveDisguiseCommand implements CommandExecutor {
             int i = 2;
 
             for (; i < args.length; i++) {
-                if (!args[i].equalsIgnoreCase("setskin"))
+                if (!args[i].equalsIgnoreCase("setskin")) {
                     continue;
+                }
 
                 break;
             }
@@ -138,6 +140,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                     @Override
                     public void onSuccess(WrappedGameProfile profile) {
                         runnable.cancel();
+                        DisguiseUtilities.doSkinUUIDWarning(sender);
 
                         finalArgs[skinId] = DisguiseUtilities.getGson().toJson(profile);
 
@@ -166,8 +169,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
             LibsMsg.CUSTOM_DISGUISE_SAVED.send(sender, name);
 
             DisguiseUtilities.setSaveDisguiseCommandUsed();
-        }
-        catch (DisguiseParseException e) {
+        } catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
                 DisguiseUtilities.sendMessage(sender, e.getMessage());
             } else {

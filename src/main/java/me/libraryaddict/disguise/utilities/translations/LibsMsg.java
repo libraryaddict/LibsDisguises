@@ -198,9 +198,8 @@ public enum LibsMsg {
     COPY_DISGUISE_NO_COPY(ChatColor.GREEN + "Data: " + ChatColor.YELLOW + "%s"),
     CLICK_TO_COPY_HOVER(ChatColor.GOLD + "Click to Copy"),
     CLICK_COPY(ChatColor.YELLOW + "" + ChatColor.BOLD + "%s"),
-    SKIN_API_UUID_3(ChatColor.RED +
-            "You seem to be using a Minecraft account with an UUID version of 3. If the skin is not as expected, you can change 'UUIDVersion' in protocol.yml" +
-            " to 3 which may fix this. If you are using a Minecraft account that was not purchased, then there is nothing further we can do to fix this."),
+    SKIN_API_UUID_3(ChatColor.RED + "Using account with UUID version 3. If skin is incorrect, try change 'UUIDVersion' in protocol.yml" +
+            " to 3. If skin is still incorrect and you did not purchase Minecraft, this cannot be fixed."),
     SKIN_API_IN_USE(ChatColor.RED + "mineskin.org is currently in use, please try again"),
     SKIN_API_TIMER(ChatColor.RED + "mineskin.org can be used again in %s seconds"),
     SKIN_API_FAIL(ChatColor.RED + "Unexpected error while accessing mineskin.org, please try again"),

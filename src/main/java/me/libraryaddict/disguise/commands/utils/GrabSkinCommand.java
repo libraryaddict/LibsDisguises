@@ -90,6 +90,7 @@ public class GrabSkinCommand implements CommandExecutor {
             @Override
             public void onSuccess(WrappedGameProfile profile) {
                 runnable.cancel();
+                DisguiseUtilities.doSkinUUIDWarning(sender);
 
                 String nName = name;
 
