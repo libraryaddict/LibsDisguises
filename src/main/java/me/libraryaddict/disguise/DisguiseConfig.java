@@ -626,6 +626,13 @@ public class DisguiseConfig {
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
         setContactMojangServers(config.getBoolean("ContactMojangServers"));
         setDisguiseRadiusMax(config.getInt("DisguiseRadiusMax"));
+        String apiKey = config.getString("MineSkinAPIKey");
+
+        if (apiKey != null && apiKey.matches("[a-zA-Z0-9]{8,}")) {
+            DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);
+        } else if (apiKey != null && apiKey.length() > 8) {
+            DisguiseUtilities.getLogger().warning("API Key provided for MineSkin does not appear to be in a valid format!");
+        }
 
         if (!LibsPremium.isPremium() && (isSavePlayerDisguises() || isSaveEntityDisguises())) {
             DisguiseUtilities.getLogger().warning("You must purchase the plugin to use saved disguises!");

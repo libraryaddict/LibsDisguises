@@ -23,13 +23,10 @@ public enum LibsMsg {
     CANNOT_FIND_PLAYER_NAME(ChatColor.RED + "Cannot find the player '%s'"),
     CANNOT_FIND_PLAYER_UUID(ChatColor.RED + "Cannot find the uuid '%s'"),
     CLICK_TIMER(ChatColor.RED + "Right click a entity in the next %s seconds to grab the disguise reference!"),
-    CLONE_HELP1(ChatColor.DARK_GREEN +
-            "Right click a entity to get a disguise reference you can pass to other disguise commands!"),
-    CLONE_HELP2(ChatColor.DARK_GREEN +
-            "Security note: Any references you create will be available to all players able to use disguise " +
-            "references."),
-    CLONE_HELP3(ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN +
-            "Optional" + ChatColor.DARK_GREEN + ")"),
+    CLONE_HELP1(ChatColor.DARK_GREEN + "Right click a entity to get a disguise reference you can pass to other disguise commands!"),
+    CLONE_HELP2(ChatColor.DARK_GREEN + "Security note: Any references you create will be available to all players able to use disguise " + "references."),
+    CLONE_HELP3(
+            ChatColor.DARK_GREEN + "/disguiseclone IgnoreEquipment" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")"),
     CUSTOM_DISGUISE_SAVED(ChatColor.GOLD + "Custom disguise has been saved as '%s'!"),
     D_HELP1(ChatColor.DARK_GREEN + "Disguise another player!"),
     D_HELP3(ChatColor.DARK_GREEN + "/disguiseplayer <PlayerName> player <Name>"),
@@ -38,18 +35,15 @@ public enum LibsMsg {
     D_PARSE_NOPERM(ChatColor.RED + "You do not have permission to use the method %s"),
     DHELP_CANTFIND(ChatColor.RED + "Cannot find the disguise %s"),
     DHELP_HELP1(ChatColor.RED + "/disguisehelp <DisguiseType> " + ChatColor.GREEN +
-            "- View the methods you can set on a disguise. Add 'show' to reveal the methods you don't have permission" +
-            " to use"),
-    DHELP_HELP2(ChatColor.RED + "/disguisehelp <DisguiseOption> " + ChatColor.GREEN + "- View information about the " +
-            "disguise values such as 'RabbitType'"),
+            "- View the methods you can set on a disguise. Add 'show' to reveal the methods you don't have permission" + " to use"),
+    DHELP_HELP2(ChatColor.RED + "/disguisehelp <DisguiseOption> " + ChatColor.GREEN + "- View information about the " + "disguise values such as 'RabbitType'"),
     DHELP_HELP3(ChatColor.RED + "/disguisehelp " + ChatColor.DARK_GREEN + "%s" + ChatColor.GREEN + " - %s"),
     DHELP_HELP4(ChatColor.RED + "%s: " + ChatColor.GREEN + "%s"),
     DHELP_HELP4_SEPERATOR(ChatColor.RED + ", " + ChatColor.GREEN),
     DHELP_HELP5(ChatColor.RED + "%s: " + ChatColor.GREEN + "%s"),
     DHELP_HELP6(ChatColor.RED + "%s: " + ChatColor.DARK_GREEN + "%s " + ChatColor.GREEN + "%s"),
     DHELP_OPTIONS("%s options: %s"),
-    DISABLED_LIVING_TO_MISC(
-            ChatColor.RED + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),
+    DISABLED_LIVING_TO_MISC(ChatColor.RED + "Can't disguise a living entity as a misc disguise. This has been disabled in the config!"),
     DISG_ENT_CLICK(ChatColor.RED + "Right click an entity in the next %s seconds to disguise it as a %s!"),
     DISG_ENT_HELP1(ChatColor.DARK_GREEN + "Choose a disguise then right click an entity to disguise it!"),
     DISG_ENT_HELP3(ChatColor.DARK_GREEN + "/disguiseentity player <Name>"),
@@ -71,8 +65,7 @@ public enum LibsMsg {
     DMODIFY_MODIFIED(ChatColor.RED + "Your disguise has been modified!"),
     DMODIFY_NO_PERM(ChatColor.RED + "No permission to modify your disguise!"),
     DMODIFYENT_CLICK(ChatColor.RED + "Right click a disguised entity in the next %s seconds to modify their disguise!"),
-    DISGUISECOPY_INTERACT(
-            ChatColor.RED + "Right click a disguised entity in the next %s seconds to copy their disguise!"),
+    DISGUISECOPY_INTERACT(ChatColor.RED + "Right click a disguised entity in the next %s seconds to copy their disguise!"),
     DMODPLAYER_HELP1(ChatColor.DARK_GREEN + "Modify the disguise of another player!"),
     DMODPLAYER_MODIFIED(ChatColor.RED + "Modified the disguise of %s!"),
     DMODPLAYER_NODISGUISE(ChatColor.RED + "The player '%s' is not disguised"),
@@ -83,14 +76,12 @@ public enum LibsMsg {
     DHELP_NO_OPTIONS(ChatColor.RED + "No options with permission to use"),
     DCLONE_EQUIP("ignoreEquip"),
     DCLONE_ADDEDANIMATIONS("doAddedAnimations"),
-    DMODRADIUS_HELP2((ChatColor.DARK_GREEN + "/disguisemodifyradius <DisguiseType" + ChatColor.DARK_GREEN + "(" +
-            ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Disguise Methods>")
-            .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
-    DMODRADIUS_HELP3(ChatColor.DARK_GREEN + "See the DisguiseType's usable by " + ChatColor.GREEN +
-            "/disguisemodifyradius DisguiseType"),
+    DMODRADIUS_HELP2(
+            (ChatColor.DARK_GREEN + "/disguisemodifyradius <DisguiseType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN +
+                    ")> <Radius> <Disguise Methods>").replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
+    DMODRADIUS_HELP3(ChatColor.DARK_GREEN + "See the DisguiseType's usable by " + ChatColor.GREEN + "/disguisemodifyradius DisguiseType"),
     DMODRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply the disguise methods as well as the radius"),
-    DMODRADIUS_NEEDOPTIONS_ENTITY(
-            ChatColor.RED + "You need to supply the disguise methods as well as the radius and EntityType"),
+    DMODRADIUS_NEEDOPTIONS_ENTITY(ChatColor.RED + "You need to supply the disguise methods as well as the radius and EntityType"),
     DMODRADIUS_NOENTS(ChatColor.RED + "Couldn't find any disguised entities!"),
     DMODRADIUS_NOPERM(ChatColor.RED + "No permission to modify %s disguises!"),
     DMODRADIUS_UNRECOGNIZED(ChatColor.RED + "Unrecognised DisguiseType %s"),
@@ -98,32 +89,25 @@ public enum LibsMsg {
     DPLAYER_SUPPLY(ChatColor.RED + "You need to supply a disguise as well as the player/uuid"),
     DRADIUS_ENTITIES(ChatColor.DARK_GREEN + "EntityTypes usable are: %s"),
     DRADIUS_HELP1(ChatColor.DARK_GREEN + "Disguise all entities in a radius! Caps at %s blocks!"),
-    DRADIUS_HELP3((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN +
-            "Optional" + ChatColor.DARK_GREEN + ")> <Radius> player <Name>").replace("<", "<" + ChatColor.GREEN)
-            .replace(">", ChatColor.DARK_GREEN + ">")),
-    DRADIUS_HELP4((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN +
-            "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <DisguiseType> <Baby" + ChatColor.DARK_GREEN + "(" +
-            ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")>").replace("<", "<" + ChatColor.GREEN)
-            .replace(">", ChatColor.DARK_GREEN + ">")),
-    DRADIUS_HELP5((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN +
-            "Optional" + ChatColor.DARK_GREEN + ")> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" +
-            ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")>")
+    DRADIUS_HELP3((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN +
+            ")> <Radius> player <Name>").replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
+    DRADIUS_HELP4((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN +
+            ")> <Radius> <DisguiseType> <Baby" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN + ")>")
             .replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
-    DRADIUS_HELP6(
-            ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN + "/disguiseradius EntityTypes"),
-    DRADIUS_MISCDISG(ChatColor.RED +
-            "Failed to disguise %s entities because the option to disguise a living entity as a non-living has been " +
+    DRADIUS_HELP5((ChatColor.DARK_GREEN + "/disguiseradius <EntityType" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN +
+            ")> <Radius> <Dropped_Item/Falling_Block> <Id> <Durability" + ChatColor.DARK_GREEN + "(" + ChatColor.GREEN + "Optional" + ChatColor.DARK_GREEN +
+            ")>").replace("<", "<" + ChatColor.GREEN).replace(">", ChatColor.DARK_GREEN + ">")),
+    DRADIUS_HELP6(ChatColor.DARK_GREEN + "See the EntityType's usable by " + ChatColor.GREEN + "/disguiseradius EntityTypes"),
+    DRADIUS_MISCDISG(ChatColor.RED + "Failed to disguise %s entities because the option to disguise a living entity as a non-living has been " +
             "disabled in the config"),
     DRADIUS_NEEDOPTIONS(ChatColor.RED + "You need to supply a disguise as well as the radius"),
     DRADIUS_NEEDOPTIONS_ENTITY(ChatColor.RED + "You need to supply a disguise as well as the radius and EntityType"),
     FAILED_DISGIUSE(ChatColor.RED + "Failed to disguise as %s"),
     GRABBED_SKIN(ChatColor.GOLD + "Grabbed skin and saved as %s!"),
     PLEASE_WAIT(ChatColor.GRAY + "Please wait..."),
-    INVALID_CLONE(ChatColor.DARK_RED + "Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' " +
-            "'DoSneak' 'DoSprint'"),
+    INVALID_CLONE(ChatColor.DARK_RED + "Unknown method '%s' - Valid methods are 'IgnoreEquipment' 'DoSneakSprint' " + "'DoSneak' 'DoSprint'"),
     LIBS_COMMAND_WRONG_ARG(ChatColor.RED + "[LibsDisguises] Invalid argument, use /libsdisguises help"),
-    LIBS_UPDATE_UNKNOWN_BRANCH(
-            ChatColor.RED + "[LibsDisguises] Invalid argument, use 'dev' or 'release' to switch branches"),
+    LIBS_UPDATE_UNKNOWN_BRANCH(ChatColor.RED + "[LibsDisguises] Invalid argument, use 'dev' or 'release' to switch branches"),
     LIMITED_RADIUS(ChatColor.RED + "Limited radius to %s! Don't want to make too much lag right?"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY(ChatColor.RED + "Disguised %s as a %s!"),
     LISTEN_ENTITY_ENTITY_DISG_ENTITY_FAIL(ChatColor.RED + "Failed to disguise %s as a %s!"),
@@ -153,8 +137,7 @@ public enum LibsMsg {
     UPDATE_IN_PROGRESS(ChatColor.DARK_GREEN + "LibsDisguises is now downloading an update..."),
     NO_PERM_DISGUISE(ChatColor.RED + "You do not have permission for that disguise!"),
     NO_MODS_LISTENING(ChatColor.RED + "This server is not listening for mods!"),
-    NO_PERMS_USE_OPTIONS(ChatColor.RED +
-            "Ignored %s methods you do not have permission to use. Add 'show' to view unusable methods."),
+    NO_PERMS_USE_OPTIONS(ChatColor.RED + "Ignored %s methods you do not have permission to use. Add 'show' to view unusable methods."),
     OWNED_BY(ChatColor.GOLD + "Plugin registered to '%%__USER__%%'!"),
     NOT_DISGUISED(ChatColor.RED + "You are not disguised!"),
     DISGUISE_REQUIRED(ChatColor.RED + "You must be disguised to run this command!"),
@@ -162,23 +145,22 @@ public enum LibsMsg {
     NOT_NUMBER(ChatColor.RED + "Error! %s is not a number"),
     PARSE_CANT_DISG_UNKNOWN(ChatColor.RED + "Error! You cannot disguise as " + ChatColor.GREEN + "Unknown!"),
     PARSE_CANT_LOAD(ChatColor.RED + "Error! This disguise couldn't be loaded!"),
-    PARSE_DISG_NO_EXIST(
-            ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + "%s" + ChatColor.RED + " doesn't exist!"),
+    PARSE_DISG_NO_EXIST(ChatColor.RED + "Error! The disguise " + ChatColor.GREEN + "%s" + ChatColor.RED + " doesn't exist!"),
     PARSE_EXPECTED_RECEIVED(
-            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s" + ChatColor.RED + ", received " + ChatColor.GREEN +
-                    "%s" + ChatColor.RED + " instead for " + ChatColor.GREEN + "%s"),
-    PARSE_PARTICLE_BLOCK(ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material" + ChatColor.RED + ", received " +
-            ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
-    PARSE_PARTICLE_ITEM(ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material,Amount?,Glow?" + ChatColor.RED +
-            ", received " + ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
+            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s" + ChatColor.RED + ", received " + ChatColor.GREEN + "%s" + ChatColor.RED + " instead for " +
+                    ChatColor.GREEN + "%s"),
+    PARSE_PARTICLE_BLOCK(
+            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material" + ChatColor.RED + ", received " + ChatColor.GREEN + "%s" + ChatColor.RED +
+                    " instead"),
+    PARSE_PARTICLE_ITEM(ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Material,Amount?,Glow?" + ChatColor.RED + ", received " + ChatColor.GREEN + "%s" +
+            ChatColor.RED + " instead"),
     PARSE_PARTICLE_REDSTONE(
-            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Color,Size.0?" + ChatColor.RED + ", received " +
-                    ChatColor.GREEN + "%s" + ChatColor.RED + " instead"),
+            ChatColor.RED + "Expected " + ChatColor.GREEN + "%s:Color,Size.0?" + ChatColor.RED + ", received " + ChatColor.GREEN + "%s" + ChatColor.RED +
+                    " instead"),
     PARSE_NO_ARGS("No arguments defined"),
     PARSE_NO_OPTION_VALUE(ChatColor.RED + "No value was given for the method %s"),
     PARSE_NO_PERM_NAME(ChatColor.RED + "Error! You don't have permission to use that name!"),
-    PARSE_NO_PERM_PARAM(
-            ChatColor.RED + "Error! You do not have permission to use the parameter %s on the %s disguise!"),
+    PARSE_NO_PERM_PARAM(ChatColor.RED + "Error! You do not have permission to use the parameter %s on the %s disguise!"),
     PARSE_NO_PERM_REF(ChatColor.RED + "You do not have permission to use disguise references!"),
     PARSE_NO_REF(ChatColor.RED + "Cannot find a disguise under the reference %s"),
     PARSE_OPTION_NA(ChatColor.RED + "Cannot find the method '%s'"),
@@ -187,8 +169,7 @@ public enum LibsMsg {
     PARSE_INVALID_TIME(ChatColor.RED + "Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
     PARSE_INVALID_TIME_SEQUENCE(ChatColor.RED + "Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
     PARSE_USE_SECOND_NUM(ChatColor.RED + "Error! Only the disguises %s and %s uses a second number!"),
-    REF_TOO_MANY(ChatColor.RED +
-            "Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or " +
+    REF_TOO_MANY(ChatColor.RED + "Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or " +
             "lower the time they last"),
     RELOADED_CONFIG(ChatColor.GREEN + "[LibsDisguises] Reloaded config."),
     UND_ENTITY(ChatColor.RED + "Right click a disguised entity to undisguise them!"),
@@ -197,15 +178,14 @@ public enum LibsMsg {
     UNDISG_PLAYER_FAIL(ChatColor.RED + "%s not disguised!"),
     UNDISG_PLAYER_HELP(ChatColor.RED + "/undisguiseplayer <Name>"),
     UNDISRADIUS(ChatColor.RED + "Successfully undisguised %s entities!"),
-    UPDATE_READY(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
-            "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" + ChatColor.DARK_RED +
-            ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "!"),
-    UPDATE_READY_SNAPSHOT(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED +
-            "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "%s" + ChatColor.DARK_RED +
-            ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!"),
-    UPDATE_HOW(ChatColor.DARK_AQUA + "Use " + ChatColor.AQUA + "/libsdisgusies changelog" + ChatColor.DARK_AQUA +
-            " to see what changed, use " + ChatColor.AQUA + "/libsdisguises update!" + ChatColor.DARK_AQUA +
-            " to download the update!"),
+    UPDATE_READY(ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED + "There is a update ready to be downloaded! You are using " + ChatColor.RED + "v%s" +
+            ChatColor.DARK_RED + ", the new version is " + ChatColor.RED + "v%s" + ChatColor.DARK_RED + "!"),
+    UPDATE_READY_SNAPSHOT(
+            ChatColor.RED + "[LibsDisguises] " + ChatColor.DARK_RED + "There is a new build of Lib's Disguises! You are using " + ChatColor.RED + "%s" +
+                    ChatColor.DARK_RED + ", the latest build is " + ChatColor.RED + "#%s" + ChatColor.DARK_RED + "!"),
+    UPDATE_HOW(
+            ChatColor.DARK_AQUA + "Use " + ChatColor.AQUA + "/libsdisgusies changelog" + ChatColor.DARK_AQUA + " to see what changed, use " + ChatColor.AQUA +
+                    "/libsdisguises update!" + ChatColor.DARK_AQUA + " to download the update!"),
     VIEW_SELF_ON(ChatColor.GREEN + "Toggled viewing own disguise on!"),
     VIEW_SELF_OFF(ChatColor.GREEN + "Toggled viewing own disguise off!"),
     VIEW_BAR_ON(ChatColor.GREEN + "Toggled disguised notify bar on!"),
@@ -218,6 +198,9 @@ public enum LibsMsg {
     COPY_DISGUISE_NO_COPY(ChatColor.GREEN + "Data: " + ChatColor.YELLOW + "%s"),
     CLICK_TO_COPY_HOVER(ChatColor.GOLD + "Click to Copy"),
     CLICK_COPY(ChatColor.YELLOW + "" + ChatColor.BOLD + "%s"),
+    SKIN_API_UUID_3(ChatColor.RED +
+            "You seem to be using a Minecraft account with an UUID version of 3. If the skin is not as expected, you can change 'UUIDVersion' in protocol.yml" +
+            " to 3 which may fix this. If you are using a Minecraft account that was not purchased, then there is nothing further we can do to fix this."),
     SKIN_API_IN_USE(ChatColor.RED + "mineskin.org is currently in use, please try again"),
     SKIN_API_TIMER(ChatColor.RED + "mineskin.org can be used again in %s seconds"),
     SKIN_API_FAIL(ChatColor.RED + "Unexpected error while accessing mineskin.org, please try again"),
@@ -229,6 +212,7 @@ public enum LibsMsg {
     SKIN_API_404("mineskin.org unable to find an image at that url"),
     SKIN_API_IMAGE_TIMEOUT(ChatColor.RED + "Error! mineskin.org took too long to connect! Is your image valid?"),
     SKIN_API_TIMEOUT_ERROR(ChatColor.RED + "Error! Took too long to connect to mineskin.org!"),
+    SKIN_API_TIMEOUT_API_KEY_ERROR(ChatColor.RED + "Error! Took too long to connect to mineskin.org! Is the API Key correct?"),
     SKIN_API_TIMEOUT(ChatColor.RED + "Took too long to connect to mineskin.org!"),
     SKIN_API_IMAGE_HAS_ERROR("Your image has the error: %s"),
     SKIN_API_USING_URL(ChatColor.GRAY + "Url provided, now attempting to connect to mineskin.org"),
@@ -238,37 +222,27 @@ public enum LibsMsg {
     SKIN_API_INVALID_NAME(ChatColor.RED + "Invalid name/file/uuid provided!"),
     SKIN_API_USING_UUID(ChatColor.GRAY + "UUID successfully parsed, now attempting to connect to mineskin.org"),
     SKIN_API_USING_EXISTING_NAME(ChatColor.GRAY + "Found a saved skin under that name locally! Using that!"),
-    SKIN_API_USING_NAME(
-            ChatColor.GRAY + "Determined to be player name, now attempting to validate and connect to mineskin.org"),
+    SKIN_API_USING_NAME(ChatColor.GRAY + "Determined to be player name, now attempting to validate and connect to mineskin.org"),
     SAVE_DISG_HELP_1(ChatColor.GREEN + "The <DisguiseName> is what the disguise will be called in Lib's Disguises"),
-    SAVE_DISG_HELP_2(ChatColor.GREEN +
-            "/savedisguise <DisguiseName> - If you don't provide arguments, it'll try make a disguise from your" +
+    SAVE_DISG_HELP_2(ChatColor.GREEN + "/savedisguise <DisguiseName> - If you don't provide arguments, it'll try make a disguise from your" +
             " current disguise. This will not work if you are not disguised!"),
     SAVE_DISG_HELP_3(ChatColor.GREEN + "/savedisguise <DisguiseName> <Arguments>"),
-    SAVE_DISG_HELP_4(ChatColor.GREEN +
-            "Your arguments need to be as if you're using /disguise. So '/disguise player Notch setsneaking' - " +
+    SAVE_DISG_HELP_4(ChatColor.GREEN + "Your arguments need to be as if you're using /disguise. So '/disguise player Notch setsneaking' - " +
             "Means '/savedisguise Notch player Notch setsneaking'"),
     SAVE_DISG_HELP_5(ChatColor.GREEN + "Remember! You can upload your own skins, then reference those skins!"),
-    SAVE_DISG_HELP_6(ChatColor.GREEN +
-            "If you are using setSkin, you can append :slim to your skin path to get the slim Alex model. So myskin" +
-            ".png:slim"),
-    GRAB_DISG_HELP_1(ChatColor.GREEN +
-            "You can choose a name to save the skins under, the names will be usable as if it was an actual player " +
-            "skin"),
+    SAVE_DISG_HELP_6(ChatColor.GREEN + "If you are using setSkin, you can append :slim to your skin path to get the slim Alex model. So myskin" + ".png:slim"),
+    GRAB_DISG_HELP_1(ChatColor.GREEN + "You can choose a name to save the skins under, the names will be usable as if it was an actual player " + "skin"),
     GRAB_DISG_HELP_2(ChatColor.DARK_GREEN + "/grabskin <Optional Name> https://somesite.com/myskin.png"),
     GRAB_DISG_HELP_3(ChatColor.DARK_GREEN + "/grabskin <Optional Name> myskin.png - Skins must be in the folder!"),
     GRAB_DISG_HELP_4(ChatColor.DARK_GREEN + "/grabskin <Optional Name> <Player name or UUID>"),
-    GRAB_DISG_HELP_5(
-            ChatColor.GREEN + "If you want the slim Alex version of the skin, append :slim. So 'myskin.png:slim'"),
-    GRAB_DISG_HELP_6(
-            ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),
+    GRAB_DISG_HELP_5(ChatColor.GREEN + "If you want the slim Alex version of the skin, append :slim. So 'myskin.png:slim'"),
+    GRAB_DISG_HELP_6(ChatColor.GREEN + "You will be sent the skin data, but you can also use the saved names in disguises"),
     GRAB_HEAD_SUCCESS(ChatColor.GREEN + "Head successfully grabbed and added to inventory!"),
     GRAB_HEAD_HELP_1(ChatColor.GREEN + "Grab the head of a file, player or url! This is a Lib's Disguises feature."),
     GRAB_HEAD_HELP_2(ChatColor.DARK_GREEN + "/grabhead https://somesite.com/myskin.png"),
     GRAB_HEAD_HELP_3(ChatColor.DARK_GREEN + "/grabhead myskin.png - Skins must be in the folder!"),
     GRAB_HEAD_HELP_4(ChatColor.DARK_GREEN + "/grabhead <Player name or UUID>"),
-    CUSTOM_DISGUISE_NAME_CONFLICT(
-            ChatColor.RED + "Cannot create the custom disguise '%s' as there is a name conflict!"),
+    CUSTOM_DISGUISE_NAME_CONFLICT(ChatColor.RED + "Cannot create the custom disguise '%s' as there is a name conflict!"),
     ERROR_LOADING_CUSTOM_DISGUISE(ChatColor.RED + "Error while loading custom disguise '%s'%s"),
     SKIN_API_INTERNAL_ERROR(ChatColor.RED + "Internal error in the skin API, perhaps bad data?"),
     META_INFO(ChatColor.GREEN + "Name: %s, Watcher: %s, Index: %s, Type: %s, Default: %s"),
@@ -277,25 +251,19 @@ public enum LibsMsg {
     META_VALUES_NO_CLICK(ChatColor.BLUE + "Metas, use as param for more info: " + ChatColor.DARK_AQUA),
     META_VALUE_SEPERATOR(ChatColor.AQUA + ", " + ChatColor.DARK_AQUA),
     META_CLICK_SHOW(ChatColor.GOLD + "Click to show %s"),
-    LIBS_PERM_CHECK_NON_PREM(
-            ChatColor.RED + "This server is not premium, non-admins should not be able to use commands"),
+    LIBS_PERM_CHECK_NON_PREM(ChatColor.RED + "This server is not premium, non-admins should not be able to use commands"),
     LIBS_PERM_CHECK_CAN_TARGET(ChatColor.GOLD + "You can specify a player target with /ld permtest <Target> instead!"),
     LIBS_PERM_CHECK_USING_TARGET(ChatColor.GOLD + "Running the permission test on '%s'"),
     LIBS_PERM_CHECK_INFO_1(ChatColor.AQUA + "Now checking for the permission 'libsdisguises.disguise.pig'"),
     LIBS_PERM_CHECK_INFO_2(ChatColor.AQUA + "If you did not give this permission, please set it."),
     NORMAL_PERM_CHECK_SUCCESS(ChatColor.GOLD + "Normal permission check, success."),
     NORMAL_PERM_CHECK_FAIL(ChatColor.RED + "Normal permission check, fail."),
-    LIBS_PERM_CHECK_SUCCESS(
-            ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
-    LIBS_PERM_CHECK_FAIL(
-            ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!"),
-    LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS(ChatColor.GOLD +
-            "Tested libsdisguises.disguise.zombie, which your player seems to have! There may be a problem in your " +
-            "permissions setup!"),
-    LIBS_PERM_CHECK_COMMAND_UNREGISTERED(
-            ChatColor.RED + "The /disguise command seems to be unregistered! Check your config!"),
-    LIBS_PERM_COMMAND_SUCCESS(
-            ChatColor.GOLD + "Tested permission '%s' for /disguise command access, permission success!"),
+    LIBS_PERM_CHECK_SUCCESS(ChatColor.GOLD + "Lib's Disguises permission check, success. Pig disguise should be usable!"),
+    LIBS_PERM_CHECK_FAIL(ChatColor.GOLD + "Lib's Disguises permission check, fail. Your permission plugin isn't compliant!"),
+    LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS(
+            ChatColor.GOLD + "Tested libsdisguises.disguise.zombie, which your player seems to have! There may be a problem in your " + "permissions setup!"),
+    LIBS_PERM_CHECK_COMMAND_UNREGISTERED(ChatColor.RED + "The /disguise command seems to be unregistered! Check your config!"),
+    LIBS_PERM_COMMAND_SUCCESS(ChatColor.GOLD + "Tested permission '%s' for /disguise command access, permission success!"),
     LIBS_PERM_COMMAND_FAIL(ChatColor.RED + "Tested permission '%s' for /disguise command access, permission failed!"),
     CANT_ATTACK_DISGUISED(ChatColor.RED + "Cannot fight while disguised!"),
     CANT_ATTACK_DISGUISED_RECENTLY(ChatColor.RED + "You were disguised recently! Can't attack yet!"),
@@ -310,50 +278,38 @@ public enum LibsMsg {
     ITEM_SERIALIZED_MC_LD_NO_COPY(ChatColor.GOLD + "MC Serialized for LD: " + ChatColor.YELLOW + "%s"),
     ITEM_SIMPLE_STRING_NO_COPY(ChatColor.GOLD + "Simple: " + ChatColor.YELLOW + "%s"),
     LIBS_SCOREBOARD_NO_TEAM(ChatColor.RED + "Not on a scoreboard team!"),
-    LIBS_SCOREBOARD_SUCCESS(ChatColor.GOLD +
-            "On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right" +
-            " now, then " +
-            "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
-            "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the " +
-            "end' if you " + "still need help with this, or we'll assume you can't read."),
-    LIBS_SCOREBOARD_NAMES_DISABLED(ChatColor.RED +
-            "Scoreboard names has been disabled, the test for player disguises has failed before it started"),
-    LIBS_SCOREBOARD_IGNORE_TEST(
-            ChatColor.GREEN + "This was a seperate test from the self disguising collision test that will follow!"),
+    LIBS_SCOREBOARD_SUCCESS(
+            ChatColor.GOLD + "On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right" + " now, then " +
+                    "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
+                    "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the " + "end' if you " +
+                    "still need help with this, or we'll assume you can't read."),
+    LIBS_SCOREBOARD_NAMES_DISABLED(ChatColor.RED + "Scoreboard names has been disabled, the test for player disguises has failed before it started"),
+    LIBS_SCOREBOARD_IGNORE_TEST(ChatColor.GREEN + "This was a seperate test from the self disguising collision test that will follow!"),
     USING_DEFAULT_CONFIG(ChatColor.DARK_GREEN + "Using the default config!"),
     LIBS_SCOREBOARD_ISSUES(ChatColor.GREEN + "Too many issues found, hidden %s"),
     LIBS_SCOREBOARD_NO_ISSUES(ChatColor.GREEN + "No issues found in player disguise scoreboard name teams"),
-    LD_COMMAND_UPDATEPROTOCOLLIB(ChatColor.BLUE + "/libsdisguises updateprotocollib - " + ChatColor.AQUA +
-            "Updates ProtocolLib to the latest development version"),
+    LD_COMMAND_UPDATEPROTOCOLLIB(
+            ChatColor.BLUE + "/libsdisguises updateprotocollib - " + ChatColor.AQUA + "Updates ProtocolLib to the latest development version"),
     LD_COMMAND_HELP(ChatColor.BLUE + "/libsdisguises help - " + ChatColor.AQUA + "Returns this!"),
-    LD_COMMAND_COUNT(ChatColor.BLUE + "/libsdisguises count - " + ChatColor.AQUA +
-            "Tells you how many active disguises there are"),
-    LD_COMMAND_METAINFO(ChatColor.BLUE + "/libsdisguises metainfo - " + ChatColor.AQUA +
-            "Debugging info, tells you what the metadata is for a disguise"),
-    LD_COMMAND_CONFIG(ChatColor.BLUE + "/libsdisguises config - " + ChatColor.AQUA +
-            "Tells you what's not normal in your config"),
+    LD_COMMAND_COUNT(ChatColor.BLUE + "/libsdisguises count - " + ChatColor.AQUA + "Tells you how many active disguises there are"),
+    LD_COMMAND_METAINFO(ChatColor.BLUE + "/libsdisguises metainfo - " + ChatColor.AQUA + "Debugging info, tells you what the metadata is for a disguise"),
+    LD_COMMAND_CONFIG(ChatColor.BLUE + "/libsdisguises config - " + ChatColor.AQUA + "Tells you what's not normal in your config"),
     LD_COMMAND_UPDATE(ChatColor.BLUE + "/libsdisguises update - " + ChatColor.AQUA +
             "'update' will fetch an update, 'update dev' will fetch a dev build update, 'update release' will fetch a" +
             " release build update and 'update!' will download that update!"),
-    LD_COMMAND_CHANGELOG(ChatColor.BLUE + "/libsdisguises changelog - " + ChatColor.AQUA +
-            "Gives you the changelog of the current update fetched"),
+    LD_COMMAND_CHANGELOG(ChatColor.BLUE + "/libsdisguises changelog - " + ChatColor.AQUA + "Gives you the changelog of the current update fetched"),
     LD_DEBUG_MINESKIN(ChatColor.BLUE + "/libsdisguises mineskin - " + ChatColor.AQUA + "Prints debug information about MineSkin to console"),
     LD_DEBUG_MINESKIN_TOGGLE(ChatColor.BLUE + "MineSkin debug is now %s, this command toggles the printing of MineSkin information to console"),
-    LD_COMMAND_JSON(ChatColor.BLUE + "/libsdisguises json - " + ChatColor.AQUA +
-            "Turns the current held item into a string format"),
+    LD_COMMAND_JSON(ChatColor.BLUE + "/libsdisguises json - " + ChatColor.AQUA + "Turns the current held item into a string format"),
     LD_COMMAND_MODS(ChatColor.BLUE + "/libsdisguises mods <Player?> - " + ChatColor.AQUA +
             "If using modded entities, this will tell you what mods a player is using if possible"),
-    LD_COMMAND_PERMTEST(ChatColor.BLUE + "/libsdisguises permtest <Player?> - " + ChatColor.AQUA +
-            "Does a quick test to see if your permissions are working"),
-    LD_COMMAND_SCOREBOARD(ChatColor.BLUE + "/libsdisguises scoreboard <Player?> - " + ChatColor.AQUA +
-            "Does a test to see if there's any scoreboard issues it can detect"),
-    LD_COMMAND_RELOAD(ChatColor.BLUE + "/libsdisguises reload - " + ChatColor.AQUA +
-            "Reload's the plugin config and possibly blows disguises"),
-    LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA +
-            "Used to help debug scoreboard issues on a player disguise"),
+    LD_COMMAND_PERMTEST(ChatColor.BLUE + "/libsdisguises permtest <Player?> - " + ChatColor.AQUA + "Does a quick test to see if your permissions are working"),
+    LD_COMMAND_SCOREBOARD(
+            ChatColor.BLUE + "/libsdisguises scoreboard <Player?> - " + ChatColor.AQUA + "Does a test to see if there's any scoreboard issues it can detect"),
+    LD_COMMAND_RELOAD(ChatColor.BLUE + "/libsdisguises reload - " + ChatColor.AQUA + "Reload's the plugin config and possibly blows disguises"),
+    LD_COMMAND_DEBUG(ChatColor.BLUE + "/libsdisguises debug - " + ChatColor.AQUA + "Used to help debug scoreboard issues on a player disguise"),
     LD_COMMAND_UPLOAD_LOGS(ChatColor.BLUE + "/libsdisguises uploadlogs - " + ChatColor.AQUA +
-            "Uploads latest.log, disguises.yml and configs and gives you the link to share. Used when seeking " +
-            "assistance."),
+            "Uploads latest.log, disguises.yml and configs and gives you the link to share. Used when seeking " + "assistance."),
     SELF_DISGUISE_HIDDEN(ChatColor.GREEN + "Self disguise hidden as it's too tall..");
 
     private final String string;
@@ -381,8 +337,8 @@ public enum LibsMsg {
         int matches = StringUtils.countMatches(getRaw(), "%s");
 
         if (matches != strings.length) {
-            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
-                    ". Please inform plugin author if not using translations.");
+            DisguiseUtilities.getLogger()
+                    .severe("Mismatch in messages, incorrect parameters supplied for " + name() + ". Please inform plugin author if not using translations.");
         }
 
         String trans = TranslateType.MESSAGES.get(getRaw());

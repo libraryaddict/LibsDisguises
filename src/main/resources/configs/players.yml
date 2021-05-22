@@ -1,5 +1,10 @@
 # This config file is for settings that are about the players themselves, and the player disguises!
 
+# MineSkin will at a later date give you less delay for skin requests, if you fill this in with a valid API you too can take advantage of this!
+# This requires you to have a Minecraft account registered with MineSkin, that account must be owned by you and will have its skin changed constantly.
+# https://mineskin.org/apikey
+MineSkinAPIKey: 'N/A'
+
 # Shall the players view their disguises?
 # Best used when viewing yourself in 3rd person
 ViewSelfDisguises: true

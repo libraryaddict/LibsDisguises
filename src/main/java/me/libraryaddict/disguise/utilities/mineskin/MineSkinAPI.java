@@ -37,6 +37,9 @@ public class MineSkinAPI {
     @Getter
     @Setter
     private boolean debugging;
+    @Getter
+    @Setter
+    private String apiKey;
 
     public boolean isInUse() {
         return lock.isLocked();
@@ -80,6 +83,10 @@ public class MineSkinAPI {
             printDebug("Grabbing a skin from url '" + skinUrl + "'");
         }
 
+        if (getApiKey() != null) {
+            printDebug("Using a MineSkin api key!");
+        }
+
         if (sleep > 0) {
             printDebug("Sleeping for " + sleep + "ms before calling the API due to a recent request");
 
@@ -94,15 +101,20 @@ public class MineSkinAPI {
         long nextRequestIn = TimeUnit.SECONDS.toMillis(10);
 
         try {
+            if (getApiKey() != null) {
+                path += (path.contains("?") ? '&' : '?') + "key=" + getApiKey();
+            }
+
             URL url = new URL("https://api.mineskin.org" + path);
             // Creating a connection
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", "LibsDisguises");
             connection.setConnectTimeout(19000);
             connection.setReadTimeout(19000);
+            connection.setDoOutput(true);
+
+            connection.setRequestProperty("User-Agent", "LibsDisguises");
 
             String boundary = "LD@" + Long.toHexString(System.currentTimeMillis()); // Just generate some unique random value.
-            connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 
             String charset = "UTF-8";
@@ -202,7 +214,12 @@ public class MineSkinAPI {
             try {
                 if (connection != null && (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
                         connection.getResponseCode() == 599)) {
-                    callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
+                    if (getApiKey() != null && connection.getResponseCode() == 504) {
+                        callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
+                    } else {
+                        callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
+                    }
+
                     return null;
                 }
             } catch (IOException ignored) {
