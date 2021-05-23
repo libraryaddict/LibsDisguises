@@ -4,13 +4,18 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.checkerframework.checker.regex.qual.Regex;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by libraryaddict on 10/06/2017.
@@ -23,7 +28,9 @@ public enum TranslateType {
 
     private File file;
     private LinkedHashMap<String, String> translated = new LinkedHashMap<>();
+    private HashMap<String, Boolean> toDeDupe = new HashMap<>();
     private FileWriter writer;
+    private int written;
 
     TranslateType(String fileName) {
         file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
@@ -63,10 +70,14 @@ public enum TranslateType {
             if (writer != null) {
                 writer.close();
                 writer = null;
+
+                DisguiseUtilities.getLogger().info("Saved " + written + " translations that were not in " + getFile().getName());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        deDupeMessages();
     }
 
     private void loadTranslations() {
@@ -88,7 +99,6 @@ public enum TranslateType {
 
         try {
             config.load(getFile());
-            int dupes = 0;
 
             for (String key : config.getKeys(false)) {
                 String value = config.getString(key);
@@ -98,18 +108,7 @@ public enum TranslateType {
                 } else {
                     String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
 
-                    if (translated.containsKey(newKey)) {
-                        if (dupes++ < 5) {
-                            DisguiseUtilities.getLogger().severe("Alert! Duplicate translation entry for " + key + " in " + name() + " translations!");
-                            continue;
-                        } else {
-                            DisguiseUtilities.getLogger()
-                                    .severe("Too many duplicated keys! It's likely that this file was mildly " + "corrupted by a previous bug!");
-                            DisguiseUtilities.getLogger().severe("Delete the file, or you can remove every line after the first " + "duplicate message!");
-                            break;
-                        }
-                    }
-
+                    toDeDupe.put(newKey, true);
                     translated.put(newKey, DisguiseUtilities.translateAlternateColorCodes(value));
 
                     if (!newKey.equals(translated.get(newKey))) {
@@ -142,13 +141,15 @@ public enum TranslateType {
     }
 
     public void save(String message, String comment) {
+        String sanitized = StringEscapeUtils.escapeJava(message.replace(ChatColor.COLOR_CHAR + "", "&"));
+
+        toDeDupe.put(sanitized, false);
+
         if (translated.containsKey(message)) {
             return;
         }
 
         translated.put(message, message);
-
-        message = StringEscapeUtils.escapeJava(message.replace(ChatColor.COLOR_CHAR + "", "&"));
 
         try {
             boolean exists = getFile().exists();
@@ -174,9 +175,70 @@ public enum TranslateType {
                 }
             }
 
-            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + message + "\": \"" + message + "\"\n");
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + sanitized + "\": \"" + sanitized + "\"\n");
+            written++;
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void deDupeMessages() {
+        try {
+            if (!getFile().exists()) {
+                return;
+            }
+
+            ArrayList<String> disguiseText = new ArrayList(Arrays.asList(new String(Files.readAllBytes(getFile().toPath())).split("\r?\n")));
+            int dupes = 0;
+            int outdated = 0;
+
+            for (Map.Entry<String, Boolean> entry : toDeDupe.entrySet()) {
+                String s = entry.getKey();
+                boolean isOutdated = entry.getValue();
+                boolean removedFirst = isOutdated;
+
+                String str = "\"" + s + "\": \"" + s + "\"";
+
+                for (int i = 0; i < disguiseText.size(); i++) {
+                    if (!disguiseText.get(i).equals(str)) {
+                        continue;
+                    }
+
+                    if (!removedFirst) {
+                        removedFirst = true;
+                        continue;
+                    }
+
+                    disguiseText.remove(i);
+
+                    if (isOutdated) {
+                        outdated++;
+                    } else {
+                        dupes++;
+                    }
+
+                    if (disguiseText.get(--i).startsWith("# Reference: ")) {
+                        disguiseText.remove(i);
+                    }
+
+                    if (disguiseText.size() <= i || !disguiseText.get(i).isEmpty()) {
+                        continue;
+                    }
+
+                    disguiseText.remove(i);
+                }
+            }
+
+            if (dupes + outdated > 0) {
+                DisguiseUtilities.getLogger().info("Removed " + dupes + " duplicate and " + outdated + " outdated translations from " + getFile().getName() +
+                        ", this was likely caused by a previous issue in the plugin");
+
+                Files.write(getFile().toPath(), StringUtils.join(disguiseText, "\n").getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            toDeDupe.clear();
         }
     }
 

@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
@@ -106,7 +107,7 @@ public class TranslateFiller {
                 .save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
-            TranslateType.MESSAGES.save(msg.getRaw(), "Reference: " + msg.name());
+            TranslateType.MESSAGES.save(DisguiseUtilities.translateAlternateColorCodes(msg.getRaw()), "Reference: " + msg.name());
         }
 
         for (TranslateType type : TranslateType.values()) {

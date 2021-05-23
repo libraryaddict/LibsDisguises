@@ -2510,12 +2510,10 @@ public class DisguiseUtilities {
 
     public static String translateAlternateColorCodes(String string) {
         if (NmsVersion.v1_16.isSupported()) {
-            return string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
+            string = string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
         }
 
-        string = ChatColor.translateAlternateColorCodes('&', string);
-
-        return string;
+        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
     /**
