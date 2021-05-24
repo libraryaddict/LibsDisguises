@@ -38,8 +38,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         if (NmsVersion.v1_16.isSupported()) {
             handleNew(disguise, sentPacket, packets, observer, entity);
         } else {
@@ -47,12 +46,10 @@ public class PacketHandlerEquipment implements IPacketHandler {
         }
     }
 
-    public void handleNew(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handleNew(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         // Else if the disguise is updating equipment
 
-        List<Pair<Object, Object>> slots = (List<Pair<Object, Object>>) packets.getPackets().get(0).getModifier()
-                .read(1);
+        List<Pair<Object, Object>> slots = (List<Pair<Object, Object>>) packets.getPackets().get(0).getModifier().read(1);
         List<Pair<Object, Object>> newSlots = new ArrayList<>();
         boolean constructed = false;
 
@@ -78,26 +75,24 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     equipPacket.getModifier().write(1, newSlots);
                 }
 
-                newSlots.add(Pair.of(pair.getFirst(),
-                        ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack)));
+                newSlots.add(Pair.of(pair.getFirst(), ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack)));
             } else {
                 newSlots.add(pair);
+                itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
             }
 
-            if (disguise.getWatcher().isRightClicking() &&
-                    (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
-                itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
-
+            if (disguise.getWatcher().isRightClicking() && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
                     List<WrappedWatchableObject> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.LIVING_HAND,
-                                WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_HAND.getIndex()));
+                        WrappedWatchableObject watch = ReflectionManager
+                                .createWatchable(MetaIndex.LIVING_HAND, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_HAND.getIndex()));
 
-                        if (watch != null)
+                        if (watch != null) {
                             list.add(watch);
+                        }
 
                         list = disguise.getWatcher().convert(observer, list);
                     } else {
@@ -140,8 +135,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
         }
     }
 
-    public void handleOld(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handleOld(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         // Else if the disguise is updating equipment
 
         EquipmentSlot slot = ReflectionManager.createEquipmentSlot(packets.getPackets().get(0).getModifier().read(1));
@@ -155,24 +149,26 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
             packets.addPacket(equipPacket);
 
-            equipPacket.getModifier()
-                    .write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
+            equipPacket.getModifier().write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
         }
 
         if (disguise.getWatcher().isRightClicking() && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
-            ItemStack heldItem = packets.getPackets().get(0).getItemModifier().read(0);
+            if (itemStack == null) {
+                itemStack = packets.getPackets().get(0).getItemModifier().read(0);
+            }
 
-            if (heldItem != null && heldItem.getType() != Material.AIR) {
+            if (itemStack != null && itemStack.getType() != Material.AIR) {
                 // Convert the datawatcher
                 List<WrappedWatchableObject> list = new ArrayList<>();
                 MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_HAND : MetaIndex.ENTITY_META;
 
                 if (DisguiseConfig.isMetaPacketsEnabled()) {
-                    WrappedWatchableObject watch = ReflectionManager.createWatchable(toUse,
-                            WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
+                    WrappedWatchableObject watch =
+                            ReflectionManager.createWatchable(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
 
-                    if (watch != null)
+                    if (watch != null) {
                         list.add(watch);
+                    }
 
                     list = disguise.getWatcher().convert(observer, list);
                 } else {

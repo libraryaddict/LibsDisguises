@@ -29,11 +29,11 @@ import java.util.Map;
  */
 @Getter
 @RequiredArgsConstructor
+@Setter
 public class LibsPackets {
     private final ArrayList<PacketContainer> packets = new ArrayList<>();
     private final HashMap<Integer, ArrayList<PacketContainer>> delayedPacketsMap = new HashMap<>();
     private final Disguise disguise;
-    @Setter
     private boolean unhandled;
 
     public Disguise getDisguise() {
@@ -79,7 +79,8 @@ public class LibsPackets {
 
                 try {
                     for (PacketContainer packet : entry.getValue()) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+                        // To have right click handled properly, equip packets sent are normal
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, packet.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT);
                     }
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
