@@ -2902,7 +2902,7 @@ public class DisguiseUtilities {
     }
 
     public static byte getPitch(DisguiseType disguiseType, byte value) {
-        if (disguiseType.isMisc()) {
+        if (disguiseType != DisguiseType.WITHER_SKULL && disguiseType.isMisc()) {
             return (byte) -value;
         }
 
