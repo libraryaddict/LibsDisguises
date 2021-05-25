@@ -35,11 +35,8 @@ class DisguiseRunnable extends BukkitRunnable {
         switch (disguise.getType()) {
             case FIREWORK:
             case WITHER_SKULL:
-                vectorY = 0.000001D;
-                alwaysSendVelocity = true;
-                break;
             case EXPERIENCE_ORB:
-                vectorY = 0.0221;
+                vectorY = 0.000001D;
                 alwaysSendVelocity = true;
                 break;
             default:
