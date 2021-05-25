@@ -30,17 +30,18 @@ public class PacketHandlerMetadata implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
-
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         packets.clear();
 
         if (!DisguiseConfig.isMetaPacketsEnabled()) {
             return;
         }
 
-        List<WrappedWatchableObject> watchableObjects = disguise.getWatcher()
-                .convert(observer, sentPacket.getWatchableCollectionModifier().read(0));
+        List<WrappedWatchableObject> watchableObjects = disguise.getWatcher().convert(observer, sentPacket.getWatchableCollectionModifier().read(0));
+
+        if (watchableObjects.isEmpty()) {
+            return;
+        }
 
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
