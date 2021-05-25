@@ -10,7 +10,7 @@ Translations: false
 # Disabling this will also disable notifications when the plugin updated
 NotifyUpdate: true
 # Should the plugin automatically update?
-AutoUpdate: true
+AutoUpdate: false
 
 # Where should the plugin check for updates?
 # SAME_BUILDS - Will check snapshots if you're not using a release build
