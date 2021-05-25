@@ -24,6 +24,7 @@ class DisguiseRunnable extends BukkitRunnable {
     private int blockX, blockY, blockZ, facing;
     private int deadTicks = 0;
     private int actionBarTicks = -1;
+    private int refreshRate;
     private long lastRefreshed = System.currentTimeMillis();
     private Disguise disguise;
     final Double vectorY;
@@ -45,6 +46,20 @@ class DisguiseRunnable extends BukkitRunnable {
                 break;
         }
 
+        // Where refresh rate is in ticks, exp is in here due to a fire exploit + stop it glitching out so much
+        switch (disguise.getType()) {
+            case FIREWORK:
+            case EXPERIENCE_ORB:
+                refreshRate = 40; // 2 seconds
+                break;
+            case EVOKER_FANGS:
+                refreshRate = 23;
+                break;
+            default:
+                break;
+        }
+
+        refreshRate *= 50;
     }
 
     @Override
@@ -89,13 +104,11 @@ class DisguiseRunnable extends BukkitRunnable {
 
         deadTicks = 0;
 
-        // If the disguise type is tnt, we need to resend the entity packet else it will turn invisible
-        if (disguise.getType() == DisguiseType.FIREWORK || disguise.getType() == DisguiseType.EVOKER_FANGS) {
-            if (lastRefreshed + ((disguise.getType() == DisguiseType.FIREWORK ? 40 : 23) * 50) < System.currentTimeMillis()) {
-                lastRefreshed = System.currentTimeMillis();
+        // If the disguise type is invisibable, we need to resend the entity packet else it will turn invisible
+        if (refreshRate > 0 && lastRefreshed + refreshRate < System.currentTimeMillis()) {
+            lastRefreshed = System.currentTimeMillis();
 
-                DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
-            }
+            DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
         }
 
         if (disguise.isModifyBoundingBox()) {
