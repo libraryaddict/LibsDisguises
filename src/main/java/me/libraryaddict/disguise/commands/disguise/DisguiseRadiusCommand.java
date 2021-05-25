@@ -66,6 +66,10 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
+        if (hasHitRateLimit(sender)) {
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) || args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 

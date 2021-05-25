@@ -48,6 +48,10 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
+        if (hasHitRateLimit(sender)) {
+            return true;
+        }
+
         Entity entityTarget = Bukkit.getPlayer(args[0]);
 
         if (entityTarget == null) {

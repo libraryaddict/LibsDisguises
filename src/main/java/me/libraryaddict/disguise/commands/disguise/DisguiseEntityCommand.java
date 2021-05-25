@@ -41,6 +41,10 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
+        if (hasHitRateLimit(sender)) {
+            return true;
+        }
+
         String[] disguiseArgs = DisguiseUtilities.split(StringUtils.join(args, " "));
         Disguise testDisguise;
 

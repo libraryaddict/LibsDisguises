@@ -125,6 +125,7 @@ public enum LibsMsg {
     MADE_REF(ChatColor.RED + "Constructed a %s disguise! Your reference is %s"),
     MADE_REF_EXAMPLE(ChatColor.RED + "Example usage: /disguise %s"),
     NO_CONSOLE(ChatColor.RED + "You may not use this command from the console!"),
+    TOO_FAST(ChatColor.RED + "You are using the disguise command too fast!"),
     NO_MODS(ChatColor.RED + "%s is not using any mods!"),
     MODS_LIST(ChatColor.DARK_GREEN + "%s has the mods:" + ChatColor.AQUA + " %s"),
     NO_PERM(ChatColor.RED + "You are forbidden to use this command."),
