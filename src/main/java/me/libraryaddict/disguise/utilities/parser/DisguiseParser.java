@@ -758,7 +758,7 @@ public class DisguiseParser {
                 customName = true;
             }
 
-            args = parsePlaceholders(args, sender, target);
+            args = parsePlaceholders(args, sender == null ? target : sender, target);
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
