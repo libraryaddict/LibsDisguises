@@ -85,6 +85,9 @@ public class DisguiseConfig {
     private static boolean hidingArmorFromSelf;
     @Getter
     @Setter
+    private static boolean hidingCreativeEquipmentFromSelf;
+    @Getter
+    @Setter
     private static boolean hidingHeldItemFromSelf;
     @Getter
     @Setter
@@ -579,6 +582,7 @@ public class DisguiseConfig {
         setEquipmentPacketsEnabled(config.getBoolean("PacketsEnabled.Equipment"));
         setExplicitDisguisePermissions(config.getBoolean("Permissions.ExplicitDisguises"));
         setHideArmorFromSelf(config.getBoolean("RemoveArmor"));
+        setHidingCreativeEquipmentFromSelf(config.getBoolean("RemoveCreativeEquipment"));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setHideHeldItemFromSelf(config.getBoolean("RemoveHeldItem"));
         setHorseSaddleable(config.getBoolean("SaddleableHorse"));

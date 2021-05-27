@@ -12,9 +12,10 @@ RandomDisguiseOptions: true
 # For self disguises, they need to have the armor and the held item removed
 # Else they see floating armor, floating held items.
 # This turns the items invisible in the disguised players inventory. It does not actually remove them!
-# Be warned that in creative this can actually delete the item from the inventory due to a weird bug
 RemoveArmor: true
 RemoveHeldItem: false
+# An exception for creative mode as this can actually delete the item from the inventory due to creative being weird
+RemoveCreativeEquipment: false
 
 # If you set a disguise to burning, it will no longer be able to be shown as sneaking or invisible.
 # Set this to true if you want the disguise to get the animations of the disguised entity. Such as invisible, on fire, sprinting, sneaking, blocking
