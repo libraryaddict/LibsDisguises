@@ -10,6 +10,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -64,8 +65,13 @@ class DisguiseRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null) {
-            cancel();
+        if (!disguise.isDisguiseInUse() || disguise.getEntity() == null || !Bukkit.getWorlds().contains(disguise.getEntity().getWorld())) {
+            disguise.stopDisguise();
+
+            // If still somehow not cancelled
+            if (!isCancelled()) {
+                cancel();
+            }
             return;
         }
 

@@ -682,8 +682,9 @@ public abstract class Disguise {
 
         Bukkit.getPluginManager().callEvent(event);
 
-        // If this disguise is not in use, and the entity isnt a player that's offline
-        if (event.isCancelled() && (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline())) {
+        // Can only continue a disguise that's valid
+        if (event.isCancelled() && getEntity() != null && Bukkit.getWorlds().contains(getEntity().getWorld()) &&
+                (!(getEntity() instanceof Player) || ((Player) getEntity()).isOnline())) {
             return false;
         }
 
