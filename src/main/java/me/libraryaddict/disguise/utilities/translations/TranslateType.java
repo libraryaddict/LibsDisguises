@@ -83,10 +83,6 @@ public enum TranslateType {
     private void loadTranslations() {
         translated.clear();
 
-        if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger().info("Loading translations: " + name());
-        }
-
         if (!getFile().exists()) {
             DisguiseUtilities.getLogger().info("Translations for " + name() + " missing! Saving..");
             return;
@@ -124,7 +120,7 @@ public enum TranslateType {
             DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
             DisguiseUtilities.getLogger()
-                    .info("Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations. Is this intended?");
+                    .info("Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +". Is this intended?");
         }
     }
 
