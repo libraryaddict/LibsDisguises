@@ -302,13 +302,17 @@ public enum LibsMsg {
     LibsMsg(String string) {
         this.string = string;
 
-        if (!DisguiseUtilities.hasAdventureTextSupport()) {
-            for (ChatColor c : ChatColor.values()) {
-                string = string.replaceAll("<" + c.name().toLowerCase(Locale.ROOT) + ">", "§" + c.getChar());
-            }
+        useString = DisguiseUtilities.hasAdventureTextSupport() ? string : getVanillaFormat();
+    }
+
+    public String getVanillaFormat() {
+        String raw = getRaw();
+
+        for (ChatColor c : ChatColor.values()) {
+            raw = raw.replace("<" + c.name().toLowerCase(Locale.ROOT) + ">", "§" + c.getChar());
         }
 
-        useString = string;
+        return raw;
     }
 
     public String getRaw() {

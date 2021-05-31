@@ -107,7 +107,7 @@ public class TranslateFiller {
                 .save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
-            TranslateType.MESSAGES.save(DisguiseUtilities.translateAlternateColorCodes(msg.getRaw()), "Reference: " + msg.name());
+            TranslateType.MESSAGES.save(msg, DisguiseUtilities.translateAlternateColorCodes(msg.getRaw()), "Reference: " + msg.name());
         }
 
         for (TranslateType type : TranslateType.values()) {

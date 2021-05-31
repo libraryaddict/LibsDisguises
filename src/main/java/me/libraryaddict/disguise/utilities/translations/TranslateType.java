@@ -135,15 +135,31 @@ public enum TranslateType {
     }
 
     public void save(String message, String comment) {
-        String sanitized = StringEscapeUtils.escapeJava(message.replace(ChatColor.COLOR_CHAR + "", "&"));
+        save(null, message, comment);
+    }
 
-        toDeDupe.put(sanitized, false);
+    public void save(LibsMsg orig, String message, String comment) {
+        toDeDupe.put(StringEscapeUtils.escapeJava(message.replace("§", "&")), false);
 
         if (translated.containsKey(message)) {
             return;
         }
 
-        translated.put(message, message);
+        String value = message;
+
+        if (orig != null) {
+            String vanilla = orig.getVanillaFormat();
+
+            if (translated.containsKey(vanilla) && !vanilla.equals(message) && !translated.get(vanilla).equals(vanilla)) {
+                value = translated.get(vanilla);
+
+                for (ChatColor color : ChatColor.values()) {
+                    value = value.replace("§" + color.getChar(), "<" + color.name().toLowerCase(Locale.ROOT) + ">");
+                }
+            }
+        }
+
+        translated.put(message, value);
 
         try {
             boolean exists = getFile().exists();
@@ -169,7 +185,10 @@ public enum TranslateType {
                 }
             }
 
-            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + sanitized + "\": \"" + sanitized + "\"\n");
+            String sanitizedKey = StringEscapeUtils.escapeJava(message.replace("§", "&"));
+            String sanitized = StringEscapeUtils.escapeJava(value.replace("§", "&"));
+
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + sanitizedKey + "\": \"" + sanitized + "\"\n");
             written++;
         } catch (Exception ex) {
             ex.printStackTrace();
