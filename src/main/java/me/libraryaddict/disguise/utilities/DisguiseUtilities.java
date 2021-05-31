@@ -35,6 +35,9 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -197,6 +200,7 @@ public class DisguiseUtilities {
     private final static boolean java16;
     private static boolean criedOverJava16;
     private static HashSet<UUID> warnedSkin = new HashSet<>();
+    private static Boolean adventureTextSupport;
 
     static {
         final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
@@ -213,6 +217,19 @@ public class DisguiseUtilities {
 
             java16 = vers >= 16;
         }
+    }
+
+    public static boolean hasAdventureTextSupport() {
+        if (adventureTextSupport == null) {
+            try {
+                Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
+                adventureTextSupport = true;
+            } catch (ClassNotFoundException ex) {
+                adventureTextSupport = false;
+            }
+        }
+
+        return adventureTextSupport;
     }
 
     public static void doSkinUUIDWarning(CommandSender sender) {
@@ -2421,16 +2438,16 @@ public class DisguiseUtilities {
     }
 
     public static void sendMessage(CommandSender sender, String message) {
+        if (message.isEmpty()) {
+            return;
+        }
+
         if (!NmsVersion.v1_16.isSupported()) {
-            if (!message.isEmpty()) {
-                sender.sendMessage(message);
-            }
+            sender.sendMessage(message);
         } else {
             BaseComponent[] components = getColoredChat(message);
 
-            if (components.length > 0) {
-                sender.spigot().sendMessage(components);
-            }
+            sender.spigot().sendMessage(components);
         }
     }
 
@@ -2516,12 +2533,20 @@ public class DisguiseUtilities {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 
+    public static Component getAdventureChat(String message) {
+        return MiniMessage.get().parse(message);
+    }
+
     /**
      * Modification of TextComponent.fromLegacyText
      */
     public static BaseComponent[] getColoredChat(String message) {
         if (message.isEmpty()) {
             return new BaseComponent[0];
+        }
+
+        if (hasAdventureTextSupport()) {
+            return ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(getAdventureChat(message)));
         }
 
         ArrayList<BaseComponent> components = new ArrayList();

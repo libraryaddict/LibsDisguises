@@ -7,15 +7,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.checkerframework.checker.regex.qual.Regex;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by libraryaddict on 10/06/2017.
@@ -102,9 +99,9 @@ public enum TranslateType {
                 if (value == null) {
                     DisguiseUtilities.getLogger().severe("Translation for " + name() + " has a null value for the key '" + key + "'");
                 } else {
-                    String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
+                    toDeDupe.put(key, true);
 
-                    toDeDupe.put(newKey, true);
+                    String newKey = DisguiseUtilities.translateAlternateColorCodes(key);
                     translated.put(newKey, DisguiseUtilities.translateAlternateColorCodes(value));
 
                     if (!newKey.equals(translated.get(newKey))) {
@@ -120,7 +117,8 @@ public enum TranslateType {
             DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
             DisguiseUtilities.getLogger()
-                    .info("Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +". Is this intended?");
+                    .info("Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +
+                            ". Is this intended?");
         }
     }
 
@@ -254,6 +252,10 @@ public enum TranslateType {
         }
 
         return translated;
+    }
+
+    public String get(LibsMsg msg) {
+        return get(msg.getStringToUse());
     }
 
     public String get(String msg) {

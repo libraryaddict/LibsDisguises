@@ -4,10 +4,7 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.ComponentConverter;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.comphenix.protocol.wrappers.*;
 import com.google.common.base.Strings;
 import com.mojang.datafixers.util.Pair;
 import lombok.AccessLevel;
@@ -572,8 +569,15 @@ public class FlagWatcher {
             }
 
             if (NmsVersion.v1_13.isSupported()) {
-                setData(MetaIndex.ENTITY_CUSTOM_NAME,
-                        Optional.of(WrappedChatComponent.fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(name)))));
+                Optional<WrappedChatComponent> optional;
+
+                if (DisguiseUtilities.hasAdventureTextSupport()) {
+                    optional = Optional.of(AdventureComponentConverter.fromComponent(DisguiseUtilities.getAdventureChat(name)));
+                } else {
+                    optional = Optional.of(WrappedChatComponent.fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(name))));
+                }
+
+                setData(MetaIndex.ENTITY_CUSTOM_NAME, optional);
             } else {
                 setData(MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
             }

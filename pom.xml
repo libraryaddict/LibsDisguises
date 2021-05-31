@@ -75,6 +75,7 @@
         <junit.version>4.13.1</junit.version>
         <paper-api.version>[1.16,]</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
+        <adventure.version>4.1.0-SNAPSHOT</adventure.version>
     </properties>
 
     <dependencies>
@@ -128,6 +129,11 @@
             <artifactId>bungeecord-chat</artifactId>
             <version>${bungeecord-chat.version}</version>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>${adventure.version}</version>
         </dependency>
     </dependencies>
 
