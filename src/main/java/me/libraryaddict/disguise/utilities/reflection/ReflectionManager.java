@@ -1530,17 +1530,11 @@ public class ReflectionManager {
 
     public static int getCombinedIdByItemStack(ItemStack itemStack) {
         try {
-            Object nmsBlock;
-
-            if (NmsVersion.v1_13.isSupported()) {
-                nmsBlock = magicGetBlock.invoke(null, itemStack.getType());
-            } else {
-                Object nmsItem = getNmsItem(itemStack);
-
-                Object item = getNmsItem.invoke(nmsItem);
-
-                nmsBlock = getOldItemAsBlock.invoke(null, item);
+            if (!NmsVersion.v1_13.isSupported()) {
+                return itemStack.getType().ordinal() + (itemStack.getDurability() << 12);
             }
+
+            Object nmsBlock = magicGetBlock.invoke(null, itemStack.getType());
 
             Object iBlockData = getBlockData.invoke(nmsBlock);
 

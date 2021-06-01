@@ -43,7 +43,7 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
 
     @Override
     public Object fromString(String string) {
-        String[] split = string.split("[ -]", -1);
+        String[] split = string.split("[:, -]", -1);
 
         if (split.length > (NmsVersion.v1_13.isSupported() ? 1 : 3)) {
             throw new IllegalArgumentException();
