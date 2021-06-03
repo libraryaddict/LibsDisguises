@@ -75,7 +75,6 @@ public abstract class Disguise {
     /**
      * For when plugins may want to assign custom data to a disguise, such as who owns it
      */
-    @Getter
     private final LinkedHashMap<String, Object> customData = new LinkedHashMap<>();
     @Getter
     private String disguiseName;
@@ -101,6 +100,10 @@ public abstract class Disguise {
     public Disguise(DisguiseType disguiseType) {
         this.disguiseType = disguiseType;
         this.disguiseName = disguiseType.toReadable();
+    }
+
+    public HashMap<String, Object> getCustomData() {
+        return customData;
     }
 
     public UUID getUUID() {

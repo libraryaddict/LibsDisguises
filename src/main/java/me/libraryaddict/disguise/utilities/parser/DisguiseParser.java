@@ -250,7 +250,7 @@ public class DisguiseParser {
             }
 
             if (includeCustomData) {
-                LinkedHashMap<String, Object> meta = disguise.getCustomData();
+                HashMap<String, Object> meta = disguise.getCustomData();
                 LinkedHashMap<String, String> serializedMeta = new LinkedHashMap<>();
 
                 for (Entry<String, Object> entry : meta.entrySet()) {
