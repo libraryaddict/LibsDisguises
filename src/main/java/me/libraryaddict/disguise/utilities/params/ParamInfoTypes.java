@@ -187,7 +187,8 @@ public class ParamInfoTypes {
 
                 list.add(material);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                // Forge injected materials may not have corresponding field, ignore it
+                // e.printStackTrace();
             }
         }
 
