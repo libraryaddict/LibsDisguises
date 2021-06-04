@@ -189,7 +189,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
                 if (!setViewDisguise(args)) {
                     // They prefer to have the opposite of whatever the view disguises option is
-                    if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises()) {
+                    if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
                         disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
                     }
                 }

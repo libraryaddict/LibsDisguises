@@ -184,7 +184,7 @@ public class DisguiseAPI {
         }
 
         // They prefer to have the opposite of whatever the view disguises option is
-        if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewDisguises()) {
+        if (hasSelfDisguisePreference(entity) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
             disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
         }
 
@@ -400,7 +400,7 @@ public class DisguiseAPI {
      * @return
      */
     public static boolean isViewSelfToggled(Entity entity) {
-        return hasSelfDisguisePreference(entity) != DisguiseConfig.isViewDisguises();
+        return hasSelfDisguisePreference(entity) != DisguiseConfig.isViewSelfDisguisesDefault();
     }
 
     /**
@@ -462,7 +462,7 @@ public class DisguiseAPI {
             }
         }
 
-        if (!canSeeSelfDisguises == DisguiseConfig.isViewDisguises()) {
+        if (!canSeeSelfDisguises == DisguiseConfig.isViewSelfDisguisesDefault()) {
             if (!hasSelfDisguisePreference(entity)) {
                 DisguiseUtilities.getViewSelf().add(entity.getUniqueId());
                 DisguiseUtilities.addSaveAttempt();
