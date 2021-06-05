@@ -186,8 +186,7 @@ public class ParamInfoTypes {
                 }
 
                 list.add(material);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+            } catch (NoSuchFieldException ignored) {
             }
         }
 
