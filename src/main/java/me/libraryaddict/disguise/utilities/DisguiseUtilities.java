@@ -224,7 +224,7 @@ public class DisguiseUtilities {
             try {
                 Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
                 adventureTextSupport = true;
-            } catch (ClassNotFoundException ex) {
+            } catch (Throwable ex) {
                 adventureTextSupport = false;
             }
         }
