@@ -380,7 +380,13 @@ public abstract class Disguise {
         }
 
         if (isDynamicName()) {
-            String name = getEntity().getCustomName();
+            String name;
+
+            if (getEntity() instanceof Player) {
+                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
+            } else {
+                name = getEntity().getCustomName();
+            }
 
             if (name == null) {
                 name = "";
@@ -1014,8 +1020,14 @@ public abstract class Disguise {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 : System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
         }
 
-        if (isDynamicName() && !isPlayerDisguise()) {
-            String name = getEntity().getCustomName();
+        if (isDynamicName()) {
+            String name;
+
+            if (getEntity() instanceof Player) {
+                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
+            } else {
+                name = getEntity().getCustomName();
+            }
 
             if (name == null) {
                 name = "";

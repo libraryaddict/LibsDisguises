@@ -648,7 +648,13 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDynamicName()) {
-            String name = getEntity().getCustomName();
+            String name;
+
+            if (getEntity() instanceof Player) {
+                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
+            } else {
+                name = getEntity().getCustomName();
+            }
 
             if (name == null) {
                 name = "";
