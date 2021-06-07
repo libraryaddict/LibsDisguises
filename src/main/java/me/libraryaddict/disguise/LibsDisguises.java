@@ -104,7 +104,11 @@ public class LibsDisguises extends JavaPlugin {
                 commandConfig.load();
             }
         } catch (Throwable throwable) {
-            getUpdateChecker().doUpdate();
+            try {
+                getUpdateChecker().doUpdate();
+            } catch (Throwable t) {
+                getLogger().severe("Failed to even do a forced update");
+            }
 
             throw throwable;
         }
@@ -251,7 +255,11 @@ public class LibsDisguises extends JavaPlugin {
 
             new MetricsInitalizer();
         } catch (Throwable throwable) {
-            getUpdateChecker().doUpdate();
+            try {
+                getUpdateChecker().doUpdate();
+            } catch (Throwable t) {
+                getLogger().severe("Failed to even do a forced update");
+            }
 
             throw throwable;
         }
