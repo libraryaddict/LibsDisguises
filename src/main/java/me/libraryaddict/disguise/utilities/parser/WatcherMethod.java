@@ -18,4 +18,10 @@ public class WatcherMethod {
     private final Class returnType;
     private final Class param;
     private final boolean randomDefault;
+
+    @Override
+    public String toString() {
+        return "WatcherMethod{" + "watcherClass=" + watcherClass + ", method=" + method + ", name='" + name + '\'' + ", returnType=" + returnType + ", param=" +
+                param + ", randomDefault=" + randomDefault + '}';
+    }
 }

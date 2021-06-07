@@ -8,6 +8,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -106,7 +107,8 @@ public class DisguiseMethods {
 
                 methods.add(m);
 
-                if (m.getName().startsWith("get") || m.getName().startsWith("has") || param == null || param == Void.TYPE || ParamInfoManager.getParamInfo(m) == null) {
+                if (m.getName().startsWith("get") || m.getName().startsWith("has") || param == null || param == Void.TYPE ||
+                        ParamInfoManager.getParamInfo(m) == null) {
                     continue;
                 }
 
@@ -122,6 +124,7 @@ public class DisguiseMethods {
                 try {
                     Class cl = boolean.class;
                     Class disguiseClass = Disguise.class;
+                    boolean randomDefault = false;
 
                     switch (methodName) {
                         case "setExpires":
@@ -136,8 +139,9 @@ public class DisguiseMethods {
                         case "setBossBarStyle":
                             cl = BarStyle.class;
                             break;
-                        case "setSoundGroup":
                         case "setDisguiseName":
+                            randomDefault = true;
+                        case "setSoundGroup":
                             cl = String.class;
                             break;
                         case "setDeadmau5Ears":
@@ -151,9 +155,20 @@ public class DisguiseMethods {
                         try {
                             WatcherMethod method = new WatcherMethod(disguiseClass,
                                     MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)), methodName,
-                                    null, cl, false);
+                                    null, cl, randomDefault);
 
                             methods.add(method);
+
+                            watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class, (a) -> new ArrayList<>())
+                                    .add(method);
+
+                            String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
+
+                            WatcherMethod getMethod = new WatcherMethod(disguiseClass,
+                                    MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName, cl, null,
+                                    randomDefault);
+
+                            methods.add(getMethod);
                             break;
                         } catch (NoSuchMethodException ex) {
                             if (returnType == disguiseClass) {
