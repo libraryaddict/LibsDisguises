@@ -67,7 +67,8 @@ commands:
     description: Modify your own disguise
   disguisemodifyplayer:
     aliases: [dmodifyplayer, dmodplayer, disgmodifyplayer, dismodplayer, disgmodplayer, modifydisguiseplayer,
-              moddisguiseplayer, mdisguiseplayer, mdisgplayer]
+              moddisguiseplayer, mdisguiseplayer, mdisgplayer, dmodifyuuid, dmoduuid, disgmodifyuuid, dismoduuid, disgmoduuid, modifydisguiseuuid,
+              moddisguiseuuid, mdisguiseuuid, mdisguuid]
     permission: libsdisguises.seecmd.disguisemodifyplayer
     description: Modify the disguise of a player
   disguisemodifyradius:
