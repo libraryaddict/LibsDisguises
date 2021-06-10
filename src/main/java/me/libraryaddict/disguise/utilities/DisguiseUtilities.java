@@ -222,8 +222,15 @@ public class DisguiseUtilities {
     public static boolean hasAdventureTextSupport() {
         if (adventureTextSupport == null) {
             try {
-                Class.forName("net.kyori.adventure.text.minimessage.MiniMessage");
                 adventureTextSupport = true;
+
+                // Force a test for support by actually trying to use it all
+                BaseComponent[] test1 = ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(getAdventureChat("<green>test")));
+                WrappedChatComponent test2 = AdventureComponentConverter.fromComponent(DisguiseUtilities.getAdventureChat("<green>test"));
+
+                if (test1 == null || test1.length == 0 || test2 == null) {
+                    adventureTextSupport = false;
+                }
             } catch (Throwable ex) {
                 adventureTextSupport = false;
             }
