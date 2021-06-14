@@ -219,6 +219,11 @@ public class DisguiseUtilities {
         }
     }
 
+    /**
+     * This should return true every single time, except for when ProtocolLib isn't updated for AdventureComponentConverter
+     *
+     * The reason being is that we shade the adventure text library in the plugin
+     */
     public static boolean hasAdventureTextSupport() {
         if (adventureTextSupport == null) {
             try {

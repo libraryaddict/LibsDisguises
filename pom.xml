@@ -57,6 +57,35 @@
                     <mainClass>me.libraryaddict.disguise.utilities.watchers.CompileMethods</mainClass>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <minimizeJar>true</minimizeJar>
+                    <artifactSet>
+                        <includes>
+                            <include>net.kyori:adventure-text-minimessage</include>
+                            <include>net.kyori:adventure-text-serializer-gson</include>
+                            <include>net.kyori:adventure-api</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>net.kyori</pattern>
+                            <shadedPattern>ld-shaded.net.kyori</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -75,7 +104,9 @@
         <junit.version>4.13.1</junit.version>
         <paper-api.version>[1.16,]</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
-        <adventure.version>4.1.0-SNAPSHOT</adventure.version>
+        <adventure-minimessage.version>4.1.0-SNAPSHOT</adventure-minimessage.version>
+        <adventure-api.version>4.7.0</adventure-api.version>
+        <adventure-serializer.version>4.7.0</adventure-serializer.version>
     </properties>
 
     <dependencies>
@@ -133,7 +164,23 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
-            <version>${adventure.version}</version>
+            <version>${adventure-minimessage.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-gson</artifactId>
+            <version>${adventure-serializer.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>${adventure-api.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

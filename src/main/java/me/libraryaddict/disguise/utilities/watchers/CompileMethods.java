@@ -10,7 +10,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,7 +68,7 @@ public class CompileMethods {
         File soundsFile = new File("target/classes/ANTI_PIRACY_SECRET_FILE");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
-            byte[] array = StringUtils.join(list, "\n").getBytes(StandardCharsets.UTF_8);
+            byte[] array = String.join("\n", list).getBytes(StandardCharsets.UTF_8);
 
             for (int i = 0; i < array.length; i++) {
                 array[i] = (byte) (Byte.MAX_VALUE - array[i]);
@@ -160,7 +159,7 @@ public class CompileMethods {
         File methodsFile = new File("target/classes/ANTI_PIRACY_ENCRYPTION");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
-            byte[] array = StringUtils.join(methods, "\n").getBytes(StandardCharsets.UTF_8);
+            byte[] array = String.join("\n", methods).getBytes(StandardCharsets.UTF_8);
 
             for (int i = 0; i < array.length; i++) {
                 array[i] = (byte) (Byte.MAX_VALUE - array[i]);
