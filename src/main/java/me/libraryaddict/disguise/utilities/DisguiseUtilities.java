@@ -39,7 +39,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.StringUtils;
@@ -219,29 +218,8 @@ public class DisguiseUtilities {
         }
     }
 
-    /**
-     * This should return true every single time, except for when ProtocolLib isn't updated for AdventureComponentConverter
-     *
-     * The reason being is that we shade the adventure text library in the plugin
-     */
-    public static boolean hasAdventureTextSupport() {
-        if (adventureTextSupport == null) {
-            try {
-                adventureTextSupport = true;
-
-                // Force a test for support by actually trying to use it all
-                BaseComponent[] test1 = ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(getAdventureChat("<green>test")));
-                WrappedChatComponent test2 = AdventureComponentConverter.fromComponent(DisguiseUtilities.getAdventureChat("<green>test"));
-
-                if (test1 == null || test1.length == 0 || test2 == null) {
-                    adventureTextSupport = false;
-                }
-            } catch (Throwable ex) {
-                adventureTextSupport = false;
-            }
-        }
-
-        return adventureTextSupport;
+    public static String serialize(Component component) {
+        return GsonComponentSerializer.gson().serialize(component);
     }
 
     public static void doSkinUUIDWarning(CommandSender sender) {
@@ -2549,110 +2527,12 @@ public class DisguiseUtilities {
         return MiniMessage.get().parse(message);
     }
 
-    /**
-     * Modification of TextComponent.fromLegacyText
-     */
     public static BaseComponent[] getColoredChat(String message) {
         if (message.isEmpty()) {
             return new BaseComponent[0];
         }
 
-        if (hasAdventureTextSupport()) {
-            return ComponentSerializer.parse(GsonComponentSerializer.gson().serialize(getAdventureChat(message)));
-        }
-
-        ArrayList<BaseComponent> components = new ArrayList();
-        StringBuilder builder = new StringBuilder();
-        TextComponent component = new TextComponent();
-        Matcher matcher = urlMatcher.matcher(message);
-
-        for (int i = 0; i < message.length(); ++i) {
-            char c = message.charAt(i);
-            TextComponent old;
-
-            if (c == ChatColor.COLOR_CHAR && i + 1 >= message.length()) {
-                break;
-            }
-
-            if (c == ChatColor.COLOR_CHAR || (NmsVersion.v1_16.isSupported() && c == '<' && i + 9 < message.length() &&
-                    Pattern.matches("<#[0-9a-fA-F]{6}>", message.substring(i, i + 9)))) {
-                i++;
-
-                net.md_5.bungee.api.ChatColor format;
-
-                if (c != ChatColor.COLOR_CHAR || (message.length() - i >= 7 && Pattern.matches("#[0-9a-fA-F]{6}", message.substring(i, i + 7)))) {
-                    format = net.md_5.bungee.api.ChatColor.of(message.substring(i, i + 7));
-
-                    i += c == '<' ? 7 : 8;
-                } else {
-                    c = message.charAt(i);
-
-                    if (c >= 'A' && c <= 'Z') {
-                        c = (char) (c + 32);
-                    }
-
-                    format = net.md_5.bungee.api.ChatColor.getByChar(c);
-                }
-
-                if (format != null) {
-                    if (builder.length() > 0) {
-                        old = component;
-                        component = new TextComponent(component);
-                        old.setText(builder.toString());
-                        builder = new StringBuilder();
-                        components.add(old);
-                    }
-
-                    if (format == net.md_5.bungee.api.ChatColor.BOLD) {
-                        component.setBold(true);
-                    } else if (format == net.md_5.bungee.api.ChatColor.ITALIC) {
-                        component.setItalic(true);
-                    } else if (format == net.md_5.bungee.api.ChatColor.UNDERLINE) {
-                        component.setUnderlined(true);
-                    } else if (format == net.md_5.bungee.api.ChatColor.STRIKETHROUGH) {
-                        component.setStrikethrough(true);
-                    } else if (format == net.md_5.bungee.api.ChatColor.MAGIC) {
-                        component.setObfuscated(true);
-                    } else if (format == net.md_5.bungee.api.ChatColor.RESET) {
-                        component = new TextComponent();
-                        component.setColor(net.md_5.bungee.api.ChatColor.WHITE);
-                    } else {
-                        component = new TextComponent();
-                        component.setColor(format);
-                    }
-                }
-            } else {
-                int pos = message.indexOf(32, i);
-                if (pos == -1) {
-                    pos = message.length();
-                }
-
-                if (matcher.region(i, pos).find()) {
-                    if (builder.length() > 0) {
-                        old = component;
-                        component = new TextComponent(component);
-                        old.setText(unquoteHex(builder.toString()));
-                        builder = new StringBuilder();
-                        components.add(old);
-                    }
-
-                    old = component;
-                    component = new TextComponent(component);
-                    String urlString = message.substring(i, pos);
-                    component.setText(unquoteHex(urlString));
-                    component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, urlString.startsWith("http") ? urlString : "http://" + urlString));
-                    components.add(component);
-                    i += pos - i - 1;
-                    component = old;
-                } else {
-                    builder.append(c);
-                }
-            }
-        }
-
-        component.setText(unquoteHex(builder.toString()));
-        components.add(component);
-        return components.toArray(new BaseComponent[0]);
+        return ComponentSerializer.parse(serialize(getAdventureChat(message)));
     }
 
     public static void sendProtocolLibUpdateMessage(CommandSender p, String version, String requiredProtocolLib) {

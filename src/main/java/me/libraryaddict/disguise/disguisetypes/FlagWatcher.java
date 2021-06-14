@@ -569,13 +569,8 @@ public class FlagWatcher {
             }
 
             if (NmsVersion.v1_13.isSupported()) {
-                Optional<WrappedChatComponent> optional;
-
-                if (DisguiseUtilities.hasAdventureTextSupport()) {
-                    optional = Optional.of(AdventureComponentConverter.fromComponent(DisguiseUtilities.getAdventureChat(name)));
-                } else {
-                    optional = Optional.of(WrappedChatComponent.fromJson(ComponentSerializer.toString(DisguiseUtilities.getColoredChat(name))));
-                }
+                Optional<WrappedChatComponent> optional =
+                        Optional.of(WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(name))));
 
                 setData(MetaIndex.ENTITY_CUSTOM_NAME, optional);
             } else {

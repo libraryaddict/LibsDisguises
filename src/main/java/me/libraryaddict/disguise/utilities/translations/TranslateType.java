@@ -138,19 +138,19 @@ public enum TranslateType {
         save(null, message, comment);
     }
 
-    public void save(LibsMsg orig, String message, String comment) {
-        toDeDupe.put(StringEscapeUtils.escapeJava(message.replace("§", "&")), false);
+    public void save(LibsMsg orig, String rawMessage, String comment) {
+        toDeDupe.put(StringEscapeUtils.escapeJava(rawMessage.replace("§", "&")), false);
 
-        if (translated.containsKey(message)) {
+        if (translated.containsKey(rawMessage)) {
             return;
         }
 
-        String value = message;
+        String value = rawMessage;
 
         if (orig != null) {
             String vanilla = orig.getVanillaFormat();
 
-            if (translated.containsKey(vanilla) && !vanilla.equals(message) && !translated.get(vanilla).equals(vanilla)) {
+            if (translated.containsKey(vanilla) && !vanilla.equals(rawMessage) && !translated.get(vanilla).equals(vanilla)) {
                 value = translated.get(vanilla);
 
                 for (ChatColor color : ChatColor.values()) {
@@ -159,7 +159,7 @@ public enum TranslateType {
             }
         }
 
-        translated.put(message, value);
+        translated.put(rawMessage, value);
 
         try {
             boolean exists = getFile().exists();
@@ -185,10 +185,10 @@ public enum TranslateType {
                 }
             }
 
-            String sanitizedKey = StringEscapeUtils.escapeJava(message.replace("§", "&"));
-            String sanitized = StringEscapeUtils.escapeJava(value.replace("§", "&"));
+            String sanitizedKey = StringEscapeUtils.escapeJava(rawMessage.replace("§", "&"));
+            String sanitizedValue = StringEscapeUtils.escapeJava(value.replace("§", "&"));
 
-            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + sanitizedKey + "\": \"" + sanitized + "\"\n");
+            writer.write("\n" + (comment != null ? "# " + comment + "\n" : "") + "\"" + sanitizedKey + "\": \"" + sanitizedValue + "\"\n");
             written++;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -274,7 +274,7 @@ public enum TranslateType {
     }
 
     public String get(LibsMsg msg) {
-        return get(msg.getStringToUse());
+        return get(msg.getRaw());
     }
 
     public String get(String msg) {

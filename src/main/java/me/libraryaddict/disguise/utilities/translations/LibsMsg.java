@@ -297,12 +297,9 @@ public enum LibsMsg {
     SELF_DISGUISE_HIDDEN("<green>Self disguise hidden as it's too tall..");
 
     private final String string;
-    private final String useString;
 
     LibsMsg(String string) {
         this.string = string;
-
-        useString = DisguiseUtilities.hasAdventureTextSupport() ? string : getVanillaFormat();
     }
 
     public String getVanillaFormat() {
@@ -317,10 +314,6 @@ public enum LibsMsg {
 
     public String getRaw() {
         return string;
-    }
-
-    public String getStringToUse() {
-        return useString;
     }
 
     public BaseComponent[] getChat(Object... strings) {
