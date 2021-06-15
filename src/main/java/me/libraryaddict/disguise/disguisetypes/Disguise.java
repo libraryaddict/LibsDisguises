@@ -738,13 +738,13 @@ public abstract class Disguise {
         }
 
         if (getInternalArmorstandIds().length > 0) {
-            PacketContainer packet = new PacketContainer(Server.ENTITY_DESTROY);
-            packet.getIntegerArrays().write(0, getInternalArmorstandIds());
-
             try {
-                for (Player player : getEntity().getWorld().getPlayers()) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                for (PacketContainer packet : DisguiseUtilities.getDestroyPackets(getInternalArmorstandIds())) {
+                    for (Player player : getEntity().getWorld().getPlayers()) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    }
                 }
+
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }

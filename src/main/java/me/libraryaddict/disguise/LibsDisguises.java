@@ -105,7 +105,9 @@ public class LibsDisguises extends JavaPlugin {
             }
         } catch (Throwable throwable) {
             try {
-                getUpdateChecker().doUpdate();
+                if (isNumberedBuild()) {
+                    getUpdateChecker().doUpdate();
+                }
             } catch (Throwable t) {
                 getLogger().severe("Failed to even do a forced update");
             }
@@ -256,7 +258,9 @@ public class LibsDisguises extends JavaPlugin {
             new MetricsInitalizer();
         } catch (Throwable throwable) {
             try {
-                getUpdateChecker().doUpdate();
+                if (isNumberedBuild()) {
+                    getUpdateChecker().doUpdate();
+                }
             } catch (Throwable t) {
                 getLogger().severe("Failed to even do a forced update");
             }

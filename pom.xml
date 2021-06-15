@@ -98,7 +98,7 @@
         <asm.version>9.0</asm.version>
         <lombok.version>1.18.16</lombok.version>
         <protocollib.version>master-SNAPSHOT</protocollib.version>
-        <spigot.version>[1.16,1.16.5]</spigot.version>
+        <spigot.version>[1.17,]</spigot.version>
         <junit.version>4.13.1</junit.version>
         <paper-api.version>[1.16,]</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>

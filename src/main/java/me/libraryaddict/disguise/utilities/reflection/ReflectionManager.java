@@ -112,20 +112,35 @@ public class ReflectionManager {
     private static Method getObjectives;
     private static Method getPlayerScoreObjective;
     private static Method setScore;
+    private static HashMap<String, String> classLocations = new HashMap<>();
+    private static Field playerConnection;
 
     public static void init() {
         try {
             boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
             setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
-            entityCountField = getNmsField("Entity", "entityCount");
+
+            if (NmsVersion.v1_17.isSupported()) {
+                for (Field f : getNmsClass("Entity").getDeclaredFields()) {
+                    if (f.getType() != AtomicInteger.class) {
+                        continue;
+                    }
+
+                    f.setAccessible(true);
+                    entityCountField = f;
+                    break;
+                }
+            } else {
+                entityCountField = getNmsField("Entity", "entityCount");
+            }
 
             mobEffectConstructor = getNmsConstructor("MobEffect", getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE);
             mobEffectList = getNmsMethod("MobEffectList", "fromId", Integer.TYPE);
             boundingBoxMethod = getNmsMethod("Entity", "getBoundingBox");
             bukkitEntityMethod = getNmsMethod("Entity", "getBukkitEntity");
 
-            Class<?> craftItemClass = getCraftClass("inventory.CraftItemStack");
+            Class<?> craftItemClass = getCraftClass("CraftItemStack");
             itemAsCraftCopyMethod = getCraftMethod(craftItemClass, "asCraftCopy", ItemStack.class);
             itemAsNmsCopyMethod = getCraftMethod(craftItemClass, "asNMSCopy", ItemStack.class);
             itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
@@ -136,11 +151,19 @@ public class ReflectionManager {
             enumDirectionMethod = getNmsMethod("EnumDirection", "fromType2", int.class);
             enumPlayerInfoAction = (Enum[]) getNmsClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants();
             chatComponentConstructor = getNmsConstructor("ChatComponentText", String.class);
-            packetPlayOutConstructor =
-                    getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
-                            getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
+
+            if (NmsVersion.v1_17.isSupported()) {
+                packetPlayOutConstructor =
+                        getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", GameProfile.class, int.class, getNmsClass("EnumGamemode"),
+                                getNmsClass("IChatBaseComponent"));
+            } else {
+                packetPlayOutConstructor =
+                        getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
+                                getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
+            }
+
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
-            getNmsEntityMethod = getCraftMethod("entity.CraftEntity", "getHandle");
+            getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
             enumItemSlots = (Enum[]) getNmsClass("EnumItemSlot").getEnumConstants();
 
             Class craftSound = getCraftClass("CraftSound");
@@ -159,23 +182,30 @@ public class ReflectionManager {
             getBlockData = getNmsMethod(getNmsClass("Block"), "getBlockData");
 
             if (NmsVersion.v1_13.isSupported()) {
-                craftBlockDataGetState = getCraftMethod("block.data.CraftBlockData", "getState");
-                magicGetBlock = getCraftMethod("util.CraftMagicNumbers", "getBlock", Material.class);
-                magicGetMaterial = getCraftMethod("util.CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
+                craftBlockDataGetState = getCraftMethod("CraftBlockData", "getState");
+                magicGetBlock = getCraftMethod("CraftMagicNumbers", "getBlock", Material.class);
+                magicGetMaterial = getCraftMethod("CraftMagicNumbers", "getMaterial", getNmsClass("Block"));
                 entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
 
                 if (NmsVersion.v1_14.isSupported()) {
                     entityPoseClass = getNmsClass("EntityPose");
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "get", getNmsClass("MinecraftKey"));
                     villagerDataConstructor = getNmsConstructor("VillagerData", getNmsClass("VillagerType"), getNmsClass("VillagerProfession"), int.class);
-                    villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
-                    villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
+
+                    if (NmsVersion.v1_17.isSupported()) {
+                        villagerProfessionRegistry = getNmsField("IRegistry", "ap").get(null);
+                        villagerTypeRegistry = getNmsField("IRegistry", "ao").get(null);
+                        playerConnection = getNmsField("EntityPlayer", "b");
+                    } else {
+                        villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
+                        villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
+                    }
                 } else {
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "getOrDefault", getNmsClass("MinecraftKey"));
                 }
             }
 
-            bukkitKeyToNms = getCraftMethod("util.CraftNamespacedKey", "toMinecraft", NamespacedKey.class);
+            bukkitKeyToNms = getCraftMethod("CraftNamespacedKey", "toMinecraft", NamespacedKey.class);
             dataWatcherItemConstructor = getNmsConstructor("DataWatcher$Item", getNmsClass("DataWatcherObject"), Object.class);
             vec3DConstructor = getNmsConstructor("Vec3D", double.class, double.class, double.class);
             getOldItemAsBlock = getNmsMethod(getNmsClass("Block"), "asBlock", getNmsClass("Item"));
@@ -183,14 +213,44 @@ public class ReflectionManager {
             getBlockDataAsId = getNmsMethod("Block", "getCombinedId", getNmsClass("IBlockData"));
 
             getNmsWorld = getCraftMethod("CraftWorld", "getHandle");
-            deserializedItemMeta = getCraftMethod(getCraftClass("inventory.CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
+            deserializedItemMeta = getCraftMethod(getCraftClass("CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
 
-            noDamageTicks = getNmsField("Entity", "noDamageTicks");
+            if (NmsVersion.v1_17.isSupported()) {
+                boolean nextInt = false;
+
+                for (Field f : getNmsClass("Entity").getDeclaredFields()) {
+                    if (f.getType().getSimpleName().equals("Tag")) {
+                        nextInt = true;
+                    } else if (f.getType() == int.class && nextInt) {
+                        noDamageTicks = f;
+                        break;
+                    }
+                }
+            } else {
+                noDamageTicks = getNmsField("Entity", "noDamageTicks");
+            }
+
             isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
-            genericDamage = getNmsField("DamageSource", "GENERIC").get(null);
-            boardField = getCraftClass("scoreboard.CraftScoreboard").getDeclaredField("board");
+
+            for (Field f : getNmsClass("DamageSource").getFields()) {
+                Object obj = f.get(null);
+
+                if (obj == null) {
+                    continue;
+                }
+
+                if (!obj.toString().contains("(generic)")) {
+                    continue;
+                }
+
+                genericDamage = obj;
+                break;
+            }
+
+            boardField = getCraftClass("CraftScoreboard").getDeclaredField("board");
             boardField.setAccessible(true);
-            scoreboardCrtieriaHealth = getNmsField("IScoreboardCriteria", NmsVersion.v1_13.isSupported() ? "HEALTH" : "g").get(null);
+            scoreboardCrtieriaHealth =
+                    getNmsField("IScoreboardCriteria", NmsVersion.v1_17.isSupported() ? NmsVersion.v1_13.isSupported() ? "f" : "HEALTH" : "g").get(null);
             setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
 
             if (!NmsVersion.v1_13.isSupported()) {
@@ -241,15 +301,15 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
 
-        pingField = getNmsField("EntityPlayer", "ping");
+        pingField = getNmsField("EntityPlayer", NmsVersion.v1_17.isSupported() ? "e" : "ping");
 
         if (NmsVersion.v1_14.isSupported()) {
-            chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
-            trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
-            entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
+            chunkMapField = getNmsField("ChunkProviderServer", NmsVersion.v1_17.isSupported() ? "a" : "playerChunkMap");
+            trackedEntitiesField = getNmsField("PlayerChunkMap", NmsVersion.v1_17.isSupported() ? "G" : "trackedEntities");
+            entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", NmsVersion.v1_17.isSupported() ? "b" : "trackerEntry");
 
             if (NmsVersion.v1_16.isSupported()) {
-                chunkProviderField = getNmsField("WorldServer", "chunkProvider");
+                chunkProviderField = getNmsField("WorldServer", NmsVersion.v1_17.isSupported() ? "C" : "chunkProvider");
             } else {
                 chunkProviderField = getNmsField("World", "chunkProvider");
             }
@@ -384,23 +444,52 @@ public class ReflectionManager {
         return -1;
     }
 
+    public static Object getEntityTrackerInstance(Player player) {
+        try {
+            if (NmsVersion.v1_17.isSupported()) {
+                return playerConnection.get(getNmsEntity(player));
+            }
+
+            return getNmsEntity(player);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static Object createEntityInstance(DisguiseType disguiseType, String entityName) {
         try {
-            Class<?> entityClass = getNmsClass("Entity" + entityName);
+            Class<?> entityClass;
+
+            if (NmsVersion.v1_17.isSupported()) {
+                entityClass = getNmsClassIgnoreErrors("Entity" + entityName);
+
+                if (entityClass == null) {
+                    entityClass = getNmsClass(entityName);
+                }
+            } else {
+                entityClass = getNmsClass("Entity" + entityName);
+            }
+
             Object entityObject;
             Object world = getWorldServer(Bukkit.getWorlds().get(0));
 
             if (entityName.equals("Player")) {
                 Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
-
-                Object playerinteractmanager =
-                        getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
-                                .newInstance(world);
-
                 WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
-                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+                if (NmsVersion.v1_17.isSupported()) {
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType())
+                            .newInstance(minecraftServer, world, gameProfile.getHandle());
+                } else {
+                    Object playerinteractmanager =
+                            getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
+                                    .newInstance(world);
+
+                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
+                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+                }
             } else if (entityName.equals("EnderPearl")) {
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
                         .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
@@ -564,7 +653,7 @@ public class ReflectionManager {
 
     public static Class<?> getCraftClass(String className) {
         try {
-            return Class.forName("org.bukkit.craftbukkit." + getBukkitVersion() + "." + className);
+            return Class.forName(getLocation("org.bukkit.craftbukkit", className));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -679,6 +768,10 @@ public class ReflectionManager {
         try {
             Object playerListName = chatComponentConstructor.newInstance(gameProfile.getName());
 
+            if (NmsVersion.v1_17.isSupported()) {
+                return packetPlayOutConstructor.newInstance(gameProfile.getHandle(), 0, enumGamemode[1], playerListName);
+            }
+
             return packetPlayOutConstructor.newInstance(playerInfoPacket, gameProfile.getHandle(), 0, enumGamemode[1], playerListName);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -748,9 +841,33 @@ public class ReflectionManager {
         return new UUID(firstLong, secondLong);
     }
 
+    private static String getLocation(String pack, String className) {
+        String toReturn = classLocations.get(className);
+
+        if (toReturn != null) {
+            return toReturn;
+        }
+
+        try {
+            ArrayList<String> classes = ClassGetter.getEntriesForPackage(pack);
+
+            String realLocation = classes.stream().filter(s -> s.endsWith("/" + className + ".class")).findAny().get().replace("/", ".").replace(".class", "");
+
+            classLocations.put(className, realLocation);
+
+            return realLocation;
+        } catch (Throwable throwable) {
+            //  System.err.println(pack + " - " + className);
+            // throwable.printStackTrace();
+            classLocations.put(className, className);
+        }
+
+        return className;
+    }
+
     public static Class getNmsClass(String className) {
         try {
-            return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
+            return Class.forName(getLocation("net.minecraft", className));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -760,7 +877,7 @@ public class ReflectionManager {
 
     public static Class getNmsClassIgnoreErrors(String className) {
         try {
-            return Class.forName("net.minecraft.server." + getBukkitVersion() + "." + className);
+            return Class.forName(getLocation("net.minecraft", className));
         } catch (Exception ignored) {
         }
 
@@ -1212,7 +1329,7 @@ public class ReflectionManager {
 
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name);
 
-            Object registry = getNmsField("IRegistry", "ITEM").get(null);
+            Object registry = getNmsField("IRegistry", NmsVersion.v1_17.isSupported() ? "Z" : "ITEM").get(null);
 
             Method getMethod = getNmsMethod(getNmsClass("RegistryMaterials"), "get", mcKey.getClass());
             Object item = getMethod.invoke(registry, mcKey);
@@ -1221,7 +1338,7 @@ public class ReflectionManager {
                 return null;
             }
 
-            Method getMaterial = getCraftMethod("util.CraftMagicNumbers", "getMaterial", getNmsClass("Item"));
+            Method getMaterial = getCraftMethod("CraftMagicNumbers", "getMaterial", getNmsClass("Item"));
 
             return (Material) getMaterial.invoke(null, item);
         } catch (Exception ex) {
@@ -1247,7 +1364,7 @@ public class ReflectionManager {
             Object registry;
 
             if (NmsVersion.v1_13.isSupported()) {
-                registry = getNmsField("IRegistry", "ITEM").get(null);
+                registry = getNmsField("IRegistry", NmsVersion.v1_17.isSupported() ? "Z" : "ITEM").get(null);
             } else {
                 registry = getNmsField("Item", "REGISTRY").get(null);
             }
@@ -1415,7 +1532,7 @@ public class ReflectionManager {
 
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
 
             Constructor c = getNmsClass("EntityTypes").getConstructors()[0];
 
@@ -1452,9 +1569,9 @@ public class ReflectionManager {
         try {
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
 
-            return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+            return (int) registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", Object.class).invoke(registry, entityTypes);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1469,9 +1586,9 @@ public class ReflectionManager {
 
                 Class typesClass = getNmsClass("IRegistry");
 
-                Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+                Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
 
-                return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
+                return (int) registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", Object.class).invoke(registry, entityTypes);
             }
 
             return entityType.getTypeId();
@@ -1486,10 +1603,10 @@ public class ReflectionManager {
         try {
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name.toString());
 
-            return registry.getClass().getMethod("a", mcKey.getClass()).invoke(registry, mcKey);
+            return registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", mcKey.getClass()).invoke(registry, mcKey);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1552,7 +1669,7 @@ public class ReflectionManager {
             Object iBlockData = idMethod.invoke(null, id);
             Class iBlockClass = getNmsClass("IBlockData");
 
-            return (BlockData) getCraftMethod("block.data.CraftBlockData", "fromData", iBlockClass).invoke(null, iBlockData);
+            return (BlockData) getCraftMethod("CraftBlockData", "fromData", iBlockClass).invoke(null, iBlockData);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1609,6 +1726,12 @@ public class ReflectionManager {
 
         try {
             switch (disguiseType) {
+                case MARKER:
+                    watcherClass = FlagWatcher.class;
+                    break;
+                case GLOW_ITEM_FRAME:
+                    watcherClass = ItemFrameWatcher.class;
+                    break;
                 case ARROW:
                     watcherClass = TippedArrowWatcher.class;
                     break;
@@ -1647,10 +1770,6 @@ public class ReflectionManager {
                     break;
                 case ELDER_GUARDIAN:
                     watcherClass = GuardianWatcher.class;
-                    break;
-                case WITHER_SKELETON:
-                case STRAY:
-                    watcherClass = SkeletonWatcher.class;
                     break;
                 case ILLUSIONER:
                 case EVOKER:
@@ -1764,6 +1883,21 @@ public class ReflectionManager {
 
         if (nmsEntityName == null) {
             switch (disguiseType) {
+                case AXOLOTL:
+                    nmsEntityName = "Axolotl";
+                    break;
+                case GOAT:
+                    nmsEntityName = "Goat";
+                    break;
+                case GLOW_ITEM_FRAME:
+                    nmsEntityName = "GlowItemFrame";
+                    break;
+                case GLOW_SQUID:
+                    nmsEntityName = "GlowSquid";
+                    break;
+                case MARKER:
+                    nmsEntityName = "Marker";
+                    break;
                 case DONKEY:
                     nmsEntityName = "HorseDonkey";
                     break;

@@ -41,6 +41,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import net.minecraft.server.level.EntityTrackerEntry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -349,11 +350,8 @@ public class DisguiseUtilities {
     }
 
     public static void removeInvisibleSlime(Player player) {
-        PacketContainer container = new PacketContainer(Server.ENTITY_DESTROY);
-        container.getIntegerArrays().write(0, new int[]{DisguiseAPI.getEntityAttachmentId()});
-
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, container, false);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getDestroyPacket(DisguiseAPI.getEntityAttachmentId()), false);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -990,9 +988,7 @@ public class DisguiseUtilities {
             trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
             // ConcurrentModificationException
 
-            PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
-
-            destroyPacket.getIntegerArrays().write(0, new int[]{disguise.getEntity().getEntityId()});
+            PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
             for (Object p : trackedPlayers) {
                 Player player = (Player) ReflectionManager.getBukkitEntity(p);
@@ -1057,11 +1053,31 @@ public class DisguiseUtilities {
     }
 
     public static PacketContainer getDestroyPacket(int... ids) {
+        if (NmsVersion.v1_17.isSupported() && ids.length != 1) {
+            throw new IllegalStateException("Should use getDestroyPackets for ints of len " + ids.length);
+        }
+
         PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
 
         destroyPacket.getIntegerArrays().write(0, ids);
 
         return destroyPacket;
+    }
+
+    public static PacketContainer[] getDestroyPackets(int... ids) {
+        if (!NmsVersion.v1_17.isSupported()) {
+            return new PacketContainer[]{getDestroyPacket(ids)};
+        }
+
+        PacketContainer[] packets = new PacketContainer[ids.length];
+
+        for (int i = 0; i < packets.length; i++) {
+            packets[i] = new PacketContainer(Server.ENTITY_DESTROY);
+
+            packets[i].getIntegers().write(0, ids[i]);
+        }
+
+        return packets;
     }
 
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
@@ -1768,12 +1784,12 @@ public class DisguiseUtilities {
         ids[ids.length - 1] = DisguiseAPI.getSelfDisguiseId();
 
         // Send a packet to destroy the fake entity
-        PacketContainer packet = getDestroyPacket(ids);
-
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        for (PacketContainer packet : getDestroyPackets(ids)) {
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         // player.spigot().setCollidesWithEntities(true);
@@ -1806,10 +1822,10 @@ public class DisguiseUtilities {
                 if (!runningPaper) {
                     Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getNmsEntity(player));
+                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getEntityTrackerInstance(player));
                 } else {
                     ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap").get(entityTrackerEntry))
-                            .remove(ReflectionManager.getNmsEntity(player));
+                            .remove(ReflectionManager.getEntityTrackerInstance(player));
                 }
             }
         } catch (Exception ex) {
@@ -2345,10 +2361,10 @@ public class DisguiseUtilities {
                 // Add himself to his own entity tracker
                 Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getNmsEntity(player));
+                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getEntityTrackerInstance(player));
             } else {
                 Field field = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
-                Object nmsEntity = ReflectionManager.getNmsEntity(player);
+                Object nmsEntity = ReflectionManager.getEntityTrackerInstance(player);
                 Map<Object, Object> map = ((Map<Object, Object>) field.get(entityTrackerEntry));
                 map.put(nmsEntity, true);
             }
@@ -2365,7 +2381,8 @@ public class DisguiseUtilities {
             boolean isMoving = false;
 
             try {
-                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField(NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry")
+                        .getDeclaredField(NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             } catch (Exception ex) {
@@ -2978,7 +2995,9 @@ public class DisguiseUtilities {
         }
 
         if (destroyIds.length > 0) {
-            packets.add(getDestroyPacket(destroyIds));
+            for (PacketContainer packet : getDestroyPackets(destroyIds)) {
+                packets.add(packet);
+            }
         }
 
         return packets;
