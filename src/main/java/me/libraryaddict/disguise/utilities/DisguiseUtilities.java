@@ -1059,7 +1059,11 @@ public class DisguiseUtilities {
 
         PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
 
-        destroyPacket.getIntegerArrays().write(0, ids);
+        if (NmsVersion.v1_17.isSupported()) {
+            destroyPacket.getIntegers().write(0, ids[0]);
+        } else {
+            destroyPacket.getIntegerArrays().write(0, ids);
+        }
 
         return destroyPacket;
     }
