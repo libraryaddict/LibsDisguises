@@ -104,6 +104,7 @@ public class ReflectionManager {
     private static Constructor mobEffectConstructor;
     private static Method boundingBoxMethod;
     private static Method bukkitEntityMethod;
+    private static Method connectionEntityMethod;
     private static Field noDamageTicks;
     private static Method isInvul;
     private static Object genericDamage;
@@ -196,6 +197,7 @@ public class ReflectionManager {
                         villagerProfessionRegistry = getNmsField("IRegistry", "ap").get(null);
                         villagerTypeRegistry = getNmsField("IRegistry", "ao").get(null);
                         playerConnection = getNmsField("EntityPlayer", "b");
+                        connectionEntityMethod = getNmsMethod("PlayerConnection", "d");
                     } else {
                         villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
                         villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
@@ -589,6 +591,21 @@ public class ReflectionManager {
             }
 
             return new FakeBoundingBox(x, y, z);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Object getTrackerPlayer(Object nmsEntity) {
+        try {
+            if (NmsVersion.v1_17.isSupported()) {
+                // Convert from player connection to EntityPlayer
+                nmsEntity = connectionEntityMethod.invoke(nmsEntity);
+            }
+
+            return nmsEntity;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

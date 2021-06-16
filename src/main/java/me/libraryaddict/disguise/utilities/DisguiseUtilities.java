@@ -982,6 +982,7 @@ public class DisguiseUtilities {
                 return;
             }
 
+            // TODO Store reflection field
             Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
             // If the tracker exists. Remove himself from his tracker
@@ -991,7 +992,7 @@ public class DisguiseUtilities {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
             for (Object p : trackedPlayers) {
-                Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getTrackerPlayer(p));
 
                 if (player == disguise.getEntity() || disguise.canSee(player)) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
@@ -1188,6 +1189,7 @@ public class DisguiseUtilities {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
             if (entityTrackerEntry != null) {
+                // TODO Store reflection field
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
@@ -1701,6 +1703,7 @@ public class DisguiseUtilities {
             if (entityTrackerEntry != null) {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
+                // TODO Store the fields
                 final Method clear = ReflectionManager
                         .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear", ReflectionManager.getNmsClass("EntityPlayer"));
 
@@ -1710,7 +1713,8 @@ public class DisguiseUtilities {
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
                 PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
-                for (final Object p : trackedPlayers) {
+                for (final Object o : trackedPlayers) {
+                    Object p = ReflectionManager.getTrackerPlayer(o);
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
                     if (disguise.getEntity() != player && disguise.canSee(player)) {
@@ -1822,6 +1826,7 @@ public class DisguiseUtilities {
 
             if (entityTrackerEntry != null) {
 
+                // TODO Store reflection fields
                 // If the tracker exists. Remove himself from his tracker
                 if (!runningPaper) {
                     Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
@@ -2360,6 +2365,7 @@ public class DisguiseUtilities {
                 return;
             }
 
+            // TODO Store reflection fields
             // Check for code differences in PaperSpigot vs Spigot
             if (!runningPaper) {
                 // Add himself to his own entity tracker
@@ -2385,6 +2391,7 @@ public class DisguiseUtilities {
             boolean isMoving = false;
 
             try {
+                // TODO Store the field
                 Field field = ReflectionManager.getNmsClass("EntityTrackerEntry")
                         .getDeclaredField(NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
