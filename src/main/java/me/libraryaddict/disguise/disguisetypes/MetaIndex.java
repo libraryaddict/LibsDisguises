@@ -268,7 +268,7 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<EntityPose> ENTITY_POSE = new MetaIndex<>(FlagWatcher.class, 6, EntityPose.STANDING);
 
-    @NmsAddedIn(NmsVersion.v1_16)
+    @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Integer> ENTITY_TICKS_FROZEN = new MetaIndex<>(FlagWatcher.class, 7, 0);
 
     public static MetaIndex<BlockPosition> FALLING_BLOCK_POSITION = new MetaIndex<>(FallingBlockWatcher.class, 0, BlockPosition.ORIGIN);
