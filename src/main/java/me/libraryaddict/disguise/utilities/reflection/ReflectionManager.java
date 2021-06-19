@@ -252,7 +252,7 @@ public class ReflectionManager {
             boardField = getCraftClass("CraftScoreboard").getDeclaredField("board");
             boardField.setAccessible(true);
             scoreboardCrtieriaHealth =
-                    getNmsField("IScoreboardCriteria", NmsVersion.v1_17.isSupported() ? NmsVersion.v1_13.isSupported() ? "f" : "HEALTH" : "g").get(null);
+                    getNmsField("IScoreboardCriteria", NmsVersion.v1_17.isSupported() ? "f" : NmsVersion.v1_13.isSupported() ? "HEALTH" : "g").get(null);
             setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
 
             if (!NmsVersion.v1_13.isSupported()) {
