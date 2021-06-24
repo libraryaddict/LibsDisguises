@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -104,6 +105,13 @@ public class PacketListenerClientInteract extends PacketAdapter {
         }
 
         switch (disguise.getType()) {
+            case AXOLOTL:
+                // They can't be picked up by a bucket sir if they are fake
+                if (!(disguise.getEntity() instanceof Axolotl)) {
+                    DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                    observer.updateInventory(); // Remove their fake bucket
+                }
+                break;
             case CAT:
             case WOLF:
             case SHEEP:
