@@ -67,7 +67,7 @@ public class LibsDisguises extends JavaPlugin {
 
             Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
 
-            if (plugin == null || DisguiseUtilities.isOlderThan(DisguiseUtilities.getProtocolLibRequiredVersion(), plugin.getDescription().getVersion())) {
+            if (plugin == null || DisguiseUtilities.isProtocolLibOutdated()) {
                 getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
 
                 try {
@@ -171,10 +171,10 @@ public class LibsDisguises extends JavaPlugin {
                 return;
             }
 
-            String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+            String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
             String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-            if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+            if (DisguiseUtilities.isProtocolLibOutdated()) {
                 getLogger().severe("!! May I have your attention please !!");
                 getLogger()
                         .severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +

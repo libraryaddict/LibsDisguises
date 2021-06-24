@@ -460,8 +460,49 @@ public class DisguiseUtilities {
         }
     }
 
-    public static String getProtocolLibRequiredVersion() {
-        return !NmsVersion.v1_13.isSupported() ? "4.4.0" : NmsVersion.v1_16.isSupported() ? "4.6.0" : "4.5.1";
+    public static String[] getProtocolLibRequiredVersion() {
+        // If we are on 1.12
+        if (!NmsVersion.v1_13.isSupported()) {
+            return new String[]{"4.4.0"};
+        }
+
+        // If we are on 1.13, 1.14, 1.15
+        if (!NmsVersion.v1_16.isSupported()) {
+            return new String[]{"4.5.1"};
+        }
+
+        // If we are on 1.16
+        if (!NmsVersion.v1_17.isSupported()) {
+            return new String[]{"4.6.0"};
+        }
+
+        // If we are on 1.17, future release build or this dev build
+        return new String[]{"4.7.1", "521"};
+    }
+
+    public static boolean isProtocolLibOutdated() {
+        String plVersion = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+        String[] reqVersion = getProtocolLibRequiredVersion();
+
+        // If this is also checking for a custom build, and PL has the custom build in..
+        // We run this check first as the 4.7.1 isn't out, and it'd always tell us to update otherwise.
+        if (reqVersion.length > 1 && plVersion.contains("-SNAPSHOT-b")) {
+            try {
+                String build = plVersion.substring(plVersion.lastIndexOf("b") + 1);
+
+                // Just incase they're running a custom build?
+                if (build.length() < 3) {
+                    return false;
+                }
+
+                int buildNo = Integer.parseInt(build);
+
+                return buildNo < Integer.parseInt(reqVersion[1]);
+            } catch (Throwable ignored) {
+            }
+        }
+
+        return isOlderThan(reqVersion[0], plVersion);
     }
 
     public static File updateProtocolLib() throws Exception {

@@ -19,6 +19,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -329,10 +330,10 @@ public class DisguiseListener implements Listener {
         p.removeMetadata("ld_loggedin", LibsDisguises.getInstance());
         plugin.getUpdateChecker().notifyUpdate(p);
 
-        String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+        String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+        if (DisguiseUtilities.isProtocolLibOutdated()) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
 
             new BukkitRunnable() {

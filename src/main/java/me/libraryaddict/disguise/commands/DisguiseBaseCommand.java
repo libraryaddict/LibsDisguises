@@ -22,6 +22,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -69,10 +70,10 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     }
 
     protected boolean isNotPremium(CommandSender sender) {
-        String requiredProtocolLib = DisguiseUtilities.getProtocolLibRequiredVersion();
+        String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-        if (DisguiseUtilities.isOlderThan(requiredProtocolLib, version)) {
+        if (DisguiseUtilities.isProtocolLibOutdated()) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
         }
 
