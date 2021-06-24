@@ -460,6 +460,9 @@ public class DisguiseUtilities {
         }
     }
 
+    /**
+     * Returns the min required version, as in any older version will just not work.
+     */
     public static String[] getProtocolLibRequiredVersion() {
         // If we are on 1.12
         if (!NmsVersion.v1_13.isSupported()) {
