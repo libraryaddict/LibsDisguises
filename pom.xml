@@ -97,7 +97,7 @@
 
         <asm.version>9.0</asm.version>
         <lombok.version>1.18.16</lombok.version>
-        <protocollib.version>4.6.0</protocollib.version>
+        <protocollib.version>4.7.0-SNAPSHOT</protocollib.version>
         <spigot.version>[1.17,]</spigot.version>
         <junit.version>4.13.1</junit.version>
         <paper-api.version>[1.16,]</paper-api.version>
@@ -121,7 +121,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.github.dmulloy2</groupId>
+            <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>${protocollib.version}</version>
             <optional>true</optional>
@@ -183,10 +183,6 @@
     </dependencies>
 
     <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
         <repository>
             <id>md_5-releases</id>
             <url>https://repo.md-5.net/content/groups/public/</url>
