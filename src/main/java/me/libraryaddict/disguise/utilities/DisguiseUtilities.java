@@ -1035,7 +1035,7 @@ public class DisguiseUtilities {
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
             for (Object p : trackedPlayers) {
-                Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getTrackerPlayer(p));
+                Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getPlayerFromPlayerConnection(p));
 
                 if (player == disguise.getEntity() || disguise.canSee(player)) {
                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
@@ -1237,7 +1237,7 @@ public class DisguiseUtilities {
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
                 for (Object p : trackedPlayers) {
-                    Player player = (Player) ReflectionManager.getBukkitEntity(p);
+                    Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getPlayerFromPlayerConnection(p));
 
                     if (((TargetedDisguise) disguise).canSee(player)) {
                         players.add(player);
@@ -1636,7 +1636,8 @@ public class DisguiseUtilities {
 
                 trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                 // ConcurrentModificationException
-                for (final Object p : trackedPlayers) {
+                for (final Object o : trackedPlayers) {
+                    Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                     Player pl = (Player) ReflectionManager.getBukkitEntity(p);
 
                     if (pl == null || !player.equalsIgnoreCase((pl).getName())) {
@@ -1689,7 +1690,8 @@ public class DisguiseUtilities {
 
                     trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
                     // ConcurrentModificationException
-                    for (final Object p : trackedPlayers) {
+                    for (final Object o : trackedPlayers) {
+                        Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
                         if (player != entity) {
@@ -1757,7 +1759,7 @@ public class DisguiseUtilities {
                 PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
                 for (final Object o : trackedPlayers) {
-                    Object p = ReflectionManager.getTrackerPlayer(o);
+                    Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
                     if (disguise.getEntity() != player && disguise.canSee(player)) {
@@ -1874,10 +1876,10 @@ public class DisguiseUtilities {
                 if (!runningPaper) {
                     Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getEntityTrackerInstance(player));
+                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
                 } else {
                     ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap").get(entityTrackerEntry))
-                            .remove(ReflectionManager.getEntityTrackerInstance(player));
+                            .remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
                 }
             }
         } catch (Exception ex) {
@@ -2414,10 +2416,10 @@ public class DisguiseUtilities {
                 // Add himself to his own entity tracker
                 Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getEntityTrackerInstance(player));
+                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getPlayerConnectionOrPlayer(player));
             } else {
                 Field field = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
-                Object nmsEntity = ReflectionManager.getEntityTrackerInstance(player);
+                Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);
                 Map<Object, Object> map = ((Map<Object, Object>) field.get(entityTrackerEntry));
                 map.put(nmsEntity, true);
             }

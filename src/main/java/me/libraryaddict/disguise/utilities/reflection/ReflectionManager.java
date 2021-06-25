@@ -446,7 +446,7 @@ public class ReflectionManager {
         return -1;
     }
 
-    public static Object getEntityTrackerInstance(Player player) {
+    public static Object getPlayerConnectionOrPlayer(Player player) {
         try {
             if (NmsVersion.v1_17.isSupported()) {
                 return playerConnection.get(getNmsEntity(player));
@@ -598,7 +598,7 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getTrackerPlayer(Object nmsEntity) {
+    public static Object getPlayerFromPlayerConnection(Object nmsEntity) {
         try {
             if (NmsVersion.v1_17.isSupported()) {
                 // Convert from player connection to EntityPlayer
