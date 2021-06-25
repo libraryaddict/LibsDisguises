@@ -3,10 +3,6 @@ package me.libraryaddict.disguise.utilities.json;
 import com.google.gson.*;
 import me.libraryaddict.disguise.disguisetypes.*;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**

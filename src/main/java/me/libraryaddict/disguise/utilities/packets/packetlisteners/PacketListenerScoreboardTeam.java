@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
@@ -12,9 +11,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
-import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
-
-import java.util.Optional;
 
 /**
  * Created by libraryaddict on 4/07/2020.

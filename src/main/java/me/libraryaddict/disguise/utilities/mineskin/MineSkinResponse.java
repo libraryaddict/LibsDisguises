@@ -6,7 +6,6 @@ import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Map;
 import java.util.UUID;
 
 /**

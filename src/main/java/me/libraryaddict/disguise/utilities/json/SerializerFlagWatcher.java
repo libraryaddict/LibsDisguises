@@ -11,11 +11,7 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
