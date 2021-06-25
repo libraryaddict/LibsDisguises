@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
@@ -11,6 +12,9 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
+
+import java.util.Optional;
 
 /**
  * Created by libraryaddict on 4/07/2020.
@@ -23,6 +27,13 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
     @Override
     public void onPacketSending(PacketEvent event) {
         PacketContainer packet = event.getPacket();
+
+        int type = packet.getIntegers().read(0);
+
+        if (type != 0 && type != 2) {
+            return;
+        }
+
         String name = packet.getStrings().read(0);
 
         if (name == null || !name.startsWith("LD_") || name.equals("LD_NoName")) {
