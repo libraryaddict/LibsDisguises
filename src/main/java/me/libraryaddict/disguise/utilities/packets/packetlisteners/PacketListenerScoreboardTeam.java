@@ -24,10 +24,12 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
     public void onPacketSending(PacketEvent event) {
         PacketContainer packet = event.getPacket();
 
-        int type = packet.getIntegers().read(0);
+        if (NmsVersion.v1_17.isSupported()) {
+            int type = packet.getIntegers().read(0);
 
-        if (type != 0 && type != 2) {
-            return;
+            if (type != 0 && type != 2) {
+                return;
+            }
         }
 
         String name = packet.getStrings().read(0);
