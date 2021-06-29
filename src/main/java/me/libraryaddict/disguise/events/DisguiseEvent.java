@@ -30,6 +30,10 @@ public class DisguiseEvent extends Event implements Cancellable {
         this(null, entity, disguise);
     }
 
+    public Entity getDisguised() {
+        return getEntity();
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlerList;

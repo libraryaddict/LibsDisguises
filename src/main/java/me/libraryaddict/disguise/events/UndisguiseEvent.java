@@ -32,6 +32,10 @@ public class UndisguiseEvent extends Event implements Cancellable {
         this.isBeingReplaced = beingReplaced;
     }
 
+    public Entity getEntity() {
+        return getDisguised();
+    }
+
     @Override
     public HandlerList getHandlers() {
         return handlerList;
