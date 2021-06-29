@@ -1337,7 +1337,7 @@ public class ReflectionManager {
     public static Material getMaterial(String name) {
         try {
             if (!NmsVersion.v1_13.isSupported()) {
-                Method toMinecraft = getCraftMethod("util.CraftMagicNumbers", "getMaterialFromInternalName", String.class);
+                Method toMinecraft = getCraftMethod("CraftMagicNumbers", "getMaterialFromInternalName", String.class);
 
                 Object instance = toMinecraft.getDeclaringClass().getField("INSTANCE").get(null);
 
@@ -1372,7 +1372,7 @@ public class ReflectionManager {
 
     public static String getItemName(Material material) {
         try {
-            Object item = getCraftMethod("util.CraftMagicNumbers", "getItem", Material.class).invoke(null, material);
+            Object item = getCraftMethod("CraftMagicNumbers", "getItem", Material.class).invoke(null, material);
 
             if (item == null) {
                 return null;
