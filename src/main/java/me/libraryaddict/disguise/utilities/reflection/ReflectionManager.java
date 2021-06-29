@@ -235,6 +235,10 @@ public class ReflectionManager {
             isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
 
             for (Field f : getNmsClass("DamageSource").getFields()) {
+                if (!Modifier.isStatic(f.getModifiers())) {
+                    continue;
+                }
+
                 Object obj = f.get(null);
 
                 if (obj == null) {
