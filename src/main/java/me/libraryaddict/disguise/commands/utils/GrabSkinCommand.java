@@ -58,7 +58,14 @@ public class GrabSkinCommand implements CommandExecutor {
         }
 
         if (tName == null && skin.matches("(.*\\/)?[a-zA-Z0-9_-]{3,20}(\\.png)?")) {
-            tName = skin.substring(skin.lastIndexOf("/") + 1, skin.contains(".") ? skin.lastIndexOf(".") : skin.length());
+            int start = skin.lastIndexOf("/") + 1;
+            int end = skin.length();
+
+            if (skin.lastIndexOf(".", start) > start) {
+                end = skin.lastIndexOf(".", start);
+            }
+
+            tName = skin.substring(start, end);
 
             if (DisguiseUtilities.hasGameProfile(tName)) {
                 tName = null;
