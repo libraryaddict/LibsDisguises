@@ -71,26 +71,21 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
 
     public void onPre17Packet(PacketEvent event) {
         int[] entityIds = event.getPacket().getIntegerArrays().read(0);
-        int[] newEntityIds = entityIds;
 
         for (int entityId : entityIds) {
-            int[] toAdd = getToRemove(event.getPlayer(), entityId);
+            int[] toRemove = getToRemove(event.getPlayer(), entityId);
 
-            if (toAdd == null) {
+            if (toRemove == null) {
                 continue;
             }
 
-            newEntityIds = Arrays.copyOf(entityIds, entityIds.length + toAdd.length);
-
-            for (int a = 0; a < toAdd.length; a++) {
-                newEntityIds[newEntityIds.length - (a + 1)] = toAdd[a];
+            try {
+                for (PacketContainer container : DisguiseUtilities.getDestroyPackets(toRemove)) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), container);
+                }
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
-
-        if (entityIds.length == newEntityIds.length) {
-            return;
-        }
-
-        event.getPacket().getIntegerArrays().write(0, newEntityIds);
     }
 }
