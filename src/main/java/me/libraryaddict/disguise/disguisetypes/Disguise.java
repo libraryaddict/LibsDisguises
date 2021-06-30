@@ -29,6 +29,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
@@ -357,7 +358,9 @@ public abstract class Disguise {
 
         removeBossBar();
 
-        BossBar bar = Bukkit.createBossBar(getBossBar(), LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()), getBossBarColor(), getBossBarStyle());
+        BossBar bar = Bukkit.createBossBar(getBossBar(),
+                BaseComponent.toLegacyText(DisguiseUtilities.getColoredChat(LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()))), getBossBarColor(),
+                getBossBarStyle());
         bar.setProgress(1);
         bar.addPlayer((Player) getEntity());
     }
