@@ -16,6 +16,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.*;
 import me.libraryaddict.disguise.events.DisguiseInteractEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Axolotl;
@@ -81,7 +82,14 @@ public class PacketListenerClientInteract extends PacketAdapter {
             // The type of interact, we don't care the difference with "Interact_At" however as it's not
             // useful
             // for self disguises
-            EnumWrappers.EntityUseAction interactType = packet.getEntityUseActions().read(0);
+            EnumWrappers.EntityUseAction interactType;
+
+            if (NmsVersion.v1_17.isSupported()) {
+                interactType = packet.getEnumEntityUseActions().read(0).getAction();
+            } else {
+                interactType = packet.getEntityUseActions().read(0);
+            }
+
             final EquipmentSlot handUsed;
 
             // Attack has a null hand, which throws an error if you attempt to fetch
