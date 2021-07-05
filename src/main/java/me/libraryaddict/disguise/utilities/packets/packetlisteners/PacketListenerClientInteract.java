@@ -54,8 +54,9 @@ public class PacketListenerClientInteract extends PacketAdapter {
             event.setCancelled(true);
         } else if (DisguiseUtilities.isNotInteractable(packet.getIntegers().read(0))) {
             event.setCancelled(true);
-        } else if (DisguiseUtilities.isSpecialInteract(packet.getIntegers().read(0)) && packet.getModifier().read(3) != null &&
-                packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+        } else if (DisguiseUtilities.isSpecialInteract(packet.getIntegers().read(0)) && getHand(packet) == EnumWrappers.Hand.OFF_HAND) {
+            // If its an interaction that we should cancel, such as right clicking a wolf..
+            // Honestly I forgot the reason.
             event.setCancelled(true);
         }
 
@@ -71,6 +72,22 @@ public class PacketListenerClientInteract extends PacketAdapter {
         }
     }
 
+    private EnumWrappers.Hand getHand(PacketContainer packet) {
+        if (!NmsVersion.v1_17.isSupported()) {
+            return packet.getHands().read(0);
+        }
+
+        return packet.getEnumEntityUseActions().read(0).getHand();
+    }
+
+    private EnumWrappers.EntityUseAction getInteractType(PacketContainer packet) {
+        if (!NmsVersion.v1_17.isSupported()) {
+            return packet.getEntityUseActions().read(0);
+        }
+
+        return packet.getEnumEntityUseActions().read(0).getAction();
+    }
+
     private void handleSync(Player observer, PacketContainer packet) {
         final Disguise disguise = DisguiseUtilities.getDisguise(observer, packet.getIntegers().read(0));
 
@@ -82,19 +99,12 @@ public class PacketListenerClientInteract extends PacketAdapter {
             // The type of interact, we don't care the difference with "Interact_At" however as it's not
             // useful
             // for self disguises
-            EnumWrappers.EntityUseAction interactType;
-
-            if (NmsVersion.v1_17.isSupported()) {
-                interactType = packet.getEnumEntityUseActions().read(0).getAction();
-            } else {
-                interactType = packet.getEntityUseActions().read(0);
-            }
-
             final EquipmentSlot handUsed;
+            final EnumWrappers.EntityUseAction interactType = getInteractType(packet);
 
             // Attack has a null hand, which throws an error if you attempt to fetch
             // If the hand used wasn't their main hand
-            if (interactType != EnumWrappers.EntityUseAction.ATTACK && packet.getHands().read(0) == EnumWrappers.Hand.OFF_HAND) {
+            if (interactType != EnumWrappers.EntityUseAction.ATTACK && getHand(packet) == EnumWrappers.Hand.OFF_HAND) {
                 handUsed = EquipmentSlot.OFF_HAND;
             } else {
                 handUsed = EquipmentSlot.HAND;
