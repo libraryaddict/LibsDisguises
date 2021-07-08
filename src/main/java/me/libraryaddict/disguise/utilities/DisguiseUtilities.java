@@ -129,15 +129,15 @@ public class DisguiseUtilities {
                 team.setColor(disguise.getWatcher().getGlowColor());
             }
 
-            String prefix = NmsVersion.v1_13.isSupported() ? "Colorize" : getPrefix();
-            String suffix = NmsVersion.v1_13.isSupported() ? "Colorize" : getSuffix();
+            String prefix = getPrefix();
+            String suffix = getSuffix();
 
             if (!prefix.equals(team.getPrefix())) {
-                team.setPrefix(prefix);
+                team.setPrefix(NmsVersion.v1_13.isSupported() ? "Colorize" : prefix);
             }
 
             if (!suffix.equals(team.getSuffix())) {
-                team.setSuffix(suffix);
+                team.setSuffix(NmsVersion.v1_13.isSupported() ? "Colorize" : suffix);
             }
         }
     }
