@@ -1,6 +1,7 @@
 # This config is called sanity, because you shouldn't need to change the stuff in here
 
-#Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
+# Stop shulker disguises from moving, they're weird. This option only effects PLAYERS that are disguised, other entities disguised as shulkers will NOT be effected!
+# This is ignored in 1.17+ as its fixed in those versions
 StopShulkerDisguisesFromMoving: true
 
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player

@@ -18,6 +18,7 @@ import me.libraryaddict.disguise.utilities.LibsEntityInteract;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -467,7 +468,7 @@ public class DisguiseListener implements Listener {
             DisguiseUtilities.doBoundingBox((TargetedDisguise) disguise);
         }
 
-        if (DisguiseConfig.isStopShulkerDisguisesFromMoving()) {
+        if (!NmsVersion.v1_17.isSupported() && DisguiseConfig.isStopShulkerDisguisesFromMoving()) {
             Disguise disguise;
 
             if ((disguise = DisguiseAPI.getDisguise(event.getPlayer())) != null) {
