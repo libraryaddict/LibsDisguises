@@ -175,25 +175,27 @@ public class LibsDisguises extends JavaPlugin {
             String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
             if (DisguiseUtilities.isProtocolLibOutdated()) {
-                getLogger().severe("!! May I have your attention please !!");
-                getLogger()
-                        .severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
-                                "!");
-                getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target/ProtocolLib" + ".jar");
-                getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
-                getLogger().severe("!! May I have your attention please !!");
+                BukkitRunnable runnable = new BukkitRunnable() {
+                    private int timesRun;
 
-                new BukkitRunnable() {
                     @Override
                     public void run() {
                         getLogger().severe("!! May I have your attention please !!");
                         getLogger().severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
                                 requiredProtocolLib + "!");
                         getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
-                        getLogger().severe("Or! Use /ld updateprotocollib - To update to the latest development build");
-                        getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
+                        getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
+
+                        if (timesRun++ > 0) {
+                            getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
+                        }
+
+                        getLogger().severe("!! May I have your attention please !!");
                     }
-                }.runTaskTimer(this, 20, 10 * 60 * 20);
+                };
+
+                runnable.run();
+                runnable.runTaskTimer(this, 20, 10 * 60 * 20);
             }
 
             // If this is a release build, even if jenkins build..
