@@ -479,7 +479,7 @@ public class DisguiseUtilities {
         }
 
         // If we are on 1.17, future release build or this dev build
-        return new String[]{"4.7.1", "521"};
+        return new String[]{"4.7.1", "528"};
     }
 
     public static boolean isProtocolLibOutdated() {
@@ -1097,35 +1097,21 @@ public class DisguiseUtilities {
     }
 
     public static PacketContainer getDestroyPacket(int... ids) {
-        if (NmsVersion.v1_17.isSupported() && ids.length != 1) {
-            throw new IllegalStateException("Should use getDestroyPackets for ints of len " + ids.length);
-        }
-
         PacketContainer destroyPacket = new PacketContainer(Server.ENTITY_DESTROY);
 
         if (NmsVersion.v1_17.isSupported()) {
-            destroyPacket.getIntegers().write(0, ids[0]);
+            List<Integer> ints = new ArrayList<>();
+
+            for (int id : ids) {
+                ints.add(id);
+            }
+
+            destroyPacket.getIntLists().write(0, ints);
         } else {
             destroyPacket.getIntegerArrays().write(0, ids);
         }
 
         return destroyPacket;
-    }
-
-    public static PacketContainer[] getDestroyPackets(int... ids) {
-        if (!NmsVersion.v1_17.isSupported()) {
-            return new PacketContainer[]{getDestroyPacket(ids)};
-        }
-
-        PacketContainer[] packets = new PacketContainer[ids.length];
-
-        for (int i = 0; i < packets.length; i++) {
-            packets[i] = new PacketContainer(Server.ENTITY_DESTROY);
-
-            packets[i].getIntegers().write(0, ids[i]);
-        }
-
-        return packets;
     }
 
     public static TargetedDisguise getDisguise(Player observer, Entity entity) {
@@ -1837,12 +1823,10 @@ public class DisguiseUtilities {
         ids[ids.length - 1] = DisguiseAPI.getSelfDisguiseId();
 
         // Send a packet to destroy the fake entity
-        for (PacketContainer packet : getDestroyPackets(ids)) {
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getDestroyPacket(ids));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         // player.spigot().setCollidesWithEntities(true);
@@ -3051,9 +3035,7 @@ public class DisguiseUtilities {
         }
 
         if (destroyIds.length > 0) {
-            for (PacketContainer packet : getDestroyPackets(destroyIds)) {
-                packets.add(packet);
-            }
+            packets.add(getDestroyPacket(destroyIds));
         }
 
         return packets;

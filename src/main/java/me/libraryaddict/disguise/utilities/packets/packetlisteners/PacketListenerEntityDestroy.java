@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 3/05/2020.
@@ -30,22 +31,19 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
         }
 
         if (!NmsVersion.v1_17.isSupported()) {
-            onPre17Packet(event);
-            return;
-        }
+            int[] entityIds = event.getPacket().getIntegerArrays().read(0);
 
-        int[] toAdd = getToRemove(event.getPlayer(), event.getPacket().getIntegers().read(0));
-
-        if (toAdd == null) {
-            return;
-        }
-
-        try {
-            for (PacketContainer container : DisguiseUtilities.getDestroyPackets(toAdd)) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), container);
+            for (int entityId : entityIds) {
+                handleEntityId(event.getPlayer(), entityId);
             }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+
+            return;
+        }
+
+        List<Integer> entityIds = event.getPacket().getIntLists().read(0);
+
+        for (int entityId : entityIds) {
+            handleEntityId(event.getPlayer(), entityId);
         }
     }
 
@@ -69,23 +67,17 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
         return disguise.getArmorstandIds();
     }
 
-    public void onPre17Packet(PacketEvent event) {
-        int[] entityIds = event.getPacket().getIntegerArrays().read(0);
+    private void handleEntityId(Player player, int entityId) {
+        int[] toRemove = getToRemove(player, entityId);
 
-        for (int entityId : entityIds) {
-            int[] toRemove = getToRemove(event.getPlayer(), entityId);
+        if (toRemove == null) {
+            return;
+        }
 
-            if (toRemove == null) {
-                continue;
-            }
-
-            try {
-                for (PacketContainer container : DisguiseUtilities.getDestroyPackets(toRemove)) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), container);
-                }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, DisguiseUtilities.getDestroyPacket(toRemove));
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 }
