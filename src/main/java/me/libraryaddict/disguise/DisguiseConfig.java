@@ -573,8 +573,8 @@ public class DisguiseConfig {
         setDisablePvP(config.getBoolean("DisablePvP"));
         setDisablePvE(config.getBoolean("DisablePvE"));
         setPvPTimer(config.getDouble("PvPTimer"));
-        setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacked")));
-        setDisguiseBlownWhenAttacking(config.getBoolean("BlowDisguises", config.getBoolean("BlowDisguisesWhenAttacking")));
+        setDisguiseBlownWhenAttacked(config.getBoolean("BlowDisguisesWhenAttacked"));
+        setDisguiseBlownWhenAttacking(config.getBoolean("BlowDisguisesWhenAttacking"));
         setDisguiseCloneExpire(config.getInt("DisguiseCloneExpire"));
         setDisguiseEntityExpire(config.getInt("DisguiseEntityExpire"));
         setDynamicExpiry(config.getBoolean("DynamicExpiry"));
