@@ -396,13 +396,13 @@ public class DisguiseListener implements Listener {
         String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-        if (DisguiseUtilities.isProtocolLibOutdated()) {
+        if (DisguiseUtilities.isProtocolLibOutdated() && p.isOp()) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (!p.isOnline() || !p.isOp()) {
+                    if (!p.isOnline()) {
                         cancel();
                         return;
                     }
