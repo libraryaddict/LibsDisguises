@@ -274,7 +274,7 @@ public class PlayerSkinHandler implements Listener {
         PacketContainer teleport = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 
         StructureModifier<Object> mods = teleport.getModifier();
-        Location loc = disguise.getEntity().getLocation().add(0, disguise.getWatcher().getYModifier(), 0);
+        Location loc = disguise.getEntity().getLocation().add(0, disguise.getWatcher().getYModifier() + DisguiseUtilities.getYModifier(disguise), 0);
 
         Float pitchLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getPitchLock() : null;
         Float yawLock = DisguiseConfig.isMovementPacketsEnabled() ? disguise.getWatcher().getYawLock() : null;
@@ -303,7 +303,7 @@ public class PlayerSkinHandler implements Listener {
 
         mods.write(0, id);
         mods.write(1, loc.getX());
-        mods.write(2, loc.getY() + DisguiseUtilities.getYModifier(disguise));
+        mods.write(2, loc.getY());
         mods.write(3, loc.getZ());
         mods.write(4, yaw);
         mods.write(5, pitch);

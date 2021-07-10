@@ -180,8 +180,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             skin.setSleepPackets(!normalPlayerDisguise);
 
-            Location spawnAt = normalPlayerDisguise ? disguisedEntity.getLocation() :
-                    observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10));
+            Location spawnAt = normalPlayerDisguise ? loc : observer.getLocation().add(observer.getLocation().getDirection().normalize().multiply(10));
 
             // Spawn him in front of the observer
             StructureModifier<Double> doubles = spawnPlayer.getDoubles();
