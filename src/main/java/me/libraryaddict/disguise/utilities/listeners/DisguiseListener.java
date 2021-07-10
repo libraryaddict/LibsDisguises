@@ -402,7 +402,7 @@ public class DisguiseListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (!p.isOnline()) {
+                    if (!p.isOnline() || !p.isOp()) {
                         cancel();
                         return;
                     }
