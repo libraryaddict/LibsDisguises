@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -87,7 +88,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         mods.write(0, 0);
                         mods.write(1, slot);
-                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                        packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                         try {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -109,7 +110,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                            packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -137,7 +138,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                     mods.write(0, 0);
                     mods.write(1, player.getInventory().getHeldItemSlot() + 36);
-                    mods.write(2, ReflectionManager.getNmsItem(currentlyHeld));
+                    packet.getItemModifier().write(0, currentlyHeld);
 
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -156,7 +157,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                     mods.write(0, 0);
                     mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                    mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                    packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -205,7 +206,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         mods.write(0, 0);
                         mods.write(1, slot);
-                        mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                        packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                         try {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -225,7 +226,7 @@ public class PacketListenerInventory extends PacketAdapter {
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, 0);
                             mods.write(1, slot);
-                            mods.write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                            packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -281,7 +282,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
                         event.setPacket(event.getPacket().shallowClone());
 
-                        event.getPacket().getModifier().write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+                        event.getPacket().getItemModifier().write(0, new ItemStack(Material.AIR));
                     }
                 }
                 // Else if its a hotbar slot
@@ -295,7 +296,8 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         if (item != null && item.getType() != Material.AIR) {
                             event.setPacket(event.getPacket().shallowClone());
-                            event.getPacket().getModifier().write(2, ReflectionManager.getNmsItem(new org.bukkit.inventory.ItemStack(Material.AIR)));
+
+                            event.getPacket().getItemModifier().write(0, new ItemStack(Material.AIR));
                         }
                     }
                 }
