@@ -30,8 +30,8 @@ public class PacketListenerInventory extends PacketAdapter {
     private LibsDisguises libsDisguises;
 
     public PacketListenerInventory(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS, PacketType.Play.Client.HELD_ITEM_SLOT,
-                PacketType.Play.Client.SET_CREATIVE_SLOT, PacketType.Play.Client.WINDOW_CLICK);
+        super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS, PacketType.Play.Client.SET_CREATIVE_SLOT,
+                PacketType.Play.Client.WINDOW_CLICK);
 
         libsDisguises = plugin;
     }
@@ -87,7 +87,12 @@ public class PacketListenerInventory extends PacketAdapter {
                         StructureModifier<Object> mods = packet.getModifier();
 
                         mods.write(0, 0);
-                        mods.write(1, slot);
+                        mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, slot);
+
+                        if (NmsVersion.v1_17.isSupported()) {
+                            mods.write(1, ReflectionManager.getIncrementedStateId(player));
+                        }
+
                         packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                         try {
@@ -109,7 +114,12 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, 0);
-                            mods.write(1, slot);
+                            mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, slot);
+
+                            if (NmsVersion.v1_17.isSupported()) {
+                                mods.write(1, ReflectionManager.getIncrementedStateId(player));
+                            }
+
                             packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                             try {
@@ -121,57 +131,19 @@ public class PacketListenerInventory extends PacketAdapter {
                     }
                 }
             }
-        }
-        // If the player switched item, aka he moved from slot 1 to slot 2
-        else if (event.getPacketType() == PacketType.Play.Client.HELD_ITEM_SLOT) {
-            if (disguise.isHidingHeldItemFromSelf()) {
-                // From logging, it seems that both bukkit and nms uses the same thing for the slot switching.
-                // 0 1 2 3 - 8
-                // If the packet is coming, then I need to replace the item they are switching to
-                // As for the old item, I need to restore it.
-                org.bukkit.inventory.ItemStack currentlyHeld = player.getItemInHand();
-                // If his old weapon isn't air
-                if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
-                    PacketContainer packet = new PacketContainer(Server.SET_SLOT);
-
-                    StructureModifier<Object> mods = packet.getModifier();
-
-                    mods.write(0, 0);
-                    mods.write(1, player.getInventory().getHeldItemSlot() + 36);
-                    packet.getItemModifier().write(0, currentlyHeld);
-
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                org.bukkit.inventory.ItemStack newHeld = player.getInventory().getItem(event.getPacket().getIntegers().read(0));
-
-                // If his new weapon isn't air either!
-                if (newHeld != null && newHeld.getType() != Material.AIR) {
-                    PacketContainer packet = new PacketContainer(Server.SET_SLOT);
-
-                    StructureModifier<Object> mods = packet.getModifier();
-
-                    mods.write(0, 0);
-                    mods.write(1, event.getPacket().getIntegers().read(0) + 36);
-                    packet.getItemModifier().write(0, new ItemStack(Material.AIR));
-
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         } else if (event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK) {
-            int slot = event.getPacket().getIntegers().read(1);
+            int slot = event.getPacket().getIntegers().read(NmsVersion.v1_17.isSupported() ? 2 : 1);
 
             org.bukkit.inventory.ItemStack clickedItem;
+            int type;
 
-            if (event.getPacket().getShorts().read(0) == 1) {
+            if (NmsVersion.v1_17.isSupported()) {
+                type = event.getPacket().getIntegers().read(3);
+            } else {
+                type = event.getPacket().getShorts().read(0);
+            }
+
+            if (type == 1) {
                 // Its a shift click
                 clickedItem = event.getPacket().getItemModifier().read(0);
 
@@ -205,7 +177,12 @@ public class PacketListenerInventory extends PacketAdapter {
                         StructureModifier<Object> mods = packet.getModifier();
 
                         mods.write(0, 0);
-                        mods.write(1, slot);
+                        mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, slot);
+
+                        if (NmsVersion.v1_17.isSupported()) {
+                            mods.write(1, ReflectionManager.getIncrementedStateId(player));
+                        }
+
                         packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
                         try {
@@ -225,8 +202,11 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             StructureModifier<Object> mods = packet.getModifier();
                             mods.write(0, 0);
-                            mods.write(1, slot);
-                            packet.getItemModifier().write(0, new ItemStack(Material.AIR));
+                            mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, slot);
+
+                            if (NmsVersion.v1_17.isSupported()) {
+                                mods.write(1, ReflectionManager.getIncrementedStateId(player));
+                            }
 
                             try {
                                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
@@ -269,7 +249,7 @@ public class PacketListenerInventory extends PacketAdapter {
         if (event.getPacketType() == Server.SET_SLOT) {
             // The raw slot
             // nms code has the start of the hotbar being 36.
-            int slot = event.getPacket().getIntegers().read(1);
+            int slot = event.getPacket().getIntegers().read(NmsVersion.v1_17.isSupported() ? 2 : 1);
 
             // If the slot is a armor slot
             if (slot >= 5 && slot <= 8) {

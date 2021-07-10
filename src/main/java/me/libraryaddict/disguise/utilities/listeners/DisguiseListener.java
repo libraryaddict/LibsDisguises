@@ -1,7 +1,9 @@
 package me.libraryaddict.disguise.utilities.listeners;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import lombok.Getter;
@@ -19,13 +21,11 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -43,6 +43,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -232,6 +233,67 @@ public class DisguiseListener implements Listener {
             event.setDamage(event.getDamage() * 3);
         } else {
             event.setDamage(new Random().nextDouble() * 8);
+        }
+    }
+
+    @EventHandler
+    public void onHeldItemSwitch(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        Disguise disguise = DisguiseAPI.getDisguise(player, player);
+
+        if (disguise == null || !disguise.isHidingHeldItemFromSelf()) {
+            return;
+        }
+
+        // From logging, it seems that both bukkit and nms uses the same thing for the slot switching.
+        // 0 1 2 3 - 8
+        // If the packet is coming, then I need to replace the item they are switching to
+        // As for the old item, I need to restore it.
+        org.bukkit.inventory.ItemStack currentlyHeld = player.getItemInHand();
+        // If his old weapon isn't air
+        if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+
+            StructureModifier<Object> mods = packet.getModifier();
+
+            mods.write(0, 0);
+            mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, event.getPreviousSlot() + 36);
+
+            if (NmsVersion.v1_17.isSupported()) {
+                mods.write(1, ReflectionManager.getIncrementedStateId(player));
+            }
+
+            packet.getItemModifier().write(0, currentlyHeld);
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+
+        org.bukkit.inventory.ItemStack newHeld = player.getInventory().getItem(event.getNewSlot());
+
+        // If his new weapon isn't air either!
+        if (newHeld != null && newHeld.getType() != Material.AIR) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+
+            StructureModifier<Object> mods = packet.getModifier();
+
+            mods.write(0, 0);
+            mods.write(NmsVersion.v1_17.isSupported() ? 2 : 1, event.getNewSlot() + 36);
+
+            if (NmsVersion.v1_17.isSupported()) {
+                mods.write(1, ReflectionManager.getIncrementedStateId(player));
+            }
+
+            packet.getItemModifier().write(0, new ItemStack(Material.AIR));
+
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 

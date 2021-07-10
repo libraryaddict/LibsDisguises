@@ -115,6 +115,8 @@ public class ReflectionManager {
     private static Method setScore;
     private static HashMap<String, String> classLocations = new HashMap<>();
     private static Field playerConnection;
+    private static Method incrementedInventoryStateId;
+    private static Field playerInventoryContainer;
 
     public static void init() {
         try {
@@ -130,6 +132,16 @@ public class ReflectionManager {
 
                     f.setAccessible(true);
                     entityCountField = f;
+                    break;
+                }
+
+                for (Field f : getNmsClass("EntityHuman").getDeclaredFields()) {
+                    if (!f.getType().getSimpleName().equals("ContainerPlayer")) {
+                        continue;
+                    }
+
+                    f.setAccessible(true);
+                    playerInventoryContainer = f;
                     break;
                 }
             } else {
@@ -198,6 +210,7 @@ public class ReflectionManager {
                         villagerTypeRegistry = getNmsField("IRegistry", "ao").get(null);
                         playerConnection = getNmsField("EntityPlayer", "b");
                         connectionEntityMethod = getNmsMethod("PlayerConnection", "d");
+                        incrementedInventoryStateId = getNmsMethod("Container", "incrementStateId");
                     } else {
                         villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
                         villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
@@ -340,6 +353,18 @@ public class ReflectionManager {
         }
 
         return false;
+    }
+
+    public static int getIncrementedStateId(Player player) {
+        try {
+            Object container = playerInventoryContainer.get(getNmsEntity(player));
+
+            return (int) incrementedInventoryStateId.invoke(container);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return 0;
     }
 
     public static boolean isSupported(AccessibleObject obj) {
