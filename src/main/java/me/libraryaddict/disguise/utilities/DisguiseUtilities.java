@@ -479,7 +479,7 @@ public class DisguiseUtilities {
         }
 
         // If we are on 1.17, future release build or this dev build
-        return new String[]{"4.7.1", "528"};
+        return new String[]{"4.7.0"};
     }
 
     public static boolean isProtocolLibOutdated() {
