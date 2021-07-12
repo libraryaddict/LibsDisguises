@@ -217,7 +217,7 @@ public class DisguiseConfig {
     @Getter
     private static String savedServerIp = "";
     @Getter
-    private static boolean autoUpdate;
+    private static Boolean autoUpdate;
     @Getter
     private static boolean notifyUpdate;
     private static BukkitTask updaterTask;
@@ -277,6 +277,14 @@ public class DisguiseConfig {
 
     public static boolean isExtendedNames() {
         return getPlayerNameType() == PlayerNameType.EXTENDED;
+    }
+
+    public static boolean isAutoUpdate() {
+        if (getAutoUpdate() == null) {
+            autoUpdate = LibsDisguises.getInstance().getConfig().getBoolean("AutoUpdate");
+        }
+
+        return getAutoUpdate();
     }
 
     public static void setAutoUpdate(boolean update) {

@@ -105,7 +105,7 @@ public class LibsDisguises extends JavaPlugin {
             }
         } catch (Throwable throwable) {
             try {
-                if (isNumberedBuild()) {
+                if (isNumberedBuild() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();
                 }
             } catch (Throwable t) {
@@ -260,7 +260,7 @@ public class LibsDisguises extends JavaPlugin {
             new MetricsInitalizer();
         } catch (Throwable throwable) {
             try {
-                if (isNumberedBuild()) {
+                if (isNumberedBuild() && DisguiseConfig.isAutoUpdate()) {
                     getUpdateChecker().doUpdate();
                 }
             } catch (Throwable t) {
