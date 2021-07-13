@@ -2498,20 +2498,11 @@ public class DisguiseUtilities {
         }
     }
 
-    @Deprecated
     public static void sendMessage(CommandSender sender, LibsMsg msg, Object... args) {
-        if (!NmsVersion.v1_16.isSupported()) {
-            String message = msg.get(args);
+        BaseComponent[] components = msg.getChat(args);
 
-            if (!message.isEmpty()) {
-                sender.sendMessage(message);
-            }
-        } else {
-            BaseComponent[] components = msg.getChat(args);
-
-            if (components.length > 0) {
-                sender.spigot().sendMessage(components);
-            }
+        if (components.length > 0) {
+            sender.spigot().sendMessage(components);
         }
     }
 
