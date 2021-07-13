@@ -175,7 +175,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             // If self disguise, or further than 50 blocks, or not in front of entity
             normalPlayerDisguise = observer == disguisedEntity || disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
-                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector().distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
+                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector()
+                            .distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
             sendArmor = normalPlayerDisguise;
 
             skin.setSleepPackets(!normalPlayerDisguise);
@@ -335,7 +336,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
                 spawnEntity = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, nmsEntity, objectId, data)
                         .createPacket(nmsEntity, objectId, data);
+
+                StructureModifier<Double> doubles = spawnEntity.getDoubles();
+
+                doubles.write(0, x);
+                doubles.write(1, y);
+                doubles.write(2, z);
             }
+
+            spawnEntity.getModifier().write(8, pitch);
+            spawnEntity.getModifier().write(9, yaw);
 
             packets.addPacket(spawnEntity);
 
@@ -355,9 +365,6 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     packets.addPacket(velocity);
                 }
             }
-
-            spawnEntity.getModifier().write(8, pitch);
-            spawnEntity.getModifier().write(9, yaw);
 
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
