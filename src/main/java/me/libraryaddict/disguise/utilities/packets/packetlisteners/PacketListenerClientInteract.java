@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -77,7 +78,13 @@ public class PacketListenerClientInteract extends PacketAdapter {
             return packet.getHands().read(0);
         }
 
-        return packet.getEnumEntityUseActions().read(0).getHand();
+        WrappedEnumEntityUseAction action = packet.getEnumEntityUseActions().read(0);
+
+        if (action.getAction() == EnumWrappers.EntityUseAction.ATTACK) {
+            return EnumWrappers.Hand.MAIN_HAND;
+        }
+
+        return action.getHand();
     }
 
     private EnumWrappers.EntityUseAction getInteractType(PacketContainer packet) {
