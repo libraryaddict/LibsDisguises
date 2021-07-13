@@ -3103,6 +3103,8 @@ public class DisguiseUtilities {
         }
 
         switch (disguise.getType()) {
+            case ENDER_CRYSTAL:
+                return yMod + 1;
             case BAT:
                 if (entity instanceof LivingEntity) {
                     return yMod + ((LivingEntity) entity).getEyeHeight();
@@ -3146,6 +3148,7 @@ public class DisguiseUtilities {
             default:
                 break;
         }
+
         return yMod;
     }
 }
