@@ -2946,7 +2946,8 @@ public class DisguiseUtilities {
             destroyIds = Arrays.copyOfRange(standIds, newNames.length, internalOldNames.length);
         }
 
-        double height = disguise.getHeight();
+        // Don't need to offset with DisguiseUtilities.getYModifier, because that's a visual offset and not an actual location offset
+        double height = disguise.getHeight() + disguise.getWatcher().getYModifier();
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {
@@ -2987,7 +2988,7 @@ public class DisguiseUtilities {
                 Location loc = disguise.getEntity().getLocation();
 
                 packet.getDoubles().write(0, loc.getX());
-                packet.getDoubles().write(1, loc.getY() + height + disguise.getWatcher().getYModifier() + (0.28 * i));
+                packet.getDoubles().write(1, loc.getY() + height  + (0.28 * i));
                 packet.getDoubles().write(2, loc.getZ());
                 packets.add(packet);
 

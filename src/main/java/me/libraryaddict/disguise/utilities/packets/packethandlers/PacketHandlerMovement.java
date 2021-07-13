@@ -81,7 +81,7 @@ public class PacketHandlerMovement implements IPacketHandler {
             return;
         }
 
-        double yMod = disguise.getWatcher().getYModifier();
+        double yMod = DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier();
 
         // If falling block should be appearing in center of blocks
         if (disguise.getType() == DisguiseType.FALLING_BLOCK &&
