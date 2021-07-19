@@ -478,8 +478,9 @@ public class DisguiseUtilities {
             return new String[]{"4.6.0"};
         }
 
-        // If we are on 1.17, future release build or this dev build
-        return new String[]{"4.7.0"};
+        // If we are on 1.17, you need this release or dev build
+        // ProtocolLib is a little funny in that it provides next release version as the current version
+        return new String[]{"4.7.0", "528"};
     }
 
     public static boolean isProtocolLibOutdated() {
