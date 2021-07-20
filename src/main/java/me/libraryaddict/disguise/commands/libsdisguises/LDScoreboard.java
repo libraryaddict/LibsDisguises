@@ -62,6 +62,12 @@ public class LDScoreboard implements LDCommand {
                         continue;
                     }
 
+                    DisguiseUtilities.DScoreTeam scoreboardName = ((PlayerDisguise) disguise).getScoreboardName();
+
+                    if (scoreboardName.getTeamName() == null) {
+                        continue;
+                    }
+
                     ArrayList<Scoreboard> checked = new ArrayList<>();
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -72,7 +78,7 @@ public class LDScoreboard implements LDCommand {
                         }
 
                         checked.add(board);
-                        DisguiseUtilities.DScoreTeam scoreboardName = ((PlayerDisguise) disguise).getScoreboardName();
+
 
                         Team team = board.getTeam(scoreboardName.getTeamName());
 
