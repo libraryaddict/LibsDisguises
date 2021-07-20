@@ -1369,8 +1369,7 @@ public class DisguiseUtilities {
         try {
             // Check if we enable the paperdisguiselistener
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
-        } catch (Exception ex) {
-            runningPaper = true;
+        } catch (Exception ignored) {
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
