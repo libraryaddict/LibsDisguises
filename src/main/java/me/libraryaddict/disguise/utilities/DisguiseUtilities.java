@@ -1367,13 +1367,10 @@ public class DisguiseUtilities {
 
     public static void init() {
         try {
-            // Force an exception to be thrown if it doesn't contain trackedPlayerMap
-            Class tracker = ReflectionManager.getNmsClass("EntityTrackerEntry");
-            tracker.getDeclaredField("trackedPlayerMap");
-
-            // Don't really need this here, but it's insurance!
+            // Check if we enable the paperdisguiselistener
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            runningPaper = true;
         }
 
         GsonBuilder gsonBuilder = new GsonBuilder();
