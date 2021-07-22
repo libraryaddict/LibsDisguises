@@ -1854,7 +1854,7 @@ public class DisguiseUtilities {
 
                 // TODO Store reflection fields
                 // If the tracker exists. Remove himself from his tracker
-                if (!runningPaper) {
+                if (!isRunningPaper() || NmsVersion.v1_16.isSupported()) {
                     Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
                     ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
@@ -2393,7 +2393,7 @@ public class DisguiseUtilities {
 
             // TODO Store reflection fields
             // Check for code differences in PaperSpigot vs Spigot
-            if (!runningPaper) {
+            if (!isRunningPaper() || NmsVersion.v1_16.isSupported()) {
                 // Add himself to his own entity tracker
                 Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
