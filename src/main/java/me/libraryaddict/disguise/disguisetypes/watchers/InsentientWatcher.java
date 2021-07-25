@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.inventory.MainHand;
@@ -34,7 +33,7 @@ public class InsentientWatcher extends LivingWatcher {
         if (flag) {
             setData(MetaIndex.INSENTIENT_META, (byte) (b0 | i));
         } else {
-            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & i));
+            setData(MetaIndex.INSENTIENT_META, (byte) (b0 & -(i + 1)));
         }
 
         sendData(MetaIndex.INSENTIENT_META);
@@ -56,12 +55,5 @@ public class InsentientWatcher extends LivingWatcher {
         }
 
         setInsentientFlag(4, enraged);
-
-        if (!getDisguise().isDisguiseInUse() || enraged) {
-            return;
-        }
-
-        // TODO Check if a less hacky fix is possible
-        DisguiseUtilities.refreshTrackers(getDisguise());
     }
 }
