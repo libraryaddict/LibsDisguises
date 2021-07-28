@@ -21,12 +21,12 @@ public class AxolotlWatcher extends AgeableWatcher {
         sendData(MetaIndex.AXOLOTL_PLAYING_DEAD);
     }
 
-    public Axolotl.Variant getVarient() {
-        return Axolotl.Variant.values()[getData(MetaIndex.AXOLOTL_VARIENT)];
+    public Axolotl.Variant getVariant() {
+        return Axolotl.Variant.values()[getData(MetaIndex.AXOLOTL_VARIANT)];
     }
 
-    public void setVarient(Axolotl.Variant varient) {
-        setData(MetaIndex.AXOLOTL_VARIENT, varient.ordinal());
-        sendData(MetaIndex.AXOLOTL_VARIENT);
+    public void setVariant(Axolotl.Variant variant) {
+        setData(MetaIndex.AXOLOTL_VARIANT, variant.ordinal());
+        sendData(MetaIndex.AXOLOTL_VARIANT);
     }
 }

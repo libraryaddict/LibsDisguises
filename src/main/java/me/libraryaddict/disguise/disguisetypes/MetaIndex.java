@@ -112,7 +112,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> ARROW_PIERCE_LEVEL = new MetaIndex<>(ArrowWatcher.class, 2, (byte) 0);
 
     @NmsAddedIn(NmsVersion.v1_17)
-    public static MetaIndex<Integer> AXOLOTL_VARIENT = new MetaIndex<>(AxolotlWatcher.class, 0, 0);
+    public static MetaIndex<Integer> AXOLOTL_VARIANT = new MetaIndex<>(AxolotlWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Boolean> AXOLOTL_PLAYING_DEAD = new MetaIndex<>(AxolotlWatcher.class, 1, false);
