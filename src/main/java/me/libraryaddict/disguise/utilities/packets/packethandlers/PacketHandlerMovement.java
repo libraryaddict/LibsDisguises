@@ -12,6 +12,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.AbstractHorse;
@@ -26,13 +27,12 @@ import java.util.ArrayList;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerMovement implements IPacketHandler {
-    private final boolean invalid =
-            LibsPremium.getUserID().matches("[0-9]+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
+    private final boolean invalid = LibsPremium.getUserID().matches("[0-9]+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
 
     @Override
     public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
-                PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.REL_ENTITY_MOVE};
+        return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK, PacketType.Play.Server.ENTITY_TELEPORT,
+                PacketType.Play.Server.REL_ENTITY_MOVE};
     }
 
     private short conRel(double oldCord, double newCord) {
@@ -40,8 +40,7 @@ public class PacketHandlerMovement implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-                       Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         handle2(disguise, sentPacket, packets, observer, entity);
 
         int len = disguise.getMultiNameLength();
@@ -74,8 +73,7 @@ public class PacketHandlerMovement implements IPacketHandler {
         packets.getPackets().addAll(toAdd);
     }
 
-    public void handle2(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-                        Entity entity) {
+    public void handle2(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         if (invalid && RandomUtils.nextDouble() < 0.1) {
             packets.clear();
             return;
@@ -84,8 +82,7 @@ public class PacketHandlerMovement implements IPacketHandler {
         double yMod = DisguiseUtilities.getYModifier(disguise) + disguise.getWatcher().getYModifier();
 
         // If falling block should be appearing in center of blocks
-        if (disguise.getType() == DisguiseType.FALLING_BLOCK &&
-                ((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
+        if (disguise.getType() == DisguiseType.FALLING_BLOCK && ((FallingBlockWatcher) disguise.getWatcher()).isGridLocked()) {
             packets.clear();
 
             if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK) {
@@ -108,32 +105,60 @@ public class PacketHandlerMovement implements IPacketHandler {
                 doubles.write(1, y + yMod);
                 doubles.write(2, loc.getBlockZ() + 0.5);
             } else {
-                StructureModifier<Short> shorts = movePacket.getShorts();
+                int x;
+                int y;
+                int z;
 
-                Vector diff = new Vector(shorts.read(0) / 4096D, shorts.read(1) / 4096D, shorts.read(2) / 4096D);
+                if (NmsVersion.v1_14.isSupported()) {
+                    StructureModifier<Short> shorts = movePacket.getShorts();
+
+                    x = shorts.read(0);
+                    y = shorts.read(1);
+                    z = shorts.read(2);
+                } else {
+                    StructureModifier<Integer> ints = movePacket.getIntegers();
+
+                    x = ints.read(0);
+                    y = ints.read(1);
+                    z = ints.read(2);
+                }
+
+                Vector diff = new Vector(x / 4096D, y / 4096D, z / 4096D);
                 Location newLoc = loc.clone().subtract(diff);
 
                 double origY = loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0);
                 double newY = newLoc.getBlockY() + (newLoc.getY() % 1 >= 0.85 ? 1 : newLoc.getY() % 1 >= 0.35 ? .5 : 0);
 
-                boolean sameBlock =
-                        loc.getBlockX() == newLoc.getBlockX() && newY == origY && loc.getBlockZ() == newLoc.getBlockZ();
+                boolean sameBlock = loc.getBlockX() == newLoc.getBlockX() && newY == origY && loc.getBlockZ() == newLoc.getBlockZ();
 
                 if (sameBlock) {
                     // Make no modifications but don't send anything
                     return;
                 } else {
-                    shorts.write(0, conRel(loc.getBlockX(), newLoc.getBlockX()));
-                    shorts.write(1, conRel(origY, newY));
-                    shorts.write(2, conRel(loc.getBlockZ(), newLoc.getBlockZ()));
+                    x = conRel(loc.getBlockX(), newLoc.getBlockX());
+                    y = conRel(origY, newY);
+                    z = conRel(loc.getBlockZ(), newLoc.getBlockZ());
+
+                    if (NmsVersion.v1_14.isSupported()) {
+                        StructureModifier<Short> shorts = movePacket.getShorts();
+
+                        shorts.write(0, (short) x);
+                        shorts.write(1, (short) y);
+                        shorts.write(2, (short) z);
+                    } else {
+                        StructureModifier<Integer> ints = movePacket.getIntegers();
+
+                        ints.write(0, x);
+                        ints.write(1, y);
+                        ints.write(2, z);
+                    }
                 }
             }
 
             packets.addPacket(movePacket);
             return;
         } else if (disguise.getType() == DisguiseType.RABBIT &&
-                (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE ||
-                        sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
+                (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE || sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
             // When did the rabbit disguise last hop
             long lastHop = 999999;
 
@@ -148,8 +173,7 @@ public class PacketHandlerMovement implements IPacketHandler {
             if (lastHop < 100 || lastHop > 500) {
                 if (lastHop > 500) {
                     entity.removeMetadata("LibsRabbitHop", LibsDisguises.getInstance());
-                    entity.setMetadata("LibsRabbitHop",
-                            new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
+                    entity.setMetadata("LibsRabbitHop", new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
                 }
 
                 PacketContainer statusPacket = new PacketContainer(PacketType.Play.Server.ENTITY_STATUS);
@@ -160,8 +184,7 @@ public class PacketHandlerMovement implements IPacketHandler {
             }
         }
 
-        if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK &&
-                disguise.getType() == DisguiseType.WITHER_SKULL) {
+        if (sentPacket.getType() == PacketType.Play.Server.ENTITY_LOOK && disguise.getType() == DisguiseType.WITHER_SKULL) {
             // Stop wither skulls from looking
             packets.clear();
         } else {
@@ -197,8 +220,7 @@ public class PacketHandlerMovement implements IPacketHandler {
                 bytes.write(0, yawValue);
                 bytes.write(1, pitchValue);
 
-                if (entity == observer.getVehicle() &&
-                        AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
+                if (entity == observer.getVehicle() && AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
                     PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
 
                     packet.getIntegers().write(0, DisguiseAPI.getEntityAttachmentId());
@@ -206,8 +228,7 @@ public class PacketHandlerMovement implements IPacketHandler {
                     packet.getBytes().write(1, pitchValue);
 
                     packets.addPacket(packet);
-                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT &&
-                        disguise.getType() == DisguiseType.ITEM_FRAME) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT && disguise.getType() == DisguiseType.ITEM_FRAME) {
                     StructureModifier<Double> doubles = movePacket.getDoubles();
 
                     Location loc = entity.getLocation();
