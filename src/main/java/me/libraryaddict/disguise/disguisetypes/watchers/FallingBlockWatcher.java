@@ -54,13 +54,23 @@ public class FallingBlockWatcher extends FlagWatcher {
 
         if (getDisguise().isDisguiseInUse() && getDisguise().getEntity() != null) {
             PacketContainer relMove = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-            StructureModifier<Short> shorts = relMove.getShorts();
+            relMove.getModifier().write(0, getDisguise().getEntity().getEntityId());
+
             Location loc = getDisguise().getEntity().getLocation();
 
-            relMove.getModifier().write(0, getDisguise().getEntity().getEntityId());
-            shorts.write(0, conRel(loc.getX(), loc.getBlockX() + 0.5));
-            shorts.write(1, conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
-            shorts.write(2, conRel(loc.getZ(), loc.getBlockZ() + 0.5));
+            if (NmsVersion.v1_14.isSupported()) {
+                StructureModifier<Short> shorts = relMove.getShorts();
+
+                shorts.write(0, conRel(loc.getX(), loc.getBlockX() + 0.5));
+                shorts.write(1, conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
+                shorts.write(2, conRel(loc.getZ(), loc.getBlockZ() + 0.5));
+            } else {
+                StructureModifier<Integer> ints = relMove.getIntegers();
+
+                ints.write(0, (int) conRel(loc.getX(), loc.getBlockX() + 0.5));
+                ints.write(1, (int) conRel(loc.getY(), loc.getBlockY() + (loc.getY() % 1 >= 0.85 ? 1 : loc.getY() % 1 >= 0.35 ? .5 : 0)));
+                ints.write(2, (int) conRel(loc.getZ(), loc.getBlockZ() + 0.5));
+            }
 
             try {
                 for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
