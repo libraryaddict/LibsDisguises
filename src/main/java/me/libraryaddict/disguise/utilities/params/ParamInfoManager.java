@@ -58,6 +58,10 @@ public class ParamInfoManager {
     }
 
     public static ParamInfo getParamInfo(Class c) {
+        if (c.isAnonymousClass()) {
+            c = c.getSuperclass();
+        }
+
         for (ParamInfo info : getParamInfos()) {
             if (!info.isParam(c)) {
                 continue;

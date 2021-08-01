@@ -133,7 +133,7 @@ public class ParamInfoTypes {
                 "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
                         "etc. 30m20secs = 30 minutes, 20 seconds"));
 
-        paramInfos.add(new ParamInfoEnum(ChatColor.class, "ChatColor", "A chat color"));
+        paramInfos.add(new ParamInfoChatColor(ChatColor.class, "ChatColor", "A chat color"));
         paramInfos.add(new ParamInfoEnum(GolemCrack.class, "Golem Cracked", "The stage a golem has been cracked"));
 
         // Register base types
