@@ -358,8 +358,7 @@ public abstract class Disguise {
 
         removeBossBar();
 
-        BossBar bar = Bukkit.createBossBar(getBossBar(),
-                BaseComponent.toLegacyText(DisguiseUtilities.getColoredChat(LibsMsg.ACTION_BAR_MESSAGE.get(getDisguiseName()))), getBossBarColor(),
+        BossBar bar = Bukkit.createBossBar(getBossBar(), BaseComponent.toLegacyText(LibsMsg.ACTION_BAR_MESSAGE.getBase(getDisguiseName())), getBossBarColor(),
                 getBossBarStyle());
         bar.setProgress(1);
         bar.addPlayer((Player) getEntity());
@@ -378,7 +377,7 @@ public abstract class Disguise {
     protected void doActionBar() {
         if (getNotifyBar() == DisguiseConfig.NotifyBar.ACTION_BAR && getEntity() instanceof Player && !getEntity().hasPermission("libsdisguises.noactionbar") &&
                 DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
-            ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR, LibsMsg.ACTION_BAR_MESSAGE.getChat(getDisguiseName()));
+            ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR, LibsMsg.ACTION_BAR_MESSAGE.getBase(getDisguiseName()));
         }
 
         if (isDynamicName()) {

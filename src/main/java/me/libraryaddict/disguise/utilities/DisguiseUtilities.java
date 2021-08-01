@@ -2496,7 +2496,7 @@ public class DisguiseUtilities {
     }
 
     public static void sendMessage(CommandSender sender, LibsMsg msg, Object... args) {
-        BaseComponent[] components = msg.getChat(args);
+        BaseComponent[] components = msg.getBase(args);
 
         if (components.length > 0) {
             sender.spigot().sendMessage(components);

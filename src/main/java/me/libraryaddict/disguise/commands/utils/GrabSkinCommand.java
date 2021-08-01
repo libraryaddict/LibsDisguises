@@ -123,7 +123,7 @@ public class GrabSkinCommand implements CommandExecutor {
                 int msg = 1;
 
                 //if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY.get()));
+                ComponentBuilder builder = new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY.getBase());
 
                 while (start < string.length()) {
                     int end = Math.min(256, string.length() - start);
@@ -133,16 +133,17 @@ public class GrabSkinCommand implements CommandExecutor {
                     builder.append(" ");
 
                     if (string.length() <= 256) {
-                        builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY_DATA.get()));
+                        builder.append(LibsMsg.CLICK_TO_COPY_DATA.getBase());
                     } else {
                         builder.reset();
-                        builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(msg)));
+                        builder.append(LibsMsg.CLICK_COPY.getBase(msg));
                     }
 
                     start += end;
 
                     builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + " " + msg).create()));
+                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append(" " + msg).create()));
                     msg += 1;
                 }
 

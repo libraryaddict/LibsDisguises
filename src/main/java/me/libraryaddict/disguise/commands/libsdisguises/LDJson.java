@@ -96,7 +96,7 @@ public class LDJson implements LDCommand {
         int start = 0;
         int msg = 1;
 
-        ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(prefix.get()));
+        ComponentBuilder builder = new ComponentBuilder("").append(prefix.getBase());
 
         while (start < string.length()) {
             int end = Math.min(256, string.length() - start);
@@ -106,17 +106,17 @@ public class LDJson implements LDCommand {
             builder.append(" ");
 
             if (string.length() <= 256) {
-                builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_TO_COPY_DATA.get()));
+                builder.append(LibsMsg.CLICK_TO_COPY_DATA.getBase());
             } else {
                 builder.reset();
-                builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(msg)));
+                builder.append(LibsMsg.CLICK_COPY.getBase(msg));
             }
 
             start += end;
 
             builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
             builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + (string.length() <= 256 ? "" : " " + msg))
+                    new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append((string.length() <= 256 ? "" : " " + msg))
                             .create()));
             msg += 1;
         }

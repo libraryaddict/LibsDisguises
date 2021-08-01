@@ -33,7 +33,9 @@ public class CopyDisguiseCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player && !sender.isOp() &&
                 (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            sender.sendMessage(ChatColor.RED +
+                    "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
+                    "non-admin usage!");
             return true;
         }
 
@@ -51,8 +53,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
                 if (args[0].contains("-")) {
                     try {
                         target = Bukkit.getEntity(UUID.fromString(args[0]));
-                    }
-                    catch (Exception ignored) {
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -67,8 +68,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
 
         if (disguise == null) {
             LibsDisguises.getInstance().getListener()
-                    .addInteraction(sender.getName(), new CopyDisguiseInteraction(this),
-                            DisguiseConfig.getDisguiseEntityExpire());
+                    .addInteraction(sender.getName(), new CopyDisguiseInteraction(this), DisguiseConfig.getDisguiseEntityExpire());
 
             LibsMsg.DISGUISECOPY_INTERACT.send(sender, DisguiseConfig.getDisguiseEntityExpire());
             return true;
@@ -79,8 +79,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
         sendMessage(sender, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
 
         if (disguise instanceof PlayerDisguise) {
-            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY,
-                    DisguiseParser.parseToString(disguise), true);
+            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY, DisguiseParser.parseToString(disguise), true);
         }
 
         DisguiseUtilities.setCopyDisguiseCommandUsed();
@@ -94,7 +93,7 @@ public class CopyDisguiseCommand implements CommandExecutor {
             return;
         }*/
 
-        ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(msg.get())).append(" ");
+        ComponentBuilder builder = new ComponentBuilder("").append(msg.getBase()).append(" ");
 
         if (string.length() > 256 || forceAbbrev) {
             String[] split = DisguiseUtilities.split(string);
@@ -136,18 +135,17 @@ public class CopyDisguiseCommand implements CommandExecutor {
 
                 sections++;
 
-                builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(sections)));
+                builder.append(LibsMsg.CLICK_COPY.getBase(sections));
                 builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, current.toString()));
                 builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get() + " " + sections).create()));
+                        new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append(" " + sections).create()));
 
                 current = new StringBuilder();
             }
         } else {
-            builder.append(TextComponent.fromLegacyText(LibsMsg.CLICK_COPY.get(string)));
+            builder.append(LibsMsg.CLICK_COPY.getBase(string));
             builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, string));
-            builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder(LibsMsg.CLICK_TO_COPY_HOVER.get()).create()));
+            builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, LibsMsg.CLICK_TO_COPY_HOVER.getBase()));
         }
 
         sender.spigot().sendMessage(builder.create());

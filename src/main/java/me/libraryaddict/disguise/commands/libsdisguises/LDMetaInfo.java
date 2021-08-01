@@ -48,7 +48,7 @@ public class LDMetaInfo implements LDCommand {
             names.sort(String::compareToIgnoreCase);
 
            // if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").append(TextComponent.fromLegacyText(LibsMsg.META_VALUES.get()));
+                ComponentBuilder builder = new ComponentBuilder("").append(LibsMsg.META_VALUES.getBase());
 
                 Iterator<String> itel = names.iterator();
 
@@ -57,10 +57,10 @@ public class LDMetaInfo implements LDCommand {
 
                     builder.append(TextComponent.fromLegacyText(name));
                     builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/libsdisguises metainfo " + name));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(LibsMsg.META_CLICK_SHOW.get(name))));
+                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, LibsMsg.META_CLICK_SHOW.getBase(name)));
 
                     if (itel.hasNext()) {
-                        builder.append(TextComponent.fromLegacyText(LibsMsg.META_VALUE_SEPERATOR.get()));
+                        builder.append(LibsMsg.META_VALUE_SEPERATOR.getBase());
                     }
                 }
 

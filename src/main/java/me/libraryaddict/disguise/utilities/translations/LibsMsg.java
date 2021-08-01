@@ -316,14 +316,13 @@ public enum LibsMsg {
         return string;
     }
 
-    public BaseComponent[] getChat(Object... strings) {
-        String string = get(strings);
-
-        return DisguiseUtilities.getColoredChat(string);
-    }
-
     public void send(CommandSender player, Object... strings) {
         DisguiseUtilities.sendMessage(player, this, strings);
+    }
+
+    @Deprecated
+    public BaseComponent[] getBase(Object... strings) {
+        return DisguiseUtilities.getColoredChat(get(strings));
     }
 
     @Deprecated
