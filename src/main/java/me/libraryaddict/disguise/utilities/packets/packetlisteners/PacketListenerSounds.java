@@ -64,7 +64,7 @@ public class PacketListenerSounds extends PacketAdapter {
         SoundType soundType = null;
 
         Entity disguisedEntity = null;
-        SoundGroup entitySound = null;
+        SoundGroup soundGroup = null;
         Object soundEffectObj = mods.read(0);
 
         Disguise disguise = null;
@@ -93,16 +93,15 @@ public class PacketListenerSounds extends PacketAdapter {
 
                 disguise = entityDisguise;
                 disguisedEntity = entity;
-                entitySound = SoundGroup.getGroup(entity.getType().name());
+                soundGroup = SoundGroup.getGroup(entity.getType().name());
 
-                if (entitySound == null) {
-                    event.setCancelled(true);
-                    continue;
+                if (soundGroup.getSound(soundEffectObj) == null) {
+                    return;
                 }
 
                 if ((!(entity instanceof LivingEntity)) || ((LivingEntity) entity).getHealth() > 0) {
                     boolean hasInvun = ReflectionManager.hasInvul(entity);
-                    soundType = entitySound.getType(soundEffectObj, !hasInvun);
+                    soundType = soundGroup.getType(soundEffectObj, !hasInvun);
                 } else {
                     soundType = SoundType.DEATH;
                 }
@@ -143,7 +142,7 @@ public class PacketListenerSounds extends PacketAdapter {
         float pitch = (float) mods.read(6);
 
         // If the volume is the default
-        if (volume == entitySound.getDamageAndIdleSoundVolume()) {
+        if (volume == soundGroup.getDamageAndIdleSoundVolume()) {
             volume = disguiseSound.getDamageAndIdleSoundVolume();
         }
 
