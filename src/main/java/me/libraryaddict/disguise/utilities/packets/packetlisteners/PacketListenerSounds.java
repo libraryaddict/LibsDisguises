@@ -108,8 +108,7 @@ public class PacketListenerSounds extends PacketAdapter {
                 }
             }
 
-            if (disguise != null && disguise.isSoundsReplaced() &&
-                    (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
+            if (disguise != null && disguise.isSoundsReplaced() && (disguise.isSelfDisguiseSoundsReplaced() || disguisedEntity != observer)) {
                 Object sound = null;
 
                 SoundGroup disguiseSound = SoundGroup.getGroup(disguise);
@@ -133,8 +132,7 @@ public class PacketListenerSounds extends PacketAdapter {
                         }
 
                         // Here I assume its the default pitch as I can't calculate if its real.
-                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity &&
-                                ((MobDisguise) disguise).doesDisguiseAge()) {
+                        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
                             boolean baby = false;
 
                             if (disguisedEntity instanceof Zombie) {
@@ -150,16 +148,14 @@ public class PacketListenerSounds extends PacketAdapter {
                                         return;
                                     }
 
-                                    pitch = (DisguiseUtilities.random.nextFloat() -
-                                            DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
+                                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
                                 } else {
                                     // If the pitch is not the expected
                                     if (pitch < 1 || pitch > 1.2) {
                                         return;
                                     }
 
-                                    pitch = (DisguiseUtilities.random.nextFloat() -
-                                            DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+                                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                                 }
                             }
                         }
@@ -201,8 +197,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
             Entity entity = disguise.getEntity();
 
-            if (!disguise.getType().isPlayer() &&
-                    (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
+            if (!disguise.getType().isPlayer() && (disguise.isSelfDisguiseSoundsReplaced() || entity != event.getPlayer())) {
                 SoundGroup disSound = SoundGroup.getGroup(entity.getType().name());
 
                 if (disSound == null) {
@@ -216,8 +211,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     soundType = SoundType.DEATH;
                 }
 
-                if (disSound.getSound(soundType) == null ||
-                        (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
+                if (disSound.getSound(soundType) == null || (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer())) {
                     if (disguise.isSelfDisguiseSoundsReplaced() && entity == event.getPlayer()) {
                         cancelSound = !cancelSound;
 
@@ -234,8 +228,7 @@ public class PacketListenerSounds extends PacketAdapter {
                         if (sound != null) {
                             Location loc = entity.getLocation();
                             PacketContainer packet = new PacketContainer(
-                                    sound.getClass().getSimpleName().equals("MinecraftKey") ?
-                                            Server.CUSTOM_SOUND_EFFECT : Server.NAMED_SOUND_EFFECT);
+                                    sound.getClass().getSimpleName().equals("MinecraftKey") ? Server.CUSTOM_SOUND_EFFECT : Server.NAMED_SOUND_EFFECT);
 
                             mods = packet.getModifier();
 
@@ -249,24 +242,14 @@ public class PacketListenerSounds extends PacketAdapter {
                             float pitch;
 
                             if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) *
-                                        0.2F + 1.5F;
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
                             } else {
-                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) *
-                                        0.2F + 1.0F;
+                                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                             }
 
                             if (disguise.getType() == DisguiseType.BAT) {
                                 pitch *= 0.95F;
                             }
-
-                         /*   pitch *= 63;
-
-                            if (pitch < 0)
-                                pitch = 0;
-
-                            if (pitch > 255)
-                                pitch = 255;*/
 
                             mods.write(6, pitch);
 
