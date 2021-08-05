@@ -17,7 +17,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
@@ -39,11 +41,9 @@ public class PacketListenerSounds extends PacketAdapter {
         if (event.isCancelled()) {
             return;
         }
-
         if (event.isAsync()) {
             return;
         }
-
         if (event.getPlayer().getName().contains("UNKNOWN[")) {
             return;
         }
@@ -147,32 +147,11 @@ public class PacketListenerSounds extends PacketAdapter {
             volume = disguiseSound.getDamageAndIdleSoundVolume();
         }
 
-        // Here I assume its the default pitch as I can't calculate if its real.
         if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
-            boolean baby = false;
-
-            if (disguisedEntity instanceof Zombie) {
-                baby = ((Zombie) disguisedEntity).isBaby();
-            } else if (disguisedEntity instanceof Ageable) {
-                baby = !((Ageable) disguisedEntity).isAdult();
-            }
-
-            if (((MobDisguise) disguise).isAdult() == baby) {
-                if (baby) {
-                    // If the pitch is not the expected
-                    if (pitch < 1.5 || pitch > 1.7) {
-                        return;
-                    }
-
-                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
-                } else {
-                    // If the pitch is not the expected
-                    if (pitch < 1 || pitch > 1.2) {
-                        return;
-                    }
-
-                    pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
-                }
+            if (((MobDisguise) disguise).isAdult()) {
+                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+            } else {
+                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.4F;
             }
         }
 
@@ -249,6 +228,7 @@ public class PacketListenerSounds extends PacketAdapter {
         }
 
         if (disSound.getSound(soundType) != null) {
+
             disSound = SoundGroup.getGroup(disguise);
 
             if (disSound != null) {
@@ -271,7 +251,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     float pitch;
 
                     if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.5F;
+                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.4F;
                     } else {
                         pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
                     }
@@ -293,4 +273,3 @@ public class PacketListenerSounds extends PacketAdapter {
         }
     }
 }
-
