@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.params;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.EndermanWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemBlock;
@@ -48,6 +49,11 @@ public class ParamInfoManager {
     public static ParamInfo getParamInfo(WatcherMethod method) {
         if (method.getName().equals("setSoundGroup")) {
             return getParamInfoSoundGroup();
+        }
+
+        // Enderman can't hold non-blocks
+        if (method.getWatcherClass() == EndermanWatcher.class && method.getName().equalsIgnoreCase("setItemInMainHand")) {
+            return getParamInfoItemBlock();
         }
 
         if (method.getWatcherClass() == FallingBlockWatcher.class && (method.getParam() == Material.class || method.getParam() == ItemStack.class)) {

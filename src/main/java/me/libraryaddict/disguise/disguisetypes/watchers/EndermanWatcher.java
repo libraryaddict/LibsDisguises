@@ -32,12 +32,17 @@ public class EndermanWatcher extends InsentientWatcher {
     }
 
     public void setItemInMainHand(Material type) {
+        if (!type.isBlock()) {
+            return;
+        }
+
         Optional<WrappedBlockData> optional;
 
-        if (type == null)
+        if (type == null) {
             optional = Optional.empty();
-        else
+        } else {
             optional = Optional.of(WrappedBlockData.createData(type));
+        }
 
         setData(MetaIndex.ENDERMAN_ITEM, optional);
         sendData(MetaIndex.ENDERMAN_ITEM);

@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStack;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
@@ -180,6 +181,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
             if (info != null && !info.isParam(boolean.class)) {
                 addMethods = false;
+            }
+
+            // Enderman can't hold non-blocks
+            if (disguisePerm.getType() == DisguiseType.ENDERMAN && prevArg.equalsIgnoreCase("setItemInMainHand")) {
+                info = ParamInfoManager.getParamInfoItemBlock();
             }
         }
 

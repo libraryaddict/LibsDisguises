@@ -31,8 +31,7 @@ import java.util.*;
  */
 public class ParamInfoTypes {
     public ParamInfoItemBlock getParamInfoBlock() {
-        return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
-                "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials());
+        return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material)", "An ItemStack compromised of Material", getMaterials());
     }
 
     public ParamInfoSoundGroup getParamInfoSoundGroup() {
