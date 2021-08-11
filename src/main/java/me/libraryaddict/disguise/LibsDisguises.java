@@ -123,6 +123,10 @@ public class LibsDisguises extends JavaPlugin {
                 getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             }
 
+            if (Bukkit.getVersion().contains("(MC: 1.17)")) {
+                getLogger().severe("Please update from MC 1.17! You should be using 1.17.1!");
+            }
+
             try {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
             } catch (ClassNotFoundException e) {
