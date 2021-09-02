@@ -33,7 +33,7 @@ commands:
     permission: libsdisguises.seecmd.disguiseradius
     description: Disguise all entities within a radius as an entity.
   undisguise:
-    aliases: [u, und, undis, undisg]
+    aliases: [und, undis, undisg]
     permission: libsdisguises.seecmd.undisguise
     description: Undisguise yourself.
   undisguiseentity:
