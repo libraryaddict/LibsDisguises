@@ -6,10 +6,12 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -138,15 +140,18 @@ public class DisguiseAPI {
                 continue;
             }
 
-                watcher.setUnsafeData(index, obj.getRawValue());
+            watcher.setUnsafeData(index, obj.getRawValue());
 
             // Update the meta for 0, otherwise boolean be weird
             if (index == MetaIndex.ENTITY_META) {
                 watcher.setSprinting(watcher.isSprinting() && displayExtraAnimations);
                 watcher.setFlyingWithElytra(watcher.isFlyingWithElytra() && displayExtraAnimations);
-                watcher.setRightClicking(watcher.isRightClicking() && displayExtraAnimations);
                 watcher.setSneaking(watcher.isSneaking() && displayExtraAnimations);
                 watcher.setSwimming(watcher.isSwimming() && displayExtraAnimations);
+
+                if (!NmsVersion.v1_13.isSupported()) {
+                    watcher.setRightClicking(watcher.isRightClicking() && displayExtraAnimations);
+                }
 
                 if (!displayExtraAnimations) {
                     Arrays.fill(watcher.getModifiedEntityAnimations(), false);
@@ -154,6 +159,16 @@ public class DisguiseAPI {
 
                 watcher.setGlowing(watcher.isGlowing());
                 watcher.setInvisible(watcher.isInvisible());
+            } else if (index == MetaIndex.LIVING_META && NmsVersion.v1_13.isSupported()) {
+                LivingWatcher livingWatcher = (LivingWatcher) watcher;
+
+                livingWatcher.setRightClicking(livingWatcher.isRightClicking() && displayExtraAnimations);
+                livingWatcher.setLeftClicking(livingWatcher.isLeftClicking() && displayExtraAnimations);
+                livingWatcher.setSpinning(livingWatcher.isSpinning() && displayExtraAnimations);
+
+                if (!displayExtraAnimations) {
+                    Arrays.fill(livingWatcher.getModifiedLivingAnimations(), false);
+                }
             }
         }
 

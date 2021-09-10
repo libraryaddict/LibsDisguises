@@ -168,7 +168,11 @@ public class FlagWatcher {
         sendHeadPacket();
     }
 
-    private byte addEntityAnimations(byte originalValue, byte entityValue) {
+    protected byte addEntityAnimations(MetaIndex index, byte originalValue, byte entityValue) {
+        if (index != MetaIndex.ENTITY_META) {
+            return originalValue;
+        }
+
         for (int i = 0; i < 6; i++) {
             if ((entityValue & 1 << i) != 0 && !modifiedEntityAnimations[i]) {
                 originalValue = (byte) (originalValue | 1 << i);
@@ -294,10 +298,12 @@ public class FlagWatcher {
             }
 
             if (value != null) {
-                if (isEntityAnimationsAdded() && id == MetaIndex.ENTITY_META.getIndex()) {
-                    value = addEntityAnimations((byte) value, (byte) watch.getRawValue());
+                if (isEntityAnimationsAdded() && (index == MetaIndex.ENTITY_META || index == MetaIndex.LIVING_META)) {
+                    value = addEntityAnimations(index, (byte) value, (byte) watch.getRawValue());
 
-                    doSneakCheck((Byte) value);
+                    if (index == MetaIndex.ENTITY_META) {
+                        doSneakCheck((Byte) value);
+                    }
                 }
 
                 boolean isDirty = watch.getDirtyState();
@@ -835,8 +841,8 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() && data == MetaIndex.ENTITY_META) {
-                value = addEntityAnimations((byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() && (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
+                value = addEntityAnimations(data, (byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
 
             WrappedWatchableObject watch = ReflectionManager.createWatchable(data, value);

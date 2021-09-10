@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -25,6 +26,8 @@ public class LivingWatcher extends FlagWatcher {
     private double maxHealth;
     private boolean maxHealthSet;
     private HashSet<String> potionEffects = new HashSet<>();
+    @Getter
+    private boolean[] modifiedLivingAnimations = new boolean[3];
 
     public LivingWatcher(Disguise disguise) {
         super(disguise);
@@ -36,6 +39,7 @@ public class LivingWatcher extends FlagWatcher {
         clone.potionEffects = (HashSet<String>) potionEffects.clone();
         clone.maxHealth = maxHealth;
         clone.maxHealthSet = maxHealthSet;
+        clone.modifiedLivingAnimations = Arrays.copyOf(modifiedLivingAnimations, modifiedLivingAnimations.length);
 
         return clone;
     }
@@ -79,29 +83,56 @@ public class LivingWatcher extends FlagWatcher {
     }*/
 
     private boolean getHandFlag(int byteValue) {
-        return (getData(MetaIndex.LIVING_HAND) & 1 << byteValue) != 0;
+        return (getData(MetaIndex.LIVING_META) & 1 << byteValue) != 0;
     }
 
     private void setHandFlag(int byteValue, boolean flag) {
-        byte b0 = getData(MetaIndex.LIVING_HAND);
+        byte b0 = getData(MetaIndex.LIVING_META);
+        modifiedLivingAnimations[byteValue] = true;
 
         if (flag) {
-            setData(MetaIndex.LIVING_HAND, (byte) (b0 | 1 << byteValue));
+            setData(MetaIndex.LIVING_META, (byte) (b0 | 1 << byteValue));
         } else {
-            setData(MetaIndex.LIVING_HAND, (byte) (b0 & ~(1 << byteValue)));
+            setData(MetaIndex.LIVING_META, (byte) (b0 & ~(1 << byteValue)));
         }
 
-        sendData(MetaIndex.LIVING_HAND);
+        sendData(MetaIndex.LIVING_META);
+    }
+
+    private boolean isRightHandInUse() {
+        return getHandFlag(1);
+    }
+
+    private void setHandInUse(boolean rightHand) {
+        if (isRightHandInUse() == rightHand) {
+            return;
+        }
+
+        setHandFlag(1, rightHand);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
     public boolean isRightClicking() {
-        return getHandFlag(0);
+        return isRightHandInUse() && getHandFlag(0);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
     public void setRightClicking(boolean setRightClicking) {
+        setHandInUse(true);
+
         setHandFlag(0, setRightClicking);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_13)
+    public boolean isLeftClicking() {
+        return !isRightHandInUse() && getHandFlag(0);
+    }
+
+    @NmsAddedIn(NmsVersion.v1_13)
+    public void setLeftClicking(boolean setLeftClicking) {
+        setHandInUse(false);
+
+        setHandFlag(0, setLeftClicking);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
@@ -261,5 +292,20 @@ public class LivingWatcher extends FlagWatcher {
     public void setArrowsSticking(int arrowsNo) {
         setData(MetaIndex.LIVING_ARROWS, Math.max(0, Math.min(127, arrowsNo)));
         sendData(MetaIndex.LIVING_ARROWS);
+    }
+
+    @Override
+    protected byte addEntityAnimations(MetaIndex index, byte originalValue, byte entityValue) {
+        if (index != MetaIndex.LIVING_META) {
+            return super.addEntityAnimations(index, originalValue, entityValue);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if ((entityValue & 1 << i) != 0 && !modifiedLivingAnimations[i]) {
+                originalValue = (byte) (originalValue | 1 << i);
+            }
+        }
+
+        return originalValue;
     }
 }

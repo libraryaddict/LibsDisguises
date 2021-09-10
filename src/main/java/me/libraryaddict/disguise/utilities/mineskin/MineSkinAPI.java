@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.utilities.mineskin;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.SkinUtils;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -65,11 +66,11 @@ public class MineSkinAPI {
     }
 
     private void printDebug(String message) {
-        if (!isDebugging()) {
+        if (!isDebugging() || LibsDisguises.getInstance() == null) {
             return;
         }
 
-        System.out.println("[MineSkinAPI] " + message);
+        LibsDisguises.getInstance().getLogger().info("[MineSkinAPI] " + message);
     }
 
     private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file, SkinUtils.ModelType modelType) {

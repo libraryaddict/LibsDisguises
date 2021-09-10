@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
@@ -80,14 +81,14 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
             }
 
-            if (disguise.getWatcher().isRightClicking() && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
+            if ((disguise.getWatcher().isRightClicking() || (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isLeftClicking())) && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
                     List<WrappedWatchableObject> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
                         WrappedWatchableObject watch = ReflectionManager
-                                .createWatchable(MetaIndex.LIVING_HAND, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_HAND.getIndex()));
+                                .createWatchable(MetaIndex.LIVING_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
 
                         if (watch != null) {
                             list.add(watch);
@@ -96,7 +97,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
                         list = disguise.getWatcher().convert(observer, list);
                     } else {
                         for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
-                            if (obj.getIndex() == MetaIndex.LIVING_HAND.getIndex()) {
+                            if (obj.getIndex() == MetaIndex.LIVING_META.getIndex()) {
                                 list.add(obj);
                                 break;
                             }
@@ -151,7 +152,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
             equipPacket.getModifier().write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
         }
 
-        if (disguise.getWatcher().isRightClicking() && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
+        if ((disguise.getWatcher().isRightClicking() || (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isLeftClicking())) && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
             if (itemStack == null) {
                 itemStack = packets.getPackets().get(0).getItemModifier().read(0);
             }
@@ -159,7 +160,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
             if (itemStack != null && itemStack.getType() != Material.AIR) {
                 // Convert the datawatcher
                 List<WrappedWatchableObject> list = new ArrayList<>();
-                MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_HAND : MetaIndex.ENTITY_META;
+                MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
 
                 if (DisguiseConfig.isMetaPacketsEnabled()) {
                     WrappedWatchableObject watch =
