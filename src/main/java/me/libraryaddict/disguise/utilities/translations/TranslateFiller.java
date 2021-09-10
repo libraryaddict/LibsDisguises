@@ -59,7 +59,7 @@ public class TranslateFiller {
                 continue;
             }
 
-            for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass())) {
+            for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(type.getWatcherClass(), true)) {
                 Class para = method.getParam();
                 String className = method.getWatcherClass().getSimpleName().replace("Watcher", "");
 

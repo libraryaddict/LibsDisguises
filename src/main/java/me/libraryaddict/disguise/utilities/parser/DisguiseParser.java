@@ -64,7 +64,7 @@ public class DisguiseParser {
 
                 FlagWatcher watcher = type.getWatcherClass().getConstructor(Disguise.class).newInstance(disguise);
 
-                WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(watcher.getClass());
+                WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(watcher.getClass(), true);
 
                 for (WatcherMethod setMethod : methods) {
                     // Invalidate methods that can't be handled normally
@@ -939,7 +939,7 @@ public class DisguiseParser {
 
     public static void callMethods(CommandSender sender, Disguise disguise, DisguisePermissions disguisePermission, DisguisePerm disguisePerm,
                                    Collection<String> usedOptions, String[] args, String permNode) throws Throwable {
-        WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
+        WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguise.getWatcher().getClass(), true);
         List<String> list = new ArrayList<>(Arrays.asList(args));
         HashMap<String, HashMap<String, Boolean>> disguiseOptions = getDisguiseOptions(sender, permNode, disguisePerm);
 

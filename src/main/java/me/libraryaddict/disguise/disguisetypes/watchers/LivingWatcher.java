@@ -111,25 +111,27 @@ public class LivingWatcher extends FlagWatcher {
         setHandFlag(1, rightHand);
     }
 
+    @Override
     @NmsAddedIn(NmsVersion.v1_13)
-    public boolean isRightClicking() {
+    public boolean isRightHandRaised() {
         return isRightHandInUse() && getHandFlag(0);
     }
 
+    @Override
     @NmsAddedIn(NmsVersion.v1_13)
-    public void setRightClicking(boolean setRightClicking) {
+    public void setRightHandRaised(boolean setRightClicking) {
         setHandInUse(true);
 
         setHandFlag(0, setRightClicking);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
-    public boolean isLeftClicking() {
+    public boolean isLeftHandRaised() {
         return !isRightHandInUse() && getHandFlag(0);
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
-    public void setLeftClicking(boolean setLeftClicking) {
+    public void setLeftHandRaised(boolean setLeftClicking) {
         setHandInUse(false);
 
         setHandFlag(0, setLeftClicking);
@@ -307,5 +309,17 @@ public class LivingWatcher extends FlagWatcher {
         }
 
         return originalValue;
+    }
+
+    @Deprecated
+    @NmsAddedIn(NmsVersion.v1_12)
+    public boolean isRightClicking() {
+        return isRightHandRaised();
+    }
+
+    @Deprecated
+    @NmsAddedIn(NmsVersion.v1_12)
+    public void setRightClicking(boolean rightClicking) {
+        setRightHandRaised(rightClicking);
     }
 }

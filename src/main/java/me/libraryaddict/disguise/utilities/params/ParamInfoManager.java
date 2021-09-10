@@ -106,11 +106,19 @@ public class ParamInfoManager {
     }
 
     public static WatcherMethod[] getDisguiseWatcherMethods(@Nullable Class<? extends FlagWatcher> watcherClass) {
+        return getDisguiseWatcherMethods(watcherClass, false);
+    }
+
+    public static WatcherMethod[] getDisguiseWatcherMethods(@Nullable Class<? extends FlagWatcher> watcherClass, boolean includeIgnored) {
         if (watcherClass == null) {
             return new WatcherMethod[0];
         }
 
         ArrayList<WatcherMethod> methods = new ArrayList<>(disguiseMethods.getMethods(watcherClass));
+
+        if (!includeIgnored) {
+            methods.removeIf(WatcherMethod::isHideFromTab);
+        }
 
         // Order first by their declaring class, the top class (SheepWatcher) goes before (FlagWatcher)
         // Order methods in the same watcher by their name from A to Z
@@ -124,8 +132,6 @@ public class ParamInfoManager {
 
             return String.CASE_INSENSITIVE_ORDER.compare(m1.getName(), m2.getName());
         });
-
-
 
         return methods.toArray(new WatcherMethod[0]);
     }

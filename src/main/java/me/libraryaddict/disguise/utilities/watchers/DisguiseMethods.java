@@ -84,7 +84,7 @@ public class DisguiseMethods {
                     continue;
                 }
 
-                if (info.isDeprecated() && info.getRemoved() < 0) {
+                if (info.isDeprecated() && info.getAdded() != 0 && info.getRemoved() < 0) {
                     continue;
                 }
 
@@ -103,7 +103,7 @@ public class DisguiseMethods {
 
                 MethodHandle method = MethodHandles.publicLookup().findVirtual(watcher, info.getMethod(), type);
 
-                WatcherMethod m = new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault());
+                WatcherMethod m = new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault(), info.isDeprecated() && info.getAdded() ==0);
 
                 methods.add(m);
 
@@ -155,7 +155,7 @@ public class DisguiseMethods {
                         try {
                             WatcherMethod method = new WatcherMethod(disguiseClass,
                                     MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)), methodName,
-                                    null, cl, randomDefault);
+                                    null, cl, randomDefault, false);
 
                             methods.add(method);
 
@@ -166,7 +166,7 @@ public class DisguiseMethods {
 
                             WatcherMethod getMethod = new WatcherMethod(disguiseClass,
                                     MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName, cl, null,
-                                    randomDefault);
+                                    randomDefault, false);
 
                             methods.add(getMethod);
                             break;
