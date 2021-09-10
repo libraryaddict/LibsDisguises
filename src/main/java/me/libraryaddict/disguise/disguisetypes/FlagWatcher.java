@@ -20,7 +20,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -764,22 +763,22 @@ public class FlagWatcher {
     @Deprecated
     @NmsAddedIn(NmsVersion.v1_12)
     public boolean isRightClicking() {
-        return isRightHandRaised();
+        return isMainHandRaised();
     }
 
     @Deprecated
     @NmsAddedIn(NmsVersion.v1_12)
     public void setRightClicking(boolean rightClicking) {
-        setRightHandRaised(rightClicking);
+        setMainHandRaised(rightClicking);
     }
 
     //@NmsRemovedIn(val = NmsVersion.v1_13)
-    public boolean isRightHandRaised() {
+    public boolean isMainHandRaised() {
         return !NmsVersion.v1_13.isSupported() && getEntityFlag(4);
     }
 
     //@NmsRemovedIn(val = NmsVersion.v1_13)
-    public void setRightHandRaised(boolean setRightClicking) {
+    public void setMainHandRaised(boolean setRightClicking) {
         if (NmsVersion.v1_13.isSupported()) {
             return;
         }

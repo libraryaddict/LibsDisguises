@@ -150,7 +150,7 @@ public class DisguiseAPI {
                 watcher.setSwimming(watcher.isSwimming() && displayExtraAnimations);
 
                 if (!NmsVersion.v1_13.isSupported()) {
-                    watcher.setRightHandRaised(watcher.isRightHandRaised() && displayExtraAnimations);
+                    watcher.setMainHandRaised(watcher.isMainHandRaised() && displayExtraAnimations);
                 }
 
                 if (!displayExtraAnimations) {
@@ -162,8 +162,8 @@ public class DisguiseAPI {
             } else if (index == MetaIndex.LIVING_META && NmsVersion.v1_13.isSupported()) {
                 LivingWatcher livingWatcher = (LivingWatcher) watcher;
 
-                livingWatcher.setRightHandRaised(livingWatcher.isRightHandRaised() && displayExtraAnimations);
-                livingWatcher.setLeftHandRaised(livingWatcher.isLeftHandRaised() && displayExtraAnimations);
+                livingWatcher.setMainHandRaised(livingWatcher.isMainHandRaised() && displayExtraAnimations);
+                livingWatcher.setOffhandRaised(livingWatcher.isOffhandRaised() && displayExtraAnimations);
                 livingWatcher.setSpinning(livingWatcher.isSpinning() && displayExtraAnimations);
 
                 if (!displayExtraAnimations) {

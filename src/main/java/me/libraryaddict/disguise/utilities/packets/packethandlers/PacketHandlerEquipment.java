@@ -81,14 +81,16 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
             }
 
-            if ((disguise.getWatcher().isRightHandRaised() || (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isLeftHandRaised())) && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
+            if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
+                    (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
+                            slot == EquipmentSlot.OFF_HAND)) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
                     List<WrappedWatchableObject> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WrappedWatchableObject watch = ReflectionManager
-                                .createWatchable(MetaIndex.LIVING_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
+                        WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.LIVING_META,
+                                WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
 
                         if (watch != null) {
                             list.add(watch);
@@ -152,7 +154,9 @@ public class PacketHandlerEquipment implements IPacketHandler {
             equipPacket.getModifier().write(2, ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack));
         }
 
-        if ((disguise.getWatcher().isRightHandRaised() || (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isLeftHandRaised())) && (slot == EquipmentSlot.HAND || slot == EquipmentSlot.OFF_HAND)) {
+        if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
+                (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
+                        slot == EquipmentSlot.OFF_HAND)) {
             if (itemStack == null) {
                 itemStack = packets.getPackets().get(0).getItemModifier().read(0);
             }
