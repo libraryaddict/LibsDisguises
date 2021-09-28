@@ -48,7 +48,7 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     public boolean isMarker() {
-        return getArmorStandFlag(10);
+        return getArmorStandFlag(16);
     }
 
     public boolean isNoBasePlate() {
