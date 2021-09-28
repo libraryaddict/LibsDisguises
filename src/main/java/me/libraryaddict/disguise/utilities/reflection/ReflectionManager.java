@@ -879,7 +879,7 @@ public class ReflectionManager {
         bb.put(6, (byte) (bb.get(6) & 0x0f));  // clear version
         bb.put(6, (byte) (bb.get(6) | DisguiseConfig.getUUIDGeneratedVersion()));  // set to version X (Default 4)
 
-        bb.position(0);
+        bb.rewind();
 
         long firstLong = bb.getLong();
         long secondLong = bb.getLong();
