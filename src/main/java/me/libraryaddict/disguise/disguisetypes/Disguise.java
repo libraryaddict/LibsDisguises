@@ -796,7 +796,9 @@ public abstract class Disguise {
             getEntity().removeMetadata("LastDisguise", LibsDisguises.getInstance());
         }
 
-        getEntity().setMetadata("LastDisguise", new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
+        if (DisguiseConfig.getPvPTimer() > 0) {
+            getEntity().setMetadata("LastDisguise", new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
+        }
 
         if (NmsVersion.v1_13.isSupported()) {
             removeBossBar();
