@@ -871,20 +871,7 @@ public class ReflectionManager {
             return uuid;
         }
 
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-
-        bb.put(6, (byte) (bb.get(6) & 0x0f));  // clear version
-        bb.put(6, (byte) (bb.get(6) | DisguiseConfig.getUUIDGeneratedVersion()));  // set to version X (Default 4)
-
-        bb.rewind();
-
-        long firstLong = bb.getLong();
-        long secondLong = bb.getLong();
-
-        return new UUID(firstLong, secondLong);
+        return new UUID((uuid.getMostSignificantBits() & ~(4 << 12)) | ((long) DisguiseConfig.getUUIDGeneratedVersion() << 12), uuid.getLeastSignificantBits());
     }
 
     private static String getLocation(String pack, String className) {
@@ -1115,9 +1102,8 @@ public class ReflectionManager {
         try {
             Location loc = entity.getLocation();
 
-            Object boundingBox = boundingBoxConstructor
-                    .newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2), loc.getX() + (newBox.getX() / 2),
-                            loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
+            Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
+                    loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         } catch (Exception ex) {
@@ -1825,8 +1811,8 @@ public class ReflectionManager {
                     watcherClass = PufferFishWatcher.class;
                     break;
                 default:
-                    watcherClass = (Class<? extends FlagWatcher>) Class
-                            .forName("me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
+                    watcherClass = (Class<? extends FlagWatcher>) Class.forName(
+                            "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
                     break;
             }
         } catch (ClassNotFoundException ex) {
