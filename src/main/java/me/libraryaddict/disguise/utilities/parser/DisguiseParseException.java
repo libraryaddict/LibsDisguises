@@ -1,19 +1,27 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.command.CommandSender;
 
 /**
  * Created by libraryaddict on 7/09/2018.
  */
+@Getter
 public class DisguiseParseException extends Exception {
     private static final long serialVersionUID = 1276971370793124510L;
+    private LibsMsg msg;
+    private String[] params;
 
     public DisguiseParseException() {
         super();
     }
 
     public DisguiseParseException(LibsMsg message, String... params) {
-        super(message.get(params));
+        super(message.getVanillaFormat(params));
+
+        this.msg = message;
+        this.params = params;
     }
 
     public DisguiseParseException(String message) {
@@ -26,5 +34,13 @@ public class DisguiseParseException extends Exception {
 
     public DisguiseParseException(Throwable throwable) {
         super(throwable);
+    }
+
+    public void send(CommandSender sender) {
+        if (this.getMsg() == null) {
+            return;
+        }
+
+        this.msg.send(sender, (Object[]) params);
     }
 }

@@ -72,7 +72,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                 LibsMsg.CUSTOM_DISGUISE_SAVED.send(sender, name);
             } catch (DisguiseParseException e) {
                 if (e.getMessage() != null) {
-                    DisguiseUtilities.sendMessage(sender, e.getMessage());
+                    e.send(sender);
                 } else {
                     LibsMsg.PARSE_CANT_LOAD.send(sender);
                 }
@@ -171,7 +171,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
             DisguiseUtilities.setSaveDisguiseCommandUsed();
         } catch (DisguiseParseException e) {
             if (e.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, e.getMessage());
+                e.send(sender);
             } else {
                 LibsMsg.PARSE_CANT_LOAD.send(sender);
             }

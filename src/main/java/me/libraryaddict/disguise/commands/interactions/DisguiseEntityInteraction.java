@@ -38,10 +38,7 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         try {
             disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs, DisguiseParser.getPermissions(p, "disguiseentity"));
         } catch (DisguiseParseException e) {
-            if (e.getMessage() != null) {
-                DisguiseUtilities.sendMessage(p, e.getMessage());
-            }
-
+            e.send(p);
             return;
         } catch (Throwable e) {
             e.printStackTrace();

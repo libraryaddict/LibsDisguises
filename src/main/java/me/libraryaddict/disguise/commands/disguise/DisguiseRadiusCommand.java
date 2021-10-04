@@ -215,9 +215,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                 LibsMsg.DRADIUS_MISCDISG.send(sender, miscDisguises);
             }
         } catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, ex.getMessage());
-            }
+            ex.send(sender);
         } catch (Throwable ex) {
             ex.printStackTrace();
         }

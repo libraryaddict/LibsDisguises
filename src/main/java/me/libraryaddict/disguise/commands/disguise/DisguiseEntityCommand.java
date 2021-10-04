@@ -51,9 +51,7 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         try {
             testDisguise = DisguiseParser.parseTestDisguise(sender, getPermNode(), disguiseArgs, getPermissions(sender));
         } catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, ex.getMessage());
-            }
+            ex.send(sender);
 
             return true;
         } catch (Throwable ex) {

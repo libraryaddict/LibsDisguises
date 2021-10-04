@@ -56,9 +56,7 @@ public class DisguiseModifyInteraction implements LibsEntityInteract {
             DisguiseParser.callMethods(p, disguise, perms, disguisePerm, new ArrayList<>(Arrays.asList(options)), options, "DisguiseModifyEntity");
             LibsMsg.LISTENER_MODIFIED_DISG.send(p);
         } catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(p, ex.getMessage());
-            }
+            ex.send(p);
         } catch (Throwable ex) {
             ex.printStackTrace();
         }

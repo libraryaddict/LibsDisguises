@@ -302,6 +302,16 @@ public enum LibsMsg {
         this.string = string;
     }
 
+    public String getVanillaFormat(String[] params) {
+        String raw = get((Object[]) params);
+
+        for (ChatColor c : ChatColor.values()) {
+            raw = raw.replace("<" + c.name().toLowerCase(Locale.ROOT) + ">", "§" + c.getChar());
+        }
+
+        return raw;
+    }
+
     public String getVanillaFormat() {
         String raw = getRaw();
 

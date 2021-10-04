@@ -168,9 +168,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
                 DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs, "DisguiseModifyRadius");
                 modifiedDisguises++;
             } catch (DisguiseParseException ex) {
-                if (ex.getMessage() != null) {
-                    DisguiseUtilities.sendMessage(sender, ex.getMessage());
-                }
+                ex.send(sender);
 
                 return true;
             } catch (Throwable ex) {

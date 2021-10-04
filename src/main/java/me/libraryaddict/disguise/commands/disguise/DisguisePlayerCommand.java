@@ -81,9 +81,7 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         try {
             disguise = DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")), permissions);
         } catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, ex.getMessage());
-            }
+            ex.send(sender);
             return true;
         } catch (Throwable ex) {
             ex.printStackTrace();

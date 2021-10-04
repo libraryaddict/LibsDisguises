@@ -62,9 +62,7 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
                     "DisguiseModify");
         }
         catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, ex.getMessage());
-            }
+            ex.send(sender);
 
             return true;
         }

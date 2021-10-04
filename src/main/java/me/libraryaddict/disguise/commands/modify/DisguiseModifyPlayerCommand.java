@@ -91,9 +91,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
                     "DisguiseModifyPlayer");
         }
         catch (DisguiseParseException ex) {
-            if (ex.getMessage() != null) {
-                DisguiseUtilities.sendMessage(sender, ex.getMessage());
-            }
+            ex.send(sender);
             return true;
         }
 
