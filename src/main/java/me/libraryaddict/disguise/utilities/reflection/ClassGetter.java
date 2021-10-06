@@ -51,19 +51,23 @@ public class ClassGetter {
 
         // Get a File object for the package
         CodeSource src = runFrom.getProtectionDomain().getCodeSource();
-
         if (src != null) {
             URL resource = src.getLocation();
-
-            if (resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".jar")) {
+            boolean isInsideJar = resource.getPath().toLowerCase(Locale.ENGLISH).contains(".jar!") && resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".class");
+            if (resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".jar") || isInsideJar) {
                 processJarfile(resource, pkgname, classes);
             } else {
-                for (File f : new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles()) {
-                    if (f.getName().contains("$")) {
-                        continue;
-                    }
+                File[] baseFileList = new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles();
+                if (baseFileList != null) {
+                    for (File f : baseFileList){
+                        if (f.getName().contains("$")) {
+                            continue;
+                        }
 
-                    classes.add(pkgname + "/" + f.getName());
+                        classes.add(pkgname + "/" + f.getName());
+                    }
+                } else {
+                    System.out.println("File not found for: " + resource.getPath() + "/" + pkgname.replace(".", "/"));
                 }
             }
         }
