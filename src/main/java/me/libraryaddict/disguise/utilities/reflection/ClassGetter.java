@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import org.bukkit.entity.Entity;
 
 import java.io.File;
@@ -51,15 +52,20 @@ public class ClassGetter {
 
         // Get a File object for the package
         CodeSource src = runFrom.getProtectionDomain().getCodeSource();
+
         if (src != null) {
             URL resource = src.getLocation();
-            boolean isInsideJar = resource.getPath().toLowerCase(Locale.ENGLISH).contains(".jar!") && resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".class");
-            if (resource.getPath().toLowerCase(Locale.ENGLISH).endsWith(".jar") || isInsideJar) {
+            String path = resource.getPath().toLowerCase(Locale.ENGLISH);
+
+            boolean isInsideJar = path.endsWith(".jar") || (path.contains(".jar!") && path.endsWith(".class"));
+
+            if (isInsideJar) {
                 processJarfile(resource, pkgname, classes);
             } else {
                 File[] baseFileList = new File(resource.getPath() + "/" + pkgname.replace(".", "/")).listFiles();
+
                 if (baseFileList != null) {
-                    for (File f : baseFileList){
+                    for (File f : baseFileList) {
                         if (f.getName().contains("$")) {
                             continue;
                         }
@@ -67,7 +73,7 @@ public class ClassGetter {
                         classes.add(pkgname + "/" + f.getName());
                     }
                 } else {
-                    System.out.println("File not found for: " + resource.getPath() + "/" + pkgname.replace(".", "/"));
+                    DisguiseUtilities.getLogger().severe("File not found for: " + resource.getPath() + "/" + pkgname.replace(".", "/"));
                 }
             }
         }
