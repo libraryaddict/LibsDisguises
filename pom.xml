@@ -96,8 +96,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <asm.version>9.0</asm.version>
-        <lombok.version>1.18.16</lombok.version>
-        <protocollib.version>4.7.0-SNAPSHOT</protocollib.version>
+        <lombok.version>1.18.20</lombok.version>
+        <protocollib.version>4.7.0</protocollib.version>
         <spigot.version>[1.17,]</spigot.version>
         <junit.version>4.13.1</junit.version>
         <paper-api.version>[1.16,]</paper-api.version>

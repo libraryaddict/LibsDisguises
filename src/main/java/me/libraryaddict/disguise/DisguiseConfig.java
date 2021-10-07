@@ -687,7 +687,8 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
         }
 
-        PermissionDefault commandVisibility = PermissionDefault.getByName(config.getString("Permissions.SeeCommands"));
+        String seeCommands = config.getString("Permissions.SeeCommands");
+        PermissionDefault commandVisibility =  seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
 
         if (commandVisibility == null) {
             DisguiseUtilities.getLogger()
