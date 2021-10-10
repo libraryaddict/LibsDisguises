@@ -551,6 +551,10 @@ public class DisguiseListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
+        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "LibsRabbitHop", "ld_loggedin"}) {
+            player.removeMetadata(meta, LibsDisguises.getInstance());
+        }
+
         // Removed as its not compatible with scoreboard teams
         /*if (player.hasPermission("libsdisguises.seethrough")) {
             for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
