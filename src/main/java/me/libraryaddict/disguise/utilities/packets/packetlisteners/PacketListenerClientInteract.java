@@ -75,7 +75,11 @@ public class PacketListenerClientInteract extends PacketAdapter {
 
     private EnumWrappers.Hand getHand(PacketContainer packet) {
         if (!NmsVersion.v1_17.isSupported()) {
-            return packet.getHands().read(0);
+            if (getInteractType(packet) != EnumWrappers.EntityUseAction.ATTACK) {
+                return packet.getHands().read(0);
+            }
+
+            return EnumWrappers.Hand.MAIN_HAND;
         }
 
         WrappedEnumEntityUseAction action = packet.getEnumEntityUseActions().read(0);
