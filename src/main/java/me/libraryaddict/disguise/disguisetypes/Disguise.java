@@ -792,11 +792,11 @@ public abstract class Disguise {
             }
         }
 
-        if (getEntity().hasMetadata("LastDisguise")) {
-            getEntity().removeMetadata("LastDisguise", LibsDisguises.getInstance());
+        for (String meta : new String[]{"LastDisguise", "LD-LastAttacked", "forge_mods", "LibsRabbitHop", "ld_loggedin"}) {
+            getEntity().removeMetadata(meta, LibsDisguises.getInstance());
         }
 
-        if (DisguiseConfig.getPvPTimer() > 0) {
+        if (DisguiseConfig.getPvPTimer() > 0 && getEntity() instanceof Player) {
             getEntity().setMetadata("LastDisguise", new FixedMetadataValue(LibsDisguises.getInstance(), System.currentTimeMillis()));
         }
 
