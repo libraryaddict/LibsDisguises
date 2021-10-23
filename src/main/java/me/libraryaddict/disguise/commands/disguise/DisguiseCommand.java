@@ -74,7 +74,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             }
         }
 
-        if (!DisguiseAPI.isActionBarShown(disguise.getEntity())) {
+        if (!DisguiseAPI.isNotifyBarShown(disguise.getEntity())) {
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 

@@ -20,7 +20,7 @@ public class DisguiseViewBarCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (DisguiseAPI.isActionBarShown(player)) {
+        if (DisguiseAPI.isNotifyBarShown(player)) {
             DisguiseAPI.setActionBarShown(player, false);
             LibsMsg.VIEW_BAR_OFF.send(sender);
         } else {

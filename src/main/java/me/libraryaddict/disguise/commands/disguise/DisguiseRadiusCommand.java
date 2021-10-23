@@ -194,7 +194,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
                     }
                 }
 
-                if (!DisguiseAPI.isActionBarShown(disguise.getEntity())) {
+                if (!DisguiseAPI.isNotifyBarShown(disguise.getEntity())) {
                     disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
                 }
 
