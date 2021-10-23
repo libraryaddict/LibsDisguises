@@ -34,7 +34,7 @@ public class PacketListenerScoreboardTeam extends PacketAdapter {
 
         String name = packet.getStrings().read(0);
 
-        if (name == null || !name.startsWith("LD_") || name.equals("LD_NoName")) {
+        if (name == null || !name.startsWith("LD_") || name.equals("LD_NoName") || name.startsWith("LD_Color_")) {
             return;
         }
 
