@@ -203,7 +203,7 @@ public class DisguiseAPI {
             disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
         }
 
-        if (hasActionBarPreference(entity) && !isActionBarShown(entity)) {
+        if (hasActionBarPreference(entity) && !isNotifyBarShown(entity)) {
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 
@@ -418,14 +418,22 @@ public class DisguiseAPI {
         return hasSelfDisguisePreference(entity) != DisguiseConfig.isViewSelfDisguisesDefault();
     }
 
+    @Deprecated
+    public static boolean isActionBarShown(Entity entity) {
+        return isNotifyBarShown(entity);
+    }
+
     /**
-     * Returns true if the entitiy has /disguiseviewself toggled on.
+     * Returns true if the entity wants to see the action bar / boss bar
      *
      * @param entity
      * @return
      */
-    public static boolean isActionBarShown(Entity entity) {
-        return !hasActionBarPreference(entity);
+    public static boolean isNotifyBarShown(Entity entity) {
+        // If default is no notify bar, but they toggled it. Then we want to show it.
+        // If default is a notify bar, but they toggled it. Then we want to hide it.
+
+        return (DisguiseConfig.getNotifyBar() == DisguiseConfig.NotifyBar.NONE) == hasActionBarPreference(entity);
     }
 
     public static boolean hasSelfDisguisePreference(Entity entity) {
