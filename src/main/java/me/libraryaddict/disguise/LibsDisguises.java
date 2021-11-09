@@ -214,7 +214,14 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             // This doesn't do anything but makes sure the class is constructed properly.
-            DisguiseAPI.getSelfDisguiseId();
+            try {
+                DisguiseAPI.getSelfDisguiseId();
+            } catch (Throwable ex) {
+                while (ex != null) {
+                    ex.printStackTrace();
+                    ex = ex.getCause();
+                }
+            }
             ReflectionManager.init();
 
             PacketsManager.init();
