@@ -31,9 +31,14 @@ import java.util.List;
 import java.util.Map;
 
 public class DisguiseAPI {
-    private static int selfDisguiseId = ReflectionManager.getNewEntityId(true);
+    private final static int selfDisguiseId;
     @Getter
-    private static int entityAttachmentId = ReflectionManager.getNewEntityId(true);
+    private final static int entityAttachmentId;
+
+    static {
+        selfDisguiseId = ReflectionManager.getNewEntityId(true);
+        entityAttachmentId = ReflectionManager.getNewEntityId(true);
+    }
 
     public static void addCustomDisguise(String disguiseName, String disguiseInfo) throws DisguiseParseException {
         // Dirty fix for anyone that somehow got this far with a . in the name, invalid yaml!
