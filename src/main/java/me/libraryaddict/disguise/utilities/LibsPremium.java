@@ -243,7 +243,7 @@ public class LibsPremium {
             }
         }
 
-        if (!foundJar) {
+        if (!isPremium()) {
             if (bisectHosted = new BisectHosting().isBisectHosted("LibsDisguises")) {
                 DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
