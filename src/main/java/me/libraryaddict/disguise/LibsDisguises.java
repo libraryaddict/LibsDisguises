@@ -213,6 +213,8 @@ public class LibsDisguises extends JavaPlugin {
                 DisguiseConfig.setUsingReleaseBuilds(false);
             }
 
+            // This doesn't do anything but makes sure the class is constructed properly.
+            DisguiseAPI.getSelfDisguiseId();
             ReflectionManager.init();
 
             PacketsManager.init();
