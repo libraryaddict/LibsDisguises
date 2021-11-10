@@ -48,7 +48,7 @@ public class PacketListenerSounds extends PacketAdapter {
             return;
         }
 
-        event.setPacket(event.getPacket().deepClone());
+        event.setPacket(event.getPacket().shallowClone());
 
         if (event.getPacketType() == Server.ENTITY_STATUS) {
             handleEntityStatus(event);
@@ -261,7 +261,6 @@ public class PacketListenerSounds extends PacketAdapter {
 
                     mods.write(6, pitch);
 
-                    event.setCancelled(true);
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
                     } catch (InvocationTargetException e) {
