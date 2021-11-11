@@ -217,21 +217,21 @@ public class PacketListenerSounds extends PacketAdapter {
             }
         }
 
-        SoundGroup disSound = SoundGroup.getGroup(entity.getType().name());
+        SoundGroup entitySoundGroup = SoundGroup.getGroup(entity.getType().name());
 
-        if (disSound == null) {
+        if (entitySoundGroup == null) {
             return;
         }
 
-        Object sound = disSound.getSound(soundType);
+        Object sound = entitySoundGroup.getSound(soundType);
 
         if (sound == null) {
             return;
         }
 
-        disSound = SoundGroup.getGroup(disguise);
+        SoundGroup disSound = SoundGroup.getGroup(disguise);
 
-        if (disSound == null) {
+        if (disSound == null || disSound == entitySoundGroup) {
             return;
         }
 
@@ -262,6 +262,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
         mods.write(6, pitch);
 
+        event.setCancelled(true);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
         } catch (InvocationTargetException e) {
