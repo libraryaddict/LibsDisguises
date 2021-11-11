@@ -38,17 +38,9 @@ public class PacketListenerSounds extends PacketAdapter {
 
     @Override
     public void onPacketSending(PacketEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled() || event.isAsync() || event.isPlayerTemporary()) {
             return;
         }
-        if (event.isAsync()) {
-            return;
-        }
-        if (event.getPlayer().getName().contains("UNKNOWN[")) {
-            return;
-        }
-
-        event.setPacket(event.getPacket().shallowClone());
 
         if (event.getPacketType() == Server.ENTITY_STATUS) {
             handleEntityStatus(event);
@@ -106,6 +98,7 @@ public class PacketListenerSounds extends PacketAdapter {
                     soundType = SoundType.DEATH;
                 }
             }
+
             if (disguise != null) {
                 break;
             }
@@ -169,6 +162,9 @@ public class PacketListenerSounds extends PacketAdapter {
 
             event.setPacket(newPacket);
         } else {
+            event.setPacket(event.getPacket().shallowClone());
+            mods = event.getPacket().getModifier();
+
             mods.write(0, sound);
             mods.write(1, soundCat);
             mods.write(5, volume);
@@ -214,6 +210,7 @@ public class PacketListenerSounds extends PacketAdapter {
         if (entity == event.getPlayer() && !disguise.getType().isPlayer()) {
             if (!disguise.isSelfDisguiseSoundsReplaced()) {
                 cancelSound = !cancelSound;
+
                 if (cancelSound) {
                     return;
                 }
@@ -226,48 +223,49 @@ public class PacketListenerSounds extends PacketAdapter {
             return;
         }
 
-        if (disSound.getSound(soundType) != null) {
+        Object sound = disSound.getSound(soundType);
 
-            disSound = SoundGroup.getGroup(disguise);
+        if (sound == null) {
+            return;
+        }
 
-            if (disSound != null) {
-                Object sound = disSound.getSound(soundType);
+        disSound = SoundGroup.getGroup(disguise);
 
-                if (sound != null) {
-                    Location loc = entity.getLocation();
-                    PacketContainer packet = new PacketContainer(
-                            sound.getClass().getSimpleName().equals("MinecraftKey") ? Server.CUSTOM_SOUND_EFFECT : Server.NAMED_SOUND_EFFECT);
+        if (disSound == null) {
+            return;
+        }
 
-                    mods = packet.getModifier();
+        Location loc = entity.getLocation();
+        PacketContainer packet =
+                new PacketContainer(sound.getClass().getSimpleName().equals("MinecraftKey") ? Server.CUSTOM_SOUND_EFFECT : Server.NAMED_SOUND_EFFECT);
 
-                    mods.write(0, sound);
-                    mods.write(1, ReflectionManager.getSoundCategory(disguise.getType())); // Meh
-                    mods.write(2, (int) (loc.getX() * 8D));
-                    mods.write(3, (int) (loc.getY() * 8D));
-                    mods.write(4, (int) (loc.getZ() * 8D));
-                    mods.write(5, disSound.getDamageAndIdleSoundVolume());
+        mods = packet.getModifier();
 
-                    float pitch;
+        mods.write(0, sound);
+        mods.write(1, ReflectionManager.getSoundCategory(disguise.getType())); // Meh
+        mods.write(2, (int) (loc.getX() * 8D));
+        mods.write(3, (int) (loc.getY() * 8D));
+        mods.write(4, (int) (loc.getZ() * 8D));
+        mods.write(5, disSound.getDamageAndIdleSoundVolume());
 
-                    if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
-                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.4F;
-                    } else {
-                        pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
-                    }
+        float pitch;
 
-                    if (disguise.getType() == DisguiseType.BAT) {
-                        pitch *= 0.95F;
-                    }
+        if (disguise instanceof MobDisguise && !((MobDisguise) disguise).isAdult()) {
+            pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.4F;
+        } else {
+            pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+        }
 
-                    mods.write(6, pitch);
+        if (disguise.getType() == DisguiseType.BAT) {
+            pitch *= 0.95F;
+        }
 
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        mods.write(6, pitch);
+
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 }
