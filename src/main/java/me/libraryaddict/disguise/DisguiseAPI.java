@@ -31,13 +31,15 @@ import java.util.List;
 import java.util.Map;
 
 public class DisguiseAPI {
-    private final static int selfDisguiseId;
-    @Getter
-    private final static int entityAttachmentId;
+    private static int selfDisguiseId;
+    private static int entityAttachmentId;
 
-    static {
-        selfDisguiseId = ReflectionManager.getNewEntityId(true);
-        entityAttachmentId = ReflectionManager.getNewEntityId(true);
+    public static int getEntityAttachmentId() {
+        if (entityAttachmentId == 0) {
+            entityAttachmentId = ReflectionManager.getNewEntityId();
+        }
+
+        return entityAttachmentId;
     }
 
     public static void addCustomDisguise(String disguiseName, String disguiseInfo) throws DisguiseParseException {
@@ -381,6 +383,10 @@ public class DisguiseAPI {
     }
 
     public static int getSelfDisguiseId() {
+        if (selfDisguiseId == 0) {
+            selfDisguiseId = ReflectionManager.getNewEntityId();
+        }
+
         return selfDisguiseId;
     }
 
