@@ -305,7 +305,7 @@ public class DisguiseUtilities {
             return team.getPrefix() + team.getColor() + playerName + team.getSuffix();
         }
 
-        Player player = Bukkit.getPlayer(playerName);
+        Player player = Bukkit.getPlayerExact(playerName);
 
         if (player == null) {
             return playerName;
