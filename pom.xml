@@ -8,7 +8,7 @@
     <version>10.0.26-SNAPSHOT</version>
 
     <build>
-        <defaultGoal>exec:java clean install -x</defaultGoal>
+        <defaultGoal>exec:java clean install -X</defaultGoal>
         <finalName>LibsDisguises</finalName>
 
         <resources>
