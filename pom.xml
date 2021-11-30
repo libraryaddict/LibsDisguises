@@ -7,8 +7,27 @@
     <artifactId>LibsDisguises</artifactId>
     <version>10.0.26-SNAPSHOT</version>
 
+    <properties>
+        <build.number>unknown</build.number>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <lombok.version>1.18.22</lombok.version>
+        <protocollib.version>4.7.0</protocollib.version>
+        <spigot.version>1.17-R0.1-SNAPSHOT</spigot.version>
+        <junit.version>4.13.2</junit.version>
+        <paper-api.version>1.16.5-R0.1-SNAPSHOT</paper-api.version>
+        <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
+        <adventure-minimessage.version>4.2.0-SNAPSHOT</adventure-minimessage.version>
+        <adventure-api.version>4.9.3</adventure-api.version>
+        <adventure-serializer.version>4.9.3</adventure-serializer.version>
+    </properties>
+
     <build>
-        <defaultGoal>exec:java clean install -X</defaultGoal>
+        <defaultGoal>exec:java clean install</defaultGoal>
         <finalName>LibsDisguises</finalName>
 
         <resources>
@@ -36,12 +55,12 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M5</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>3.0.0</version>
 
                 <executions>
                     <execution>
@@ -87,25 +106,6 @@
         </plugins>
     </build>
 
-    <properties>
-        <build.number>unknown</build.number>
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>dd/MM/yyyy HH:mm</maven.build.timestamp.format>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <lombok.version>1.18.22</lombok.version>
-        <protocollib.version>4.7.0</protocollib.version>
-        <spigot.version>[1.17,]</spigot.version>
-        <junit.version>4.13.2</junit.version>
-        <paper-api.version>[1.17,]</paper-api.version>
-        <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
-        <adventure-minimessage.version>4.2.0-SNAPSHOT</adventure-minimessage.version>
-        <adventure-api.version>4.9.3</adventure-api.version>
-        <adventure-serializer.version>4.9.3</adventure-serializer.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -140,7 +140,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
+            <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper-api.version}</version>
             <scope>provided</scope>
