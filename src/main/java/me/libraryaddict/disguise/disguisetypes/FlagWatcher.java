@@ -343,7 +343,7 @@ public class FlagWatcher {
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
                         ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
 
-                ReflectionManager.setScore(player.getScoreboard(), ReflectionManager.scoreboardCrtieriaHealth, name, (int) Math.ceil(health));
+                ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
         }
 
@@ -383,7 +383,7 @@ public class FlagWatcher {
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
                         ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
 
-                ReflectionManager.setScore(player.getScoreboard(), ReflectionManager.scoreboardCrtieriaHealth, name, (int) Math.ceil(health));
+                ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
         }
 

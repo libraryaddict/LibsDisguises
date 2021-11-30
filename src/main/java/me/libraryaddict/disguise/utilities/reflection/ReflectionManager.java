@@ -29,13 +29,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.io.*;
 import java.lang.reflect.*;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -108,11 +109,6 @@ public class ReflectionManager {
     private static Field noDamageTicks;
     private static Method isInvul;
     private static Object genericDamage;
-    private static Field boardField;
-    public static Object scoreboardCrtieriaHealth;
-    private static Method getObjectives;
-    private static Method getPlayerScoreObjective;
-    private static Method setScore;
     private static HashMap<String, String> classLocations = new HashMap<>();
     private static Field playerConnection;
     private static Method incrementedInventoryStateId;
@@ -264,19 +260,6 @@ public class ReflectionManager {
 
                 genericDamage = obj;
                 break;
-            }
-
-            boardField = getCraftClass("CraftScoreboard").getDeclaredField("board");
-            boardField.setAccessible(true);
-            scoreboardCrtieriaHealth =
-                    getNmsField("IScoreboardCriteria", NmsVersion.v1_17.isSupported() ? "f" : NmsVersion.v1_13.isSupported() ? "HEALTH" : "g").get(null);
-            setScore = getNmsMethod("ScoreboardScore", "setScore", int.class);
-
-            if (!NmsVersion.v1_13.isSupported()) {
-                getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"));
-                getPlayerScoreObjective = getNmsMethod("Scoreboard", "getPlayerScoreForObjective", String.class, getNmsClass("ScoreboardObjective"));
-            } else {
-                getObjectives = getNmsMethod("Scoreboard", "getObjectivesForCriteria", getNmsClass("IScoreboardCriteria"), String.class, Consumer.class);
             }
 
             Method method = getNmsMethod("SoundCategory", "a");
@@ -2115,41 +2098,27 @@ public class ReflectionManager {
         }
     }
 
-    public static void setScore(Scoreboard scoreboard, Object criteria, String name, int score) {
+    public static void setScore(Scoreboard scoreboard, String name, int score) {
         if (!Bukkit.isPrimaryThread()) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    setScore(scoreboard, criteria, name, score);
+                    setScore(scoreboard, name, score);
                 }
             }.runTask(LibsDisguises.getInstance());
             return;
         }
 
-        try {
-            Object board = boardField.get(scoreboard);
+        Set<Objective> objectives = scoreboard.getObjectivesByCriteria("health");
 
-            if (!NmsVersion.v1_13.isSupported()) {
-                Collection scores = (Collection) getObjectives.invoke(board, criteria);
+        for (Objective objective : objectives) {
+            Score s = objective.getScore(name);
 
-                for (Object obj : scores) {
-                    setScore.invoke(getPlayerScoreObjective.invoke(board, name, obj), score);
-                }
-
-                return;
+            if (s.isScoreSet() && s.getScore() == score) {
+                continue;
             }
 
-            Consumer con = o -> {
-                try {
-                    setScore.invoke(o, score);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            };
-
-            getObjectives.invoke(board, criteria, name, con);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            s.setScore(score);
         }
     }
 
