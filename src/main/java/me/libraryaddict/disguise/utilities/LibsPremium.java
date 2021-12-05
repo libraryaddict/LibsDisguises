@@ -114,34 +114,14 @@ public class LibsPremium {
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
-            boolean oldJarFile = true;
-
-            try {
-                // Error thrown if method doesn't exist
-                c.getMethod("getUserID");
-                // Method exists, is not older file
-                oldJarFile = false;
-            }
-            catch (Exception ignored) {
-            }
-
             // Fetch the plugin.yml from the jar file
-            YamlConfiguration config = ReflectionManager.getPluginYAML(file);
+            YamlConfiguration config = ReflectionManager.getPluginYAMLEx(file);
             // No checks for null config as the correct error will be thrown on access
 
-            Boolean premium;
-            String userId = null;
-            String downloadId = null;
-            String resourceId = null;
-
-            if (oldJarFile) {
-                premium = (Boolean) c.getMethod("isPremium").invoke(null);
-            } else {
-                userId = (String) c.getMethod("getUserID").invoke(null);
-                resourceId = (String) c.getMethod("getResourceID").invoke(null);
-                downloadId = (String) c.getMethod("getDownloadID").invoke(null);
-                premium = isPremium(resourceId, userId);
-            }
+            String userId = (String) c.getMethod("getUserID").invoke(null);
+            String downloadId = (String) c.getMethod("getDownloadID").invoke(null);
+            String resourceId = (String) c.getMethod("getResourceID").invoke(null);
+            Boolean premium = isPremium(resourceId, userId);
 
             String pluginBuildDate = "??/??/????";
 
@@ -164,8 +144,7 @@ public class LibsPremium {
 
             String pluginVersion = config.getString("version");
 
-            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion,
-                    pluginBuildNumber, pluginBuildDate);
+            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber, pluginBuildDate);
         }
     }
 
@@ -173,15 +152,18 @@ public class LibsPremium {
         File[] files = new File("plugins/LibsDisguises/").listFiles();
         boolean foundJar = false;
 
-        if (files == null)
+        if (files == null) {
             return;
+        }
 
         for (File file : files) {
-            if (!file.isFile())
+            if (!file.isFile()) {
                 continue;
+            }
 
-            if (!file.getName().endsWith(".jar"))
+            if (!file.getName().endsWith(".jar")) {
                 continue;
+            }
 
             foundJar = true;
 
@@ -189,13 +171,11 @@ public class LibsPremium {
 
             try {
                 plugin = getInformation(file);
-            }
-            catch (ClassNotFoundException ex) {
-                DisguiseUtilities.getLogger()
-                        .warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() + ")");
+            } catch (ClassNotFoundException | NoClassDefFoundError ex) {
+                DisguiseUtilities.getLogger().warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() +
+                        ") - It may need replacing with a newer jar from SpigotMC");
                 continue;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 DisguiseUtilities.getLogger().warning("Error while trying to handle the file " + file.getName());
                 ex.printStackTrace();
                 continue;
@@ -203,17 +183,14 @@ public class LibsPremium {
 
             // Format into a string
             // v5.2.6, build #40, created 16/02/2019
-            String fileInfo = String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(),
-                    plugin.getBuildDate());
+            String fileInfo = String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(), plugin.getBuildDate());
 
             if (plugin.isPremium()) {
-                if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null ||
-                        plugin.getDownloadID() == null || plugin.getUserID().equals("666666")) {
-                    DisguiseUtilities.getLogger().warning(
-                            "You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
-                                    ") in the LibsDisguises folder! For security purposes, please replace this with a" +
-                                    " new " +
-                                    "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
+                if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null || plugin.getDownloadID() == null ||
+                        plugin.getUserID().equals("666666")) {
+                    DisguiseUtilities.getLogger().warning("You have an old Lib's Disguises jar (" + file.getName() + " " + fileInfo +
+                            ") in the LibsDisguises folder! For security purposes, please replace this with a" + " new " +
+                            "version from SpigotMC - https://www.spigotmc.org/resources/libs-disguises.32453/");
                     continue;
                 }
 
@@ -234,12 +211,10 @@ public class LibsPremium {
             } else {
                 // You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
                 // 16/02/2019) in the LibsDisguises folder!
-                DisguiseUtilities.getLogger().warning(
-                        "You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo +
-                                ") in the LibsDisguises folder!");
-                DisguiseUtilities.getLogger().warning(
-                        "Please place the premium jar downloaded from https://www.spigotmc" +
-                                ".org/resources/libs-disguises.32453/ " + "in here!");
+                DisguiseUtilities.getLogger()
+                        .warning("You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
+                DisguiseUtilities.getLogger()
+                        .warning("Please place the premium jar downloaded from https://www.spigotmc" + ".org/resources/libs-disguises.32453/ " + "in here!");
             }
         }
 
@@ -251,9 +226,8 @@ public class LibsPremium {
 
                 thisPluginIsPaidFor = true;
             } else {
-                DisguiseUtilities.getLogger().warning(
-                        "If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
-                                ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
+                DisguiseUtilities.getLogger().warning("If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
+                        ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
             }
         }
     }
@@ -281,25 +255,21 @@ public class LibsPremium {
 
         try {
             pluginInformation = getInformation(file);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             String pluginBuildDate = "??/??/????";
 
             YamlConfiguration config = new YamlConfiguration();
 
             try {
                 try (InputStream stream = LibsDisguises.getInstance().getResource("plugin.yml")) {
-                    config.loadFromString(
-                            new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
-                                    .collect(Collectors.joining("\n")));
+                    config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n")));
                 }
 
                 // If plugin.yml contains a build-date
                 if (config.contains("build-date")) {
                     pluginBuildDate = config.getString("build-date");
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
@@ -309,9 +279,8 @@ public class LibsPremium {
                 buildNo = "#" + buildNo;
             }
 
-            pluginInformation = new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(),
-                    getResourceID(), getDownloadID(), isPremium(getResourceID(), getUserID()), version, buildNo,
-                    pluginBuildDate);
+            pluginInformation = new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(), getResourceID(), getDownloadID(),
+                    isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
         }
 
         if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {
@@ -349,7 +318,7 @@ public class LibsPremium {
 
                     foundBetter = true;
                     break;
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     DisguiseUtilities.getLogger().info("Ew, error about invalid Libs Disguises jar. Deleting " + f.getName());
                     f.delete();
                 } catch (Throwable e) {
@@ -362,17 +331,14 @@ public class LibsPremium {
 
                 FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
 
-                DisguiseUtilities.getLogger().info("Copied " + f.getName() +
-                        " to the plugin folder! You can use dev builds with premium enabled!");
+                DisguiseUtilities.getLogger().info("Copied " + f.getName() + " to the plugin folder! You can use dev builds with premium enabled!");
             }
         }
 
         if (isPremium()) {
-            boolean prem =
-                    getPaidInformation() == null ? getPluginInformation().isLegit() : getPaidInformation().isLegit();
+            boolean prem = getPaidInformation() == null ? getPluginInformation().isLegit() : getPaidInformation().isLegit();
 
-            DisguiseUtilities.getLogger()
-                    .info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
+            DisguiseUtilities.getLogger().info("Premium enabled, thank you for supporting Lib's Disguises!" + (!prem ? "!" : ""));
         }
     }
 }

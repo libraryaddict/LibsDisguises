@@ -429,6 +429,20 @@ public class ReflectionManager {
         return null;
     }
 
+    public static YamlConfiguration getPluginYAMLEx(File file) throws Exception {
+        String s = getResourceAsString(file, "plugin.yml");
+
+        if (s == null) {
+            return null;
+        }
+
+        YamlConfiguration config = new YamlConfiguration();
+
+        config.loadFromString(getResourceAsString(file, "plugin.yml"));
+
+        return config;
+    }
+
     public static int getNewEntityId() {
         return getNewEntityId(true);
     }
