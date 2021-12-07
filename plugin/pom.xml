@@ -75,6 +75,14 @@
                 </executions>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
+                    <filters>
+                        <filter>
+                            <artifact>LibsDisguises:*</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
                     <artifactSet>
                         <includes>
                             <include>net.kyori:*</include>
@@ -165,6 +173,7 @@
             <groupId>LibsDisguises</groupId>
             <artifactId>v1_18_R1</artifactId>
             <version>${project.version}</version>
+            <classifier>remapped-spigot</classifier>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
