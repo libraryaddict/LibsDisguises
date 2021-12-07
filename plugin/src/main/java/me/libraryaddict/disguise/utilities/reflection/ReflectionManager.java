@@ -117,7 +117,15 @@ public class ReflectionManager {
 
     public static void init() {
         try {
-            v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
+            // Load first because its necessary for 1.18+
+            if (NmsVersion.v1_14.isSupported()) {
+                entityPoseClass = getNmsClass("EntityPose");
+            }
+
+            if (NmsVersion.v1_18.isSupported()) {
+                v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
+                return;
+            }
             boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
             setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
@@ -199,7 +207,6 @@ public class ReflectionManager {
                 entityTypesAMethod = getNmsMethod("EntityTypes", "a", String.class);
 
                 if (NmsVersion.v1_14.isSupported()) {
-                    entityPoseClass = getNmsClass("EntityPose");
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "get", getNmsClass("MinecraftKey"));
                     villagerDataConstructor = getNmsConstructor("VillagerData", getNmsClass("VillagerType"), getNmsClass("VillagerProfession"), int.class);
 
@@ -348,6 +355,7 @@ public class ReflectionManager {
         if (NmsVersion.v1_18.isSupported()) {
             return v1_18ReflectionManager.getIncrementedStateId(player);
         }
+
         try {
             Object container = playerInventoryContainer.get(getNmsEntity(player));
 
@@ -924,13 +932,7 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
-        try {
-            return new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(),
-                    playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        return ReflectionManagerAbstract.getGameProfile(uuid == null ? getRandomUUID() : uuid, playerName);
     }
 
     public static WrappedGameProfile getClonedProfile(WrappedGameProfile gameProfile) {
@@ -968,6 +970,10 @@ public class ReflectionManager {
     }
 
     private static String getLocation(String pack, String className) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return ClassMappings.getClass(pack, className);
+        }
+
         String toReturn = classLocations.get(className);
 
         if (toReturn != null) {
@@ -1677,6 +1683,10 @@ public class ReflectionManager {
     public static Object createDataWatcherItem(MetaIndex id, Object value) {
         WrappedDataWatcherObject watcherObject = createDataWatcherObject(id, value);
 
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createDataWatcherItem(watcherObject, convertInvalidMeta(value));
+        }
+
         try {
             return dataWatcherItemConstructor.newInstance(watcherObject.getHandle(), convertInvalidMeta(value));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -2253,7 +2263,7 @@ public class ReflectionManager {
                 return;
             }
 
-            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType, nmsEntityName);
+            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType, NmsVersion.v1_18.isSupported() ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");

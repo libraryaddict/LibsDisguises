@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import org.bukkit.*;
@@ -17,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ReflectionManagerAbstract {
     boolean hasInvul(Entity entity);
@@ -107,6 +109,8 @@ public interface ReflectionManagerAbstract {
 
     Object getVillagerProfession(Villager.Profession profession);
 
+    <T> Object createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem);
+
     @Deprecated
     Object createSoundEffect(String minecraftKey);
 
@@ -137,4 +141,13 @@ public interface ReflectionManagerAbstract {
     Object getWorldServer(World w);
 
     ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
+
+    static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
+        try {
+            return new WrappedGameProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

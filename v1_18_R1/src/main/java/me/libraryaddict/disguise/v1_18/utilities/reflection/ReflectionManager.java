@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.v1_18.utilities.reflection;
 
 import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -10,8 +11,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.Vector3f;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.*;
@@ -26,6 +30,8 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -102,7 +108,18 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         if (optional.isPresent()) {
             net.minecraft.world.entity.EntityType<?> entityType = optional.get();
             ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
-            net.minecraft.world.entity.Entity entity = entityType.create(world);
+            net.minecraft.world.entity.Entity entity;
+            if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
+                WrappedGameProfile gameProfile = ReflectionManagerAbstract.getGameProfile(new UUID(0, 0), "Steve");
+                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle());
+            }/* else if (entityType == net.minecraft.world.entity.EntityType.ENDER_PEARL) {
+                entity = new ThrownEnderpearl(world, (net.minecraft.world.entity.LivingEntity) createEntityInstance("cow"));
+            } else if (entityType == net.minecraft.world.entity.EntityType.FISHING_BOBBER) {
+                entity = new FishingHook((net.minecraft.world.entity.player.Player) createEntityInstance("player"), world, 0, 0);
+            }*/ else {
+                entity = entityType.create(world);
+            }
+
             // Workaround for paper being 2 smart 4 me
             entity.setPos(1.0, 1.0, 1.0);
             entity.setPos(0.0, 0.0, 0.0);
@@ -291,13 +308,13 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return Optional.empty();
     }
 
-    public Vec3 convertVec3(Object object) {
+    public Vector3f convertVec3(Object object) {
         if (object instanceof Vector3F) {
             Vector3F vector3F = (Vector3F) object;
-            return new Vec3(vector3F.getX(), vector3F.getY(), vector3F.getZ());
+            return new Vector3f(vector3F.getX(), vector3F.getY(), vector3F.getZ());
         } else if (object instanceof EulerAngle) {
             EulerAngle eulerAngle = (EulerAngle) object;
-            return new Vec3(eulerAngle.getX(), eulerAngle.getY(), eulerAngle.getZ());
+            return new Vector3f((float) eulerAngle.getX(), (float) eulerAngle.getY(), (float) eulerAngle.getZ());
         }
 
         return null;
@@ -332,6 +349,10 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public VillagerProfession getVillagerProfession(Villager.Profession profession) {
         return Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(profession.getKey()));
+    }
+
+    public <T> SynchedEntityData.DataItem<T> createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem) {
+        return new SynchedEntityData.DataItem<>((EntityDataAccessor<T>) wrappedDataWatcherObject.getHandle(), metaItem);
     }
 
     @Deprecated
