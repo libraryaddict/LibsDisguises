@@ -113,8 +113,11 @@ public class ReflectionManager {
     private static Method incrementedInventoryStateId;
     private static Field playerInventoryContainer;
 
+    private static ReflectionManagerAbstract v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
+
     public static void init() {
         try {
+            v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
             boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
             setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
@@ -322,6 +325,10 @@ public class ReflectionManager {
     }
 
     public static boolean hasInvul(Entity entity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.hasInvul(entity);
+        }
+
         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
 
         try {
@@ -338,6 +345,9 @@ public class ReflectionManager {
     }
 
     public static int getIncrementedStateId(Player player) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getIncrementedStateId(player);
+        }
         try {
             Object container = playerInventoryContainer.get(getNmsEntity(player));
 
@@ -448,6 +458,10 @@ public class ReflectionManager {
     }
 
     public static int getNewEntityId(boolean increment) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getNewEntityId(increment);
+        }
+
         try {
             Number entityCount = (Number) entityCountField.get(null);
 
@@ -472,6 +486,10 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerConnectionOrPlayer(Player player) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getPlayerConnectionOrPlayer(player);
+        }
+
         try {
             if (NmsVersion.v1_17.isSupported()) {
                 return playerConnection.get(getNmsEntity(player));
@@ -486,6 +504,10 @@ public class ReflectionManager {
     }
 
     public static Object createEntityInstance(DisguiseType disguiseType, String entityName) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createEntityInstance(entityName);
+        }
+
         try {
             Class<?> entityClass;
 
@@ -554,6 +576,10 @@ public class ReflectionManager {
     }
 
     public static Object getMobEffectList(int id) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getMobEffectList(id);
+        }
+
         try {
             return mobEffectList.invoke(null, id);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -568,6 +594,10 @@ public class ReflectionManager {
     }
 
     public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createMobEffect(id, duration, amplification, ambient, particles);
+        }
+
         try {
             return mobEffectConstructor.newInstance(getMobEffectList(id), duration, amplification, ambient, particles);
         } catch (Exception e) {
@@ -578,6 +608,13 @@ public class ReflectionManager {
     }
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            double x = v1_18ReflectionManager.getXBoundingBox(entity);
+            double y = v1_18ReflectionManager.getYBoundingBox(entity);
+            double z = v1_18ReflectionManager.getZBoundingBox(entity);
+            return new FakeBoundingBox(x, y, z);
+        }
+
         try {
             Object boundingBox = boundingBoxMethod.invoke(getNmsEntity(entity));
 
@@ -624,6 +661,10 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerFromPlayerConnection(Object nmsEntity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getPlayerFromPlayerConnection(nmsEntity);
+        }
+
         try {
             if (NmsVersion.v1_17.isSupported()) {
                 // Convert from player connection to EntityPlayer
@@ -639,6 +680,10 @@ public class ReflectionManager {
     }
 
     public static Entity getBukkitEntity(Object nmsEntity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getBukkitEntity(nmsEntity);
+        }
+
         try {
             return (Entity) bukkitEntityMethod.invoke(nmsEntity);
         } catch (Exception ex) {
@@ -649,6 +694,10 @@ public class ReflectionManager {
     }
 
     public static ItemStack getBukkitItem(Object nmsItem) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getBukkitItem(nmsItem);
+        }
+
         try {
             return (ItemStack) itemAsBukkitMethod.invoke(null, nmsItem);
         } catch (Exception e) {
@@ -659,6 +708,10 @@ public class ReflectionManager {
     }
 
     public static ItemStack getCraftItem(ItemStack bukkitItem) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getCraftItem(bukkitItem);
+        }
+
         try {
             return (ItemStack) itemAsCraftCopyMethod.invoke(null, bukkitItem);
         } catch (Exception e) {
@@ -703,6 +756,18 @@ public class ReflectionManager {
         return null;
     }
 
+    public static ReflectionManagerAbstract getReflectionManager(NmsVersion nmsVersion) {
+        try {
+            Class<?> aClass = Class.forName("me.libraryaddict.disguise." + nmsVersion.name() + ".utilities.reflection.ReflectionManager");
+            Object o = aClass.getConstructor().newInstance();
+            return (ReflectionManagerAbstract) o;
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public static Constructor getCraftConstructor(Class clazz, Class<?>... parameters) {
         try {
             Constructor declaredConstructor = clazz.getDeclaredConstructor(parameters);
@@ -720,6 +785,10 @@ public class ReflectionManager {
     }
 
     public static Object getCraftSound(Sound sound) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getCraftSound(sound);
+        }
+
         try {
             return soundEffectMethod.invoke(null, getSoundString(sound));
         } catch (Exception ex) {
@@ -730,6 +799,10 @@ public class ReflectionManager {
     }
 
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEntityTrackerEntry(target);
+        }
+
         Object world = getWorldServer(target.getWorld());
 
         if (NmsVersion.v1_14.isSupported()) {
@@ -753,6 +826,10 @@ public class ReflectionManager {
     }
 
     public static Object getMinecraftServer() {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getMinecraftServer();
+        }
+
         try {
             return getServerMethod.invoke(Bukkit.getServer());
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -762,6 +839,10 @@ public class ReflectionManager {
     }
 
     public static String getEnumArt(Art art) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEnumArt(art);
+        }
+
         try {
             Object enumArt = getEnumArtMethod.invoke(null, art);
             for (Field field : enumArt.getClass().getDeclaredFields()) {
@@ -777,6 +858,10 @@ public class ReflectionManager {
     }
 
     public static Object getBlockPosition(int x, int y, int z) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getBlockPosition(x, y, z);
+        }
+
         try {
             return blockPositionConstructor.newInstance(x, y, z);
         } catch (Exception ex) {
@@ -787,6 +872,10 @@ public class ReflectionManager {
     }
 
     public static Enum getEnumDirection(int direction) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEnumDirection(direction);
+        }
+
         try {
             return (Enum) enumDirectionMethod.invoke(null, direction);
         } catch (Exception ex) {
@@ -797,6 +886,10 @@ public class ReflectionManager {
     }
 
     public static Enum getEnumPlayerInfoAction(int action) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEnumPlayerInfoAction(action);
+        }
+
         try {
             return enumPlayerInfoAction[action];
         } catch (Exception ex) {
@@ -807,6 +900,10 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerInfoData(Object playerInfoPacket, WrappedGameProfile gameProfile) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getPlayerInfoData(gameProfile);
+        }
+
         try {
             Object playerListName = chatComponentConstructor.newInstance(gameProfile.getName());
 
@@ -930,6 +1027,10 @@ public class ReflectionManager {
     }
 
     public static Object getNmsEntity(Entity entity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getNmsEntity(entity);
+        }
+
         try {
             return getNmsEntityMethod.invoke(entity);
         } catch (Exception ex) {
@@ -957,6 +1058,10 @@ public class ReflectionManager {
     }
 
     public static Object getNmsItem(ItemStack itemstack) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getNmsItem(itemstack);
+        }
+
         try {
             return itemAsNmsCopyMethod.invoke(null, itemstack);
         } catch (Exception e) {
@@ -1001,6 +1106,10 @@ public class ReflectionManager {
     }
 
     public static double getPing(Player player) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getPing(player);
+        }
+
         try {
             return pingField.getInt(ReflectionManager.getNmsEntity(player));
         } catch (Exception ex) {
@@ -1011,6 +1120,10 @@ public class ReflectionManager {
     }
 
     public static float[] getSize(Entity entity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getSize(entity);
+        }
+
         try {
             if (NmsVersion.v1_14.isSupported()) {
                 Object size = getNmsField("Entity", "size").get(getNmsEntity(entity));
@@ -1035,6 +1148,10 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getSkullBlob(gameProfile);
+        }
+
         try {
             Object minecraftServer = getMinecraftServer();
 
@@ -1055,6 +1172,10 @@ public class ReflectionManager {
     }
 
     public static Float getSoundModifier(Object entity) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getSoundModifier(entity);
+        }
+
         try {
             return (Float) damageAndIdleSoundMethod.invoke(entity);
         } catch (Exception ignored) {
@@ -1069,24 +1190,29 @@ public class ReflectionManager {
         try {
             Object minecraftServer = getMinecraftServer();
 
-            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
-                    Object agent = Class.forName("com.mojang.authlib.Agent").getDeclaredField("MINECRAFT").get(null);
+            LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
+            if (NmsVersion.v1_18.isSupported()) {
+                v1_18ReflectionManager.injectCallback(playername, callback);
+            } else {
+                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                    if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
+                        Object agent = Class.forName("com.mojang.authlib.Agent").getDeclaredField("MINECRAFT").get(null);
 
-                    LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
-                    Object profileRepo = method.invoke(minecraftServer);
+                        Object profileRepo = method.invoke(minecraftServer);
 
-                    method.getReturnType()
-                            .getMethod("findProfilesByNames", String[].class, agent.getClass(), Class.forName("com.mojang.authlib.ProfileLookupCallback"))
-                            .invoke(profileRepo, new String[]{playername}, agent, callback);
-
-                    if (callback.getGameProfile() != null) {
-                        return callback.getGameProfile();
+                        method.getReturnType()
+                                .getMethod("findProfilesByNames", String[].class, agent.getClass(), Class.forName("com.mojang.authlib.ProfileLookupCallback"))
+                                .invoke(profileRepo, new String[]{playername}, agent, callback);
+                        break;
                     }
-
-                    return getGameProfile(null, playername);
                 }
             }
+
+            if (callback.getGameProfile() != null) {
+                return callback.getGameProfile();
+            }
+
+            return getGameProfile(null, playername);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1095,6 +1221,11 @@ public class ReflectionManager {
     }
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
+        if (NmsVersion.v1_18.isSupported()) {
+            v1_18ReflectionManager.setBoundingBox(entity, newBox.getX(), newBox.getY(), newBox.getZ());
+            return;
+        }
+
         try {
             Location loc = entity.getLocation();
 
@@ -1108,6 +1239,10 @@ public class ReflectionManager {
     }
 
     public static Enum getSoundCategory(String category) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getSoundCategory(category);
+        }
+
         return soundCategories.get(category);
     }
 
@@ -1136,6 +1271,10 @@ public class ReflectionManager {
      * @return null if the equipment slot is null
      */
     public static Enum createEnumItemSlot(EquipmentSlot slot) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createEnumItemSlot(slot);
+        }
+
         switch (slot) {
             case HAND:
                 return enumItemSlots[0];
@@ -1213,6 +1352,10 @@ public class ReflectionManager {
     }
 
     public static Object getSoundString(Sound sound) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getSoundString(sound);
+        }
+
         try {
             if (soundGetMethod == null) {
                 return soundEffectGetKey.get(soundEffectGetMethod.invoke(null, sound)).toString();
@@ -1257,6 +1400,9 @@ public class ReflectionManager {
     public static Object convertInvalidMeta(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
+            if (NmsVersion.v1_18.isSupported()) {
+                return v1_18ReflectionManager.convertOptional(opt);
+            }
 
             if (!opt.isPresent()) {
                 return NmsVersion.v1_13.isSupported() ? value : com.google.common.base.Optional.absent();
@@ -1298,6 +1444,9 @@ public class ReflectionManager {
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
+            if (NmsVersion.v1_18.isSupported()) {
+                return v1_18ReflectionManager.convertVec3(angle);
+            }
 
             try {
                 return vector3FConstructor.newInstance(angle.getX(), angle.getY(), angle.getZ());
@@ -1306,6 +1455,9 @@ public class ReflectionManager {
             }
         } else if (value instanceof EulerAngle) {
             EulerAngle angle = (EulerAngle) value;
+            if (NmsVersion.v1_18.isSupported()) {
+                return v1_18ReflectionManager.convertVec3(angle);
+            }
 
             try {
                 return vector3FConstructor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ());
@@ -1313,6 +1465,10 @@ public class ReflectionManager {
                 ex.printStackTrace();
             }
         } else if (value instanceof Direction) {
+            if (NmsVersion.v1_18.isSupported()) {
+                return v1_18ReflectionManager.convertDirection((Direction) value);
+            }
+
             try {
                 return enumDirectionFrom.invoke(null, ((Direction) value).ordinal());
             } catch (Exception ex) {
@@ -1320,6 +1476,9 @@ public class ReflectionManager {
             }
         } else if (value instanceof BlockPosition) {
             BlockPosition pos = (BlockPosition) value;
+            if (NmsVersion.v1_18.isSupported()) {
+                return v1_18ReflectionManager.getBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+            }
 
             try {
                 return blockPositionConstructor.newInstance(pos.getX(), pos.getY(), pos.getZ());
@@ -1346,6 +1505,10 @@ public class ReflectionManager {
     }
 
     public static Material getMaterial(String name) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getMaterial(name);
+        }
+
         try {
             if (!NmsVersion.v1_13.isSupported()) {
                 Method toMinecraft = getCraftMethod("CraftMagicNumbers", "getMaterialFromInternalName", String.class);
@@ -1382,6 +1545,10 @@ public class ReflectionManager {
     }
 
     public static String getItemName(Material material) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getItemName(material);
+        }
+
         try {
             Object item = getCraftMethod("CraftMagicNumbers", "getItem", Material.class).invoke(null, material);
 
@@ -1414,6 +1581,10 @@ public class ReflectionManager {
     }
 
     public static Object getNmsVillagerData(VillagerData data) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getNmsVillagerData(data.getType(), data.getProfession());
+        }
+
         Object type = getVillagerType(data.getType());
         Object profession = getVillagerProfession(data.getProfession());
 
@@ -1427,6 +1598,10 @@ public class ReflectionManager {
     }
 
     public static Object getVillagerType(Villager.Type type) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getVillagerType(type);
+        }
+
         try {
             Object mcKey = bukkitKeyToNms.invoke(null, type.getKey());
 
@@ -1463,6 +1638,10 @@ public class ReflectionManager {
     }
 
     public static Object getVillagerProfession(Villager.Profession profession) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getVillagerProfession(profession);
+        }
+
         try {
             Object mcKey = bukkitKeyToNms.invoke(null, profession.getKey());
 
@@ -1509,6 +1688,10 @@ public class ReflectionManager {
 
     @Deprecated
     public static Object createSoundEffect(String minecraftKey) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createSoundEffect(minecraftKey);
+        }
+
         try {
             return getNmsConstructor("SoundEffect", getNmsClass("MinecraftKey")).newInstance(createMinecraftKey(minecraftKey));
         } catch (Exception ex) {
@@ -1519,6 +1702,10 @@ public class ReflectionManager {
     }
 
     public static Object createMinecraftKey(String name) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.createMinecraftKey(name);
+        }
+
         try {
             return getNmsConstructor("MinecraftKey", String.class).newInstance(name);
         } catch (Exception ex) {
@@ -1529,6 +1716,10 @@ public class ReflectionManager {
     }
 
     public static Object getVec3D(Vector vector) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getVec3D(vector);
+        }
+
         try {
             return vec3DConstructor.newInstance(vector.getX(), vector.getY(), vector.getZ());
         } catch (Exception ex) {
@@ -1539,6 +1730,10 @@ public class ReflectionManager {
     }
 
     public static Object getEntityType(EntityType entityType) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEntityType(entityType);
+        }
+
         try {
             Object val = entityTypesAMethod.invoke(null, entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName());
 
@@ -1555,6 +1750,10 @@ public class ReflectionManager {
     }
 
     public static Object registerEntityType(NamespacedKey key) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.registerEntityType(key);
+        }
+
         try {
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(key.toString());
 
@@ -1594,6 +1793,10 @@ public class ReflectionManager {
     }
 
     public static int getEntityTypeId(Object entityTypes) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEntityTypeId(entityTypes);
+        }
+
         try {
             Class typesClass = getNmsClass("IRegistry");
 
@@ -1608,6 +1811,10 @@ public class ReflectionManager {
     }
 
     public static int getEntityTypeId(EntityType entityType) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEntityTypeId(entityType);
+        }
+
         try {
             if (NmsVersion.v1_13.isSupported()) {
                 Object entityTypes = getEntityType(entityType);
@@ -1628,6 +1835,10 @@ public class ReflectionManager {
     }
 
     public static Object getEntityType(NamespacedKey name) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getEntityType(name);
+        }
+
         try {
             Class typesClass = getNmsClass("IRegistry");
 
@@ -1643,6 +1854,10 @@ public class ReflectionManager {
     }
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getNmsEntityPose(entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
+        }
+
         return Enum.valueOf(entityPoseClass, entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
     }
 
@@ -1662,6 +1877,10 @@ public class ReflectionManager {
     }
 
     public static int getCombinedIdByBlockData(BlockData data) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getCombinedIdByBlockData(data);
+        }
+
         try {
             Object iBlockData = craftBlockDataGetState.invoke(data);
 
@@ -1674,6 +1893,10 @@ public class ReflectionManager {
     }
 
     public static int getCombinedIdByItemStack(ItemStack itemStack) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getCombinedIdByItemStack(itemStack);
+        }
+
         try {
             if (!NmsVersion.v1_13.isSupported()) {
                 return itemStack.getType().ordinal() + (itemStack.getDurability() << 12);
@@ -1692,6 +1915,10 @@ public class ReflectionManager {
     }
 
     public static BlockData getBlockDataByCombinedId(int id) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getBlockDataByCombinedId(id);
+        }
+
         try {
             Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
             Object iBlockData = idMethod.invoke(null, id);
@@ -1706,6 +1933,10 @@ public class ReflectionManager {
     }
 
     public static ItemStack getItemStackByCombinedId(int id) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getItemStackByCombinedId(id);
+        }
+
         try {
             Method idMethod = getNmsMethod("Block", "getByCombinedId", int.class);
             Object iBlockData = idMethod.invoke(null, id);
@@ -1730,6 +1961,10 @@ public class ReflectionManager {
     }
 
     public static Object getWorldServer(World w) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getWorldServer(w);
+        }
+
         try {
             return getNmsWorld.invoke(w);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -1740,6 +1975,10 @@ public class ReflectionManager {
     }
 
     public static ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
+        if (NmsVersion.v1_18.isSupported()) {
+            return v1_18ReflectionManager.getDeserializedItemMeta(meta);
+        }
+
         try {
             return (ItemMeta) deserializedItemMeta.invoke(null, meta);
         } catch (Exception e) {
