@@ -8,9 +8,9 @@
     <packaging>pom</packaging>
     <version>10.0.26-SNAPSHOT</version>
     <modules>
+        <module>shared</module>
         <module>v1_18_R1</module>
         <module>plugin</module>
-        <module>shared</module>
     </modules>
 
     <properties>

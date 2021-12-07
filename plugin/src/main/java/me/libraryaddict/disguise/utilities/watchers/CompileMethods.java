@@ -65,8 +65,7 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("target/classes/ANTI_PIRACY_SECRET_FILE");
-        System.out.println(soundsFile.getAbsolutePath());
+        File soundsFile = new File("plugin/target/classes/ANTI_PIRACY_ENCRYPTION");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
             byte[] array = String.join("\n", list).getBytes(StandardCharsets.UTF_8);
@@ -157,8 +156,7 @@ public class CompileMethods {
             }
         }
 
-        File methodsFile = new File("target/classes/ANTI_PIRACY_ENCRYPTION");
-        System.out.println(methodsFile.getAbsolutePath());
+        File methodsFile = new File("plugin/target/classes/ANTI_PIRACY_ENCRYPTION");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
             byte[] array = String.join("\n", methods).getBytes(StandardCharsets.UTF_8);
