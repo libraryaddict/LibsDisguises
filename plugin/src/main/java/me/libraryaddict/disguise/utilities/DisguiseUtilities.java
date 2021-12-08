@@ -480,7 +480,12 @@ public class DisguiseUtilities {
 
         // If we are on 1.17, you need this release or dev build
         // ProtocolLib is a little funny in that it provides next release version as the current version
-        return new String[]{"4.7.0", "528"};
+        if (!NmsVersion.v1_18.isSupported()) {
+            return new String[]{"4.7.0", "528"};
+        }
+
+        // If you're on 1.18..
+        return new String[]{"4.8.0", "538"};
     }
 
     public static boolean isProtocolLibOutdated() {
@@ -1609,8 +1614,8 @@ public class DisguiseUtilities {
 
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
                         ReflectionManager.getNmsClass("EntityPlayer"));
@@ -1665,8 +1670,8 @@ public class DisguiseUtilities {
                 if (entityTrackerEntry != null) {
                     Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
-                    Method clear = ReflectionManager
-                            .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                    Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                            ReflectionManager.getNmsClass("EntityPlayer"));
 
                     final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
                             ReflectionManager.getNmsClass("EntityPlayer"));
@@ -1732,8 +1737,8 @@ public class DisguiseUtilities {
                 Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
 
                 // TODO Store the fields
-                final Method clear = ReflectionManager
-                        .getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear", ReflectionManager.getNmsClass("EntityPlayer"));
+                final Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                        ReflectionManager.getNmsClass("EntityPlayer"));
 
                 final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
                         ReflectionManager.getNmsClass("EntityPlayer"));
@@ -1859,8 +1864,8 @@ public class DisguiseUtilities {
 
                     ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
                 } else {
-                    ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap").get(entityTrackerEntry))
-                            .remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
+                    ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap").get(entityTrackerEntry)).remove(
+                            ReflectionManager.getPlayerConnectionOrPlayer(player));
                 }
             }
         } catch (Exception ex) {
@@ -2962,8 +2967,8 @@ public class DisguiseUtilities {
                     name = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                 }
 
-                WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager
-                        .createDataWatcherObject(NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
+                WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(
+                        NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD, name);
 
                 watcher.setObject(obj, ReflectionManager.convertInvalidMeta(name));
 
@@ -2985,7 +2990,7 @@ public class DisguiseUtilities {
                 Location loc = disguise.getEntity().getLocation();
 
                 packet.getDoubles().write(0, loc.getX());
-                packet.getDoubles().write(1, loc.getY() + height  + (0.28 * i));
+                packet.getDoubles().write(1, loc.getY() + height + (0.28 * i));
                 packet.getDoubles().write(2, loc.getZ());
                 packets.add(packet);
 

@@ -108,7 +108,6 @@ public class ReflectionManager {
     private static Field noDamageTicks;
     private static Method isInvul;
     private static Object genericDamage;
-    private static HashMap<String, String> classLocations = new HashMap<>();
     private static Field playerConnection;
     private static Method incrementedInventoryStateId;
     private static Field playerInventoryContainer;
@@ -766,7 +765,7 @@ public class ReflectionManager {
 
     public static ReflectionManagerAbstract getReflectionManager(NmsVersion nmsVersion) {
         try {
-            Class<?> aClass = Class.forName("me.libraryaddict.disguise." + nmsVersion.name() + ".utilities.reflection.ReflectionManager");
+            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + nmsVersion.name() + ".ReflectionManager");
             Object o = aClass.getConstructor().newInstance();
             return (ReflectionManagerAbstract) o;
         } catch (ReflectiveOperationException e) {
@@ -970,31 +969,7 @@ public class ReflectionManager {
     }
 
     private static String getLocation(String pack, String className) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return ClassMappings.getClass(pack, className);
-        }
-
-        String toReturn = classLocations.get(className);
-
-        if (toReturn != null) {
-            return toReturn;
-        }
-
-        try {
-            ArrayList<String> classes = ClassGetter.getEntriesForPackage(pack);
-
-            String realLocation = classes.stream().filter(s -> s.endsWith("/" + className + ".class")).findAny().get().replace("/", ".").replace(".class", "");
-
-            classLocations.put(className, realLocation);
-
-            return realLocation;
-        } catch (Throwable throwable) {
-            //  System.err.println(pack + " - " + className);
-            // throwable.printStackTrace();
-            classLocations.put(className, className);
-        }
-
-        return className;
+        return ClassMappings.getClass(pack, className);
     }
 
     public static Class getNmsClass(String className) {
@@ -1865,7 +1840,8 @@ public class ReflectionManager {
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
         if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNmsEntityPose(entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
+            return v1_18ReflectionManager.getNmsEntityPose(
+                    entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
         }
 
         return Enum.valueOf(entityPoseClass, entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
@@ -2263,7 +2239,8 @@ public class ReflectionManager {
                 return;
             }
 
-            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType, NmsVersion.v1_18.isSupported() ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType,
+                    NmsVersion.v1_18.isSupported() ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");

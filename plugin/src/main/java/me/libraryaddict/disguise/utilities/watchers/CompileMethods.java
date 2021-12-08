@@ -65,7 +65,7 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("plugin/target/classes/ANTI_PIRACY_ENCRYPTION");
+        File soundsFile = new File("plugin/target/classes/ANTI_PIRACY_SECRET_FILE");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
             byte[] array = String.join("\n", list).getBytes(StandardCharsets.UTF_8);
