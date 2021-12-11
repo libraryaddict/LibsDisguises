@@ -25,6 +25,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
@@ -35,7 +36,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import org.bukkit.craftbukkit.v1_17_R1.CraftArt;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_17_R1.CraftSound;
@@ -58,6 +58,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -242,8 +243,17 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
             return 0.0f;
         } else {
-            return ((net.minecraft.world.entity.LivingEntity) entity).getVoicePitch();
+            try {
+                Method method = LivingEntity.class.getDeclaredMethod("getSoundVolume");
+                method.setAccessible(true);
+
+                return (Float) method.invoke(entity);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
+
+        return 0f;
     }
 
     public void injectCallback(String playername, ProfileLookupCallback callback) {

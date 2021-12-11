@@ -110,8 +110,8 @@ public class PacketListenerSounds extends PacketAdapter {
 
         // Blocks null and CANCEL, HURT and DEATH are 100% handled by entity status!
         if (soundType != SoundType.STEP && soundType != SoundType.IDLE) {
-            event.setCancelled(true);
-            return;
+            //event.setCancelled(true);
+            // return;
         }
 
         if (disguisedEntity == observer && !disguise.isSelfDisguiseSoundsReplaced()) {
@@ -141,35 +141,32 @@ public class PacketListenerSounds extends PacketAdapter {
 
         if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
-                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.0F;
+                pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {
-                pitch = (DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F + 1.4F;
+                pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.4F;
             }
         }
 
-        if (sound.getClass().getSimpleName().equals("MinecraftKey")) {
-            PacketContainer newPacket = new PacketContainer(Server.CUSTOM_SOUND_EFFECT);
-            StructureModifier<Object> newModifs = newPacket.getModifier();
+        PacketContainer newPacket;
 
-            newModifs.write(0, sound);
-            newModifs.write(1, soundCat);
+        if (sound.getClass().getSimpleName().equals("MinecraftKey")) {
+            newPacket = new PacketContainer(Server.CUSTOM_SOUND_EFFECT);
+            StructureModifier<Object> newModifs = newPacket.getModifier();
 
             newModifs.write(2, mods.read(2));
             newModifs.write(3, mods.read(3));
             newModifs.write(4, mods.read(4));
-            newModifs.write(5, volume);
-            newModifs.write(6, pitch);
-
-            event.setPacket(newPacket);
         } else {
-            event.setPacket(event.getPacket().shallowClone());
-            mods = event.getPacket().getModifier();
-
-            mods.write(0, sound);
-            mods.write(1, soundCat);
-            mods.write(5, volume);
-            mods.write(6, pitch);
+            newPacket = event.getPacket().shallowClone();
+            mods = newPacket.getModifier();
         }
+
+        mods.write(0, sound);
+        mods.write(1, soundCat);
+        mods.write(5, volume);
+        mods.write(6, pitch);
+
+        event.setPacket(newPacket);
     }
 
     private void handleEntityStatus(PacketEvent event) {
@@ -191,10 +188,12 @@ public class PacketListenerSounds extends PacketAdapter {
 
         if (disguise instanceof TargetedDisguise) {
             Set<TargetedDisguise> discs = DisguiseUtilities.getDisguises().get(entity.getEntityId());
+
             for (TargetedDisguise targetedDisguise : discs) {
                 if (targetedDisguise != disguise) {
                     continue;
                 }
+
                 if (!targetedDisguise.canSee(observer)) {
                     return;
                 }
@@ -203,7 +202,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
         SoundType soundType = SoundType.HURT;
 
-        if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() == 0) {
+        if (entity instanceof LivingEntity && ((LivingEntity) entity).getHealth() <= 0) {
             soundType = SoundType.DEATH;
         }
 
@@ -230,8 +229,9 @@ public class PacketListenerSounds extends PacketAdapter {
         }
 
         SoundGroup disSound = SoundGroup.getGroup(disguise);
+        SoundGroup expectedGroup = SoundGroup.getGroup(disguise.getType().name());
 
-        if (disSound == null || disSound == entitySoundGroup) {
+        if (disSound == null || disSound == expectedGroup) {
             return;
         }
 

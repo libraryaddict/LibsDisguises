@@ -699,6 +699,7 @@ public class ReflectionManager {
             Object o = aClass.getConstructor().newInstance();
 
             return (ReflectionManagerAbstract) o;
+        } catch (ClassNotFoundException ignored) {
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
@@ -1088,6 +1089,7 @@ public class ReflectionManager {
             return (Float) damageAndIdleSoundMethod.invoke(entity);
         } catch (Exception ignored) {
         }
+
         return null;
     }
 

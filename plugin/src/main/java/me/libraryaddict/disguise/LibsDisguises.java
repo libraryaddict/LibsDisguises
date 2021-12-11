@@ -24,6 +24,7 @@ import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
@@ -83,8 +84,8 @@ public class LibsDisguises extends JavaPlugin {
                         getLogger().severe("Please restart the server to complete the ProtocolLib update!");
                     }
                 } catch (Exception e) {
-                    getLogger()
-                            .severe("Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" +
+                    getLogger().severe(
+                            "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" +
                                     " can " + "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
                     e.printStackTrace();
                 }
@@ -164,8 +165,8 @@ public class LibsDisguises extends JavaPlugin {
             LibsPremium.check(getDescription().getVersion(), getFile());
 
             if (!LibsPremium.isPremium()) {
-                getLogger()
-                        .info("You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
+                getLogger().info(
+                        "You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
             }
 
             if (ReflectionManager.getVersion() == null) {
@@ -185,8 +186,9 @@ public class LibsDisguises extends JavaPlugin {
                     @Override
                     public void run() {
                         getLogger().severe("!! May I have your attention please !!");
-                        getLogger().severe("Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
-                                requiredProtocolLib + "!");
+                        getLogger().severe(
+                                "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
+                                        "!");
                         getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
                         getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
 
@@ -218,9 +220,11 @@ public class LibsDisguises extends JavaPlugin {
             PacketsManager.init();
             DisguiseUtilities.init();
 
+            new SoundManager().load();
+
             ReflectionManager.registerValues();
 
-            new SoundManager().load();
+            ParamInfoManager.getParamInfoSoundGroup().recalculate();
 
             DisguiseConfig.loadConfig();
 

@@ -24,8 +24,6 @@ public class SoundManager {
 
         loadSounds();
         loadCustomSounds();
-
-        ParamInfoManager.getParamInfoSoundGroup().recalculate();
     }
 
     private void loadCustomSounds() {

@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities.reflection.v1_18;
 
 import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
@@ -30,8 +29,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
-import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,7 +46,10 @@ import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -58,6 +58,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -214,7 +215,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public ClientboundPlayerInfoPacket.PlayerUpdate getPlayerInfoData(WrappedGameProfile gameProfile) {
-        return new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL, new TextComponent(gameProfile.getName()));
+        return new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL,
+                new TextComponent(gameProfile.getName()));
     }
 
     public Object getNmsEntity(Entity entity) {
@@ -241,8 +243,17 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         if (!(entity instanceof net.minecraft.world.entity.LivingEntity)) {
             return 0.0f;
         } else {
-            return ((net.minecraft.world.entity.LivingEntity) entity).getVoicePitch();
+            try {
+                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("getSoundVolume");
+                method.setAccessible(true);
+
+                return (Float) method.invoke(entity);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
+
+        return 0f;
     }
 
     public void injectCallback(String playername, ProfileLookupCallback callback) {
@@ -252,9 +263,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public void setBoundingBox(Entity entity, double x, double y, double z) {
         Location loc = entity.getLocation();
-        ((CraftEntity) entity).getHandle().setBoundingBox(new AABB(
-                loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2,
-                loc.getX() + x / 2, loc.getY() + y / 2, loc.getZ() + z / 2));
+        ((CraftEntity) entity).getHandle().setBoundingBox(
+                new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2, loc.getZ() + z / 2));
     }
 
     public Enum getSoundCategory(String category) {
@@ -370,11 +380,13 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public net.minecraft.world.entity.EntityType getEntityType(EntityType entityType) {
-        return net.minecraft.world.entity.EntityType.byString(entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
+        return net.minecraft.world.entity.EntityType.byString(
+                entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
     }
 
     public Object registerEntityType(NamespacedKey key) {
-        net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity = new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
+        net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
+                new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
         Registry.register(Registry.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
         newEntity.getDescriptionId();
         return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
