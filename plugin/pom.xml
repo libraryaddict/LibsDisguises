@@ -185,6 +185,14 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>v1_17_R1</artifactId>
+            <version>${project.version}</version>
+            <classifier>remapped-spigot</classifier>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

@@ -111,8 +111,7 @@ public class ReflectionManager {
     private static Field playerConnection;
     private static Method incrementedInventoryStateId;
     private static Field playerInventoryContainer;
-
-    private static ReflectionManagerAbstract v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
+    private static ReflectionManagerAbstract nmsReflection;
 
     public static void init() {
         try {
@@ -121,37 +120,17 @@ public class ReflectionManager {
                 entityPoseClass = getNmsClass("EntityPose");
             }
 
-            if (NmsVersion.v1_18.isSupported()) {
-                v1_18ReflectionManager = getReflectionManager(NmsVersion.v1_18);
+            nmsReflection = getReflectionManager(getVersion());
+
+            if (nmsReflection != null) {
                 return;
             }
+
             boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
             setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
 
-            if (NmsVersion.v1_17.isSupported()) {
-                for (Field f : getNmsClass("Entity").getDeclaredFields()) {
-                    if (f.getType() != AtomicInteger.class) {
-                        continue;
-                    }
-
-                    f.setAccessible(true);
-                    entityCountField = f;
-                    break;
-                }
-
-                for (Field f : getNmsClass("EntityHuman").getDeclaredFields()) {
-                    if (!f.getType().getSimpleName().equals("ContainerPlayer")) {
-                        continue;
-                    }
-
-                    f.setAccessible(true);
-                    playerInventoryContainer = f;
-                    break;
-                }
-            } else {
-                entityCountField = getNmsField("Entity", "entityCount");
-            }
+            entityCountField = getNmsField("Entity", "entityCount");
 
             mobEffectConstructor = getNmsConstructor("MobEffect", getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE);
             mobEffectList = getNmsMethod("MobEffectList", "fromId", Integer.TYPE);
@@ -170,15 +149,9 @@ public class ReflectionManager {
             enumPlayerInfoAction = (Enum[]) getNmsClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants();
             chatComponentConstructor = getNmsConstructor("ChatComponentText", String.class);
 
-            if (NmsVersion.v1_17.isSupported()) {
-                packetPlayOutConstructor =
-                        getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", GameProfile.class, int.class, getNmsClass("EnumGamemode"),
-                                getNmsClass("IChatBaseComponent"));
-            } else {
-                packetPlayOutConstructor =
-                        getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
-                                getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
-            }
+            packetPlayOutConstructor =
+                    getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
+                            getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
 
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
             getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
@@ -209,16 +182,9 @@ public class ReflectionManager {
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "get", getNmsClass("MinecraftKey"));
                     villagerDataConstructor = getNmsConstructor("VillagerData", getNmsClass("VillagerType"), getNmsClass("VillagerProfession"), int.class);
 
-                    if (NmsVersion.v1_17.isSupported()) {
-                        villagerProfessionRegistry = getNmsField("IRegistry", "ap").get(null);
-                        villagerTypeRegistry = getNmsField("IRegistry", "ao").get(null);
-                        playerConnection = getNmsField("EntityPlayer", "b");
-                        connectionEntityMethod = getNmsMethod("PlayerConnection", "d");
-                        incrementedInventoryStateId = getNmsMethod("Container", "incrementStateId");
-                    } else {
-                        villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
-                        villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
-                    }
+                    villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
+                    villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
+
                 } else {
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "getOrDefault", getNmsClass("MinecraftKey"));
                 }
@@ -234,20 +200,7 @@ public class ReflectionManager {
             getNmsWorld = getCraftMethod("CraftWorld", "getHandle");
             deserializedItemMeta = getCraftMethod(getCraftClass("CraftMetaItem$SerializableMeta"), "deserialize", Map.class);
 
-            if (NmsVersion.v1_17.isSupported()) {
-                boolean nextInt = false;
-
-                for (Field f : getNmsClass("Entity").getDeclaredFields()) {
-                    if (f.getType().getSimpleName().equals("Tag")) {
-                        nextInt = true;
-                    } else if (f.getType() == int.class && nextInt) {
-                        noDamageTicks = f;
-                        break;
-                    }
-                }
-            } else {
-                noDamageTicks = getNmsField("Entity", "noDamageTicks");
-            }
+            noDamageTicks = getNmsField("Entity", "noDamageTicks");
 
             isInvul = getNmsMethod("Entity", "isInvulnerable", getNmsClass("DamageSource"));
 
@@ -311,15 +264,15 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
 
-        pingField = getNmsField("EntityPlayer", NmsVersion.v1_17.isSupported() ? "e" : "ping");
+        pingField = getNmsField("EntityPlayer", "ping");
 
         if (NmsVersion.v1_14.isSupported()) {
-            chunkMapField = getNmsField("ChunkProviderServer", NmsVersion.v1_17.isSupported() ? "a" : "playerChunkMap");
-            trackedEntitiesField = getNmsField("PlayerChunkMap", NmsVersion.v1_17.isSupported() ? "G" : "trackedEntities");
-            entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", NmsVersion.v1_17.isSupported() ? "b" : "trackerEntry");
+            chunkMapField = getNmsField("ChunkProviderServer", "playerChunkMap");
+            trackedEntitiesField = getNmsField("PlayerChunkMap", "trackedEntities");
+            entityTrackerField = getNmsField("PlayerChunkMap$EntityTracker", "trackerEntry");
 
             if (NmsVersion.v1_16.isSupported()) {
-                chunkProviderField = getNmsField("WorldServer", NmsVersion.v1_17.isSupported() ? "C" : "chunkProvider");
+                chunkProviderField = getNmsField("WorldServer", "chunkProvider");
             } else {
                 chunkProviderField = getNmsField("World", "chunkProvider");
             }
@@ -331,8 +284,8 @@ public class ReflectionManager {
     }
 
     public static boolean hasInvul(Entity entity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.hasInvul(entity);
+        if (nmsReflection != null) {
+            return nmsReflection.hasInvul(entity);
         }
 
         Object nmsEntity = ReflectionManager.getNmsEntity(entity);
@@ -351,8 +304,8 @@ public class ReflectionManager {
     }
 
     public static int getIncrementedStateId(Player player) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getIncrementedStateId(player);
+        if (nmsReflection != null) {
+            return nmsReflection.getIncrementedStateId(player);
         }
 
         try {
@@ -465,8 +418,8 @@ public class ReflectionManager {
     }
 
     public static int getNewEntityId(boolean increment) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNewEntityId(increment);
+        if (nmsReflection != null) {
+            return nmsReflection.getNewEntityId(increment);
         }
 
         try {
@@ -493,15 +446,11 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerConnectionOrPlayer(Player player) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getPlayerConnectionOrPlayer(player);
+        if (nmsReflection != null) {
+            return nmsReflection.getPlayerConnectionOrPlayer(player);
         }
 
         try {
-            if (NmsVersion.v1_17.isSupported()) {
-                return playerConnection.get(getNmsEntity(player));
-            }
-
             return getNmsEntity(player);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -511,22 +460,12 @@ public class ReflectionManager {
     }
 
     public static Object createEntityInstance(DisguiseType disguiseType, String entityName) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createEntityInstance(entityName);
+        if (nmsReflection != null) {
+            return nmsReflection.createEntityInstance(entityName);
         }
 
         try {
-            Class<?> entityClass;
-
-            if (NmsVersion.v1_17.isSupported()) {
-                entityClass = getNmsClassIgnoreErrors("Entity" + entityName);
-
-                if (entityClass == null) {
-                    entityClass = getNmsClass(entityName);
-                }
-            } else {
-                entityClass = getNmsClass("Entity" + entityName);
-            }
+            Class<?> entityClass = getNmsClass("Entity" + entityName);
 
             Object entityObject;
             Object world = getWorldServer(Bukkit.getWorlds().get(0));
@@ -535,17 +474,13 @@ public class ReflectionManager {
                 Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
                 WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
-                if (NmsVersion.v1_17.isSupported()) {
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType())
-                            .newInstance(minecraftServer, world, gameProfile.getHandle());
-                } else {
-                    Object playerinteractmanager =
-                            getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
-                                    .newInstance(world);
+                Object playerinteractmanager =
+                        getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
+                                .newInstance(world);
 
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
-                            playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
-                }
+                entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
+                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+
             } else if (entityName.equals("EnderPearl")) {
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
                         .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
@@ -583,8 +518,8 @@ public class ReflectionManager {
     }
 
     public static Object getMobEffectList(int id) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getMobEffectList(id);
+        if (nmsReflection != null) {
+            return nmsReflection.getMobEffectList(id);
         }
 
         try {
@@ -601,8 +536,8 @@ public class ReflectionManager {
     }
 
     public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createMobEffect(id, duration, amplification, ambient, particles);
+        if (nmsReflection != null) {
+            return nmsReflection.createMobEffect(id, duration, amplification, ambient, particles);
         }
 
         try {
@@ -615,10 +550,10 @@ public class ReflectionManager {
     }
 
     public static FakeBoundingBox getBoundingBox(Entity entity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            double x = v1_18ReflectionManager.getXBoundingBox(entity);
-            double y = v1_18ReflectionManager.getYBoundingBox(entity);
-            double z = v1_18ReflectionManager.getZBoundingBox(entity);
+        if (nmsReflection != null) {
+            double x = nmsReflection.getXBoundingBox(entity);
+            double y = nmsReflection.getYBoundingBox(entity);
+            double z = nmsReflection.getZBoundingBox(entity);
             return new FakeBoundingBox(x, y, z);
         }
 
@@ -668,16 +603,11 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerFromPlayerConnection(Object nmsEntity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getPlayerFromPlayerConnection(nmsEntity);
+        if (nmsReflection != null) {
+            return nmsReflection.getPlayerFromPlayerConnection(nmsEntity);
         }
 
         try {
-            if (NmsVersion.v1_17.isSupported()) {
-                // Convert from player connection to EntityPlayer
-                nmsEntity = connectionEntityMethod.invoke(nmsEntity);
-            }
-
             return nmsEntity;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -687,8 +617,8 @@ public class ReflectionManager {
     }
 
     public static Entity getBukkitEntity(Object nmsEntity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getBukkitEntity(nmsEntity);
+        if (nmsReflection != null) {
+            return nmsReflection.getBukkitEntity(nmsEntity);
         }
 
         try {
@@ -701,8 +631,8 @@ public class ReflectionManager {
     }
 
     public static ItemStack getBukkitItem(Object nmsItem) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getBukkitItem(nmsItem);
+        if (nmsReflection != null) {
+            return nmsReflection.getBukkitItem(nmsItem);
         }
 
         try {
@@ -715,8 +645,8 @@ public class ReflectionManager {
     }
 
     public static ItemStack getCraftItem(ItemStack bukkitItem) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getCraftItem(bukkitItem);
+        if (nmsReflection != null) {
+            return nmsReflection.getCraftItem(bukkitItem);
         }
 
         try {
@@ -767,6 +697,7 @@ public class ReflectionManager {
         try {
             Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + nmsVersion.name() + ".ReflectionManager");
             Object o = aClass.getConstructor().newInstance();
+
             return (ReflectionManagerAbstract) o;
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -792,8 +723,8 @@ public class ReflectionManager {
     }
 
     public static Object getCraftSound(Sound sound) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getCraftSound(sound);
+        if (nmsReflection != null) {
+            return nmsReflection.getCraftSound(sound);
         }
 
         try {
@@ -806,8 +737,8 @@ public class ReflectionManager {
     }
 
     public static Object getEntityTrackerEntry(Entity target) throws Exception {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEntityTrackerEntry(target);
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityTrackerEntry(target);
         }
 
         Object world = getWorldServer(target.getWorld());
@@ -833,8 +764,8 @@ public class ReflectionManager {
     }
 
     public static Object getMinecraftServer() {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getMinecraftServer();
+        if (nmsReflection != null) {
+            return nmsReflection.getMinecraftServer();
         }
 
         try {
@@ -846,8 +777,8 @@ public class ReflectionManager {
     }
 
     public static String getEnumArt(Art art) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEnumArt(art);
+        if (nmsReflection != null) {
+            return nmsReflection.getEnumArt(art);
         }
 
         try {
@@ -865,8 +796,8 @@ public class ReflectionManager {
     }
 
     public static Object getBlockPosition(int x, int y, int z) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getBlockPosition(x, y, z);
+        if (nmsReflection != null) {
+            return nmsReflection.getBlockPosition(x, y, z);
         }
 
         try {
@@ -879,8 +810,8 @@ public class ReflectionManager {
     }
 
     public static Enum getEnumDirection(int direction) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEnumDirection(direction);
+        if (nmsReflection != null) {
+            return nmsReflection.getEnumDirection(direction);
         }
 
         try {
@@ -893,8 +824,8 @@ public class ReflectionManager {
     }
 
     public static Enum getEnumPlayerInfoAction(int action) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEnumPlayerInfoAction(action);
+        if (nmsReflection != null) {
+            return nmsReflection.getEnumPlayerInfoAction(action);
         }
 
         try {
@@ -907,16 +838,12 @@ public class ReflectionManager {
     }
 
     public static Object getPlayerInfoData(Object playerInfoPacket, WrappedGameProfile gameProfile) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getPlayerInfoData(gameProfile);
+        if (nmsReflection != null) {
+            return nmsReflection.getPlayerInfoData(gameProfile);
         }
 
         try {
             Object playerListName = chatComponentConstructor.newInstance(gameProfile.getName());
-
-            if (NmsVersion.v1_17.isSupported()) {
-                return packetPlayOutConstructor.newInstance(gameProfile.getHandle(), 0, enumGamemode[1], playerListName);
-            }
 
             return packetPlayOutConstructor.newInstance(playerInfoPacket, gameProfile.getHandle(), 0, enumGamemode[1], playerListName);
         } catch (Exception ex) {
@@ -1008,8 +935,8 @@ public class ReflectionManager {
     }
 
     public static Object getNmsEntity(Entity entity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNmsEntity(entity);
+        if (nmsReflection != null) {
+            return nmsReflection.getNmsEntity(entity);
         }
 
         try {
@@ -1039,8 +966,8 @@ public class ReflectionManager {
     }
 
     public static Object getNmsItem(ItemStack itemstack) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNmsItem(itemstack);
+        if (nmsReflection != null) {
+            return nmsReflection.getNmsItem(itemstack);
         }
 
         try {
@@ -1087,8 +1014,8 @@ public class ReflectionManager {
     }
 
     public static double getPing(Player player) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getPing(player);
+        if (nmsReflection != null) {
+            return nmsReflection.getPing(player);
         }
 
         try {
@@ -1101,8 +1028,8 @@ public class ReflectionManager {
     }
 
     public static float[] getSize(Entity entity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getSize(entity);
+        if (nmsReflection != null) {
+            return nmsReflection.getSize(entity);
         }
 
         try {
@@ -1129,8 +1056,8 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getSkullBlob(gameProfile);
+        if (nmsReflection != null) {
+            return nmsReflection.getSkullBlob(gameProfile);
         }
 
         try {
@@ -1153,8 +1080,8 @@ public class ReflectionManager {
     }
 
     public static Float getSoundModifier(Object entity) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getSoundModifier(entity);
+        if (nmsReflection != null) {
+            return nmsReflection.getSoundModifier(entity);
         }
 
         try {
@@ -1172,8 +1099,8 @@ public class ReflectionManager {
             Object minecraftServer = getMinecraftServer();
 
             LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
-            if (NmsVersion.v1_18.isSupported()) {
-                v1_18ReflectionManager.injectCallback(playername, callback);
+            if (nmsReflection != null) {
+                nmsReflection.injectCallback(playername, callback);
             } else {
                 for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                     if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
@@ -1202,8 +1129,8 @@ public class ReflectionManager {
     }
 
     public static void setBoundingBox(Entity entity, FakeBoundingBox newBox) {
-        if (NmsVersion.v1_18.isSupported()) {
-            v1_18ReflectionManager.setBoundingBox(entity, newBox.getX(), newBox.getY(), newBox.getZ());
+        if (nmsReflection != null) {
+            nmsReflection.setBoundingBox(entity, newBox.getX(), newBox.getY(), newBox.getZ());
             return;
         }
 
@@ -1220,8 +1147,8 @@ public class ReflectionManager {
     }
 
     public static Enum getSoundCategory(String category) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getSoundCategory(category);
+        if (nmsReflection != null) {
+            return nmsReflection.getSoundCategory(category);
         }
 
         return soundCategories.get(category);
@@ -1252,8 +1179,8 @@ public class ReflectionManager {
      * @return null if the equipment slot is null
      */
     public static Enum createEnumItemSlot(EquipmentSlot slot) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createEnumItemSlot(slot);
+        if (nmsReflection != null) {
+            return nmsReflection.createEnumItemSlot(slot);
         }
 
         switch (slot) {
@@ -1333,8 +1260,8 @@ public class ReflectionManager {
     }
 
     public static Object getSoundString(Sound sound) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getSoundString(sound);
+        if (nmsReflection != null) {
+            return nmsReflection.getSoundString(sound);
         }
 
         try {
@@ -1381,8 +1308,8 @@ public class ReflectionManager {
     public static Object convertInvalidMeta(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
-            if (NmsVersion.v1_18.isSupported()) {
-                return v1_18ReflectionManager.convertOptional(opt);
+            if (nmsReflection != null) {
+                return nmsReflection.convertOptional(opt);
             }
 
             if (!opt.isPresent()) {
@@ -1425,8 +1352,8 @@ public class ReflectionManager {
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
-            if (NmsVersion.v1_18.isSupported()) {
-                return v1_18ReflectionManager.convertVec3(angle);
+            if (nmsReflection != null) {
+                return nmsReflection.convertVec3(angle);
             }
 
             try {
@@ -1436,8 +1363,8 @@ public class ReflectionManager {
             }
         } else if (value instanceof EulerAngle) {
             EulerAngle angle = (EulerAngle) value;
-            if (NmsVersion.v1_18.isSupported()) {
-                return v1_18ReflectionManager.convertVec3(angle);
+            if (nmsReflection != null) {
+                return nmsReflection.convertVec3(angle);
             }
 
             try {
@@ -1446,8 +1373,8 @@ public class ReflectionManager {
                 ex.printStackTrace();
             }
         } else if (value instanceof Direction) {
-            if (NmsVersion.v1_18.isSupported()) {
-                return v1_18ReflectionManager.convertDirection((Direction) value);
+            if (nmsReflection != null) {
+                return nmsReflection.convertDirection((Direction) value);
             }
 
             try {
@@ -1457,8 +1384,8 @@ public class ReflectionManager {
             }
         } else if (value instanceof BlockPosition) {
             BlockPosition pos = (BlockPosition) value;
-            if (NmsVersion.v1_18.isSupported()) {
-                return v1_18ReflectionManager.getBlockPosition(pos.getX(), pos.getY(), pos.getZ());
+            if (nmsReflection != null) {
+                return nmsReflection.getBlockPosition(pos.getX(), pos.getY(), pos.getZ());
             }
 
             try {
@@ -1486,8 +1413,8 @@ public class ReflectionManager {
     }
 
     public static Material getMaterial(String name) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getMaterial(name);
+        if (nmsReflection != null) {
+            return nmsReflection.getMaterial(name);
         }
 
         try {
@@ -1501,7 +1428,7 @@ public class ReflectionManager {
 
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name);
 
-            Object registry = getNmsField("IRegistry", NmsVersion.v1_17.isSupported() ? "Z" : "ITEM").get(null);
+            Object registry = getNmsField("IRegistry", "ITEM").get(null);
 
             Method getMethod = getNmsMethod(getNmsClass("RegistryMaterials"), "get", mcKey.getClass());
             Object item = getMethod.invoke(registry, mcKey);
@@ -1526,8 +1453,8 @@ public class ReflectionManager {
     }
 
     public static String getItemName(Material material) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getItemName(material);
+        if (nmsReflection != null) {
+            return nmsReflection.getItemName(material);
         }
 
         try {
@@ -1540,7 +1467,7 @@ public class ReflectionManager {
             Object registry;
 
             if (NmsVersion.v1_13.isSupported()) {
-                registry = getNmsField("IRegistry", NmsVersion.v1_17.isSupported() ? "Z" : "ITEM").get(null);
+                registry = getNmsField("IRegistry", "ITEM").get(null);
             } else {
                 registry = getNmsField("Item", "REGISTRY").get(null);
             }
@@ -1562,8 +1489,8 @@ public class ReflectionManager {
     }
 
     public static Object getNmsVillagerData(VillagerData data) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNmsVillagerData(data.getType(), data.getProfession());
+        if (nmsReflection != null) {
+            return nmsReflection.getNmsVillagerData(data.getType(), data.getProfession());
         }
 
         Object type = getVillagerType(data.getType());
@@ -1579,8 +1506,8 @@ public class ReflectionManager {
     }
 
     public static Object getVillagerType(Villager.Type type) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getVillagerType(type);
+        if (nmsReflection != null) {
+            return nmsReflection.getVillagerType(type);
         }
 
         try {
@@ -1619,8 +1546,8 @@ public class ReflectionManager {
     }
 
     public static Object getVillagerProfession(Villager.Profession profession) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getVillagerProfession(profession);
+        if (nmsReflection != null) {
+            return nmsReflection.getVillagerProfession(profession);
         }
 
         try {
@@ -1658,8 +1585,8 @@ public class ReflectionManager {
     public static Object createDataWatcherItem(MetaIndex id, Object value) {
         WrappedDataWatcherObject watcherObject = createDataWatcherObject(id, value);
 
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createDataWatcherItem(watcherObject, convertInvalidMeta(value));
+        if (nmsReflection != null) {
+            return nmsReflection.createDataWatcherItem(watcherObject, convertInvalidMeta(value));
         }
 
         try {
@@ -1673,8 +1600,8 @@ public class ReflectionManager {
 
     @Deprecated
     public static Object createSoundEffect(String minecraftKey) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createSoundEffect(minecraftKey);
+        if (nmsReflection != null) {
+            return nmsReflection.createSoundEffect(minecraftKey);
         }
 
         try {
@@ -1687,8 +1614,8 @@ public class ReflectionManager {
     }
 
     public static Object createMinecraftKey(String name) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.createMinecraftKey(name);
+        if (nmsReflection != null) {
+            return nmsReflection.createMinecraftKey(name);
         }
 
         try {
@@ -1701,8 +1628,8 @@ public class ReflectionManager {
     }
 
     public static Object getVec3D(Vector vector) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getVec3D(vector);
+        if (nmsReflection != null) {
+            return nmsReflection.getVec3D(vector);
         }
 
         try {
@@ -1715,8 +1642,8 @@ public class ReflectionManager {
     }
 
     public static Object getEntityType(EntityType entityType) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEntityType(entityType);
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityType(entityType);
         }
 
         try {
@@ -1735,8 +1662,8 @@ public class ReflectionManager {
     }
 
     public static Object registerEntityType(NamespacedKey key) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.registerEntityType(key);
+        if (nmsReflection != null) {
+            return nmsReflection.registerEntityType(key);
         }
 
         try {
@@ -1744,7 +1671,7 @@ public class ReflectionManager {
 
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
 
             Constructor c = getNmsClass("EntityTypes").getConstructors()[0];
 
@@ -1778,16 +1705,16 @@ public class ReflectionManager {
     }
 
     public static int getEntityTypeId(Object entityTypes) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEntityTypeId(entityTypes);
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityTypeId(entityTypes);
         }
 
         try {
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
 
-            return (int) registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", Object.class).invoke(registry, entityTypes);
+            return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1796,8 +1723,8 @@ public class ReflectionManager {
     }
 
     public static int getEntityTypeId(EntityType entityType) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEntityTypeId(entityType);
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityTypeId(entityType);
         }
 
         try {
@@ -1806,9 +1733,9 @@ public class ReflectionManager {
 
                 Class typesClass = getNmsClass("IRegistry");
 
-                Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
+                Object registry = typesClass.getField("ENTITY_TYPE").get(null);
 
-                return (int) registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", Object.class).invoke(registry, entityTypes);
+                return (int) registry.getClass().getMethod("a", Object.class).invoke(registry, entityTypes);
             }
 
             return entityType.getTypeId();
@@ -1820,17 +1747,17 @@ public class ReflectionManager {
     }
 
     public static Object getEntityType(NamespacedKey name) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getEntityType(name);
+        if (nmsReflection != null) {
+            return nmsReflection.getEntityType(name);
         }
 
         try {
             Class typesClass = getNmsClass("IRegistry");
 
-            Object registry = typesClass.getField(NmsVersion.v1_17.isSupported() ? "Y" : "ENTITY_TYPE").get(null);
+            Object registry = typesClass.getField("ENTITY_TYPE").get(null);
             Object mcKey = getNmsConstructor("MinecraftKey", String.class).newInstance(name.toString());
 
-            return registry.getClass().getMethod(NmsVersion.v1_17.isSupported() ? "getId" : "a", mcKey.getClass()).invoke(registry, mcKey);
+            return registry.getClass().getMethod("a", mcKey.getClass()).invoke(registry, mcKey);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1839,9 +1766,8 @@ public class ReflectionManager {
     }
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getNmsEntityPose(
-                    entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
+        if (nmsReflection != null) {
+            return nmsReflection.getNmsEntityPose(entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
         }
 
         return Enum.valueOf(entityPoseClass, entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
@@ -1863,8 +1789,8 @@ public class ReflectionManager {
     }
 
     public static int getCombinedIdByBlockData(BlockData data) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getCombinedIdByBlockData(data);
+        if (nmsReflection != null) {
+            return nmsReflection.getCombinedIdByBlockData(data);
         }
 
         try {
@@ -1879,8 +1805,8 @@ public class ReflectionManager {
     }
 
     public static int getCombinedIdByItemStack(ItemStack itemStack) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getCombinedIdByItemStack(itemStack);
+        if (nmsReflection != null) {
+            return nmsReflection.getCombinedIdByItemStack(itemStack);
         }
 
         try {
@@ -1901,8 +1827,8 @@ public class ReflectionManager {
     }
 
     public static BlockData getBlockDataByCombinedId(int id) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getBlockDataByCombinedId(id);
+        if (nmsReflection != null) {
+            return nmsReflection.getBlockDataByCombinedId(id);
         }
 
         try {
@@ -1919,8 +1845,8 @@ public class ReflectionManager {
     }
 
     public static ItemStack getItemStackByCombinedId(int id) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getItemStackByCombinedId(id);
+        if (nmsReflection != null) {
+            return nmsReflection.getItemStackByCombinedId(id);
         }
 
         try {
@@ -1947,8 +1873,8 @@ public class ReflectionManager {
     }
 
     public static Object getWorldServer(World w) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getWorldServer(w);
+        if (nmsReflection != null) {
+            return nmsReflection.getWorldServer(w);
         }
 
         try {
@@ -1961,8 +1887,8 @@ public class ReflectionManager {
     }
 
     public static ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
-        if (NmsVersion.v1_18.isSupported()) {
-            return v1_18ReflectionManager.getDeserializedItemMeta(meta);
+        if (nmsReflection != null) {
+            return nmsReflection.getDeserializedItemMeta(meta);
         }
 
         try {
@@ -2240,7 +2166,7 @@ public class ReflectionManager {
             }
 
             Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType,
-                    NmsVersion.v1_18.isSupported() ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+                    nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");
