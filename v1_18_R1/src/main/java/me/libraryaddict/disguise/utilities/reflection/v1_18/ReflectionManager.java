@@ -244,7 +244,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("getSoundVolume");
+                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eu");
                 method.setAccessible(true);
 
                 return (Float) method.invoke(entity);
