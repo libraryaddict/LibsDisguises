@@ -273,11 +273,12 @@ public class FlagWatcher {
 
             // Its sending the air metadata. This is the least commonly sent metadata which all entitys still share.
             // I send my custom values if I see this!
-            if (id == MetaIndex.ENTITY_AIR_TICKS.getIndex()) {
+            if (index == MetaIndex.ENTITY_AIR_TICKS) {
                 sendAllCustom = true;
             }
 
             Object value = null;
+            boolean usingBackup = false;
 
             if (entityValues.containsKey(id)) {
                 if (entityValues.get(id) == null) {
@@ -286,7 +287,7 @@ public class FlagWatcher {
 
                 value = entityValues.get(id);
 
-                if (id == MetaIndex.LIVING_HEALTH.getIndex() && (float) watch.getRawValue() <= 0) {
+                if (index == MetaIndex.LIVING_HEALTH && (float) watch.getRawValue() <= 0) {
                     value = watch.getRawValue();
                 }
             } else if (backupEntityValues.containsKey(id)) {
@@ -295,10 +296,11 @@ public class FlagWatcher {
                 }
 
                 value = backupEntityValues.get(id);
+                usingBackup = true;
             }
 
             if (value != null) {
-                if (isEntityAnimationsAdded() && (index == MetaIndex.ENTITY_META || index == MetaIndex.LIVING_META)) {
+                if (isEntityAnimationsAdded() && (index == MetaIndex.ENTITY_META || (index == MetaIndex.LIVING_META && !usingBackup))) {
                     value = addEntityAnimations(index, (byte) value, (byte) watch.getRawValue());
 
                     if (index == MetaIndex.ENTITY_META) {
