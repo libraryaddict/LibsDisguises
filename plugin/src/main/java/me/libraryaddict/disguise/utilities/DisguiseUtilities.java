@@ -9,9 +9,7 @@ import com.comphenix.protocol.wrappers.*;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
@@ -1396,6 +1394,7 @@ public class DisguiseUtilities {
         // Gotta register all the flag watcher stuff before I make this one
         gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher(gsonBuilder.create()));
         gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
+        gsonBuilder.registerTypeAdapter(Optional.class, (JsonSerializer<Optional>) (optional, type, jsonSerializationContext) -> jsonSerializationContext.serialize("<optional>(" + jsonSerializationContext.serialize(optional.orElse(null)) + ")"));
 
         gson = gsonBuilder.create();
 
