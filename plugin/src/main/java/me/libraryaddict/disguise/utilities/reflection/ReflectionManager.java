@@ -1310,12 +1310,13 @@ public class ReflectionManager {
     public static Object convertInvalidMeta(Object value) {
         if (value instanceof Optional) {
             Optional opt = (Optional) value;
-            if (nmsReflection != null) {
-                return nmsReflection.convertOptional(opt);
-            }
 
             if (!opt.isPresent()) {
                 return NmsVersion.v1_13.isSupported() ? value : com.google.common.base.Optional.absent();
+            }
+
+            if (nmsReflection != null) {
+                return nmsReflection.convertOptional(opt.get());
             }
 
             Object val = opt.get();
