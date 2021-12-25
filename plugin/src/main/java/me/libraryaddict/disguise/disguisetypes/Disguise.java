@@ -365,7 +365,7 @@ public abstract class Disguise {
     }
 
     public boolean isUpsideDown() {
-        return getWatcher().isUpsideDown();
+        return getWatcher() != null && getWatcher().isUpsideDown();
     }
 
     public Disguise setUpsideDown(boolean upsideDown) {
