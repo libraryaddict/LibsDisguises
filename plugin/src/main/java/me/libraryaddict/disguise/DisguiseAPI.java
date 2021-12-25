@@ -3,6 +3,7 @@ package me.libraryaddict.disguise;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import java.util.ArrayList;
 import me.libraryaddict.disguise.disguisetypes.*;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
@@ -282,7 +283,7 @@ public class DisguiseAPI {
         // You called the disguiseToAll method foolish mortal! Prepare to have your custom settings wiped!!!
         ((TargetedDisguise) disguise).setDisguiseTarget(TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS);
 
-        for (String observer : ((TargetedDisguise) disguise).getObservers()) {
+        for (String observer : new ArrayList<>(((TargetedDisguise) disguise).getObservers())) {
             ((TargetedDisguise) disguise).removePlayer(observer);
         }
 
