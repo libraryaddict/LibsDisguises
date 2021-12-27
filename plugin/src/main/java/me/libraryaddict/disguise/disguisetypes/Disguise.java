@@ -79,11 +79,11 @@ public abstract class Disguise {
     @Getter
     private String disguiseName;
     /**
-     * Is the name allowed to be changed by Lib's Disguises if they do some option?
+     * Is the name specifically set to something by a third party?
      */
     @Getter
     @Setter
-    private boolean customDisguiseName = true;
+    private boolean customDisguiseName = false;
     @Getter
     @Setter
     private boolean tallDisguisesVisible = DisguiseConfig.isTallSelfDisguises();
