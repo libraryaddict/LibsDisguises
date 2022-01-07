@@ -143,11 +143,11 @@ public class DisguiseAPI {
                 continue;
             }
 
-            if (index.getDefault() == obj.getValue() || index.getDefault() == obj.getRawValue()) {
+            if (index.getDefault() == obj.getValue() || index.getDefault() == obj.getValue()) {
                 continue;
             }
 
-            watcher.setUnsafeData(index, obj.getRawValue());
+            watcher.setUnsafeData(index, obj.getValue());
 
             // Update the meta for 0, otherwise boolean be weird
             if (index == MetaIndex.ENTITY_META) {
