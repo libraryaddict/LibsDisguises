@@ -143,7 +143,7 @@ public class DisguiseAPI {
                 continue;
             }
 
-            if (index.getDefault() == obj.getValue() || index.getDefault() == obj.getValue()) {
+            if (index.getDefault() == obj.getValue() || index.getDefault() == obj.getRawValue()) {
                 continue;
             }
 
