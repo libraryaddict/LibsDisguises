@@ -2091,13 +2091,16 @@ public class DisguiseUtilities {
 
             if (playerName == null || !playerName.startsWith(namePrefix)) {
                 String nameSuffix = "" + ChatColor.RESET;
+                int maxLength = namePrefix.length() + nameSuffix.length();
 
                 for (int i = 0; i < 1000; i++) {
-                    String testName = namePrefix + colorize(encode(getRandom().nextInt(Integer.MAX_VALUE))) + nameSuffix;
+                    String tName = colorize(encode(getRandom().nextInt(Integer.MAX_VALUE)));
 
-                    if (testName.length() > 16) {
-                        break;
+                    if (tName.length() > maxLength) {
+                        tName = tName.substring(0, maxLength);
                     }
+
+                    String testName = namePrefix + tName + nameSuffix;
 
                     if (!isValidPlayerName(board, testName)) {
                         continue;
