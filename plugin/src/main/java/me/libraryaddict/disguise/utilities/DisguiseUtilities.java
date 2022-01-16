@@ -2181,6 +2181,8 @@ public class DisguiseUtilities {
     }
 
     private static String encode(long toConvert) {
+        toConvert = Math.abs(toConvert) + 1;
+
         StringBuilder builder = new StringBuilder();
 
         while (toConvert != 0) {
