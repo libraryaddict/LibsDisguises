@@ -97,7 +97,7 @@ public class FlagWatcher {
         }
 
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
-                .createPacket(getDisguise().getEntity());
+            .createPacket(getDisguise().getEntity());
 
         try {
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
@@ -343,7 +343,7 @@ public class FlagWatcher {
                 float health = ((Number) watch.getRawValue()).floatValue();
 
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
-                        ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
+                    ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
 
                 ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
@@ -383,7 +383,7 @@ public class FlagWatcher {
                 }
 
                 String name = DisguiseConfig.isScoreboardNames() && ((PlayerDisguise) getDisguise()).hasScoreboardName() ?
-                        ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
+                    ((PlayerDisguise) getDisguise()).getScoreboardName().getPlayer() : ((PlayerDisguise) getDisguise()).getName();
 
                 ReflectionManager.setScore(player.getScoreboard(), name, (int) Math.ceil(health));
             }
@@ -580,7 +580,7 @@ public class FlagWatcher {
 
             if (NmsVersion.v1_13.isSupported()) {
                 Optional<WrappedChatComponent> optional =
-                        Optional.of(WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(name))));
+                    Optional.of(WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(name))));
 
                 setData(MetaIndex.ENTITY_CUSTOM_NAME, optional);
             } else {
@@ -1022,7 +1022,11 @@ public class FlagWatcher {
 
     @Deprecated
     public <Y> void setUnsafeData(MetaIndex<Y> id, Y value) {
-        setData(id, value);
+        if (!id.getDefault().getClass().isInstance(value)) {
+            setBackupValue(id, value);
+        } else {
+            setData(id, value);
+        }
     }
 
     protected <Y> void setData(MetaIndex<Y> id, Y value) {
