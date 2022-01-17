@@ -143,6 +143,11 @@ public class ParamInfoParticle extends ParamInfoEnum {
                     throw new DisguiseParseException(LibsMsg.PARSE_PARTICLE_REDSTONE, particle.name(), string);
                 } else {
                     size = Math.max(0.2f, Float.parseFloat(split[split.length - 1]));
+
+                    // Stupid high cap
+                    if (size > 100) {
+                        size = 100;
+                    }
                 }
 
                 data = new Particle.DustOptions(color, size);

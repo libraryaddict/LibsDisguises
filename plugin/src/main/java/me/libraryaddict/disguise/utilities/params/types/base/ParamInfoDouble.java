@@ -17,7 +17,13 @@ public class ParamInfoDouble extends ParamInfo {
 
     @Override
     protected Object fromString(String string) {
-        return Double.parseDouble(string);
+        double result = Double.parseDouble(string);
+
+        if (!Double.isFinite(result) || Math.abs(result) > 999_999_999) {
+            throw new NumberFormatException("For input string: \"" + string + "\"");
+        }
+
+        return result;
     }
 
     @Override
