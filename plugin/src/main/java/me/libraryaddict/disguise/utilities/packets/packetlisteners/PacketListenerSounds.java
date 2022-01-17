@@ -156,6 +156,8 @@ public class PacketListenerSounds extends PacketAdapter {
             newModifs.write(2, mods.read(2));
             newModifs.write(3, mods.read(3));
             newModifs.write(4, mods.read(4));
+
+            mods = newModifs;
         } else {
             newPacket = event.getPacket().shallowClone();
             mods = newPacket.getModifier();
