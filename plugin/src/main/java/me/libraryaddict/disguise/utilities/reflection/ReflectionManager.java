@@ -2265,13 +2265,16 @@ public class ReflectionManager {
             ex.printStackTrace();
         }
     }
-
     public static void setScore(Scoreboard scoreboard, String name, int score) {
-        if (!Bukkit.isPrimaryThread()) {
+        setScore(scoreboard, name, score, true);
+    }
+
+    public static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
+        if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    setScore(scoreboard, name, score);
+                    setScore(scoreboard, name, score, false);
                 }
             }.runTask(LibsDisguises.getInstance());
             return;
