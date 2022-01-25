@@ -60,7 +60,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
             Disguise disguise = DisguiseAPI.getDisguise((Entity) sender);
 
             if (disguise == null) {
-                LibsMsg.NOT_DISGUISED.send(sender);
+                LibsMsg.NOT_DISGUISED_SAVE_DISGUISE.send(sender);
                 return true;
             }
 
