@@ -28,7 +28,7 @@ NameAboveDisguise: '%complex%'
 # And names will always display even if the entity is invisible using potion effects
 # With ArmorStands & the Premium version, you can also use multiple lines in the nametag, use \n as a seperator.
 # Read the next option for more information.
-PlayerNames: TEAMS
+PlayerNames: ARMORSTANDS
 
 # If doing ARMORSTANDS in the above option, should CustomNames for non-player disguises be overridden to use armorstands too?
 # This allows multiline names if you have purchased the plugin
