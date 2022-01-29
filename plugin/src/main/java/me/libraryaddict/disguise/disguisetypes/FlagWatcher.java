@@ -539,6 +539,8 @@ public class FlagWatcher {
             name = name.substring(1);
         }
 
+        name = DisguiseUtilities.getHexedColors(name);
+
         String customName = getCustomName();
 
         if (Objects.equals(customName, name)) {

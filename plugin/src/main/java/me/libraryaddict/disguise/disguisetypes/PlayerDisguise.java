@@ -147,9 +147,8 @@ public class PlayerDisguise extends TargetedDisguise {
      */
     public String getProfileName() {
         return isUpsideDown() ? "Dinnerbone" :
-                isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
+            isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
     }
-
 
     public boolean isNameVisible() {
         return nameVisible;
@@ -291,9 +290,11 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (DisguiseConfig.isCopyPlayerTeamInfo() && (DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.TEAMS ||
-                DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.ARMORSTANDS)) {
+            DisguiseConfig.getPlayerNameType() == DisguiseConfig.PlayerNameType.ARMORSTANDS)) {
             name = DisguiseUtilities.getDisplayName(name);
         }
+
+        name = DisguiseUtilities.getHexedColors(name);
 
         if (name.equals(playerName)) {
             return;

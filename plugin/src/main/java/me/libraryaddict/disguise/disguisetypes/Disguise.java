@@ -144,6 +144,10 @@ public abstract class Disguise {
             name = new String[0];
         }
 
+        for (int i = 0; i < name.length; i++) {
+            name[i] = DisguiseUtilities.getHexedColors(name[i]);
+        }
+
         name = DisguiseUtilities.reverse(name);
 
         String[] oldName = multiName;

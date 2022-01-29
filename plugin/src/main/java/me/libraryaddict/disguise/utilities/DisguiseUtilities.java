@@ -289,7 +289,15 @@ public class DisguiseUtilities {
             name = team.getPrefix() + team.getColor() + player.getName() + team.getSuffix();
         }
 
-        return name.replaceAll("§x§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])", "<#$1$2$3$4$5$6>");
+        return getHexedColors(name);
+    }
+
+    public static String getHexedColors(String string) {
+        if (string == null) {
+            return string;
+        }
+
+        return string.replaceAll("§x§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])", "<#$1$2$3$4$5$6>");
     }
 
     public static String getDisplayName(String playerName) {
