@@ -315,7 +315,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return Optional.of(obj);
         }
 
-        return Optional.empty();
+        return Optional.of(val);
     }
 
     public Vector3f convertVec3(Object object) {

@@ -1352,6 +1352,8 @@ public class ReflectionManager {
                 return NmsVersion.v1_13.isSupported() ? Optional.of(obj) : com.google.common.base.Optional.of(obj);
             } else if (!NmsVersion.v1_13.isSupported()) {
                 return com.google.common.base.Optional.of(val);
+            } else {
+                return Optional.of(val);
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
