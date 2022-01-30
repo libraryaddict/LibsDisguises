@@ -734,7 +734,7 @@ public class FlagWatcher {
 
         this.glowColor = glowColor;
 
-        if (!getDisguise().isDisguiseInUse() || getDisguise().getEntity() == null) {
+        if (!getDisguise().isDisguiseInUse() || getDisguise().getEntity() == null || !getDisguise().getEntity().isValid()) {
             return;
         }
 
