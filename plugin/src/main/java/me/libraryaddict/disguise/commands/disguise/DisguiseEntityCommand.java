@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.commands.disguise;
 
+import java.util.ArrayList;
+import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
@@ -15,9 +17,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override

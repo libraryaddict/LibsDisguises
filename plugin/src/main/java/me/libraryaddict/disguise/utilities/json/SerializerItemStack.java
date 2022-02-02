@@ -1,13 +1,17 @@
 package me.libraryaddict.disguise.utilities.json;
 
-import com.google.gson.*;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * Created by libraryaddict on 1/06/2017.

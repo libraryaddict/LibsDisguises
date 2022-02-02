@@ -1,13 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import lombok.Getter;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.plugin.BisectHosting;
-import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.FileUtil;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -16,6 +8,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.plugin.BisectHosting;
+import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.FileUtil;
 
 /**
  * Created by libraryaddict on 2/06/2017.

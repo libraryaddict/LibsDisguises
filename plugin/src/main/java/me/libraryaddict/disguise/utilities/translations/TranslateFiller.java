@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.utilities.translations;
 
+import java.util.ArrayList;
+import java.util.Locale;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
@@ -8,9 +10,6 @@ import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by libraryaddict on 10/06/2017.

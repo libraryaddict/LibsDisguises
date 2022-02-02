@@ -1,9 +1,13 @@
 package me.libraryaddict.disguise.utilities.params;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
-
-import java.util.*;
 
 /**
  * Created by libraryaddict on 7/09/2018.

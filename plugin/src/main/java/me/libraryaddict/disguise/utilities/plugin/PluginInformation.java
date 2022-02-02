@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
-import lombok.Getter;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import lombok.Getter;
 
 /**
  * Created by libraryaddict on 20/06/2019.

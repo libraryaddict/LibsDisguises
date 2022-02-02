@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import me.libraryaddict.disguise.disguisetypes.Disguise;
-import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-
 import java.util.Optional;
 import java.util.UUID;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 
 public class TameableWatcher extends AgeableWatcher {
     public TameableWatcher(Disguise disguise) {

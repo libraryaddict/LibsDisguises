@@ -1,6 +1,10 @@
 package me.libraryaddict.disguise;
 
-import com.comphenix.protocol.ProtocolLibrary;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
@@ -15,7 +19,14 @@ import me.libraryaddict.disguise.commands.undisguise.UndisguiseCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguiseEntityCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguisePlayerCommand;
 import me.libraryaddict.disguise.commands.undisguise.UndisguiseRadiusCommand;
-import me.libraryaddict.disguise.commands.utils.*;
+import me.libraryaddict.disguise.commands.utils.CopyDisguiseCommand;
+import me.libraryaddict.disguise.commands.utils.DisguiseCloneCommand;
+import me.libraryaddict.disguise.commands.utils.DisguiseHelpCommand;
+import me.libraryaddict.disguise.commands.utils.DisguiseViewBarCommand;
+import me.libraryaddict.disguise.commands.utils.DisguiseViewSelfCommand;
+import me.libraryaddict.disguise.commands.utils.GrabHeadCommand;
+import me.libraryaddict.disguise.commands.utils.GrabSkinCommand;
+import me.libraryaddict.disguise.commands.utils.SaveDisguiseCommand;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.config.DisguiseCommandConfig;
@@ -32,17 +43,15 @@ import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;

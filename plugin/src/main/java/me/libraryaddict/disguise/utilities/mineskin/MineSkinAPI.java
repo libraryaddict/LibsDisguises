@@ -1,14 +1,14 @@
 package me.libraryaddict.disguise.utilities.mineskin;
 
 import com.google.gson.Gson;
-import lombok.Getter;
-import lombok.Setter;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.SkinUtils;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -18,6 +18,12 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.SkinUtils;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 
 /**
  * Created by libraryaddict on 28/12/2019.

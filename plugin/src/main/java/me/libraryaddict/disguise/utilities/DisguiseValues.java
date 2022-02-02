@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.util.HashMap;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
-
-import java.util.HashMap;
 
 /**
  * Created by libraryaddict on 19/02/2020.

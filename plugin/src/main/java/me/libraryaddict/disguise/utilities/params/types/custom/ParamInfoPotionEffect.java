@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
+import java.util.Map;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Map;
 
 /**
  * Created by libraryaddict on 16/02/2020.

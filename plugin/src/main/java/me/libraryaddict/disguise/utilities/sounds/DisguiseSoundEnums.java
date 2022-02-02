@@ -1,12 +1,11 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
 import org.bukkit.Sound;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Only living disguises go in here!

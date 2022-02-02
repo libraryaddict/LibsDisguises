@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import java.util.Arrays;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -18,8 +19,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.Arrays;
 
 /**
  * Created by libraryaddict on 28/12/2019.

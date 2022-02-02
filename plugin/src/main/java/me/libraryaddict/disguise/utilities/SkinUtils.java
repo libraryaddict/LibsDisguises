@@ -2,17 +2,16 @@ package me.libraryaddict.disguise.utilities;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
+import java.io.File;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinResponse;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.File;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Created by libraryaddict on 1/01/2020.

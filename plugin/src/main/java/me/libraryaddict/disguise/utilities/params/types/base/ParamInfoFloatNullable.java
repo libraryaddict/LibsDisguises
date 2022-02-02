@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.utilities.params.types.base;
 
-import me.libraryaddict.disguise.utilities.params.ParamInfo;
-
 /**
  * Created by libraryaddict on 7/09/2018.
  */

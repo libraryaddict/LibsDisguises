@@ -3,10 +3,9 @@ package me.libraryaddict.disguise.utilities.mineskin;
 import com.google.gson.annotations.SerializedName;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import java.util.UUID;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.UUID;
 
 /**
  * Created by libraryaddict on 29/12/2019.

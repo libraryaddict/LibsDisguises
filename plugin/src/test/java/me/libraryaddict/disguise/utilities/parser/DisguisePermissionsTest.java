@@ -1,5 +1,11 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import me.libraryaddict.disguise.DisguiseConfig;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
@@ -8,8 +14,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.*;
 
 /**
  * Created by libraryaddict on 21/10/2018.

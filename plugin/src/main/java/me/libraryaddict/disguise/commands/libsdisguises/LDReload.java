@@ -1,12 +1,11 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import java.util.Collections;
+import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.

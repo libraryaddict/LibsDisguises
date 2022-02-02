@@ -1,11 +1,10 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 
 /**
  * Created by libraryaddict on 23/05/2020.

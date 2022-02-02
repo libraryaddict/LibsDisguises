@@ -1,9 +1,18 @@
 package me.libraryaddict.disguise.utilities.json;
 
-import com.google.gson.*;
-import me.libraryaddict.disguise.disguisetypes.*;
-
+import com.google.gson.InstanceCreator;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 
 /**
  * Created by libraryaddict on 1/06/2017.

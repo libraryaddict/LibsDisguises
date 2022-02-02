@@ -6,14 +6,13 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
+import java.util.Iterator;
+import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class PacketListenerTabList extends PacketAdapter {
     public PacketListenerTabList(LibsDisguises plugin) {

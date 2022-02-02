@@ -1,13 +1,12 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import java.util.Collections;
+import java.util.List;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by libraryaddict on 27/04/2020.

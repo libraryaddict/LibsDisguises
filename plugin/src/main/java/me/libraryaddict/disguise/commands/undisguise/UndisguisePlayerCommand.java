@@ -1,5 +1,10 @@
 package me.libraryaddict.disguise.commands.undisguise;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -12,8 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.*;
 
 public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {

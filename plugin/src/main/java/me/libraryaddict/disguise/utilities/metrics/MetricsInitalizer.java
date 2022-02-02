@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.utilities.metrics;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -8,10 +11,6 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * Created by libraryaddict on 3/01/2019.

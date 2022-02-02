@@ -12,15 +12,14 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.modded.ModdedManager;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.entity.Player;
-
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.modded.ModdedManager;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.entity.Player;
 
 /**
  * Created by libraryaddict on 11/06/2020.

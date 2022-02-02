@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import java.util.Objects;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import org.bukkit.entity.EntityType;
-
-import java.util.Objects;
 
 /**
  * Created by libraryaddict on 5/10/2018.

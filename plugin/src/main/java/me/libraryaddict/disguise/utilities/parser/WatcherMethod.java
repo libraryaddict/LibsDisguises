@@ -1,10 +1,9 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import java.lang.invoke.MethodHandle;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-
-import java.lang.invoke.MethodHandle;
 
 /**
  * Created by libraryaddict on 21/05/2021.

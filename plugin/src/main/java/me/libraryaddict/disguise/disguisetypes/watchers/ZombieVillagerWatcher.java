@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import java.util.Random;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -9,8 +10,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
-
-import java.util.Random;
 
 public class ZombieVillagerWatcher extends ZombieWatcher {
 

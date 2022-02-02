@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.utilities.params.types;
 
+import java.util.Map;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-
-import java.util.Map;
 
 /**
  * Created by libraryaddict on 7/09/2018.

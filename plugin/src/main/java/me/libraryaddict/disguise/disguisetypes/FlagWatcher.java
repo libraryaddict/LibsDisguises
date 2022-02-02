@@ -10,6 +10,14 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.base.Strings;
 import com.mojang.datafixers.util.Pair;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -32,9 +40,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 public class FlagWatcher {
     private boolean addEntityAnimations = DisguiseConfig.isAddEntityAnimations();

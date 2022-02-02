@@ -5,6 +5,8 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -18,9 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by libraryaddict on 3/01/2019.

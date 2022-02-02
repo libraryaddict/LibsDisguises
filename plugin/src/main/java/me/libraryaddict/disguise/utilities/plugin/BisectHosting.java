@@ -1,12 +1,11 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import org.bukkit.Bukkit;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import org.bukkit.Bukkit;
 
 /**
  * Created by libraryaddict on 6/03/2020.

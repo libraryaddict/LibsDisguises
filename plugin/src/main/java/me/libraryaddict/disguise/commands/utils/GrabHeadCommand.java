@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import java.lang.reflect.Field;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -17,8 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by libraryaddict on 20/06/2020.

@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.commands.utils;
 
+import java.util.Arrays;
+import java.util.UUID;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -20,9 +22,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * Created by libraryaddict on 1/01/2020.

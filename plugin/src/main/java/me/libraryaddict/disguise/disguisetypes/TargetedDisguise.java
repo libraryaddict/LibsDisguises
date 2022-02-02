@@ -7,17 +7,16 @@ import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import me.libraryaddict.disguise.DisguiseAPI;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public abstract class TargetedDisguise extends Disguise {
 

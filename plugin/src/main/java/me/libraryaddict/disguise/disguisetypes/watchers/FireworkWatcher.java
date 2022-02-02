@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import java.util.OptionalInt;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -7,8 +8,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.OptionalInt;
 
 public class FireworkWatcher extends FlagWatcher {
     public FireworkWatcher(Disguise disguise) {

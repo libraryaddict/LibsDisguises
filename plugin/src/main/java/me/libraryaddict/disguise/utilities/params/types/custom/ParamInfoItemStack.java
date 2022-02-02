@@ -2,6 +2,9 @@ package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -12,10 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 
 /**
  * Created by libraryaddict on 7/09/2018.

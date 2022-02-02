@@ -1,5 +1,17 @@
 package me.libraryaddict.disguise;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +40,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 public class DisguiseConfig {
     @Getter

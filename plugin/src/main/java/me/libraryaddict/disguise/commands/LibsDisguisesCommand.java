@@ -1,8 +1,27 @@
 package me.libraryaddict.disguise.commands;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.commands.libsdisguises.*;
+import me.libraryaddict.disguise.commands.libsdisguises.LDChangelog;
+import me.libraryaddict.disguise.commands.libsdisguises.LDCommand;
+import me.libraryaddict.disguise.commands.libsdisguises.LDConfig;
+import me.libraryaddict.disguise.commands.libsdisguises.LDCount;
+import me.libraryaddict.disguise.commands.libsdisguises.LDDebugMineSkin;
+import me.libraryaddict.disguise.commands.libsdisguises.LDDebugPlayer;
+import me.libraryaddict.disguise.commands.libsdisguises.LDHelp;
+import me.libraryaddict.disguise.commands.libsdisguises.LDJson;
+import me.libraryaddict.disguise.commands.libsdisguises.LDMetaInfo;
+import me.libraryaddict.disguise.commands.libsdisguises.LDMods;
+import me.libraryaddict.disguise.commands.libsdisguises.LDPermTest;
+import me.libraryaddict.disguise.commands.libsdisguises.LDReload;
+import me.libraryaddict.disguise.commands.libsdisguises.LDScoreboard;
+import me.libraryaddict.disguise.commands.libsdisguises.LDUpdate;
+import me.libraryaddict.disguise.commands.libsdisguises.LDUpdateProtocolLib;
+import me.libraryaddict.disguise.commands.libsdisguises.LDUploadLogs;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.ChatColor;
@@ -10,11 +29,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     @Getter

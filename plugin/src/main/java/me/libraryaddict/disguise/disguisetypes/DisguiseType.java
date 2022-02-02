@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.util.Locale;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -7,8 +8,6 @@ import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import java.util.Locale;
 
 public enum DisguiseType {
     AREA_EFFECT_CLOUD(3, 0),

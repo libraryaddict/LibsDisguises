@@ -1,5 +1,10 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
@@ -7,8 +12,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.bukkit.command.CommandSender;
-
-import java.util.*;
 
 /**
  * Created by libraryaddict on 20/04/2020.

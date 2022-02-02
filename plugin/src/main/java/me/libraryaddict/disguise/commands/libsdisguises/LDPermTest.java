@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import java.util.Arrays;
+import java.util.List;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -10,9 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.permissions.Permissible;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.

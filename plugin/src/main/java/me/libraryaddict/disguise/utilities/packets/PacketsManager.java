@@ -4,17 +4,24 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
+import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.packets.packetlisteners.*;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerClientCustomPayload;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerClientInteract;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerEntityDestroy;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerInventory;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerMain;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerScoreboardTeam;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerSounds;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerTabList;
+import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerViewSelfDisguise;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 public class PacketsManager {
     private static PacketListener clientInteractEntityListener;

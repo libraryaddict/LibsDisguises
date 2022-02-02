@@ -3,6 +3,16 @@ package me.libraryaddict.disguise.commands;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
@@ -29,9 +39,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author libraryaddict

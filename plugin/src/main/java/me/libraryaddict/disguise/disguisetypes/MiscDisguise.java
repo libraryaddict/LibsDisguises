@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import java.security.InvalidParameterException;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -10,8 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.security.InvalidParameterException;
 
 public class MiscDisguise extends TargetedDisguise {
     private int id = -1, data = 0;

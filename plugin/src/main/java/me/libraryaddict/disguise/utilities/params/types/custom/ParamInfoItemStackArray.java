@@ -1,13 +1,12 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by libraryaddict on 7/09/2018.

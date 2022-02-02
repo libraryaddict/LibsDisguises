@@ -1,12 +1,11 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.WrappedBlockData;
+import java.util.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
 
 public class EndermanWatcher extends InsentientWatcher {
 

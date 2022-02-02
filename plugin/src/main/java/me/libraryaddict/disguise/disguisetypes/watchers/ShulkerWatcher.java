@@ -2,13 +2,12 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import java.util.Optional;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.DyeColor;
 import org.bukkit.block.BlockFace;
-
-import java.util.Optional;
 
 /**
  * @author Navid

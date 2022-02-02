@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.commands.modify;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -16,10 +19,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements TabCompleter {
 

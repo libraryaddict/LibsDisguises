@@ -7,6 +7,8 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -14,9 +16,6 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import org.bukkit.entity.Player;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 public class PacketListenerMain extends PacketAdapter {
     public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen) {

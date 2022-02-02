@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import java.util.List;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
-
-import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.

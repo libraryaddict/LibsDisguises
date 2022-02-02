@@ -1,9 +1,8 @@
 package me.libraryaddict.disguise.utilities;
 
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 /**
  * Created by libraryaddict on 25/10/2018.

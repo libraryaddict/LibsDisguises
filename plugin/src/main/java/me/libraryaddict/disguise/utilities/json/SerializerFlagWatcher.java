@@ -1,22 +1,32 @@
 package me.libraryaddict.disguise.utilities.json;
 
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.InstanceCreator;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.internal.LinkedTreeMap;
-import me.libraryaddict.disguise.disguisetypes.*;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
-import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import org.bukkit.inventory.ItemStack;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.EntityPose;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.VillagerData;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by libraryaddict on 1/06/2017.

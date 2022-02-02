@@ -1,5 +1,13 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.entity.Ageable;
@@ -8,8 +16,6 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-
-import java.util.*;
 
 /**
  * Created by libraryaddict on 14/10/2018.
