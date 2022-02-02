@@ -243,13 +243,13 @@ public class LibsEquipment implements EntityEquipment {
         setHelmet(helmet);
     }
 
-  // @Override
+    // @Override
     @Deprecated
     public void setItem(EquipmentSlot equipmentSlot, ItemStack itemStack, boolean silent) {
         setItem(equipmentSlot, itemStack);
     }
 
-   // @Override
+    // @Override
     @Deprecated
     public void setItemInMainHand(ItemStack itemStack, boolean silent) {
         setItemInMainHand(itemStack);

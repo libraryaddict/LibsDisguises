@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.HashMap;
-import java.util.Map;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -9,6 +7,9 @@ import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.TropicalFish;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 6/08/2018.
@@ -75,8 +76,7 @@ public class TropicalFishWatcher extends FishWatcher {
     }
 
     private int getData(final DyeColor patternColor, final DyeColor bodyColor, final TropicalFish.Pattern type) {
-        return patternColor.getWoolData() << 24 | bodyColor.getWoolData() << 16 |
-                CraftPattern.values()[type.ordinal()].getDataValue();
+        return patternColor.getWoolData() << 24 | bodyColor.getWoolData() << 16 | CraftPattern.values()[type.ordinal()].getDataValue();
     }
 
     public DyeColor getBodyColor() {

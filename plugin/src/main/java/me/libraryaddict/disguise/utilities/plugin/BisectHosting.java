@@ -1,11 +1,12 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import org.bukkit.Bukkit;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Created by libraryaddict on 6/03/2020.
@@ -30,8 +31,7 @@ public class BisectHosting {
                 if (ip.startsWith("https://www.bisecthosting.com/")) {
                     hostedBy = true;
                 }
-            }
-            catch (IOException ignored) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -56,8 +56,7 @@ public class BisectHosting {
         con.connect();
         con.getInputStream();
 
-        if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM ||
-                con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
+        if (con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP) {
             return con.getHeaderField("Location");
         }
 

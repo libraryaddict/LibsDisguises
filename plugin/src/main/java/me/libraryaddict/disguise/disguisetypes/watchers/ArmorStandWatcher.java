@@ -31,8 +31,9 @@ public class ArmorStandWatcher extends LivingWatcher {
     }
 
     private EulerAngle getPose(MetaIndex<Vector3F> type) {
-        if (!hasValue(type))
+        if (!hasValue(type)) {
             return new EulerAngle(0, 0, 0);
+        }
 
         Vector3F vec = getData(type);
 

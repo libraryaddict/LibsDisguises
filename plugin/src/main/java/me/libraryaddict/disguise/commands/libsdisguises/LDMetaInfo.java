@@ -1,9 +1,5 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -11,6 +7,11 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -46,24 +47,24 @@ public class LDMetaInfo implements LDCommand {
 
             names.sort(String::compareToIgnoreCase);
 
-           // if (NmsVersion.v1_13.isSupported()) {
-                ComponentBuilder builder = new ComponentBuilder("").append(LibsMsg.META_VALUES.getBase());
+            // if (NmsVersion.v1_13.isSupported()) {
+            ComponentBuilder builder = new ComponentBuilder("").append(LibsMsg.META_VALUES.getBase());
 
-                Iterator<String> itel = names.iterator();
+            Iterator<String> itel = names.iterator();
 
-                while (itel.hasNext()) {
-                    String name = itel.next();
+            while (itel.hasNext()) {
+                String name = itel.next();
 
-                    builder.append(TextComponent.fromLegacyText(name));
-                    builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/libsdisguises metainfo " + name));
-                    builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, LibsMsg.META_CLICK_SHOW.getBase(name)));
+                builder.append(TextComponent.fromLegacyText(name));
+                builder.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/libsdisguises metainfo " + name));
+                builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, LibsMsg.META_CLICK_SHOW.getBase(name)));
 
-                    if (itel.hasNext()) {
-                        builder.append(LibsMsg.META_VALUE_SEPERATOR.getBase());
-                    }
+                if (itel.hasNext()) {
+                    builder.append(LibsMsg.META_VALUE_SEPERATOR.getBase());
                 }
+            }
 
-                sender.spigot().sendMessage(builder.create());
+            sender.spigot().sendMessage(builder.create());
             /*} else {
                 LibsMsg.META_VALUES_NO_CLICK.send(sender,
                         StringUtils.join(names, LibsMsg.META_VALUE_SEPERATOR.get()));

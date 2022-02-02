@@ -6,27 +6,23 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public enum AnimalColor {
-    BLACK(DyeColor.BLACK,
-            NmsVersion.v1_13.isSupported() ? Material.getMaterial("INK_SAC") : Material.getMaterial("INK_SACK")),
+    BLACK(DyeColor.BLACK, NmsVersion.v1_13.isSupported() ? Material.getMaterial("INK_SAC") : Material.getMaterial("INK_SACK")),
     BLUE(DyeColor.BLUE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LAPIS_LAZULI") : null),
     BROWN(DyeColor.BROWN, NmsVersion.v1_13.isSupported() ? Material.getMaterial("COCOA_BEANS") : null),
     CYAN(DyeColor.CYAN, NmsVersion.v1_13.isSupported() ? Material.getMaterial("CYAN_DYE") : null),
     GRAY(DyeColor.GRAY, NmsVersion.v1_13.isSupported() ? Material.getMaterial("GRAY_DYE") : null),
-    GREEN(DyeColor.GREEN,
-            NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CACTUS_GREEN")),
+    GREEN(DyeColor.GREEN, NmsVersion.v1_14.isSupported() ? Material.getMaterial("GREEN_DYE") : Material.getMaterial("CACTUS_GREEN")),
     LIGHT_BLUE(DyeColor.LIGHT_BLUE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIGHT_BLUE_DYE") : null),
     LIME(DyeColor.LIME, NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIME_DYE") : null),
     MAGENTA(DyeColor.MAGENTA, NmsVersion.v1_13.isSupported() ? Material.getMaterial("MAGENTA_DYE") : null),
     ORANGE(DyeColor.ORANGE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("ORANGE_DYE") : null),
     PINK(DyeColor.PINK, NmsVersion.v1_13.isSupported() ? Material.getMaterial("PINK_DYE") : null),
     PURPLE(DyeColor.PURPLE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("PURPLE_DYE") : null),
-    RED(DyeColor.RED,
-            NmsVersion.v1_14.isSupported() ? Material.getMaterial("RED_DYE") : Material.getMaterial("ROSE_RED")),
+    RED(DyeColor.RED, NmsVersion.v1_14.isSupported() ? Material.getMaterial("RED_DYE") : Material.getMaterial("ROSE_RED")),
     LIGHT_GRAY(DyeColor.valueOf(NmsVersion.v1_13.isSupported() ? "LIGHT_GRAY" : "SILVER"),
-            NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIGHT_GRAY_DYE") : null),
+        NmsVersion.v1_13.isSupported() ? Material.getMaterial("LIGHT_GRAY_DYE") : null),
     WHITE(DyeColor.WHITE, NmsVersion.v1_13.isSupported() ? Material.getMaterial("BONE_MEAL") : null),
-    YELLOW(DyeColor.YELLOW, NmsVersion.v1_14.isSupported() ? Material.getMaterial("YELLOW_DYE") :
-            Material.getMaterial("DANDELION_YELLOW"));
+    YELLOW(DyeColor.YELLOW, NmsVersion.v1_14.isSupported() ? Material.getMaterial("YELLOW_DYE") : Material.getMaterial("DANDELION_YELLOW"));
 
     public static AnimalColor getColorByWool(int woolId) {
         for (AnimalColor color : values()) {

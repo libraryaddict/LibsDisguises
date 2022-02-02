@@ -9,6 +9,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.mojang.authlib.GameProfile;
+
 import java.lang.reflect.Type;
 import java.util.regex.Pattern;
 
@@ -23,14 +24,13 @@ public class SerializerGameProfile implements JsonSerializer<WrappedGameProfile>
     }
 
     @Override
-    public WrappedGameProfile deserialize(JsonElement json, Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+    public WrappedGameProfile deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
 
         if (obj.has("id") && !obj.get("id").getAsString().contains("-")) {
             obj.addProperty("id",
-                    Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)")
-                            .matcher(obj.get("id").getAsString()).replaceFirst("$1-$2-$3-$4-$5"));
+                Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(obj.get("id").getAsString())
+                    .replaceFirst("$1-$2-$3-$4-$5"));
         }
 
         return WrappedGameProfile.fromHandle(context.deserialize(json, GameProfile.class));

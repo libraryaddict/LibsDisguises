@@ -1,12 +1,13 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import java.util.Collections;
-import java.util.List;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 27/04/2020.
@@ -43,8 +44,7 @@ public class LDChangelog implements LDCommand {
 
         if (!checker.getUpdate().isReleaseBuild()) {
             sender.sendMessage(
-                    ChatColor.GOLD + "You are on build " + (LibsDisguises.getInstance().isNumberedBuild() ? "#" : "") +
-                            LibsDisguises.getInstance().getBuildNo());
+                ChatColor.GOLD + "You are on build " + (LibsDisguises.getInstance().isNumberedBuild() ? "#" : "") + LibsDisguises.getInstance().getBuildNo());
         }
 
         for (String msg : checker.getUpdate().getChangelog()) {

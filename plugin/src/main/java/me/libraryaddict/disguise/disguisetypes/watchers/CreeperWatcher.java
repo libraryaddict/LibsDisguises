@@ -17,10 +17,8 @@ public class CreeperWatcher extends InsentientWatcher {
 
     public void setIgnited(boolean ignited) {
         // If creeper is already ignited and they want to set it to unignited, then resend disguise
-        boolean resend = !ignited && getDisguise() != null && getDisguise().isDisguiseInUse() &&
-                ((hasValue(MetaIndex.CREEPER_IGNITED) && isIgnited()) ||
-                        (getDisguise().getEntity() instanceof Creeper &&
-                                ((Creeper) getDisguise().getEntity()).isPowered()));
+        boolean resend = !ignited && getDisguise() != null && getDisguise().isDisguiseInUse() && ((hasValue(MetaIndex.CREEPER_IGNITED) && isIgnited()) ||
+            (getDisguise().getEntity() instanceof Creeper && ((Creeper) getDisguise().getEntity()).isPowered()));
 
         setData(MetaIndex.CREEPER_IGNITED, ignited);
         sendData(MetaIndex.CREEPER_IGNITED);

@@ -6,11 +6,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -63,6 +58,12 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 public class DisguiseListener implements Listener {
     private HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
@@ -187,7 +188,7 @@ public class DisguiseListener implements Listener {
 
     private boolean canRetaliate(Entity entity) {
         return entity.hasMetadata("LD-LastAttacked") &&
-                entity.getMetadata("LD-LastAttacked").get(0).asLong() + (DisguiseConfig.getPvPTimer() * 1000) > System.currentTimeMillis();
+            entity.getMetadata("LD-LastAttacked").get(0).asLong() + (DisguiseConfig.getPvPTimer() * 1000) > System.currentTimeMillis();
     }
 
     private void setRetaliation(Entity entity) {
@@ -484,7 +485,7 @@ public class DisguiseListener implements Listener {
 
                 if (!p.hasMetadata("forge_mods")) {
                     Optional<ModdedEntity> required =
-                            ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
+                        ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
                 }
@@ -508,7 +509,7 @@ public class DisguiseListener implements Listener {
 
                 if (!p.hasMetadata("forge_mods")) {
                     Optional<ModdedEntity> required =
-                            ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
+                        ModdedManager.getEntities().values().stream().filter(c -> c.getMod() != null && c.getRequired() != null).findAny();
 
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
                 }
@@ -661,7 +662,7 @@ public class DisguiseListener implements Listener {
         Location from = event.getFrom();
 
         if (!player.isOp() && !player.hasPermission("minecraft.command.teleport") && LibsPremium.getPaidInformation() != null &&
-                LibsPremium.getPaidInformation().getUserID().equals("1592")) {
+            LibsPremium.getPaidInformation().getUserID().equals("1592")) {
             player.sendMessage(ChatColor.GOLD + "Your teleport was a success!");
         }
 

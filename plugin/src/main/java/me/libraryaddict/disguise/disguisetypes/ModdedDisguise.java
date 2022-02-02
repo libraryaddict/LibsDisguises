@@ -1,12 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.watchers.ModdedWatcher;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.security.InvalidParameterException;
 
 /**
  * Created by libraryaddict on 15/04/2020.
@@ -30,8 +31,7 @@ public class ModdedDisguise extends TargetedDisguise {
         super(disguiseType);
 
         if (disguiseType != DisguiseType.UNKNOWN) {
-            throw new InvalidParameterException(
-                    "CustomDisguise is only for DisguiseType.MODDED_LIVING/MISC and DisguiseType.UNKNOWN");
+            throw new InvalidParameterException("CustomDisguise is only for DisguiseType.MODDED_LIVING/MISC and DisguiseType.UNKNOWN");
         }
 
         createDisguise();

@@ -1,17 +1,18 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Locale;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by libraryaddict on 23/05/2020.
@@ -78,7 +79,7 @@ public class SoundManager {
 
                         if (sounds == null) {
                             DisguiseUtilities.getLogger()
-                                    .warning("Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
+                                .warning("Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
                             continue;
                         }
 

@@ -7,8 +7,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -17,6 +15,9 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 public class PacketListenerMain extends PacketAdapter {
     public PacketListenerMain(LibsDisguises plugin, ArrayList<PacketType> packetsToListen) {
         super(plugin, ListenerPriority.HIGH, packetsToListen);
@@ -24,13 +25,16 @@ public class PacketListenerMain extends PacketAdapter {
 
     @Override
     public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         final Player observer = event.getPlayer();
 
         if (observer.getName().contains("UNKNOWN[")) // If the player is temporary
+        {
             return;
+        }
 
         // First get the entity, the one sending this packet
 
@@ -48,15 +52,12 @@ public class PacketListenerMain extends PacketAdapter {
         LibsPackets packets;
 
         try {
-            packets = PacketsManager.getPacketsHandler()
-                    .transformPacket(event.getPacket(), disguise, observer, disguise.getEntity());
+            packets = PacketsManager.getPacketsHandler().transformPacket(event.getPacket(), disguise, observer, disguise.getEntity());
 
             if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler()
-                        .handlePackets(observer, (PlayerDisguise) disguise, packets);
+                LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, packets);
             }
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
             event.setCancelled(true);
             return;
@@ -74,8 +75,7 @@ public class PacketListenerMain extends PacketAdapter {
             }
 
             packets.sendDelayed(observer);
-        }
-        catch (InvocationTargetException ex) {
+        } catch (InvocationTargetException ex) {
             ex.printStackTrace();
         }
     }

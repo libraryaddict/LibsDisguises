@@ -1,9 +1,5 @@
 package me.libraryaddict.disguise.commands;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 import lombok.Getter;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.libsdisguises.LDChangelog;
@@ -30,6 +26,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     @Getter
     private final ArrayList<LDCommand> commands = new ArrayList<>();
@@ -53,8 +54,9 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
     }
 
     protected ArrayList<String> filterTabs(ArrayList<String> list, String[] origArgs) {
-        if (origArgs.length == 0)
+        if (origArgs.length == 0) {
             return list;
+        }
 
         Iterator<String> itel = list.iterator();
         String label = origArgs[origArgs.length - 1].toLowerCase(Locale.ENGLISH);
@@ -62,8 +64,9 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         while (itel.hasNext()) {
             String name = itel.next();
 
-            if (name.toLowerCase(Locale.ENGLISH).startsWith(label))
+            if (name.toLowerCase(Locale.ENGLISH).startsWith(label)) {
                 continue;
+            }
 
             itel.remove();
         }
@@ -77,8 +80,9 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
         for (int i = 0; i < args.length - 1; i++) {
             String s = args[i];
 
-            if (s.trim().isEmpty())
+            if (s.trim().isEmpty()) {
                 continue;
+            }
 
             newArgs.add(s);
         }
@@ -104,12 +108,11 @@ public class LibsDisguisesCommand implements CommandExecutor, TabCompleter {
             }
 
             sender.sendMessage(ChatColor.DARK_GREEN + "This server is running Lib's Disguises " + "v" + version +
-                    " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
+                " by libraryaddict, formerly maintained by Byteflux and NavidK0.");
 
             if (sender.hasPermission("libsdisguises.reload")) {
-                sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" +
-                        ChatColor.DARK_GREEN + " to reload the config. All disguises will be blown by doing this" +
-                        ".");
+                sender.sendMessage(ChatColor.DARK_GREEN + "Use " + ChatColor.GREEN + "/libsdisguises " + "reload" + ChatColor.DARK_GREEN +
+                    " to reload the config. All disguises will be blown by doing this" + ".");
                 sender.sendMessage(ChatColor.DARK_GREEN + "Use /libsdisguises help to see more help");
             }
 

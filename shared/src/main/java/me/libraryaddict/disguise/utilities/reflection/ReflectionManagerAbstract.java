@@ -4,9 +4,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,6 +19,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface ReflectionManagerAbstract {
     boolean hasInvul(Entity entity);

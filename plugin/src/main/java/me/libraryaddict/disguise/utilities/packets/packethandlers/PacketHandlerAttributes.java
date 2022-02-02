@@ -4,8 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
@@ -17,6 +15,9 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -72,7 +73,8 @@ public class PacketHandlerAttributes implements IPacketHandler {
                 builder.packet(updateAttributes);
 
                 attributes.add(builder.build());
-            } else if (attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.movement_speed" : "generic.movementSpeed") && disguise.getWatcher() instanceof AbstractHorseWatcher) {
+            } else if (attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.movement_speed" : "generic.movementSpeed") &&
+                disguise.getWatcher() instanceof AbstractHorseWatcher) {
                 WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
                 builder.packet(updateAttributes);
 

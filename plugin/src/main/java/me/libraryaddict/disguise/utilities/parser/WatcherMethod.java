@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.utilities.parser;
 
-import java.lang.invoke.MethodHandle;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+
+import java.lang.invoke.MethodHandle;
 
 /**
  * Created by libraryaddict on 21/05/2021.
@@ -22,6 +23,6 @@ public class WatcherMethod {
     @Override
     public String toString() {
         return "WatcherMethod{" + "watcherClass=" + watcherClass + ", method=" + method + ", name='" + name + '\'' + ", returnType=" + returnType + ", param=" +
-                param + ", randomDefault=" + randomDefault + ", hideFromTab=" + hideFromTab + '}';
+            param + ", randomDefault=" + randomDefault + ", hideFromTab=" + hideFromTab + '}';
     }
 }

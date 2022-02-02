@@ -1,13 +1,14 @@
 package me.libraryaddict.disguise.utilities.params;
 
+import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
+import me.libraryaddict.disguise.utilities.translations.TranslateType;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
-import me.libraryaddict.disguise.utilities.translations.TranslateType;
 
 /**
  * Created by libraryaddict on 7/09/2018.
@@ -52,8 +53,7 @@ public abstract class ParamInfo {
         this(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfo(Class paramClass, String name, String descriptiveName, String description,
-            Map<String, Object> possibleValues) {
+    public ParamInfo(Class paramClass, String name, String descriptiveName, String description, Map<String, Object> possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
         this.possibleValues = new LinkedHashMap<>();

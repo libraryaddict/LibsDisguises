@@ -18,8 +18,7 @@ public class PacketHandlerCollect implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         if (disguise.getType().isMisc()) {
             packets.clear();
         }

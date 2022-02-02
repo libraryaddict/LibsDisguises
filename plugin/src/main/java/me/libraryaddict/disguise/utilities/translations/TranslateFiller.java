@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.utilities.translations;
 
-import java.util.ArrayList;
-import java.util.Locale;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
@@ -11,6 +9,9 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 /**
  * Created by libraryaddict on 10/06/2017.
  */
@@ -19,21 +20,17 @@ public class TranslateFiller {
         // Fill the configs
 
         for (ParamInfo info : ParamInfoManager.getParamInfos()) {
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
 
             if (!info.getRawName().equals(info.getRawDescriptiveName())) {
-                TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                        .save(info.getRawDescriptiveName(), "A disguise option descriptive name");
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescriptiveName(), "A disguise option descriptive name");
             }
 
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                    .save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
 
             if (info.canTranslateValues()) {
                 for (String e : info.getValues().keySet()) {
-                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                            .save(e, "Used for the disguise option " + info.getRawName());
+                    TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());
                 }
             }
 
@@ -62,20 +59,21 @@ public class TranslateFiller {
                 Class para = method.getParam();
                 String className = method.getWatcherClass().getSimpleName().replace("Watcher", "");
 
-                if (className.equals("Flag") || className.equals("Disguise"))
+                if (className.equals("Flag") || className.equals("Disguise")) {
                     className = "Entity";
-                else if (className.equals("Living"))
+                } else if (className.equals("Living")) {
                     className = "Living Entity";
-                else if (className.equals("AbstractHorse"))
+                } else if (className.equals("AbstractHorse")) {
                     className = "Horse";
-                else if (className.equals("DroppedItem"))
+                } else if (className.equals("DroppedItem")) {
                     className = "Item";
-                else if (className.equals("IllagerWizard"))
+                } else if (className.equals("IllagerWizard")) {
                     className = "Illager";
+                }
 
                 TranslateType.DISGUISE_OPTIONS.save(method.getName(),
-                        "Found in the disguise options for " + className + " and uses " +
-                                (para.isArray() ? "multiple" + " " : "a ") + para.getSimpleName().replace("[]", "s"));
+                    "Found in the disguise options for " + className + " and uses " + (para.isArray() ? "multiple" + " " : "a ") +
+                        para.getSimpleName().replace("[]", "s"));
             }
         }
 
@@ -96,14 +94,12 @@ public class TranslateFiller {
 
         for (Class c : validClasses) {
             if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
-                TranslateType.DISGUISES.save(c.getSimpleName(),
-                        "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
+                TranslateType.DISGUISES.save(c.getSimpleName(), "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
             }
         }
 
         TranslateType.DISGUISES.save("EntityType", "Used for the disgiuse radius command to list all entitytypes");
-        TranslateType.DISGUISES
-                .save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
+        TranslateType.DISGUISES.save("DisgiseType", "Used for the disgiuse modify radius command to list all " + "disguisetypes");
 
         for (LibsMsg msg : LibsMsg.values()) {
             TranslateType.MESSAGES.save(msg, DisguiseUtilities.translateAlternateColorCodes(msg.getRaw()), "Reference: " + msg.name());

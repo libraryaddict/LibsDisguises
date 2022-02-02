@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Optional;
-import java.util.UUID;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public abstract class AbstractHorseWatcher extends AgeableWatcher {
     private static final int TAMED = 2, SADDLED = 4, REPRODUCED = 8, GRAZING = 16, REARING = 32, EATING = 64;

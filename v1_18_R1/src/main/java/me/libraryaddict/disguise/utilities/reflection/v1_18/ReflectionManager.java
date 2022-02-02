@@ -12,15 +12,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -80,6 +71,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReflectionManager implements ReflectionManagerAbstract {
     public boolean hasInvul(Entity entity) {
@@ -234,7 +235,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public ClientboundPlayerInfoPacket.PlayerUpdate getPlayerInfoData(WrappedGameProfile gameProfile) {
         return new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL,
-                new TextComponent(gameProfile.getName()));
+            new TextComponent(gameProfile.getName()));
     }
 
     public Object getNmsEntity(Entity entity) {
@@ -281,8 +282,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public void setBoundingBox(Entity entity, double x, double y, double z) {
         Location loc = entity.getLocation();
-        ((CraftEntity) entity).getHandle().setBoundingBox(
-                new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2, loc.getZ() + z / 2));
+        ((CraftEntity) entity).getHandle()
+            .setBoundingBox(new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2, loc.getZ() + z / 2));
     }
 
     public Enum getSoundCategory(String category) {
@@ -399,12 +400,12 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public net.minecraft.world.entity.EntityType getEntityType(EntityType entityType) {
         return net.minecraft.world.entity.EntityType.byString(
-                entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
+            entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName()).orElse(null);
     }
 
     public Object registerEntityType(NamespacedKey key) {
         net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-                new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
+            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
         Registry.register(Registry.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
         newEntity.getDescriptionId();
         return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about

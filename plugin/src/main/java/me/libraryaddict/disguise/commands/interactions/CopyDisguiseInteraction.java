@@ -26,13 +26,11 @@ public class CopyDisguiseInteraction implements LibsEntityInteract {
             Disguise disguise = DisguiseAPI.getDisguise(player, entity);
             String disguiseString = DisguiseParser.parseToString(disguise, false);
 
-            getCopyDisguiseCommand()
-                    .sendMessage(player, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
+            getCopyDisguiseCommand().sendMessage(player, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
 
             if (disguise instanceof PlayerDisguise) {
-                getCopyDisguiseCommand()
-                        .sendMessage(player, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY,
-                                DisguiseParser.parseToString(disguise), true);
+                getCopyDisguiseCommand().sendMessage(player, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY,
+                    DisguiseParser.parseToString(disguise), true);
             }
         } else {
             LibsMsg.TARGET_NOT_DISGUISED.send(player);

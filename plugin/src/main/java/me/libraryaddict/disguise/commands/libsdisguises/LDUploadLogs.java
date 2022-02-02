@@ -1,5 +1,18 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import javax.net.ssl.HttpsURLConnection;
+import lombok.Data;
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.config.ConfigLoader;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -15,18 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.net.ssl.HttpsURLConnection;
-import lombok.Data;
-import me.libraryaddict.disguise.DisguiseConfig;
-import me.libraryaddict.disguise.LibsDisguises;
-import me.libraryaddict.disguise.utilities.config.ConfigLoader;
-import me.libraryaddict.disguise.utilities.translations.LibsMsg;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Created by libraryaddict on 18/06/2020.
@@ -133,7 +134,7 @@ public class LDUploadLogs implements LDCommand {
         File disguises = new File(LibsDisguises.getInstance().getDataFolder(), "configs/disguises.yml");
 
         List<File> configs =
-                new ConfigLoader().getConfigs().stream().map(f -> new File(LibsDisguises.getInstance().getDataFolder(), f)).collect(Collectors.toList());
+            new ConfigLoader().getConfigs().stream().map(f -> new File(LibsDisguises.getInstance().getDataFolder(), f)).collect(Collectors.toList());
 
         StringBuilder configText = new StringBuilder();
 
@@ -154,13 +155,13 @@ public class LDUploadLogs implements LDCommand {
 
         if (isTooBig(latest)) {
             sender.sendMessage(
-                    ChatColor.RED + "Your latest.log file is too big! It should be less than 512kb! Please restart and run this " + "command again!");
+                ChatColor.RED + "Your latest.log file is too big! It should be less than 512kb! Please restart and run this " + "command again!");
             return;
         }
 
         if (isTooBig(disguises)) {
             sender.sendMessage(ChatColor.RED + "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
-                    "should be less than 512kb!");
+                "should be less than 512kb!");
             return;
         }
 
@@ -230,8 +231,8 @@ public class LDUploadLogs implements LDCommand {
                                     sender.sendMessage(ChatColor.GOLD + "Click on the below message to have it appear in your chat input");
                                 }
 
-                                String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " +
-                                        disguisesPaste;
+                                String text =
+                                    "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " + disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);

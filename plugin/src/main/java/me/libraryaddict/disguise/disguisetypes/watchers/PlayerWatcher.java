@@ -26,8 +26,9 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public void setDisplayedInTab(boolean showPlayerInTab) {
-        if (getDisguise().isDisguiseInUse())
+        if (getDisguise().isDisguiseInUse()) {
             throw new IllegalStateException("Cannot set this while disguise is in use!");
+        }
 
         alwaysShowInTab = showPlayerInTab;
     }

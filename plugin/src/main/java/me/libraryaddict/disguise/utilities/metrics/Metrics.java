@@ -3,6 +3,13 @@ package me.libraryaddict.disguise.utilities.metrics;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import javax.net.ssl.HttpsURLConnection;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -20,12 +27,6 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * bStats collects some data for plugin authors.
@@ -37,11 +38,9 @@ public class Metrics {
     static {
         // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
         final String defaultPackage = new String(new byte[]{'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's'});
-        final String examplePackage = new String(
-                new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
+        final String examplePackage = new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
         // We want to make sure nobody just copy & pastes the example and use the wrong package names
-        if (Metrics.class.getPackage().getName().equals(defaultPackage) ||
-                Metrics.class.getPackage().getName().equals(examplePackage)) {
+        if (Metrics.class.getPackage().getName().equals(defaultPackage) || Metrics.class.getPackage().getName().equals(examplePackage)) {
             throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
         }
     }
@@ -95,16 +94,13 @@ public class Metrics {
             config.addDefault("logFailedRequests", false);
 
             // Inform the server owners about bStats
-            config.options()
-                    .header("bStats collects some data for plugin authors like how many servers are using their " +
-                            "plugins.\n" + "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
-                            "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
+            config.options().header("bStats collects some data for plugin authors like how many servers are using their " + "plugins.\n" +
+                "To honor their work, you should not disable it.\n" + "This has nearly no effect on the server performance!\n" +
+                "Check out https://bStats.org/ to learn more :)").copyDefaults(true);
             try {
                 config.save(configFile);
                 DisguiseUtilities.getLogger().info("Saved bStats config");
-            }
-            catch (IOException ignored) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -119,8 +115,7 @@ public class Metrics {
                     service.getField("B_STATS_VERSION"); // Our identifier :)
                     found = true; // We aren't the first
                     break;
-                }
-                catch (NoSuchFieldException ignored) {
+                } catch (NoSuchFieldException ignored) {
                 }
             }
             // Register our service
@@ -249,15 +244,13 @@ public class Metrics {
         for (Class<?> service : Bukkit.getServicesManager().getKnownServices()) {
             try {
                 service.getField("B_STATS_VERSION"); // Our identifier :)
-            }
-            catch (NoSuchFieldException ignored) {
+            } catch (NoSuchFieldException ignored) {
                 continue; // Continue "searching"
             }
             // Found one!
             try {
                 pluginData.add(new Gson().toJson(service.getMethod("getPluginData").invoke(Bukkit.getServicesManager().load(service))));
-            }
-            catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
             }
         }
 
@@ -270,12 +263,10 @@ public class Metrics {
                 try {
                     // Send the data
                     sendData(data);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // Something went wrong! :(
                     if (logFailedRequests) {
-                        plugin.getLogger()
-                                .log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
+                        plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
                     }
                 }
             }
@@ -367,8 +358,7 @@ public class Metrics {
                     return null;
                 }
                 chart.add("data", data);
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 if (logFailedRequests) {
                     Bukkit.getLogger().log(Level.WARNING, "Failed to get data for custom chart with id " + chartId, t);
                 }

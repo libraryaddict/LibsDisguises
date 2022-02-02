@@ -1,13 +1,14 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import java.util.Collections;
-import java.util.List;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -51,8 +52,7 @@ public class LDMods implements LDCommand {
             return;
         }
 
-        LibsMsg.MODS_LIST.send(sender, player.getName(),
-                StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", "));
+        LibsMsg.MODS_LIST.send(sender, player.getName(), StringUtils.join((List<String>) player.getMetadata("forge_mods").get(0).value(), ", "));
     }
 
     @Override

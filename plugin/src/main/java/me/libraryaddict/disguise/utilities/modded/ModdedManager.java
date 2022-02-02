@@ -4,14 +4,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.utility.StreamSerializer;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -25,6 +17,15 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by libraryaddict on 14/04/2020.
  */
@@ -36,8 +37,7 @@ public class ModdedManager {
     @Getter
     private static byte[] fmlRegistries;
     @Getter
-    private static final Cache<String, ArrayList<String>> forgeMods = CacheBuilder.newBuilder()
-            .expireAfterWrite(1, TimeUnit.MINUTES).build();
+    private static final Cache<String, ArrayList<String>> forgeMods = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 
     public ModdedManager(ArrayList<String> channels) {
         if (getEntities().isEmpty()) {
@@ -80,8 +80,7 @@ public class ModdedManager {
 
             // Only this one thx
             // s.serializeString(output, "minecraft:entity_type");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -123,8 +122,7 @@ public class ModdedManager {
 
             // Or dummied. What is dummied anyways. What are these others?
             s.serializeVarInt(output, 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -202,9 +200,7 @@ public class ModdedManager {
         ArrayList<DisguisePerm> perms = new ArrayList<>();
 
         for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
-            perms.add(new DisguisePerm(
-                    entry.getValue().isLiving() ? DisguiseType.MODDED_LIVING : DisguiseType.MODDED_MISC,
-                    entry.getValue().getName()));
+            perms.add(new DisguisePerm(entry.getValue().isLiving() ? DisguiseType.MODDED_LIVING : DisguiseType.MODDED_MISC, entry.getValue().getName()));
         }
 
         return perms;

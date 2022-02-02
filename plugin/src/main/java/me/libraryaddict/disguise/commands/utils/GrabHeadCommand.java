@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import java.lang.reflect.Field;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -19,6 +18,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by libraryaddict on 20/06/2020.
  */
@@ -26,8 +27,10 @@ public class GrabHeadCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (sender instanceof Player && !sender.isOp() &&
-                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED +
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin " +
+                "usage!");
             return true;
         }
 
@@ -93,8 +96,7 @@ public class GrabHeadCommand implements CommandExecutor {
                             Field field = meta.getClass().getDeclaredField("profile");
                             field.setAccessible(true);
                             field.set(meta, profile.getHandle());
-                        }
-                        catch (NoSuchFieldException | IllegalAccessException e) {
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
                             e.printStackTrace();
                         }
 

@@ -18,8 +18,7 @@ public class PacketHandlerAnimation implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         // Else if the disguise is attempting to send players a forbidden packet
         if (disguise.getType().isMisc()) {
             packets.clear();

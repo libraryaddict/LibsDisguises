@@ -12,8 +12,9 @@ public class FishingHookWatcher extends FlagWatcher {
     public int getHookedId() {
         int hooked = getData(MetaIndex.FISHING_HOOK_HOOKED_ID);
 
-        if (hooked > 0)
+        if (hooked > 0) {
             hooked--;
+        }
 
         return hooked;
     }

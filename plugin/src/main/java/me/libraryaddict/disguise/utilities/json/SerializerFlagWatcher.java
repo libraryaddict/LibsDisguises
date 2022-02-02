@@ -9,12 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.internal.LinkedTreeMap;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
@@ -27,6 +21,13 @@ import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by libraryaddict on 1/06/2017.
@@ -57,7 +58,7 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Ins
     }
 
     private void correct(FlagWatcher watcher, Class<? extends FlagWatcher> flagWatcher, String name)
-            throws NoSuchFieldException, IllegalAccessException, DisguiseParseException {
+        throws NoSuchFieldException, IllegalAccessException, DisguiseParseException {
         Field field = FlagWatcher.class.getDeclaredField(name);
         field.setAccessible(true);
         HashMap<Integer, Object> map = (HashMap<Integer, Object>) field.get(watcher);

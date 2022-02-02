@@ -14,15 +14,17 @@ import org.bukkit.event.Listener;
 public class PaperDisguiseListener implements Listener {
     @EventHandler
     public void onEntityLoad(EntityAddToWorldEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises())
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
             return;
+        }
 
         Entity entity = event.getEntity();
 
         Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
 
-        if (disguises.length <= 0)
+        if (disguises.length <= 0) {
             return;
+        }
 
         DisguiseUtilities.resetPluginTimer();
 

@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
-import java.util.Arrays;
-import java.util.List;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.LibsPremium;
@@ -12,6 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.permissions.Permissible;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -65,8 +66,7 @@ public class LDPermTest implements LDCommand {
             LibsMsg.NORMAL_PERM_CHECK_FAIL.send(sender);
         }
 
-        if (player.hasPermission("libsdisguises.disguise.zombie") ||
-                permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.ZOMBIE))) {
+        if (player.hasPermission("libsdisguises.disguise.zombie") || permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.ZOMBIE))) {
             LibsMsg.LIBS_PERM_CHECK_ZOMBIE_PERMISSIONS.send(sender);
         }
 

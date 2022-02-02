@@ -49,8 +49,9 @@ public class GuardianWatcher extends InsentientWatcher {
     public void setTarget(String playername) {
         Player player = Bukkit.getPlayer(playername);
 
-        if (player == null)
+        if (player == null) {
             return;
+        }
 
         setData(MetaIndex.GUARDIAN_TARGET, player.getEntityId());
         sendData(MetaIndex.GUARDIAN_TARGET);

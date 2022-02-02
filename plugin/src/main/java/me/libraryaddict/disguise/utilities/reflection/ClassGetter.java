@@ -1,5 +1,8 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.entity.Entity;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -9,8 +12,6 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import org.bukkit.entity.Entity;
 
 /**
  * User: Austin Date: 4/22/13 Time: 11:47 PM (c) lazertester

@@ -1,13 +1,5 @@
 package me.libraryaddict.disguise.utilities.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.entity.Ageable;
@@ -16,6 +8,15 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * Created by libraryaddict on 14/10/2018.
@@ -50,8 +51,7 @@ public class DisguisePermissions {
         private byte inheritance;
         private boolean wildcardCommand;
 
-        public ParsedPermission(DisguisePerm[] disguisePerm, HashMap<String, Boolean> options, byte inheritance,
-                                boolean wildcardCommand) {
+        public ParsedPermission(DisguisePerm[] disguisePerm, HashMap<String, Boolean> options, byte inheritance, boolean wildcardCommand) {
             this.disguisePerm = new Vector<>(Arrays.asList(disguisePerm));
             this.options = options;
             this.inheritance = inheritance;
@@ -175,8 +175,7 @@ public class DisguisePermissions {
             return null;
         }
 
-        return new ParsedPermission(disguisePerms.toArray(new DisguisePerm[0]), options, (byte) inheritance,
-                split[1].equals("*"));
+        return new ParsedPermission(disguisePerms.toArray(new DisguisePerm[0]), options, (byte) inheritance, split[1].equals("*"));
     }
 
     /**
@@ -330,7 +329,7 @@ public class DisguisePermissions {
                     // Or this parsed permission is at a higher level than the last
                     // That prevents 'cow' overriding 'cow.setBurning'
                     if (parsedPermission.options.isEmpty() && !DisguiseConfig.isExplicitDisguisePermissions() &&
-                            (storage.wildcardAllow || lastOptionInheritance != parsedPermission.inheritance)) {
+                        (storage.wildcardAllow || lastOptionInheritance != parsedPermission.inheritance)) {
                         storage.wildcardAllow = true;
 
                         // If this disguise has options defined, unless wildcard was explictly given then remove it
@@ -478,16 +477,14 @@ public class DisguisePermissions {
             // have an invisible wildcard allow
             if (!storage.permittedOptions.isEmpty() || storage.negatedOptions.isEmpty()) {
                 // Check if they're trying to use anything they shouldn't
-                if (!disguiseOptions.stream()
-                        .allMatch(option -> storage.permittedOptions.contains(option.toLowerCase(Locale.ENGLISH)))) {
+                if (!disguiseOptions.stream().allMatch(option -> storage.permittedOptions.contains(option.toLowerCase(Locale.ENGLISH)))) {
                     return false;
                 }
             }
         }
 
         // If the user is using a forbidden option, return false. Otherwise true
-        return disguiseOptions.stream()
-                .noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
+        return disguiseOptions.stream().noneMatch(option -> storage.negatedOptions.contains(option.toLowerCase(Locale.ENGLISH)));
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {
@@ -495,7 +492,6 @@ public class DisguisePermissions {
     }
 
     private PermissionStorage getStorage(DisguisePerm disguisePerm) {
-        return disguises.stream().filter(disguise -> disguise.getDisguise().equals(disguisePerm)).findAny()
-                .orElse(null);
+        return disguises.stream().filter(disguise -> disguise.getDisguise().equals(disguisePerm)).findAny().orElse(null);
     }
 }

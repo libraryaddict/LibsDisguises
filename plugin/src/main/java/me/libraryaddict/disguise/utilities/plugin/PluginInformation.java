@@ -1,8 +1,9 @@
 package me.libraryaddict.disguise.utilities.plugin;
 
+import lombok.Getter;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import lombok.Getter;
 
 /**
  * Created by libraryaddict on 20/06/2019.
@@ -18,8 +19,8 @@ public class PluginInformation {
     private String buildNumber;
     private String buildDate;
 
-    public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium,
-            String version, String buildNumber, String buildDate) {
+    public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium, String version, String buildNumber,
+                             String buildDate) {
         this.size = size;
         this.userID = userID;
         this.resourceID = resourceID;
@@ -61,15 +62,13 @@ public class PluginInformation {
     public Date getParsedBuildDate() {
         try {
             return new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(getBuildDate());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
 
         return null;
     }
 
     public boolean isLegit() {
-        return getUserID().matches("[0-9]+") && !getUserID().equals("12345") && getResourceID().equals("32453") &&
-                getDownloadID().matches("-?[0-9]+");
+        return getUserID().matches("[0-9]+") && !getUserID().equals("12345") && getResourceID().equals("32453") && getDownloadID().matches("-?[0-9]+");
     }
 }

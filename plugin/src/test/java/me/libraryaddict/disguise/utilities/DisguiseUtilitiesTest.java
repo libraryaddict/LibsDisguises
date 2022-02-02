@@ -1,8 +1,9 @@
 package me.libraryaddict.disguise.utilities;
 
-import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 /**
  * Created by libraryaddict on 25/10/2018.
@@ -12,13 +13,10 @@ public class DisguiseUtilitiesTest {
     public void testNewlineSplitter() {
         Assert.assertArrayEquals(new String[]{"Name 1", "Name 2"}, DisguiseUtilities.splitNewLine("Name 1\nName 2"));
         Assert.assertArrayEquals(new String[]{"Name 1", "Name 2"}, DisguiseUtilities.splitNewLine("Name 1\\nName 2"));
-        Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"},
-                DisguiseUtilities.splitNewLine("Name 1\\\nName 2"));
+        Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"}, DisguiseUtilities.splitNewLine("Name 1\\\nName 2"));
         Assert.assertArrayEquals(new String[]{"Name 1\\nName 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\nName 2"));
-        Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"},
-                DisguiseUtilities.splitNewLine("Name 1\\\\\\nName 2"));
-        Assert.assertArrayEquals(new String[]{"Name 1\\\\nName 2"},
-                DisguiseUtilities.splitNewLine("Name 1\\\\\\\\nName 2"));
+        Assert.assertArrayEquals(new String[]{"Name 1\\", "Name 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\\\nName 2"));
+        Assert.assertArrayEquals(new String[]{"Name 1\\\\nName 2"}, DisguiseUtilities.splitNewLine("Name 1\\\\\\\\nName 2"));
     }
 
     @Test
@@ -28,46 +26,33 @@ public class DisguiseUtilitiesTest {
 
         Assert.assertArrayEquals(new String[]{"A quoted string"}, DisguiseUtilities.split("\"A quoted string\""));
 
-        Assert.assertArrayEquals(new String[]{"\"A double quoted string\""},
-                DisguiseUtilities.split("\"\"A double quoted string\"\""));
+        Assert.assertArrayEquals(new String[]{"\"A double quoted string\""}, DisguiseUtilities.split("\"\"A double quoted string\"\""));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "containing a", "quote"},
-                DisguiseUtilities.split("A string \"containing a\" quote"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "containing a", "quote"}, DisguiseUtilities.split("A string \"containing a\" quote"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"},
-                DisguiseUtilities.split("\"A\" string fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"}, DisguiseUtilities.split("\"A\" string fully split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"},
-                DisguiseUtilities.split("\"A\" \"string\" fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"}, DisguiseUtilities.split("\"A\" \"string\" fully split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"},
-                DisguiseUtilities.split("A \"string\" fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"}, DisguiseUtilities.split("A \"string\" fully split"));
 
         // Test if quotes are ignored properly and included in result
-        Assert.assertArrayEquals(new String[]{"A", "\"string", "fully", "split"},
-                DisguiseUtilities.split("A \"string fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "\"string", "fully", "split"}, DisguiseUtilities.split("A \"string fully split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "\"string", "\"fully", "split"},
-                DisguiseUtilities.split("A \"string \"fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "\"string", "\"fully", "split"}, DisguiseUtilities.split("A \"string \"fully split"));
 
-        Assert.assertArrayEquals(new String[]{"\"A", "\"string", "\"fully", "split"},
-                DisguiseUtilities.split("\"A \"string \"fully split"));
+        Assert.assertArrayEquals(new String[]{"\"A", "\"string", "\"fully", "split"}, DisguiseUtilities.split("\"A \"string \"fully split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string\"", "fully", "split"},
-                DisguiseUtilities.split("A string\" fully split"));
+        Assert.assertArrayEquals(new String[]{"A", "string\"", "fully", "split"}, DisguiseUtilities.split("A string\" fully split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string\"", "fully\"", "split"},
-                DisguiseUtilities.split("A string\" fully\" split"));
+        Assert.assertArrayEquals(new String[]{"A", "string\"", "fully\"", "split"}, DisguiseUtilities.split("A string\" fully\" split"));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "fully\"", "split"},
-                DisguiseUtilities.split("A \"string\" fully\" split"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "fully\"", "split"}, DisguiseUtilities.split("A \"string\" fully\" split"));
 
-        Assert.assertArrayEquals(new String[]{"A \"string", "with", "four", "splits"},
-                DisguiseUtilities.split("\"A \"string\" with four splits"));
+        Assert.assertArrayEquals(new String[]{"A \"string", "with", "four", "splits"}, DisguiseUtilities.split("\"A \"string\" with four splits"));
 
         // Test for quotes inside words
-        Assert.assertArrayEquals(new String[]{"Fully", "split", "\"", "message"},
-                DisguiseUtilities.split("Fully split \"\"\" message"));
+        Assert.assertArrayEquals(new String[]{"Fully", "split", "\"", "message"}, DisguiseUtilities.split("Fully split \"\"\" message"));
 
         // Test to make sure space can be quoted, with an empty quote at the end
         Assert.assertArrayEquals(new String[]{" ", "\""}, DisguiseUtilities.split("\" \" \""));
@@ -76,12 +61,11 @@ public class DisguiseUtilitiesTest {
         Assert.assertArrayEquals(new String[]{"Three", "", "split"}, DisguiseUtilities.split("Three \"\" split"));
 
         // Test to ensure single quotes, are still not quotes
-        Assert.assertArrayEquals(new String[]{"'Three", "split", "message'"},
-                DisguiseUtilities.split("'Three split message'"));
+        Assert.assertArrayEquals(new String[]{"'Three", "split", "message'"}, DisguiseUtilities.split("'Three split message'"));
 
         // There is a quoted message inside the quoted message, however it was not escaped
         Assert.assertArrayEquals(new String[]{"A", "quoted message \"inside a quoted message\""},
-                DisguiseUtilities.split("A \"quoted message \"inside a quoted message\"\""));
+            DisguiseUtilities.split("A \"quoted message \"inside a quoted message\"\""));
 
         // Now test for escaped quotes, however as escaped quotes look different inside editors, I'll be replacing \
         // with / and " with '
@@ -114,12 +98,10 @@ public class DisguiseUtilitiesTest {
 
         splitEquals("'//// ////'", "//// //");
 
-        splitEquals(
-                "Foobar is not 'Foo Bar' but is a single word 'foobar' or as some quote it, /'foobar/' and again, " +
-                        "not /'foo bar/' - It is 'foobar'!",
+        splitEquals("Foobar is not 'Foo Bar' but is a single word 'foobar' or as some quote it, /'foobar/' and again, " + "not /'foo bar/' - It is 'foobar'!",
 
-                "Foobar", "is", "not", "Foo Bar", "but", "is", "a", "single", "word", "foobar", "or", "as", "some",
-                "quote", "it,", "'foobar'", "and", "again,", "not", "'foo", "bar'", "-", "It", "is", "'foobar'!");
+            "Foobar", "is", "not", "Foo Bar", "but", "is", "a", "single", "word", "foobar", "or", "as", "some", "quote", "it,", "'foobar'", "and", "again,",
+            "not", "'foo", "bar'", "-", "It", "is", "'foobar'!");
 
         splitAndBack("Hi \" bye");
         splitAndBack("Hi\\\" I'm Sam");
@@ -139,8 +121,7 @@ public class DisguiseUtilitiesTest {
 
     private void splitEquals(String toSplit, String... expected) {
         String[] splitted = DisguiseUtilities.split(toSplit.replace("/", "\\").replace("'", "\""));
-        String[] expect = Arrays.stream(expected).map(string -> string.replace("/", "\\").replace("'", "\""))
-                .toArray(String[]::new);
+        String[] expect = Arrays.stream(expected).map(string -> string.replace("/", "\\").replace("'", "\"")).toArray(String[]::new);
 
         Assert.assertArrayEquals(expect, splitted);
 

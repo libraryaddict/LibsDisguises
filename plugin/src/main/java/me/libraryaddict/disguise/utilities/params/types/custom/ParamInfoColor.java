@@ -1,8 +1,9 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import java.util.Map;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import org.bukkit.Color;
+
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 19/09/2018.

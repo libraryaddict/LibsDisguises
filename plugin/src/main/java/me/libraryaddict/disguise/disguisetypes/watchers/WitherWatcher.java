@@ -1,9 +1,10 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.security.InvalidParameterException;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.ChatColor;
+
+import java.security.InvalidParameterException;
 
 public class WitherWatcher extends InsentientWatcher {
 
@@ -21,8 +22,7 @@ public class WitherWatcher extends InsentientWatcher {
     }
 
     public int[] getTargets() {
-        return new int[]{getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2),
-                getData(MetaIndex.WITHER_TARGET_3)};
+        return new int[]{getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2), getData(MetaIndex.WITHER_TARGET_3)};
     }
 
     /**
@@ -35,8 +35,7 @@ public class WitherWatcher extends InsentientWatcher {
 
     public void setTargets(int... targets) {
         if (targets.length != 3) {
-            throw new InvalidParameterException(
-                    ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
+            throw new InvalidParameterException(ChatColor.RED + "Expected 3 numbers for wither setTargets. Received " + targets.length);
         }
         setData(MetaIndex.WITHER_TARGET_1, targets[0]);
         setData(MetaIndex.WITHER_TARGET_2, targets[1]);

@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -15,6 +14,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+
 /**
  * Created by libraryaddict on 3/01/2019.
  */
@@ -25,8 +26,7 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-                       Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         if (disguise.getType() == DisguiseType.FALLING_BLOCK) {
             packets.clear();
             return;
@@ -36,8 +36,7 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
         Float yawLock = disguise.getWatcher().getYawLock();
         boolean riding = observer.getVehicle() == entity;
 
-        if (pitchLock == null && yawLock == null &&
-                (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER)) {
+        if (pitchLock == null && yawLock == null && (!disguise.getType().isPlayer() || entity.getType() == EntityType.PLAYER)) {
             if (riding) {
                 sentPacket = sentPacket.shallowClone();
                 sentPacket.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
@@ -86,31 +85,26 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
             case SNOWBALL:
             case PAINTING:
             case PRIMED_TNT:
-                if ((pitchLock == null || yawLock == null) && sentPacket.getBytes().read(0) == 0 &&
-                        entity.getVelocity().lengthSquared() > 0) {
+                if ((pitchLock == null || yawLock == null) && sentPacket.getBytes().read(0) == 0 && entity.getVelocity().lengthSquared() > 0) {
                     loc.setDirection(entity.getVelocity());
 
                     if (pitchLock == null) {
-                        pitch = DisguiseUtilities
-                                .getPitch(DisguiseType.PLAYER, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                        pitch = DisguiseUtilities.getPitch(DisguiseType.PLAYER, (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
                     }
 
                     if (yawLock == null) {
-                        yaw = DisguiseUtilities
-                                .getYaw(DisguiseType.PLAYER, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+                        yaw = DisguiseUtilities.getYaw(DisguiseType.PLAYER, (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
                     }
 
                     break;
                 }
             default:
                 if (pitchLock == null) {
-                    pitch = DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()),
-                            (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                    pitch = DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()), (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
                 }
 
                 if (yawLock == null) {
-                    yaw = DisguiseUtilities.getYaw(DisguiseType.getType(entity.getType()),
-                            (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+                    yaw = DisguiseUtilities.getYaw(DisguiseType.getType(entity.getType()), (byte) (int) (loc.getYaw() * 256.0F / 360.0F));
                 }
                 break;
         }

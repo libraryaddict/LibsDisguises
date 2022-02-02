@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.commands.utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
@@ -15,6 +13,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabCompleter {
 
@@ -45,7 +46,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
                 doEquipment = false;
             } else if (option.equalsIgnoreCase(LibsMsg.DCLONE_ADDEDANIMATIONS.get())) {
                 doAdded = true;
-            }  else {
+            } else {
                 LibsMsg.INVALID_CLONE.send(sender, option);
                 return true;
             }
@@ -57,8 +58,7 @@ public class DisguiseCloneCommand extends DisguiseBaseCommand implements TabComp
             DisguiseUtilities.createClonedDisguise((Player) sender, player, options);
         } else {
             LibsDisguises.getInstance().getListener()
-                    .addInteraction(sender.getName(), new DisguiseCloneInteraction(options),
-                            DisguiseConfig.getDisguiseCloneExpire());
+                .addInteraction(sender.getName(), new DisguiseCloneInteraction(options), DisguiseConfig.getDisguiseCloneExpire());
 
             LibsMsg.CLICK_TIMER.send(sender, DisguiseConfig.getDisguiseCloneExpire());
         }

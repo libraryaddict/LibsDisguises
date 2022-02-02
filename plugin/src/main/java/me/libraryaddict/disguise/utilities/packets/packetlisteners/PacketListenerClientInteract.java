@@ -130,7 +130,7 @@ public class PacketListenerClientInteract extends PacketAdapter {
                 public void run() {
                     // Fire self interact event
                     DisguiseInteractEvent selfEvent =
-                            new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, interactType == EnumWrappers.EntityUseAction.ATTACK);
+                        new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, interactType == EnumWrappers.EntityUseAction.ATTACK);
 
                     Bukkit.getPluginManager().callEvent(selfEvent);
                 }

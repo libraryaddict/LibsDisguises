@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import java.lang.reflect.InvocationTargetException;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
@@ -18,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class FallingBlockWatcher extends FlagWatcher {
     private int blockCombinedId = 1;
@@ -105,7 +106,7 @@ public class FallingBlockWatcher extends FlagWatcher {
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                    TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(block.getType().name(), " ")));
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(block.getType().name(), " ")));
         }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {
@@ -129,7 +130,7 @@ public class FallingBlockWatcher extends FlagWatcher {
 
         if (!getDisguise().isCustomDisguiseName()) {
             getDisguise().setDisguiseName(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("Block") + " " +
-                    TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(data.getMaterial().name(), " ")));
+                TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(ReflectionManager.toReadable(data.getMaterial().name(), " ")));
         }
 
         if (DisguiseAPI.isDisguiseInUse(getDisguise()) && getDisguise().getWatcher() == this) {

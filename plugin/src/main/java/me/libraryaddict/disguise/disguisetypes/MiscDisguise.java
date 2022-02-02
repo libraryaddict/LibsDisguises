@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.security.InvalidParameterException;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
@@ -11,6 +10,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.security.InvalidParameterException;
 
 public class MiscDisguise extends TargetedDisguise {
     private int id = -1, data = 0;
@@ -27,8 +28,7 @@ public class MiscDisguise extends TargetedDisguise {
         super(disguiseType);
 
         if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
-            throw new IllegalArgumentException(
-                    "This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
+            throw new IllegalArgumentException("This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
         }
 
         apply(0, itemStack);
@@ -38,8 +38,7 @@ public class MiscDisguise extends TargetedDisguise {
         super(disguiseType);
 
         if (disguiseType != DisguiseType.FALLING_BLOCK && disguiseType != DisguiseType.DROPPED_ITEM) {
-            throw new IllegalArgumentException(
-                    "This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
+            throw new IllegalArgumentException("This constructor requires a DROPPED_ITEM or FALLING_BLOCK disguise type!");
         }
 
         apply(0, new ItemStack(material));
@@ -55,9 +54,8 @@ public class MiscDisguise extends TargetedDisguise {
 
         if (!disguiseType.isMisc()) {
             throw new InvalidParameterException(
-                    "Expected a non-living DisguiseType while constructing MiscDisguise. Received " + disguiseType +
-                            " instead. Please use " + (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") +
-                            " instead");
+                "Expected a non-living DisguiseType while constructing MiscDisguise. Received " + disguiseType + " instead. Please use " +
+                    (disguiseType.isPlayer() ? "PlayerDisguise" : "MobDisguise") + " instead");
         }
 
         apply(id, new ItemStack(Material.STONE));

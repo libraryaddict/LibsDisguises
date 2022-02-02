@@ -10,16 +10,6 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.comphenix.protocol.wrappers.nbt.NbtType;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.UUID;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractSkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractVillagerWatcher;
@@ -113,6 +103,17 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.UUID;
+
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
 
@@ -136,7 +137,7 @@ public class MetaIndex<Y> {
      */
     @NmsAddedIn(NmsVersion.v1_13)
     public static MetaIndex<WrappedParticle> AREA_EFFECT_PARTICLE =
-            new MetaIndex<>(AreaEffectCloudWatcher.class, 3, NmsVersion.v1_13.isSupported() ? WrappedParticle.create(Particle.SPELL_MOB, null) : null);
+        new MetaIndex<>(AreaEffectCloudWatcher.class, 3, NmsVersion.v1_13.isSupported() ? WrappedParticle.create(Particle.SPELL_MOB, null) : null);
 
     @NmsRemovedIn(NmsVersion.v1_13)
     public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 3, 0);
@@ -368,7 +369,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<ItemStack> FIREBALL_ITEM = new MetaIndex<>(FireballWatcher.class, 0, new ItemStack(Material.AIR));
 
     public static MetaIndex<ItemStack> FIREWORK_ITEM =
-            new MetaIndex<>(FireworkWatcher.class, 0, new ItemStack(NmsVersion.v1_13.isSupported() ? Material.FIREWORK_ROCKET : Material.AIR));
+        new MetaIndex<>(FireworkWatcher.class, 0, new ItemStack(NmsVersion.v1_13.isSupported() ? Material.FIREWORK_ROCKET : Material.AIR));
 
     public static MetaIndex<Boolean> FISH_FROM_BUCKET = new MetaIndex<>(FishWatcher.class, 0, false);
 
@@ -543,7 +544,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<String> MINECART_COMMAND_STRING = new MetaIndex<>(MinecartCommandWatcher.class, 0, "");
 
     public static MetaIndex<WrappedChatComponent> MINECART_COMMAND_LAST_OUTPUT =
-            new MetaIndex<>(MinecartCommandWatcher.class, 1, WrappedChatComponent.fromText(""));
+        new MetaIndex<>(MinecartCommandWatcher.class, 1, WrappedChatComponent.fromText(""));
 
     /**
      * If the minecart furnace is fueled and burning
@@ -697,8 +698,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> ABSTRACT_VILLAGER_ANGRY = new MetaIndex<>(AbstractVillagerWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public static MetaIndex<VillagerData> VILLAGER_DATA = new MetaIndex<>(VillagerWatcher.class, 0,
-            NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
+    public static MetaIndex<VillagerData> VILLAGER_DATA =
+        new MetaIndex<>(VillagerWatcher.class, 0, NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
 
     public static MetaIndex<Boolean> WITCH_AGGRESSIVE = new MetaIndex<>(WitchWatcher.class, 0, false);
 
@@ -740,7 +741,7 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<VillagerData> ZOMBIE_VILLAGER_PROFESSION = new MetaIndex<>(ZombieVillagerWatcher.class, 1,
-            NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
+        NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
 
     /**
      * Shown for villager conversion
@@ -814,7 +815,7 @@ public class MetaIndex<Y> {
 
                     if (found != null) {
                         DisguiseUtilities.getLogger().severe(entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" +
-                                type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
+                            type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
                         continue loop;
                     }
 
@@ -832,7 +833,7 @@ public class MetaIndex<Y> {
 
     public String toString() {
         return LibsMsg.META_INFO.get(getName(this), getFlagWatcher().getSimpleName(), getIndex(), getDefault().getClass().getSimpleName(),
-                DisguiseUtilities.getGson().toJson(getDefault()));
+            DisguiseUtilities.getGson().toJson(getDefault()));
     }
 
     /**
@@ -1002,8 +1003,9 @@ public class MetaIndex<Y> {
                     continue;
                 }
 
-                DisguiseUtilities.getLogger().severe("MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() +
-                        " has already registered this! (" + metaIndex.getDefault() + "," + index.getDefault() + ")");
+                DisguiseUtilities.getLogger().severe(
+                    "MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() + " has already registered this! (" +
+                        metaIndex.getDefault() + "," + index.getDefault() + ")");
             }
 
             values()[i] = metaIndexes[a];

@@ -2,12 +2,13 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
-import java.util.Optional;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import org.bukkit.DyeColor;
 import org.bukkit.block.BlockFace;
+
+import java.util.Optional;
 
 /**
  * @author Navid
@@ -41,11 +42,13 @@ public class ShulkerWatcher extends InsentientWatcher {
     }
 
     public void setShieldHeight(int newHeight) {
-        if (newHeight < 0)
+        if (newHeight < 0) {
             newHeight = 0;
+        }
 
-        if (newHeight > 127)
+        if (newHeight > 127) {
             newHeight = 127;
+        }
 
         setData(MetaIndex.SHULKER_PEEKING, (byte) newHeight);
         sendData(MetaIndex.SHULKER_PEEKING);

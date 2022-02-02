@@ -1,18 +1,18 @@
 package me.libraryaddict.disguise.utilities.params.types.custom;
 
-import java.util.Arrays;
-import java.util.Locale;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 /**
  * Created by libraryaddict on 16/02/2020.
  */
 public class ParamInfoItemBlock extends ParamInfoItemStack {
-    public ParamInfoItemBlock(Class paramClass, String name, String valueType, String description,
-            Material[] possibleValues) {
+    public ParamInfoItemBlock(Class paramClass, String name, String valueType, String description, Material[] possibleValues) {
         super(paramClass, name, valueType, description, Arrays.stream(possibleValues).filter(m -> {
             switch (m) {
                 case CHEST:

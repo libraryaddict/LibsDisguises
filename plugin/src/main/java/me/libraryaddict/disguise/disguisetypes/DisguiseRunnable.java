@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import java.lang.reflect.InvocationTargetException;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
@@ -16,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by libraryaddict on 20/05/2021.
@@ -84,7 +85,7 @@ class DisguiseRunnable extends BukkitRunnable {
         if (disguise.getEntity() instanceof Player && !((Player) disguise.getEntity()).isOnline()) {
             disguise.removeDisguise();
         } else if (disguise.disguiseExpires > 0 && (DisguiseConfig.isDynamicExpiry() ? disguise.disguiseExpires-- == 1 :
-                disguise.disguiseExpires < System.currentTimeMillis())) { // If disguise expired
+            disguise.disguiseExpires < System.currentTimeMillis())) { // If disguise expired
             disguise.removeDisguise();
 
             if (disguise.getEntity() instanceof Player) {
@@ -182,9 +183,9 @@ class DisguiseRunnable extends BukkitRunnable {
                     Location loc = disguise.getEntity().getLocation();
 
                     mods.write(4,
-                            DisguiseUtilities.getYaw(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                    mods.write(5, DisguiseUtilities
-                            .getPitch(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
+                        DisguiseUtilities.getYaw(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                    mods.write(5,
+                        DisguiseUtilities.getPitch(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
                     if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
                         PacketContainer selfLookPacket = lookPacket.shallowClone();

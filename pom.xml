@@ -73,10 +73,10 @@
         </repository>
 
         <!-- Lumine is a repo hosted by the creators of MythicCraft -->
-		<repository>
-			<id>lumine</id>
-			<url>https://mvn.lumine.io/repository/maven-public/</url>
-		</repository>
+        <repository>
+            <id>lumine</id>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
 
         <repository>
             <id>dmulloy2-repo</id>

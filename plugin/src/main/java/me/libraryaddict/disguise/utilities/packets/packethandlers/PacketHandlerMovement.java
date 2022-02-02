@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -22,6 +21,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+
 /**
  * Created by libraryaddict on 3/01/2019.
  */
@@ -31,7 +32,7 @@ public class PacketHandlerMovement implements IPacketHandler {
     @Override
     public PacketType[] getHandledPackets() {
         return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK, PacketType.Play.Server.ENTITY_TELEPORT,
-                PacketType.Play.Server.REL_ENTITY_MOVE};
+            PacketType.Play.Server.REL_ENTITY_MOVE};
     }
 
     private short conRel(double oldCord, double newCord) {
@@ -157,7 +158,7 @@ public class PacketHandlerMovement implements IPacketHandler {
             packets.addPacket(movePacket);
             return;
         } else if (disguise.getType() == DisguiseType.RABBIT &&
-                (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE || sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
+            (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE || sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
             // When did the rabbit disguise last hop
             long lastHop = 999999;
 

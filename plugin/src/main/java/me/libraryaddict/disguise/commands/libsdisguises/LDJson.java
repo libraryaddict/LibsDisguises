@@ -1,9 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -16,6 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -114,8 +115,7 @@ public class LDJson implements LDCommand {
 
             builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
             builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append((string.length() <= 256 ? "" : " " + msg))
-                            .create()));
+                new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append((string.length() <= 256 ? "" : " " + msg)).create()));
             msg += 1;
         }
 

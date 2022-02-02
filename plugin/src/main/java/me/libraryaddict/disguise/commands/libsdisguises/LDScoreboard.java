@@ -3,11 +3,6 @@ package me.libraryaddict.disguise.commands.libsdisguises;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -26,6 +21,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 20/04/2020.
@@ -56,7 +57,7 @@ public class LDScoreboard implements LDCommand {
                     if (!((PlayerDisguise) disguise).hasScoreboardName()) {
                         if (unexpected++ < 3) {
                             sender.sendMessage(
-                                    "The player disguise " + ((PlayerDisguise) disguise).getName() + " isn't using a scoreboard name? This is unexpected");
+                                "The player disguise " + ((PlayerDisguise) disguise).getName() + " isn't using a scoreboard name? This is unexpected");
                         }
                         continue;
                     }
@@ -78,28 +79,27 @@ public class LDScoreboard implements LDCommand {
 
                         checked.add(board);
 
-
                         Team team = board.getTeam(scoreboardName.getTeamName());
 
                         if (team == null) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                        " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                        " and possibly more players!");
+                                    " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                    " and possibly more players!");
                             }
 
                             continue;
                         }
 
                         if (!team.getPrefix().equals("Colorize") &&
-                                (!team.getPrefix().equals(scoreboardName.getPrefix()) || !team.getSuffix().equals(scoreboardName.getSuffix()))) {
+                            (!team.getPrefix().equals(scoreboardName.getPrefix()) || !team.getSuffix().equals(scoreboardName.getSuffix()))) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                        " has an unexpected prefix/suffix of '" + team.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
-                                        team.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'! Expected '" +
-                                        scoreboardName.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
-                                        scoreboardName.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'");
+                                    " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                    " has an unexpected prefix/suffix of '" + team.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
+                                    team.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'! Expected '" +
+                                    scoreboardName.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
+                                    scoreboardName.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'");
                             }
                             continue;
                         }
@@ -107,9 +107,9 @@ public class LDScoreboard implements LDCommand {
                         if (!team.hasEntry(scoreboardName.getPlayer())) {
                             if (issuesFound++ < 5) {
                                 sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                        " does not have the player entry expected! Instead has '" +
-                                        StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') + "'");
+                                    " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                    " does not have the player entry expected! Instead has '" +
+                                    StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') + "'");
                             }
                         }
                     }
@@ -125,9 +125,9 @@ public class LDScoreboard implements LDCommand {
             LibsMsg.LIBS_SCOREBOARD_NAMES_DISABLED.send(sender);
         }
 
-        List<PacketListener> listeners = ProtocolLibrary.getProtocolManager().getPacketListeners().stream()
-                .filter(listener -> listener.getPlugin() != LibsDisguises.getInstance() &&
-                        listener.getSendingWhitelist().getTypes().contains(PacketType.Play.Server.SCOREBOARD_TEAM)).collect(Collectors.toList());
+        List<PacketListener> listeners = ProtocolLibrary.getProtocolManager().getPacketListeners().stream().filter(
+            listener -> listener.getPlugin() != LibsDisguises.getInstance() &&
+                listener.getSendingWhitelist().getTypes().contains(PacketType.Play.Server.SCOREBOARD_TEAM)).collect(Collectors.toList());
 
         if (!listeners.isEmpty()) {
             ComponentBuilder builder = new ComponentBuilder("");
@@ -149,15 +149,15 @@ public class LDScoreboard implements LDCommand {
                 builder.append(listener.getPlugin().getName());
                 builder.color(net.md_5.bungee.api.ChatColor.AQUA);
 
-                String plugin = ChatColor.GOLD + "Plugin: " + ChatColor.YELLOW + listener.getPlugin().getName() + " v" +
-                        listener.getPlugin().getDescription().getVersion();
+                String plugin =
+                    ChatColor.GOLD + "Plugin: " + ChatColor.YELLOW + listener.getPlugin().getName() + " v" + listener.getPlugin().getDescription().getVersion();
                 String listenerClass = ChatColor.GOLD + "Listener: " + ChatColor.YELLOW + listener.getClass().toString();
                 String packets = ChatColor.GOLD + "Packets: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getTypes(), ", ");
                 String priority = ChatColor.GOLD + "Priority: " + ChatColor.YELLOW + listener.getSendingWhitelist().getPriority();
                 String options = ChatColor.GOLD + "Options: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getOptions(), ", ");
 
                 builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        TextComponent.fromLegacyText(plugin + "\n" + listenerClass + "\n" + packets + "\n" + priority + "\n" + options)));
+                    TextComponent.fromLegacyText(plugin + "\n" + listenerClass + "\n" + packets + "\n" + priority + "\n" + options)));
             }
 
             sender.spigot().sendMessage(builder.create());
@@ -165,8 +165,8 @@ public class LDScoreboard implements LDCommand {
 
         LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.send(sender);
 
-        sender.sendMessage(ChatColor.RED +
-                "This command is somewhat outdated and needs to be changed, pushing is now disabled on the entities themselves and not players");
+        sender.sendMessage(
+            ChatColor.RED + "This command is somewhat outdated and needs to be changed, pushing is now disabled on the entities themselves and not players");
 
         Player player;
 

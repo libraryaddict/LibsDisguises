@@ -5,13 +5,14 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 /**
  * Created by libraryaddict on 21/05/2020.
@@ -51,8 +52,7 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
                 }
 
                 if (player.hasMetadata("ld_tabsend") && !player.getMetadata("ld_tabsend").isEmpty()) {
-                    ArrayList<PacketContainer> packets = (ArrayList<PacketContainer>) player.getMetadata("ld_tabsend")
-                            .get(0).value();
+                    ArrayList<PacketContainer> packets = (ArrayList<PacketContainer>) player.getMetadata("ld_tabsend").get(0).value();
 
                     player.removeMetadata("ld_tabsend", LibsDisguises.getInstance());
 
@@ -60,8 +60,7 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
                         for (PacketContainer packet : packets) {
                             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
-                    }
-                    catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }

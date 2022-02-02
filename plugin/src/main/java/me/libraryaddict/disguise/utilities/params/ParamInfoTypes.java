@@ -3,13 +3,6 @@ package me.libraryaddict.disguise.utilities.params;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
@@ -63,6 +56,14 @@ import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Created by libraryaddict on 7/09/2018.
  */
@@ -84,54 +85,43 @@ public class ParamInfoTypes {
         // Register enum types
         //paramInfos.add(new ParamInfoEnum(AnimalColor.class, "Animal Color",
         //        "View all the colors you can use for an animal color"));
-        paramInfos
-                .add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise"));
-        paramInfos.add(new ParamInfoEnum(Horse.Color.class, "Horse Color",
-                "View all the colors you can use for a horses color"));
+        paramInfos.add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise"));
+        paramInfos.add(new ParamInfoEnum(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color"));
 
-        paramInfos.add(new ParamInfoEnum(Villager.Profession.class, "Villager Profession",
-                "View all the professions you can set on a Villager and Zombie Villager"));
+        paramInfos.add(
+            new ParamInfoEnum(Villager.Profession.class, "Villager Profession", "View all the professions you can set on a Villager and Zombie Villager"));
 
         if (NmsVersion.v1_14.isSupported()) {
-            paramInfos.add(new ParamInfoEnum(Villager.Type.class, "Villager Biome",
-                    "View all the biomes you can set on a Villager and Zombie Villager"));
+            paramInfos.add(new ParamInfoEnum(Villager.Type.class, "Villager Biome", "View all the biomes you can set on a Villager and Zombie Villager"));
         }
 
         paramInfos.add(new ParamInfoEnum(BlockFace.class, "Direction", "Direction (North, East, South, West, Up, Down)",
-                "View the directions usable on player setSleeping and shulker direction",
-                Arrays.copyOf(BlockFace.values(), 6)));
-        paramInfos
-                .add(new ParamInfoEnum(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into"));
-        paramInfos
-                .add(new ParamInfoEnum(TreeSpecies.class, "Tree Species", "View the different types of tree species"));
+            "View the directions usable on player setSleeping and shulker direction", Arrays.copyOf(BlockFace.values(), 6)));
+        paramInfos.add(new ParamInfoEnum(RabbitType.class, "Rabbit Type", "View the kinds of rabbits you can turn into"));
+        paramInfos.add(new ParamInfoEnum(TreeSpecies.class, "Tree Species", "View the different types of tree species"));
 
         paramInfos.add(new ParamInfoEnum(MainHand.class, "Main Hand", "Set the main hand for an entity"));
-        paramInfos.add(new ParamInfoEnum(Llama.Color.class, "Llama Color",
-                "View all the colors you can use for a llama color"));
-        paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant",
-                "View the different colors a parrot can be"));
+        paramInfos.add(new ParamInfoEnum(Llama.Color.class, "Llama Color", "View all the colors you can use for a llama color"));
+        paramInfos.add(new ParamInfoEnum(Parrot.Variant.class, "Parrot Variant", "View the different colors a parrot can be"));
 
         if (NmsVersion.v1_13.isSupported()) {
-            paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle",
-                    "The different particles of Minecraft", Particle.values(), getMaterials()));
+            paramInfos.add(new ParamInfoParticle(WrappedParticle.class, "Particle", "The different particles of Minecraft", Particle.values(), getMaterials()));
             paramInfos.add(new ParamInfoEnum(TropicalFish.Pattern.class, "Pattern", "Patterns of a tropical fish"));
-            paramInfos.add(new ParamInfoBlockData(BlockData.class, "BlockData",
-                    "The block data states, barrel[facing=north,open=false] as example", getMaterials()));
+            paramInfos.add(
+                new ParamInfoBlockData(BlockData.class, "BlockData", "The block data states, barrel[facing=north,open=false] as example", getMaterials()));
         } else {
             paramInfos.add(new ParamInfoEnum(Particle.class, "Particle", "The different particles of Minecraft"));
         }
 
         paramInfos.add(new ParamInfoEnum(DyeColor.class, "DyeColor", "Dye colors of many different colors"));
-        paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style",
-                "Horse style which is the patterns on the horse"));
+        paramInfos.add(new ParamInfoEnum(Horse.Style.class, "Horse Style", "Horse style which is the patterns on the horse"));
 
         if (NmsVersion.v1_14.isSupported()) {
             paramInfos.add(new ParamInfoEnum(EntityPose.class, "EntityPose", "The pose the entity should strike"));
             paramInfos.add(new ParamInfoEnum(Cat.Type.class, "Cat Type", "The type of cat"));
             paramInfos.add(new ParamInfoEnum(Fox.Type.class, "Fox Type", "The type of fox"));
             paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
-            paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant",
-                    "The different variants for mushroom cows"));
+            paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant", "The different variants for mushroom cows"));
 
             if (NmsVersion.v1_17.isSupported()) {
                 paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
@@ -140,34 +130,25 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type", "The type of ocelot"));
         }
 
-        paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar",
-                "Where the disguised indicator should appear"));
+        paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));
         paramInfos.add(new ParamInfoEnum(BarColor.class, "BarColor", "The color of the boss bar"));
         paramInfos.add(new ParamInfoEnum(BarStyle.class, "BarStyle", "The style of the boss bar"));
 
         // Register custom types
-        paramInfos.add(new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)",
-                "Set the X,Y,Z directions on an armorstand"));
-        paramInfos.add(new ParamInfoColor(Color.class, "Color", "Colors that can also be defined through RGB",
-                getColors()));
-        paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items",
-                getMaterials()));
+        paramInfos.add(new ParamInfoEulerAngle(EulerAngle.class, "Euler Angle", "Euler Angle (X,Y,Z)", "Set the X,Y,Z directions on an armorstand"));
+        paramInfos.add(new ParamInfoColor(Color.class, "Color", "Colors that can also be defined through RGB", getColors()));
+        paramInfos.add(new ParamInfoEnum(Material.class, "Material", "A material used for blocks and items", getMaterials()));
         paramInfos.add(new ParamInfoItemStack(ItemStack.class, "ItemStack", "ItemStack (Material,Amount?,Glow?)",
-                "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials()));
-        paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]",
-                "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)",
-                "Four ItemStacks separated by a comma", getMaterials()));
-        paramInfos.add(new ParamInfoPotionEffect(PotionEffectType.class, "Potion Effect",
-                "View all the potion effects you can add", getPotions()));
+            "An ItemStack compromised of Material,Amount,Glow. Only requires Material", getMaterials()));
+        paramInfos.add(new ParamInfoItemStackArray(ItemStack[].class, "ItemStack[]", "Four ItemStacks (Material:Amount?:Glow?,Material:Amount?:Glow?..)",
+            "Four ItemStacks separated by a comma", getMaterials()));
+        paramInfos.add(new ParamInfoPotionEffect(PotionEffectType.class, "Potion Effect", "View all the potion effects you can add", getPotions()));
 
-        paramInfos.add(new ParamInfoBlockPosition(BlockPosition.class, "Block Position", "Block Position (num,num,num)",
-                "Three numbers separated by a ,"));
+        paramInfos.add(new ParamInfoBlockPosition(BlockPosition.class, "Block Position", "Block Position (num,num,num)", "Three numbers separated by a ,"));
         paramInfos.add(new ParamInfoGameProfile(WrappedGameProfile.class, "GameProfile",
-                "Get the gameprofile here https://sessionserver.mojang" +
-                        ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
+            "Get the gameprofile here https://sessionserver.mojang" + ".com/session/minecraft/profile/PLAYER_UUID_GOES_HERE?unsigned=false"));
         paramInfos.add(new ParamInfoTime(long.class, "Expiry Time",
-                "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " +
-                        "etc. 30m20secs = 30 minutes, 20 seconds"));
+            "Set how long the disguise lasts, <Num><Time><Num>... where <Time> is (s/sec)(m/min)(h/hour)(d/day) " + "etc. 30m20secs = 30 minutes, 20 seconds"));
 
         paramInfos.add(new ParamInfoChatColor(ChatColor.class, "ChatColor", "A chat color"));
         paramInfos.add(new ParamInfoEnum(GolemCrack.class, "Golem Cracked", "The stage a golem has been cracked"));

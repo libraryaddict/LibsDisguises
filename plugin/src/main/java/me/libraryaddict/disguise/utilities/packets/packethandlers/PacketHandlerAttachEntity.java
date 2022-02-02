@@ -20,15 +20,13 @@ public class PacketHandlerAttachEntity implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-                       Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         if (observer.getVehicle() == null) {
             DisguiseUtilities.removeInvisibleSlime(observer);
             return;
         }
 
-        if (observer.getVehicle() != entity ||
-                !AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
+        if (observer.getVehicle() != entity || !AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
             return;
         }
 

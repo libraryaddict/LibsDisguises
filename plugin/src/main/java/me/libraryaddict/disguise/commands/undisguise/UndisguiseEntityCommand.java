@@ -15,8 +15,10 @@ public class UndisguiseEntityCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player && !sender.isOp() &&
-                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED +
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin " +
+                "usage!");
             return true;
         }
 
@@ -30,8 +32,7 @@ public class UndisguiseEntityCommand implements CommandExecutor {
             return true;
         }
 
-        LibsDisguises.getInstance().getListener().addInteraction(sender.getName(), new UndisguiseEntityInteraction(),
-                DisguiseConfig.getDisguiseEntityExpire());
+        LibsDisguises.getInstance().getListener().addInteraction(sender.getName(), new UndisguiseEntityInteraction(), DisguiseConfig.getDisguiseEntityExpire());
         LibsMsg.UND_ENTITY.send(sender);
 
         return true;

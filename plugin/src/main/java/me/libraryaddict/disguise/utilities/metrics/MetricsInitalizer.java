@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.utilities.metrics;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Set;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -11,6 +8,10 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.plugin.PluginInformation;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -49,8 +50,8 @@ public class MetricsInitalizer {
                 info = LibsPremium.getPluginInformation();
             }
 
-            boolean customPremium = !info.getUserID().matches("[0-9]+") || info.getUserID().equals("1") ||
-                    !info.getResourceID().equals("32453") || !info.getDownloadID().matches("-?[0-9]+");
+            boolean customPremium = !info.getUserID().matches("[0-9]+") || info.getUserID().equals("1") || !info.getResourceID().equals("32453") ||
+                !info.getDownloadID().matches("-?[0-9]+");
 
             if (customPremium) {
                 if (plugin.isReleaseBuild() && LibsPremium.getPaidInformation() == null) {
@@ -137,8 +138,9 @@ public class MetricsInitalizer {
             public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
                 for (Set<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
                     for (Disguise disg : list) {
-                        if (disg.getEntity() == null || !disg.isDisguiseInUse())
+                        if (disg.getEntity() == null || !disg.isDisguiseInUse()) {
                             continue;
+                        }
 
                         String name = disg.getEntity().getType().name();
 
@@ -155,8 +157,9 @@ public class MetricsInitalizer {
             public HashMap<String, Integer> getValues(HashMap<String, Integer> hashMap) {
                 for (Set<TargetedDisguise> list : DisguiseUtilities.getDisguises().values()) {
                     for (Disguise disg : list) {
-                        if (disg.getEntity() == null || !disg.isDisguiseInUse())
+                        if (disg.getEntity() == null || !disg.isDisguiseInUse()) {
                             continue;
+                        }
 
                         String name = disg.getType().name();
 
@@ -194,20 +197,22 @@ public class MetricsInitalizer {
                     disgs += set.size();
                 }
 
-                if (disgs == 0)
+                if (disgs == 0) {
                     return "0";
-                if (disgs <= 5)
+                }
+                if (disgs <= 5) {
                     return "1 to 5";
-                else if (disgs <= 15)
+                } else if (disgs <= 15) {
                     return "6 to 15";
-                else if (disgs <= 30)
+                } else if (disgs <= 30) {
                     return "16 to 30";
-                else if (disgs <= 60)
+                } else if (disgs <= 60) {
                     return "30 to 60";
-                else if (disgs <= 100)
+                } else if (disgs <= 100) {
                     return "60 to 100";
-                else if (disgs <= 200)
+                } else if (disgs <= 200) {
                     return "100 to 200";
+                }
 
                 return "More than 200";
             }
@@ -233,8 +238,7 @@ public class MetricsInitalizer {
                 try {
                     Class.forName("org.spigotmc.SpigotConfig");
                     return "Yes";
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     return "No";
                 }
             }
@@ -275,13 +279,15 @@ public class MetricsInitalizer {
 
                 Collection<Set<TargetedDisguise>> list = DisguiseUtilities.getDisguises().values();
 
-                if (list.isEmpty())
+                if (list.isEmpty()) {
                     return "Unknown";
+                }
 
                 for (Set<TargetedDisguise> dList : list) {
                     for (TargetedDisguise disg : dList) {
-                        if (disg.getObservers().isEmpty())
+                        if (disg.getObservers().isEmpty()) {
                             continue;
+                        }
 
                         targetedDisguises = true;
                         return "Yes";

@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.commands.modify;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -19,6 +16,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements TabCompleter {
 
@@ -42,8 +43,7 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
             if (args[0].contains("-")) {
                 try {
                     entityTarget = Bukkit.getEntity(UUID.fromString(args[0]));
-                }
-                catch (Exception ignored) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -63,11 +63,13 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
         Disguise disguise = null;
 
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             disguise = DisguiseAPI.getDisguise((Player) sender, entityTarget);
+        }
 
-        if (disguise == null)
+        if (disguise == null) {
             disguise = DisguiseAPI.getDisguise(entityTarget);
+        }
 
         if (disguise == null) {
             LibsMsg.DMODPLAYER_NODISGUISE.send(sender, entityTarget.getName());
@@ -86,15 +88,11 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         options = DisguiseParser.parsePlaceholders(options, sender, entityTarget);
 
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options,
-                    "DisguiseModifyPlayer");
-        }
-        catch (DisguiseParseException ex) {
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options, "DisguiseModifyPlayer");
+        } catch (DisguiseParseException ex) {
             ex.send(sender);
             return true;
-        }
-
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }
@@ -133,11 +131,13 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
 
             Disguise disguise = null;
 
-            if (sender instanceof Player)
+            if (sender instanceof Player) {
                 disguise = DisguiseAPI.getDisguise((Player) sender, player);
+            }
 
-            if (disguise == null)
+            if (disguise == null) {
                 disguise = DisguiseAPI.getDisguise(player);
+            }
 
             if (disguise == null) {
                 return tabs;
@@ -159,7 +159,6 @@ public class DisguiseModifyPlayerCommand extends DisguiseBaseCommand implements 
         ArrayList<String> allowedDisguises = getAllowedDisguises(permissions);
 
         LibsMsg.DMODPLAYER_HELP1.send(sender);
-        LibsMsg.DMODIFY_HELP3.send(sender,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.DMODIFY_HELP3.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
     }
 }

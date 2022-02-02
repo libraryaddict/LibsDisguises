@@ -1,6 +1,16 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
 import com.google.gson.Gson;
+import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.utilities.LibsPremium;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
+import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
+import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
+import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,15 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
-import me.libraryaddict.disguise.utilities.LibsPremium;
-import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
-import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
-import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
-import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
-import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -109,7 +110,7 @@ public class CompileMethods {
                 } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) && !method.isAnnotationPresent(NmsRemovedIn.class)) {
                     continue;
                 } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) && !method.getName().startsWith("get") &&
-                        !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
+                    !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
                     continue;
                 } else if (method.getName().equals("removePotionEffect")) {
                     continue;

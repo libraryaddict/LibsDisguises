@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.commands.disguise;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
@@ -18,6 +16,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
@@ -43,8 +44,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser
-                    .parseDisguise(sender, (Entity) sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")), getPermissions(sender));
+            disguise = DisguiseParser.parseDisguise(sender, (Entity) sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")),
+                getPermissions(sender));
         } catch (DisguiseParseException ex) {
             ex.send(sender);
 
@@ -68,7 +69,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
         if (!setViewDisguise(args)) {
             // They prefer to have the opposite of whatever the view disguises option is
-            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
+            if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
+                disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
                 disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
             }
         }

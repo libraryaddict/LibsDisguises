@@ -1,8 +1,5 @@
 package me.libraryaddict.disguise.utilities.params;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import javax.annotation.Nullable;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -17,6 +14,10 @@ import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class ParamInfoManager {
     private static List<ParamInfo> paramList;

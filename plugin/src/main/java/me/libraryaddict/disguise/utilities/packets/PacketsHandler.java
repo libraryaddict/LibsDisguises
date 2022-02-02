@@ -2,8 +2,6 @@ package me.libraryaddict.disguise.utilities.packets;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import java.util.ArrayList;
-import java.util.Collection;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -21,6 +19,9 @@ import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerS
 import me.libraryaddict.disguise.utilities.packets.packethandlers.PacketHandlerVelocity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -45,8 +46,7 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerHeadRotation());
 
         // If not prem, if build is from jenkins, else its a custom and needs paid info
-        if (!LibsPremium.isPremium() || LibsDisguises.getInstance().getBuildNo().matches("[0-9]+") ||
-                LibsPremium.getPaidInformation() != null) {
+        if (!LibsPremium.isPremium() || LibsDisguises.getInstance().getBuildNo().matches("[0-9]+") || LibsPremium.getPaidInformation() != null) {
             packetHandlers.add(new PacketHandlerMetadata(this));
         }
 

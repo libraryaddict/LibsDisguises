@@ -12,21 +12,21 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by libraryaddict on 11/06/2020.
  */
 public class PacketListenerModdedClient extends PacketAdapter {
-    private final Cache<String, String> loginAttempts = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS)
-            .build();
+    private final Cache<String, String> loginAttempts = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();
     private final int packetId1 = 5555554, packetId2 = 5555555;
 
     public PacketListenerModdedClient() {
@@ -73,17 +73,14 @@ public class PacketListenerModdedClient extends PacketAdapter {
         int size = 256;
 
         if (j > size * 4) {
-            throw new DecoderException(
-                    "The received encoded string buffer length is longer than maximum allowed (" + j + " > " +
-                            size * 4 + ")");
+            throw new DecoderException("The received encoded string buffer length is longer than maximum allowed (" + j + " > " + size * 4 + ")");
         } else if (j < 0) {
             throw new DecoderException("The received encoded string buffer length is less than zero! Weird string!");
         } else {
             String s = buf.toString(buf.readerIndex(), j, StandardCharsets.UTF_8);
             buf.readerIndex(buf.readerIndex() + j);
             if (s.length() > size) {
-                throw new DecoderException(
-                        "The received string length is longer than maximum allowed (" + j + " > " + size + ")");
+                throw new DecoderException("The received string length is longer than maximum allowed (" + j + " > " + size + ")");
             } else {
                 return s;
             }
@@ -97,8 +94,7 @@ public class PacketListenerModdedClient extends PacketAdapter {
 
         try {
             ProtocolLibrary.getProtocolManager().recieveClientPacket(player, packet, false);
-        }
-        catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -134,16 +130,15 @@ public class PacketListenerModdedClient extends PacketAdapter {
             return;
         }
 
-        loginAttempts
-                .put(event.getPlayer().getAddress().toString(), event.getPacket().getGameProfiles().read(0).getName());
+        loginAttempts.put(event.getPlayer().getAddress().toString(), event.getPacket().getGameProfiles().read(0).getName());
 
         PacketContainer packet1 = new PacketContainer(PacketType.Login.Server.CUSTOM_PAYLOAD);
         packet1.getIntegers().write(0, packetId1);
         packet1.getMinecraftKeys().write(0, new com.comphenix.protocol.wrappers.MinecraftKey("fml", "handshake"));
 
         try {
-            Object obj1 = ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class)
-                    .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake()));
+            Object obj1 =
+                ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class).newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake()));
 
             packet1.getModifier().write(2, obj1);
 
@@ -151,14 +146,13 @@ public class PacketListenerModdedClient extends PacketAdapter {
             packet2.getIntegers().write(0, packetId2);
             packet2.getMinecraftKeys().write(0, new MinecraftKey("fml", "handshake"));
             Object obj2 = ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class)
-                    .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries()));
+                .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlRegistries()));
 
             packet2.getModifier().write(2, obj2);
 
             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet1);
             ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet2);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

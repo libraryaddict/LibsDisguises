@@ -8,9 +8,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -25,12 +22,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class PacketListenerInventory extends PacketAdapter {
     private LibsDisguises libsDisguises;
 
     public PacketListenerInventory(LibsDisguises plugin) {
         super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS, PacketType.Play.Client.SET_CREATIVE_SLOT,
-                PacketType.Play.Client.WINDOW_CLICK);
+            PacketType.Play.Client.WINDOW_CLICK);
 
         libsDisguises = plugin;
     }
@@ -66,7 +67,7 @@ public class PacketListenerInventory extends PacketAdapter {
         // If player isn't disguise, isn't self disguised, or isn't hiding items from themselves
         // If player is disguised, views self disguises and has a inventory modifier
         if (disguise == null || !DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId()) ||
-                (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
+            (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
             return;
         }
 
@@ -236,7 +237,7 @@ public class PacketListenerInventory extends PacketAdapter {
         Disguise disguise = DisguiseAPI.getDisguise(player, player);
 
         if (disguise == null || !DisguiseUtilities.getSelfDisguised().contains(player.getUniqueId()) ||
-                (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
+            (!disguise.isHidingArmorFromSelf() && !disguise.isHidingHeldItemFromSelf())) {
             return;
         }
 

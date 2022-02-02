@@ -1,14 +1,6 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
 import com.google.gson.Gson;
-import java.io.InputStream;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -23,6 +15,15 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+
+import java.io.InputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -102,12 +103,13 @@ public class DisguiseMethods {
 
                 MethodHandle method = MethodHandles.publicLookup().findVirtual(watcher, info.getMethod(), type);
 
-                WatcherMethod m = new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault(), info.isDeprecated() && info.getAdded() ==0);
+                WatcherMethod m = new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault(),
+                    info.isDeprecated() && info.getAdded() == 0);
 
                 methods.add(m);
 
                 if (m.getName().startsWith("get") || m.getName().startsWith("has") || param == null || param == Void.TYPE ||
-                        ParamInfoManager.getParamInfo(m) == null) {
+                    ParamInfoManager.getParamInfo(m) == null) {
                     continue;
                 }
 
@@ -118,8 +120,8 @@ public class DisguiseMethods {
 
             // Add these last as it's what we want to present to be called the least
             for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
-                    "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName",
-                    "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"}) {
+                "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName",
+                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"}) {
                 try {
                     Class cl = boolean.class;
                     Class disguiseClass = Disguise.class;
@@ -153,19 +155,19 @@ public class DisguiseMethods {
                     for (Class returnType : new Class[]{Void.TYPE, disguiseClass}) {
                         try {
                             WatcherMethod method = new WatcherMethod(disguiseClass,
-                                    MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)), methodName,
-                                    null, cl, randomDefault, false);
+                                MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)), methodName, null,
+                                cl, randomDefault, false);
 
                             methods.add(method);
 
                             watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class, (a) -> new ArrayList<>())
-                                    .add(method);
+                                .add(method);
 
                             String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
 
-                            WatcherMethod getMethod = new WatcherMethod(disguiseClass,
-                                    MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName, cl, null,
-                                    randomDefault, false);
+                            WatcherMethod getMethod =
+                                new WatcherMethod(disguiseClass, MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)),
+                                    getName, cl, null, randomDefault, false);
 
                             methods.add(getMethod);
                             break;

@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.commands.interactions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -14,6 +12,9 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by libraryaddict on 4/04/2020.

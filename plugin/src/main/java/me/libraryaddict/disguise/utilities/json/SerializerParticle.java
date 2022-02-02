@@ -4,8 +4,9 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by libraryaddict on 5/12/2020.

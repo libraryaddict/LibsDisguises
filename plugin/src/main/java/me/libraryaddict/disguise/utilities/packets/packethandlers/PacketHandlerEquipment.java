@@ -5,8 +5,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
@@ -20,6 +18,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 3/01/2019.
@@ -81,15 +82,15 @@ public class PacketHandlerEquipment implements IPacketHandler {
             }
 
             if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
-                    (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
-                            slot == EquipmentSlot.OFF_HAND)) {
+                (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
+                    slot == EquipmentSlot.OFF_HAND)) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
                     List<WrappedWatchableObject> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
                         WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.LIVING_META,
-                                WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
+                            WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
 
                         if (watch != null) {
                             list.add(watch);
@@ -154,8 +155,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
         }
 
         if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
-                (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
-                        slot == EquipmentSlot.OFF_HAND)) {
+            (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() && slot == EquipmentSlot.OFF_HAND)) {
             if (itemStack == null) {
                 itemStack = packets.getPackets().get(0).getItemModifier().read(0);
             }
@@ -167,7 +167,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
                 if (DisguiseConfig.isMetaPacketsEnabled()) {
                     WrappedWatchableObject watch =
-                            ReflectionManager.createWatchable(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
+                        ReflectionManager.createWatchable(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
 
                     if (watch != null) {
                         list.add(watch);

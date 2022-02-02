@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.commands.utils;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import java.util.Arrays;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -20,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Arrays;
+
 /**
  * Created by libraryaddict on 28/12/2019.
  */
@@ -28,10 +29,10 @@ public class SaveDisguiseCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
         if (sender instanceof Player && !sender.isOp() &&
-                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED +
-                    "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
-                    "non-admin usage!");
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
+                "non-admin usage!");
             return true;
         }
 

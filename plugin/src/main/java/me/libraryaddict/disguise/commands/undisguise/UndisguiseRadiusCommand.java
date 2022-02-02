@@ -18,8 +18,7 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
         try {
             Integer.parseInt(string);
             return true;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -27,8 +26,10 @@ public class UndisguiseRadiusCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player && !sender.isOp() &&
-                (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
-            sender.sendMessage(ChatColor.RED + "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin usage!");
+            (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
+            sender.sendMessage(ChatColor.RED +
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin " +
+                "usage!");
             return true;
         }
 

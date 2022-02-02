@@ -6,18 +6,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
+
+import java.lang.reflect.Type;
 
 /**
  * Created by libraryaddict on 27/11/2018.
  */
-public class SerializerBlockData implements JsonDeserializer<BlockData>,
-        JsonSerializer<BlockData> {
+public class SerializerBlockData implements JsonDeserializer<BlockData>, JsonSerializer<BlockData> {
     @Override
-    public BlockData deserialize(JsonElement json, Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+    public BlockData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         return Bukkit.createBlockData(json.getAsString());
     }
 

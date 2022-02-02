@@ -6,12 +6,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 1/06/2017.
@@ -30,8 +31,7 @@ public class SerializerItemStack implements JsonSerializer<ItemStack>, JsonDeser
     }
 
     @Override
-    public ItemStack deserialize(JsonElement json, Type typeOfT,
-            JsonDeserializationContext context) throws JsonParseException {
+    public ItemStack deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         HashMap map = context.deserialize(json, HashMap.class);
 
         if (map.containsKey("meta")) {

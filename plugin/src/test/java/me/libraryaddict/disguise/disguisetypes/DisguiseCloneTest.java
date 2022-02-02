@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import java.lang.invoke.MethodHandle;
-import java.util.Map;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
@@ -9,6 +7,9 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Assert;
+
+import java.lang.invoke.MethodHandle;
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 19/01/2020.

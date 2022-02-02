@@ -13,30 +13,6 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.GameProfile;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -105,6 +81,31 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 public class ReflectionManager {
     private static final HashMap<String, Enum> soundCategories = new HashMap<>();
@@ -212,8 +213,8 @@ public class ReflectionManager {
             chatComponentConstructor = getNmsConstructor("ChatComponentText", String.class);
 
             packetPlayOutConstructor =
-                    getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
-                            getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
+                getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
+                    getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
 
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
             getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
@@ -537,30 +538,30 @@ public class ReflectionManager {
                 WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
                 Object playerinteractmanager =
-                        getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
-                                .newInstance(world);
+                    getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
+                        .newInstance(world);
 
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
-                        playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+                    playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
 
             } else if (entityName.equals("EnderPearl")) {
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
-                        .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
+                    .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
             } else if (entityName.equals("FishingHook")) {
                 if (NmsVersion.v1_14.isSupported()) {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityHuman"), getNmsClass("World"), int.class, int.class)
-                            .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
+                        .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
                 } else {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
-                            .newInstance(world, createEntityInstance(DisguiseType.PLAYER, "Player"));
+                        .newInstance(world, createEntityInstance(DisguiseType.PLAYER, "Player"));
                 }
             } else if (!NmsVersion.v1_14.isSupported() && entityName.equals("Potion")) {
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE, getNmsClass("ItemStack"))
-                        .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                    .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
             } else {
                 if (NmsVersion.v1_14.isSupported()) {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityTypes"), getNmsClass("World"))
-                            .newInstance(getEntityType(disguiseType.getEntityType()), world);
+                        .newInstance(getEntityType(disguiseType.getEntityType()), world);
                 } else {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World")).newInstance(world);
                 }
@@ -931,7 +932,7 @@ public class ReflectionManager {
     public static WrappedGameProfile getGameProfileWithThisSkin(UUID uuid, String playerName, WrappedGameProfile profileWithSkin) {
         try {
             WrappedGameProfile gameProfile = new WrappedGameProfile(uuid != null ? uuid : getRandomUUID(),
-                    playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
+                playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
 
             if (profileWithSkin != null) {
                 gameProfile.getProperties().putAll(profileWithSkin.getProperties());
@@ -1131,8 +1132,8 @@ public class ReflectionManager {
                     Object session = method.invoke(minecraftServer);
 
                     return WrappedGameProfile.fromHandle(
-                            session.getClass().getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
-                                    .invoke(session, gameProfile.getHandle(), true));
+                        session.getClass().getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
+                            .invoke(session, gameProfile.getHandle(), true));
                 }
             }
         } catch (Exception ex) {
@@ -1173,8 +1174,8 @@ public class ReflectionManager {
                         Object profileRepo = method.invoke(minecraftServer);
 
                         method.getReturnType()
-                                .getMethod("findProfilesByNames", String[].class, agent.getClass(), Class.forName("com.mojang.authlib.ProfileLookupCallback"))
-                                .invoke(profileRepo, new String[]{playername}, agent, callback);
+                            .getMethod("findProfilesByNames", String[].class, agent.getClass(), Class.forName("com.mojang.authlib.ProfileLookupCallback"))
+                            .invoke(profileRepo, new String[]{playername}, agent, callback);
                         break;
                     }
                 }
@@ -1202,7 +1203,7 @@ public class ReflectionManager {
             Location loc = entity.getLocation();
 
             Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
-                    loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
+                loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         } catch (Exception ex) {
@@ -2026,7 +2027,7 @@ public class ReflectionManager {
                     break;
                 default:
                     watcherClass = (Class<? extends FlagWatcher>) Class.forName(
-                            "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
+                        "me.libraryaddict.disguise.disguisetypes.watchers." + toReadable(disguiseType.name()) + "Watcher");
                     break;
             }
         } catch (ClassNotFoundException ex) {
@@ -2074,12 +2075,12 @@ public class ReflectionManager {
             }
 
             // Invalidate invalid distribution
-            if (LibsPremium.isPremium() && ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() &&
-                    !LibsPremium.getPaidInformation().isLegit()) ||
+            if (LibsPremium.isPremium() &&
+                ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() && !LibsPremium.getPaidInformation().isLegit()) ||
                     (LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
-                            !LibsPremium.getPluginInformation().isLegit()))) {
+                        !LibsPremium.getPluginInformation().isLegit()))) {
                 throw new IllegalStateException(
-                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " + "reporting this error!");
+                    "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " + "reporting this error!");
             }
 
             disguiseType.setWatcherClass(watcherClass);
@@ -2232,8 +2233,8 @@ public class ReflectionManager {
                 return;
             }
 
-            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType,
-                    nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+            Object nmsEntity =
+                ReflectionManager.createEntityInstance(disguiseType, nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");
@@ -2245,7 +2246,7 @@ public class ReflectionManager {
             Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
 
             DisguiseValues disguiseValues =
-                    new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
+                new DisguiseValues(disguiseType, bukkitEntity instanceof Damageable ? ((Damageable) bukkitEntity).getMaxHealth() : 0);
 
             WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity);
             ArrayList<MetaIndex> indexes = MetaIndex.getMetaIndexes(disguiseType.getWatcherClass());
@@ -2256,9 +2257,9 @@ public class ReflectionManager {
 
                 if (flagType == null) {
                     DisguiseUtilities.getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + watch.getIndex());
-                    DisguiseUtilities.getLogger()
-                            .severe("Value: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
-                                    disguiseType.getWatcherClass().getSimpleName());
+                    DisguiseUtilities.getLogger().severe(
+                        "Value: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
+                            disguiseType.getWatcherClass().getSimpleName());
 
                     continue;
                 }
@@ -2277,7 +2278,7 @@ public class ReflectionManager {
 
                     DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
                     DisguiseUtilities.getLogger()
-                            .severe("Index: " + watch.getIndex() + " | " + flagType.getFlagWatcher().getSimpleName() + " | " + MetaIndex.getName(flagType));
+                        .severe("Index: " + watch.getIndex() + " | " + flagType.getFlagWatcher().getSimpleName() + " | " + MetaIndex.getName(flagType));
                     Object flagDefault = flagType.getDefault();
 
                     DisguiseUtilities.getLogger().severe("LibsDisguises: " + flagDefault + " (" + flagDefault.getClass() + ")");
@@ -2290,7 +2291,7 @@ public class ReflectionManager {
 
             for (MetaIndex index : indexes) {
                 DisguiseUtilities.getLogger()
-                        .severe(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
+                    .severe(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
 
             SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
@@ -2322,13 +2323,15 @@ public class ReflectionManager {
         } catch (SecurityException | IllegalArgumentException | FieldAccessException ex) {
             DisguiseUtilities.getLogger().severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
             DisguiseUtilities.getLogger()
-                    .severe("Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
-            DisguiseUtilities.getLogger().severe("Development builds are available at (ProtocolLib) " +
-                    "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) https://ci.md-5" + ".net/job/LibsDisguises/");
+                .severe("Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+            DisguiseUtilities.getLogger().severe(
+                "Development builds are available at (ProtocolLib) " + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) https://ci.md-5" +
+                    ".net/job/LibsDisguises/");
 
             ex.printStackTrace();
         }
     }
+
     public static void setScore(Scoreboard scoreboard, String name, int score) {
         setScore(scoreboard, name, score, true);
     }

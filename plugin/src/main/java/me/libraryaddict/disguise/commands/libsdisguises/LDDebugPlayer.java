@@ -1,8 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import com.google.gson.Gson;
-import java.util.Collections;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -17,6 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by libraryaddict on 24/04/2020.
@@ -49,18 +50,14 @@ public class LDDebugPlayer implements LDCommand {
             DisguiseUtilities.DScoreTeam name = disg.getScoreboardName();
 
             player.sendMessage(ChatColor.RED +
-                    String.format("Prefix: '%s', Suffix: '%s', Disguise Name: '%s', Team '%s'",
-                            name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'),
-                            name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'),
-                            name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
+                String.format("Prefix: '%s', Suffix: '%s', Disguise Name: '%s', Team '%s'", name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'),
+                    name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'), name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
 
             if (DisguiseConfig.isArmorstandsName()) {
-                player.sendMessage(
-                        ChatColor.AQUA + "Oh! You're using armorstands! Lets give some debug for that too..");
-                player.sendMessage(ChatColor.RED + String.format("Names: %s, Length: %s, Custom Name: '%s'",
-                        new Gson().toJson(disg.getMultiName()).replace(ChatColor.COLOR_CHAR, '&'),
-                        disg.getMultiNameLength(),
-                        disg.getWatcher().getCustomName().replace(ChatColor.COLOR_CHAR, '&')));
+                player.sendMessage(ChatColor.AQUA + "Oh! You're using armorstands! Lets give some debug for that too..");
+                player.sendMessage(ChatColor.RED +
+                    String.format("Names: %s, Length: %s, Custom Name: '%s'", new Gson().toJson(disg.getMultiName()).replace(ChatColor.COLOR_CHAR, '&'),
+                        disg.getMultiNameLength(), disg.getWatcher().getCustomName().replace(ChatColor.COLOR_CHAR, '&')));
             }
 
             Team team = player.getScoreboard().getTeam(name.getTeamName());
@@ -75,9 +72,8 @@ public class LDDebugPlayer implements LDCommand {
             }
 
             player.sendMessage(ChatColor.RED +
-                    String.format("Prefix Matches: %s, Suffix Matches: %s, In Team: %s, Name Visibility: %s",
-                            team.getPrefix().equals(name.getPrefix()), team.getSuffix().equals(name.getSuffix()),
-                            team.hasEntry(name.getPlayer()), team.getOption(Team.Option.NAME_TAG_VISIBILITY)));
+                String.format("Prefix Matches: %s, Suffix Matches: %s, In Team: %s, Name Visibility: %s", team.getPrefix().equals(name.getPrefix()),
+                    team.getSuffix().equals(name.getSuffix()), team.hasEntry(name.getPlayer()), team.getOption(Team.Option.NAME_TAG_VISIBILITY)));
         }
     }
 

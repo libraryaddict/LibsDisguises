@@ -1,17 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +28,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class DisguiseConfig {
     @Getter
@@ -323,7 +324,7 @@ public class DisguiseConfig {
 
     private static void doUpdaterTask() {
         boolean startTask = isAutoUpdate() || isNotifyUpdate() ||
-                "1592".equals((LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
+            "1592".equals((LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
 
         // Don't ever run the auto updater on a custom build..
         if (!LibsDisguises.getInstance().isNumberedBuild()) {
@@ -415,7 +416,7 @@ public class DisguiseConfig {
 
         // Bisect hosted, server ip, release builds
         for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(), isHittingRateLimit(),
-                getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
+            getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 
@@ -668,7 +669,7 @@ public class DisguiseConfig {
 
             if (getNotifyBar() == NotifyBar.BOSS_BAR && !NmsVersion.v1_13.isSupported()) {
                 DisguiseUtilities.getLogger()
-                        .warning("BossBars hasn't been implemented properly in 1.12 due to api restrictions, falling back to " + "ACTION_BAR");
+                    .warning("BossBars hasn't been implemented properly in 1.12 due to api restrictions, falling back to " + "ACTION_BAR");
 
                 setNotifyBar(NotifyBar.ACTION_BAR);
             }
@@ -695,11 +696,11 @@ public class DisguiseConfig {
         }
 
         String seeCommands = config.getString("Permissions.SeeCommands");
-        PermissionDefault commandVisibility =  seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
+        PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
 
         if (commandVisibility == null) {
             DisguiseUtilities.getLogger()
-                    .warning("Invalid option '" + config.getString("Permissions.SeeCommands") + "' for Permissions.SeeCommands when loading config!");
+                .warning("Invalid option '" + config.getString("Permissions.SeeCommands") + "' for Permissions.SeeCommands when loading config!");
         } else {
             setCommandVisibility(commandVisibility);
         }
@@ -738,8 +739,9 @@ public class DisguiseConfig {
             ArrayList<String> returns = doOutput(config, changed, verbose);
 
             if (!returns.isEmpty()) {
-                DisguiseUtilities.getLogger().info("This is not an error! Now outputting " + (verbose ? "missing " : "") +
-                        (changed ? (verbose ? "and " : "") + "changed/invalid " : "") + "config values");
+                DisguiseUtilities.getLogger().info(
+                    "This is not an error! Now outputting " + (verbose ? "missing " : "") + (changed ? (verbose ? "and " : "") + "changed/invalid " : "") +
+                        "config values");
 
                 for (String v : returns) {
                     DisguiseUtilities.getLogger().info(v);
@@ -829,8 +831,8 @@ public class DisguiseConfig {
                     continue;
                 }
 
-                ModdedManager
-                        .registerModdedEntity(new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)), entity, register);
+                ModdedManager.registerModdedEntity(new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)), entity,
+                    register);
 
                 DisguiseUtilities.getLogger().info("Modded entity " + name + " has been " + (register ? "registered" : "added"));
             } catch (Exception ex) {
@@ -918,7 +920,7 @@ public class DisguiseConfig {
 
             if (!NmsVersion.v1_13.isSupported() && key.equals("libraryaddict")) {
                 toParse =
-                        toParse.replace("GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET", "GOLD_BOOTS,GOLD_LEGGINGS,GOLD_CHESTPLATE,GOLD_HELMET");
+                    toParse.replace("GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET", "GOLD_BOOTS,GOLD_LEGGINGS,GOLD_CHESTPLATE,GOLD_HELMET");
             }
 
             try {
@@ -960,7 +962,7 @@ public class DisguiseConfig {
             String[] disguiseArgs = DisguiseUtilities.split(toParse);
 
             Disguise disguise = DisguiseParser.parseTestDisguise(Bukkit.getConsoleSender(), "disguise", disguiseArgs,
-                    DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
+                DisguiseParser.getPermissions(Bukkit.getConsoleSender(), "disguise"));
 
             DisguisePerm perm = new DisguisePerm(disguise.getType(), disguiseName);
 

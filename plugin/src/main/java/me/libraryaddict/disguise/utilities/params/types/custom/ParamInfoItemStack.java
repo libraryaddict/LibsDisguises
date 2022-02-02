@@ -2,9 +2,6 @@ package me.libraryaddict.disguise.utilities.params.types.custom;
 
 import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
@@ -16,16 +13,20 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
+
 /**
  * Created by libraryaddict on 7/09/2018.
  */
 public class ParamInfoItemStack extends ParamInfoEnum {
-    public ParamInfoItemStack(Class paramClass, String name, String valueType, String description,
-            Enum[] possibleValues) {
+    public ParamInfoItemStack(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
 
-        if (this instanceof ParamInfoItemBlock)
+        if (this instanceof ParamInfoItemBlock) {
             return;
+        }
 
         setOtherValues("null", "%held-item%", "%offhand-item%", "%helmet%", "%chestplate%", "%leggings%", "%boots%");
     }
@@ -105,8 +106,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
         } else if (string.startsWith("{") && string.endsWith("}")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, ItemStack.class);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 throw new IllegalArgumentException();
             }
         } else if (!string.matches("[a-zA-Z0-9_:,]+")) { // If it can't be simple parsed due to invalid chars
@@ -120,8 +120,7 @@ public class ParamInfoItemStack extends ParamInfoEnum {
             } else if (string.matches("^[^{ -]+?\\{.+?}([ -][0-9]+)?$")) { // /give @p stone[data] <amount?>
                 split = new String[string.endsWith("}") ? 2 : 3];
                 split[0] = string.substring(0, string.indexOf("{"));
-                split[string.endsWith("}") ? 1 : 2] = string
-                        .substring(string.indexOf("{"), string.lastIndexOf("}") + 1);
+                split[string.endsWith("}") ? 1 : 2] = string.substring(string.indexOf("{"), string.lastIndexOf("}") + 1);
 
                 if (!string.endsWith("}")) {
                     split[1] = string.substring(string.lastIndexOf(" ") + 1);

@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
-import java.util.ArrayList;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -22,6 +21,8 @@ import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListene
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class PacketsManager {
     private static PacketListener clientInteractEntityListener;
@@ -92,7 +93,7 @@ public class PacketsManager {
 
                 if (disguise != null) {
                     if (viewDisguisesListenerEnabled && disguise.isSelfDisguiseVisible() &&
-                            (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                        (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                         player.updateInventory();
                     }
                 }
@@ -177,8 +178,7 @@ public class PacketsManager {
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
             ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
 
-            if (NmsVersion.v1_13.isSupported() &&
-                    DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
+            if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
                 scoreboardTeamListener = new PacketListenerScoreboardTeam();
 
                 ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
@@ -207,8 +207,7 @@ public class PacketsManager {
                             DisguiseUtilities.removeSelfDisguise(disguise);
                         }
 
-                        if (inventoryModifierEnabled &&
-                                (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                        if (inventoryModifierEnabled && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
                             player.updateInventory();
                         }
                     }

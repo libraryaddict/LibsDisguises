@@ -1,13 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
-import java.util.Optional;
-import java.util.UUID;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Ocelot;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class OcelotWatcher extends AgeableWatcher {
 

@@ -1,13 +1,14 @@
 package me.libraryaddict.disguise.utilities.sounds;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Sound;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 /**
  * Created by libraryaddict on 23/05/2020.

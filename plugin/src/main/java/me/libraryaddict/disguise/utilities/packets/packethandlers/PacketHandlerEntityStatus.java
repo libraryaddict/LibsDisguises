@@ -18,8 +18,7 @@ public class PacketHandlerEntityStatus implements IPacketHandler {
     }
 
     @Override
-    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer,
-            Entity entity) {
+    public void handle(Disguise disguise, PacketContainer sentPacket, LibsPackets packets, Player observer, Entity entity) {
         // If the entity is updating their status, stop them from showing death
         if (packets.getPackets().get(0).getBytes().read(0) == (byte) 3) {
             packets.clear();

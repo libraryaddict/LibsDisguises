@@ -6,13 +6,14 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
-import java.util.Iterator;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class PacketListenerTabList extends PacketAdapter {
     public PacketListenerTabList(LibsDisguises plugin) {
@@ -21,13 +22,15 @@ public class PacketListenerTabList extends PacketAdapter {
 
     @Override
     public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
         Player observer = event.getPlayer();
 
-        if (event.getPacket().getPlayerInfoAction().read(0) != PlayerInfoAction.ADD_PLAYER)
+        if (event.getPacket().getPlayerInfoAction().read(0) != PlayerInfoAction.ADD_PLAYER) {
             return;
+        }
 
         List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().read(0);
         Iterator<PlayerInfoData> itel = list.iterator();
@@ -37,16 +40,19 @@ public class PacketListenerTabList extends PacketAdapter {
 
             Player player = Bukkit.getPlayer(data.getProfile().getUUID());
 
-            if (player == null)
+            if (player == null) {
                 continue;
+            }
 
             Disguise disguise = DisguiseAPI.getDisguise(observer, player);
 
-            if (disguise == null)
+            if (disguise == null) {
                 continue;
+            }
 
-            if (!disguise.isHidePlayer())
+            if (!disguise.isHidePlayer()) {
                 continue;
+            }
 
             itel.remove();
         }

@@ -1,9 +1,5 @@
 package me.libraryaddict.disguise.commands.disguise;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
@@ -26,6 +22,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
     private ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
@@ -188,7 +189,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
                 if (!setViewDisguise(args)) {
                     // They prefer to have the opposite of whatever the view disguises option is
-                    if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) && disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
+                    if (DisguiseAPI.hasSelfDisguisePreference(disguise.getEntity()) &&
+                        disguise.isSelfDisguiseVisible() == DisguiseConfig.isViewSelfDisguisesDefault()) {
                         disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
                     }
                 }

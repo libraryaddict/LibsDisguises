@@ -20,8 +20,7 @@ public class DisguiseTypesTest {
 
             DisguiseType disguiseType = DisguiseType.getType(entityType);
 
-            Assert.assertSame(entityType.name() + " has no DisguiseType registered!", disguiseType.name(),
-                    entityType.name());
+            Assert.assertSame(entityType.name() + " has no DisguiseType registered!", disguiseType.name(), entityType.name());
         }
     }
 }

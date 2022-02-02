@@ -1,10 +1,5 @@
 package me.libraryaddict.disguise;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
@@ -53,6 +48,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class LibsDisguises extends JavaPlugin {
     private static LibsDisguises instance;
     private DisguiseListener listener;
@@ -94,8 +95,8 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 } catch (Exception e) {
                     getLogger().severe(
-                            "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" +
-                                    " can " + "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
+                        "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" + " can " +
+                            "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
                     e.printStackTrace();
                 }
 
@@ -105,7 +106,7 @@ public class LibsDisguises extends JavaPlugin {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
             } catch (ClassNotFoundException e) {
                 getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
-                        "plugin will continue to load, but it will look like a mugging victim");
+                    "plugin will continue to load, but it will look like a mugging victim");
             }
 
             commandConfig = new DisguiseCommandConfig();
@@ -141,7 +142,7 @@ public class LibsDisguises extends JavaPlugin {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
             } catch (ClassNotFoundException e) {
                 getLogger().severe("Oh dear, you seem to be using CraftBukkit. Please use Spigot or Paper instead! This " +
-                        "plugin will continue to load, but it will look like a mugging victim");
+                    "plugin will continue to load, but it will look like a mugging victim");
             }
 
             File disguiseFile = new File(getDataFolder(), "configs/disguises.yml");
@@ -175,12 +176,12 @@ public class LibsDisguises extends JavaPlugin {
 
             if (!LibsPremium.isPremium()) {
                 getLogger().info(
-                        "You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
+                    "You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
             }
 
             if (ReflectionManager.getVersion() == null) {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
-                        StringUtils.join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", ".")).collect(Collectors.toList()), " & ") + "!");
+                    StringUtils.join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", ".")).collect(Collectors.toList()), " & ") + "!");
                 getPluginLoader().disablePlugin(this);
                 return;
             }
@@ -196,8 +197,8 @@ public class LibsDisguises extends JavaPlugin {
                     public void run() {
                         getLogger().severe("!! May I have your attention please !!");
                         getLogger().severe(
-                                "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
-                                        "!");
+                            "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
+                                "!");
                         getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
                         getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
 

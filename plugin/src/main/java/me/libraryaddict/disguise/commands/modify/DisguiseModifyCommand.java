@@ -1,7 +1,5 @@
 package me.libraryaddict.disguise.commands.modify;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.commands.DisguiseBaseCommand;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -17,6 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCompleter {
     @Override
@@ -57,15 +58,12 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
         options = DisguiseParser.parsePlaceholders(options, sender, sender);
 
         try {
-            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options,
-                    "DisguiseModify");
-        }
-        catch (DisguiseParseException ex) {
+            DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), options, "DisguiseModify");
+        } catch (DisguiseParseException ex) {
             ex.send(sender);
 
             return true;
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             ex.printStackTrace();
             return true;
         }
@@ -77,13 +75,15 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] origArgs) {
-        if (!(sender instanceof Player))
+        if (!(sender instanceof Player)) {
             return new ArrayList<>();
+        }
 
         Disguise disguise = DisguiseAPI.getDisguise((Player) sender, (Entity) sender);
 
-        if (disguise == null)
+        if (disguise == null) {
             return new ArrayList<>();
+        }
 
         String[] args = getPreviousArgs(origArgs);
 
@@ -105,7 +105,6 @@ public class DisguiseModifyCommand extends DisguiseBaseCommand implements TabCom
 
         LibsMsg.DMODIFY_HELP1.send(sender);
         LibsMsg.DMODIFY_HELP2.send(sender);
-        LibsMsg.DMODIFY_HELP3.send(sender,
-                StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
+        LibsMsg.DMODIFY_HELP3.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
     }
 }
