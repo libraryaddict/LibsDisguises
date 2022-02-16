@@ -19,6 +19,9 @@ public class PlayerWatcher extends LivingWatcher {
 
         setData(MetaIndex.PLAYER_SKIN, MetaIndex.PLAYER_SKIN.getDefault());
         setData(MetaIndex.PLAYER_HAND, (byte) 1); // I may be left handed, but the others are right
+
+        setInteralCustomName("");
+        setCustomNameVisible(false);
     }
 
     public boolean isDisplayedInTab() {
