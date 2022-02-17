@@ -71,6 +71,8 @@ public class FlagWatcher {
     private Float yawLock;
     @Getter
     private float yModifier;
+    @Getter
+    private float nameYModifier;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
@@ -89,12 +91,29 @@ public class FlagWatcher {
         setPitchLock(pitchLocked ? 0F : null);
     }
 
+    public void setNameYModifier(float yModifier) {
+        this.nameYModifier = yModifier;
+
+        if (!DisguiseConfig.isMovementPacketsEnabled() && !getDisguise().isDisguiseInUse()) {
+            return;
+        }
+
+        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
+            .createPacket(getDisguise().getEntity());
+
+        try {
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setYModifier(float yModifier) {
         if (!DisguiseConfig.isMovementPacketsEnabled()) {
             return;
         }
-
-        double diff = yModifier - getYModifier();
 
         this.yModifier = yModifier;
 
@@ -208,6 +227,7 @@ public class FlagWatcher {
         cloned.pitchLock = pitchLock;
         cloned.yawLock = yawLock;
         cloned.yModifier = yModifier;
+        cloned.nameYModifier = nameYModifier;
 
         return cloned;
     }

@@ -50,7 +50,7 @@ public class PacketHandlerMovement implements IPacketHandler {
         }
 
         ArrayList<PacketContainer> toAdd = new ArrayList<>();
-        double height = disguise.getHeight();
+        double height = disguise.getHeight() + disguise.getWatcher().getNameYModifier();
 
         for (PacketContainer packet : packets.getPackets()) {
             if (packet.getType() == PacketType.Play.Server.ENTITY_LOOK) {

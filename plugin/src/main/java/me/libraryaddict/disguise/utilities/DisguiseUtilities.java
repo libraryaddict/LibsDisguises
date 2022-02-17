@@ -3022,7 +3022,7 @@ public class DisguiseUtilities {
         }
 
         // Don't need to offset with DisguiseUtilities.getYModifier, because that's a visual offset and not an actual location offset
-        double height = disguise.getHeight() + disguise.getWatcher().getYModifier();
+        double height = disguise.getHeight() + disguise.getWatcher().getYModifier() + disguise.getWatcher().getNameYModifier();
 
         for (int i = 0; i < newNames.length; i++) {
             if (i < internalOldNames.length) {

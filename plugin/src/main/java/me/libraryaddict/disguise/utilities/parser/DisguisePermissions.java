@@ -391,6 +391,8 @@ public class DisguisePermissions {
             if (sender instanceof Player && !sender.isOp() && !DisguiseConfig.isExplicitDisguisePermissions()) {
                 storage.permittedOptions.remove("setYModifier");
                 storage.negatedOptions.add("setYModifier");
+                storage.permittedOptions.remove("setNameYModifier");
+                storage.negatedOptions.add("setNameYModifier");
             }
 
             disguises.add(storage);
