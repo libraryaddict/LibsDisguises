@@ -556,6 +556,23 @@ public class DisguisePermissions {
      * <p>
      * Returns if command user can access the disguise creation permission type
      */
+    public static boolean hasMethodOption(HashMap<String, Boolean> methodValues, String value) {
+        value = value.toLowerCase(Locale.ENGLISH);
+
+        // If they were explictly defined, can just return the value
+        if (methodValues.containsKey(value)) {
+            return methodValues.get(value);
+        }
+
+        // If there is at least one whitelisted value, then they needed the whitelist to use it
+        return !methodValues.containsValue(true);
+    }
+
+    /**
+     * Returns true if the string is found in the map, or it's not a whitelisted setup
+     * <p>
+     * Returns if command user can access the disguise creation permission type
+     */
     public static boolean hasPermissionOption(HashMap<String, HashMap<String, Boolean>> disguiseOptions, String method, String value) {
         method = method.toLowerCase(Locale.ENGLISH);
 
@@ -564,16 +581,6 @@ public class DisguisePermissions {
             return true;
         }
 
-        HashMap<String, Boolean> map = disguiseOptions.get(method);
-
-        value = value.toLowerCase(Locale.ENGLISH);
-
-        // If they were explictly defined, can just return the value
-        if (map.containsKey(value)) {
-            return map.get(value);
-        }
-
-        // If there is at least one whitelisted value, then they needed the whitelist to use it
-        return !map.containsValue(true);
+        return hasMethodOption(disguiseOptions.get(method), value);
     }
 }

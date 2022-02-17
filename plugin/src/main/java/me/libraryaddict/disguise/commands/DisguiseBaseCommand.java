@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -172,12 +173,15 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         List<String> tabs = new ArrayList<>();
 
         ParamInfo info = null;
+        String methodName = null;
 
         if (allArgs.length == startsAt) {
             if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
                 info = ParamInfoManager.getParamInfoItemBlock();
+                methodName = "setBlock";
             } else if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
                 info = ParamInfoManager.getParamInfo(ItemStack.class);
+                methodName = "setItemstack";
             }
         } else if (allArgs.length > startsAt) {
             // Check what argument was used before the current argument to see what we're displaying
@@ -185,6 +189,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             String prevArg = allArgs[allArgs.length - 1];
 
             info = ParamInfoManager.getParamInfo(disguisePerm, prevArg);
+            methodName = prevArg;
 
             if (info != null && !info.isParam(boolean.class)) {
                 addMethods = false;
@@ -198,17 +203,36 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
         // If the previous argument is a method
         if (info != null) {
+            Collection<String> wantToUse = null;
+
             // If there is a list of default values
             if (info.hasValues()) {
-                tabs.addAll(info.getEnums(currentArg));
+                wantToUse = info.getEnums(currentArg);
             } else if (info.isParam(String.class)) {
+                wantToUse = new ArrayList<>();
+
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     // If command user cannot see player online, don't tab-complete name
                     if (commandSender instanceof Player && !((Player) commandSender).canSee(player)) {
                         continue;
                     }
 
-                    tabs.add(player.getName());
+                    wantToUse.add(player.getName());
+                }
+            }
+
+            if (wantToUse != null) {
+                HashMap<String, HashMap<String, Boolean>> allowedOptions = DisguisePermissions.getDisguiseOptions(commandSender, getPermNode(), disguisePerm);
+                HashMap<String, Boolean> methodValues = allowedOptions.get(methodName.toLowerCase(Locale.ENGLISH));
+
+                if (methodValues != null) {
+                    for (String value : wantToUse) {
+                        if (!DisguisePermissions.hasMethodOption(methodValues, value)) {
+                            continue;
+                        }
+
+                        tabs.add(value);
+                    }
                 }
             }
         }
