@@ -94,7 +94,7 @@ public class FlagWatcher {
     public void setNameYModifier(float yModifier) {
         this.nameYModifier = yModifier;
 
-        if (!DisguiseConfig.isMovementPacketsEnabled() && !getDisguise().isDisguiseInUse()) {
+        if (!DisguiseConfig.isMovementPacketsEnabled() || !getDisguise().isDisguiseInUse()) {
             return;
         }
 
