@@ -1,6 +1,10 @@
 package me.libraryaddict.disguise.utilities.parser;
 
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
+import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.Material;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -12,6 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -158,7 +163,7 @@ public class DisguisePermissionsTest {
 
         DisguisePermissions permissions =
             createPermissions("Disguise", false, "libsdisguises.disguise.cow", "libsdisguises.disguise.sheep.setColor.setSprinting",
-                "libsdisguises.disguise.animal.-setSprinting");
+                "libsdisguises.disguise.animal.-setSprinting", "libsdisguises.disguise.sheep.setcolor.blue");
 
         Assert.assertTrue("There should be a valid disguise", permissions.hasPermissions());
 
@@ -192,6 +197,23 @@ public class DisguisePermissionsTest {
 
         Assert.assertFalse("The disguise should not be allowed even with options",
             permissions.isAllowedDisguise(firework, Arrays.asList("setBaby", "setBurning")));
+
+    }
+
+    @Test
+    public void testDisguiseParameters() {
+        HashMap<String, HashMap<String, Boolean>> disguiseOptions =
+            DisguisePermissions.getDisguiseOptions(createPermissionsHolder(false, "libsdisguises.options.disguise.falling_block.setblock.stone"), "Disguise",
+                new DisguisePerm(DisguiseType.FALLING_BLOCK));
+
+        Assert.assertTrue("They should be allowed to use true as a disguise option on setBurning",
+            DisguisePermissions.hasPermissionOption(disguiseOptions, "setBurning", "true"));
+
+        Assert.assertTrue("They should be allowed to use Material.STONE as a disguise option",
+            DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "STONE"));
+
+        Assert.assertFalse("They should be not allowed to use Material.DIRT as a disguise option",
+            DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "DIRT"));
     }
 
     @Test
@@ -236,7 +258,8 @@ public class DisguisePermissionsTest {
         DisguiseConfig.setExplicitDisguisePermissions(false);
     }
 
-    private DisguisePermissions createPermissions(String commandName, boolean isOp, String... perms) {
+    private Permissible createPermissionsHolder(boolean isOp, String... perms) {
+
         List<String> permitted = new ArrayList<>();
         List<String> negated = new ArrayList<>();
         Set<PermissionAttachmentInfo> attachments = new HashSet<>();
@@ -321,6 +344,10 @@ public class DisguisePermissionsTest {
             attachments.add(new PermissionAttachmentInfo(permissible, perm, null, setTrue));
         });
 
-        return new DisguisePermissions(permissible, commandName);
+        return permissible;
+    }
+
+    private DisguisePermissions createPermissions(String commandName, boolean isOp, String... perms) {
+        return new DisguisePermissions(createPermissionsHolder(isOp, perms), commandName);
     }
 }

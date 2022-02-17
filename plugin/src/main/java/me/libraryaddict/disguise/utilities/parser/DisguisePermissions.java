@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;
@@ -493,5 +494,86 @@ public class DisguisePermissions {
 
     private PermissionStorage getStorage(DisguisePerm disguisePerm) {
         return disguises.stream().filter(disguise -> disguise.getDisguise().equals(disguisePerm)).findAny().orElse(null);
+    }
+
+    public static HashMap<String, HashMap<String, Boolean>> getDisguiseOptions(Permissible permissionsHolder, String permNode, DisguisePerm type) {
+        HashMap<String, HashMap<String, Boolean>> returns = new HashMap<>();
+
+        // libsdisguises.options.<command>.<disguise>.<method>.<options>
+        for (PermissionAttachmentInfo permission : permissionsHolder.getEffectivePermissions()) {
+            String lowerPerm = permission.getPermission().toLowerCase(Locale.ENGLISH);
+
+            if (!lowerPerm.startsWith("libsdisguises.options.")) {
+                continue;
+            }
+
+            String[] split = lowerPerm.split("\\.");
+
+            // <command>.<disguise>.<method>.<options>
+            if (split.length < 4) {
+                continue;
+            }
+
+            if (!split[2].equalsIgnoreCase(permNode) && !split[2].equalsIgnoreCase("*")) {
+                continue;
+            }
+
+            boolean applicable = false;
+
+            for (String s : split[3].split("/")) {
+                if (!s.equals("*") && !s.replace("_", "").equalsIgnoreCase(type.toReadable().replace(" ", ""))) {
+                    continue;
+                }
+
+                applicable = true;
+                break;
+            }
+
+            if (!applicable) {
+                continue;
+            }
+
+            HashMap<String, Boolean> options = new HashMap<>();
+
+            for (int i = 5; i < split.length; i++) {
+                options.put(split[i], permission.getValue());
+            }
+
+            for (String s : split[4].split("/")) {
+                if (returns.containsKey(s)) {
+                    returns.get(s).putAll(options);
+                } else {
+                    returns.put(s, options);
+                }
+            }
+        }
+
+        return returns;
+    }
+
+    /**
+     * Returns true if the string is found in the map, or it's not a whitelisted setup
+     * <p>
+     * Returns if command user can access the disguise creation permission type
+     */
+    public static boolean hasPermissionOption(HashMap<String, HashMap<String, Boolean>> disguiseOptions, String method, String value) {
+        method = method.toLowerCase(Locale.ENGLISH);
+
+        // If no permissions were defined, return true
+        if (!disguiseOptions.containsKey(method)) {
+            return true;
+        }
+
+        HashMap<String, Boolean> map = disguiseOptions.get(method);
+
+        value = value.toLowerCase(Locale.ENGLISH);
+
+        // If they were explictly defined, can just return the value
+        if (map.containsKey(value)) {
+            return map.get(value);
+        }
+
+        // If there is at least one whitelisted value, then they needed the whitelist to use it
+        return !map.containsValue(true);
     }
 }
