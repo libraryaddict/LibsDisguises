@@ -90,6 +90,10 @@ public class DisguiseParser {
                         continue;
                     } else if (setMethod.getName().equals("setTarget") && setMethod.getParam() != int.class) {
                         continue;
+                    } else if ((setMethod.getName().equals("setCustomName") || setMethod.getName().equals("setCustomNameVisible")) &&
+                        disguise.isPlayerDisguise()) {
+                        // Player Disguise overrides the behavior of custom name, so we definitely don't want it judged on a global scale
+                        continue;
                     } else if (setMethod.getName().equals("setItemInMainHand") && setMethod.getParam() == Material.class) {
                         continue;
                     } else if (setMethod.getName().matches("setArmor") && setMethod.getParam() == ItemStack[].class) {
