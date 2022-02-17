@@ -868,6 +868,7 @@ public abstract class Disguise {
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
         }
 
+        // Sometimes someone may set the custom name stuff on the actual player... Normally harmless, until I come along..
         if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
             getWatcher().setInteralCustomName("");
             getWatcher().setInternalCustomNameVisible(false);
