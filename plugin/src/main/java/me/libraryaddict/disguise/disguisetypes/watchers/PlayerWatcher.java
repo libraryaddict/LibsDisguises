@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
@@ -19,9 +20,6 @@ public class PlayerWatcher extends LivingWatcher {
 
         setData(MetaIndex.PLAYER_SKIN, MetaIndex.PLAYER_SKIN.getDefault());
         setData(MetaIndex.PLAYER_HAND, (byte) 1); // I may be left handed, but the others are right
-
-        setInteralCustomName("");
-        setCustomNameVisible(false);
     }
 
     public boolean isDisplayedInTab() {

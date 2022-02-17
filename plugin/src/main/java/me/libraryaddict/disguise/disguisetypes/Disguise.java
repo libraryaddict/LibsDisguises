@@ -868,6 +868,11 @@ public abstract class Disguise {
             getWatcher().setBackupValue(flag, backup == null ? null : backup.getDefault());
         }
 
+        if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
+            getWatcher().setInteralCustomName("");
+            getWatcher().setInternalCustomNameVisible(false);
+        }
+
         // If a horse is disguised as a horse, it should obey parent no gravity rule
         if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse) &&
             (getWatcher() instanceof BoatWatcher || getWatcher() instanceof AbstractHorseWatcher)) {

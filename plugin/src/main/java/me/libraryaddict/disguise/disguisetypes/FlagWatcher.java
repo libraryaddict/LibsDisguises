@@ -707,10 +707,19 @@ public class FlagWatcher {
     }
 
     public void setCustomNameVisible(boolean display) {
+        if (getDisguise().isPlayerDisguise()) {
+            ((PlayerDisguise) getDisguise()).setNameVisible(display);
+            return;
+        }
+
         if (DisguiseConfig.isArmorstandsName() && DisguiseConfig.isOverrideCustomNames()) {
             display = false;
         }
 
+        setInternalCustomNameVisible(display);
+    }
+
+    protected void setInternalCustomNameVisible(boolean display) {
         setData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE, display);
         sendData(MetaIndex.ENTITY_CUSTOM_NAME_VISIBLE);
     }
