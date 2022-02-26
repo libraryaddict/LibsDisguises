@@ -74,7 +74,7 @@ public class PacketListenerSounds extends PacketAdapter {
                 disguisedEntity = entity;
                 soundGroup = SoundGroup.getGroup(entity.getType().name());
 
-                if (soundGroup.getSound(soundEffectObj) == null) {
+                if (soundGroup == null || soundGroup.getSound(soundEffectObj) == null) {
                     return;
                 }
 
@@ -93,12 +93,6 @@ public class PacketListenerSounds extends PacketAdapter {
 
         if (disguise == null || !disguise.isSoundsReplaced()) {
             return;
-        }
-
-        // Blocks null and CANCEL, HURT and DEATH are 100% handled by entity status!
-        if (soundType != SoundType.STEP && soundType != SoundType.IDLE) {
-            //event.setCancelled(true);
-            // return;
         }
 
         if (disguisedEntity == observer && !disguise.isSelfDisguiseSoundsReplaced()) {
