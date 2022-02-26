@@ -23,12 +23,6 @@ import java.util.Set;
 
 public class PacketListenerSounds extends PacketAdapter {
 
-    /**
-     * This is a fix for the stupidity that is "I can't separate the sounds from the sounds the player
-     * heard, and the sounds of the entity tracker heard"
-     */
-    private static boolean cancelSound;
-
     public PacketListenerSounds(LibsDisguises plugin) {
         super(plugin, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT);
     }

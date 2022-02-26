@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;

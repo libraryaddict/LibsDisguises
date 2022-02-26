@@ -47,7 +47,7 @@ public class ParamInfoManager {
     }
 
     public static ParamInfo getParamInfo(WatcherMethod method) {
-        if (method.getName().equals("setSoundGroup")) {
+        if (method.getName().equalsIgnoreCase("setSoundGroup")) {
             return getParamInfoSoundGroup();
         }
 
