@@ -2292,7 +2292,7 @@ public class DisguiseUtilities {
         return list.toArray(new String[0]);
     }*/
     public static String quote(String string) {
-        if (!string.contains(" ") && !string.startsWith("\"") && !string.endsWith("\"")) {
+        if (!string.isEmpty() && !string.contains(" ") && !string.startsWith("\"") && !string.endsWith("\"")) {
             return string;
         }
 
