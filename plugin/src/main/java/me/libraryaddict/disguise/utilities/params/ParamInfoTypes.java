@@ -72,10 +72,6 @@ public class ParamInfoTypes {
         return new ParamInfoItemBlock(ItemStack.class, "ItemStack", "ItemStack (Material)", "An ItemStack compromised of Material", getMaterials());
     }
 
-    public ParamInfoSoundGroup getParamInfoSoundGroup() {
-        return new ParamInfoSoundGroup();
-    }
-
     /**
      * Constructor values are listed here for continuity
      */

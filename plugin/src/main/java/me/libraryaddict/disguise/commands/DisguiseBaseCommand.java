@@ -233,6 +233,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
                         tabs.add(value);
                     }
+                } else {
+                    tabs.addAll(wantToUse);
                 }
             }
         }
