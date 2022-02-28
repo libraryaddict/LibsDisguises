@@ -121,18 +121,12 @@ public class SoundGroup {
     /**
      * Used to check if this sound name is owned by this disguise sound.
      */
-    public SoundType getType(Object sound, boolean ignoreDamage) {
+    public SoundType getType(Object sound) {
         if (sound == null) {
             return SoundType.CANCEL;
         }
 
-        SoundType soundType = getSound(sound);
-
-        if (soundType == SoundType.DEATH || (ignoreDamage && soundType == SoundType.HURT)) {
-            return null;
-        }
-
-        return soundType;
+        return getSound(sound);
     }
 
     public boolean isCancelSound(String sound) {

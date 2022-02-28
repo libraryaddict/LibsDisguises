@@ -79,8 +79,7 @@ public class PacketListenerSounds extends PacketAdapter {
                 }
 
                 if ((!(entity instanceof LivingEntity)) || ((LivingEntity) entity).getHealth() > 0) {
-                    boolean hasInvun = ReflectionManager.hasInvul(entity);
-                    soundType = soundGroup.getType(soundEffectObj, !hasInvun);
+                    soundType = soundGroup.getType(soundEffectObj);
                 } else {
                     soundType = SoundType.DEATH;
                 }
