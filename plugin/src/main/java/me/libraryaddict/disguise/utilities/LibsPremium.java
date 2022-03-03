@@ -149,7 +149,13 @@ public class LibsPremium {
     }
 
     private static void doSecondaryCheck(String version) {
-        File[] files = new File("plugins/LibsDisguises/").listFiles();
+        File pluginDir = new File("plugins/LibsDisguises/");
+
+        if (!pluginDir.exists() && LibsDisguises.getInstance() != null) {
+            pluginDir = LibsDisguises.getInstance().getDataFolder();
+        }
+
+        File[] files = pluginDir.listFiles();
         boolean foundJar = false;
 
         if (files == null) {
