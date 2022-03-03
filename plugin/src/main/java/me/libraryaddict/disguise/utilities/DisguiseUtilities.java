@@ -807,9 +807,9 @@ public class DisguiseUtilities {
             return new Disguise[0];
         }
 
-        try {
-            String cached;
+        String cached = null;
 
+        try {
             try (FileInputStream input = new FileInputStream(disguiseFile);
                  InputStreamReader inputReader = new InputStreamReader(input, StandardCharsets.UTF_8);
                  BufferedReader reader = new BufferedReader(inputReader)) {
@@ -850,7 +850,7 @@ public class DisguiseUtilities {
 
             return disguises;
         } catch (Throwable e) {
-            getLogger().severe("Malformed disguise for " + entityUUID);
+            getLogger().severe("Malformed disguise for " + entityUUID + "(" + cached + ")");
             e.printStackTrace();
         }
 
