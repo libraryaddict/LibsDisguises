@@ -179,22 +179,30 @@
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>shared</artifactId>
-            <version>10.0.27-SNAPSHOT</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>LibsDisguises</groupId>
-            <artifactId>v1_18_R1</artifactId>
-            <version>10.0.27-SNAPSHOT</version>
-            <classifier>remapped-spigot</classifier>
+            <version>${project.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>v1_17_R1</artifactId>
-            <version>10.0.27-SNAPSHOT</version>
+            <version>${project.version}</version>
+            <classifier>remapped-spigot</classifier>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>v1_18_R1</artifactId>
+            <version>${project.version}</version>
+            <classifier>remapped-spigot</classifier>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>v1_18_R2</artifactId>
+            <version>${project.version}</version>
             <classifier>remapped-spigot</classifier>
             <scope>compile</scope>
             <optional>true</optional>

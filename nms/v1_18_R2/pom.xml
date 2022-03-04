@@ -10,15 +10,14 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>v1_17_R1</artifactId>
+    <artifactId>v1_18_R2</artifactId>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spigot.version>1.17.1-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.18.2-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
     <dependencies>

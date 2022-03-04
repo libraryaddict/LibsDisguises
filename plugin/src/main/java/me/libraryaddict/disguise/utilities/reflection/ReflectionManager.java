@@ -758,7 +758,17 @@ public class ReflectionManager {
 
     public static ReflectionManagerAbstract getReflectionManager(NmsVersion nmsVersion) {
         try {
-            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + nmsVersion.name() + ".ReflectionManager");
+            String versionName = nmsVersion.name();
+
+            if (nmsVersion == NmsVersion.v1_18) {
+                if (Bukkit.getVersion().contains("1.18.1")) {
+                    versionName += "_1";
+                } else {
+                    versionName += "_2";
+                }
+            }
+
+            Class<?> aClass = Class.forName("me.libraryaddict.disguise.utilities.reflection." + versionName + ".ReflectionManager");
             Object o = aClass.getConstructor().newInstance();
 
             return (ReflectionManagerAbstract) o;
