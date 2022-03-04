@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.v1_18;
+package me.libraryaddict.disguise.utilities.reflection.v1_18_1;
 
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
