@@ -452,7 +452,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_18_R1.inventory.CraftMetaItem$SerializableMeta");
+            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_18_R2.inventory.CraftMetaItem$SerializableMeta");
             Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
             Object itemMeta = deserialize.invoke(null, meta);
 
