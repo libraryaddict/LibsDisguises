@@ -53,6 +53,12 @@
                 <version>${spigot.version}</version>
                 <optional>true</optional>
             </dependency>
+            <dependency>
+                <groupId>com.mojang</groupId>
+                <artifactId>authlib</artifactId>
+                <version>3.3.39</version>
+                <optional>true</optional>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -74,7 +74,7 @@
                         </goals>
                         <id>remap-spigot</id>
                         <configuration>
-                            <inputFile>target/${build.finalName}-remapped-mojang.jar</inputFile>
+                            <inputFile>target/${project.build.finalName}-remapped-mojang.jar</inputFile>
                             <srgIn>org.spigotmc:minecraft-server:${spigot.version}:csrg:maps-spigot</srgIn>
                             <remappedDependencies>org.spigotmc:spigot:${spigot.version}:jar:remapped-obf</remappedDependencies>
                             <remappedClassifierName>remapped-spigot</remappedClassifierName>
