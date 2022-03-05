@@ -40,18 +40,21 @@
                 <artifactId>ProtocolLib</artifactId>
                 <version>${protocollib.version}</version>
                 <optional>true</optional>
+            <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
                 <version>${spigot.version}</version>
                 <optional>true</optional>
+            <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot</artifactId>
                 <version>${spigot.version}</version>
                 <optional>true</optional>
+            <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
