@@ -26,13 +26,13 @@
             <artifactId>spigot</artifactId>
             <version>${spigot.version}</version>
             <classifier>remapped-mojang</classifier>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>${spigot.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>LibsDisguises</groupId>
