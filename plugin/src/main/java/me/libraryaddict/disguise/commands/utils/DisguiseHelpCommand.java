@@ -78,6 +78,10 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                 try {
                     for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(watcher)) {
+                        if (!method.isUsable(type.getType())) {
+                            continue;
+                        }
+
                         if (args.length < 2 || !args[1].equalsIgnoreCase(LibsMsg.DHELP_SHOW.get())) {
                             if (!perms.isAllowedDisguise(type, Collections.singleton(method.getName().toLowerCase(Locale.ENGLISH)))) {
                                 ignored++;

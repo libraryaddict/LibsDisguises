@@ -1,7 +1,7 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;

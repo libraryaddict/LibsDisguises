@@ -9,11 +9,14 @@ import com.comphenix.protocol.wrappers.WrappedAttribute.Builder;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupType;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import org.bukkit.Color;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -124,6 +127,7 @@ public class LivingWatcher extends FlagWatcher {
 
     @Override
     @NmsAddedIn(NmsVersion.v1_13)
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setMainHandRaised(boolean setRightClicking) {
         setHandInUse(true);
 
@@ -136,6 +140,7 @@ public class LivingWatcher extends FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_13)
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setOffhandRaised(boolean setLeftClicking) {
         setHandInUse(false);
 
@@ -296,6 +301,7 @@ public class LivingWatcher extends FlagWatcher {
         return getData(MetaIndex.LIVING_ARROWS);
     }
 
+    @MethodOnlyUsedBy(value = {DisguiseType.PLAYER})
     public void setArrowsSticking(int arrowsNo) {
         setData(MetaIndex.LIVING_ARROWS, Math.max(0, Math.min(127, arrowsNo)));
         sendData(MetaIndex.LIVING_ARROWS);
@@ -324,6 +330,7 @@ public class LivingWatcher extends FlagWatcher {
 
     @Deprecated
     @NmsAddedIn(NmsVersion.v1_12)
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setRightClicking(boolean rightClicking) {
         setMainHandRaised(rightClicking);
     }

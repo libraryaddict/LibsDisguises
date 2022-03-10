@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 
 import java.lang.invoke.MethodHandle;
@@ -19,6 +20,11 @@ public class WatcherMethod {
     private final Class param;
     private final boolean randomDefault;
     private final boolean hideFromTab;
+    private final boolean[] unusableBy;
+
+    public boolean isUsable(DisguiseType type) {
+        return !unusableBy[type.ordinal()];
+    }
 
     @Override
     public String toString() {

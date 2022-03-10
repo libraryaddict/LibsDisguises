@@ -19,7 +19,10 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
-import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodGroupType;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -83,6 +86,7 @@ public class FlagWatcher {
         return pitchLock != null;
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setPitchLocked(boolean pitchLocked) {
         if (isPitchLocked() == pitchLocked) {
             return;
@@ -137,6 +141,7 @@ public class FlagWatcher {
         return yawLock != null;
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setYawLocked(boolean yawLocked) {
         if (!DisguiseConfig.isMovementPacketsEnabled()) {
             return;
@@ -149,6 +154,7 @@ public class FlagWatcher {
         setYawLock(yawLocked ? 0F : null);
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setPitchLock(Float pitch) {
         if (!DisguiseConfig.isMovementPacketsEnabled()) {
             return;
@@ -183,6 +189,7 @@ public class FlagWatcher {
         }
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setYawLock(Float yaw) {
         this.yawLock = yaw;
 
@@ -236,6 +243,7 @@ public class FlagWatcher {
         return getEquipment().getHelmet();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.EQUIPPABLE)
     public void setHelmet(ItemStack itemStack) {
         getEquipment().setHelmet(itemStack);
     }
@@ -244,6 +252,7 @@ public class FlagWatcher {
         return getEquipment().getBoots();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.EQUIPPABLE)
     public void setBoots(ItemStack itemStack) {
         getEquipment().setBoots(itemStack);
     }
@@ -252,6 +261,7 @@ public class FlagWatcher {
         return getEquipment().getLeggings();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.EQUIPPABLE)
     public void setLeggings(ItemStack itemStack) {
         getEquipment().setLeggings(itemStack);
     }
@@ -260,6 +270,7 @@ public class FlagWatcher {
         return getEquipment().getChestplate();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.EQUIPPABLE)
     public void setChestplate(ItemStack itemStack) {
         getEquipment().setChestplate(itemStack);
     }
@@ -269,6 +280,7 @@ public class FlagWatcher {
         this.upsideDown = upsideDown;
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setUpsideDown(boolean upsideDown) {
         if (isUpsideDown() == upsideDown) {
             return;
@@ -467,6 +479,7 @@ public class FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setEntityPose(EntityPose entityPose) {
         setData(MetaIndex.ENTITY_POSE, entityPose);
         sendData(MetaIndex.ENTITY_POSE);
@@ -476,6 +489,7 @@ public class FlagWatcher {
         return getEquipment().getArmorContents();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.EQUIPPABLE)
     public void setArmor(ItemStack[] items) {
         getEquipment().setArmorContents(items);
     }
@@ -664,6 +678,7 @@ public class FlagWatcher {
         return equipment.getItemInMainHand();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setItemInMainHand(ItemStack itemstack) {
         setItemStack(EquipmentSlot.HAND, itemstack);
     }
@@ -672,6 +687,7 @@ public class FlagWatcher {
         return equipment.getItemInOffHand();
     }
 
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setItemInOffHand(ItemStack itemstack) {
         setItemStack(EquipmentSlot.OFF_HAND, itemstack);
     }
@@ -753,6 +769,7 @@ public class FlagWatcher {
         return getEntityFlag(7);
     }
 
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setFlyingWithElytra(boolean flying) {
         setEntityFlag(7, flying);
         sendData(MetaIndex.ENTITY_META);
@@ -816,16 +833,16 @@ public class FlagWatcher {
 
     @Deprecated
     @NmsAddedIn(NmsVersion.v1_12)
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setRightClicking(boolean rightClicking) {
         setMainHandRaised(rightClicking);
     }
 
-    //@NmsRemovedIn(val = NmsVersion.v1_13)
     public boolean isMainHandRaised() {
         return !NmsVersion.v1_13.isSupported() && getEntityFlag(4);
     }
 
-    //@NmsRemovedIn(val = NmsVersion.v1_13)
+    @MethodOnlyUsedBy(value = {}, group = MethodGroupType.HOLDABLE)
     public void setMainHandRaised(boolean setRightClicking) {
         if (NmsVersion.v1_13.isSupported()) {
             return;
@@ -839,6 +856,7 @@ public class FlagWatcher {
         return getEntityFlag(1);
     }
 
+    @MethodOnlyUsedBy(value = {DisguiseType.PLAYER})
     public void setSneaking(boolean setSneaking) {
         setEntityFlag(1, setSneaking);
         sendData(MetaIndex.ENTITY_META);
@@ -1027,6 +1045,7 @@ public class FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setSleeping(boolean sleeping) {
         if (isSleeping() == sleeping) {
             return;
@@ -1043,6 +1062,7 @@ public class FlagWatcher {
     }
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @MethodIgnoredBy(value = {}, group = MethodGroupType.NO_LOOK)
     public void setSwimming(boolean swimming) {
         if (isSwimming() == swimming) {
             return;

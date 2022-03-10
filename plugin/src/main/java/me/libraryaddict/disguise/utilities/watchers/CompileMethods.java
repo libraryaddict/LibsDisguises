@@ -1,12 +1,15 @@
 package me.libraryaddict.disguise.utilities.watchers;
 
 import com.google.gson.Gson;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
-import me.libraryaddict.disguise.utilities.reflection.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.reflection.NmsRemovedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
@@ -19,9 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -120,6 +125,7 @@ public class CompileMethods {
 
                 int added = -1;
                 int removed = -1;
+                DisguiseType[] unusableBy = new DisguiseType[0];
 
                 if (method.isAnnotationPresent(NmsAddedIn.class)) {
                     added = method.getAnnotation(NmsAddedIn.class).value().ordinal();
@@ -133,12 +139,32 @@ public class CompileMethods {
                     removed = method.getDeclaringClass().getAnnotation(NmsRemovedIn.class).value().ordinal();
                 }
 
+                if (method.isAnnotationPresent(MethodOnlyUsedBy.class)) {
+                    DisguiseType[] usableBy = method.getAnnotation(MethodOnlyUsedBy.class).value();
+
+                    if (usableBy.length == 0) {
+                        usableBy = method.getAnnotation(MethodOnlyUsedBy.class).group().getDisguiseTypes();
+                    }
+
+                    List<DisguiseType> list = Arrays.asList(usableBy);
+
+                    unusableBy =
+                        Arrays.stream(DisguiseType.values()).filter(type -> !list.contains(type)).collect(Collectors.toList()).toArray(new DisguiseType[0]);
+                } else if (method.isAnnotationPresent(MethodIgnoredBy.class)) {
+                    unusableBy = method.getAnnotation(MethodIgnoredBy.class).value();
+
+                    if (unusableBy.length == 0) {
+                        unusableBy = method.getAnnotation(MethodIgnoredBy.class).group().getDisguiseTypes();
+                    }
+                }
+
                 String param = method.getParameterCount() == 1 ? method.getParameterTypes()[0].getName() : null;
 
                 WatcherInfo info = new WatcherInfo();
                 info.setMethod(method.getName());
                 info.setAdded(added);
                 info.setRemoved(removed);
+                info.setUnusableBy(unusableBy);
                 info.setDeprecated(method.isAnnotationPresent(Deprecated.class));
                 info.setParam(param);
                 info.setDescriptor(getMethodDescriptor(method));
