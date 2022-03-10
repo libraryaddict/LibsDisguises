@@ -39,3 +39,8 @@ CarpetableLlama: false
 # Can a player interact with a non-saddled horse of any type, to give it a saddle?
 # This does not change what you can ride or control!
 SaddleableHorse: false
+
+# You shouldn't need to touch this, but if you do; This was added so scoreboard stuff that affects a certain UUID, will still continue to affect that UUID
+# This doesn't affect player disguises as those would be severely impacted
+# If you are getting issues using this, please do not report them. You disable this at your own risk.
+RandomUUIDs: true

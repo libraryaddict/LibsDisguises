@@ -118,6 +118,10 @@ public abstract class Disguise {
     }
 
     public UUID getUUID() {
+        if (!isPlayerDisguise() && !DisguiseConfig.isRandomUUIDS() && getEntity() != null) {
+            return getEntity().getUniqueId();
+        }
+
         // Partial fix for disguises serialized in older versions
         if (this.uuid == null) {
             this.uuid = ReflectionManager.getRandomUUID();

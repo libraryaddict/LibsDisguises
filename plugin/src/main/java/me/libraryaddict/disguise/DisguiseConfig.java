@@ -278,6 +278,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static String data;
+    @Getter
+    @Setter
+    private static boolean randomUUIDS;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -646,6 +649,7 @@ public class DisguiseConfig {
         setViewSelfDisguisesDefault(config.getBoolean("ViewSelfDisguisesDefault"));
         setContactMojangServers(config.getBoolean("ContactMojangServers"));
         setDisguiseRadiusMax(config.getInt("DisguiseRadiusMax"));
+        setRandomUUIDS(config.getBoolean("RandomUUIDs"));
         String apiKey = config.getString("MineSkinAPIKey");
 
         if (apiKey != null && apiKey.matches("[a-zA-Z0-9]{8,}")) {
