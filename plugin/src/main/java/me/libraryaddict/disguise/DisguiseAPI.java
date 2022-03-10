@@ -105,6 +105,10 @@ public class DisguiseAPI {
         return disguise.getValue();
     }
 
+    public static void removeCustomDisguise(String disguiseName) {
+        DisguiseConfig.removeCustomDisguise(disguiseName);
+    }
+
     public static Disguise constructDisguise(Entity entity) {
         return constructDisguise(entity, true, false);
     }
