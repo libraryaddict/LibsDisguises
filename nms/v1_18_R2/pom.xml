@@ -56,6 +56,12 @@
             <version>8.5.6</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>datafixerupper</artifactId>
+            <version>4.1.27</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
