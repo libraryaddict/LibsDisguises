@@ -18,9 +18,9 @@ ViewSelfDisguisesDefault: true
 HearSelfDisguise: true
 
 # Some disguises are rather big and tall and block your vision
-# By default those disguises are enabled despite misgivings, such as zombies, players, etc.
-# The baby versions however, should be short enough that it's a non-issue
-TallSelfDisguises: true
+# By default those disguises are disabled, such as zombies, players, etc.
+# The baby versions however, are normally short enough that it's a non-issue
+TallSelfDisguises: false
 
 # How should the plugin handle self disguises scoreboards? It disables pushing in whichever team they're assigned.
 # If you want them to be able to push again when they undisguise, set this to CREATE_SCOREBOARD
