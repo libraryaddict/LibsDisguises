@@ -8,7 +8,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>LibsDisguises</groupId>
-        <version>10.0.28</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

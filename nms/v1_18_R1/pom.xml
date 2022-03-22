@@ -5,12 +5,13 @@
     <parent>
         <artifactId>nms</artifactId>
         <groupId>LibsDisguises</groupId>
-        <version>10.0.28</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>v1_18_R1</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -37,7 +38,7 @@
         <dependency>
             <groupId>LibsDisguises</groupId>
             <artifactId>shared</artifactId>
-            <version>${project.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
