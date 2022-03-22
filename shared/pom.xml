@@ -5,7 +5,8 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>LibsDisguises</groupId>
-        <version>10.0.27-SNAPSHOT</version>
+        <version>10.0.28</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
