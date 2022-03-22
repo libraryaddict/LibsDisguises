@@ -552,7 +552,7 @@ public class DisguiseUtilities {
         }
 
         // If you're on 1.18..
-        return new String[]{"4.8.0", "538"};
+        return new String[]{"4.8.0"};
     }
 
     public static boolean isProtocolLibOutdated() {
