@@ -95,7 +95,7 @@ public class LDDebugPlayer implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            LibsMsg.NO_PERM.send(sender);
+            LibsMsg.NO_CONSOLE.send(sender);
         }
 
         LibsDisguises.getInstance().getListener().addInteraction(sender.getName(), new DebugInteraction(), 60);
