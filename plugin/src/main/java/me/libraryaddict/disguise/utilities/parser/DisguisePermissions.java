@@ -151,7 +151,7 @@ public class DisguisePermissions {
 
         // If this refers to a specific disguise
         if (dPerm != null) {
-            return new ParsedPermission(new DisguisePerm[]{dPerm}, options, (byte) 0, split[1].equals("*"));
+            return new ParsedPermission(new DisguisePerm[]{dPerm}, options, (byte) (options.containsKey("*") ? 1 : 0), split[1].equals("*"));
         }
 
         // If the disguise can't be found, it may be refering to a range
@@ -403,34 +403,34 @@ public class DisguisePermissions {
 
         if (permissionName.equals("ageable")) {
             if (Ageable.class.isAssignableFrom(disguiseType.getEntityClass())) {
-                return 1;
+                return 2;
             }
         } else if (permissionName.equals("monster") || permissionName.equals("monsters")) {
             if (Monster.class.isAssignableFrom(disguiseType.getEntityClass())) {
-                return 2;
+                return 3;
             }
         } else if (permissionName.equals("animal") || permissionName.equals("animals")) {
             if (Animals.class.isAssignableFrom(disguiseType.getEntityClass())) {
-                return 2;
+                return 3;
             }
         } else if (permissionName.equals("mob")) {
             if (disguiseType.isMob()) {
-                return 3;
+                return 4;
             }
         } else if (permissionName.equals("misc")) {
             if (disguiseType.isMisc()) {
-                return 3;
+                return 4;
             }
         } else if (permissionName.equals("custom")) {
             if (disguisePerm.isCustomDisguise()) {
-                return 3;
+                return 4;
             }
         } else if (permissionName.equals("vanilla")) {
             if (!disguisePerm.isCustomDisguise()) {
-                return 4;
+                return 5;
             }
         } else if (permissionName.equals("*")) {
-            return 5;
+            return 6;
         }
 
         return -1;

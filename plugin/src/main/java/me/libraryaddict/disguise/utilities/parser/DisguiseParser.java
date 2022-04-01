@@ -733,7 +733,6 @@ public class DisguiseParser {
                         toSkip++;
                     }
                 } else if (disguisePerm.isMob()) { // Its a mob, use the mob constructor
-
                     if (args.length > 1) {
                         boolean adult = true;
 

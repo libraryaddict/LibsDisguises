@@ -1,5 +1,7 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import lombok.SneakyThrows;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.permissions.Permissible;
@@ -213,6 +215,33 @@ public class DisguisePermissionsTest {
             DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "DIRT"));
     }
 
+    @SneakyThrows
+    @Test
+    public void testCustomDisguisePermissions() {
+        DisguiseConfig.getCustomDisguises().put(new DisguisePerm(DisguiseType.BEE, "babybee"), "bee setbaby");
+
+        DisguisePermissions permissions = createPermissions("disguise", false, "libsdisguises.disguise.bee.-*", "libsdisguises.disguise.babybee.nooptions");
+
+        Assert.assertNotNull("The custom disguise babybee should exist", DisguiseParser.getDisguisePerm("babybee"));
+
+        Assert.assertTrue("They should be allowed to disguise as a bee", permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.BEE)));
+
+        Assert.assertFalse("They should not be allowed to disguise as a bee and call setbaby",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.BEE), Collections.singletonList("setbaby")));
+
+        Assert.assertFalse("They should not be allowed to disguise as a burning bee",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.BEE), Collections.singletonList("setburning")));
+
+        Assert.assertFalse("They should not be allowed to disguise as a slime", permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.SLIME)));
+
+        Assert.assertTrue("They should be allowed to disguise as babybee", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("babybee")));
+
+        Assert.assertFalse("They should not be allowed to disguise as babybee and use setbaby",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("babybee"), Collections.singletonList("setbaby")));
+
+        DisguiseAPI.removeCustomDisguise("babybee");
+    }
+
     @Test
     public void testExplictPermissions() {
         DisguiseConfig.setExplicitDisguisePermissions(true);
@@ -256,7 +285,6 @@ public class DisguisePermissionsTest {
     }
 
     private Permissible createPermissionsHolder(boolean isOp, String... perms) {
-
         List<String> permitted = new ArrayList<>();
         List<String> negated = new ArrayList<>();
         Set<PermissionAttachmentInfo> attachments = new HashSet<>();
