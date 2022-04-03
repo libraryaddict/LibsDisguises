@@ -681,6 +681,8 @@ public class DisguiseParser {
             Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
 
             if (customDisguise != null) {
+                // TODO Doesn't this mean we can't add args to our custom disguise on /disguise?
+                // Need to add user defined args for the custom disguise
                 args = DisguiseUtilities.split(customDisguise.getValue());
                 name = customDisguise.getKey().toReadable();
                 customName = true;
