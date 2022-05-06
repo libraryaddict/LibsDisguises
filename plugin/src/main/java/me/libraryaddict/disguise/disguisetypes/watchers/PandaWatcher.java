@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
+import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Panda;
@@ -59,6 +60,7 @@ public class PandaWatcher extends AgeableWatcher {
     }
 
     @RandomDefaultValue
+    @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setHiddenGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_HIDDEN_GENE, (byte) gene.ordinal());
         sendData(MetaIndex.PANDA_HIDDEN_GENE);
