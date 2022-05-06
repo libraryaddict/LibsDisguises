@@ -20,9 +20,20 @@ public class PandaWatcher extends AgeableWatcher {
         super(disguise);
 
         if (DisguiseConfig.isRandomDisguises()) {
+            // We don't do 'setGene' here so it's just as random as it would be as if it was natural.
             setMainGene(Panda.Gene.values()[new Random().nextInt(Panda.Gene.values().length)]);
             setHiddenGene(Panda.Gene.values()[new Random().nextInt(Panda.Gene.values().length)]);
         }
+    }
+
+    public Panda.Gene getGene() {
+        return getMainGene();
+    }
+
+    @RandomDefaultValue
+    public void setGene(Panda.Gene gene) {
+        setMainGene(gene);
+        setHiddenGene(gene);
     }
 
     public Panda.Gene getMainGene() {
@@ -39,7 +50,7 @@ public class PandaWatcher extends AgeableWatcher {
         return Panda.Gene.NORMAL;
     }
 
-    @RandomDefaultValue
+    @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setMainGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_MAIN_GENE, (byte) gene.ordinal());
         sendData(MetaIndex.PANDA_MAIN_GENE);
@@ -59,7 +70,6 @@ public class PandaWatcher extends AgeableWatcher {
         return Panda.Gene.NORMAL;
     }
 
-    @RandomDefaultValue
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setHiddenGene(Panda.Gene gene) {
         setData(MetaIndex.PANDA_HIDDEN_GENE, (byte) gene.ordinal());
