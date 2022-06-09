@@ -138,6 +138,11 @@ public class LibsDisguises extends JavaPlugin {
                 getLogger().severe("Please update from MC 1.17! You should be using 1.17.1!");
             }
 
+            if (Bukkit.getVersion().contains("(MC: 1.18)") || Bukkit.getVersion().contains("(MC: 1.18.1)")) {
+                getLogger().severe(
+                    "Please update from MC 1.18 and MC 1.18.1! You should be using 1.18.2! Support will eventually be dropped for your specific version!");
+            }
+
             try {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
             } catch (ClassNotFoundException e) {
