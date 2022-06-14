@@ -180,13 +180,13 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         LibsMsg.D_HELP1.send(sender);
         LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
-        if (allowedDisguises.contains("Player")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("player"))) {
             LibsMsg.D_HELP3.send(sender);
         }
 
         LibsMsg.D_HELP4.send(sender);
 
-        if (allowedDisguises.contains("Dropped_item") || allowedDisguises.contains("Falling_block")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.D_HELP5.send(sender);
         }
     }

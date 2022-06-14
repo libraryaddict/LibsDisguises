@@ -96,13 +96,13 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
         LibsMsg.DISG_ENT_HELP1.send(sender);
         LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
-        if (allowedDisguises.contains("Player")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("player"))) {
             LibsMsg.DISG_ENT_HELP3.send(sender);
         }
 
         LibsMsg.DISG_ENT_HELP4.send(sender);
 
-        if (allowedDisguises.contains("Dropped_item") || allowedDisguises.contains("Falling_block")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.DISG_ENT_HELP5.send(sender);
         }
     }

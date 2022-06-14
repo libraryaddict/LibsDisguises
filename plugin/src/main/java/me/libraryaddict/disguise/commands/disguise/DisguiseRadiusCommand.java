@@ -290,13 +290,13 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         LibsMsg.DRADIUS_HELP1.send(sender, DisguiseConfig.getDisguiseRadiusMax());
         LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
-        if (allowedDisguises.contains("Player")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("player"))) {
             LibsMsg.DRADIUS_HELP3.send(sender);
         }
 
         LibsMsg.DRADIUS_HELP4.send(sender);
 
-        if (allowedDisguises.contains("Dropped_item") || allowedDisguises.contains("Falling_block")) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.DRADIUS_HELP5.send(sender);
         }
 
