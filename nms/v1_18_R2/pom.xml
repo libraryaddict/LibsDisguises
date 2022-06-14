@@ -51,6 +51,20 @@
             <version>3.5.41</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>8.5.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>datafixerupper</artifactId>
+            <version>4.1.27</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
