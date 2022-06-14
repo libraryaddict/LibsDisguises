@@ -134,7 +134,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         LibsMsg.DISG_HELP1.send(sender);
         LibsMsg.CAN_USE_DISGS.send(sender, StringUtils.join(allowedDisguises, LibsMsg.CAN_USE_DISGS_SEPERATOR.get()));
 
-        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("Player"))) {
+        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("player"))) {
             LibsMsg.DISG_HELP2.send(sender);
         }
 
