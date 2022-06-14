@@ -413,7 +413,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
     @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, Frog.Variant.TEMPERATE);
+    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Frog.Variant.TEMPERATE : null);
 
     @NmsAddedIn(NmsVersion.v1_19)
     public static MetaIndex<OptionalInt> FROG_TONGUE_TARGET = new MetaIndex<>(FrogWatcher.class, 1, OptionalInt.empty());
