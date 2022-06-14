@@ -1,8 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
@@ -11,6 +11,8 @@ import org.bukkit.entity.EntityType;
 import java.util.Locale;
 
 public enum DisguiseType {
+    @NmsAddedIn(NmsVersion.v1_19) ALLAY,
+
     AREA_EFFECT_CLOUD(3, 0),
 
     ARMOR_STAND(78),
@@ -32,6 +34,8 @@ public enum DisguiseType {
     CAVE_SPIDER,
 
     CHICKEN,
+
+    @NmsAddedIn(NmsVersion.v1_19) CHEST_BOAT,
 
     COD,
 
@@ -78,6 +82,8 @@ public enum DisguiseType {
     FIREWORK(76),
 
     FISHING_HOOK(90),
+
+    @NmsAddedIn(NmsVersion.v1_19) FROG,
 
     @NmsAddedIn(NmsVersion.v1_14) FOX,
 
@@ -203,6 +209,8 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) STRIDER,
 
+    @NmsAddedIn(NmsVersion.v1_19) TADPOLE,
+
     THROWN_EXP_BOTTLE(75),
 
     @NmsRemovedIn(NmsVersion.v1_14) TIPPED_ARROW(60),
@@ -224,6 +232,8 @@ public enum DisguiseType {
     VINDICATOR,
 
     @NmsAddedIn(NmsVersion.v1_14) WANDERING_TRADER,
+
+    @NmsAddedIn(NmsVersion.v1_19) WARDEN,
 
     WITCH,
 
@@ -265,6 +275,7 @@ public enum DisguiseType {
 
     private EntityType entityType;
 
+    private Object nmsType;
     private int objectId = -1, defaultData = 0;
     private int typeId;
 
@@ -297,6 +308,10 @@ public enum DisguiseType {
             }
         } catch (Exception ex) {
         }
+    }
+
+    public Object getNmsEntityType() {
+        return this.nmsType;
     }
 
     public int getDefaultData() {
@@ -337,7 +352,8 @@ public enum DisguiseType {
         return typeId;
     }
 
-    public void setTypeId(int typeId) {
+    public void setTypeId(Object nmsType, int typeId) {
+        this.nmsType = nmsType;
         this.typeId = typeId;
     }
 

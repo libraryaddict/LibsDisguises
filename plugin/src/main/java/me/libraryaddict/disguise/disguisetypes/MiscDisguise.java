@@ -5,6 +5,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseValues;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -134,7 +135,11 @@ public class MiscDisguise extends TargetedDisguise {
             case FALLING_BLOCK:
                 return ((FallingBlockWatcher) getWatcher()).getBlock().getDurability();
             case PAINTING:
-                return ((PaintingWatcher) getWatcher()).getArt().getId();
+                if (!NmsVersion.v1_19.isSupported()) {
+                    return ((PaintingWatcher) getWatcher()).getArt().getId();
+                }
+
+                return data;
             case SPLASH_POTION:
                 return ((SplashPotionWatcher) getWatcher()).getPotionId();
             default:

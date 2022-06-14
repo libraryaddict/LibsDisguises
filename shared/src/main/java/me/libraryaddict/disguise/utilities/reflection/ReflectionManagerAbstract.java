@@ -146,6 +146,13 @@ public interface ReflectionManagerAbstract {
 
     ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
 
+    /**
+     * Implement this for custom metadata values that are not backwards compatible
+     */
+    default Object convertInvalidMeta(Object value) {
+        return value;
+    }
+
     static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
         try {
             return new WrappedGameProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
