@@ -44,6 +44,7 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import net.minecraft.world.entity.animal.FrogVariant;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -61,11 +62,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fish;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -1377,6 +1380,18 @@ public class ReflectionManager {
             return entityPoseClass;
         } else if (NbtWrapper.class.isAssignableFrom(cl)) {
             return getNmsClass("NBTTagCompound");
+        } else if (NmsVersion.v1_19.isSupported()) {
+            if (Frog.Variant.class.isAssignableFrom(cl)) {
+                return getNmsClass("FrogVariant");
+            }
+
+            if (Cat.Type.class.isAssignableFrom(cl)) {
+                return getNmsClass("CatVariant");
+            }
+
+            if (Art.class.isAssignableFrom(cl)) {
+                return getNmsClass("PaintingVariant");
+            }
         }
 
         return cl;
@@ -1487,6 +1502,10 @@ public class ReflectionManager {
             return getNmsVillagerData((VillagerData) value);
         } else if (value instanceof WrappedChatComponent) {
             return ((WrappedChatComponent) value).getHandle();
+        }
+
+        if (nmsReflection != null) {
+            return nmsReflection.convertInvalidMeta(value);
         }
 
         return value;
@@ -2142,20 +2161,17 @@ public class ReflectionManager {
 
         if (nmsEntityName == null) {
             switch (disguiseType) {
+                case ALLAY:
                 case AXOLOTL:
-                    nmsEntityName = "Axolotl";
-                    break;
-                case GOAT:
-                    nmsEntityName = "Goat";
-                    break;
+                case CHEST_BOAT:
+                case FROG:
                 case GLOW_ITEM_FRAME:
-                    nmsEntityName = "GlowItemFrame";
-                    break;
                 case GLOW_SQUID:
-                    nmsEntityName = "GlowSquid";
-                    break;
+                case GOAT:
                 case MARKER:
-                    nmsEntityName = "Marker";
+                case TADPOLE:
+                case WARDEN:
+                    nmsEntityName = disguiseType.toReadable().replace(" ", "");
                     break;
                 case DONKEY:
                     nmsEntityName = "HorseDonkey";
@@ -2208,14 +2224,14 @@ public class ReflectionManager {
                 case STRAY:
                     nmsEntityName = "SkeletonStray";
                     break;
+                case TRADER_LLAMA:
+                    nmsEntityName = "LLamaTrader"; // Interesting capitalization
+                    break;
                 case TRIDENT:
                     nmsEntityName = "ThrownTrident";
                     break;
                 case WANDERING_TRADER:
                     nmsEntityName = "VillagerTrader";
-                    break;
-                case TRADER_LLAMA:
-                    nmsEntityName = "LLamaTrader"; // Interesting capitalization
                     break;
                 case ZOMBIFIED_PIGLIN:
                     nmsEntityName = "PigZombie";
@@ -2253,7 +2269,8 @@ public class ReflectionManager {
                 return;
             }
 
-            disguiseType.setTypeId(ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
+            disguiseType.setTypeId(ReflectionManager.getEntityType(disguiseType.getEntityType()),
+                ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
 
             Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
 

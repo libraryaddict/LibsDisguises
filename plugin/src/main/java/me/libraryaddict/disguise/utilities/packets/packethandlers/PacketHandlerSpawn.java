@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,8 +54,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
     @Override
     public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.SPAWN_ENTITY_LIVING,
-            PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB, PacketType.Play.Server.SPAWN_ENTITY, PacketType.Play.Server.SPAWN_ENTITY_PAINTING};
+        PacketType[] packets = new PacketType[]{PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB,
+            PacketType.Play.Server.SPAWN_ENTITY};
+
+        if (!NmsVersion.v1_19.isSupported()) {
+            packets = Arrays.copyOf(packets, packets.length + 2);
+            packets[packets.length - 2] = PacketType.Play.Server.SPAWN_ENTITY_LIVING;
+            packets[packets.length - 1] = PacketType.Play.Server.SPAWN_ENTITY_PAINTING;
+        }
+
+        return packets;
     }
 
     @Override
@@ -109,7 +118,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(2, loc.getY() + 0.06);
             mods.write(3, loc.getZ());
             mods.write(4, 1);
-        } else if (disguise.getType() == DisguiseType.PAINTING) {
+        } else if (!NmsVersion.v1_19.isSupported() && disguise.getType() == DisguiseType.PAINTING) {
             PacketContainer spawnPainting = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_PAINTING);
             packets.addPacket(spawnPainting);
 
@@ -228,7 +237,8 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 vec = new Vector();
             }
 
-            PacketContainer spawnEntity = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+            PacketContainer spawnEntity =
+                new PacketContainer(NmsVersion.v1_19.isSupported() ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             packets.addPacket(spawnEntity);
 
             StructureModifier<Object> mods = spawnEntity.getModifier();
@@ -236,10 +246,18 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, disguise.getUUID());
 
-            if (!disguise.getType().isCustom()) {
-                mods.write(2, disguise.getType().getTypeId());
+            if (NmsVersion.v1_19.isSupported()) {
+                if (!disguise.getType().isCustom()) {
+                    mods.write(2, disguise.getType().getNmsEntityType());
+                } else {
+                    mods.write(2, ((ModdedDisguise) disguise).getModdedEntity().getEntityType());
+                }
             } else {
-                mods.write(2, ((ModdedDisguise) disguise).getModdedEntity().getTypeId());
+                if (!disguise.getType().isCustom()) {
+                    mods.write(2, disguise.getType().getTypeId());
+                } else {
+                    mods.write(2, ((ModdedDisguise) disguise).getModdedEntity().getTypeId());
+                }
             }
 
             // region Vector calculations

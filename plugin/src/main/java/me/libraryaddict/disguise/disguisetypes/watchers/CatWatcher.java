@@ -26,13 +26,23 @@ public class CatWatcher extends TameableWatcher {
     }
 
     public Cat.Type getType() {
-        return Cat.Type.values()[getData(MetaIndex.CAT_TYPE)];
+        if (!NmsVersion.v1_19.isSupported()) {
+            return Cat.Type.values()[getData(MetaIndex.CAT_TYPE)];
+        }
+
+        return getData(MetaIndex.CAT_TYPE_NEW);
     }
 
     @RandomDefaultValue
     public void setType(Cat.Type type) {
-        setData(MetaIndex.CAT_TYPE, type.ordinal());
-        sendData(MetaIndex.CAT_TYPE);
+        if (NmsVersion.v1_19.isSupported()) {
+            setData(MetaIndex.CAT_TYPE_NEW, type);
+            sendData(MetaIndex.CAT_TYPE_NEW);
+        } else {
+            setData(MetaIndex.CAT_TYPE, type.ordinal());
+            sendData(MetaIndex.CAT_TYPE);
+        }
+
     }
 
     public DyeColor getCollarColor() {

@@ -105,6 +105,8 @@ public class DisguiseParser {
                         getName = "hasNectar";
                     } else if (getName.equals("HasStung")) {
                         getName = "hasStung";
+                    } else if (getName.matches("^Has((Left)|(Right))Horn$")) {
+                        getName = "has" + getName.substring(3);
                     } else if (setMethod.getParam().isAssignableFrom(boolean.class)) {
                         getName = "is" + getName;
                     } else {

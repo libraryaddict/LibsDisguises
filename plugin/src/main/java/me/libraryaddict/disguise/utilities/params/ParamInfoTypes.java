@@ -43,6 +43,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Fox;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
@@ -121,6 +122,10 @@ public class ParamInfoTypes {
 
             if (NmsVersion.v1_17.isSupported()) {
                 paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
+
+                if (NmsVersion.v1_19.isSupported()) {
+                    paramInfos.add(new ParamInfoEnum(Frog.Variant.class, "Frog Variant", "The variant of Frog"));
+                }
             }
         } else {
             paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type", "The type of ocelot"));

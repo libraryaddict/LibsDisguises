@@ -2,11 +2,12 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
+import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Art;
 
 public class PaintingWatcher extends FlagWatcher {
-
     private Art painting;
 
     public PaintingWatcher(Disguise disguise) {
@@ -22,14 +23,23 @@ public class PaintingWatcher extends FlagWatcher {
     }
 
     public Art getArt() {
-        return painting;
+        if (!NmsVersion.v1_19.isSupported()) {
+            return painting;
+        }
+
+        return getData(MetaIndex.PAINTING);
     }
 
     public void setArt(Art newPainting) {
-        this.painting = newPainting;
+        if (NmsVersion.v1_19.isSupported()) {
+            setData(MetaIndex.PAINTING, newPainting);
+            sendData(MetaIndex.PAINTING);
+        } else {
+            this.painting = newPainting;
 
-        if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
-            DisguiseUtilities.refreshTrackers(getDisguise());
+            if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
+                DisguiseUtilities.refreshTrackers(getDisguise());
+            }
         }
     }
 }

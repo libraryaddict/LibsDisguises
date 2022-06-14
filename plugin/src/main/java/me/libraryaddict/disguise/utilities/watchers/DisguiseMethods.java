@@ -109,7 +109,7 @@ public class DisguiseMethods {
 
                 methods.add(m);
 
-                if (m.getName().startsWith("get") || m.getName().startsWith("has") || param == null || param == Void.TYPE ||
+                if (m.getName().startsWith("get") || m.getName().equals("hasPotionEffect") || param == null || param == Void.TYPE ||
                     ParamInfoManager.getParamInfo(m) == null) {
                     continue;
                 }

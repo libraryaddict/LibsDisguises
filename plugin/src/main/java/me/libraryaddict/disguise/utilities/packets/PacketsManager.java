@@ -129,8 +129,11 @@ public class PacketsManager {
                 packetsToListen.add(Server.NAMED_ENTITY_SPAWN);
                 packetsToListen.add(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
                 packetsToListen.add(Server.SPAWN_ENTITY);
-                packetsToListen.add(Server.SPAWN_ENTITY_LIVING);
-                packetsToListen.add(Server.SPAWN_ENTITY_PAINTING);
+
+                if (!NmsVersion.v1_19.isSupported()) {
+                    packetsToListen.add(Server.SPAWN_ENTITY_LIVING);
+                    packetsToListen.add(Server.SPAWN_ENTITY_PAINTING);
+                }
             }
 
             // Add packets that always need to be enabled to ensure safety

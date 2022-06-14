@@ -424,7 +424,8 @@ public class DisguiseUtilities {
     }
 
     public static void sendInvisibleSlime(Player player, int horseId) {
-        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
+        PacketContainer packet = ProtocolLibrary.getProtocolManager()
+            .createPacketConstructor(NmsVersion.v1_19.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
 
         packet.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
         packet.getModifier().write(1, UUID.randomUUID());
@@ -552,7 +553,11 @@ public class DisguiseUtilities {
         }
 
         // If you're on 1.18..
-        return new String[]{"4.8.0"};
+        if (!NmsVersion.v1_19.isSupported()) {
+            return new String[]{"4.8.0"};
+        }
+
+        return new String[]{"5.0.1", "568"};
     }
 
     public static boolean isProtocolLibOutdated() {
@@ -2497,8 +2502,8 @@ public class DisguiseUtilities {
 
             try {
                 // TODO Store the field
-                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry")
-                    .getDeclaredField(NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField(
+                    NmsVersion.v1_19.isSupported() ? "p" : NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             } catch (Exception ex) {
@@ -3057,7 +3062,7 @@ public class DisguiseUtilities {
                 destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
                 destroyIds[destroyIds.length - 1] = standIds[i];
             } else {
-                PacketContainer packet = new PacketContainer(Server.SPAWN_ENTITY_LIVING);
+                PacketContainer packet = new PacketContainer(NmsVersion.v1_19.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING);
                 packet.getIntegers().write(0, standIds[i]);
                 packet.getIntegers().write(1, DisguiseType.ARMOR_STAND.getTypeId());
 

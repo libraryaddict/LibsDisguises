@@ -37,6 +37,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.FireworkWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FishingHookWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.FoxWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.FrogWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GhastWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GlowSquidWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.GoatWatcher;
@@ -55,6 +56,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.MinecartFurnaceWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MinecartWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.MushroomCowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.OcelotWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PaintingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PandaWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ParrotWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PhantomWatcher;
@@ -84,6 +86,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.TropicalFishWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TurtleWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.VexWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.VillagerWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.WardenWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitchWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitherSkullWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.WitherWatcher;
@@ -97,9 +100,12 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
+import org.bukkit.Art;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Frog;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
@@ -250,7 +256,11 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
 
     @NmsAddedIn(NmsVersion.v1_14)
+    @NmsRemovedIn(NmsVersion.v1_19)
     public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
+
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, Cat.Type.BLACK);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
@@ -402,6 +412,11 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, Frog.Variant.TEMPERATE);
+
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<OptionalInt> FROG_TONGUE_TARGET = new MetaIndex<>(FrogWatcher.class, 1, OptionalInt.empty());
     /**
      * Changes the face of the ghast
      */
@@ -412,6 +427,12 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Boolean> GOAT_SCREAMING = new MetaIndex<>(GoatWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<Boolean> GOAT_HAS_LEFT_HORN = new MetaIndex<>(GoatWatcher.class, 1, true);
+
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<Boolean> GOAT_HAS_RIGHT_HORN = new MetaIndex<>(GoatWatcher.class, 2, true);
 
     /**
      * Switch between the guardian spikes enabled/disabled
@@ -560,6 +581,9 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
 
+    @NmsAddedIn(NmsVersion.v1_19)
+    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, Art.KEBAB);
+
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);
 
@@ -700,6 +724,8 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<VillagerData> VILLAGER_DATA =
         new MetaIndex<>(VillagerWatcher.class, 0, NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
+
+    public static MetaIndex<Integer> WARDEN_ANGER = new MetaIndex<>(WardenWatcher.class, 0, 0);
 
     public static MetaIndex<Boolean> WITCH_AGGRESSIVE = new MetaIndex<>(WitchWatcher.class, 0, false);
 
