@@ -260,7 +260,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, Cat.Type.BLACK);
+    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Cat.Type.BLACK : null);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
@@ -582,7 +582,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
 
     @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, Art.KEBAB);
+    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Art.KEBAB : null);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);
