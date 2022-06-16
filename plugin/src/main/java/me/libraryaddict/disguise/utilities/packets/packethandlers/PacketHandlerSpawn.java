@@ -347,6 +347,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 Object[] params = new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
                     ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
+                if (NmsVersion.v1_19.isSupported()) {
+                    params = Arrays.copyOf(params, params.length + 1);
+
+                    params[params.length - 1] = (double) loc.getYaw();
+                }
+
                 spawnEntity = ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.SPAWN_ENTITY, params).createPacket(params);
             } else {
                 int objectId = disguise.getType().getObjectId();
@@ -369,6 +375,10 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             spawnEntity.getModifier().write(8, pitch);
             spawnEntity.getModifier().write(9, yaw);
+
+            if (NmsVersion.v1_19.isSupported()) {
+                spawnEntity.getModifier().write(10, yaw);
+            }
 
             packets.addPacket(spawnEntity);
 
