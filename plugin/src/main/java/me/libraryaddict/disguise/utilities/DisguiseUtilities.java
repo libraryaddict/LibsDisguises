@@ -557,7 +557,7 @@ public class DisguiseUtilities {
             return new String[]{"4.8.0"};
         }
 
-        return new String[]{"5.0.1", "568"};
+        return new String[]{"5.0.1", "569"};
     }
 
     public static boolean isProtocolLibOutdated() {
