@@ -291,8 +291,16 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(6, (int) (d2 * 8000.0D));
             mods.write(7, (int) (d3 * 8000.0D));
             mods.write(8, (int) (d4 * 8000.0D));
-            mods.write(9, yaw);
-            mods.write(10, pitch);
+
+            // Prior to 1.19, it's Y, X, Y
+            if (!NmsVersion.v1_19.isSupported()) {
+                mods.write(9, yaw);
+                mods.write(10, pitch);
+            } else {
+                mods.write(9, pitch);
+                mods.write(10, yaw);
+            }
+
             mods.write(11, yaw);
 
             WrappedDataWatcher newWatcher =
