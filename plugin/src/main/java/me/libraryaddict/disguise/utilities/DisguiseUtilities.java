@@ -3064,7 +3064,8 @@ public class DisguiseUtilities {
             } else {
                 PacketContainer packet = new PacketContainer(NmsVersion.v1_19.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING);
                 packet.getIntegers().write(0, standIds[i]);
-                packet.getIntegers().write(1, DisguiseType.ARMOR_STAND.getTypeId());
+                packet.getModifier()
+                    .write(2, NmsVersion.v1_19.isSupported() ? DisguiseType.ARMOR_STAND.getNmsEntityType() : DisguiseType.ARMOR_STAND.getTypeId());
 
                 packet.getUUIDs().write(0, UUID.randomUUID());
 
