@@ -2548,6 +2548,14 @@ public class DisguiseUtilities {
                 sendSelfPacket(player,
                     manager.createPacketConstructor(Server.ENTITY_EFFECT, player.getEntityId(), mobEffect).createPacket(player.getEntityId(), mobEffect));
             }
+
+            if (DisguiseConfig.isDisableFriendlyInvisibles()) {
+                Team team = player.getScoreboard().getEntryTeam(player.getName());
+
+                if (team != null && team.canSeeFriendlyInvisibles()) {
+                    team.setCanSeeFriendlyInvisibles(false);
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
