@@ -184,10 +184,6 @@ public class DisguiseUtilities {
                 team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
             }
 
-            if (DisguiseConfig.isDisableFriendlyInvisibles()) {
-                team.setCanSeeFriendlyInvisibles(false);
-            }
-
             if (disguise.getWatcher().getGlowColor() != null && disguise.getWatcher().getGlowColor() != team.getColor()) {
                 team.setColor(disguise.getWatcher().getGlowColor());
             }

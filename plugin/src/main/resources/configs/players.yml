@@ -22,14 +22,6 @@ HearSelfDisguise: true
 # The baby versions however, are normally short enough that it's a non-issue
 TallSelfDisguises: false
 
-# How should the plugin handle self disguises scoreboards? It disables pushing in whichever team they're assigned.
-# If you want them to be able to push again when they undisguise, set this to CREATE_SCOREBOARD
-# I have to disable pushing or you will be pushed around by your own self disguise
-# MODIFY_SCOREBOARD - Modifies the player's current team if possible, otherwise assigns them to a new scoreboard team.
-# IGNORE_SCOREBOARD - Doesn't touch scoreboards at all, effectively means that if you didn't disable pushing in their scoreboard team; They will still be pushed around
-# CREATE_SCOREBOARD - Creates a new team which copies the attributes of their previous scoreboard team which they are then assigned to. This means they keep nametag color and other options.
-SelfDisguisesScoreboard: MODIFY_SCOREBOARD
-
 # Hide players in tab when disguised? This means a disguised player cannot be seen when you press tab! This can be toggled on/off per disguise
 HideDisguisedPlayersFromTab: false
 

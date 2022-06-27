@@ -1066,12 +1066,6 @@ public class DisguiseConfig {
         PacketsManager.setHearDisguisesListener(isSoundsEnabled);
     }
 
-    public enum DisguisePushing { // This enum has a really bad name..
-        MODIFY_SCOREBOARD,
-        IGNORE_SCOREBOARD,
-        CREATE_SCOREBOARD
-    }
-
     public enum PlayerNameType {
         VANILLA,
         TEAMS,
