@@ -84,67 +84,67 @@ public class PlayerWatcher extends LivingWatcher {
     }
 
     public void setCapeEnabled(boolean enabled) {
-        setSkinFlags(1, enabled);
+        setSkinFlags(0, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isJacketEnabled() {
-        return isSkinFlag(2);
+        return isSkinFlag(1);
     }
 
     public void setJacketEnabled(boolean enabled) {
-        setSkinFlags(2, enabled);
+        setSkinFlags(1, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isLeftSleeveEnabled() {
-        return isSkinFlag(3);
+        return isSkinFlag(2);
     }
 
     public void setLeftSleeveEnabled(boolean enabled) {
-        setSkinFlags(3, enabled);
+        setSkinFlags(2, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isRightSleeveEnabled() {
-        return isSkinFlag(4);
+        return isSkinFlag(3);
     }
 
     public void setRightSleeveEnabled(boolean enabled) {
-        setSkinFlags(4, enabled);
+        setSkinFlags(3, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isLeftPantsEnabled() {
-        return isSkinFlag(5);
+        return isSkinFlag(4);
     }
 
     public void setLeftPantsEnabled(boolean enabled) {
-        setSkinFlags(5, enabled);
+        setSkinFlags(4, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isRightPantsEnabled() {
-        return isSkinFlag(6);
+        return isSkinFlag(5);
     }
 
     public void setRightPantsEnabled(boolean enabled) {
-        setSkinFlags(6, enabled);
+        setSkinFlags(5, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
 
     public boolean isHatEnabled() {
-        return isSkinFlag(7);
+        return isSkinFlag(6);
     }
 
     public void setHatEnabled(boolean enabled) {
-        setSkinFlags(7, enabled);
+        setSkinFlags(6, enabled);
 
         sendData(MetaIndex.PLAYER_SKIN);
     }
@@ -168,7 +168,7 @@ public class PlayerWatcher extends LivingWatcher {
         if (flag) {
             setData(MetaIndex.PLAYER_SKIN, (byte) (b0 | 1 << i));
         } else {
-            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & (~1 << i)));
+            setData(MetaIndex.PLAYER_SKIN, (byte) (b0 & ~(1 << i)));
         }
     }
 
