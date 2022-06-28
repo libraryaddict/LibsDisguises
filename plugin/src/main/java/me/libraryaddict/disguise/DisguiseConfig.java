@@ -766,6 +766,11 @@ public class DisguiseConfig {
         } else {
             DisguiseUtilities.getLogger().info("Config is up to date!");
         }
+
+        if (LibsPremium.isPremium() && !LibsPremium.isBisectHosted() && LibsPremium.getPaidInformation() != null &&
+            LibsPremium.getPaidInformation().getSize() < 666) {
+            DisguiseConfig.setDisablePvE(true);
+        }
     }
 
     public static void loadModdedDisguiseTypes() {

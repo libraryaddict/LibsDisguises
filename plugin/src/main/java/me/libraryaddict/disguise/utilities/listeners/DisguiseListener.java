@@ -629,6 +629,12 @@ public class DisguiseListener implements Listener {
             return;
         }
 
+        if (LibsPremium.isPremium() && !LibsPremium.isBisectHosted() && LibsPremium.getPaidInformation() != null &&
+            LibsPremium.getPaidInformation().getSize() == 0) {
+            event.setCancelled(true);
+            return;
+        }
+
         switch (event.getReason()) {
             case TARGET_ATTACKED_ENTITY:
                 if (LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {

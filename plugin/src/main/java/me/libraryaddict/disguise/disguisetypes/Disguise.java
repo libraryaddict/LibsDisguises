@@ -469,27 +469,39 @@ public abstract class Disguise {
             setupWatcher();
         }
 
-        if (getEntity() instanceof Player && isSelfDisguiseVisible() && !isTallDisguisesVisible() && !getType().isCustom()) {
-            DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
-
-            if (values != null) {
-                FakeBoundingBox box = null;
-
-                if (isMobDisguise() && !((MobDisguise) this).isAdult()) {
-                    box = values.getBabyBox();
-                }
-
-                if (box == null) {
-                    box = values.getAdultBox();
-                }
-
-                if (box != null && box.getY() > 1.7D) {
-                    setSelfDisguiseVisible(false);
-                }
-            }
+        if (getEntity() instanceof Player && isSelfDisguiseVisible() && !isTallDisguisesVisible() && isTallDisguise()) {
+            setSelfDisguiseVisible(false);
         }
 
         return this;
+    }
+
+    private boolean isTallDisguise() {
+        if (getType().isCustom()) {
+            return false;
+        }
+
+        DisguiseValues values = DisguiseValues.getDisguiseValues(getType());
+
+        if (values == null) {
+            return false;
+        }
+
+        FakeBoundingBox box = null;
+
+        if (isMobDisguise() && !((MobDisguise) this).isAdult()) {
+            box = values.getBabyBox();
+        }
+
+        if (box == null) {
+            box = values.getAdultBox();
+        }
+
+        if (box == null || box.getY() <= 1.7D) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -895,6 +907,10 @@ public abstract class Disguise {
      */
     @Deprecated
     public Disguise setViewSelfDisguise(boolean viewSelfDisguise) {
+        if (viewSelfDisguise && !isTallDisguisesVisible() && isTallDisguise()) {
+            viewSelfDisguise = false;
+        }
+
         if (isSelfDisguiseVisible() == viewSelfDisguise || !DisguiseConfig.isViewDisguises()) {
             return this;
         }
