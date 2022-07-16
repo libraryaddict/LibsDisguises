@@ -510,7 +510,8 @@ public class DisguisePermissions {
 
             String[] split = lowerPerm.split("\\.");
 
-            // <command>.<disguise>.<method>.<options>
+            // 0             1       2         3          4        5+
+            // libsdisguises.options.<command>.<disguise>.<method>.<options>
             if (split.length < 4) {
                 continue;
             }
