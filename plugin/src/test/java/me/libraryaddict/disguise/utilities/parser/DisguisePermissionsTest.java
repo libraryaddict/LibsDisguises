@@ -215,6 +215,34 @@ public class DisguisePermissionsTest {
             DisguisePermissions.hasPermissionOption(disguiseOptions, "setBlock", "DIRT"));
     }
 
+    @Test
+    public void testDisguiseValidWorksToGiveMore() {
+        DisguisePermissions permissions =
+            createPermissions("Disguise", false, "libsdisguises.disguise.falling_block.setCustomName", "libsdisguises.disguise.valid.falling_block.setblock");
+
+        Assert.assertFalse("The falling block disguise should not allow setBurning",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")));
+
+        Assert.assertTrue("The falling block disguise should allow setCustomName",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setcustomname")));
+
+        Assert.assertTrue("The falling block disguise should allow setBlock",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBlock")));
+    }
+
+    @Test
+    public void testDisguiseValidDoesntGiveExtra() {
+        DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.valid.falling_block.setblock");
+
+        Assert.assertFalse("The falling block disguise should not be allowed", permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK)));
+
+        Assert.assertFalse("The falling block disguise should not allow setBurning",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")));
+
+        Assert.assertFalse("The falling block disguise should not allow setBlock",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBlock")));
+    }
+
     @SneakyThrows
     @Test
     public void testCustomDisguisePermissions() {

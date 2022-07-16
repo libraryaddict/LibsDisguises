@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.entity.Ageable;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 14/10/2018.
@@ -262,13 +264,33 @@ public class DisguisePermissions {
         }
 
         for (String valid : valids) {
-            HashMap<String, Boolean> options = getOptions(valid);
-
-            String key = valid.split("\\.")[1];
+            String[] spl = valid.split("\\.");
+            String key = spl[1];
 
             if (!key.equals("*") && !key.equalsIgnoreCase(commandName)) {
                 continue;
             }
+
+            if (spl.length > 3 && !spl[3].equals("*")) {
+                List<DisguisePerm> validFor =
+                    Arrays.stream(DisguiseParser.getDisguisePerms()).filter(perm -> getInheritance(perm, spl[3]) >= 0).collect(Collectors.toList());
+
+                for (ParsedPermission perms : list) {
+                    if (perms.disguisePerm.stream().anyMatch(p -> !validFor.contains(p))) {
+                        continue;
+                    }
+
+                    HashMap<String, Boolean> options = getOptions(valid.replaceFirst("\\.valid", ""));
+
+                    perms.options.putAll(options);
+                }
+
+                if (!validFor.isEmpty()) {
+                    continue;
+                }
+            }
+
+            HashMap<String, Boolean> options = getOptions(valid);
 
             for (ParsedPermission perms : list) {
                 perms.options.putAll(options);
