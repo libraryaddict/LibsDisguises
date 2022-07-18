@@ -296,6 +296,10 @@ public class PlayerDisguise extends TargetedDisguise {
 
         name = DisguiseUtilities.getHexedColors(name);
 
+        if (name == null) {
+            name = "";
+        }
+
         if (name.equals(playerName)) {
             return;
         }
