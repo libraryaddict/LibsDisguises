@@ -74,7 +74,7 @@ public class ArmorStandWatcher extends LivingWatcher {
         if (isTrue) {
             b1 = (byte) (b1 | value);
         } else {
-            b1 = (byte) (b1 & value);
+            b1 = (byte) (b1 & ~value);
         }
 
         setData(MetaIndex.ARMORSTAND_META, b1);
