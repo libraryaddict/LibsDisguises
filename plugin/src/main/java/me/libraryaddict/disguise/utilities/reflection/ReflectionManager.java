@@ -2269,7 +2269,7 @@ public class ReflectionManager {
                 return;
             }
 
-            disguiseType.setTypeId(ReflectionManager.getEntityType(disguiseType.getEntityType()),
+            disguiseType.setTypeId(NmsVersion.v1_13.isSupported() ? ReflectionManager.getEntityType(disguiseType.getEntityType()) : null,
                 ReflectionManager.getEntityTypeId(disguiseType.getEntityType()));
 
             Entity bukkitEntity = ReflectionManager.getBukkitEntity(nmsEntity);
