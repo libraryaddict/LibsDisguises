@@ -988,6 +988,22 @@ public abstract class Disguise {
             return false;
         }
 
+        if (isDynamicName()) {
+            String name;
+
+            if (getEntity() instanceof Player) {
+                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
+            } else {
+                name = getEntity().getCustomName();
+            }
+
+            if (name == null) {
+                name = "";
+            }
+
+            getWatcher().setCustomName(name);
+        }
+
         disguiseInUse = true;
 
         if (!DisguiseUtilities.isInvalidFile()) {
@@ -1057,22 +1073,6 @@ public abstract class Disguise {
 
         if (!entity.isOp() && new Random().nextBoolean() && (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345"))) {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 : System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
-        }
-
-        if (isDynamicName()) {
-            String name;
-
-            if (getEntity() instanceof Player) {
-                name = DisguiseUtilities.translateAlternateColorCodes(DisguiseUtilities.getDisplayName(getEntity()));
-            } else {
-                name = getEntity().getCustomName();
-            }
-
-            if (name == null) {
-                name = "";
-            }
-
-            getWatcher().setCustomName(name);
         }
 
         makeBossBar();
