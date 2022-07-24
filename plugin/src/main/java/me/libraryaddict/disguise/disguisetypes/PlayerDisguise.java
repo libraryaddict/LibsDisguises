@@ -345,6 +345,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 resendDisguise = !DisguiseConfig.isScoreboardNames() || isStaticName(name) || isStaticName(getName()) || resendDisguise;
 
                 if (resendDisguise) {
+                    playerName = name;
                     resendDisguise(name, false);
                 } else {
                     if (getName().isEmpty() && !name.isEmpty() && !isNameVisible()) {
