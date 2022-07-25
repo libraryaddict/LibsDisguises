@@ -988,7 +988,7 @@ public abstract class Disguise {
             return false;
         }
 
-        if (isDynamicName()) {
+        if (isDynamicName() && (!isPlayerDisguise() || !((PlayerDisguise) this).getName().equals("<Inherit>"))) {
             String name;
 
             if (getEntity() instanceof Player) {
