@@ -11,7 +11,8 @@ public enum NmsVersion {
     v1_16,
     v1_17,
     v1_18,
-    v1_19;
+    v1_19,
+    v1_19_1;
 
     /**
      * If this nms version isn't newer than the running version

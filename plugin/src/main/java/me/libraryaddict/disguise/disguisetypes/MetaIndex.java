@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractSkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractVillagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.AllayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AreaEffectCloudWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
@@ -95,10 +96,10 @@ import me.libraryaddict.disguise.disguisetypes.watchers.ZoglinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieVillagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
-import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
-import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Art;
 import org.bukkit.Color;
@@ -123,6 +124,11 @@ import java.util.UUID;
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
 
+    @NmsAddedIn(NmsVersion.v1_19_1)
+    public static MetaIndex<Boolean> ALLAY_DANCING = new MetaIndex<>(AllayWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_19_1)
+    public static MetaIndex<Boolean> ALLAY_CAN_DUPLICATE = new MetaIndex<>(AllayWatcher.class, 1, true);
     /**
      * True if entity is a baby
      */
