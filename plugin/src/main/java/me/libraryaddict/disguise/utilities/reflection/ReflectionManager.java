@@ -747,7 +747,7 @@ public class ReflectionManager {
                 break;
             }
 
-            if (version == NmsVersion.v1_19 && Bukkit.getVersion().contains("1.19.1")) {
+            if (version == NmsVersion.v1_19 && Bukkit.getVersion().contains("1.19.")) {
                 version = NmsVersion.v1_19_1;
             }
         }
