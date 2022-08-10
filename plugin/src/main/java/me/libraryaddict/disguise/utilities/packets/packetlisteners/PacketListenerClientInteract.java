@@ -32,7 +32,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PacketListenerClientInteract extends PacketAdapter {
     public PacketListenerClientInteract(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY);
+        super(new AdapterParameteters().optionAsync().plugin(plugin).types(PacketType.Play.Client.USE_ENTITY));
     }
 
     @Override
