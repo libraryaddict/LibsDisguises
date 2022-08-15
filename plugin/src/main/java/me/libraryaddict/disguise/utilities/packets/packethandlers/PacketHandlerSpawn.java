@@ -409,9 +409,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             if (disguise.getType() == DisguiseType.ITEM_FRAME) {
                 if (data % 2 == 0) {
-                    spawnEntity.getModifier().write(4, loc.getZ() + (data == 0 ? -1 : 1));
+                    spawnEntity.getDoubles().write(2, loc.getZ() + (data == 0 ? -1 : 1));
                 } else {
-                    spawnEntity.getModifier().write(2, loc.getX() + (data == 3 ? -1 : 1));
+                    spawnEntity.getDoubles().write(0, loc.getX() + (data == 3 ? -1 : 1));
                 }
             }
         }
