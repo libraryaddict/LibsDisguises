@@ -1,6 +1,14 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ClassMappings {
     private static HashMap<String, String> classLocations = new HashMap<>();
@@ -52,5 +60,42 @@ public class ClassMappings {
             s[i] = s[i].replace("$version$", ReflectionManager.getBukkitVersion());
         }
         return s;
+    }
+
+    public static void saveMappingsCache(File dataFolder) {
+        File mappingsCache = new File(dataFolder, "mappings_cache");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappingsCache))) {
+            for (Map.Entry<String, String> entry : classLocations.entrySet()) {
+                if (!entry.getKey().equals(entry.getValue())) {
+                    writer.write(entry.getKey() + " " + entry.getValue() + "\n");
+                }
+            }
+        } catch (IOException e) {
+            // don't care if cache can't be saved
+            e.printStackTrace();
+        }
+    }
+
+    public static void loadMappingsCache(File dataFolder) {
+        File mappingsCache = new File(dataFolder, "mappings_cache");
+        try (BufferedReader reader = new BufferedReader(new FileReader(mappingsCache))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" ", 2);
+                if (parts.length == 2) {
+                    // Check if class name is still valid
+                    try {
+                        Class.forName(parts[1]);
+                        classLocations.put(parts[0], parts[1]);
+                    } catch (ClassNotFoundException e) {
+                        // silently discard, we may have just changed versions
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            // silently discard, it doesn't matter if the cache doesn't exist, we will just create it later
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

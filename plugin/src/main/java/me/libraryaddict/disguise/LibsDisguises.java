@@ -32,6 +32,7 @@ import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
+import me.libraryaddict.disguise.utilities.reflection.ClassMappings;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
@@ -230,6 +231,8 @@ public class LibsDisguises extends JavaPlugin {
                 DisguiseConfig.setUsingReleaseBuilds(false);
             }
 
+            ClassMappings.loadMappingsCache(getDataFolder());
+
             ReflectionManager.init();
 
             PacketsManager.init();
@@ -331,6 +334,7 @@ public class LibsDisguises extends JavaPlugin {
     @Override
     public void onDisable() {
         DisguiseUtilities.saveDisguises();
+        ClassMappings.saveMappingsCache(getDataFolder());
 
         reloaded = true;
     }
