@@ -36,7 +36,7 @@ public class ItemFrameWatcher extends FlagWatcher {
     }
 
     public void setRotation(int rotation) {
-        setData(MetaIndex.ITEMFRAME_ROTATION, rotation % 4);
+        setData(MetaIndex.ITEMFRAME_ROTATION, rotation % 8);
         sendData(MetaIndex.ITEMFRAME_ROTATION);
     }
 }
