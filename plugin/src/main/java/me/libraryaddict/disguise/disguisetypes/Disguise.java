@@ -17,6 +17,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AbstractHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
@@ -885,7 +886,8 @@ public abstract class Disguise {
         }
 
         // Sometimes someone may set the custom name stuff on the actual player... Normally harmless, until I come along..
-        if (getEntity() instanceof Player && !getWatcher().hasCustomName()) {
+        if (getEntity() instanceof Player && !getWatcher().hasCustomName() && !getWatcher().isUpsideDown() &&
+            !(getWatcher() instanceof SheepWatcher || ((SheepWatcher) getWatcher()).isRainbowWool())) {
             getWatcher().setInteralCustomName("");
             getWatcher().setInternalCustomNameVisible(false);
         }
