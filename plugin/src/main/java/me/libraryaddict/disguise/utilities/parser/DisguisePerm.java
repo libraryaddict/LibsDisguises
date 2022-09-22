@@ -10,7 +10,7 @@ import java.util.Objects;
  * Created by libraryaddict on 5/10/2018.
  */
 public class DisguisePerm {
-    private DisguiseType disguiseType;
+    private final DisguiseType disguiseType;
     private String permName;
     private boolean customDisguise;
 

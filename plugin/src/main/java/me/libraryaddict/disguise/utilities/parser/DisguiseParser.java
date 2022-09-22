@@ -182,7 +182,7 @@ public class DisguiseParser {
         try {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.append(disguise.getType().name());
+            stringBuilder.append(disguise.getType().toReadable().replace(" ", "_"));
 
             if (disguise.isPlayerDisguise()) {
                 stringBuilder.append(" ").append(DisguiseUtilities.quote(((PlayerDisguise) disguise).getName()));
@@ -204,7 +204,8 @@ public class DisguiseParser {
                             continue;
                         }
 
-                        stringBuilder.append(" ").append(m.getName()).append(" ").append(type.getName());
+                        stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.get(m.getName())).append(" ")
+                            .append(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(type.getName()));
                     }
 
                     continue;
@@ -251,7 +252,7 @@ public class DisguiseParser {
                     }
                 }
 
-                stringBuilder.append(" ").append(m.getName());
+                stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.get(m.getName()));
 
                 if (ourValue instanceof Boolean && (Boolean) ourValue) {
                     continue;
@@ -262,9 +263,13 @@ public class DisguiseParser {
                 if (ourValue != null) {
                     valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
 
+                    if (ourValue instanceof String) {
+                        valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(valueString);
+                    }
+
                     valueString = DisguiseUtilities.quote(valueString);
                 } else {
-                    valueString = "null";
+                    valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("null");
                 }
 
                 stringBuilder.append(" ").append(valueString);
