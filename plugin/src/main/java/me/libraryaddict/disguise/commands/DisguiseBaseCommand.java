@@ -82,7 +82,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-        if (DisguiseUtilities.isProtocolLibOutdated()) {
+        if (DisguiseUtilities.isProtocolLibOutdated() && sender.isOp()) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
         }
 
