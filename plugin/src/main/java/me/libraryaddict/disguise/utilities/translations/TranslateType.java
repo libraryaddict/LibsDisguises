@@ -9,8 +9,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +36,7 @@ public enum TranslateType {
     private File file;
     private LinkedHashMap<String, String> translated = new LinkedHashMap<>();
     private HashMap<String, Boolean> toDeDupe = new HashMap<>();
-    private FileWriter writer;
+    private OutputStreamWriter writer;
     private int written;
 
     TranslateType(String fileName) {
@@ -177,7 +180,7 @@ public enum TranslateType {
             }
 
             if (writer == null) {
-                writer = new FileWriter(getFile(), true);
+                writer = new OutputStreamWriter(new FileOutputStream(getFile(), true), StandardCharsets.UTF_8);
 
                 if (!exists) {
                     writer.write("# To use translations in Lib's Disguises, you must have the purchased plugin\n");
