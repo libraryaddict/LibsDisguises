@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.translations;
 
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -40,7 +41,7 @@ public enum TranslateType {
     private int written;
 
     TranslateType(String fileName) {
-        file = new File("plugins/LibsDisguises/Translations", fileName + ".yml");
+        file = new File(LibsDisguises.getInstance().getDataFolder(), "Translations/" + fileName + ".yml");
     }
 
     public static void refreshTranslations() {

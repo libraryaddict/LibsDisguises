@@ -149,7 +149,7 @@ public class LibsPremium {
     }
 
     private static void doSecondaryCheck(String version) {
-        File pluginDir = new File("plugins/LibsDisguises/");
+        File pluginDir = new File(LibsDisguises.getInstance().getDataFolder(), "LibsDisguises/");
 
         if (!pluginDir.exists() && LibsDisguises.getInstance() != null) {
             pluginDir = LibsDisguises.getInstance().getDataFolder();

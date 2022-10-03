@@ -228,8 +228,8 @@ public class DisguiseUtilities {
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
-    private static final File profileCache = new File("plugins/LibsDisguises/SavedSkins");
-    private static final File savedDisguises = new File("plugins/LibsDisguises/SavedDisguises");
+    private static final File profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
+    private static final File savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
     @Getter
     private static Gson gson;
     @Getter
@@ -586,7 +586,7 @@ public class DisguiseUtilities {
     }
 
     public static File updateProtocolLib() throws Exception {
-        File dest = new File("plugins/ProtocolLib.jar");
+        File dest = new File(LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile(), "ProtocolLib.jar");
 
         if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
             Method getFile = JavaPlugin.class.getDeclaredMethod("getFile");
