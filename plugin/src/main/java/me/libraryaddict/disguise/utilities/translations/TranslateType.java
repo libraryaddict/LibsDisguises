@@ -41,6 +41,10 @@ public enum TranslateType {
     private int written;
 
     TranslateType(String fileName) {
+        if (LibsDisguises.getInstance() == null) {
+            return;
+        }
+
         file = new File(LibsDisguises.getInstance().getDataFolder(), "Translations/" + fileName + ".yml");
     }
 

@@ -228,8 +228,8 @@ public class DisguiseUtilities {
     private static final HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     @Getter
     private static final HashSet<UUID> selfDisguised = new HashSet<>();
-    private static final File profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
-    private static final File savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
+    private static final File profileCache;
+    private static final File savedDisguises;
     @Getter
     private static Gson gson;
     @Getter
@@ -274,6 +274,14 @@ public class DisguiseUtilities {
             }
 
             java16 = vers >= 16;
+        }
+
+        if (LibsDisguises.getInstance() == null) {
+            profileCache = null;
+            savedDisguises = null;
+        } else {
+            profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
+            savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
         }
     }
 
