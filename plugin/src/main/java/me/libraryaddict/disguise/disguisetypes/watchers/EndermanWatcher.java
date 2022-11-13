@@ -31,6 +31,7 @@ public class EndermanWatcher extends InsentientWatcher {
         setItemInMainHand(itemstack.getType());
     }
 
+    @Deprecated
     public void setItemInMainHand(Material type) {
         if (!type.isBlock()) {
             return;
