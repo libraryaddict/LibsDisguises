@@ -574,7 +574,11 @@ public class DisguiseUtilities {
 
         // If this is also checking for a custom build, and PL has the custom build in..
         // We run this check first as the 4.7.1 isn't out, and it'd always tell us to update otherwise.
-        if (reqVersion.length > 1 && plVersion.contains("-SNAPSHOT-b")) {
+        if (reqVersion.length > 1 && plVersion.contains("-SNAPSHOT")) {
+            if (!plVersion.contains("-SNAPSHOT-b")) {
+                return false;
+            }
+
             try {
                 String build = plVersion.substring(plVersion.lastIndexOf("b") + 1);
 
