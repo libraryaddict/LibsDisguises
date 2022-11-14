@@ -167,6 +167,8 @@ public class DisguiseConfig {
     @Setter
     private static boolean useTranslations;
     @Getter
+    private static boolean autoUpdateProtocolLib;
+    @Getter
     @Setter
     private static boolean velocitySent;
     @Getter
@@ -651,6 +653,7 @@ public class DisguiseConfig {
         setDisguiseRadiusMax(config.getInt("DisguiseRadiusMax"));
         setRandomUUIDS(config.getBoolean("RandomUUIDs"));
         String apiKey = config.getString("MineSkinAPIKey");
+        autoUpdateProtocolLib = config.getBoolean("AutoUpdateProtocolLib", true);
 
         if (apiKey != null && apiKey.matches("[a-zA-Z0-9]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);

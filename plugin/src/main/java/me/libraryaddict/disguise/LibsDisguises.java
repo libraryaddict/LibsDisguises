@@ -69,39 +69,15 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onLoad() {
+
         try {
+
             if (instance != null || !Bukkit.getServer().getWorlds().isEmpty() || !Bukkit.getOnlinePlayers().isEmpty()) {
                 reloaded = true;
                 getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             }
 
             instance = this;
-
-            Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-
-            if (plugin == null || DisguiseUtilities.isProtocolLibOutdated()) {
-                getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
-
-                try {
-                    File dest = DisguiseUtilities.updateProtocolLib();
-
-                    if (plugin == null) {
-                        getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
-                        plugin = Bukkit.getPluginManager().loadPlugin(dest);
-                        plugin.onLoad();
-
-                        Bukkit.getPluginManager().enablePlugin(plugin);
-                    } else {
-                        getLogger().severe("Please restart the server to complete the ProtocolLib update!");
-                    }
-                } catch (Exception e) {
-                    getLogger().severe(
-                        "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" + " can " +
-                            "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
-                    e.printStackTrace();
-                }
-
-            }
 
             try {
                 Class cl = Class.forName("org.bukkit.Server$Spigot");
@@ -130,7 +106,39 @@ public class LibsDisguises extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        DisguiseConfig.loadInternalConfig();
+
         try {
+
+
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+
+            if (plugin == null || (DisguiseUtilities.isProtocolLibOutdated() && DisguiseConfig.isAutoUpdateProtocolLib())) {
+                getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
+
+                try {
+
+                    File dest = DisguiseUtilities.updateProtocolLib();
+
+                    if (plugin == null) {
+                        getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
+                        plugin = Bukkit.getPluginManager().loadPlugin(dest);
+                        plugin.onLoad();
+
+                        Bukkit.getPluginManager().enablePlugin(plugin);
+                    } else {
+                        getLogger().severe("Please restart the server to complete the ProtocolLib update!");
+                    }
+                } catch (Exception e) {
+                    getLogger().severe(
+                        "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" + " can " +
+                            "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
+                    e.printStackTrace();
+                }
+
+            }
+
             if (reloaded) {
                 getLogger().severe("Server was reloaded! Please do not report any bugs! This plugin can't handle " + "reloads gracefully!");
             }
@@ -175,8 +183,6 @@ public class LibsDisguises extends JavaPlugin {
             getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
             getLogger().info("Build Date: " + pluginYml.getString("build-date"));
-
-            DisguiseConfig.loadInternalConfig();
 
             LibsPremium.check(getDescription().getVersion(), getFile());
 

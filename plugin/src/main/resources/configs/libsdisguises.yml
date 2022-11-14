@@ -28,3 +28,6 @@ ChangedConfig: false
 # Should the config automatically update itself each time there's a config entry missing?
 # The old config will have any custom comments or invalid config entries wiped.
 UpdateConfig: true
+
+# Should we auto update your protocol lib?
+AutoUpdateProtocolLib: true
