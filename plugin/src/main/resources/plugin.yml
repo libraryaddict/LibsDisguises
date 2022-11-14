@@ -5,7 +5,7 @@ version: ${project.version}
 build-date: ${timestamp}
 build-number: ${build.number}
 author: libraryaddict
-authors: [ Byteflux, Navid K. ]
+authors: [ Byteflux, Navid K., camdenorrb ]
 softdepend: [ ProtocolLib, LibsDisguisesVersioning ]
 api-version: '1.13'
 commands:
