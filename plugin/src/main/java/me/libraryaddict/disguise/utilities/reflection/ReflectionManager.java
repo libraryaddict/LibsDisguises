@@ -2320,6 +2320,11 @@ public class ReflectionManager {
                 MetaIndex flagType = MetaIndex.getMetaIndex(disguiseType.getWatcherClass(), watch.getIndex());
 
                 if (flagType == null) {
+                    // Hide purpur's decision to become a modded server
+                    if (disguiseType == DisguiseType.GLOW_SQUID && watch.getRawValue().getClass() == String.class) {
+                        continue;
+                    }
+
                     DisguiseUtilities.getLogger().severe("MetaIndex not found for " + disguiseType + "! Index: " + watch.getIndex());
                     DisguiseUtilities.getLogger().severe(
                         "Value: " + watch.getRawValue() + " (" + watch.getRawValue().getClass() + ") (" + nmsEntity.getClass() + ") & " +
