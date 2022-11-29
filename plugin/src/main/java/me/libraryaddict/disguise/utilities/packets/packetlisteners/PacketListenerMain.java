@@ -25,7 +25,7 @@ public class PacketListenerMain extends PacketAdapter {
 
     @Override
     public void onPacketSending(final PacketEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled() || event.isPlayerTemporary()) {
             return;
         }
 

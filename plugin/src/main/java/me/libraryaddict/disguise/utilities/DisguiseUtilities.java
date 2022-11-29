@@ -1115,12 +1115,7 @@ public class DisguiseUtilities {
                 return;
             }
 
-            // TODO Store reflection field
-            Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-
-            // If the tracker exists. Remove himself from his tracker
-            trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-            // ConcurrentModificationException
+            Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
 
             PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
@@ -1308,11 +1303,7 @@ public class DisguiseUtilities {
             Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
             if (entityTrackerEntry != null) {
-                // TODO Store reflection field
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-                trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                // ConcurrentModificationException
-                for (Object p : trackedPlayers) {
+                for (Object p : ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry)) {
                     Player player = (Player) ReflectionManager.getBukkitEntity(ReflectionManager.getPlayerFromPlayerConnection(p));
 
                     if (((TargetedDisguise) disguise).canSee(player)) {
@@ -1699,18 +1690,10 @@ public class DisguiseUtilities {
                     return;
                 }
 
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-
-                Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
-                    ReflectionManager.getNmsClass("EntityPlayer"));
-
-                final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
-                    ReflectionManager.getNmsClass("EntityPlayer"));
+                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
 
                 PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
-                trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                // ConcurrentModificationException
                 for (final Object o : trackedPlayers) {
                     Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                     Player pl = (Player) ReflectionManager.getBukkitEntity(p);
@@ -1719,13 +1702,13 @@ public class DisguiseUtilities {
                         continue;
                     }
 
-                    clear.invoke(entityTrackerEntry, p);
+                    ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
 
                     ProtocolLibrary.getProtocolManager().sendServerPacket(pl, destroyPacket);
 
                     Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                         try {
-                            updatePlayer.invoke(entityTrackerEntry, p);
+                            ReflectionManager.addEntityTracker(entityTrackerEntry, p);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -1755,33 +1738,27 @@ public class DisguiseUtilities {
                 final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(entity);
 
                 if (entityTrackerEntry != null) {
-                    Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
+                    Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
 
-                    Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
-
-                    final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
-                        ReflectionManager.getNmsClass("EntityPlayer"));
-
-                    trackedPlayers = (Set) new HashSet(trackedPlayers).clone(); // Copy before iterating to prevent
-                    // ConcurrentModificationException
                     for (final Object o : trackedPlayers) {
                         Object p = ReflectionManager.getPlayerFromPlayerConnection(o);
                         Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
-                        if (player != entity) {
-                            clear.invoke(entityTrackerEntry, p);
-
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
-
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
-                                try {
-                                    updatePlayer.invoke(entityTrackerEntry, p);
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
-                            }, 2);
+                        if (player == entity) {
+                            continue;
                         }
+                        ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
+
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
+
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
+                            try {
+                                ReflectionManager.addEntityTracker(entityTrackerEntry, p);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }, 2);
+
                     }
                 }
             } catch (Exception ex) {
@@ -1821,16 +1798,7 @@ public class DisguiseUtilities {
             final Object entityTrackerEntry = ReflectionManager.getEntityTrackerEntry(disguise.getEntity());
 
             if (entityTrackerEntry != null) {
-                Set trackedPlayers = (Set) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-
-                // TODO Store the fields
-                final Method clear = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
-                    ReflectionManager.getNmsClass("EntityPlayer"));
-
-                final Method updatePlayer = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
-                    ReflectionManager.getNmsClass("EntityPlayer"));
-
-                trackedPlayers = (Set) new HashSet(trackedPlayers).clone();
+                Set trackedPlayers = ReflectionManager.getClonedTrackedPlayers(entityTrackerEntry);
                 PacketContainer destroyPacket = getDestroyPacket(disguise.getEntity().getEntityId());
 
                 for (final Object o : trackedPlayers) {
@@ -1838,13 +1806,13 @@ public class DisguiseUtilities {
                     Player player = (Player) ReflectionManager.getBukkitEntity(p);
 
                     if (disguise.getEntity() != player && disguise.canSee(player)) {
-                        clear.invoke(entityTrackerEntry, p);
+                        ReflectionManager.clearEntityTracker(entityTrackerEntry, p);
 
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket);
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> {
                             try {
-                                updatePlayer.invoke(entityTrackerEntry, p);
+                                ReflectionManager.addEntityTracker(entityTrackerEntry, p);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -1947,9 +1915,7 @@ public class DisguiseUtilities {
                 // TODO Store reflection fields
                 // If the tracker exists. Remove himself from his tracker
                 if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
-                    Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-
-                    ((Set<Object>) trackedPlayersObj).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
+                    ReflectionManager.getTrackedPlayers(entityTrackerEntry).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
                 } else {
                     ((Map<Object, Object>) ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap").get(entityTrackerEntry)).remove(
                         ReflectionManager.getPlayerConnectionOrPlayer(player));
@@ -2491,9 +2457,7 @@ public class DisguiseUtilities {
             // Check for code differences in PaperSpigot vs Spigot
             if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
                 // Add himself to his own entity tracker
-                Object trackedPlayersObj = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers").get(entityTrackerEntry);
-
-                ((Set<Object>) trackedPlayersObj).add(ReflectionManager.getPlayerConnectionOrPlayer(player));
+                ReflectionManager.getTrackedPlayers(entityTrackerEntry).add(ReflectionManager.getPlayerConnectionOrPlayer(player));
             } else {
                 Field field = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
                 Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);

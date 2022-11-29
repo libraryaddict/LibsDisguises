@@ -13,6 +13,7 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.GameProfile;
+import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -44,7 +45,6 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import net.minecraft.world.entity.animal.FrogVariant;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -102,6 +102,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -180,6 +181,9 @@ public class ReflectionManager {
     private static Method incrementedInventoryStateId;
     private static Field playerInventoryContainer;
     private static ReflectionManagerAbstract nmsReflection;
+    private static Field trackedPlayers;
+    private static Method clearEntityTracker;
+    private static Method addEntityTracker;
 
     public static void init() {
         try {
@@ -189,6 +193,12 @@ public class ReflectionManager {
             }
 
             nmsReflection = getReflectionManager(getVersion());
+
+            trackedPlayers = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers");
+            clearEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
+                ReflectionManager.getNmsClass("EntityPlayer"));
+            addEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
+                ReflectionManager.getNmsClass("EntityPlayer"));
 
             if (nmsReflection != null) {
                 return;
@@ -1046,6 +1056,27 @@ public class ReflectionManager {
 
     public static Field getNmsField(String className, String fieldName) {
         return getNmsField(getNmsClass(className), fieldName);
+    }
+
+    @SneakyThrows
+    public static Set getClonedTrackedPlayers(Object entityTrackerEntry) {
+        // Copy before iterating to prevent ConcurrentModificationException
+        return (Set) new HashSet(getTrackedPlayers(entityTrackerEntry)).clone();
+    }
+
+    @SneakyThrows
+    public static Set getTrackedPlayers(Object entityTrackerEntry) {
+        return (Set) trackedPlayers.get(entityTrackerEntry);
+    }
+
+    @SneakyThrows
+    public static void clearEntityTracker(Object tracker, Object player) {
+        clearEntityTracker.invoke(tracker, player);
+    }
+
+    @SneakyThrows
+    public static void addEntityTracker(Object tracker, Object player) {
+        addEntityTracker.invoke(tracker, player);
     }
 
     public static Object getNmsItem(ItemStack itemstack) {
