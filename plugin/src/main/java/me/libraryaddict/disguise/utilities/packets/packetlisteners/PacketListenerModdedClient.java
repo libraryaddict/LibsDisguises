@@ -92,11 +92,7 @@ public class PacketListenerModdedClient extends PacketAdapter {
         PacketContainer packet = new PacketContainer(PacketType.Login.Client.START);
         packet.getModifier().write(0, new GameProfile(null, name));
 
-        try {
-            ProtocolLibrary.getProtocolManager().recieveClientPacket(player, packet, false);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        ProtocolLibrary.getProtocolManager().receiveClientPacket(player, packet, false);
     }
 
     @Override

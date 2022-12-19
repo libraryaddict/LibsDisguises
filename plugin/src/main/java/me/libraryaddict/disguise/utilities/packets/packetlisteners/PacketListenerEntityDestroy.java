@@ -72,10 +72,6 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
             return;
         }
 
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, DisguiseUtilities.getDestroyPacket(toRemove));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, DisguiseUtilities.getDestroyPacket(toRemove));
     }
 }

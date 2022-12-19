@@ -72,19 +72,15 @@ public class FallingBlockWatcher extends FlagWatcher {
                 ints.write(2, (int) conRel(loc.getZ(), loc.getBlockZ() + 0.5));
             }
 
-            try {
-                for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                    if (player == getDisguise().getEntity()) {
-                        PacketContainer temp = relMove.shallowClone();
-                        temp.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
+            for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
+                if (player == getDisguise().getEntity()) {
+                    PacketContainer temp = relMove.shallowClone();
+                    temp.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
 
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp, isGridLocked());
-                    } else {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, relMove, isGridLocked());
-                    }
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, temp, isGridLocked());
+                } else {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, relMove, isGridLocked());
                 }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
             }
         }
     }

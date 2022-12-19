@@ -132,27 +132,19 @@ class DisguiseRunnable extends BukkitRunnable {
 
             packet.getIntegers().write(0, disguise.getEntity().getEntityId());
 
-            try {
-                for (Player player : DisguiseUtilities.getPerverts(disguise)) {
-                    if (disguise.getEntity() != player) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                        continue;
-                    } else if (!disguise.isSelfDisguiseVisible() || !(disguise.getEntity() instanceof Player)) {
-                        continue;
-                    }
-
-                    PacketContainer selfPacket = packet.shallowClone();
-
-                    selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
-
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfPacket, false);
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
+            for (Player player : DisguiseUtilities.getPerverts(disguise)) {
+                if (disguise.getEntity() != player) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                    continue;
+                } else if (!disguise.isSelfDisguiseVisible() || !(disguise.getEntity() instanceof Player)) {
+                    continue;
                 }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+                PacketContainer selfPacket = packet.shallowClone();
+
+                selfPacket.getModifier().write(0, DisguiseAPI.getSelfDisguiseId());
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfPacket, false);
             }
         }
     }
@@ -192,11 +184,7 @@ class DisguiseRunnable extends BukkitRunnable {
 
                         selfLookPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
 
-                        try {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfLookPacket, false);
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) disguise.getEntity(), selfLookPacket, false);
                     }
                 }
 

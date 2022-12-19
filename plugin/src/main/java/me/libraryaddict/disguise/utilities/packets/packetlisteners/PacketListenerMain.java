@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -69,14 +70,10 @@ public class PacketListenerMain extends PacketAdapter {
 
         event.setCancelled(true);
 
-        try {
-            for (PacketContainer packet : packets.getPackets()) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
-            }
-
-            packets.sendDelayed(observer);
-        } catch (InvocationTargetException ex) {
-            ex.printStackTrace();
+        for (PacketContainer packet : packets.getPackets()) {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, false);
         }
+
+        packets.sendDelayed(observer);
     }
 }

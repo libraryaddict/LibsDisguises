@@ -14,11 +14,13 @@ import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,11 +88,11 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     slot == EquipmentSlot.OFF_HAND)) {
                 if (itemStack != null && itemStack.getType() != Material.AIR) {
                     // Convert the datawatcher
-                    List<WrappedWatchableObject> list = new ArrayList<>();
+                    List<WatcherValue> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.LIVING_META,
-                            WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
+                        WatcherValue watch =
+                            new WatcherValue(MetaIndex.LIVING_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
 
                         if (watch != null) {
                             list.add(watch);
@@ -98,7 +100,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
                         list = disguise.getWatcher().convert(observer, list);
                     } else {
-                        for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
+                        for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
                             if (obj.getIndex() == MetaIndex.LIVING_META.getIndex()) {
                                 list.add(obj);
                                 break;
@@ -107,16 +109,12 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     }
 
                     // Construct the packets to return
-                    PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                    PacketContainer packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
 
-                    packetBlock.getModifier().write(0, entity.getEntityId());
-                    packetBlock.getWatchableCollectionModifier().write(0, list);
+                    list.forEach(v -> v.setValue((byte) 0));
 
-                    PacketContainer packetUnblock = packetBlock.deepClone();
                     // Make a packet to send the 'unblock'
-                    for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
-                        watcher.setValue((byte) 0);
-                    }
+                    PacketContainer packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
 
                     // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
                     // Scheduler
@@ -162,12 +160,11 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
             if (itemStack != null && itemStack.getType() != Material.AIR) {
                 // Convert the datawatcher
-                List<WrappedWatchableObject> list = new ArrayList<>();
+                List<WatcherValue> list = new ArrayList<>();
                 MetaIndex toUse = NmsVersion.v1_13.isSupported() ? MetaIndex.LIVING_META : MetaIndex.ENTITY_META;
 
                 if (DisguiseConfig.isMetaPacketsEnabled()) {
-                    WrappedWatchableObject watch =
-                        ReflectionManager.createWatchable(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
+                    WatcherValue watch = new WatcherValue(toUse, WrappedDataWatcher.getEntityWatcher(entity).getByte(toUse.getIndex()));
 
                     if (watch != null) {
                         list.add(watch);
@@ -175,7 +172,7 @@ public class PacketHandlerEquipment implements IPacketHandler {
 
                     list = disguise.getWatcher().convert(observer, list);
                 } else {
-                    for (WrappedWatchableObject obj : disguise.getWatcher().getWatchableObjects()) {
+                    for (WatcherValue obj : disguise.getWatcher().getWatchableObjects()) {
                         if (obj.getIndex() == toUse.getIndex()) {
                             list.add(obj);
                             break;
@@ -184,20 +181,12 @@ public class PacketHandlerEquipment implements IPacketHandler {
                 }
 
                 // Construct the packets to return
-                PacketContainer packetBlock = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+                PacketContainer packetBlock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
 
-                packetBlock.getModifier().write(0, entity.getEntityId());
-                packetBlock.getWatchableCollectionModifier().write(0, list);
+                list.forEach(v -> v.setValue(NmsVersion.v1_13.isSupported() ? (byte) 0 : (byte) ((byte) v.getValue() & ~(1 << 4))));
 
-                PacketContainer packetUnblock = packetBlock.deepClone();
                 // Make a packet to send the 'unblock'
-                for (WrappedWatchableObject watcher : packetUnblock.getWatchableCollectionModifier().read(0)) {
-                    if (NmsVersion.v1_13.isSupported()) {
-                        watcher.setValue((byte) 0);
-                    } else {
-                        watcher.setValue((byte) ((byte) watcher.getRawValue() & ~(1 << 4)));
-                    }
-                }
+                PacketContainer packetUnblock = ReflectionManager.getMetadataPacket(entity.getEntityId(), list);
 
                 // Send the unblock before the itemstack change so that the 2nd metadata packet works. Why?
                 // Scheduler

@@ -184,16 +184,12 @@ public class LivingWatcher extends FlagWatcher {
             packet.getAttributeCollectionModifier().write(0, attributes);
 
             for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-                try {
-                    if (player == getDisguise().getEntity()) {
-                        PacketContainer p = packet.shallowClone();
-                        p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
-                    } else {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                    }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                if (player == getDisguise().getEntity()) {
+                    PacketContainer p = packet.shallowClone();
+                    p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+                } else {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                 }
             }
         }

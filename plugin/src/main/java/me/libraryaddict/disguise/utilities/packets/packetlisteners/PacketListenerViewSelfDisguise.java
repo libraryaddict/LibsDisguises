@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -17,7 +18,9 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -102,12 +105,8 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 LibsDisguises.getInstance().getSkinHandler().handlePackets(observer, (PlayerDisguise) disguise, selfTransformed);
             }
 
-            try {
-                for (PacketContainer newPacket : selfTransformed.getPackets()) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket, false);
-                }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            for (PacketContainer newPacket : selfTransformed.getPackets()) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket, false);
             }
 
             selfTransformed.sendDelayed(observer);
@@ -118,47 +117,50 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                     event.setPacket(packet = packet.deepClone());
                 }
 
-                for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
-                    if (watch.getIndex() != 0) {
-                        continue;
+                if (NmsVersion.v1_19_R2.isSupported()) {
+                    for (WrappedDataValue watch : packet.getDataValueCollectionModifier().read(0)) {
+                        if (watch.getIndex() != 0) {
+                            continue;
+                        }
+
+                        byte b = (byte) watch.getRawValue();
+
+                        // Add invisibility, remove glowing
+                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
+
+                        watch.setValue(a);
                     }
+                } else {
+                    for (WrappedWatchableObject watch : packet.getWatchableCollectionModifier().read(0)) {
+                        if (watch.getIndex() != 0) {
+                            continue;
+                        }
 
-                    byte b = (byte) watch.getRawValue();
+                        byte b = (byte) watch.getRawValue();
 
-                    // Add invisibility, remove glowing
-                    byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
+                        // Add invisibility, remove glowing
+                        byte a = (byte) ((b | 1 << 5) & ~(1 << 6));
 
-                    watch.setValue(a);
+                        watch.setValue(a);
+                    }
                 }
             } else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN) {
                 event.setCancelled(true);
 
-                PacketContainer metaPacket = new PacketContainer(Server.ENTITY_METADATA);
-
-                StructureModifier<Object> mods = metaPacket.getModifier();
-
-                mods.write(0, observer.getEntityId());
-
-                List<WrappedWatchableObject> watchableList = new ArrayList<>();
+                List<WatcherValue> watchableList = new ArrayList<>();
                 byte b = 1 << 5;
 
                 if (observer.isSprinting()) {
                     b = (byte) (b | 1 << 3);
                 }
 
-                WrappedWatchableObject watch = ReflectionManager.createWatchable(MetaIndex.ENTITY_META, b);
+                WatcherValue watch = new WatcherValue(MetaIndex.ENTITY_META, b);
 
-                if (watch != null) {
-                    watchableList.add(watch);
-                }
+                watchableList.add(watch);
 
-                metaPacket.getWatchableCollectionModifier().write(0, watchableList);
+                PacketContainer metaPacket = ReflectionManager.getMetadataPacket(observer.getEntityId(), watchableList);
 
-                try {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, metaPacket);
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                ProtocolLibrary.getProtocolManager().sendServerPacket(observer, metaPacket);
             } else if (event.getPacketType() == Server.ANIMATION) {
                 if (packet.getIntegers().read(1) != 2) {
                     event.setCancelled(true);

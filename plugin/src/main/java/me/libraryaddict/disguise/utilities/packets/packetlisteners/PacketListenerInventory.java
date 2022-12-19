@@ -95,11 +95,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
-                        try {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                     }
                 }
             } else if (slot >= 36 && slot <= 45) {
@@ -122,11 +118,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                             packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
                     }
                 }
@@ -185,11 +177,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
-                        try {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                     }
                     // Else if its a hotbar slot
                 } else if (slot >= 36 && slot <= 45) {
@@ -208,11 +196,7 @@ public class PacketListenerInventory extends PacketAdapter {
                                 mods.write(1, ReflectionManager.getIncrementedStateId(player));
                             }
 
-                            try {
-                                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                         }
                     }
                 }

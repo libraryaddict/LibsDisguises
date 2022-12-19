@@ -56,12 +56,8 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
 
                     player.removeMetadata("ld_tabsend", LibsDisguises.getInstance());
 
-                    try {
-                        for (PacketContainer packet : packets) {
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                        }
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                    for (PacketContainer packet : packets) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                     }
                 }
 

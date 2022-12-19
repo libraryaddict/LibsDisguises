@@ -5,8 +5,6 @@ import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -36,6 +34,7 @@ import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise.TargetType;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ZombieWatcher;
 import me.libraryaddict.disguise.utilities.json.SerializerBlockData;
 import me.libraryaddict.disguise.utilities.json.SerializerChatComponent;
@@ -54,6 +53,7 @@ import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
 import net.kyori.adventure.text.Component;
@@ -104,7 +104,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -113,6 +112,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -257,7 +257,7 @@ public class DisguiseUtilities {
     private final static ConcurrentHashMap<String, DScoreTeam> teams = new ConcurrentHashMap<>();
     private final static boolean java16;
     private static boolean criedOverJava16;
-    private static HashSet<UUID> warnedSkin = new HashSet<>();
+    private static final HashSet<UUID> warnedSkin = new HashSet<>();
     private static Boolean adventureTextSupport;
 
     static {
@@ -366,7 +366,7 @@ public class DisguiseUtilities {
             return string;
         }
 
-        return string.replaceAll("§x§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])§([0-9a-fA-F])", "<#$1$2$3$4$5$6>");
+        return string.replaceAll("§x§([\\da-fA-F])§([\\da-fA-F])§([\\da-fA-F])§([\\da-fA-F])§([\\da-fA-F])§([\\da-fA-F])", "<#$1$2$3$4$5$6>");
     }
 
     public static String getDisplayName(String playerName) {
@@ -424,11 +424,7 @@ public class DisguiseUtilities {
     }
 
     public static void removeInvisibleSlime(Player player) {
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, getDestroyPacket(DisguiseAPI.getEntityAttachmentId()), false);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, getDestroyPacket(DisguiseAPI.getEntityAttachmentId()), false);
     }
 
     public static void sendInvisibleSlime(Player player, int horseId) {
@@ -439,31 +435,21 @@ public class DisguiseUtilities {
         packet.getModifier().write(1, UUID.randomUUID());
         packet.getModifier().write(2, DisguiseType.SLIME.getTypeId());
 
-        WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-        WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(MetaIndex.SLIME_SIZE, 0);
-
-        watcher.setObject(obj, 0);
-
         if (NmsVersion.v1_15.isSupported()) {
-            PacketContainer metaPacket = ProtocolLibrary.getProtocolManager()
-                .createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, DisguiseAPI.getEntityAttachmentId(), watcher, true)
-                .createPacket(DisguiseAPI.getEntityAttachmentId(), watcher, true);
+            PacketContainer metaPacket =
+                ReflectionManager.getMetadataPacket(DisguiseAPI.getEntityAttachmentId(), Collections.singletonList(new WatcherValue(MetaIndex.SLIME_SIZE, 0)));
 
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
         } else {
+            WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+            WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(MetaIndex.SLIME_SIZE, 0);
+            watcher.setObject(obj, 0);
+
             packet.getDataWatcherModifier().write(0, watcher);
 
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
         }
 
         PacketContainer attachHorse = new PacketContainer(Server.MOUNT);
@@ -474,12 +460,8 @@ public class DisguiseUtilities {
         attachPlayer.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
         attachPlayer.getModifier().write(1, new int[]{player.getEntityId()});
 
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachHorse, false);
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachPlayer, false);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachHorse, false);
+        ProtocolLibrary.getProtocolManager().sendServerPacket(player, attachPlayer, false);
     }
 
     public static void loadViewPreferences() {
@@ -565,7 +547,12 @@ public class DisguiseUtilities {
             return new String[]{"4.8.0"};
         }
 
-        return new String[]{"5.0.1", "600"};
+        // If you're on 1.19.1
+        if (!NmsVersion.v1_19_1.isSupported()) {
+            return new String[]{"5.0.1", "600"};
+        }
+
+        return new String[]{"5.0.1", "607"};
     }
 
     public static boolean isProtocolLibOutdated() {
@@ -739,27 +726,27 @@ public class DisguiseUtilities {
             disguise = disguise.clone();
         }
 
-        String reference = null;
+        StringBuilder reference = null;
         int referenceLength = Math.max(2, (int) Math.ceil((0.1D + DisguiseConfig.getMaxClonedDisguises()) / 26D));
         int attempts = 0;
 
         while (reference == null && attempts++ < 1000) {
-            reference = "@";
+            reference = new StringBuilder("@");
 
             for (int i = 0; i < referenceLength; i++) {
-                reference += alphabet[DisguiseUtilities.random.nextInt(alphabet.length)];
+                reference.append(alphabet[DisguiseUtilities.random.nextInt(alphabet.length)]);
             }
 
-            if (DisguiseUtilities.getClonedDisguise(reference) != null) {
+            if (DisguiseUtilities.getClonedDisguise(reference.toString()) != null) {
                 reference = null;
             }
         }
 
-        if (reference != null && DisguiseUtilities.addClonedDisguise(reference, disguise)) {
+        if (reference != null && DisguiseUtilities.addClonedDisguise(reference.toString(), disguise)) {
             String entityName = DisguiseType.getType(toClone).toReadable();
 
-            LibsMsg.MADE_REF.send(player, entityName, reference);
-            LibsMsg.MADE_REF_EXAMPLE.send(player, reference);
+            LibsMsg.MADE_REF.send(player, entityName, reference.toString());
+            LibsMsg.MADE_REF_EXAMPLE.send(player, reference.toString());
         } else {
             LibsMsg.REF_TOO_MANY.send(player);
         }
@@ -938,7 +925,7 @@ public class DisguiseUtilities {
         }
 
         if ("a%%__USER__%%a".equals("a12345a") ||
-            (LibsPremium.getUserID().matches("[0-9]+") && !("" + Integer.parseInt(LibsPremium.getUserID())).equals(LibsPremium.getUserID()))) {
+            (LibsPremium.getUserID().matches("\\d+") && !("" + Integer.parseInt(LibsPremium.getUserID())).equals(LibsPremium.getUserID()))) {
             if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.isOp() || p.hasPermission("*"))) {
                 World world = Bukkit.getWorlds().get(0);
 
@@ -1225,7 +1212,7 @@ public class DisguiseUtilities {
         if (getDisguises().containsKey(entityId)) {
             Set<TargetedDisguise> disguises = getDisguises().get(entityId);
 
-            return disguises.toArray(new TargetedDisguise[disguises.size()]);
+            return disguises.toArray(new TargetedDisguise[0]);
         }
 
         return new TargetedDisguise[0];
@@ -1545,7 +1532,7 @@ public class DisguiseUtilities {
             Method m = CompileMethods.class.getMethod("main", String[].class);
 
             if ((!m.isAnnotationPresent(CompileMethods.CompileMethodsIntfer.class) ||
-                m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("[0-9]+")) && !DisguiseConfig.doOutput(true, false).isEmpty()) {
+                m.getAnnotation(CompileMethods.CompileMethodsIntfer.class).user().matches("\\d+")) && !DisguiseConfig.doOutput(true, false).isEmpty()) {
                 DisguiseConfig.setViewDisguises(false);
             }
         } catch (NoSuchMethodException e) {
@@ -1640,7 +1627,7 @@ public class DisguiseUtilities {
                 return new String[0];
             }
 
-            return ((String) map.get("body")).split("(\\r|\\n)+");
+            return ((String) map.get("body")).split("([\\r\\n])+");
         } catch (Exception ignored) {
         }
 
@@ -1894,11 +1881,14 @@ public class DisguiseUtilities {
 
         removeSelfTracker(player);
 
-        // Resend entity metadata else he will be invisible to himself until its resent
+        // Resend entity metadata else he will be invisible to themselves until its resent
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, ProtocolLibrary.getProtocolManager()
-                .createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true)
-                .createPacket(player.getEntityId(), WrappedDataWatcher.getEntityWatcher(player), true));
+            List<WatcherValue> list = WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects().stream()
+                .map(v -> new WatcherValue(MetaIndex.getMetaIndex(PlayerWatcher.class, v.getIndex()), v.getRawValue())).collect(Collectors.toList());
+
+            PacketContainer metaPacket = ReflectionManager.getMetadataPacket(player.getEntityId(), list);
+
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -2154,7 +2144,7 @@ public class DisguiseUtilities {
 
                     String testName = namePrefix + tName + nameSuffix;
 
-                    if (!isValidPlayerName(board, testName)) {
+                    if (isInvalidPlayerName(board, testName)) {
                         continue;
                     }
 
@@ -2191,7 +2181,7 @@ public class DisguiseUtilities {
 
                 String[] extended = new String[]{prefix, nName, suffix};
 
-                if ((playerName == null || !playerName.equals(extended[1])) && !isValidPlayerName(board, extended[1])) {
+                if ((playerName == null || !playerName.equals(extended[1])) && isInvalidPlayerName(board, extended[1])) {
                     continue;
                 }
 
@@ -2245,35 +2235,10 @@ public class DisguiseUtilities {
         return builder.reverse().toString();
     }
 
-    private static boolean isValidPlayerName(Scoreboard board, String name) {
-        return board.getEntryTeam(name) == null && Bukkit.getPlayerExact(name) == null;
+    private static boolean isInvalidPlayerName(Scoreboard board, String name) {
+        return board.getEntryTeam(name) != null || Bukkit.getPlayerExact(name) != null;
     }
 
-    /**
-     * Splits a string while respecting quotes.
-     * <p>
-     * Re
-     */
-    /*public static String[] split(String string) {
-        Matcher matcher = Pattern.compile("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\"(?=\\s|$))|\\S+").matcher(string);
-
-        List<String> list = new ArrayList<>();
-
-        while (matcher.find()) {
-            String match = matcher.group();
-
-            // If the match was quoted, then remove quotes and escapes
-            if (match.matches("\"(?:\"(?=\\S)|\\\\\"|[^\"])*(?:[^\\\\]\")")) {
-                // Replace the match by removing first and last quote
-                // Then remove escaped slashes from the trailing with regex
-                match = match.substring(1, match.length() - 1).replaceAll("\\\\\\\\(?=(\\\\\\\\)*$)", "\\");
-            }
-
-            list.add(matcher.group());
-        }
-
-        return list.toArray(new String[0]);
-    }*/
     public static String quote(String string) {
         string = string.replace("\n", "\\n");
 
@@ -2330,7 +2295,7 @@ public class DisguiseUtilities {
             }
         }
 
-        lines.add(builder.toString() + string.substring(last));
+        lines.add(builder + string.substring(last));
 
         return lines.toArray(new String[0]);
     }
@@ -2469,10 +2434,10 @@ public class DisguiseUtilities {
             // Send the player a packet with himself being spawned
             manager.sendServerPacket(player, manager.createPacketConstructor(Server.NAMED_ENTITY_SPAWN, player).createPacket(player));
 
-            WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(player);
+            List<WatcherValue> watcherList = WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects().stream()
+                .map(v -> new WatcherValue(MetaIndex.getMetaIndex(PlayerWatcher.class, v.getIndex()), v.getRawValue())).collect(Collectors.toList());
 
-            sendSelfPacket(player, manager.createPacketConstructor(Server.ENTITY_METADATA, player.getEntityId(), dataWatcher, true)
-                .createPacket(player.getEntityId(), dataWatcher, true));
+            sendSelfPacket(player, ReflectionManager.getMetadataPacket(player.getEntityId(), watcherList));
 
             boolean isMoving = false;
 
@@ -2542,11 +2507,11 @@ public class DisguiseUtilities {
     }
 
     public static String quoteHex(String string) {
-        return string.replaceAll("(<)(#[0-9a-fA-F]{6}>)", "$1\\$2");
+        return string.replaceAll("(<)(#[\\da-fA-F]{6}>)", "$1\\$2");
     }
 
     public static String unquoteHex(String string) {
-        return string.replaceAll("(<)\\\\(#[0-9a-fA-F]{6}>)", "$1$2");
+        return string.replaceAll("(<)\\\\(#[\\da-fA-F]{6}>)", "$1$2");
     }
 
     public static void sendMessage(CommandSender sender, String message) {
@@ -2574,7 +2539,7 @@ public class DisguiseUtilities {
     public static int[] getNumericVersion(String version) {
         int[] v = new int[0];
         for (String split : version.split("[.\\-]")) {
-            if (!split.matches("[0-9]+")) {
+            if (!split.matches("\\d+")) {
                 return v;
             }
 
@@ -2630,7 +2595,7 @@ public class DisguiseUtilities {
 
     public static String translateAlternateColorCodes(String string) {
         if (NmsVersion.v1_16.isSupported()) {
-            string = string.replaceAll("&(?=#[0-9a-fA-F]{6})", ChatColor.COLOR_CHAR + "");
+            string = string.replaceAll("&(?=#[\\da-fA-F]{6})", ChatColor.COLOR_CHAR + "");
         }
 
         return ChatColor.translateAlternateColorCodes('&', string);
@@ -2690,52 +2655,38 @@ public class DisguiseUtilities {
 
         LibsPackets transformed = PacketsManager.getPacketsHandler().transformPacket(packet, disguise, player, player);
 
-        try {
-            if (transformed.isUnhandled()) {
-                transformed.addPacket(packet);
-            }
-
-            LibsPackets newPackets = new LibsPackets(disguise);
-
-            for (PacketContainer p : transformed.getPackets()) {
-                p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-
-                newPackets.addPacket(p);
-            }
-
-            for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : transformed.getDelayedPacketsMap().entrySet()) {
-                for (PacketContainer newPacket : entry.getValue()) {
-                    if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
-                        newPacket.getIntegers().read(0) == player.getEntityId()) {
-                        newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
-                    }
-
-                    newPackets.addDelayedPacket(newPacket, entry.getKey());
-                }
-            }
-
-            if (disguise.isPlayerDisguise()) {
-                LibsDisguises.getInstance().getSkinHandler().handlePackets(player, (PlayerDisguise) disguise, newPackets);
-            }
-
-            for (PacketContainer p : newPackets.getPackets()) {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
-            }
-
-            newPackets.sendDelayed(player);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        if (transformed.isUnhandled()) {
+            transformed.addPacket(packet);
         }
-    }
 
-    public static PacketContainer getTabPacket(PlayerDisguise disguise, EnumWrappers.PlayerInfoAction action) {
-        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        LibsPackets newPackets = new LibsPackets(disguise);
 
-        addTab.getPlayerInfoAction().write(0, action);
-        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-            new PlayerInfoData(disguise.getGameProfile(), 0, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(disguise.getName()))));
+        for (PacketContainer p : transformed.getPackets()) {
+            p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
 
-        return addTab;
+            newPackets.addPacket(p);
+        }
+
+        for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : transformed.getDelayedPacketsMap().entrySet()) {
+            for (PacketContainer newPacket : entry.getValue()) {
+                if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
+                    newPacket.getIntegers().read(0) == player.getEntityId()) {
+                    newPacket.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());
+                }
+
+                newPackets.addDelayedPacket(newPacket, entry.getKey());
+            }
+        }
+
+        if (disguise.isPlayerDisguise()) {
+            LibsDisguises.getInstance().getSkinHandler().handlePackets(player, (PlayerDisguise) disguise, newPackets);
+        }
+
+        for (PacketContainer p : newPackets.getPackets()) {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, p, false);
+        }
+
+        newPackets.sendDelayed(player);
     }
 
     /**
@@ -2890,38 +2841,26 @@ public class DisguiseUtilities {
         }
     }
 
-    /**
-     * Create a new datawatcher but with the 'correct' values
-     */
-    public static WrappedDataWatcher createSanitizedDataWatcher(Player player, WrappedDataWatcher entityWatcher, FlagWatcher disguiseWatcher) {
-        WrappedDataWatcher newWatcher = new WrappedDataWatcher();
+    public static WrappedDataWatcher createDatawatcher(List<WatcherValue> watcherValues) {
+        WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-        try {
-            List<WrappedWatchableObject> list = DisguiseConfig.isMetaPacketsEnabled() ? disguiseWatcher.convert(player, entityWatcher.getWatchableObjects()) :
-                disguiseWatcher.getWatchableObjects();
-
-            for (WrappedWatchableObject watchableObject : list) {
-                if (watchableObject == null) {
-                    continue;
-                }
-
-                Object object = watchableObject.getRawValue();
-
-                if (object == null) {
-                    continue;
-                }
-
-                MetaIndex metaIndex = MetaIndex.getMetaIndex(disguiseWatcher, watchableObject.getIndex());
-
-                WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(metaIndex, object);
-
-                newWatcher.setObject(obj, object);
+        for (WatcherValue value : watcherValues) {
+            if (value == null) {
+                continue;
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+
+            watcher.setObject(value.getIndex(), value.getWatchableObject());
         }
 
-        return newWatcher;
+        return watcher;
+    }
+
+    public static List<WatcherValue> createSanitizedWatcherValues(Player player, WrappedDataWatcher entityWatcher, FlagWatcher flagWatcher) {
+        if (!DisguiseConfig.isMetaPacketsEnabled()) {
+            return flagWatcher.getWatchableObjects();
+        }
+
+        return flagWatcher.convert(player, WatcherValue.getValues(entityWatcher));
     }
 
     public static byte getPitch(DisguiseType disguiseType, EntityType entityType, byte value) {
@@ -3021,8 +2960,6 @@ public class DisguiseUtilities {
                     continue;
                 }
 
-                WrappedDataWatcher watcher = new WrappedDataWatcher();
-
                 Object name;
 
                 if (NmsVersion.v1_13.isSupported()) {
@@ -3031,15 +2968,10 @@ public class DisguiseUtilities {
                     name = ChatColor.translateAlternateColorCodes('&', newNames[i]);
                 }
 
-                WrappedDataWatcher.WrappedDataWatcherObject obj =
-                    ReflectionManager.createDataWatcherObject(NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD,
-                        name);
+                MetaIndex index = NmsVersion.v1_13.isSupported() ? MetaIndex.ENTITY_CUSTOM_NAME : MetaIndex.ENTITY_CUSTOM_NAME_OLD;
 
-                watcher.setObject(obj, ReflectionManager.convertInvalidMeta(name));
-
-                PacketContainer metaPacket =
-                    ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, 0, watcher, true)
-                        .createPacket(standIds[i], watcher, true);
+                PacketContainer metaPacket = ReflectionManager.getMetadataPacket(standIds[i],
+                    Collections.singletonList(new WatcherValue(index, ReflectionManager.convertInvalidMeta(name))));
 
                 packets.add(metaPacket);
             } else if (newNames[i].isEmpty()) {
@@ -3060,7 +2992,7 @@ public class DisguiseUtilities {
                 packet.getDoubles().write(2, loc.getZ());
                 packets.add(packet);
 
-                WrappedDataWatcher watcher = new WrappedDataWatcher();
+                List<WatcherValue> watcherValues = new ArrayList<>();
 
                 for (MetaIndex index : MetaIndex.getMetaIndexes(ArmorStandWatcher.class)) {
                     Object val = index.getDefault();
@@ -3077,18 +3009,18 @@ public class DisguiseUtilities {
                         val = true;
                     }
 
-                    WrappedDataWatcher.WrappedDataWatcherObject obj = ReflectionManager.createDataWatcherObject(index, val);
-
-                    watcher.setObject(obj, ReflectionManager.convertInvalidMeta(val));
+                    watcherValues.add(new WatcherValue(index, val));
                 }
 
                 if (NmsVersion.v1_15.isSupported()) {
-                    PacketContainer metaPacket =
-                        ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, standIds[i], watcher, true)
-                            .createPacket(standIds[i], watcher, true);
+                    PacketContainer metaPacket = ReflectionManager.getMetadataPacket(standIds[i], watcherValues);
 
                     packets.add(metaPacket);
                 } else {
+                    WrappedDataWatcher watcher = new WrappedDataWatcher();
+
+                    watcherValues.forEach(v -> watcher.setObject(v.getIndex(), ReflectionManager.createDataWatcherObject(v.getMetaIndex(), v.getValue())));
+
                     packet.getDataWatcherModifier().write(0, watcher);
                 }
             }

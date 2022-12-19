@@ -1,6 +1,10 @@
 package me.libraryaddict.disguise.utilities.reflection.v1_18_1;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
@@ -76,6 +80,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -229,13 +234,18 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return net.minecraft.core.Direction.from2DDataValue(direction);
     }
 
-    public ClientboundPlayerInfoPacket.Action getEnumPlayerInfoAction(int action) {
-        return ClientboundPlayerInfoPacket.Action.values()[action];
-    }
+    @Override
+    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible) {
+        ClientboundPlayerInfoPacket.PlayerUpdate entry =
+            new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL, new TextComponent(displayName));
 
-    public ClientboundPlayerInfoPacket.PlayerUpdate getPlayerInfoData(WrappedGameProfile gameProfile) {
-        return new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL,
-            new TextComponent(gameProfile.getName()));
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+        StructureModifier<Object> modifier = packet.getModifier();
+
+        modifier.write(0, ClientboundPlayerInfoPacket.Action.valueOf(action.name()));
+        modifier.write(1, Collections.singletonList(entry));
+
+        return packet;
     }
 
     public Object getNmsEntity(Entity entity) {

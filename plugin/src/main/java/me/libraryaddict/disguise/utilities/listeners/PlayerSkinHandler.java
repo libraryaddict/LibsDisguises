@@ -21,6 +21,9 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
+import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,6 +36,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,11 +165,7 @@ public class PlayerSkinHandler implements Listener {
 
             packet.getModifier().write(0, id);
 
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
         }
     }
 
@@ -259,11 +259,11 @@ public class PlayerSkinHandler implements Listener {
         }
 
         Entity entity = disguise.getEntity();
-        WrappedDataWatcher watcher = DisguiseUtilities.createSanitizedDataWatcher(player, WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
 
-        PacketContainer metaPacket =
-            ProtocolLibrary.getProtocolManager().createPacketConstructor(PacketType.Play.Server.ENTITY_METADATA, entity.getEntityId(), watcher, true)
-                .createPacket(entity.getEntityId(), watcher, true);
+        List<WatcherValue> watcherValues =
+            DisguiseUtilities.createSanitizedWatcherValues(player, WrappedDataWatcher.getEntityWatcher(entity), disguise.getWatcher());
+
+        PacketContainer metaPacket = ReflectionManager.getMetadataPacket(entity.getEntityId(), watcherValues);
 
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket, false);
     }
@@ -319,16 +319,16 @@ public class PlayerSkinHandler implements Listener {
         }
 
         try {
-            for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : skin.getSleptPackets().entrySet()) {
-                if (entry.getKey() == 0) {
-                    for (PacketContainer packet : entry.getValue()) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-                    }
-                } else {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            try {
+            if (disguise.isDisguiseInUse()) {
+                for (Map.Entry<Integer, ArrayList<PacketContainer>> entry : skin.getSleptPackets().entrySet()) {
+                    if (entry.getKey() == 0) {
+                        for (PacketContainer packet : entry.getValue()) {
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
+                        }
+                    } else {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
                                 if (!disguise.isDisguiseInUse()) {
                                     return;
                                 }
@@ -336,39 +336,37 @@ public class PlayerSkinHandler implements Listener {
                                 for (PacketContainer packet : entry.getValue()) {
                                     ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
                                 }
+                            }
+                        }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
+                    }
+                }
+
+                if (skin.isSleepPackets()) {
+                    addTeleport(player, skin);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                addMetadata(player, skin);
                             } catch (InvocationTargetException e) {
                                 e.printStackTrace();
                             }
                         }
-                    }.runTaskLater(LibsDisguises.getInstance(), entry.getKey());
+                    }.runTask(LibsDisguises.getInstance());
                 }
-            }
 
-            if (skin.isSleepPackets()) {
-                addTeleport(player, skin);
+                if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {
+                    ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(disguise, new String[0]);
 
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            addMetadata(player, skin);
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                    for (PacketContainer p : packets) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, p);
                     }
-                }.runTask(LibsDisguises.getInstance());
-            }
-
-            if (DisguiseConfig.isArmorstandsName() && disguise.isNameVisible() && disguise.getMultiNameLength() > 0) {
-                ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(disguise, new String[0]);
-
-                for (PacketContainer p : packets) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, p);
                 }
             }
 
             if (skin.isDoTabList()) {
-                PacketContainer packetContainer = DisguiseUtilities.getTabPacket(disguise, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+                PacketContainer packetContainer = ReflectionManager.createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
             }

@@ -277,11 +277,7 @@ public class DisguiseListener implements Listener {
 
             packet.getItemModifier().write(0, currentlyHeld);
 
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
         }
 
         org.bukkit.inventory.ItemStack newHeld = player.getInventory().getItem(event.getNewSlot());
@@ -301,11 +297,7 @@ public class DisguiseListener implements Listener {
 
             packet.getItemModifier().write(0, new ItemStack(Material.AIR));
 
-            try {
-                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
         }
     }
 
@@ -460,10 +452,8 @@ public class DisguiseListener implements Listener {
                 PlayerDisguise disguise = (PlayerDisguise) targetedDisguise;
 
                 if (disguise.isDisplayedInTab()) {
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, DisguiseUtilities.getTabPacket(disguise, PlayerInfoAction.ADD_PLAYER));
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                    for (PacketContainer packet : ReflectionManager.createTablistAddPackets(disguise)) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
                     }
                 }
             }

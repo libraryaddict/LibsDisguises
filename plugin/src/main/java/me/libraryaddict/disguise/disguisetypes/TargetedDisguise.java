@@ -13,7 +13,6 @@ import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,21 +55,12 @@ public abstract class TargetedDisguise extends Disguise {
                 DisguiseUtilities.refreshTracker(this, playername);
 
                 if (isHidePlayer() && getEntity() instanceof Player) {
-                    try {
-                        Player player = Bukkit.getPlayerExact(playername);
+                    Player player = Bukkit.getPlayerExact(playername);
 
-                        if (player != null) {
-                            PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                    if (player != null) {
+                        PacketContainer deleteTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), !canSee(player));
 
-                            deleteTab.getPlayerInfoAction().write(0, canSee(player) ? PlayerInfoAction.REMOVE_PLAYER : PlayerInfoAction.ADD_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0, NativeGameMode.SURVIVAL,
-                                    WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
-
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
-                        }
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                     }
                 }
             }
@@ -126,21 +116,12 @@ public abstract class TargetedDisguise extends Disguise {
                 DisguiseUtilities.refreshTracker(this, playername);
 
                 if (isHidePlayer() && getEntity() instanceof Player) {
-                    try {
-                        Player player = Bukkit.getPlayerExact(playername);
+                    Player player = Bukkit.getPlayerExact(playername);
 
-                        if (player != null) {
-                            PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+                    if (player != null) {
+                        PacketContainer deleteTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), canSee(player));
 
-                            deleteTab.getPlayerInfoAction().write(0, canSee(player) ? PlayerInfoAction.ADD_PLAYER : PlayerInfoAction.REMOVE_PLAYER);
-                            deleteTab.getPlayerInfoDataLists().write(0, Arrays.asList(
-                                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0, NativeGameMode.SURVIVAL,
-                                    WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())))));
-
-                            ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
-                        }
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -71,9 +72,7 @@ public interface ReflectionManagerAbstract {
 
     Enum getEnumDirection(int direction);
 
-    Enum getEnumPlayerInfoAction(int action);
-
-    Object getPlayerInfoData(WrappedGameProfile gameProfile);
+    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible);
 
     Object getNmsEntity(Entity entity);
 

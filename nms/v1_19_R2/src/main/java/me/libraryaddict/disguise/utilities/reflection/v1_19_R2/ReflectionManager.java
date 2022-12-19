@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.v1_19_1;
+package me.libraryaddict.disguise.utilities.reflection.v1_19_R2;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -18,13 +18,14 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManagerAbstract;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vector3f;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
@@ -42,11 +43,12 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
+import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.decoration.PaintingVariants;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,16 +62,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_19_R1.CraftArt;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_19_R2.CraftArt;
+import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -88,6 +90,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -143,13 +146,17 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             net.minecraft.world.entity.Entity entity;
             if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
                 WrappedGameProfile gameProfile = ReflectionManagerAbstract.getGameProfile(new UUID(0, 0), "Steve");
-                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle(), null);
+                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle());
             }/* else if (entityType == net.minecraft.world.entity.EntityType.ENDER_PEARL) {
                 entity = new ThrownEnderpearl(world, (net.minecraft.world.entity.LivingEntity) createEntityInstance("cow"));
             } else if (entityType == net.minecraft.world.entity.EntityType.FISHING_BOBBER) {
                 entity = new FishingHook((net.minecraft.world.entity.player.Player) createEntityInstance("player"), world, 0, 0);
             }*/ else {
                 entity = entityType.create(world);
+            }
+
+            if (entity == null) {
+                return null;
             }
 
             // Workaround for paper being 2 smart 4 me
@@ -230,7 +237,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public String getEnumArt(Art art) {
-        return Registry.PAINTING_VARIANT.getKey(CraftArt.BukkitToNotch(art).value()).getPath();
+        return BuiltInRegistries.PAINTING_VARIANT.getKey(CraftArt.BukkitToNotch(art).value()).getPath();
     }
 
     public BlockPos getBlockPosition(int x, int y, int z) {
@@ -241,15 +248,22 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return net.minecraft.core.Direction.from2DDataValue(direction);
     }
 
-    @Override
     public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible) {
-        ClientboundPlayerInfoPacket.PlayerUpdate entry =
-            new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL, Component.literal(displayName), null);
+        if (action == EnumWrappers.PlayerInfoAction.REMOVE_PLAYER) {
+            PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
+            packet.getModifier().write(0, Collections.singletonList(gameProfile.getUUID()));
+
+            return packet;
+        }
+
+        ClientboundPlayerInfoUpdatePacket.Entry entry =
+            new ClientboundPlayerInfoUpdatePacket.Entry(gameProfile.getUUID(), (GameProfile) gameProfile.getHandle(), nameVisible, 0, GameType.SURVIVAL,
+                Component.literal(displayName), null);
 
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         StructureModifier<Object> modifier = packet.getModifier();
 
-        modifier.write(0, ClientboundPlayerInfoPacket.Action.valueOf(action.name()));
+        modifier.write(0, EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name())));
         modifier.write(1, Collections.singletonList(entry));
 
         return packet;
@@ -375,7 +389,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public String getItemName(Material material) {
-        return Registry.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
+        return BuiltInRegistries.ITEM.getKey(CraftMagicNumbers.getItem(material)).getPath();
     }
 
     public net.minecraft.world.item.ItemStack getNmsItem(ItemStack itemStack) {
@@ -383,18 +397,18 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public VillagerData getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession) {
-        VillagerType nmsVillagerType = Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(villagerType.getKey()));
-        VillagerProfession nmsVillagerProfession = Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
+        VillagerType nmsVillagerType = BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(villagerType.getKey()));
+        VillagerProfession nmsVillagerProfession = BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
 
         return new net.minecraft.world.entity.npc.VillagerData(nmsVillagerType, nmsVillagerProfession, 1);
     }
 
     public VillagerType getVillagerType(Villager.Type type) {
-        return Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()));
+        return BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()));
     }
 
     public VillagerProfession getVillagerProfession(Villager.Profession profession) {
-        return Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(profession.getKey()));
+        return BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(profession.getKey()));
     }
 
     public <T> SynchedEntityData.DataItem<T> createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem) {
@@ -403,7 +417,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     @Deprecated
     public SoundEvent createSoundEffect(String minecraftKey) {
-        return new SoundEvent(new ResourceLocation(minecraftKey));
+        throw new UnsupportedOperationException("createSoundEffect has been deprecated with nnew changes");
     }
 
     @Override
@@ -422,15 +436,16 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public Object registerEntityType(NamespacedKey key) {
         net.minecraft.world.entity.EntityType<net.minecraft.world.entity.Entity> newEntity =
-            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0);
-        Registry.register(Registry.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
+            new net.minecraft.world.entity.EntityType<>(null, null, false, false, false, false, null, null, 0, 0, FeatureFlagSet.of());
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(key), newEntity);
         newEntity.getDescriptionId();
         return newEntity; // TODO ??? Some reflection in legacy that I'm unsure about
     }
 
     public int getEntityTypeId(Object entityTypes) {
         net.minecraft.world.entity.EntityType entityType = (net.minecraft.world.entity.EntityType) entityTypes;
-        return Registry.ENTITY_TYPE.getId(entityType);
+
+        return BuiltInRegistries.ENTITY_TYPE.getId(entityType);
     }
 
     public int getEntityTypeId(EntityType entityType) {
@@ -438,7 +453,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public Object getEntityType(NamespacedKey name) {
-        return Registry.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
+        return BuiltInRegistries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(name));
     }
 
     public Object getNmsEntityPose(String enumPose) {
@@ -469,7 +484,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R1.inventory.CraftMetaItem$SerializableMeta");
+            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_19_R2.inventory.CraftMetaItem$SerializableMeta");
             Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
             Object itemMeta = deserialize.invoke(null, meta);
 
@@ -492,7 +507,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         }
 
         if (value instanceof Art) {
-            return Registry.PAINTING_VARIANT.getHolderOrThrow(getArtVariant((Art) value));
+            return getArtVariant((Art) value);
         }
 
         return value;
@@ -512,98 +527,10 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     private CatVariant getCatVariant(Cat.Type type) {
-        switch (type) {
-            case TABBY:
-                return CatVariant.TABBY;
-            case BLACK:
-                return CatVariant.BLACK;
-            case RED:
-                return CatVariant.RED;
-            case SIAMESE:
-                return CatVariant.SIAMESE;
-            case BRITISH_SHORTHAIR:
-                return CatVariant.BRITISH_SHORTHAIR;
-            case CALICO:
-                return CatVariant.CALICO;
-            case PERSIAN:
-                return CatVariant.PERSIAN;
-            case RAGDOLL:
-                return CatVariant.RAGDOLL;
-            case WHITE:
-                return CatVariant.WHITE;
-            case JELLIE:
-                return CatVariant.JELLIE;
-            case ALL_BLACK:
-                return CatVariant.ALL_BLACK;
-        }
-
-        return null;
+        return BuiltInRegistries.CAT_VARIANT.byId(type.ordinal());
     }
 
-    private ResourceKey<PaintingVariant> getArtVariant(Art art) {
-        switch (art) {
-            case KEBAB:
-                return PaintingVariants.KEBAB;
-            case AZTEC:
-                return PaintingVariants.AZTEC;
-            case ALBAN:
-                return PaintingVariants.ALBAN;
-            case AZTEC2:
-                return PaintingVariants.AZTEC2;
-            case BOMB:
-                return PaintingVariants.BOMB;
-            case PLANT:
-                return PaintingVariants.PLANT;
-            case WASTELAND:
-                return PaintingVariants.WASTELAND;
-            case POOL:
-                return PaintingVariants.POOL;
-            case COURBET:
-                return PaintingVariants.COURBET;
-            case SEA:
-                return PaintingVariants.SEA;
-            case SUNSET:
-                return PaintingVariants.SUNSET;
-            case CREEBET:
-                return PaintingVariants.CREEBET;
-            case WANDERER:
-                return PaintingVariants.WANDERER;
-            case GRAHAM:
-                return PaintingVariants.GRAHAM;
-            case MATCH:
-                return PaintingVariants.MATCH;
-            case BUST:
-                return PaintingVariants.BUST;
-            case STAGE:
-                return PaintingVariants.STAGE;
-            case VOID:
-                return PaintingVariants.VOID;
-            case SKULL_AND_ROSES:
-                return PaintingVariants.SKULL_AND_ROSES;
-            case WITHER:
-                return PaintingVariants.WITHER;
-            case FIGHTERS:
-                return PaintingVariants.FIGHTERS;
-            case POINTER:
-                return PaintingVariants.POINTER;
-            case PIGSCENE:
-                return PaintingVariants.PIGSCENE;
-            case BURNING_SKULL:
-                return PaintingVariants.BURNING_SKULL;
-            case SKELETON:
-                return PaintingVariants.SKELETON;
-            case DONKEY_KONG:
-                return PaintingVariants.DONKEY_KONG;
-            case EARTH:
-                return PaintingVariants.EARTH;
-            case WIND:
-                return PaintingVariants.WIND;
-            case WATER:
-                return PaintingVariants.WATER;
-            case FIRE:
-                return PaintingVariants.FIRE;
-        }
-
-        return null;
+    private Holder.Reference<PaintingVariant> getArtVariant(Art art) {
+        return BuiltInRegistries.PAINTING_VARIANT.getHolder(art.ordinal()).get();
     }
 }

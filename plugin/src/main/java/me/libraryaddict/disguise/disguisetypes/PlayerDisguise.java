@@ -4,6 +4,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.google.gson.Gson;
 import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -360,18 +361,14 @@ public class PlayerDisguise extends TargetedDisguise {
             }
 
             if (isDisplayedInTab()) {
-                PacketContainer addTab = DisguiseUtilities.getTabPacket(this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
+                PacketContainer addTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
 
-                try {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!canSee(player)) {
-                            continue;
-                        }
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!canSee(player)) {
+                        continue;
                     }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                 }
             }
         } else {
@@ -525,22 +522,19 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisplayedInTab()) {
-            PacketContainer addTab = DisguiseUtilities.getTabPacket(this, PlayerInfoAction.ADD_PLAYER);
+            PacketContainer[] addTabs = ReflectionManager.createTablistAddPackets(this);
+            PacketContainer deleteTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.REMOVE_PLAYER);
 
-            PacketContainer deleteTab = addTab.shallowClone();
-            deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-
-            try {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!canSee(player)) {
-                        continue;
-                    }
-
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (!canSee(player)) {
+                    continue;
                 }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+
+                for (PacketContainer packet : addTabs) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                }
             }
         }
 

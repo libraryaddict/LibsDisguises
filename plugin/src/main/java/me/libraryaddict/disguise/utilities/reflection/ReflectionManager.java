@@ -1,11 +1,17 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -20,6 +26,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.VillagerData;
 import me.libraryaddict.disguise.disguisetypes.watchers.AgeableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArrowWatcher;
@@ -100,9 +107,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -523,6 +533,28 @@ public class ReflectionManager {
         return -1;
     }
 
+    public static PacketContainer getMetadataPacket(int entityId, List<WatcherValue> values) {
+        Object[] params;
+
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+
+        metaPacket.getIntegers().write(0, entityId);
+
+        if (NmsVersion.v1_19_R2.isSupported()) {
+            List<WrappedDataValue> dataValues = new ArrayList<>();
+            values.forEach(v -> dataValues.add(v.getDataValue()));
+
+            metaPacket.getDataValueCollectionModifier().write(0, dataValues);
+        } else {
+            List<WrappedWatchableObject> dataValues = new ArrayList<>();
+            values.forEach(v -> dataValues.add(v.getWatchableObject()));
+
+            metaPacket.getWatchableCollectionModifier().write(0, dataValues);
+        }
+
+        return metaPacket;
+    }
+
     public static Object getPlayerConnectionOrPlayer(Player player) {
         if (nmsReflection != null) {
             return nmsReflection.getPlayerConnectionOrPlayer(player);
@@ -754,11 +786,10 @@ public class ReflectionManager {
                 }
 
                 version = v;
-                break;
             }
 
-            if (version == NmsVersion.v1_19 && Bukkit.getVersion().contains("1.19.")) {
-                version = NmsVersion.v1_19_1;
+            if (version == NmsVersion.v1_19_1 && !Bukkit.getVersion().matches("1\\.19\\.[12]")) {
+                version = NmsVersion.v1_19;
             }
         }
 
@@ -917,10 +948,6 @@ public class ReflectionManager {
     }
 
     public static Enum getEnumPlayerInfoAction(int action) {
-        if (nmsReflection != null) {
-            return nmsReflection.getEnumPlayerInfoAction(action);
-        }
-
         try {
             return enumPlayerInfoAction[action];
         } catch (Exception ex) {
@@ -930,15 +957,57 @@ public class ReflectionManager {
         return null;
     }
 
-    public static Object getPlayerInfoData(Object playerInfoPacket, WrappedGameProfile gameProfile) {
+    public static PacketContainer updateTablistVisibility(Player player, boolean visible) {
+        if (NmsVersion.v1_19_R2.isSupported()) {
+            return nmsReflection.getTabListPacket(player.getPlayerListName(), ReflectionManager.getGameProfile(player),
+                EnumWrappers.PlayerInfoAction.UPDATE_LISTED, visible);
+        }
+
+        PlayerInfoData playerInfo =
+            new PlayerInfoData(ReflectionManager.getGameProfile(player), 0, EnumWrappers.NativeGameMode.fromBukkit((player).getGameMode()),
+                WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName(player)));
+
+        PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
+
+        addTab.getPlayerInfoAction().write(0, visible ? EnumWrappers.PlayerInfoAction.ADD_PLAYER : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+        addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
+
+        return addTab;
+    }
+
+    public static PacketContainer[] createTablistAddPackets(PlayerDisguise disguise) {
+        if (!NmsVersion.v1_19_R2.isSupported()) {
+            return new PacketContainer[]{createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER)};
+        }
+
+        PacketContainer[] packets = new PacketContainer[disguise.isDisplayedInTab() ? 3 : 2];
+        packets[0] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
+        packets[1] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME);
+
+        if (disguise.isDisplayedInTab()) {
+            packets[2] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
+        }
+
+        return packets;
+    }
+
+    public static PacketContainer createTablistPacket(PlayerDisguise disguise, EnumWrappers.PlayerInfoAction action) {
         if (nmsReflection != null) {
-            return nmsReflection.getPlayerInfoData(gameProfile);
+            return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), action, disguise.isDisplayedInTab());
         }
 
         try {
-            Object playerListName = chatComponentConstructor.newInstance(gameProfile.getName());
+            Object playerListName = chatComponentConstructor.newInstance(disguise.getGameProfile().getName());
+            PacketContainer sendTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-            return packetPlayOutConstructor.newInstance(playerInfoPacket, gameProfile.getHandle(), 0, enumGamemode[1], playerListName);
+            // Add player to the list, necessary to spawn them
+            sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(action.ordinal()));
+
+            List playerList = Collections.singletonList(
+                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile()));
+            sendTab.getModifier().write(1, playerList);
+
+            return sendTab;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1214,6 +1283,7 @@ public class ReflectionManager {
             Object minecraftServer = getMinecraftServer();
 
             LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
+
             if (nmsReflection != null) {
                 nmsReflection.injectCallback(playername, callback);
             } else {
@@ -2127,6 +2197,7 @@ public class ReflectionManager {
      * sound volume
      * for mob noises. As well as setting their watcher class and entity size.
      */
+    @SneakyThrows
     public static void registerValues() {
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
@@ -2206,6 +2277,7 @@ public class ReflectionManager {
                 case MARKER:
                 case TADPOLE:
                 case WARDEN:
+                case CAMEL:
                     nmsEntityName = disguiseType.toReadable().replace(" ", "");
                     break;
                 case DONKEY:

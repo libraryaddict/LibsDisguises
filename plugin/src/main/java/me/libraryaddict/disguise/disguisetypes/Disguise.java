@@ -1,12 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,10 +41,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -189,18 +183,15 @@ public abstract class Disguise {
 
         ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(this, oldName);
 
-        try {
-            for (Player player : DisguiseUtilities.getPerverts(this)) {
-                if (isPlayerDisguise() && LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
-                    continue;
-                }
-
-                for (PacketContainer packet : packets) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
+        for (Player player : DisguiseUtilities.getPerverts(this)) {
+            if (!NmsVersion.v1_19_R2.isSupported() && isPlayerDisguise() &&
+                LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
+                continue;
             }
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+
+            for (PacketContainer packet : packets) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            }
         }
     }
 
@@ -752,34 +743,23 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-                PacketContainer deleteTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-                deleteTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-                deleteTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-                    new PlayerInfoData(disguise.getGameProfile(), 0, NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(disguise.getProfileName()))));
+                PacketContainer deleteTab = ReflectionManager.createTablistPacket(disguise, PlayerInfoAction.REMOVE_PLAYER);
 
-                try {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player)) {
-                            continue;
-                        }
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!((TargetedDisguise) this).canSee(player)) {
+                        continue;
                     }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
                 }
             }
         }
 
         if (getInternalArmorstandIds().length > 0) {
-            try {
-                PacketContainer packet = DisguiseUtilities.getDestroyPacket(getInternalArmorstandIds());
+            PacketContainer packet = DisguiseUtilities.getDestroyPacket(getInternalArmorstandIds());
 
-                for (Player player : getEntity().getWorld().getPlayers()) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            for (Player player : getEntity().getWorld().getPlayers()) {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             }
         }
 
@@ -803,25 +783,14 @@ public abstract class Disguise {
         }
 
         if (isHidePlayer() && getEntity() instanceof Player && ((Player) getEntity()).isOnline()) {
-            PlayerInfoData playerInfo =
-                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0, NativeGameMode.fromBukkit(((Player) getEntity()).getGameMode()),
-                    WrappedChatComponent.fromText(DisguiseUtilities.getPlayerListName((Player) getEntity())));
+            PacketContainer addTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), true);
 
-            PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-
-            addTab.getPlayerInfoAction().write(0, PlayerInfoAction.ADD_PLAYER);
-            addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
-
-            try {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player)) {
-                        continue;
-                    }
-
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (!((TargetedDisguise) this).canSee(player)) {
+                    continue;
                 }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
             }
         }
 
@@ -1016,18 +985,16 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-                PacketContainer addTab = DisguiseUtilities.getTabPacket(disguise, PlayerInfoAction.ADD_PLAYER);
+                PacketContainer[] addTabs = ReflectionManager.createTablistAddPackets(disguise);
 
-                try {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!((TargetedDisguise) this).canSee(player)) {
-                            continue;
-                        }
-
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!((TargetedDisguise) this).canSee(player)) {
+                        continue;
                     }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+
+                    for (PacketContainer packet : addTabs) {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+                    }
                 }
             }
         }
@@ -1055,21 +1022,14 @@ public abstract class Disguise {
         }, 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
-            PacketContainer removeTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
-            removeTab.getPlayerInfoAction().write(0, PlayerInfoAction.REMOVE_PLAYER);
-            removeTab.getPlayerInfoDataLists().write(0, Collections.singletonList(
-                new PlayerInfoData(ReflectionManager.getGameProfile((Player) getEntity()), 0, NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(""))));
+            PacketContainer removeTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), false);
 
-            try {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!((TargetedDisguise) this).canSee(player)) {
-                        continue;
-                    }
-
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, removeTab);
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (!((TargetedDisguise) this).canSee(player)) {
+                    continue;
                 }
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, removeTab);
             }
         }
 

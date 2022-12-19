@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BeeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
@@ -260,6 +261,12 @@ public class MetaIndex<Y> {
 
     @NmsAddedIn(NmsVersion.v1_13)
     public static MetaIndex<Integer> BOAT_SHAKE = new MetaIndex<>(BoatWatcher.class, 6, 0);
+
+    @NmsAddedIn(NmsVersion.v1_19_R2)
+    public static MetaIndex<Boolean> CAMEL_DASHING = new MetaIndex<>(CamelWatcher.class, 0, false);
+
+    @NmsAddedIn(NmsVersion.v1_19_R2)
+    public static MetaIndex<Long> CAMEL_LAST_POSE_CHANGED = new MetaIndex<>(CamelWatcher.class, 1, 0L);
 
     @NmsAddedIn(NmsVersion.v1_14)
     @NmsRemovedIn(NmsVersion.v1_19)

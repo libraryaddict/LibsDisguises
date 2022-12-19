@@ -23,8 +23,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.22</lombok.version>
-        <protocollib.version>4.7.0</protocollib.version>
-        <spigot.version>1.19-R0.1-SNAPSHOT</spigot.version>
+        <protocollib.version>5.0.0-SNAPSHOT</protocollib.version>
+        <spigot.version>1.19.3-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <paper-api.version>1.16.5-R0.1-SNAPSHOT</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
@@ -35,11 +35,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--<dependency>
+                 <groupId>com.comphenix.protocol</groupId>
+                 <artifactId>ProtocolLib</artifactId>
+                 <version>${protocollib.version}</version>
+                 <optional>true</optional>
+             </dependency>-->
             <dependency>
-                <groupId>com.comphenix.protocol</groupId>
+                <groupId>com.github.dmulloy2</groupId>
                 <artifactId>ProtocolLib</artifactId>
-                <version>${protocollib.version}</version>
-                <optional>true</optional>
+                <version>eebb99f</version>
             </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
@@ -76,6 +81,11 @@
         <repository>
             <id>lumine</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
 
         <repository>

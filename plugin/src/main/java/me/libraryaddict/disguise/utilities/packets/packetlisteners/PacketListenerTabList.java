@@ -9,11 +9,14 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class PacketListenerTabList extends PacketAdapter {
     public PacketListenerTabList(LibsDisguises plugin) {
@@ -27,16 +30,34 @@ public class PacketListenerTabList extends PacketAdapter {
         }
 
         Player observer = event.getPlayer();
+        Set<PlayerInfoAction> actions;
 
-        if (event.getPacket().getPlayerInfoAction().read(0) != PlayerInfoAction.ADD_PLAYER) {
+        if (NmsVersion.v1_19_R2.isSupported()) {
+            actions = event.getPacket().getPlayerInfoActions().read(0);
+        } else {
+            actions = EnumSet.of(event.getPacket().getPlayerInfoAction().read(0));
+        }
+
+        if (actions.stream().noneMatch(a -> a == PlayerInfoAction.ADD_PLAYER)) {
             return;
         }
 
-        List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().read(0);
+        List<PlayerInfoData> list = event.getPacket().getPlayerInfoDataLists().read(NmsVersion.v1_19_R2.isSupported() ? 1 : 0);
         Iterator<PlayerInfoData> itel = list.iterator();
+        Iterator<PlayerInfoAction> actionItel = actions.iterator();
 
         while (itel.hasNext()) {
             PlayerInfoData data = itel.next();
+
+            if (NmsVersion.v1_19_R2.isSupported()) {
+                if (actionItel.next() != PlayerInfoAction.ADD_PLAYER) {
+                    continue;
+                }
+            }
+
+            if (data == null) {
+                continue;
+            }
 
             Player player = Bukkit.getPlayer(data.getProfile().getUUID());
 
@@ -55,12 +76,23 @@ public class PacketListenerTabList extends PacketAdapter {
             }
 
             itel.remove();
+
+            if (NmsVersion.v1_19_R2.isSupported()) {
+                actionItel.remove();
+            }
         }
 
         if (list.isEmpty()) {
             event.setCancelled(true);
-        } else {
-            event.getPacket().getPlayerInfoDataLists().write(0, list);
+            return;
         }
+
+        event.getPacket().getPlayerInfoDataLists().write(NmsVersion.v1_19_R2.isSupported() ? 1 : 0, list);
+
+        if (!NmsVersion.v1_19_R2.isSupported()) {
+            return;
+        }
+
+        event.getPacket().getPlayerInfoActions().write(0, actions);
     }
 }

@@ -77,13 +77,9 @@ public class LibsPackets {
                     packets.removeIf(p -> p.getType() != PacketType.Play.Server.PLAYER_INFO);
                 }
 
-                try {
-                    for (PacketContainer packet : entry.getValue()) {
-                        // To have right click handled properly, equip packets sent are normal
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, packet.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT);
-                    }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                for (PacketContainer packet : entry.getValue()) {
+                    // To have right click handled properly, equip packets sent are normal
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(observer, packet, packet.getType() == PacketType.Play.Server.ENTITY_EQUIPMENT);
                 }
             }, entry.getKey());
         }

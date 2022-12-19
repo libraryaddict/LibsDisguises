@@ -1,10 +1,14 @@
 package me.libraryaddict.disguise.disguisetypes;
 
+import lombok.SneakyThrows;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -28,6 +32,8 @@ public enum DisguiseType {
     BLAZE,
 
     BOAT(1),
+
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) CAMEL,
 
     @NmsAddedIn(NmsVersion.v1_14) CAT,
 
@@ -256,9 +262,7 @@ public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_16) ZOMBIFIED_PIGLIN;
 
     public static DisguiseType getType(Entity entity) {
-        DisguiseType disguiseType = getType(entity.getType());
-
-        return disguiseType;
+        return getType(entity.getType());
     }
 
     public static DisguiseType getType(EntityType entityType) {
@@ -278,9 +282,9 @@ public enum DisguiseType {
     private Object nmsType;
     private int objectId = -1, defaultData = 0;
     private int typeId;
-
     private Class<? extends FlagWatcher> watcherClass;
 
+    @SneakyThrows
     DisguiseType(int... ints) {
         for (int i = 0; i < ints.length; i++) {
             int value = ints[i];
@@ -300,13 +304,20 @@ public enum DisguiseType {
         }
 
         try {
+
             // Why oh why can't isCustom() work :(
             if (name().startsWith("MODDED_")) {
                 setEntityType(EntityType.UNKNOWN);
             } else {
+                NmsAddedIn added = DisguiseType.class.getField(name()).getAnnotation(NmsAddedIn.class);
+
+                if (LibsDisguises.getInstance() != null && added != null && !added.value().isSupported()) {
+                    return;
+                }
+
                 setEntityType(EntityType.valueOf(name()));
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
