@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -10,7 +9,6 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
@@ -112,7 +110,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -2503,7 +2500,13 @@ public class DisguiseUtilities {
     }
 
     public static String getPlayerListName(Player player) {
-        return Strings.isEmpty(player.getPlayerListName()) ? player.getName() : player.getPlayerListName();
+        String name = player.getPlayerListName();
+
+        if (name == null || name.isEmpty()) {
+            return player.getName();
+        }
+
+        return player.getPlayerListName();
     }
 
     public static String quoteHex(String string) {
