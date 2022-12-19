@@ -45,6 +45,7 @@
                 <groupId>com.github.dmulloy2</groupId>
                 <artifactId>ProtocolLib</artifactId>
                 <version>eebb99f</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
