@@ -170,7 +170,7 @@ public class LibsDisguises extends JavaPlugin {
 
             getLogger().info("File Name: " + getFile().getName());
 
-            getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion());
+            getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion() + " (" + ReflectionManager.getVersion() + ")");
 
             getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
