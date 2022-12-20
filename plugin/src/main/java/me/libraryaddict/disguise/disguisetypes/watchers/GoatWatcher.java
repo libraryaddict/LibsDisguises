@@ -26,7 +26,7 @@ public class GoatWatcher extends AgeableWatcher {
         return getData(MetaIndex.GOAT_HAS_LEFT_HORN);
     }
 
-    @NmsAddedIn(NmsVersion.v1_19)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public void setHasLeftHorn(boolean hasHorn) {
         setData(MetaIndex.GOAT_HAS_LEFT_HORN, hasHorn);
         sendData(MetaIndex.GOAT_HAS_LEFT_HORN);
@@ -36,7 +36,7 @@ public class GoatWatcher extends AgeableWatcher {
         return getData(MetaIndex.GOAT_HAS_RIGHT_HORN);
     }
 
-    @NmsAddedIn(NmsVersion.v1_19)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public void setHasRightHorn(boolean hasHorn) {
         setData(MetaIndex.GOAT_HAS_RIGHT_HORN, hasHorn);
         sendData(MetaIndex.GOAT_HAS_RIGHT_HORN);

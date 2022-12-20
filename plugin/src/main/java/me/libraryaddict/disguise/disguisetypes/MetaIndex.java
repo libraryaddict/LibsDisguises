@@ -269,11 +269,11 @@ public class MetaIndex<Y> {
     public static MetaIndex<Long> CAMEL_LAST_POSE_CHANGED = new MetaIndex<>(CamelWatcher.class, 1, 0L);
 
     @NmsAddedIn(NmsVersion.v1_14)
-    @NmsRemovedIn(NmsVersion.v1_19)
+    @NmsRemovedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
 
-    @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Cat.Type.BLACK : null);
+    @NmsAddedIn(NmsVersion.v1_19_R1)
+    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Cat.Type.BLACK : null);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
@@ -425,10 +425,10 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
-    @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Frog.Variant.TEMPERATE : null);
+    @NmsAddedIn(NmsVersion.v1_19_R1)
+    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Frog.Variant.TEMPERATE : null);
 
-    @NmsAddedIn(NmsVersion.v1_19)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<OptionalInt> FROG_TONGUE_TARGET = new MetaIndex<>(FrogWatcher.class, 1, OptionalInt.empty());
     /**
      * Changes the face of the ghast
@@ -441,10 +441,10 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_17)
     public static MetaIndex<Boolean> GOAT_SCREAMING = new MetaIndex<>(GoatWatcher.class, 0, false);
 
-    @NmsAddedIn(NmsVersion.v1_19)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Boolean> GOAT_HAS_LEFT_HORN = new MetaIndex<>(GoatWatcher.class, 1, true);
 
-    @NmsAddedIn(NmsVersion.v1_19)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Boolean> GOAT_HAS_RIGHT_HORN = new MetaIndex<>(GoatWatcher.class, 2, true);
 
     /**
@@ -594,8 +594,8 @@ public class MetaIndex<Y> {
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> OCELOT_TRUST = new MetaIndex<>(OcelotWatcher.class, 0, false);
 
-    @NmsAddedIn(NmsVersion.v1_19)
-    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, NmsVersion.v1_19.isSupported() ? Art.KEBAB : null);
+    @NmsAddedIn(NmsVersion.v1_19_R1)
+    public static MetaIndex<Art> PAINTING = new MetaIndex<>(PaintingWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Art.KEBAB : null);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Integer> PANDA_HEAD_SHAKING = new MetaIndex<>(PandaWatcher.class, 0, 0);

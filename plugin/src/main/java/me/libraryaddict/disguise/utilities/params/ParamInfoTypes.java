@@ -123,7 +123,7 @@ public class ParamInfoTypes {
             if (NmsVersion.v1_17.isSupported()) {
                 paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
 
-                if (NmsVersion.v1_19.isSupported()) {
+                if (NmsVersion.v1_19_R1.isSupported()) {
                     paramInfos.add(new ParamInfoEnum(Frog.Variant.class, "Frog Variant", "The variant of Frog"));
                 }
             }

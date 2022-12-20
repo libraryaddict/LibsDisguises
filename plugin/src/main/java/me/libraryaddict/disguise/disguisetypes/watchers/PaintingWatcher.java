@@ -23,7 +23,7 @@ public class PaintingWatcher extends FlagWatcher {
     }
 
     public Art getArt() {
-        if (!NmsVersion.v1_19.isSupported()) {
+        if (!NmsVersion.v1_19_R1.isSupported()) {
             return painting;
         }
 
@@ -31,7 +31,7 @@ public class PaintingWatcher extends FlagWatcher {
     }
 
     public void setArt(Art newPainting) {
-        if (NmsVersion.v1_19.isSupported()) {
+        if (NmsVersion.v1_19_R1.isSupported()) {
             setData(MetaIndex.PAINTING, newPainting);
             sendData(MetaIndex.PAINTING);
         } else {

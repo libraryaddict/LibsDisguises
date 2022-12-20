@@ -425,7 +425,7 @@ public class DisguiseUtilities {
 
     public static void sendInvisibleSlime(Player player, int horseId) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager()
-            .createPacketConstructor(NmsVersion.v1_19.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
+            .createPacketConstructor(NmsVersion.v1_19_R1.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
 
         packet.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
         packet.getModifier().write(1, UUID.randomUUID());
@@ -539,7 +539,7 @@ public class DisguiseUtilities {
         }
 
         // If you're on 1.18..
-        if (!NmsVersion.v1_19.isSupported()) {
+        if (!NmsVersion.v1_19_R1.isSupported()) {
             return new String[]{"4.8.0"};
         }
 
@@ -2440,7 +2440,7 @@ public class DisguiseUtilities {
             try {
                 // TODO Store the field
                 Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField(
-                    NmsVersion.v1_19.isSupported() ? "p" : NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
+                    NmsVersion.v1_19_R1.isSupported() ? "p" : NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
             } catch (Exception ex) {
@@ -2980,10 +2980,10 @@ public class DisguiseUtilities {
                 destroyIds = Arrays.copyOf(destroyIds, destroyIds.length + 1);
                 destroyIds[destroyIds.length - 1] = standIds[i];
             } else {
-                PacketContainer packet = new PacketContainer(NmsVersion.v1_19.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING);
+                PacketContainer packet = new PacketContainer(NmsVersion.v1_19_R1.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING);
                 packet.getIntegers().write(0, standIds[i]);
                 packet.getModifier()
-                    .write(2, NmsVersion.v1_19.isSupported() ? DisguiseType.ARMOR_STAND.getNmsEntityType() : DisguiseType.ARMOR_STAND.getTypeId());
+                    .write(2, NmsVersion.v1_19_R1.isSupported() ? DisguiseType.ARMOR_STAND.getNmsEntityType() : DisguiseType.ARMOR_STAND.getTypeId());
 
                 packet.getUUIDs().write(0, UUID.randomUUID());
 

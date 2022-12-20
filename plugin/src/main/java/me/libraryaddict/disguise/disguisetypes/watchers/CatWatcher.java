@@ -26,7 +26,7 @@ public class CatWatcher extends TameableWatcher {
     }
 
     public Cat.Type getType() {
-        if (!NmsVersion.v1_19.isSupported()) {
+        if (!NmsVersion.v1_19_R1.isSupported()) {
             return Cat.Type.values()[getData(MetaIndex.CAT_TYPE)];
         }
 
@@ -35,7 +35,7 @@ public class CatWatcher extends TameableWatcher {
 
     @RandomDefaultValue
     public void setType(Cat.Type type) {
-        if (NmsVersion.v1_19.isSupported()) {
+        if (NmsVersion.v1_19_R1.isSupported()) {
             setData(MetaIndex.CAT_TYPE_NEW, type);
             sendData(MetaIndex.CAT_TYPE_NEW);
         } else {

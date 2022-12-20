@@ -3,19 +3,17 @@ package me.libraryaddict.disguise.disguisetypes;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
-import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.Locale;
 
 public enum DisguiseType {
-    @NmsAddedIn(NmsVersion.v1_19) ALLAY,
+    @NmsAddedIn(NmsVersion.v1_19_R1) ALLAY,
 
     AREA_EFFECT_CLOUD(3, 0),
 
@@ -41,7 +39,7 @@ public enum DisguiseType {
 
     CHICKEN,
 
-    @NmsAddedIn(NmsVersion.v1_19) CHEST_BOAT,
+    @NmsAddedIn(NmsVersion.v1_19_R1) CHEST_BOAT,
 
     COD,
 
@@ -89,7 +87,7 @@ public enum DisguiseType {
 
     FISHING_HOOK(90),
 
-    @NmsAddedIn(NmsVersion.v1_19) FROG,
+    @NmsAddedIn(NmsVersion.v1_19_R1) FROG,
 
     @NmsAddedIn(NmsVersion.v1_14) FOX,
 
@@ -215,7 +213,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_16) STRIDER,
 
-    @NmsAddedIn(NmsVersion.v1_19) TADPOLE,
+    @NmsAddedIn(NmsVersion.v1_19_R1) TADPOLE,
 
     THROWN_EXP_BOTTLE(75),
 
@@ -239,7 +237,7 @@ public enum DisguiseType {
 
     @NmsAddedIn(NmsVersion.v1_14) WANDERING_TRADER,
 
-    @NmsAddedIn(NmsVersion.v1_19) WARDEN,
+    @NmsAddedIn(NmsVersion.v1_19_R1) WARDEN,
 
     WITCH,
 

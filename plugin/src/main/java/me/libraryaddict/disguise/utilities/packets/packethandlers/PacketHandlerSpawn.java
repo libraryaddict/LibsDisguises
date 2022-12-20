@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mojang.datafixers.util.Pair;
@@ -59,7 +58,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
         PacketType[] packets = new PacketType[]{PacketType.Play.Server.NAMED_ENTITY_SPAWN, PacketType.Play.Server.SPAWN_ENTITY_EXPERIENCE_ORB,
             PacketType.Play.Server.SPAWN_ENTITY};
 
-        if (!NmsVersion.v1_19.isSupported()) {
+        if (!NmsVersion.v1_19_R1.isSupported()) {
             packets = Arrays.copyOf(packets, packets.length + 2);
             packets[packets.length - 2] = PacketType.Play.Server.SPAWN_ENTITY_LIVING;
             packets[packets.length - 1] = PacketType.Play.Server.SPAWN_ENTITY_PAINTING;
@@ -119,7 +118,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(2, loc.getY() + 0.06);
             mods.write(3, loc.getZ());
             mods.write(4, 1);
-        } else if (!NmsVersion.v1_19.isSupported() && disguise.getType() == DisguiseType.PAINTING) {
+        } else if (!NmsVersion.v1_19_R1.isSupported() && disguise.getType() == DisguiseType.PAINTING) {
             PacketContainer spawnPainting = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_PAINTING);
             packets.addPacket(spawnPainting);
 
@@ -225,7 +224,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             }
 
             PacketContainer spawnEntity =
-                new PacketContainer(NmsVersion.v1_19.isSupported() ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+                new PacketContainer(NmsVersion.v1_19_R1.isSupported() ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING);
             packets.addPacket(spawnEntity);
 
             StructureModifier<Object> mods = spawnEntity.getModifier();
@@ -233,7 +232,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(0, disguisedEntity.getEntityId());
             mods.write(1, disguise.getUUID());
 
-            if (NmsVersion.v1_19.isSupported()) {
+            if (NmsVersion.v1_19_R1.isSupported()) {
                 if (!disguise.getType().isCustom()) {
                     mods.write(2, disguise.getType().getNmsEntityType());
                 } else {
@@ -280,7 +279,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             mods.write(8, (int) (d4 * 8000.0D));
 
             // Prior to 1.19, it's Y, X, Y
-            if (!NmsVersion.v1_19.isSupported()) {
+            if (!NmsVersion.v1_19_R1.isSupported()) {
                 mods.write(9, yaw);
                 mods.write(10, pitch);
             } else {
@@ -340,7 +339,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 Object[] params = new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
                     ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
-                if (NmsVersion.v1_19.isSupported()) {
+                if (NmsVersion.v1_19_R1.isSupported()) {
                     params = Arrays.copyOf(params, params.length + 1);
 
                     params[params.length - 1] = (double) loc.getYaw();
@@ -369,7 +368,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             spawnEntity.getModifier().write(8, pitch);
             spawnEntity.getModifier().write(9, yaw);
 
-            if (NmsVersion.v1_19.isSupported()) {
+            if (NmsVersion.v1_19_R1.isSupported()) {
                 spawnEntity.getModifier().write(10, yaw);
             }
 

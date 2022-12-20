@@ -130,7 +130,7 @@ public class PacketsManager {
                 packetsToListen.add(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
                 packetsToListen.add(Server.SPAWN_ENTITY);
 
-                if (!NmsVersion.v1_19.isSupported()) {
+                if (!NmsVersion.v1_19_R1.isSupported()) {
                     packetsToListen.add(Server.SPAWN_ENTITY_LIVING);
                     packetsToListen.add(Server.SPAWN_ENTITY_PAINTING);
                 }

@@ -785,10 +785,6 @@ public class ReflectionManager {
 
                 version = v;
             }
-
-            if (version == NmsVersion.v1_19_R1 && !Bukkit.getVersion().matches("1\\.19\\.[12]")) {
-                version = NmsVersion.v1_19;
-            }
         }
 
         return bukkitVersion;
@@ -1483,7 +1479,7 @@ public class ReflectionManager {
             return entityPoseClass;
         } else if (NbtWrapper.class.isAssignableFrom(cl)) {
             return getNmsClass("NBTTagCompound");
-        } else if (NmsVersion.v1_19.isSupported()) {
+        } else if (NmsVersion.v1_19_R1.isSupported()) {
             if (Frog.Variant.class.isAssignableFrom(cl)) {
                 return getNmsClass("FrogVariant");
             }

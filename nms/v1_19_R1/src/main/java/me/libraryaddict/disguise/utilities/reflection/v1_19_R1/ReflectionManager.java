@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.v1_19_1;
+package me.libraryaddict.disguise.utilities.reflection.v1_19_R1;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
