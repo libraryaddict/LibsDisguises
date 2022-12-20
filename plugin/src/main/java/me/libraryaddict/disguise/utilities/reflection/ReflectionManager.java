@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.wrappers.BlockPosition;
@@ -107,7 +106,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -788,7 +786,7 @@ public class ReflectionManager {
                 version = v;
             }
 
-            if (version == NmsVersion.v1_19_1 && !Bukkit.getVersion().matches("1\\.19\\.[12]")) {
+            if (version == NmsVersion.v1_19_R1 && !Bukkit.getVersion().matches("1\\.19\\.[12]")) {
                 version = NmsVersion.v1_19;
             }
         }

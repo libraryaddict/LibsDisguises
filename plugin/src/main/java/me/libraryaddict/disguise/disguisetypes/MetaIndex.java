@@ -125,10 +125,10 @@ import java.util.UUID;
 public class MetaIndex<Y> {
     private static MetaIndex[] _values = new MetaIndex[0];
 
-    @NmsAddedIn(NmsVersion.v1_19_1)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Boolean> ALLAY_DANCING = new MetaIndex<>(AllayWatcher.class, 0, false);
 
-    @NmsAddedIn(NmsVersion.v1_19_1)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<Boolean> ALLAY_CAN_DUPLICATE = new MetaIndex<>(AllayWatcher.class, 1, true);
     /**
      * True if entity is a baby

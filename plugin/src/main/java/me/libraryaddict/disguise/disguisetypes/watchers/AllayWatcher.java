@@ -11,7 +11,7 @@ public class AllayWatcher extends InsentientWatcher {
         super(disguise);
     }
 
-    @NmsAddedIn(NmsVersion.v1_19_1)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     public void setDancing(boolean dancing) {
         setData(MetaIndex.ALLAY_DANCING, dancing);
         sendData(MetaIndex.ALLAY_DANCING);
@@ -21,7 +21,7 @@ public class AllayWatcher extends InsentientWatcher {
         return getData(MetaIndex.ALLAY_DANCING);
     }
 
-    @NmsAddedIn(NmsVersion.v1_19_1)
+    @NmsAddedIn(NmsVersion.v1_19_R1)
     @MethodOnlyUsedBy(value = {}) // Hide from command
     public void setCanDuplicate(boolean canDuplicate) {
         setData(MetaIndex.ALLAY_CAN_DUPLICATE, canDuplicate);
