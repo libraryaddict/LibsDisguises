@@ -998,7 +998,7 @@ public class ReflectionManager {
             sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(action.ordinal()));
 
             List playerList = Collections.singletonList(
-                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile()));
+                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile()).getHandle());
             sendTab.getModifier().write(1, playerList);
 
             return sendTab;
