@@ -55,6 +55,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -991,20 +992,15 @@ public class ReflectionManager {
         }
 
         try {
-            Object playerListName = chatComponentConstructor.newInstance(disguise.getGameProfile().getName());
+            WrappedGameProfile profile =
+                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile());
+            PlayerInfoData playerInfo = new PlayerInfoData(profile, 0, EnumWrappers.NativeGameMode.fromBukkit(GameMode.SURVIVAL),
+                WrappedChatComponent.fromText(disguise.getGameProfile().getName()));
+
             PacketContainer sendTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-            sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(action.ordinal()));
-
-            GameProfile profile = (GameProfile) ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(),
-                disguise.getGameProfile()).getHandle();
-
-            Object playerData = playerInfoConstructor.newInstance(sendTab.getHandle(), profile, 0, enumGamemode[1], playerListName);
-
-            // Add player to the list, necessary to spawn them
-            List playerList = Collections.singletonList(playerData);
-
-            sendTab.getModifier().write(1, playerList);
+            sendTab.getPlayerInfoAction().write(0, action);
+            sendTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
 
             return sendTab;
         } catch (Exception ex) {
