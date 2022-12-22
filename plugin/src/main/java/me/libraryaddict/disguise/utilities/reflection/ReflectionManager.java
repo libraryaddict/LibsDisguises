@@ -150,7 +150,7 @@ public class ReflectionManager {
     private static Method enumDirectionMethod;
     private static Enum[] enumPlayerInfoAction;
     private static Constructor chatComponentConstructor;
-    private static Constructor packetPlayOutConstructor;
+    private static Constructor playerInfoConstructor;
     private static Enum[] enumGamemode;
     private static Method getNmsEntityMethod;
     private static Enum[] enumItemSlots;
@@ -235,7 +235,7 @@ public class ReflectionManager {
             enumPlayerInfoAction = (Enum[]) getNmsClass("PacketPlayOutPlayerInfo$EnumPlayerInfoAction").getEnumConstants();
             chatComponentConstructor = getNmsConstructor("ChatComponentText", String.class);
 
-            packetPlayOutConstructor =
+            playerInfoConstructor =
                 getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
                     getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
 
@@ -994,11 +994,16 @@ public class ReflectionManager {
             Object playerListName = chatComponentConstructor.newInstance(disguise.getGameProfile().getName());
             PacketContainer sendTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-            // Add player to the list, necessary to spawn them
             sendTab.getModifier().write(0, ReflectionManager.getEnumPlayerInfoAction(action.ordinal()));
 
-            List playerList = Collections.singletonList(
-                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile()).getHandle());
+            GameProfile profile = (GameProfile) ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(),
+                disguise.getGameProfile()).getHandle();
+
+            Object playerData = playerInfoConstructor.newInstance(sendTab.getHandle(), profile, 0, enumGamemode[1], playerListName);
+
+            // Add player to the list, necessary to spawn them
+            List playerList = Collections.singletonList(playerData);
+
             sendTab.getModifier().write(1, playerList);
 
             return sendTab;
