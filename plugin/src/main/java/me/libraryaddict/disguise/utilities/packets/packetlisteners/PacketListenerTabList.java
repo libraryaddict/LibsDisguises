@@ -46,7 +46,7 @@ public class PacketListenerTabList extends PacketAdapter {
         Iterator<PlayerInfoData> itel = list.iterator();
         Iterator<PlayerInfoAction> actionItel = actions.iterator();
 
-        while (itel.hasNext()) {
+        while (itel.hasNext() && actionItel.hasNext()) {
             PlayerInfoData data = itel.next();
 
             if (NmsVersion.v1_19_R2.isSupported()) {
