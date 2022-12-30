@@ -151,16 +151,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
             double dist = observer.getLocation().toVector().distanceSquared(disguisedEntity.getLocation().toVector());
 
             // If self disguise, or further than 50 blocks, or not in front of entity
-            inLineOfSight =
-                NmsVersion.v1_19_R2.isSupported() || observer == disguisedEntity || disguisedEntity.getPassengers().contains(observer) || dist > (50 * 50) ||
-                    (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector()
-                        .distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
+            inLineOfSight = DisguiseUtilities.isFancyHiddenTabs() || observer == disguisedEntity || disguisedEntity.getPassengers().contains(observer) ||
+                dist > (50 * 50) || (observer.getLocation().add(observer.getLocation().getDirection().normalize()).toVector()
+                .distanceSquared(disguisedEntity.getLocation().toVector()) - dist) < 0.3;
 
             int entityId = disguisedEntity.getEntityId();
 
             PlayerSkinHandler.PlayerSkin skin;
 
-            if (NmsVersion.v1_19_R2.isSupported() || !playerDisguise.isDisplayedInTab() || !playerDisguise.isNameVisible()) {
+            if (DisguiseUtilities.isFancyHiddenTabs() || !playerDisguise.isDisplayedInTab() || !playerDisguise.isNameVisible()) {
                 // Send player info along with the disguise
 
                 for (PacketContainer sendTab : ReflectionManager.createTablistAddPackets(playerDisguise)) {
@@ -168,7 +167,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 }
 
                 skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
-                skin.setDoTabList(!NmsVersion.v1_19_R2.isSupported());
+                skin.setDoTabList(!DisguiseUtilities.isFancyHiddenTabs());
 
                 if (LibsPremium.getPaidInformation() != null && !LibsPremium.getPaidInformation().getBuildNumber().matches("#\\d+")) {
                     skin.getSleptPackets().computeIfAbsent(0, (a) -> new ArrayList<>()).add(new PacketContainer(PacketType.Play.Server.HELD_ITEM_SLOT));

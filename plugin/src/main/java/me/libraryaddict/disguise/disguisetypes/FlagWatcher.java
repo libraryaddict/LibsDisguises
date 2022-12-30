@@ -511,7 +511,7 @@ public class FlagWatcher {
         ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(getDisguise(), new String[0]);
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
-            if (!NmsVersion.v1_19_R2.isSupported() && getDisguise().isPlayerDisguise() &&
+            if (!DisguiseUtilities.isFancyHiddenTabs() && getDisguise().isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) getDisguise())) {
                 continue;
             }

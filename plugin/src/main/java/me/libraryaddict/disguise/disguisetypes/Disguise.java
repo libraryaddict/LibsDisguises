@@ -184,7 +184,7 @@ public abstract class Disguise {
         ArrayList<PacketContainer> packets = DisguiseUtilities.getNamePackets(this, oldName);
 
         for (Player player : DisguiseUtilities.getPerverts(this)) {
-            if (!NmsVersion.v1_19_R2.isSupported() && isPlayerDisguise() &&
+            if (!DisguiseUtilities.isFancyHiddenTabs() && isPlayerDisguise() &&
                 LibsDisguises.getInstance().getSkinHandler().isSleeping(player, (PlayerDisguise) this)) {
                 continue;
             }

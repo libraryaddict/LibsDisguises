@@ -254,7 +254,8 @@ public class DisguiseUtilities {
     private final static boolean java16;
     private static boolean criedOverJava16;
     private static final HashSet<UUID> warnedSkin = new HashSet<>();
-    private static Boolean adventureTextSupport;
+    @Getter
+    private static boolean fancyHiddenTabs;
 
     static {
         final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
@@ -1434,6 +1435,8 @@ public class DisguiseUtilities {
             runningPaper = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
         } catch (Exception ignored) {
         }
+
+        fancyHiddenTabs = NmsVersion.v1_19_R2.isSupported() && Bukkit.getPluginManager().getPlugin("ViaBackwards") == null;
 
         GsonBuilder gsonBuilder = new GsonBuilder();
 
