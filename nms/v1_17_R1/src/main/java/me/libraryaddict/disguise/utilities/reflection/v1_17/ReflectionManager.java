@@ -235,14 +235,14 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     @Override
-    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible) {
+    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible, EnumWrappers.PlayerInfoAction... actions) {
         ClientboundPlayerInfoPacket.PlayerUpdate entry =
             new ClientboundPlayerInfoPacket.PlayerUpdate((GameProfile) gameProfile.getHandle(), 0, GameType.SURVIVAL, new TextComponent(displayName));
 
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         StructureModifier<Object> modifier = packet.getModifier();
 
-        modifier.write(0, ClientboundPlayerInfoPacket.Action.valueOf(action.name()));
+        modifier.write(0, ClientboundPlayerInfoPacket.Action.valueOf(actions[0].name()));
         modifier.write(1, Collections.singletonList(entry));
 
         return packet;

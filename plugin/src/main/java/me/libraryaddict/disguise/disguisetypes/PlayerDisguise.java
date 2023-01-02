@@ -522,7 +522,7 @@ public class PlayerDisguise extends TargetedDisguise {
         }
 
         if (isDisplayedInTab()) {
-            PacketContainer[] addTabs = ReflectionManager.createTablistAddPackets(this);
+            PacketContainer addTab = ReflectionManager.createTablistAddPackets(this);
             PacketContainer deleteTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.REMOVE_PLAYER);
 
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -531,10 +531,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 }
 
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, deleteTab);
-
-                for (PacketContainer packet : addTabs) {
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                }
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
             }
         }
 

@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
@@ -24,6 +25,7 @@ import org.bukkit.util.Vector;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 public interface ReflectionManagerAbstract {
     boolean hasInvul(Entity entity);
@@ -72,7 +74,7 @@ public interface ReflectionManagerAbstract {
 
     Enum getEnumDirection(int direction);
 
-    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible);
+    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible, EnumWrappers.PlayerInfoAction... actions);
 
     Object getNmsEntity(Entity entity);
 
@@ -144,6 +146,9 @@ public interface ReflectionManagerAbstract {
     Object getWorldServer(World w);
 
     ItemMeta getDeserializedItemMeta(Map<String, Object> meta);
+
+    default void handleTablistPacket(PacketEvent event, Function<UUID, Boolean> shouldRemove) {
+    }
 
     /**
      * Implement this for custom metadata values that are not backwards compatible

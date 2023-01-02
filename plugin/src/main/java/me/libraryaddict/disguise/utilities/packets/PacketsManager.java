@@ -43,10 +43,10 @@ public class PacketsManager {
         // Because it kicks you for hacking.
 
         clientInteractEntityListener = new PacketListenerClientInteract(LibsDisguises.getInstance());
-       // PacketListener tabListListener = new PacketListenerTabList(LibsDisguises.getInstance());
+        PacketListener tabListListener = new PacketListenerTabList(LibsDisguises.getInstance());
 
         ProtocolLibrary.getProtocolManager().addPacketListener(clientInteractEntityListener);
-       // ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
+        ProtocolLibrary.getProtocolManager().addPacketListener(tabListListener);
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListenerClientCustomPayload());
 
         // Now I call this and the main listener is registered!

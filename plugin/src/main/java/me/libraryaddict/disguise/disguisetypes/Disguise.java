@@ -985,16 +985,14 @@ public abstract class Disguise {
             PlayerDisguise disguise = (PlayerDisguise) this;
 
             if (disguise.isDisplayedInTab()) {
-                PacketContainer[] addTabs = ReflectionManager.createTablistAddPackets(disguise);
+                PacketContainer addTab = ReflectionManager.createTablistAddPackets(disguise);
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (!((TargetedDisguise) this).canSee(player)) {
                         continue;
                     }
 
-                    for (PacketContainer packet : addTabs) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
-                    }
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
                 }
             }
         }

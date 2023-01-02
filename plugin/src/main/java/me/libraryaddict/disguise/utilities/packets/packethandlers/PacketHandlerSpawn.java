@@ -162,9 +162,7 @@ public class PacketHandlerSpawn implements IPacketHandler {
             if (DisguiseUtilities.isFancyHiddenTabs() || !playerDisguise.isDisplayedInTab() || !playerDisguise.isNameVisible()) {
                 // Send player info along with the disguise
 
-                for (PacketContainer sendTab : ReflectionManager.createTablistAddPackets(playerDisguise)) {
-                    packets.addPacket(sendTab);
-                }
+                packets.addPacket(ReflectionManager.createTablistAddPackets(playerDisguise));
 
                 skin = LibsDisguises.getInstance().getSkinHandler().addPlayerSkin(observer, playerDisguise);
                 skin.setDoTabList(!DisguiseUtilities.isFancyHiddenTabs());

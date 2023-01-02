@@ -18,6 +18,7 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.GameProfile;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -189,6 +190,7 @@ public class ReflectionManager {
     private static Field playerConnection;
     private static Method incrementedInventoryStateId;
     private static Field playerInventoryContainer;
+    @Getter
     private static ReflectionManagerAbstract nmsReflection;
     private static Field trackedPlayers;
     private static Method clearEntityTracker;
@@ -953,9 +955,9 @@ public class ReflectionManager {
     }
 
     public static PacketContainer updateTablistVisibility(Player player, boolean visible) {
-        if (NmsVersion.v1_19_R2.isSupported()) {
-            return nmsReflection.getTabListPacket(player.getPlayerListName(), ReflectionManager.getGameProfile(player),
-                EnumWrappers.PlayerInfoAction.UPDATE_LISTED, visible);
+        if (DisguiseUtilities.isFancyHiddenTabs()) {
+            return nmsReflection.getTabListPacket(player.getPlayerListName(), ReflectionManager.getGameProfile(player), visible,
+                EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
         }
 
         PlayerInfoData playerInfo =
@@ -970,25 +972,18 @@ public class ReflectionManager {
         return addTab;
     }
 
-    public static PacketContainer[] createTablistAddPackets(PlayerDisguise disguise) {
+    public static PacketContainer createTablistAddPackets(PlayerDisguise disguise) {
         if (!NmsVersion.v1_19_R2.isSupported()) {
-            return new PacketContainer[]{createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER)};
+            return createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
         }
 
-        PacketContainer[] packets = new PacketContainer[disguise.isDisplayedInTab() ? 3 : 2];
-        packets[0] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
-        packets[1] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME);
-
-        if (disguise.isDisplayedInTab()) {
-            packets[2] = createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
-        }
-
-        return packets;
+        return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), disguise.isDisplayedInTab(),
+            EnumWrappers.PlayerInfoAction.ADD_PLAYER, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME, EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
     }
 
     public static PacketContainer createTablistPacket(PlayerDisguise disguise, EnumWrappers.PlayerInfoAction action) {
         if (nmsReflection != null) {
-            return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), action, disguise.isDisplayedInTab());
+            return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), disguise.isDisplayedInTab(), action);
         }
 
         try {

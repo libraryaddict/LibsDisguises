@@ -452,9 +452,7 @@ public class DisguiseListener implements Listener {
                 PlayerDisguise disguise = (PlayerDisguise) targetedDisguise;
 
                 if (disguise.isDisplayedInTab()) {
-                    for (PacketContainer packet : ReflectionManager.createTablistAddPackets(disguise)) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet);
-                    }
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(p, ReflectionManager.createTablistAddPackets(disguise));
                 }
             }
         }

@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.reflection.v1_19_R2;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
@@ -43,7 +44,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
-import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -88,14 +88,18 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ReflectionManager implements ReflectionManagerAbstract {
     public boolean hasInvul(Entity entity) {
@@ -248,8 +252,38 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return net.minecraft.core.Direction.from2DDataValue(direction);
     }
 
-    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, EnumWrappers.PlayerInfoAction action, boolean nameVisible) {
-        if (action == EnumWrappers.PlayerInfoAction.REMOVE_PLAYER) {
+    @Override
+    public void handleTablistPacket(PacketEvent event, Function<UUID, Boolean> shouldRemove) {
+        ClientboundPlayerInfoUpdatePacket packet = (ClientboundPlayerInfoUpdatePacket) event.getPacket().getHandle();
+
+        if (!packet.actions().contains(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER)) {
+            return;
+        }
+
+        List<ClientboundPlayerInfoUpdatePacket.Entry> canKeep = new ArrayList<>();
+
+        for (ClientboundPlayerInfoUpdatePacket.Entry entry : packet.entries()) {
+            if (shouldRemove.apply(entry.profileId())) {
+                continue;
+            }
+
+            canKeep.add(entry);
+        }
+
+        if (canKeep.size() == packet.entries().size()) {
+            return;
+        }
+
+        if (canKeep.isEmpty()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        event.getPacket().getModifier().write(1, canKeep);
+    }
+
+    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible, EnumWrappers.PlayerInfoAction... actions) {
+        if (actions[0] == EnumWrappers.PlayerInfoAction.REMOVE_PLAYER) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
             packet.getModifier().write(0, Collections.singletonList(gameProfile.getUUID()));
 
@@ -262,8 +296,10 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         StructureModifier<Object> modifier = packet.getModifier();
+        EnumSet<ClientboundPlayerInfoUpdatePacket.Action> enumSet =
+            EnumSet.copyOf(Arrays.stream(actions).map(action -> ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name())).collect(Collectors.toList()));
 
-        modifier.write(0, EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name())));
+        modifier.write(0, enumSet);
         modifier.write(1, Collections.singletonList(entry));
 
         return packet;
