@@ -30,6 +30,10 @@ public class SlimeWatcher extends InsentientWatcher {
             size = 50;
         }
 
+        setUnsafeSize(size);
+    }
+
+    public void setUnsafeSize(int size) {
         if (hasValue(MetaIndex.SLIME_SIZE) && getData(MetaIndex.SLIME_SIZE) == size) {
             return;
         }
@@ -38,5 +42,9 @@ public class SlimeWatcher extends InsentientWatcher {
         sendData(MetaIndex.SLIME_SIZE);
 
         updateNameHeight();
+    }
+
+    public int getUnsafeSize() {
+        return getSize();
     }
 }

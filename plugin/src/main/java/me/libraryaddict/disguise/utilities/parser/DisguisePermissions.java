@@ -410,10 +410,10 @@ public class DisguisePermissions {
             }
 
             if (sender instanceof Player && !sender.isOp() && !DisguiseConfig.isExplicitDisguisePermissions()) {
-                storage.permittedOptions.remove("setYModifier");
-                storage.negatedOptions.add("setYModifier");
-                storage.permittedOptions.remove("setNameYModifier");
-                storage.negatedOptions.add("setNameYModifier");
+                for (String unsafeMethod : new String[]{"setYModifier", "setNameYModifier"}) {
+                    storage.permittedOptions.remove(unsafeMethod);
+                    storage.negatedOptions.add(unsafeMethod);
+                }
             }
 
             disguises.add(storage);
