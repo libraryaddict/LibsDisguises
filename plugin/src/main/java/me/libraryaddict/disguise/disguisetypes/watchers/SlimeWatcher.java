@@ -33,6 +33,7 @@ public class SlimeWatcher extends InsentientWatcher {
         setUnsafeSize(size);
     }
 
+    @RandomDefaultValue
     public void setUnsafeSize(int size) {
         if (hasValue(MetaIndex.SLIME_SIZE) && getData(MetaIndex.SLIME_SIZE) == size) {
             return;
