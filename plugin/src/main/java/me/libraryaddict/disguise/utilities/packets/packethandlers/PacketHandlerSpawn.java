@@ -371,6 +371,15 @@ public class PacketHandlerSpawn implements IPacketHandler {
 
             packets.addPacket(spawnEntity);
 
+            // Since 1.19.3 we apparently no longer send all metadata but only the non-default
+            if (NmsVersion.v1_19_R2.isSupported()) {
+                List<WatcherValue> watcherValues =
+                    DisguiseUtilities.createSanitizedWatcherValues(observer, WrappedDataWatcher.getEntityWatcher(disguisedEntity), disguise.getWatcher());
+                PacketContainer metaPacket = ReflectionManager.getMetadataPacket(disguisedEntity.getEntityId(), watcherValues);
+
+                packets.addPacket(metaPacket);
+            }
+
             // If it's not the same type, then highly likely they have different velocity settings which we'd want to
             // cancel
             if (DisguiseType.getType(disguisedEntity) != disguise.getType()) {
