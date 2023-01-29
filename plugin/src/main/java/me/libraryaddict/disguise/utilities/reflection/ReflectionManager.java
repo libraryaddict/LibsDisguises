@@ -1792,10 +1792,9 @@ public class ReflectionManager {
         return null;
     }
 
-    @Deprecated
     public static Object createSoundEffect(String minecraftKey) {
         if (nmsReflection != null) {
-            return nmsReflection.createSoundEffect(minecraftKey);
+            return nmsReflection.createSoundEvent(minecraftKey);
         }
 
         try {
@@ -1805,6 +1804,14 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    public static Object createSoundEvent(String name) {
+        if (nmsReflection != null) {
+            return nmsReflection.createSoundEvent(name);
+        }
+
+        return createMinecraftKey(name);
     }
 
     public static Object createMinecraftKey(String name) {

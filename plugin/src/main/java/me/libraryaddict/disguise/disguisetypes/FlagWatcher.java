@@ -337,17 +337,8 @@ public class FlagWatcher {
                 }
 
                 watch = new WatcherValue(index, value);
-
-                if (watch == null) {
-                    continue;
-                }
             } else {
-
                 watch = new WatcherValue(index, watch.getValue());
-
-                if (watch == null) {
-                    continue;
-                }
 
                 if (id == MetaIndex.ENTITY_META.getIndex()) {
                     doSneakCheck((Byte) watch.getValue());

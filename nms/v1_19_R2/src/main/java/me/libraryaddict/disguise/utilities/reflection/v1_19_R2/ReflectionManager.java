@@ -216,8 +216,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return CraftItemStack.asCraftCopy(bukkitItem);
     }
 
-    public SoundEvent getCraftSound(Sound sound) {
-        return CraftSound.getSoundEffect(sound);
+    public Holder<SoundEvent> getCraftSound(Sound sound) {
+        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(CraftSound.getSoundEffect(sound));
     }
 
     public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
@@ -451,9 +451,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return new SynchedEntityData.DataItem<>((EntityDataAccessor<T>) wrappedDataWatcherObject.getHandle(), metaItem);
     }
 
-    @Deprecated
-    public SoundEvent createSoundEffect(String minecraftKey) {
-        throw new UnsupportedOperationException("createSoundEffect has been deprecated with nnew changes");
+    public Holder<SoundEvent> createSoundEvent(String minecraftKey) {
+        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvent.createVariableRangeEvent(createMinecraftKey(minecraftKey)));
     }
 
     @Override

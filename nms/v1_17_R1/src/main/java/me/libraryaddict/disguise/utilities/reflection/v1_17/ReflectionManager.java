@@ -394,11 +394,6 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return new SynchedEntityData.DataItem<>((EntityDataAccessor<T>) wrappedDataWatcherObject.getHandle(), metaItem);
     }
 
-    @Deprecated
-    public SoundEvent createSoundEffect(String minecraftKey) {
-        return new SoundEvent(new ResourceLocation(minecraftKey));
-    }
-
     @Override
     public ResourceLocation createMinecraftKey(String name) {
         return new ResourceLocation(name);

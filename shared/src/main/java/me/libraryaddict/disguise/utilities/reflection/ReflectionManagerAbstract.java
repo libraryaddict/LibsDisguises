@@ -116,8 +116,9 @@ public interface ReflectionManagerAbstract {
 
     <T> Object createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem);
 
-    @Deprecated
-    Object createSoundEffect(String minecraftKey);
+    default Object createSoundEvent(String minecraftKey) {
+        return createMinecraftKey(minecraftKey);
+    }
 
     Object createMinecraftKey(String name);
 

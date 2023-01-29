@@ -47,8 +47,8 @@ public class SoundGroup {
         if (sound instanceof Sound) {
             sound = ReflectionManager.getCraftSound((Sound) sound);
         } else if (sound instanceof String) {
-            sound = ReflectionManager.createMinecraftKey((String) sound);
-        } else if (!sound.getClass().getSimpleName().equals("SoundEffect")) {
+            sound = ReflectionManager.createSoundEvent((String) sound);
+        } else if (!sound.getClass().getSimpleName().equals("SoundEffect") && !sound.getClass().getSimpleName().equals("Holder")) {
             throw new IllegalArgumentException("Unexpected " + sound.getClass());
         }
 
