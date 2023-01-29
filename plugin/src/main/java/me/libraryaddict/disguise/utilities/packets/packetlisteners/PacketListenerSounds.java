@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.packets.packetlisteners;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -11,6 +12,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup.SoundType;
@@ -22,9 +24,9 @@ import org.bukkit.entity.Player;
 import java.util.Set;
 
 public class PacketListenerSounds extends PacketAdapter {
-
     public PacketListenerSounds(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.NORMAL, Server.NAMED_SOUND_EFFECT);
+        super(plugin, ListenerPriority.NORMAL,
+            NmsVersion.v1_19_R2.isSupported() ? new PacketType[]{Server.NAMED_SOUND_EFFECT, Server.ENTITY_SOUND} : new PacketType[]{Server.NAMED_SOUND_EFFECT});
     }
 
     @Override
@@ -40,61 +42,72 @@ public class PacketListenerSounds extends PacketAdapter {
         StructureModifier<Object> mods = event.getPacket().getModifier();
         Player observer = event.getPlayer();
 
-        SoundType soundType = null;
-
-        Entity disguisedEntity = null;
+        SoundType soundType;
         SoundGroup soundGroup = null;
         Object soundEffectObj = mods.read(0);
+        int offset = 0;
 
         Disguise disguise = null;
+        Entity entity = null;
 
-        int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
+        if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
+            offset = 3;
 
-        for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
-            for (TargetedDisguise entityDisguise : disguises) {
-                Entity entity = entityDisguise.getEntity();
+            int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
 
-                if (entity == null || entity.getWorld() != observer.getWorld()) {
-                    continue;
-                }
+            loop:
+            for (Set<TargetedDisguise> disguises : DisguiseUtilities.getDisguises().values()) {
+                for (TargetedDisguise entityDisguise : disguises) {
+                    entity = entityDisguise.getEntity();
 
-                if (!entityDisguise.canSee(observer)) {
-                    continue;
-                }
+                    if (entity == null || entity.getWorld() != observer.getWorld()) {
+                        continue;
+                    }
 
-                Location loc = entity.getLocation();
+                    if (!entityDisguise.canSee(observer)) {
+                        continue;
+                    }
 
-                int[] entCords = new int[]{(int) (loc.getX() * 8), (int) (loc.getY() * 8), (int) (loc.getZ() * 8)};
+                    Location loc = entity.getLocation();
 
-                if (soundCords[0] != entCords[0] || soundCords[1] != entCords[1] || soundCords[2] != entCords[2]) {
-                    continue;
-                }
+                    int[] entCords = new int[]{(int) (loc.getX() * 8), (int) (loc.getY() * 8), (int) (loc.getZ() * 8)};
 
-                disguise = entityDisguise;
-                disguisedEntity = entity;
-                soundGroup = SoundGroup.getGroup(entity.getType().name());
+                    if (soundCords[0] != entCords[0] || soundCords[1] != entCords[1] || soundCords[2] != entCords[2]) {
+                        continue;
+                    }
 
-                if (soundGroup == null || soundGroup.getSound(soundEffectObj) == null) {
-                    return;
-                }
+                    disguise = entityDisguise;
+                    soundGroup = SoundGroup.getGroup(entity.getType().name());
 
-                if ((!(entity instanceof LivingEntity)) || ((LivingEntity) entity).getHealth() > 0) {
-                    soundType = soundGroup.getType(soundEffectObj);
-                } else {
-                    soundType = SoundType.DEATH;
+                    break loop;
                 }
             }
+        } else {
+            disguise = DisguiseUtilities.getDisguise(observer, (int) mods.read(2));
 
-            if (disguise != null) {
-                break;
+            if (disguise == null) {
+                return;
             }
+
+            entity = disguise.getEntity();
+            soundGroup = SoundGroup.getGroup(entity.getType().name());
         }
 
         if (disguise == null || !disguise.isSoundsReplaced()) {
             return;
         }
 
-        if (disguisedEntity == observer && !disguise.isSelfDisguiseSoundsReplaced()) {
+        if (soundGroup == null || soundGroup.getSound(soundEffectObj) == null) {
+            return;
+        }
+
+        if ((!(entity instanceof LivingEntity)) || ((LivingEntity) entity).getHealth() > 0) {
+            soundType = soundGroup.getType(soundEffectObj);
+        } else {
+            soundType = SoundType.DEATH;
+        }
+
+        if (entity == observer && !disguise.isSelfDisguiseSoundsReplaced()) {
             return;
         }
 
@@ -113,15 +126,15 @@ public class PacketListenerSounds extends PacketAdapter {
         }
 
         Enum soundCat = ReflectionManager.getSoundCategory(disguise.getType());
-        float volume = (float) mods.read(5);
-        float pitch = (float) mods.read(6);
+        float volume = (float) mods.read(offset + 2);
+        float pitch = (float) mods.read(offset + 3);
 
         // If the volume is the default, set it to what the real disguise sound group expects
         if (volume == soundGroup.getDamageAndIdleSoundVolume()) {
             volume = disguiseSound.getDamageAndIdleSoundVolume();
         }
 
-        if (disguise instanceof MobDisguise && disguisedEntity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
+        if (disguise instanceof MobDisguise && entity instanceof LivingEntity && ((MobDisguise) disguise).doesDisguiseAge()) {
             if (((MobDisguise) disguise).isAdult()) {
                 pitch = ((DisguiseUtilities.random.nextFloat() - DisguiseUtilities.random.nextFloat()) * 0.2F) + 1.0F;
             } else {
@@ -131,7 +144,7 @@ public class PacketListenerSounds extends PacketAdapter {
 
         PacketContainer newPacket;
 
-        if (sound.getClass().getSimpleName().equals("MinecraftKey")) {
+        if (!NmsVersion.v1_19_R2.isSupported() && sound.getClass().getSimpleName().equals("MinecraftKey")) {
             newPacket = new PacketContainer(Server.CUSTOM_SOUND_EFFECT);
             StructureModifier<Object> newModifs = newPacket.getModifier();
 
@@ -147,8 +160,8 @@ public class PacketListenerSounds extends PacketAdapter {
 
         mods.write(0, sound);
         mods.write(1, soundCat);
-        mods.write(5, volume);
-        mods.write(6, pitch);
+        mods.write(offset + 2, volume);
+        mods.write(offset + 3, pitch);
 
         event.setPacket(newPacket);
     }

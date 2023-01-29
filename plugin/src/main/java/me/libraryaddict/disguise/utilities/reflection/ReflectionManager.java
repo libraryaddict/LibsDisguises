@@ -2439,6 +2439,11 @@ public class ReflectionManager {
 
                 if (soundStrength != null) {
                     sound.setDamageAndIdleSoundVolume(soundStrength);
+
+                    // This should only display on custom builds
+                    if (disguiseType == DisguiseType.COW && soundStrength != 0.4F && !LibsDisguises.getInstance().isNumberedBuild()) {
+                        DisguiseUtilities.getLogger().severe("The hurt sound volume may be wrong on the COW disguise! Bad nms update?");
+                    }
                 }
             }
 

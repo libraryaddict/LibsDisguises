@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -21,6 +22,9 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
+import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -173,6 +177,28 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             } else if (event.getPacketType() == Server.ENTITY_STATUS) {
                 if (disguise.isSelfDisguiseSoundsReplaced() && !disguise.getType().isPlayer() && packet.getBytes().read(0) == 2) {
                     event.setCancelled(true);
+
+                    // As of 1.19.3, no sound is sent but instead the client is expected to play a hurt sound on entity status effect
+                    if (NmsVersion.v1_19_R2.isSupported()) {
+                        SoundGroup group = SoundGroup.getGroup(disguise);
+                        Object sound = group.getSound(SoundGroup.SoundType.HURT);
+
+                        if (sound != null) {
+                            PacketContainer newPacket = new PacketContainer(Server.ENTITY_SOUND);
+                            StructureModifier mods = newPacket.getModifier();
+
+                            mods.write(0, sound);
+                            // Category
+                            mods.write(2, DisguiseAPI.getSelfDisguiseId());
+                            mods.write(3, 1f);
+                            mods.write(4, 1f);
+                            mods.write(5, (long) (Math.random() * 1000L));
+
+                            newPacket.getSoundCategories().write(0, EnumWrappers.SoundCategory.MASTER);
+
+                            ProtocolLibrary.getProtocolManager().sendServerPacket(observer, newPacket);
+                        }
+                    }
                 }
             } else if (event.getPacketType() == Server.ENTITY_VELOCITY && !DisguiseUtilities.isPlayerVelocity(observer)) {
                 // The player only sees velocity changes when there is a velocity event. As the method claims there
