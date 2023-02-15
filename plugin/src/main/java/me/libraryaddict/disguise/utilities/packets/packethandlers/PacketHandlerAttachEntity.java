@@ -26,7 +26,8 @@ public class PacketHandlerAttachEntity implements IPacketHandler {
             return;
         }
 
-        if (observer.getVehicle() != entity || !AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass())) {
+        if (observer.getVehicle() != entity || !AbstractHorse.class.isAssignableFrom(disguise.getType().getEntityClass()) ||
+            AbstractHorse.class.isAssignableFrom(entity.getType().getEntityClass())) {
             return;
         }
 
