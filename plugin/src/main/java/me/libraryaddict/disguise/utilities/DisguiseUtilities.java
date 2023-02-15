@@ -429,8 +429,8 @@ public class DisguiseUtilities {
             .createPacketConstructor(NmsVersion.v1_19_R1.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
 
         packet.getModifier().write(0, DisguiseAPI.getEntityAttachmentId());
-        packet.getModifier().write(1, UUID.randomUUID());
-        packet.getModifier().write(2, DisguiseType.SLIME.getTypeId());
+        packet.getUUIDs().write(0, UUID.randomUUID());
+        packet.getModifier().write(2, NmsVersion.v1_19_R1.isSupported() ? DisguiseType.SLIME.getNmsEntityType() : DisguiseType.SLIME.getTypeId());
 
         if (NmsVersion.v1_15.isSupported()) {
             PacketContainer metaPacket =
