@@ -82,6 +82,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -421,10 +422,19 @@ public class DisguiseUtilities {
     }
 
     public static void removeInvisibleSlime(Player player) {
+        if (!player.hasMetadata("LibsDisguises Invisible Slime")) {
+            return;
+        }
+
+        player.removeMetadata("LibsDisguises Invisible Slime", LibsDisguises.getInstance());
         ProtocolLibrary.getProtocolManager().sendServerPacket(player, getDestroyPacket(DisguiseAPI.getEntityAttachmentId()), false);
     }
 
     public static void sendInvisibleSlime(Player player, int horseId) {
+        if (!player.hasMetadata("LibsDisguises Invisible Slime")) {
+            player.setMetadata("LibsDisguises Invisible Slime", new FixedMetadataValue(LibsDisguises.getInstance(), true));
+        }
+
         PacketContainer packet = ProtocolLibrary.getProtocolManager()
             .createPacketConstructor(NmsVersion.v1_19_R1.isSupported() ? Server.SPAWN_ENTITY : Server.SPAWN_ENTITY_LIVING, player).createPacket(player);
 
