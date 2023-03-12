@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
@@ -2859,13 +2860,7 @@ public class DisguiseUtilities {
     public static WrappedDataWatcher createDatawatcher(List<WatcherValue> watcherValues) {
         WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-        for (WatcherValue value : watcherValues) {
-            if (value == null) {
-                continue;
-            }
-
-            watcher.setObject(value.getIndex(), value.getWatchableObject());
-        }
+        watcherValues.forEach(v -> watcher.setObject(v.getIndex(), ReflectionManager.createDataWatcherObject(v.getMetaIndex(), v.getValue())));
 
         return watcher;
     }
@@ -3032,11 +3027,7 @@ public class DisguiseUtilities {
 
                     packets.add(metaPacket);
                 } else {
-                    WrappedDataWatcher watcher = new WrappedDataWatcher();
-
-                    watcherValues.forEach(v -> watcher.setObject(v.getIndex(), ReflectionManager.createDataWatcherObject(v.getMetaIndex(), v.getValue())));
-
-                    packet.getDataWatcherModifier().write(0, watcher);
+                    packet.getDataWatcherModifier().write(0, createDatawatcher(watcherValues));
                 }
             }
         }
