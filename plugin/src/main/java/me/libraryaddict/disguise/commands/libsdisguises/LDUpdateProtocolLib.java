@@ -40,7 +40,7 @@ public class LDUpdateProtocolLib implements LDCommand {
             return;
         }
 
-        sender.sendMessage(ChatColor.RED + "Please hold, now downloading..");
+        sender.sendMessage(ChatColor.RED + "Please hold, now downloading ProtocolLib..");
 
         new BukkitRunnable() {
             @Override
@@ -53,7 +53,7 @@ public class LDUpdateProtocolLib implements LDCommand {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            sender.sendMessage(ChatColor.RED + "Update success! Restart server to finish update!");
+                            sender.sendMessage(ChatColor.RED + "Download success! Restart server to finish update!");
                         }
                     }.runTask(LibsDisguises.getInstance());
                 } catch (Exception ex) {

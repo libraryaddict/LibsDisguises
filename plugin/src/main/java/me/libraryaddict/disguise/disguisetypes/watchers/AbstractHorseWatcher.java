@@ -2,6 +2,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,6 +19,7 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         return getData(MetaIndex.HORSE_OWNER).orElse(null);
     }
 
+    @NmsRemovedIn(NmsVersion.v1_19_R3)
     public void setOwner(UUID uuid) {
         setData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
         sendData(MetaIndex.HORSE_OWNER);
