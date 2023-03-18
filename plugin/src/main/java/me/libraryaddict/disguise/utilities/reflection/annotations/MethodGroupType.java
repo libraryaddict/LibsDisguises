@@ -18,7 +18,8 @@ public enum MethodGroupType {
         DisguiseType.WITHER_SKELETON, DisguiseType.ZOMBIE),
 
     HOLDABLE(EQUIPPABLE, DisguiseType.ENDERMAN, DisguiseType.EVOKER, DisguiseType.ILLUSIONER, DisguiseType.IRON_GOLEM, DisguiseType.PILLAGER,
-        DisguiseType.RAVAGER, DisguiseType.VEX, DisguiseType.VINDICATOR, DisguiseType.WANDERING_TRADER, DisguiseType.WITCH, DisguiseType.ZOMBIE_VILLAGER),
+        DisguiseType.RAVAGER, DisguiseType.VEX, DisguiseType.VINDICATOR, DisguiseType.WANDERING_TRADER, DisguiseType.WITCH, DisguiseType.ZOMBIE_VILLAGER,
+        DisguiseType.VILLAGER),
 
     NONE();
 
