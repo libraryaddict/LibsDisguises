@@ -1,9 +1,13 @@
 package me.libraryaddict.disguise.disguisetypes.watchers;
 
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.DyeColor;
+
+import java.util.Optional;
 
 public class SheepWatcher extends AgeableWatcher {
 
@@ -28,7 +32,22 @@ public class SheepWatcher extends AgeableWatcher {
     }
 
     public boolean isRainbowWool() {
-        return "jeb_".equals(getCustomName());
+        if (!NmsVersion.v1_13.isSupported()) {
+            if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME_OLD)) {
+                return false;
+            }
+
+            return "jeb_".equals(getData(MetaIndex.ENTITY_CUSTOM_NAME_OLD));
+        }
+
+        if (!hasValue(MetaIndex.ENTITY_CUSTOM_NAME)) {
+            return false;
+        }
+
+        Optional<WrappedChatComponent> optional = getData(MetaIndex.ENTITY_CUSTOM_NAME);
+
+        return optional.filter(wrappedChatComponent -> "{\"text\":\"jeb_\"}".equals(wrappedChatComponent.getJson())).isPresent();
+
     }
 
     public void setRainbowWool(boolean rainbow) {

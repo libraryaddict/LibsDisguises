@@ -855,8 +855,8 @@ public abstract class Disguise {
         }
 
         // Sometimes someone may set the custom name stuff on the actual player... Normally harmless, until I come along..
-        if (getEntity() instanceof Player && !getWatcher().hasCustomName() && !getWatcher().isUpsideDown() &&
-            (!(getWatcher() instanceof SheepWatcher) || !((SheepWatcher) getWatcher()).isRainbowWool())) {
+        if (getEntity() instanceof Player && !getWatcher().hasCustomName() && !isUpsideDown() &&
+            !(getWatcher() instanceof SheepWatcher && ((SheepWatcher) getWatcher()).isRainbowWool())) {
             getWatcher().setInteralCustomName("");
             getWatcher().setInternalCustomNameVisible(false);
         }
