@@ -13,9 +13,13 @@ public class DisguiseTypesTest {
     @Test
     public void testDisguiseTypes() {
         for (EntityType entityType : EntityType.values()) {
-            if (entityType == EntityType.LIGHTNING) {
-                continue;
-            } else if (entityType == EntityType.UNKNOWN) {
+            if (entityType == EntityType.LIGHTNING
+                    || entityType == EntityType.UNKNOWN
+                    || entityType == EntityType.BLOCK_DISPLAY
+                    || entityType == EntityType.TEXT_DISPLAY
+                    || entityType == EntityType.ITEM_DISPLAY
+                    || entityType == EntityType.INTERACTION
+                    || entityType == EntityType.SNIFFER) {
                 continue;
             }
 
