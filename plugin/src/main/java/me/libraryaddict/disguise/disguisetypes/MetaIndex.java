@@ -1139,7 +1139,7 @@ public class MetaIndex<Y> {
 
                 MetaIndex index = (MetaIndex) field.get(null);
 
-                if (index == null) {
+                if (index == null || index.getDefault() == null) {
                     continue;
                 }
 
