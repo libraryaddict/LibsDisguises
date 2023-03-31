@@ -557,8 +557,13 @@ public class DisguiseUtilities {
             return new String[]{"4.8.0"};
         }
 
+        // If you're on 1.19.0
+        if (NmsVersion.v1_19_R1.isSupported()) {
+            return new String[]{"5.0.1", "600"};
+        }
+
         // If you're on 1.19.1 or 1.19.2
-        if (!NmsVersion.v1_19_R2.isSupported()) {
+        if (NmsVersion.v1_19_R2.isSupported()) {
             return new String[]{"5.0.1", "600"};
         }
 
