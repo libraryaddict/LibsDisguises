@@ -132,14 +132,25 @@ public class ConfigLoader {
             }
         }
 
+        List<String> strings = new ArrayList<>();
         String[] string = ourConfig.split("\n");
-
+        boolean loadingList = false;
+        boolean useInternalList = false;
         StringBuilder section = new StringBuilder();
 
-        for (int i = 0; i < string.length; i++) {
-            String s = string[i];
+        for (String s : string) {
+            if (s.trim().startsWith("-") && loadingList) {
+                if (useInternalList) {
+                    strings.add(s);
+                }
 
-            if (s.trim().startsWith("#") || !s.contains(":")) {
+                continue;
+            } else if (loadingList) {
+                loadingList = false;
+            }
+
+            if (s.trim().startsWith("#") || !s.contains(":") || s.trim().startsWith("-")) {
+                strings.add(s);
                 continue;
             }
 
@@ -161,6 +172,18 @@ public class ConfigLoader {
 
             if (savedConfig.isConfigurationSection(key)) {
                 section.append(key).append(".");
+            } else if (savedConfig.isList(key)) {
+                strings.add(s);
+                loadingList = true;
+                useInternalList = !savedConfig.isSet(key);
+
+                if (!useInternalList) {
+                    for (String a : savedConfig.getStringList(key)) {
+                        strings.add(rawKey.substring(0, Math.max(0, rawKey.indexOf(" ") + 1)) + "  - " + a);
+                    }
+                }
+
+                continue;
             } else if (savedConfig.isSet(key)) {
                 String rawVal = s.split(":")[1].trim();
                 Object val = savedConfig.get(key);
@@ -169,8 +192,10 @@ public class ConfigLoader {
                     val = "'" + StringEscapeUtils.escapeJava(val.toString().replace(ChatColor.COLOR_CHAR + "", "&")) + "'";
                 }
 
-                string[i] = rawKey + ": " + val;
+                s = rawKey + ": " + val;
             }
+
+            strings.add(s);
         }
 
         try {
@@ -182,7 +207,7 @@ public class ConfigLoader {
             configFile.createNewFile();
 
             try (PrintWriter out = new PrintWriter(configFile)) {
-                out.write(StringUtils.join(string, "\n"));
+                out.write(String.join("\n", strings));
             }
         } catch (IOException e) {
             e.printStackTrace();
