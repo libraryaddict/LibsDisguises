@@ -25,8 +25,11 @@ import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStac
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoItemStackArray;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoParticle;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoPotionEffect;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoQuaternionf;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoSoundGroup;
 import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoTime;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoTransformation;
+import me.libraryaddict.disguise.utilities.params.types.custom.ParamInfoVector3f;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Art;
@@ -42,20 +45,26 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Fox;
 import org.bukkit.entity.Frog;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MainHand;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -80,8 +89,6 @@ public class ParamInfoTypes {
         List<ParamInfo> paramInfos = new ArrayList<>();
 
         // Register enum types
-        //paramInfos.add(new ParamInfoEnum(AnimalColor.class, "Animal Color",
-        //        "View all the colors you can use for an animal color"));
         paramInfos.add(new ParamInfoEnum(Art.class, "Art", "View all the paintings you can use for a painting disguise"));
         paramInfos.add(new ParamInfoEnum(Horse.Color.class, "Horse Color", "View all the colors you can use for a horses color"));
 
@@ -119,16 +126,28 @@ public class ParamInfoTypes {
             paramInfos.add(new ParamInfoEnum(Fox.Type.class, "Fox Type", "The type of fox"));
             paramInfos.add(new ParamInfoEnum(Panda.Gene.class, "Panda Gene", "The panda gene type"));
             paramInfos.add(new ParamInfoEnum(MushroomCow.Variant.class, "Mushroom Cow Variant", "The different variants for mushroom cows"));
-
-            if (NmsVersion.v1_17.isSupported()) {
-                paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
-
-                if (NmsVersion.v1_19_R1.isSupported()) {
-                    paramInfos.add(new ParamInfoEnum(Frog.Variant.class, "Frog Variant", "The variant of Frog"));
-                }
-            }
         } else {
             paramInfos.add(new ParamInfoEnum(Ocelot.Type.class, "Ocelot Type", "The type of ocelot"));
+        }
+
+        if (NmsVersion.v1_17.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(Axolotl.Variant.class, "Axolotl Variant", "The variant of Axolotl"));
+
+        }
+
+        if (NmsVersion.v1_19_R1.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(Frog.Variant.class, "Frog Variant", "The variant of Frog"));
+        }
+
+        if (NmsVersion.v1_19_R3.isSupported()) {
+            paramInfos.add(new ParamInfoTransformation(Transformation.class, "Transformation", "Translation (Transform, Left Rotation, Scale, Right Rotation)",
+                "Numbers for a position translation"));
+            paramInfos.add(new ParamInfoVector3f(Vector3f.class, "Vector3f", "Vector3f (X, Y, Z)", "Used as part of a Transformation"));
+            paramInfos.add(
+                new ParamInfoQuaternionf(Quaternionf.class, "Quaternion", "Quaternion (X, Y, Z, W)", "Four values used to define part of a Transformation"));
+            paramInfos.add(new ParamInfoEnum(ItemDisplay.ItemDisplayTransform.class, "Item Display Transform", "How the Item Display is transformed"));
+            paramInfos.add(new ParamInfoEnum(Display.Billboard.class, "Display Billboard", "How the billboard is aligned"));
+            paramInfos.add(new ParamInfoEnum(TextDisplay.TextAligment.class, "Text Display Alignment", "How the text is aligned in the display"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));
@@ -155,7 +174,7 @@ public class ParamInfoTypes {
         paramInfos.add(new ParamInfoEnum(GolemCrack.class, "Golem Cracked", "The stage a golem has been cracked"));
 
         // Register base types
-        Map<String, Object> booleanMap = new HashMap<>();
+        Map<String, Boolean> booleanMap = new HashMap<>();
         booleanMap.put("true", true);
         booleanMap.put("false", false);
 
@@ -233,7 +252,7 @@ public class ParamInfoTypes {
         String[] split = string.split("_");
 
         for (int i = 0; i < split.length; i++) {
-            split[i] = split[i].substring(0, 1) + split[i].substring(1).toLowerCase(Locale.ENGLISH);
+            split[i] = split[i].charAt(0) + split[i].substring(1).toLowerCase(Locale.ENGLISH);
         }
 
         return StringUtils.join(split, "_");

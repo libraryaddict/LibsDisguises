@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ClassMappings {
-    private static HashMap<String, String> classLocations = new HashMap<>();
+    private static final HashMap<String, String> classLocations = new HashMap<>();
 
     private static final String[] packages = getPackages();
 

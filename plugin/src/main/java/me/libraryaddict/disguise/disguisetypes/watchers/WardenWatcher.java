@@ -8,12 +8,12 @@ public class WardenWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public int getAnger() {
+        return getData(MetaIndex.WARDEN_ANGER);
+    }
+
     public void setAnger(int anger) {
         setData(MetaIndex.WARDEN_ANGER, anger);
         sendData(MetaIndex.WARDEN_ANGER);
-    }
-
-    public int getAnger() {
-        return getData(MetaIndex.WARDEN_ANGER);
     }
 }

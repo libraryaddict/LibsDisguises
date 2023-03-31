@@ -60,7 +60,7 @@ public class GrabHeadCommand implements CommandExecutor {
         }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
-            private BukkitTask runnable = new BukkitRunnable() {
+            private final BukkitTask runnable = new BukkitRunnable() {
                 @Override
                 public void run() {
                     LibsMsg.PLEASE_WAIT.send(sender);

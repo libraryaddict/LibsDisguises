@@ -1,7 +1,6 @@
 package me.libraryaddict.disguise.utilities.reflection.annotations;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 
 import java.util.Arrays;

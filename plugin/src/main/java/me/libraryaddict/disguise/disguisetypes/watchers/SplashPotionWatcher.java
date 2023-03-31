@@ -25,20 +25,20 @@ public class SplashPotionWatcher extends FlagWatcher {
         return potionId;
     }
 
-    public void setSplashPotion(ItemStack item) {
-        setData(MetaIndex.SPLASH_POTION_ITEM, item);
-        sendData(MetaIndex.SPLASH_POTION_ITEM);
-    }
-
-    public ItemStack getSplashPotion() {
-        return getData(MetaIndex.SPLASH_POTION_ITEM);
-    }
-
     public void setPotionId(int newPotionId) {
         this.potionId = newPotionId;
 
         if (getDisguise().getEntity() != null && getDisguise().getWatcher() == this) {
             DisguiseUtilities.refreshTrackers(getDisguise());
         }
+    }
+
+    public ItemStack getSplashPotion() {
+        return getData(MetaIndex.SPLASH_POTION_ITEM);
+    }
+
+    public void setSplashPotion(ItemStack item) {
+        setData(MetaIndex.SPLASH_POTION_ITEM, item);
+        sendData(MetaIndex.SPLASH_POTION_ITEM);
     }
 }

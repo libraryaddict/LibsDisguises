@@ -6,11 +6,11 @@ import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import me.libraryaddict.disguise.utilities.reflection.ClassGetter;
+import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodIgnoredBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.MethodOnlyUsedBy;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
-import me.libraryaddict.disguise.utilities.reflection.WatcherInfo;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
 
@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * Created by libraryaddict on 13/02/2020.
@@ -148,8 +147,7 @@ public class CompileMethods {
 
                     List<DisguiseType> list = Arrays.asList(usableBy);
 
-                    unusableBy =
-                        Arrays.stream(DisguiseType.values()).filter(type -> !list.contains(type)).collect(Collectors.toList()).toArray(new DisguiseType[0]);
+                    unusableBy = Arrays.stream(DisguiseType.values()).filter(type -> !list.contains(type)).toArray(DisguiseType[]::new);
                 } else if (method.isAnnotationPresent(MethodIgnoredBy.class)) {
                     unusableBy = method.getAnnotation(MethodIgnoredBy.class).value();
 

@@ -33,7 +33,7 @@ import java.util.Optional;
  * Created by libraryaddict on 1/06/2017.
  */
 public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, InstanceCreator<FlagWatcher> {
-    private Gson gson;
+    private final Gson gson;
 
     public SerializerFlagWatcher(Gson gson) {
         this.gson = gson;

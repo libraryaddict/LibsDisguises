@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -35,8 +34,8 @@ public enum TranslateType {
     DISGUISE_OPTIONS_PARAMETERS("disguise_option_parameters");
 
     private File file;
-    private LinkedHashMap<String, String> translated = new LinkedHashMap<>();
-    private HashMap<String, Boolean> toDeDupe = new HashMap<>();
+    private final LinkedHashMap<String, String> translated = new LinkedHashMap<>();
+    private final HashMap<String, Boolean> toDeDupe = new HashMap<>();
     private OutputStreamWriter writer;
     private int written;
 
@@ -77,7 +76,6 @@ public enum TranslateType {
         }
 
         // Close the writer
-
         try {
             if (writer != null) {
                 writer.close();
@@ -121,6 +119,8 @@ public enum TranslateType {
 
                     if (!newKey.equals(translated.get(newKey))) {
                         diff++;
+                        translated.put(newKey,
+                            translated.get(newKey) + (diff % 3 == 0 || LibsMsg.OWNED_BY.getRaw().contains("Plugin registered to '") ? "" : " "));
                     }
                 }
             }

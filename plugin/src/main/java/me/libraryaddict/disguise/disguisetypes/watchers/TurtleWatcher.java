@@ -11,12 +11,12 @@ public class TurtleWatcher extends AgeableWatcher {
         super(disguise);
     }
 
+    public boolean isEgg() {
+        return getData(MetaIndex.TURTLE_HAS_EGG);
+    }
+
     public void setEgg(boolean egg) {
         setData(MetaIndex.TURTLE_HAS_EGG, egg);
         sendData(MetaIndex.TURTLE_HAS_EGG);
-    }
-
-    public boolean isEgg() {
-        return getData(MetaIndex.TURTLE_HAS_EGG);
     }
 }

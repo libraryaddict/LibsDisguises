@@ -29,10 +29,10 @@ import java.util.List;
  * Created by libraryaddict on 13/02/2020.
  */
 public class DisguiseMethods {
-    private HashMap<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
-    private HashMap<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
+    private final HashMap<Class<? extends FlagWatcher>, List<WatcherMethod>> watcherMethods = new HashMap<>();
+    private final HashMap<Class<? extends Disguise>, List<WatcherMethod>> disguiseMethods = new HashMap<>();
     @Getter
-    private ArrayList<WatcherMethod> methods = new ArrayList<>();
+    private final ArrayList<WatcherMethod> methods = new ArrayList<>();
 
     public ArrayList<WatcherMethod> getMethods(Class c) {
         ArrayList<WatcherMethod> methods = new ArrayList<>();

@@ -27,7 +27,7 @@ import java.util.Map;
 public class DisguiseCommandConfig {
     @Getter
     @Setter
-    public class DisguiseCommand {
+    public static class DisguiseCommand {
         private String name;
         private String description;
         private String permission;
@@ -35,8 +35,8 @@ public class DisguiseCommandConfig {
         private boolean enabled;
     }
 
-    private File commandConfig = new File(LibsDisguises.getInstance().getDataFolder(), "configs/plugin-commands.yml");
-    private HashMap<String, DisguiseCommand> commands = new HashMap<>();
+    private final File commandConfig = new File(LibsDisguises.getInstance().getDataFolder(), "configs/plugin-commands.yml");
+    private final HashMap<String, DisguiseCommand> commands = new HashMap<>();
     private boolean modifyCommands = false;
 
     private void loadConfig() {

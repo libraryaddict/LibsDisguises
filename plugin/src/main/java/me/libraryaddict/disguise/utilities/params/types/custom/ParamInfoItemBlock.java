@@ -41,7 +41,7 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
     }
 
     @Override
-    public Object fromString(String string) {
+    public ItemStack fromString(String string) {
         String[] split = string.split("[:, -]", -1);
 
         if (split.length > (NmsVersion.v1_13.isSupported() ? 1 : 3)) {
@@ -60,7 +60,7 @@ public class ParamInfoItemBlock extends ParamInfoItemStack {
 
         ItemStack itemStack;
 
-        if (!NmsVersion.v1_13.isSupported() && split.length > 1 && split[split.length - 1].matches("[0-9]+")) {
+        if (!NmsVersion.v1_13.isSupported() && split.length > 1 && split[split.length - 1].matches("\\d+")) {
             itemStack = new ItemStack(material, 1, Short.parseShort(split[split.length - 1]));
         } else {
             itemStack = new ItemStack(material, 1);

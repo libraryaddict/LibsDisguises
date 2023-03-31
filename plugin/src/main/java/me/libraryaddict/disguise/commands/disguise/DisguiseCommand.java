@@ -82,7 +82,7 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         }
 
-        if (!sender.isOp() && LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
+        if (!sender.isOp() && LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}")) {
             disguise.setExpires(DisguiseConfig.isDynamicExpiry() ? 20 * 60 * 10 : System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
         }
 

@@ -11,12 +11,12 @@ public class PufferFishWatcher extends FishWatcher {
         super(disguise);
     }
 
+    public int getPuffState() {
+        return getData(MetaIndex.PUFFERFISH_PUFF_STATE);
+    }
+
     public void setPuffState(int puffState) {
         setData(MetaIndex.PUFFERFISH_PUFF_STATE, Math.min(Math.max(puffState, 0), 2));
         sendData(MetaIndex.PUFFERFISH_PUFF_STATE);
-    }
-
-    public int getPuffState() {
-        return getData(MetaIndex.PUFFERFISH_PUFF_STATE);
     }
 }

@@ -102,8 +102,8 @@ public enum AnimalColor {
         return null;
     }
 
-    private DyeColor dyeColor;
-    private Material material;
+    private final DyeColor dyeColor;
+    private final Material material;
 
     AnimalColor(DyeColor color, Material material) {
         dyeColor = color;

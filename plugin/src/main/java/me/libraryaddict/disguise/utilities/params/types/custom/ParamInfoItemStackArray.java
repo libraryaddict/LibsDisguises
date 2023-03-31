@@ -76,7 +76,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
     }
 
     @Override
-    public Object fromString(String string) {
+    public ItemStack[] fromString(String string) {
         if (string.startsWith("[") && string.endsWith("]")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, ItemStack[].class);

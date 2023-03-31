@@ -11,12 +11,12 @@ public class RaiderWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public boolean isCastingSpell() {
+        return getData(MetaIndex.RAIDER_CASTING_SPELL);
+    }
+
     public void setCastingSpell(boolean value) {
         setData(MetaIndex.RAIDER_CASTING_SPELL, value);
         sendData(MetaIndex.RAIDER_CASTING_SPELL);
-    }
-
-    public boolean isCastingSpell() {
-        return getData(MetaIndex.RAIDER_CASTING_SPELL);
     }
 }

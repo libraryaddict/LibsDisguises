@@ -180,7 +180,7 @@ public class UpdateChecker {
 
             updateMessage = new String[]{LibsMsg.UPDATE_READY.get(currentVersion, getUpdate().getVersion()), LibsMsg.UPDATE_HOW.get()};
         } else {
-            if (!getUpdate().getVersion().matches("[0-9]+")) {
+            if (!getUpdate().getVersion().matches("\\d+")) {
                 return LibsMsg.UPDATE_FAILED;
             }
 
@@ -192,7 +192,7 @@ public class UpdateChecker {
 
             String build = LibsDisguises.getInstance().getBuildNo();
 
-            updateMessage = new String[]{LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("[0-9]+") ? "#" : "") + build, newBuild), LibsMsg.UPDATE_HOW.get()};
+            updateMessage = new String[]{LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("\\d+") ? "#" : "") + build, newBuild), LibsMsg.UPDATE_HOW.get()};
         }
 
         return null;
@@ -253,8 +253,8 @@ public class UpdateChecker {
         newVersion = newVersion.replaceAll("(v)|(-SNAPSHOT)", "");
 
         // If the server has been online for less than 6 hours and both versions are 1.1.1 kind of versions
-        if (started + TimeUnit.HOURS.toMillis(6) > System.currentTimeMillis() && currentVersion.matches("[0-9]+(\\.[0-9]+)*") &&
-            newVersion.matches("[0-9]+(\\.[0-9]+)*")) {
+        if (started + TimeUnit.HOURS.toMillis(6) > System.currentTimeMillis() && currentVersion.matches("\\d+(\\.\\d+)*") &&
+            newVersion.matches("\\d+(\\.\\d+)*")) {
 
             int cVersion = Integer.parseInt(currentVersion.replace(".", ""));
             int nVersion = Integer.parseInt(newVersion.replace(".", ""));

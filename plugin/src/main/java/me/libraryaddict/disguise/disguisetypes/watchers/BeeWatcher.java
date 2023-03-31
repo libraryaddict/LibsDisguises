@@ -2,8 +2,8 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
-import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 
 /**
  * Created by libraryaddict on 14/12/2019.
@@ -14,13 +14,13 @@ public class BeeWatcher extends AgeableWatcher {
         super(disguise);
     }
 
+    public int getBeeAnger() {
+        return getData(MetaIndex.BEE_ANGER);
+    }
+
     public void setBeeAnger(int beeAnger) {
         setData(MetaIndex.BEE_ANGER, beeAnger);
         sendData(MetaIndex.BEE_ANGER);
-    }
-
-    public int getBeeAnger() {
-        return getData(MetaIndex.BEE_ANGER);
     }
 
     public void setHasNectar(boolean hasNectar) {
@@ -39,12 +39,12 @@ public class BeeWatcher extends AgeableWatcher {
         return getBeeFlag(4);
     }
 
-    public void setFlipped(boolean isFlipped) {
-        setBeeFlag(2, isFlipped);
-    }
-
     public boolean isFlipped() {
         return getBeeFlag(2);
+    }
+
+    public void setFlipped(boolean isFlipped) {
+        setBeeFlag(2, isFlipped);
     }
 
     private boolean getBeeFlag(int value) {

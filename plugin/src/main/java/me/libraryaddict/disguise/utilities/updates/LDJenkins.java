@@ -30,7 +30,7 @@ public class LDJenkins {
 
     @AllArgsConstructor
     @Getter
-    private class JenkinsUpdate implements DisguiseUpdate {
+    private static class JenkinsUpdate implements DisguiseUpdate {
         private final Date fetched = new Date();
         private final String version;
         private final String[] changelog;
@@ -71,7 +71,7 @@ public class LDJenkins {
                 return new String[0];
             }
 
-            return ((String) map.get("body")).split("(\\r|\\n)+");
+            return ((String) map.get("body")).split("[\\r\\n]+");
         } catch (Exception ignored) {
         }
 

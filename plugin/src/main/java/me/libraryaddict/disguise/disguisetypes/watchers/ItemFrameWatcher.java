@@ -19,10 +19,6 @@ public class ItemFrameWatcher extends FlagWatcher {
         return getData(MetaIndex.ITEMFRAME_ITEM);
     }
 
-    public int getRotation() {
-        return getData(MetaIndex.ITEMFRAME_ROTATION);
-    }
-
     public void setItem(ItemStack newItem) {
         if (newItem == null) {
             newItem = new ItemStack(Material.AIR);
@@ -33,6 +29,10 @@ public class ItemFrameWatcher extends FlagWatcher {
 
         setData(MetaIndex.ITEMFRAME_ITEM, newItem);
         sendData(MetaIndex.ITEMFRAME_ITEM);
+    }
+
+    public int getRotation() {
+        return getData(MetaIndex.ITEMFRAME_ROTATION);
     }
 
     public void setRotation(int rotation) {

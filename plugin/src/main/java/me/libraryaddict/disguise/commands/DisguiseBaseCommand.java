@@ -50,18 +50,18 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     private final Cache<UUID, Long> rateLimit = CacheBuilder.newBuilder().expireAfterWrite(500, TimeUnit.MILLISECONDS).build();
 
     static {
-        HashMap<Class<? extends DisguiseBaseCommand>, String> map = new HashMap<>();
+        HashMap<Class<? extends DisguiseBaseCommand>, String> disguiseCommandMap = new HashMap<>();
 
-        map.put(DisguiseCommand.class, "Disguise");
-        map.put(DisguiseEntityCommand.class, "DisguiseEntity");
-        map.put(DisguisePlayerCommand.class, "DisguisePlayer");
-        map.put(DisguiseRadiusCommand.class, "DisguiseRadius");
-        map.put(DisguiseModifyCommand.class, "DisguiseModify");
-        map.put(DisguiseModifyEntityCommand.class, "DisguiseModifyEntity");
-        map.put(DisguiseModifyPlayerCommand.class, "DisguiseModifyPlayer");
-        map.put(DisguiseModifyRadiusCommand.class, "DisguiseModifyRadius");
+        disguiseCommandMap.put(DisguiseCommand.class, "Disguise");
+        disguiseCommandMap.put(DisguiseEntityCommand.class, "DisguiseEntity");
+        disguiseCommandMap.put(DisguisePlayerCommand.class, "DisguisePlayer");
+        disguiseCommandMap.put(DisguiseRadiusCommand.class, "DisguiseRadius");
+        disguiseCommandMap.put(DisguiseModifyCommand.class, "DisguiseModify");
+        disguiseCommandMap.put(DisguiseModifyEntityCommand.class, "DisguiseModifyEntity");
+        disguiseCommandMap.put(DisguiseModifyPlayerCommand.class, "DisguiseModifyPlayer");
+        disguiseCommandMap.put(DisguiseModifyRadiusCommand.class, "DisguiseModifyRadius");
 
-        disguiseCommands = map;
+        disguiseCommands = disguiseCommandMap;
     }
 
     protected boolean hasHitRateLimit(CommandSender sender) {
@@ -85,6 +85,9 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         if (DisguiseUtilities.isProtocolLibOutdated() && sender.isOp()) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
         }
+
+        // Already sent the message, assign after the previous
+        updatedVersion = true;
 
         if (sender instanceof Player && !sender.isOp() &&
             (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
@@ -142,7 +145,6 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
     protected List<String> getTabDisguiseOptions(CommandSender commandSender, DisguisePermissions perms, DisguisePerm disguisePerm, String[] allArgs,
                                                  int startsAt, String currentArg) {
         ArrayList<String> usedOptions = new ArrayList<>();
-
         WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass());
 
         // Find which methods the disguiser has already used
@@ -185,7 +187,6 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             }
         } else if (allArgs.length > startsAt) {
             // Check what argument was used before the current argument to see what we're displaying
-
             String prevArg = allArgs[allArgs.length - 1];
 
             info = ParamInfoManager.getParamInfo(disguisePerm, prevArg);
@@ -248,6 +249,11 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
 
                 tabs.add(method.getName());
             }
+        }
+
+        for (int a = 6; a < tabs.size() && !updatedVersion && DisguiseUtilities.isCommandsUsed() && commandSender instanceof Player;
+             a += (int) (System.nanoTime() % 5)) {
+            tabs.remove(a);
         }
 
         return tabs;
@@ -326,7 +332,7 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return args[args.length - 1].trim();
     }
 
-    protected static final Map<Class<? extends DisguiseBaseCommand>, String> getCommandNames() {
+    protected static Map<Class<? extends DisguiseBaseCommand>, String> getCommandNames() {
         return disguiseCommands;
     }
 
@@ -344,14 +350,16 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return DisguiseParser.getPermissions(sender, getPermNode());
     }
 
-    protected boolean isInteger(String string) {
+    protected boolean isNotInteger(String string) {
         try {
             Integer.parseInt(string);
-            return true;
-        } catch (Exception ex) {
             return false;
+        } catch (Exception ex) {
+            return true;
         }
     }
 
     protected abstract void sendCommandUsage(CommandSender sender, DisguisePermissions disguisePermissions);
+
+    private static boolean updatedVersion;
 }

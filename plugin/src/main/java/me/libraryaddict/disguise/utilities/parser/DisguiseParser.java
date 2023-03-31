@@ -54,7 +54,7 @@ public class DisguiseParser {
     /**
      * <Setter, <Getter, DefaultValue>>
      */
-    private static HashMap<WatcherMethod, Map.Entry<WatcherMethod, Object>> defaultWatcherValues = new HashMap<>();
+    private static final HashMap<WatcherMethod, Map.Entry<WatcherMethod, Object>> defaultWatcherValues = new HashMap<>();
 
     public static void createDefaultMethods() {
         try {
@@ -324,7 +324,7 @@ public class DisguiseParser {
             if (!Objects.deepEquals(dObj, object)) {
                 throw new IllegalStateException(String.format(
                     "%s has conflicting values in class %s! This means it expected the same value again but " + "received a " +
-                        "different value on a different disguise! %s is not the same as %s!", setMethod.toString(), setMethod.toString(), object, dObj));
+                        "different value on a different disguise! %s is not the same as %s!", setMethod.toString(), setMethod, object, dObj));
             }
 
             return;

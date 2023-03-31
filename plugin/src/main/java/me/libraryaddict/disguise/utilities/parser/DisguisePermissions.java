@@ -1,6 +1,5 @@
 package me.libraryaddict.disguise.utilities.parser;
 
-import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.entity.Ageable;
@@ -24,10 +23,10 @@ import java.util.stream.Collectors;
  * Created by libraryaddict on 14/10/2018.
  */
 public class DisguisePermissions {
-    private class PermissionStorage {
-        private DisguisePerm disguisePerm;
-        private List<String> permittedOptions = new ArrayList<>();
-        private List<String> negatedOptions = new ArrayList<>();
+    private static class PermissionStorage {
+        private final DisguisePerm disguisePerm;
+        private final List<String> permittedOptions = new ArrayList<>();
+        private final List<String> negatedOptions = new ArrayList<>();
         private boolean wildcardAllow = false;
 
         public PermissionStorage(DisguisePerm disguisePerm) {
@@ -39,9 +38,9 @@ public class DisguisePermissions {
         }
     }
 
-    private class ParsedPermission {
-        private Vector<DisguisePerm> disguisePerm;
-        private HashMap<String, Boolean> options;
+    private static class ParsedPermission {
+        private final Vector<DisguisePerm> disguisePerm;
+        private final HashMap<String, Boolean> options;
         private boolean negated;
         /**
          * 0 = Names a specific disguise
@@ -50,8 +49,8 @@ public class DisguisePermissions {
          * 3... = etc
          * 4 = * = Disguise wildcard
          */
-        private byte inheritance;
-        private boolean wildcardCommand;
+        private final byte inheritance;
+        private final boolean wildcardCommand;
 
         public ParsedPermission(DisguisePerm[] disguisePerm, HashMap<String, Boolean> options, byte inheritance, boolean wildcardCommand) {
             this.disguisePerm = new Vector<>(Arrays.asList(disguisePerm));
@@ -81,10 +80,10 @@ public class DisguisePermissions {
         }
     }
 
-    class DisguisePermitted {
-        private boolean strictAllowed;
-        private List<String> optionsAllowed;
-        private List<String> optionsForbidden;
+    static class DisguisePermitted {
+        private final boolean strictAllowed;
+        private final List<String> optionsAllowed;
+        private final List<String> optionsForbidden;
 
         public DisguisePermitted(List<String> optionsAllowed, List<String> optionsForbidden, boolean strict) {
             this.strictAllowed = strict;
@@ -108,7 +107,7 @@ public class DisguisePermissions {
     /**
      * List of PermissionStorage that the permission holder is able to use
      */
-    private List<PermissionStorage> disguises = new ArrayList<>();
+    private final List<PermissionStorage> disguises = new ArrayList<>();
 
     /**
      * @param permissionHolder The permissions to check
@@ -362,7 +361,7 @@ public class DisguisePermissions {
 
                 for (Map.Entry<String, Boolean> entry : parsedPermission.options.entrySet()) {
                     // If permission is negated, reverse the option from 'allowed' to 'denied' or vice versa
-                    boolean allowUse = parsedPermission.isNegated() ? !entry.getValue() : entry.getValue();
+                    boolean allowUse = parsedPermission.isNegated() != entry.getValue();
 
                     storage.permittedOptions.remove(entry.getKey());
                     storage.negatedOptions.remove(entry.getKey());
@@ -409,8 +408,8 @@ public class DisguisePermissions {
                 storage.negatedOptions.add("setinvisible");
             }
 
-            if (sender instanceof Player && !sender.isOp() && !DisguiseConfig.isExplicitDisguisePermissions()) {
-                for (String unsafeMethod : new String[]{"setYModifier", "setNameYModifier"}) {
+            if (sender instanceof Player && !sender.isOp()) {
+                for (String unsafeMethod : DisguiseConfig.getDisabledMethods()) {
                     storage.permittedOptions.remove(unsafeMethod);
                     storage.negatedOptions.add(unsafeMethod);
                 }
@@ -418,6 +417,12 @@ public class DisguisePermissions {
 
             disguises.add(storage);
         }
+
+        if (sender.isOp() || DisguiseConfig.getDisabledDisguises().isEmpty()) {
+            return;
+        }
+
+        disguises.removeIf(storage -> DisguiseConfig.getDisabledDisguises().contains(storage.getDisguise().getType()));
     }
 
     private int getInheritance(DisguisePerm disguisePerm, String permissionName) {

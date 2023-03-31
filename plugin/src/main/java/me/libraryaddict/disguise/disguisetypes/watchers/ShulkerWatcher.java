@@ -54,6 +54,14 @@ public class ShulkerWatcher extends InsentientWatcher {
         sendData(MetaIndex.SHULKER_PEEKING);
     }
 
+    public DyeColor getColor() {
+        if (!hasValue(MetaIndex.SHULKER_COLOR)) {
+            return DyeColor.PURPLE;
+        }
+
+        return AnimalColor.getColorByWool(getData(MetaIndex.SHULKER_COLOR)).getDyeColor();
+    }
+
     @Deprecated
     public void setColor(AnimalColor color) {
         setColor(color.getDyeColor());
@@ -66,13 +74,5 @@ public class ShulkerWatcher extends InsentientWatcher {
 
         setData(MetaIndex.SHULKER_COLOR, newColor.getWoolData());
         sendData(MetaIndex.SHULKER_COLOR);
-    }
-
-    public DyeColor getColor() {
-        if (!hasValue(MetaIndex.SHULKER_COLOR)) {
-            return DyeColor.PURPLE;
-        }
-
-        return AnimalColor.getColorByWool(getData(MetaIndex.SHULKER_COLOR)).getDyeColor();
     }
 }

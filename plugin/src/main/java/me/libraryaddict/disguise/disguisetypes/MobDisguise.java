@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import java.security.InvalidParameterException;
 
 public class MobDisguise extends TargetedDisguise {
-    private boolean isAdult;
+    private final boolean isAdult;
 
     public MobDisguise(DisguiseType disguiseType) {
         this(disguiseType, true);

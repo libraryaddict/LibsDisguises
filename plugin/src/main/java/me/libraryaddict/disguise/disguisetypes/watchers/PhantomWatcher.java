@@ -11,12 +11,12 @@ public class PhantomWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public int getSize() {
+        return getData(MetaIndex.PHANTOM_SIZE);
+    }
+
     public void setSize(int size) {
         setData(MetaIndex.PHANTOM_SIZE, Math.min(Math.max(size, -50), 50));
         sendData(MetaIndex.PHANTOM_SIZE);
-    }
-
-    public int getSize() {
-        return getData(MetaIndex.PHANTOM_SIZE);
     }
 }

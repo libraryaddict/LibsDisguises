@@ -9,12 +9,12 @@ public class ChestedHorseWatcher extends AbstractHorseWatcher {
         super(disguise);
     }
 
+    public boolean isCarryingChest() {
+        return getData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST);
+    }
+
     public void setCarryingChest(boolean carryingChest) {
         setData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST, carryingChest);
         sendData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST);
-    }
-
-    public boolean isCarryingChest() {
-        return getData(MetaIndex.HORSE_CHESTED_CARRYING_CHEST);
     }
 }

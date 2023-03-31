@@ -9,8 +9,8 @@ import java.util.Map;
 /**
  * Created by libraryaddict on 7/09/2018.
  */
-public class ParamInfoBoolean extends ParamInfo {
-    public ParamInfoBoolean(String name, String valueType, String description, Map<String, Object> possibleValues) {
+public class ParamInfoBoolean extends ParamInfo<Boolean> {
+    public ParamInfoBoolean(String name, String valueType, String description, Map<String, Boolean> possibleValues) {
         super(Boolean.class, name, valueType, description, possibleValues);
     }
 
@@ -20,7 +20,7 @@ public class ParamInfoBoolean extends ParamInfo {
     }
 
     @Override
-    public Object fromString(List<String> list) {
+    public Boolean fromString(List<String> list) {
         if (list.isEmpty()) {
             return true;
         }
@@ -38,12 +38,12 @@ public class ParamInfoBoolean extends ParamInfo {
     }
 
     @Override
-    protected Object fromString(String string) {
+    protected Boolean fromString(String string) {
         throw new IllegalStateException("This shouldn't be called");
     }
 
     @Override
-    public String toString(Object object) {
+    public String toString(Boolean object) {
         return object.toString();
     }
 

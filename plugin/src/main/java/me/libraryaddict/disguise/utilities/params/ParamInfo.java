@@ -13,47 +13,47 @@ import java.util.Set;
 /**
  * Created by libraryaddict on 7/09/2018.
  */
-public abstract class ParamInfo {
-    private Class paramClass;
-    private String descriptiveName;
-    private String name;
-    private Map<String, Object> possibleValues;
+public abstract class ParamInfo<T> {
+    private final Class paramClass;
+    private final String descriptiveName;
+    private final String name;
+    private Map<String, T> possibleValues;
     /**
      * Used for translations, namely ItemStack and it's 'Glowing' and 'null' counterparts
      */
     private String[] otherValues;
-    private String description;
+    private final String description;
 
-    public ParamInfo(Class paramClass, String name, String description) {
+    public ParamInfo(Class<T> paramClass, String name, String description) {
         this(paramClass, name, name, description);
     }
 
-    public ParamInfo(Class paramClass, String name, String descriptiveName, String description) {
+    public ParamInfo(Class<T> paramClass, String name, String descriptiveName, String description) {
         this.name = name;
         this.paramClass = paramClass;
         this.descriptiveName = descriptiveName;
         this.description = description;
     }
 
-    public ParamInfo(Class paramClass, String name, String description, Enum[] possibleValues) {
+    public ParamInfo(Class<T> paramClass, String name, String description, T[] possibleValues) {
         this(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfo(Class paramClass, String name, String descriptiveName, String description, Enum[] possibleValues) {
+    public ParamInfo(Class<T> paramClass, String name, String descriptiveName, String description, T[] possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
         this.possibleValues = new LinkedHashMap<>();
 
-        for (Enum anEnum : possibleValues) {
-            this.getValues().put(anEnum.name(), anEnum);
+        for (T anEnum : possibleValues) {
+            this.getValues().put(((Enum) anEnum).name(), anEnum);
         }
     }
 
-    public ParamInfo(Class paramClass, String name, String description, Map<String, Object> possibleValues) {
+    public ParamInfo(Class<T> paramClass, String name, String description, Map<String, T> possibleValues) {
         this(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfo(Class paramClass, String name, String descriptiveName, String description, Map<String, Object> possibleValues) {
+    public ParamInfo(Class<T> paramClass, String name, String descriptiveName, String description, Map<String, T> possibleValues) {
         this(paramClass, name, descriptiveName, description);
 
         this.possibleValues = new LinkedHashMap<>();
@@ -84,15 +84,15 @@ public abstract class ParamInfo {
         return false;
     }
 
-    protected abstract Object fromString(String string) throws DisguiseParseException;
+    protected abstract T fromString(String string) throws DisguiseParseException;
 
-    public abstract String toString(Object object);
+    public abstract String toString(T object);
 
-    public Object fromString(List<String> arguments) throws DisguiseParseException {
+    public T fromString(List<String> arguments) throws DisguiseParseException {
         // Don't consume a string immediately, if it errors we need to check other param types
         String string = arguments.get(0);
 
-        Object value = fromString(string);
+        T value = fromString(string);
 
         // Throw error if null wasn't expected
         if (value == null && !canReturnNull()) {
@@ -144,7 +144,7 @@ public abstract class ParamInfo {
         return description;
     }
 
-    public Map<String, Object> getValues() {
+    public Map<String, T> getValues() {
         return this.possibleValues;
     }
 

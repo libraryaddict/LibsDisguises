@@ -9,7 +9,6 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedParticle;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
@@ -258,6 +257,9 @@ public class DisguiseUtilities {
     private static final HashSet<UUID> warnedSkin = new HashSet<>();
     @Getter
     private static boolean fancyHiddenTabs;
+    @Getter
+    @Setter
+    private static boolean protocollibUpdateDownloaded;
 
     static {
         final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
@@ -555,12 +557,18 @@ public class DisguiseUtilities {
             return new String[]{"4.8.0"};
         }
 
-        // If you're on 1.19.1
+        // If you're on 1.19.1 or 1.19.2
         if (!NmsVersion.v1_19_R2.isSupported()) {
             return new String[]{"5.0.1", "600"};
         }
 
-        return new String[]{"5.0.1", "607"};
+        // If you're on 1.19.4
+        if (NmsVersion.v1_19_R3.isSupported()) {
+            return new String[]{"5.0.1", "627"};
+        }
+
+        // When we haven't updated!
+        throw new IllegalArgumentException("ProtocolLib support was not added for " + ReflectionManager.getVersion().name());
     }
 
     public static boolean isProtocolLibOutdated() {
@@ -618,6 +626,8 @@ public class DisguiseUtilities {
         try (InputStream input = con.getInputStream()) {
             Files.copy(input, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
+
+        setProtocollibUpdateDownloaded(true);
 
         return dest;
     }
@@ -1359,7 +1369,7 @@ public class DisguiseUtilities {
             }
         }
 
-        if (Pattern.matches("([A-Za-z0-9_]){1,16}", origName)) {
+        if (Pattern.matches("\\w{1,16}", origName)) {
             final Player player = Bukkit.getPlayerExact(playerName);
 
             if (player != null) {
@@ -2630,6 +2640,12 @@ public class DisguiseUtilities {
     }
 
     public static void sendProtocolLibUpdateMessage(CommandSender p, String version, String requiredProtocolLib) {
+        if (isProtocollibUpdateDownloaded()) {
+            p.sendMessage(ChatColor.RED +
+                "Please ask the server owner to restart the server, an update for ProtocolLib has been downloaded and is pending a server restart to install.");
+            return;
+        }
+
         p.sendMessage(
             ChatColor.RED + "Please ask the server owner to update ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
                 requiredProtocolLib + "!");
@@ -2882,11 +2898,19 @@ public class DisguiseUtilities {
     }
 
     public static byte getPitch(DisguiseType disguiseType, byte value) {
-        if (disguiseType != DisguiseType.WITHER_SKULL && disguiseType.isMisc()) {
-            return (byte) -value;
+        switch (disguiseType) {
+            case BLOCK_DISPLAY:
+            case ITEM_DISPLAY:
+            case TEXT_DISPLAY:
+            case WITHER_SKULL:
+                return value;
+            case PHANTOM:
+                return (byte) -value;
+            default:
+                break;
         }
 
-        if (disguiseType == DisguiseType.PHANTOM) {
+        if (disguiseType.isMisc()) {
             return (byte) -value;
         }
 
@@ -2924,6 +2948,10 @@ public class DisguiseUtilities {
             case PAINTING:
             case ITEM_FRAME:
                 return (byte) -(value + 128);
+            case BLOCK_DISPLAY:
+            case ITEM_DISPLAY:
+            case TEXT_DISPLAY:
+                return value;
             default:
                 if (disguiseType.isMisc() && disguiseType != DisguiseType.ARMOR_STAND) {
                     return (byte) (value - 64);
@@ -3040,7 +3068,7 @@ public class DisguiseUtilities {
     }
 
     public static Disguise getDisguise(Player observer, int entityId) {
-        // If the entity ID is the same as self disguises id, then it needs to be set to the observers id
+        // If the entity ID is the same as self disguises' id, then it needs to be set to the observers id
         if (entityId == DisguiseAPI.getSelfDisguiseId()) {
             entityId = observer.getEntityId();
         }

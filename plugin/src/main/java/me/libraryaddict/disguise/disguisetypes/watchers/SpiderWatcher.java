@@ -8,12 +8,12 @@ public class SpiderWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public boolean isClimbing() {
+        return getData(MetaIndex.SPIDER_CLIMB) == (byte) 1;
+    }
+
     public void setClimbing(boolean climbing) {
         setData(MetaIndex.SPIDER_CLIMB, (byte) (climbing ? 1 : 0));
         sendData(MetaIndex.SPIDER_CLIMB);
-    }
-
-    public boolean isClimbing() {
-        return getData(MetaIndex.SPIDER_CLIMB) == (byte) 1;
     }
 }

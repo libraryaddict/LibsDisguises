@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by libraryaddict on 10/06/2017.
@@ -29,17 +30,10 @@ public class TranslateFiller {
             TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
 
             if (info.canTranslateValues()) {
-                for (String e : info.getValues().keySet()) {
+                for (String e : ((Map<String, Object>) info.getValues()).keySet()) {
                     TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(e, "Used for the disguise option " + info.getRawName());
                 }
             }
-
-            /*if (info.getOtherValues() != null) {
-                for (String e : info.getOtherValues()) {
-                    TranslateType.DISGUISE_OPTIONS_PARAMETERS
-                            .save(e, "Used for the disguise option " + info.getRawName());
-                }
-            }*/
         }
 
         for (DisguiseType type : DisguiseType.values()) {

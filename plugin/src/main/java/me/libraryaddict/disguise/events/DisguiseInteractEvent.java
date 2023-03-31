@@ -18,9 +18,9 @@ public class DisguiseInteractEvent extends PlayerEvent {
         return handlers;
     }
 
-    private TargetedDisguise disguise;
-    private EquipmentSlot hand;
-    private boolean leftClick;
+    private final TargetedDisguise disguise;
+    private final EquipmentSlot hand;
+    private final boolean leftClick;
 
     public DisguiseInteractEvent(TargetedDisguise disguise, EquipmentSlot hand, boolean leftClick) {
         super((Player) disguise.getEntity());

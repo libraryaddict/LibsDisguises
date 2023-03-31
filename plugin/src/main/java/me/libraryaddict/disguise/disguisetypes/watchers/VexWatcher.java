@@ -9,12 +9,12 @@ public class VexWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public boolean isAngry() {
+        return getData(MetaIndex.VEX_ANGRY) == 1;
+    }
+
     public void setAngry(boolean angry) {
         setData(MetaIndex.VEX_ANGRY, (byte) (angry ? 1 : 0));
         sendData(MetaIndex.VEX_ANGRY);
-    }
-
-    public boolean isAngry() {
-        return getData(MetaIndex.VEX_ANGRY) == 1;
     }
 }

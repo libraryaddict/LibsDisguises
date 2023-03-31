@@ -22,12 +22,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PacketListenerInventory extends PacketAdapter {
-    private LibsDisguises libsDisguises;
+    private final LibsDisguises libsDisguises;
 
     public PacketListenerInventory(LibsDisguises plugin) {
         super(plugin, ListenerPriority.HIGH, Server.SET_SLOT, Server.WINDOW_ITEMS, PacketType.Play.Client.SET_CREATIVE_SLOT,

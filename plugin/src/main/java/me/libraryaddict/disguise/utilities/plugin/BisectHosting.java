@@ -15,7 +15,7 @@ public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
         boolean claimedHosted = DisguiseConfig.isBisectHosted();
         String ip = Bukkit.getIp();
-        String parsedIP = ip.replaceAll("[^:0-9.]", "");
+        String parsedIP = ip.replaceAll("[^:\\d.]", "");
 
         // If not hosted by bisect
         if (!claimedHosted && DisguiseConfig.getSavedServerIp().equals(parsedIP)) {
@@ -24,7 +24,7 @@ public class BisectHosting {
 
         boolean hostedBy = false;
 
-        if (ip.matches("((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
+        if (ip.matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}")) {
             try {
                 ip = getFinalURL("http://" + ip);
 

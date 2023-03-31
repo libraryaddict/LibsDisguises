@@ -7,7 +7,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class LibsEquipment implements EntityEquipment {
-    private ItemStack[] equipment = new ItemStack[EquipmentSlot.values().length];
+    private final ItemStack[] equipment = new ItemStack[EquipmentSlot.values().length];
     private transient FlagWatcher flagWatcher;
 
     public LibsEquipment(FlagWatcher flagWatcher) {

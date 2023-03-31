@@ -16,8 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Created by libraryaddict on 20/05/2021.
  */
@@ -27,7 +25,7 @@ class DisguiseRunnable extends BukkitRunnable {
     private int actionBarTicks = -1;
     private int refreshRate;
     private long lastRefreshed = System.currentTimeMillis();
-    private Disguise disguise;
+    private final Disguise disguise;
     final Double vectorY;
     final boolean alwaysSendVelocity;
 

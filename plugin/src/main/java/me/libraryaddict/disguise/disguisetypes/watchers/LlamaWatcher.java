@@ -12,13 +12,13 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         super(disguise);
     }
 
+    public Llama.Color getColor() {
+        return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
+    }
+
     public void setColor(Llama.Color color) {
         setData(MetaIndex.LLAMA_COLOR, color.ordinal());
         sendData(MetaIndex.LLAMA_COLOR);
-    }
-
-    public Llama.Color getColor() {
-        return Llama.Color.values()[getData(MetaIndex.LLAMA_COLOR)];
     }
 
     public DyeColor getCarpet() {
@@ -39,12 +39,12 @@ public class LlamaWatcher extends ChestedHorseWatcher {
         setCarpet(color.getDyeColor());
     }
 
+    public int getStrength() {
+        return getData(MetaIndex.LLAMA_STRENGTH);
+    }
+
     public void setStrength(int strength) {
         setData(MetaIndex.LLAMA_STRENGTH, strength);
         sendData(MetaIndex.LLAMA_STRENGTH);
-    }
-
-    public int getStrength() {
-        return getData(MetaIndex.LLAMA_STRENGTH);
     }
 }

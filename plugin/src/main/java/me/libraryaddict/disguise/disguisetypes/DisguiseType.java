@@ -29,6 +29,8 @@ public enum DisguiseType {
 
     BLAZE,
 
+    @NmsAddedIn(NmsVersion.v1_19_R3) BLOCK_DISPLAY,
+
     BOAT(1),
 
     @NmsAddedIn(NmsVersion.UNSUPPORTED) CAMEL,
@@ -111,7 +113,11 @@ public enum DisguiseType {
 
     ILLUSIONER,
 
+    @NmsAddedIn(NmsVersion.v1_19_R3) INTERACTION,
+
     IRON_GOLEM,
+
+    @NmsAddedIn(NmsVersion.v1_19_R3) ITEM_DISPLAY,
 
     ITEM_FRAME(71),
 
@@ -197,6 +203,8 @@ public enum DisguiseType {
 
     SMALL_FIREBALL(63),
 
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) SNIFFER,
+
     SNOWBALL(61),
 
     SNOWMAN,
@@ -214,6 +222,8 @@ public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_16) STRIDER,
 
     @NmsAddedIn(NmsVersion.v1_19_R1) TADPOLE,
+
+    @NmsAddedIn(NmsVersion.v1_19_R3) TEXT_DISPLAY,
 
     THROWN_EXP_BOTTLE(75),
 

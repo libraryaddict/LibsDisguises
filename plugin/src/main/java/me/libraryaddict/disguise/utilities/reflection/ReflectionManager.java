@@ -1475,7 +1475,9 @@ public class ReflectionManager {
             return entityPoseClass;
         } else if (NbtWrapper.class.isAssignableFrom(cl)) {
             return getNmsClass("NBTTagCompound");
-        } else if (NmsVersion.v1_19_R1.isSupported()) {
+        }
+
+        if (NmsVersion.v1_19_R1.isSupported()) {
             if (Frog.Variant.class.isAssignableFrom(cl)) {
                 return getNmsClass("FrogVariant");
             }
@@ -1486,6 +1488,12 @@ public class ReflectionManager {
 
             if (Art.class.isAssignableFrom(cl)) {
                 return getNmsClass("PaintingVariant");
+            }
+        }
+
+        if (NmsVersion.v1_19_R3.isSupported()) {
+            if (BlockData.class.isAssignableFrom(cl)) {
+                return getNmsClass("IBlockData");
             }
         }
 
@@ -1542,6 +1550,7 @@ public class ReflectionManager {
             }
         } else if (value instanceof Vector3F) {
             Vector3F angle = (Vector3F) value;
+
             if (nmsReflection != null) {
                 return nmsReflection.convertVec3(angle);
             }
@@ -2266,6 +2275,10 @@ public class ReflectionManager {
             switch (disguiseType) {
                 case ALLAY:
                 case AXOLOTL:
+                case BLOCK_DISPLAY:
+                case INTERACTION:
+                case ITEM_DISPLAY:
+                case TEXT_DISPLAY:
                 case CHEST_BOAT:
                 case FROG:
                 case GLOW_ITEM_FRAME:

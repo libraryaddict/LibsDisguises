@@ -47,7 +47,7 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerSpawn implements IPacketHandler {
-    private PacketsHandler packetsHandler;
+    private final PacketsHandler packetsHandler;
 
     public PacketHandlerSpawn(PacketsHandler packetsHandler) {
         this.packetsHandler = packetsHandler;
@@ -333,8 +333,9 @@ public class PacketHandlerSpawn implements IPacketHandler {
                     entityType = ReflectionManager.getEntityType(disguise.getType().getEntityType());
                 }
 
-                Object[] params = new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, loc.getPitch(), loc.getYaw(), entityType, data,
-                    ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
+                Object[] params =
+                    new Object[]{disguisedEntity.getEntityId(), disguise.getUUID(), x, y, z, pitch / 256.0F * 360.0F, yaw / 256.0F * 360.0F, entityType, data,
+                        ReflectionManager.getVec3D(disguisedEntity.getVelocity())};
 
                 if (NmsVersion.v1_19_R1.isSupported()) {
                     params = Arrays.copyOf(params, params.length + 1);
@@ -360,13 +361,13 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 doubles.write(0, x);
                 doubles.write(1, y);
                 doubles.write(2, z);
-            }
 
-            spawnEntity.getModifier().write(8, pitch);
-            spawnEntity.getModifier().write(9, yaw);
+                spawnEntity.getModifier().write(8, pitch);
+                spawnEntity.getModifier().write(9, yaw);
 
-            if (NmsVersion.v1_19_R1.isSupported()) {
-                spawnEntity.getModifier().write(10, yaw);
+                if (NmsVersion.v1_19_R1.isSupported()) {
+                    spawnEntity.getModifier().write(10, yaw);
+                }
             }
 
             packets.addPacket(spawnEntity);

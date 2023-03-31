@@ -4,7 +4,6 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinResponse;
-import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -86,21 +85,18 @@ public class SkinUtils {
     }
 
     public static void handleName(String playerName, ModelType modelType, SkinCallback callback) {
-        WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(playerName, new LibsProfileLookup() {
-            @Override
-            public void onLookup(WrappedGameProfile gameProfile) {
-                // Isn't handled by callback
-                if (!Pattern.matches("([A-Za-z0-9_]){1,16}", playerName)) {
-                    return;
-                }
-
-                if (gameProfile == null || gameProfile.getProperties().isEmpty()) {
-                    callback.onError(LibsMsg.CANNOT_FIND_PLAYER_NAME, playerName);
-                    return;
-                }
-
-                handleProfile(gameProfile, modelType, callback);
+        WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(playerName, gameProfile1 -> {
+            // Isn't handled by callback
+            if (!Pattern.matches("\\w{1,16}", playerName)) {
+                return;
             }
+
+            if (gameProfile1 == null || gameProfile1.getProperties().isEmpty()) {
+                callback.onError(LibsMsg.CANNOT_FIND_PLAYER_NAME, playerName);
+                return;
+            }
+
+            handleProfile(gameProfile1, modelType, callback);
         });
 
         // Is handled in callback
@@ -168,14 +164,14 @@ public class SkinUtils {
             param = param.substring(0, param.length() - ":slim".length());
         }
 
-        if (param.matches("https?:\\/\\/.+")) {
+        if (param.matches("https?://.+")) {
             // Its an url
             callback.onInfo(LibsMsg.SKIN_API_USING_URL);
 
             handleUrl(param, modelType, callback);
         } else {
             // Check if it contains legal file characters
-            if (!param.matches("[a-zA-Z0-9 -_]+(\\.png)?")) {
+            if (!param.matches("[a-zA-Z\\d -_]+(\\.png)?")) {
                 callback.onError(LibsMsg.SKIN_API_INVALID_NAME);
                 return;
             }

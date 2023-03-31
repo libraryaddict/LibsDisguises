@@ -19,7 +19,7 @@ public abstract class AbstractHorseWatcher extends AgeableWatcher {
         return getData(MetaIndex.HORSE_OWNER).orElse(null);
     }
 
-    //@NmsRemovedIn(NmsVersion.v1_19_R3)
+    @NmsRemovedIn(NmsVersion.v1_19_R3)
     public void setOwner(UUID uuid) {
         setData(MetaIndex.HORSE_OWNER, Optional.of(uuid));
         sendData(MetaIndex.HORSE_OWNER);

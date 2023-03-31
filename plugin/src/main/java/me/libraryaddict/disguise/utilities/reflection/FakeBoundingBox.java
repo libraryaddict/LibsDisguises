@@ -2,9 +2,9 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 public class FakeBoundingBox {
 
-    private double xMod;
-    private double yMod;
-    private double zMod;
+    private final double xMod;
+    private final double yMod;
+    private final double zMod;
 
     public FakeBoundingBox(double xMod, double yMod, double zMod) {
         this.xMod = xMod;

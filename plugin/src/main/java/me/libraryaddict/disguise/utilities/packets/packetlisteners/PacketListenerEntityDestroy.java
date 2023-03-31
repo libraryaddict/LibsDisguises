@@ -11,7 +11,6 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**

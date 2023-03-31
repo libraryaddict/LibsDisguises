@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCompleter {
-    private ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
+    private final ArrayList<Class<? extends Entity>> validClasses = new ArrayList<>();
 
     public DisguiseRadiusCommand() {
         for (EntityType type : EntityType.values()) {
@@ -87,7 +87,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
         EntityType type = null;
         int starting = 0;
 
-        if (!isInteger(args[0])) {
+        if (isNotInteger(args[0])) {
             for (Class c : validClasses) {
                 if (TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0])) {
                     entityClass = c;
@@ -122,7 +122,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (!isInteger(args[starting])) {
+        if (isNotInteger(args[starting])) {
             LibsMsg.NOT_NUMBER.send(sender, args[starting]);
             return true;
         }
@@ -254,7 +254,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         int starting = 1;
 
-        if (!isInteger(args[0])) {
+        if (isNotInteger(args[0])) {
             for (Class c : validClasses) {
                 if (!TranslateType.DISGUISES.get(c.getSimpleName()).equalsIgnoreCase(args[0])) {
                     continue;
@@ -265,7 +265,7 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             }
 
             // Not a valid radius
-            if (starting == 1 || args.length == 1 || !isInteger(args[1])) {
+            if (starting == 1 || args.length == 1 || isNotInteger(args[1])) {
                 return filterTabs(tabs, origArgs);
             }
         }

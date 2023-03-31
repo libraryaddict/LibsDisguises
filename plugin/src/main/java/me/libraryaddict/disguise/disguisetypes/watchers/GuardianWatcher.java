@@ -21,6 +21,13 @@ public class GuardianWatcher extends InsentientWatcher {
     }
 
     /**
+     * @return Entity id of target
+     */
+    public int getTarget() {
+        return getData(MetaIndex.GUARDIAN_TARGET);
+    }
+
+    /**
      * Shoot a beam at the given entityId.
      *
      * @param entityId
@@ -28,13 +35,6 @@ public class GuardianWatcher extends InsentientWatcher {
     public void setTarget(int entityId) {
         setData(MetaIndex.GUARDIAN_TARGET, entityId);
         sendData(MetaIndex.GUARDIAN_TARGET);
-    }
-
-    /**
-     * @return Entity id of target
-     */
-    public int getTarget() {
-        return getData(MetaIndex.GUARDIAN_TARGET);
     }
 
     public void setTarget(Entity entity) {

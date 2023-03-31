@@ -22,11 +22,13 @@ import me.libraryaddict.disguise.disguisetypes.watchers.AxolotlWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BeeWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BlazeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.BlockDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.BoatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CamelWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CatWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ChestedHorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.CreeperWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.DisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DolphinWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.EnderCrystalWatcher;
@@ -49,7 +51,9 @@ import me.libraryaddict.disguise.disguisetypes.watchers.HorseWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IllagerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IllagerWizardWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.InsentientWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.InteractionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.IronGolemWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.ItemDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ItemFrameWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LlamaWatcher;
@@ -75,12 +79,14 @@ import me.libraryaddict.disguise.disguisetypes.watchers.SheepWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ShulkerWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SkeletonWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SlimeWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.SnifferWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SnowmanWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SpiderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.SplashPotionWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.StriderWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TNTWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TameableWatcher;
+import me.libraryaddict.disguise.disguisetypes.watchers.TextDisplayWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.ThrowableWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TippedArrowWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.TridentWatcher;
@@ -103,13 +109,17 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.Art;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Frog;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -241,6 +251,9 @@ public class MetaIndex<Y> {
      */
     public static MetaIndex<Byte> BLAZE_BLAZING = new MetaIndex<>(BlazeWatcher.class, 0, (byte) 0);
 
+    public static MetaIndex<BlockData> BLOCK_DISPLAY_BLOCK_STATE =
+        new MetaIndex<>(BlockDisplayWatcher.class, 0, NmsVersion.v1_19_R3.isSupported() ? Bukkit.createBlockData(Material.AIR) : null);
+
     /**
      * How damaged the boat is
      */
@@ -298,6 +311,41 @@ public class MetaIndex<Y> {
      * No visible effect
      */
     public static MetaIndex<Integer> CREEPER_STATE = new MetaIndex<>(CreeperWatcher.class, 0, -1);
+
+    public static MetaIndex<Integer> DISPLAY_INTERPOLATION_START_DELTA_TICKS = new MetaIndex<>(DisplayWatcher.class, 0, 0);
+
+    public static MetaIndex<Integer> DISPLAY_INTERPOLATION_DURATION = new MetaIndex<>(DisplayWatcher.class, 1, 0);
+
+    @NmsAddedIn(NmsVersion.v1_19_R3)
+    public static MetaIndex<Vector3f> DISPLAY_TRANSLATION = new MetaIndex<>(DisplayWatcher.class, 2, NmsVersion.v1_19_R3.isSupported() ? new Vector3f() : null);
+
+    @NmsAddedIn(NmsVersion.v1_19_R3)
+    public static MetaIndex<Vector3f> DISPLAY_SCALE =
+        new MetaIndex<>(DisplayWatcher.class, 3, NmsVersion.v1_19_R3.isSupported() ? new Vector3f(1F, 1F, 1F) : null);
+
+    @NmsAddedIn(NmsVersion.v1_19_R3)
+    public static MetaIndex<Quaternionf> DISPLAY_LEFT_ROTATION =
+        new MetaIndex<>(DisplayWatcher.class, 4, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
+
+    @NmsAddedIn(NmsVersion.v1_19_R3)
+    public static MetaIndex<Quaternionf> DISPLAY_RIGHT_ROTATION =
+        new MetaIndex<>(DisplayWatcher.class, 5, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
+
+    public static MetaIndex<Byte> DISPLAY_BILLBOARD_RENDER_CONSTRAINTS = new MetaIndex<>(DisplayWatcher.class, 6, (byte) 0);
+
+    public static MetaIndex<Integer> DISPLAY_BRIGHTNESS_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 7, -1);
+
+    public static MetaIndex<Float> DISPLAY_VIEW_RANGE = new MetaIndex<>(DisplayWatcher.class, 8, 1F);
+
+    public static MetaIndex<Float> DISPLAY_SHADOW_RADIUS = new MetaIndex<>(DisplayWatcher.class, 9, 0F);
+
+    public static MetaIndex<Float> DISPLAY_SHADOW_STRENGTH = new MetaIndex<>(DisplayWatcher.class, 10, 1F);
+
+    public static MetaIndex<Float> DISPLAY_WIDTH = new MetaIndex<>(DisplayWatcher.class, 11, 0F);
+
+    public static MetaIndex<Float> DISPLAY_HEIGHT = new MetaIndex<>(DisplayWatcher.class, 12, 0F);
+
+    public static MetaIndex<Integer> DISPLAY_GLOW_COLOR_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 13, -1);
 
     /**
      * No visible effect
@@ -426,7 +474,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Optional<UUID>> FOX_TRUSTED_2 = new MetaIndex<>(FoxWatcher.class, 3, Optional.empty());
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
-    public static MetaIndex<Frog.Variant> FROG_VARIANT = new MetaIndex<>(FrogWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Frog.Variant.TEMPERATE : null);
+    public static MetaIndex<Frog.Variant> FROG_VARIANT =
+        new MetaIndex<>(FrogWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Frog.Variant.TEMPERATE : null);
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
     public static MetaIndex<OptionalInt> FROG_TONGUE_TARGET = new MetaIndex<>(FrogWatcher.class, 1, OptionalInt.empty());
@@ -480,6 +529,7 @@ public class MetaIndex<Y> {
     /**
      * Owner of the horse, no visual effect
      */
+    @NmsRemovedIn(NmsVersion.v1_19_R3)
     public static MetaIndex<Optional<UUID>> HORSE_OWNER = new MetaIndex<>(AbstractHorseWatcher.class, 1, Optional.empty());
 
     @NmsAddedIn(NmsVersion.v1_14)
@@ -495,6 +545,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> IRON_GOLEM_PLAYER_CREATED = new MetaIndex<>(IronGolemWatcher.class, 0, (byte) 0);
 
+    public static MetaIndex<ItemStack> ITEM_DISPLAY_ITEMSTACK = new MetaIndex<>(ItemDisplayWatcher.class, 0, new ItemStack(Material.AIR));
+
+    public static MetaIndex<Byte> ITEM_DISPLAY_TRANSFORM = new MetaIndex<>(ItemDisplayWatcher.class, 1, (byte) 0);
+
     /**
      * The itemstack inside the itemframe
      */
@@ -504,6 +558,12 @@ public class MetaIndex<Y> {
      * The itemstack rotation inside the itemframe
      */
     public static MetaIndex<Integer> ITEMFRAME_ROTATION = new MetaIndex<>(ItemFrameWatcher.class, 1, 0);
+
+    public static MetaIndex<Float> INTERACTION_WIDTH = new MetaIndex<>(InteractionWatcher.class, 0, 1F);
+
+    public static MetaIndex<Float> INTERACTION_HEIGHT = new MetaIndex<>(InteractionWatcher.class, 1, 1F);
+
+    public static MetaIndex<Boolean> INTERACTION_RESPONSIVE = new MetaIndex<>(InteractionWatcher.class, 2, false);
 
     /**
      * How many arrows sticking out of the living entity, currently used on player
@@ -683,6 +743,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<>(SnowmanWatcher.class, 0, (byte) 16);
 
+    public static MetaIndex<Byte> SNIFFER_STATE = new MetaIndex<>(SnifferWatcher.class, 0, (byte) 0);
+
+    public static MetaIndex<Integer> SNIFFER_DROP_SEED_AT_TICK = new MetaIndex<>(SnifferWatcher.class, 1, 0);
+
     @NmsAddedIn(NmsVersion.v1_16)
     public static MetaIndex<Integer> STRIDER_SADDLE_UNKNOWN = new MetaIndex<>(StriderWatcher.class, 0, 0);
 
@@ -699,6 +763,16 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1, Optional.empty());
+
+    public static MetaIndex<WrappedChatComponent> TEXT_DISPLAY_TEXT = new MetaIndex<>(TextDisplayWatcher.class, 0, WrappedChatComponent.fromText(""));
+
+    public static MetaIndex<Integer> TEXT_DISPLAY_LINE_WIDTH = new MetaIndex<>(TextDisplayWatcher.class, 1, 200);
+
+    public static MetaIndex<Integer> TEXT_DISPLAY_BACKGROUND_COLOR = new MetaIndex<>(TextDisplayWatcher.class, 2, 1073741824);
+
+    public static MetaIndex<Byte> TEXT_DISPLAY_TEXT_OPACITY = new MetaIndex<>(TextDisplayWatcher.class, 3, (byte) -1);
+
+    public static MetaIndex<Byte> TEXT_DISPLAY_FLAGS = new MetaIndex<>(TextDisplayWatcher.class, 4, (byte) 0);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<ItemStack> THROWABLE_ITEM = new MetaIndex<>(ThrowableWatcher.class, 0, new ItemStack(Material.AIR));
@@ -1065,12 +1139,12 @@ public class MetaIndex<Y> {
 
                 MetaIndex index = (MetaIndex) field.get(null);
 
-                if (!ReflectionManager.isSupported(field)) {
-                    index._index = -1;
+                if (index == null) {
                     continue;
                 }
 
-                if (index == null) {
+                if (!ReflectionManager.isSupported(field)) {
+                    index._index = -1;
                     continue;
                 }
 
@@ -1102,9 +1176,9 @@ public class MetaIndex<Y> {
         return false;
     }
 
-    private Y _defaultValue;
+    private final Y _defaultValue;
     private int _index;
-    private Class<? extends FlagWatcher> _watcher;
+    private final Class<? extends FlagWatcher> _watcher;
     private WrappedDataWatcher.Serializer serializer;
 
     public MetaIndex(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {

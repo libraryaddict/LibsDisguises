@@ -39,3 +39,19 @@ NotifyBar: ACTION_BAR
 BossBarColor: GREEN
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/boss/BarStyle.html
 BossBarStyle: SOLID
+
+# What disguise types are default to OP only, because they are prone to abuse.
+# By default, this contains TEXT_DISPLAY, ITEM_DISPLAY, BLOCK_DISPLAY and INTERACTION
+DisabledDisguises:
+  - TEXT_DISPLAY
+  - ITEM_DISPLAY
+  - BLOCK_DISPLAY
+  - INTERACTION
+
+# These disguise methods are also limited to OP only, because they're open to abuse
+# setInvisible has overlap with the config option for disabled invsibility, if either is used, it will be disabled.
+# Thankfully, only trusted people are OP. So this doesn't need further configuration.
+DisabledMethods:
+  - setYModifier
+  - setNameYModifier
+  - setInvisible

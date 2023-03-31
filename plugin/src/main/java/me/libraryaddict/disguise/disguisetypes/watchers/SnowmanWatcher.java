@@ -8,12 +8,12 @@ public class SnowmanWatcher extends InsentientWatcher {
         super(disguise);
     }
 
+    public boolean isDerp() {
+        return getData(MetaIndex.SNOWMAN_DERP) == 0;
+    }
+
     public void setDerp(boolean derp) {
         setData(MetaIndex.SNOWMAN_DERP, (byte) (derp ? 0 : 16));
         sendData(MetaIndex.SNOWMAN_DERP);
-    }
-
-    public boolean isDerp() {
-        return getData(MetaIndex.SNOWMAN_DERP) == 0;
     }
 }

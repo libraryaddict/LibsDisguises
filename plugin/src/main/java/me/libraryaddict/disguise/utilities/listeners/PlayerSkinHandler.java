@@ -21,7 +21,6 @@ import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import org.bukkit.Location;
@@ -36,7 +35,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +59,7 @@ public class PlayerSkinHandler implements Listener {
         private boolean sleepPackets;
 
         public boolean canRemove(boolean onMoved) {
-            return firstPacketSent + (DisguiseConfig.getTablistRemoveDelay() * 50) + (onMoved ? 0 : DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50) <
+            return firstPacketSent + (DisguiseConfig.getTablistRemoveDelay() * 50L) + (onMoved ? 0 : DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50L) <
                 System.currentTimeMillis();
         }
 
@@ -80,7 +78,7 @@ public class PlayerSkinHandler implements Listener {
 
     @Getter
     private final Cache<Player, List<PlayerSkin>> cache =
-        CacheBuilder.newBuilder().weakKeys().expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50, TimeUnit.MILLISECONDS)
+        CacheBuilder.newBuilder().weakKeys().expireAfterWrite(DisguiseConfig.getPlayerDisguisesSkinExpiresMove() * 50L, TimeUnit.MILLISECONDS)
             .removalListener((event) -> {
                 if (event.getCause() != RemovalCause.EXPIRED) {
                     return;

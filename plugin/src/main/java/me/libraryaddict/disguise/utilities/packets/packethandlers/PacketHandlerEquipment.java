@@ -3,7 +3,6 @@ package me.libraryaddict.disguise.utilities.packets.packethandlers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.mojang.datafixers.util.Pair;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
@@ -11,7 +10,6 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
@@ -20,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +25,6 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerEquipment implements IPacketHandler {
-    private PacketsHandler packetsHandler;
-
-    public PacketHandlerEquipment(PacketsHandler packetsHandler) {
-        this.packetsHandler = packetsHandler;
-    }
-
     @Override
     public PacketType[] getHandledPackets() {
         return new PacketType[]{PacketType.Play.Server.ENTITY_EQUIPMENT};

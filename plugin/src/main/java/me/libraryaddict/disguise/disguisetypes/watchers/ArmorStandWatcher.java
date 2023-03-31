@@ -18,16 +18,32 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_BODY);
     }
 
+    public void setBody(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_BODY, vector);
+    }
+
     public EulerAngle getHead() {
         return getPose(MetaIndex.ARMORSTAND_HEAD);
+    }
+
+    public void setHead(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_HEAD, vector);
     }
 
     public EulerAngle getLeftArm() {
         return getPose(MetaIndex.ARMORSTAND_LEFT_ARM);
     }
 
+    public void setLeftArm(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_LEFT_ARM, vector);
+    }
+
     public EulerAngle getLeftLeg() {
         return getPose(MetaIndex.ARMORSTAND_LEFT_LEG);
+    }
+
+    public void setLeftLeg(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_LEFT_LEG, vector);
     }
 
     private EulerAngle getPose(MetaIndex<Vector3F> type) {
@@ -44,28 +60,56 @@ public class ArmorStandWatcher extends LivingWatcher {
         return getPose(MetaIndex.ARMORSTAND_RIGHT_ARM);
     }
 
+    public void setRightArm(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_RIGHT_ARM, vector);
+    }
+
     public EulerAngle getRightLeg() {
         return getPose(MetaIndex.ARMORSTAND_RIGHT_LEG);
+    }
+
+    public void setRightLeg(EulerAngle vector) {
+        setPose(MetaIndex.ARMORSTAND_RIGHT_LEG, vector);
     }
 
     public boolean isMarker() {
         return getArmorStandFlag(16);
     }
 
+    public void setMarker(boolean isMarker) {
+        setArmorStandFlag(16, isMarker);
+    }
+
     public boolean isNoBasePlate() {
         return getArmorStandFlag(8);
+    }
+
+    public void setNoBasePlate(boolean noBasePlate) {
+        setArmorStandFlag(8, noBasePlate);
     }
 
     public boolean isNoGravity() {
         return getArmorStandFlag(2);
     }
 
+    public void setNoGravity(boolean noGravity) {
+        setArmorStandFlag(2, noGravity);
+    }
+
     public boolean isShowArms() {
         return getArmorStandFlag(4);
     }
 
+    public void setShowArms(boolean showArms) {
+        setArmorStandFlag(4, showArms);
+    }
+
     public boolean isSmall() {
         return getArmorStandFlag(1);
+    }
+
+    public void setSmall(boolean isSmall) {
+        setArmorStandFlag(1, isSmall);
     }
 
     private void setArmorStandFlag(int value, boolean isTrue) {
@@ -81,52 +125,8 @@ public class ArmorStandWatcher extends LivingWatcher {
         sendData(MetaIndex.ARMORSTAND_META);
     }
 
-    public void setBody(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_BODY, vector);
-    }
-
-    public void setHead(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_HEAD, vector);
-    }
-
-    public void setLeftArm(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_LEFT_ARM, vector);
-    }
-
-    public void setLeftLeg(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_LEFT_LEG, vector);
-    }
-
-    public void setMarker(boolean isMarker) {
-        setArmorStandFlag(16, isMarker);
-    }
-
-    public void setNoBasePlate(boolean noBasePlate) {
-        setArmorStandFlag(8, noBasePlate);
-    }
-
-    public void setNoGravity(boolean noGravity) {
-        setArmorStandFlag(2, noGravity);
-    }
-
     private void setPose(MetaIndex<Vector3F> type, EulerAngle vector) {
         setData(type, new Vector3F((float) vector.getX(), (float) vector.getY(), (float) vector.getZ()));
         sendData(type);
-    }
-
-    public void setRightArm(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_RIGHT_ARM, vector);
-    }
-
-    public void setRightLeg(EulerAngle vector) {
-        setPose(MetaIndex.ARMORSTAND_RIGHT_LEG, vector);
-    }
-
-    public void setShowArms(boolean showArms) {
-        setArmorStandFlag(4, showArms);
-    }
-
-    public void setSmall(boolean isSmall) {
-        setArmorStandFlag(1, isSmall);
     }
 }

@@ -118,7 +118,7 @@ public class SaveDisguiseCommand implements CommandExecutor {
                 String[] finalArgs = args;
 
                 SkinUtils.grabSkin(args[skinId], new SkinUtils.SkinCallback() {
-                    private BukkitTask runnable = new BukkitRunnable() {
+                    private final BukkitTask runnable = new BukkitRunnable() {
                         @Override
                         public void run() {
                             LibsMsg.PLEASE_WAIT.send(sender);

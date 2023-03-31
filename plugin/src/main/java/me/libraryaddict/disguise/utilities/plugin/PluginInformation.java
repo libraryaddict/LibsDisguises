@@ -10,14 +10,14 @@ import java.util.Date;
  */
 public class PluginInformation {
     @Getter
-    private long size;
-    private String userID;
-    private String resourceID;
-    private String downloadID;
-    private boolean premium;
-    private String version;
-    private String buildNumber;
-    private String buildDate;
+    private final long size;
+    private final String userID;
+    private final String resourceID;
+    private final String downloadID;
+    private final boolean premium;
+    private final String version;
+    private final String buildNumber;
+    private final String buildDate;
 
     public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium, String version, String buildNumber,
                              String buildDate) {
@@ -62,13 +62,13 @@ public class PluginInformation {
     public Date getParsedBuildDate() {
         try {
             return new SimpleDateFormat("dd/MM/yyyy HH:mm").parse(getBuildDate());
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
 
         return null;
     }
 
     public boolean isLegit() {
-        return getUserID().matches("[0-9]+") && !getUserID().equals("12345") && getResourceID().equals("32453") && getDownloadID().matches("-?[0-9]+");
+        return getUserID().matches("\\d+") && !getUserID().equals("12345") && getResourceID().equals("32453") && getDownloadID().matches("-?\\d+");
     }
 }

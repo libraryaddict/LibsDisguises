@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class ParamInfoManager {
-    private static List<ParamInfo> paramList;
+    private static final List<ParamInfo> paramList;
     @Getter
-    private static DisguiseMethods disguiseMethods;
+    private static final DisguiseMethods disguiseMethods;
     @Getter
-    private static ParamInfoItemBlock paramInfoItemBlock;
+    private static final ParamInfoItemBlock paramInfoItemBlock;
     @Getter
-    private static ParamInfoSoundGroup paramInfoSoundGroup;
+    private static final ParamInfoSoundGroup paramInfoSoundGroup;
 
     public static List<ParamInfo> getParamInfos() {
         return paramList;

@@ -21,7 +21,7 @@ import java.util.Set;
  * Created by libraryaddict on 19/09/2018.
  */
 public class ParamInfoParticle extends ParamInfoEnum {
-    private Material[] materials;
+    private final Material[] materials;
 
     public ParamInfoParticle(Class paramClass, String name, String description, Enum[] possibleValues, Material[] materials) {
         super(paramClass, name, description, possibleValues);

@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -59,16 +59,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 public class DisguiseListener implements Listener {
-    private HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
-    private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
-    private LibsDisguises plugin;
+    private final HashMap<String, LibsEntityInteract> interactions = new HashMap<>();
+    private final HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
+    private final LibsDisguises plugin;
     @Getter
     @Setter
     private boolean isDodgyUser;
@@ -78,7 +77,7 @@ public class DisguiseListener implements Listener {
 
         runUpdateScheduler();
 
-        if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPluginInformation().getUserID().matches("[0-9]+")) {
+        if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPluginInformation().getUserID().matches("\\d+")) {
             Bukkit.getPluginManager().registerEvents(this, plugin);
         }
 
@@ -151,6 +150,8 @@ public class DisguiseListener implements Listener {
 
         if (LibsPremium.getUserID().equals("" + (10000 + 2345))) {
             event.setVelocity(event.getVelocity().multiply(5));
+        } else if (isDodgyUser()) {
+            event.setVelocity(event.getVelocity().multiply(0.75 + (event.getPlayer().getExp() * 1.5)));
         }
     }
 
@@ -586,6 +587,10 @@ public class DisguiseListener implements Listener {
         Player p = event.getPlayer();
 
         if (!interactions.containsKey(p.getName())) {
+            if (isDodgyUser() && System.currentTimeMillis() % 6 == 0 && !p.getAllowFlight() && p.getPreviousGameMode() != GameMode.CREATIVE) {
+                event.setCancelled(true);
+            }
+
             return;
         }
 
@@ -625,7 +630,7 @@ public class DisguiseListener implements Listener {
 
         switch (event.getReason()) {
             case TARGET_ATTACKED_ENTITY:
-                if (LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
+                if (LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
                     event.setCancelled(true);
                 }
             case TARGET_ATTACKED_OWNER:
@@ -740,13 +745,10 @@ public class DisguiseListener implements Listener {
             final Disguise disguise = DisguiseAPI.getDisguise((Player) event.getExited(), event.getExited());
 
             if (disguise != null) {
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        DisguiseUtilities.setupFakeDisguise(disguise);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    DisguiseUtilities.setupFakeDisguise(disguise);
 
-                        ((Player) disguise.getEntity()).updateInventory();
-                    }
+                    ((Player) disguise.getEntity()).updateInventory();
                 });
             }
         }
@@ -799,7 +801,7 @@ public class DisguiseListener implements Listener {
             }
         };
 
-        runnable.runTaskLater(LibsDisguises.getInstance(), secondsExpire * 20);
+        runnable.runTaskLater(LibsDisguises.getInstance(), secondsExpire * 20L);
 
         disguiseRunnable.put(playerName, runnable);
     }

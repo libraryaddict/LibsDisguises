@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerMovement implements IPacketHandler {
-    private final boolean invalid = LibsPremium.getUserID().matches("[0-9]+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
+    private final boolean invalid = LibsPremium.getUserID().matches("\\d+") && Integer.parseInt(LibsPremium.getUserID()) < 2;
 
     @Override
     public PacketType[] getHandledPackets() {

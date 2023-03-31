@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Disguise {
     private transient boolean disguiseInUse;
-    private DisguiseType disguiseType;
+    private final DisguiseType disguiseType;
     private transient BukkitRunnable runnable;
     private transient Entity entity;
     private boolean hearSelfDisguise = DisguiseConfig.isSelfDisguisesSoundsReplaced();
@@ -489,11 +489,7 @@ public abstract class Disguise {
             box = values.getAdultBox();
         }
 
-        if (box == null || box.getY() <= 1.7D) {
-            return false;
-        }
-
-        return true;
+        return box != null && !(box.getY() <= 1.7D);
     }
 
     /**
@@ -621,11 +617,6 @@ public abstract class Disguise {
     }
 
     public Disguise setModifyBoundingBox(boolean modifyBox) {
-//        if (((TargetedDisguise) this).getDisguiseTarget() != TargetType.SHOW_TO_EVERYONE_BUT_THESE_PLAYERS) {
-//            throw new RuntimeException("Cannot modify the bounding box of a disguise which is not TargetType" +
-//                    ".SHOW_TO_EVERYONE_BUT_THESE_PLAYERS");
-//        }
-
         if (isModifyBoundingBox() != modifyBox) {
             this.modifyBoundingBox = modifyBox;
 
@@ -1012,12 +1003,7 @@ public abstract class Disguise {
         DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
 
         // If he is a player, then self disguise himself
-        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                DisguiseUtilities.setupFakeDisguise(Disguise.this);
-            }
-        }, 2);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
             PacketContainer removeTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), false);

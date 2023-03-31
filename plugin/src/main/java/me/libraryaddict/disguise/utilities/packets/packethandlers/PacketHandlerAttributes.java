@@ -23,7 +23,7 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerAttributes implements IPacketHandler {
-    private boolean skipAttributes = !NmsVersion.v1_14.isSupported() && ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
+    private final boolean skipAttributes = !NmsVersion.v1_14.isSupported() && ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
 
     public PacketHandlerAttributes() {
         if (!skipAttributes) {

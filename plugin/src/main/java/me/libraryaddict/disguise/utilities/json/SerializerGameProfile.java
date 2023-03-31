@@ -29,7 +29,7 @@ public class SerializerGameProfile implements JsonSerializer<WrappedGameProfile>
 
         if (obj.has("id") && !obj.get("id").getAsString().contains("-")) {
             obj.addProperty("id",
-                Pattern.compile("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)").matcher(obj.get("id").getAsString())
+                Pattern.compile("([\\da-fA-F]{8})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]+)").matcher(obj.get("id").getAsString())
                     .replaceFirst("$1-$2-$3-$4-$5"));
         }
 

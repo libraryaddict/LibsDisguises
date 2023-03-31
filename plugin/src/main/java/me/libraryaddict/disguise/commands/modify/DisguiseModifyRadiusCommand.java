@@ -83,7 +83,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
         DisguiseType baseType = null;
         int starting = 0;
 
-        if (!isInteger(args[0])) {
+        if (isNotInteger(args[0])) {
             for (DisguiseType t : DisguiseType.values()) {
                 if (t.getEntityType() == null) {
                     continue;
@@ -115,7 +115,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             return true;
         }
 
-        if (!isInteger(args[starting])) {
+        if (isNotInteger(args[starting])) {
             LibsMsg.NOT_NUMBER.send(sender, args[starting]);
             return true;
         }
@@ -219,7 +219,7 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
         int starting = 0;
 
-        if (!isInteger(args[0])) {
+        if (isNotInteger(args[0])) {
             for (DisguiseType t : DisguiseType.values()) {
                 if (t.getEntityType() == null) {
                     continue;
@@ -232,12 +232,12 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             }
 
             // Not a valid radius
-            if (starting == 1 || args.length == 1 || !isInteger(args[1])) {
+            if (starting == 1 || args.length == 1 || isNotInteger(args[1])) {
                 return filterTabs(tabs, origArgs);
             }
         }
 
-        if (args.length <= starting || !isInteger(args[starting])) {
+        if (args.length <= starting || isNotInteger(args[starting])) {
             return filterTabs(tabs, origArgs);
         }
 

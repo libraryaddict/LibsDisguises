@@ -19,7 +19,7 @@ public enum RabbitType {
         return null;
     }
 
-    private int type;
+    private final int type;
 
     RabbitType(int type) {
         this.type = type;

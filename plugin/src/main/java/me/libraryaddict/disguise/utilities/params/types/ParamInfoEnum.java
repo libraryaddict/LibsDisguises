@@ -8,28 +8,28 @@ import java.util.Map;
 /**
  * Created by libraryaddict on 7/09/2018.
  */
-public class ParamInfoEnum extends ParamInfo {
-    public ParamInfoEnum(Class<? extends Enum> paramClass, String name, String description) {
+public class ParamInfoEnum<T> extends ParamInfo<T> {
+    public ParamInfoEnum(Class<T> paramClass, String name, String description) {
         super(paramClass, name, name, description, paramClass.getEnumConstants());
     }
 
-    public ParamInfoEnum(Class paramClass, String name, String valueType, String description, Enum[] possibleValues) {
+    public ParamInfoEnum(Class paramClass, String name, String valueType, String description, T[] possibleValues) {
         super(paramClass, name, valueType, description, possibleValues);
     }
 
-    public ParamInfoEnum(Class paramClass, String name, String description, Enum[] possibleValues) {
+    public ParamInfoEnum(Class paramClass, String name, String description, T[] possibleValues) {
         super(paramClass, name, name, description, possibleValues);
     }
 
-    public ParamInfoEnum(Class paramClass, String name, String description, Map<String, Object> possibleValues) {
+    public ParamInfoEnum(Class paramClass, String name, String description, Map<String, T> possibleValues) {
         super(paramClass, name, name, description, possibleValues);
     }
 
     @Override
-    public Object fromString(String string) throws DisguiseParseException {
+    public T fromString(String string) throws DisguiseParseException {
         string = string.replace("_", "");
 
-        for (Map.Entry<String, Object> entry : getValues().entrySet()) {
+        for (Map.Entry<String, T> entry : getValues().entrySet()) {
             if (!entry.getKey().replace("_", "").equalsIgnoreCase(string)) {
                 continue;
             }
@@ -41,7 +41,7 @@ public class ParamInfoEnum extends ParamInfo {
     }
 
     @Override
-    public String toString(Object object) {
+    public String toString(T object) {
         return object.toString();
     }
 

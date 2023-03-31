@@ -93,7 +93,7 @@ public class ClassGetter {
         try {
             String relPath = pkgname.replace('.', '/');
             String resPath = URLDecoder.decode(resource.getPath(), "UTF-8");
-            String jarPath = resPath.replaceFirst("[.]jar[!].*", ".jar").replaceFirst("file:", "");
+            String jarPath = resPath.replaceFirst("\\.jar!.*", ".jar").replaceFirst("file:", "");
 
             JarFile jarFile = new JarFile(jarPath);
 

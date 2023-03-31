@@ -48,6 +48,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
@@ -145,7 +146,7 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             if (Bukkit.getVersion().contains("(MC: 1.19)")) {
-                getLogger().severe("Please update from MC 1.19.0! You should be using 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
+                getLogger().severe("Please update from MC 1.19.0! You should be using at least 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
             }
 
             try {
@@ -206,11 +207,18 @@ public class LibsDisguises extends JavaPlugin {
                     @Override
                     public void run() {
                         getLogger().severe("!! May I have your attention please !!");
-                        getLogger().severe(
-                            "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
-                                "!");
-                        getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
-                        getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
+
+                        if (DisguiseUtilities.isProtocollibUpdateDownloaded()) {
+                            getLogger().severe(
+                                "An update for ProtocolLib has been downloaded and will be installed when the server restarts. When possible, please restart " +
+                                    "the server. Lib's Disguises may not work correctly until you do so.");
+                        } else {
+                            getLogger().severe(
+                                "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
+                                    "!");
+                            getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
+                            getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
+                        }
 
                         if (timesRun++ > 0) {
                             getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
@@ -227,7 +235,7 @@ public class LibsDisguises extends JavaPlugin {
             // If this is a release build, even if jenkins build..
             if (isReleaseBuild()) {
                 // If downloaded from spigot, forcibly set release build to true
-                if (LibsPremium.getUserID().matches("[0-9]+")) {
+                if (LibsPremium.getUserID().matches("\\d+")) {
                     DisguiseConfig.setUsingReleaseBuilds(true);
                 }
                 // Otherwise leave it untouched as they might've just happened to hit a dev build, which is a release build
@@ -331,7 +339,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     @Override
-    public File getFile() {
+    public @NotNull File getFile() {
         return super.getFile();
     }
 
@@ -356,7 +364,7 @@ public class LibsDisguises extends JavaPlugin {
     }
 
     public boolean isNumberedBuild() {
-        return getBuildNo() != null && getBuildNo().matches("[0-9]+");
+        return getBuildNo() != null && getBuildNo().matches("\\d+");
     }
 
     private void registerCommand(String commandName, CommandExecutor executioner) {

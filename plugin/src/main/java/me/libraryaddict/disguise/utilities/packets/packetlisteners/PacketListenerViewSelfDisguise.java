@@ -23,11 +23,8 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
-import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +114,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
 
             if (event.getPacketType() == Server.ENTITY_METADATA) {
                 if (!LibsPremium.getPluginInformation().isPremium() || LibsPremium.getPaidInformation() != null ||
-                    LibsPremium.getPluginInformation().getBuildNumber().matches("#[0-9]+")) {
+                    LibsPremium.getPluginInformation().getBuildNumber().matches("#\\d+")) {
                     event.setPacket(packet = packet.deepClone());
                 }
 

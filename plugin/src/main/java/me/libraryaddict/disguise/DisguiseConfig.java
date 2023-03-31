@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.config.ConfigLoader;
@@ -37,10 +38,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DisguiseConfig {
     @Getter
@@ -53,13 +56,11 @@ public class DisguiseConfig {
     @Setter
     private static boolean addEntityAnimations;
     @Getter
-    @Setter
     private static boolean animationPacketsEnabled;
     @Getter
     @Setter
     private static boolean catDyeable;
     @Getter
-    @Setter
     private static boolean collectPacketsEnabled;
     @Getter
     @Setter
@@ -77,10 +78,8 @@ public class DisguiseConfig {
     @Setter
     private static boolean dynamicExpiry;
     @Getter
-    @Setter
     private static boolean entityStatusPacketsEnabled;
     @Getter
-    @Setter
     private static boolean equipmentPacketsEnabled;
     @Getter
     @Setter
@@ -113,7 +112,6 @@ public class DisguiseConfig {
     @Setter
     private static boolean metaPacketsEnabled;
     @Getter
-    @Setter
     private static boolean miscDisguisesForLivingEnabled;
     @Getter
     @Setter
@@ -125,7 +123,6 @@ public class DisguiseConfig {
     @Setter
     private static boolean monstersIgnoreDisguises;
     @Getter
-    @Setter
     private static boolean movementPacketsEnabled;
     @Getter
     @Setter
@@ -164,7 +161,6 @@ public class DisguiseConfig {
     @Setter
     private static boolean updateGameProfiles;
     @Getter
-    @Setter
     private static boolean useTranslations;
     @Getter
     @Setter
@@ -281,6 +277,12 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static boolean randomUUIDS;
+    @Getter
+    @Setter
+    private static List<DisguiseType> disabledDisguises = new ArrayList<>();
+    @Getter
+    @Setter
+    private static List<String> disabledMethods = new ArrayList<>();
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -352,12 +354,9 @@ public class DisguiseConfig {
         // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
         timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
 
-        updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(LibsDisguises.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck();
-            }
-        }, timeSinceLast, timer);
+        updaterTask = Bukkit.getScheduler()
+            .runTaskTimerAsynchronously(LibsDisguises.getInstance(), () -> LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck(), timeSinceLast,
+                timer);
     }
 
     public static void setUsingReleaseBuilds(boolean useReleaseBuilds) {
@@ -652,7 +651,7 @@ public class DisguiseConfig {
         setRandomUUIDS(config.getBoolean("RandomUUIDs"));
         String apiKey = config.getString("MineSkinAPIKey");
 
-        if (apiKey != null && apiKey.matches("[a-zA-Z0-9]{8,}")) {
+        if (apiKey != null && apiKey.matches("[a-zA-Z\\d]{8,}")) {
             DisguiseUtilities.getMineSkinAPI().setApiKey(apiKey);
         } else if (apiKey != null && apiKey.length() > 8) {
             DisguiseUtilities.getLogger().warning("API Key provided for MineSkin does not appear to be in a valid format!");
@@ -698,6 +697,15 @@ public class DisguiseConfig {
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
         }
+
+        try {
+            setDisabledDisguises(
+                config.getStringList("DisabledDisguises").stream().map(s -> DisguiseType.valueOf(s.toUpperCase(Locale.ROOT))).collect(Collectors.toList()));
+        } catch (Exception ex) {
+            DisguiseUtilities.getLogger().warning("Cannot load 'DisabledDisguises' in features.yml, invalid disguise types provided?");
+        }
+
+        setDisabledMethods(config.getStringList("DisabledMethods"));
 
         String seeCommands = config.getString("Permissions.SeeCommands");
         PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
@@ -790,7 +798,7 @@ public class DisguiseConfig {
 
         for (String name : config.getConfigurationSection("Custom-Entities").getKeys(false)) {
             try {
-                if (!name.matches("[a-zA-Z0-9_]+")) {
+                if (!name.matches("\\w+")) {
                     DisguiseUtilities.getLogger().severe("Invalid modded disguise name '" + name + "'");
                     continue;
                 }

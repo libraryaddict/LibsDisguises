@@ -21,16 +21,16 @@ public class WitherWatcher extends InsentientWatcher {
         return getData(MetaIndex.WITHER_INVUL);
     }
 
-    public int[] getTargets() {
-        return new int[]{getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2), getData(MetaIndex.WITHER_TARGET_3)};
-    }
-
     /**
      * Sets the amount of time this Wither is invulnerable for
      */
     public void setInvulnerability(int invulnerability) {
         setData(MetaIndex.WITHER_INVUL, invulnerability);
         sendData(MetaIndex.WITHER_INVUL);
+    }
+
+    public int[] getTargets() {
+        return new int[]{getData(MetaIndex.WITHER_TARGET_1), getData(MetaIndex.WITHER_TARGET_2), getData(MetaIndex.WITHER_TARGET_3)};
     }
 
     public void setTargets(int... targets) {

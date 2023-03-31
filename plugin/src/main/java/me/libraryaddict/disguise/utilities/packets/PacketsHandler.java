@@ -40,14 +40,14 @@ public class PacketsHandler {
         packetHandlers.add(new PacketHandlerAttributes());
         packetHandlers.add(new PacketHandlerCollect());
         packetHandlers.add(new PacketHandlerEntityStatus());
-        packetHandlers.add(new PacketHandlerEquipment(this));
+        packetHandlers.add(new PacketHandlerEquipment());
         packetHandlers.add(new PacketHandlerAttachEntity());
 
         packetHandlers.add(new PacketHandlerHeadRotation());
 
         // If not prem, if build is from jenkins, else its a custom and needs paid info
-        if (!LibsPremium.isPremium() || LibsDisguises.getInstance().getBuildNo().matches("[0-9]+") || LibsPremium.getPaidInformation() != null) {
-            packetHandlers.add(new PacketHandlerMetadata(this));
+        if (!LibsPremium.isPremium() || LibsDisguises.getInstance().getBuildNo().matches("\\d+") || LibsPremium.getPaidInformation() != null) {
+            packetHandlers.add(new PacketHandlerMetadata());
         }
 
         packetHandlers.add(new PacketHandlerMovement());

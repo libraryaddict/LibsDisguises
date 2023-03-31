@@ -976,8 +976,8 @@ public class Metrics {
         ZAMBIA("ZM", "Zambia"),
         ZIMBABWE("ZW", "Zimbabwe");
 
-        private String isoTag;
-        private String name;
+        private final String isoTag;
+        private final String name;
 
         Country(String isoTag, String name) {
             this.isoTag = isoTag;

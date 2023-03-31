@@ -16,7 +16,7 @@ import java.util.Set;
  * Created by libraryaddict on 12/08/2020.
  */
 public class ParamInfoBlockData extends ParamInfo {
-    private Material[] materials;
+    private final Material[] materials;
 
     public ParamInfoBlockData(Class paramClass, String name, String description, Material[] possibleValues) {
         super(paramClass, name, "BlockData[State=Something]", description);

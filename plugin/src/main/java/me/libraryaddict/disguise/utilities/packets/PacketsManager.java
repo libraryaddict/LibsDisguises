@@ -34,8 +34,6 @@ public class PacketsManager {
     private static PacketListener viewDisguisesListener;
     private static boolean viewDisguisesListenerEnabled;
     private static PacketsHandler packetsHandler;
-    private static PacketListener destroyListener;
-    private static PacketListener scoreboardTeamListener;
 
     public static void addPacketListeners() {
         // Add a client listener to cancel them interacting with uninteractable disguised entitys.
@@ -176,13 +174,13 @@ public class PacketsManager {
             }
 
             mainListener = new PacketListenerMain(LibsDisguises.getInstance(), packetsToListen);
-            destroyListener = new PacketListenerEntityDestroy(LibsDisguises.getInstance());
+            PacketListener destroyListener = new PacketListenerEntityDestroy(LibsDisguises.getInstance());
 
             ProtocolLibrary.getProtocolManager().addPacketListener(mainListener);
             ProtocolLibrary.getProtocolManager().addPacketListener(destroyListener);
 
             if (NmsVersion.v1_13.isSupported() && DisguiseConfig.getPlayerNameType() != DisguiseConfig.PlayerNameType.ARMORSTANDS) {
-                scoreboardTeamListener = new PacketListenerScoreboardTeam();
+                PacketListener scoreboardTeamListener = new PacketListenerScoreboardTeam();
 
                 ProtocolLibrary.getProtocolManager().addPacketListener(scoreboardTeamListener);
             }

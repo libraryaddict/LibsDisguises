@@ -8,12 +8,12 @@ public class CamelWatcher extends AbstractHorseWatcher {
         super(disguise);
     }
 
+    public boolean isDashing() {
+        return getData(MetaIndex.CAMEL_DASHING);
+    }
+
     public void setDashing(boolean dashing) {
         setData(MetaIndex.CAMEL_DASHING, dashing);
         sendData(MetaIndex.CAMEL_DASHING);
-    }
-
-    public boolean isDashing() {
-        return getData(MetaIndex.CAMEL_DASHING);
     }
 }
