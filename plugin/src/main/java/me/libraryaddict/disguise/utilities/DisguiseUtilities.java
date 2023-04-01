@@ -2881,7 +2881,7 @@ public class DisguiseUtilities {
     public static WrappedDataWatcher createDatawatcher(List<WatcherValue> watcherValues) {
         WrappedDataWatcher watcher = new WrappedDataWatcher();
 
-        watcherValues.forEach(v -> watcher.setObject(v.getIndex(), ReflectionManager.createDataWatcherObject(v.getMetaIndex(), v.getValue())));
+        watcherValues.forEach(v -> watcher.setObject(ReflectionManager.createDataWatcherObject(v.getMetaIndex(), v.getValue()), v.getValue()));
 
         return watcher;
     }
