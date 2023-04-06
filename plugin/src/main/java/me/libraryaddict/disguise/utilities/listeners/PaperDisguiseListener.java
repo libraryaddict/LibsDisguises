@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.utilities.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
@@ -20,7 +22,7 @@ public class PaperDisguiseListener implements Listener {
 
         Entity entity = event.getEntity();
 
-        Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+        Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
 
         if (disguises.length <= 0) {
             return;
@@ -32,5 +34,22 @@ public class PaperDisguiseListener implements Listener {
             disguise.setEntity(entity);
             disguise.startDisguise();
         }
+    }
+
+    @EventHandler
+    public void onEntitiesUnload(EntityRemoveFromWorldEvent event) {
+        if (!DisguiseConfig.isSaveEntityDisguises()) {
+            return;
+        }
+
+        Entity entity = event.getEntity();
+
+        Disguise[] disguises = DisguiseAPI.getDisguises(entity);
+
+        if (disguises.length <= 0) {
+            return;
+        }
+
+        DisguiseUtilities.saveDisguises(entity, disguises);
     }
 }

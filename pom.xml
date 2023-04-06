@@ -26,7 +26,7 @@
         <protocollib.version>5.0.0-SNAPSHOT</protocollib.version>
         <spigot.version>1.19.4-R0.1-SNAPSHOT</spigot.version>
         <junit.version>5.9.2</junit.version>
-        <paper-api.version>1.16.5-R0.1-SNAPSHOT</paper-api.version>
+        <paper-api.version>1.19.4-R0.1-SNAPSHOT</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
         <adventure-minimessage.version>4.2.0-SNAPSHOT</adventure-minimessage.version>
         <adventure-api.version>4.9.3</adventure-api.version>

@@ -26,6 +26,7 @@ import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.config.DisguiseCommandConfig;
 import me.libraryaddict.disguise.utilities.listeners.DisguiseListener;
+import me.libraryaddict.disguise.utilities.listeners.DisguiseListener1_18;
 import me.libraryaddict.disguise.utilities.listeners.PaperDisguiseListener;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.metrics.MetricsInitalizer;
@@ -266,6 +267,10 @@ public class LibsDisguises extends JavaPlugin {
             skinHandler = new PlayerSkinHandler();
 
             Bukkit.getPluginManager().registerEvents(getSkinHandler(), LibsDisguises.getInstance());
+
+            if (NmsVersion.v1_18.isSupported()) {
+                Bukkit.getPluginManager().registerEvents(new DisguiseListener1_18(), this);
+            }
 
             if (DisguiseUtilities.isRunningPaper()) {
                 Bukkit.getPluginManager().registerEvents(new PaperDisguiseListener(), this);

@@ -87,7 +87,7 @@ public class DisguiseListener implements Listener {
 
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+                Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
 
                 if (disguises.length <= 0) {
                     continue;
@@ -304,7 +304,7 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises()) {
+        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18.isSupported()) {
             return;
         }
 
@@ -315,7 +315,7 @@ public class DisguiseListener implements Listener {
                 continue;
             }
 
-            DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
+            DisguiseUtilities.saveDisguises(entity, disguises);
         }
     }
 
@@ -339,7 +339,7 @@ public class DisguiseListener implements Listener {
             }
 
             disguisesSaved++;
-            DisguiseUtilities.saveDisguises(entity.getUniqueId(), disguises);
+            DisguiseUtilities.saveDisguises(entity, disguises);
         }
 
         if (disguisesSaved > 0) {
@@ -349,12 +349,12 @@ public class DisguiseListener implements Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (!DisguiseConfig.isSaveEntityDisguises()) {
+        if (!DisguiseConfig.isSaveEntityDisguises() || NmsVersion.v1_18.isSupported()) {
             return;
         }
 
         for (Entity entity : event.getChunk().getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
 
             if (disguises.length <= 0) {
                 continue;
@@ -376,7 +376,7 @@ public class DisguiseListener implements Listener {
         }
 
         for (Entity entity : event.getWorld().getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity.getUniqueId(), true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
 
             if (disguises.length <= 0) {
                 continue;
@@ -418,7 +418,7 @@ public class DisguiseListener implements Listener {
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p.getUniqueId(), true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p, true);
 
             if (disguises.length > 0) {
                 DisguiseUtilities.resetPluginTimer();
@@ -579,7 +579,7 @@ public class DisguiseListener implements Listener {
             return;
         }
 
-        DisguiseUtilities.saveDisguises(player.getUniqueId(), disguises);
+        DisguiseUtilities.saveDisguises(player, disguises);
     }
 
     @EventHandler
