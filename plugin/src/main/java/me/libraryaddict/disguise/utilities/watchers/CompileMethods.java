@@ -170,6 +170,12 @@ public class CompileMethods {
                 info.setReturnType(method.getReturnType().getName());
                 info.setRandomDefault(method.isAnnotationPresent(RandomDefaultValue.class));
 
+                if (info.isRandomDefault() && !"void".equals(info.getReturnType())) {
+                    throw new IllegalStateException(
+                        "@RandomDefaultValue is intended for use only on setter methods, " + info.getMethod() + " on " + c.getSimpleName() +
+                            " does not met this criteria!");
+                }
+
                 String s = new Gson().toJson(info);
 
                 if (methods.contains(s)) {

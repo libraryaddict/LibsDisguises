@@ -41,7 +41,6 @@ public class PlayerWatcher extends LivingWatcher {
         ((PlayerDisguise) getDisguise()).setNameVisible(nameVisible);
     }
 
-    @RandomDefaultValue
     public String getName() {
         return ((PlayerDisguise) getDisguise()).getName();
     }

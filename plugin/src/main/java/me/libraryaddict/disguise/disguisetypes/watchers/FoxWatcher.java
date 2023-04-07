@@ -47,11 +47,11 @@ public class FoxWatcher extends AgeableWatcher {
         setFoxFlag(32, value);
     }
 
-    @RandomDefaultValue
     public Fox.Type getType() {
         return Fox.Type.values()[getData(MetaIndex.FOX_TYPE)];
     }
 
+    @RandomDefaultValue
     public void setType(Fox.Type type) {
         setData(MetaIndex.FOX_TYPE, type.ordinal());
         sendData(MetaIndex.FOX_TYPE);
