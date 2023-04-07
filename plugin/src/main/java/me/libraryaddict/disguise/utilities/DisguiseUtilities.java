@@ -535,49 +535,46 @@ public class DisguiseUtilities {
      * Returns the min required version, as in any older version will just not work.
      */
     public static String[] getProtocolLibRequiredVersion() {
-        // If we are on 1.12
-        if (!NmsVersion.v1_13.isSupported()) {
-            return new String[]{"4.4.0"};
-        }
+        // 1.12 base version
+        String[] requiredVersion = new String[]{"4.4.0"};
 
         // If we are on 1.13, 1.14, 1.15
-        if (!NmsVersion.v1_16.isSupported()) {
-            return new String[]{"4.5.1"};
+        if (NmsVersion.v1_13.isSupported()) {
+            requiredVersion = new String[]{"4.5.1"};
         }
 
         // If we are on 1.16
-        if (!NmsVersion.v1_17.isSupported()) {
-            return new String[]{"4.6.0"};
+        if (NmsVersion.v1_16.isSupported()) {
+            requiredVersion = new String[]{"4.6.0"};
         }
 
         // If we are on 1.17, you need this release or dev build
         // ProtocolLib is a little funny in that it provides next release version as the current version
-        if (!NmsVersion.v1_18.isSupported()) {
-            return new String[]{"4.7.0", "528"};
+        if (NmsVersion.v1_17.isSupported()) {
+            requiredVersion = new String[]{"4.7.0", "528"};
         }
 
         // If you're on 1.18..
-        if (!NmsVersion.v1_19_R1.isSupported()) {
-            return new String[]{"4.8.0"};
+        if (NmsVersion.v1_18.isSupported()) {
+            requiredVersion = new String[]{"4.8.0"};
         }
 
         // If you're on 1.19.0
         if (NmsVersion.v1_19_R1.isSupported()) {
-            return new String[]{"5.0.1", "600"};
+            requiredVersion = new String[]{"5.0.1", "600"};
         }
 
         // If you're on 1.19.1 or 1.19.2
         if (NmsVersion.v1_19_R2.isSupported()) {
-            return new String[]{"5.0.1", "600"};
+            requiredVersion = new String[]{"5.0.1", "600"};
         }
 
         // If you're on 1.19.4
         if (NmsVersion.v1_19_R3.isSupported()) {
-            return new String[]{"5.0.1", "627"};
+            requiredVersion = new String[]{"5.0.1", "630"};
         }
 
-        // When we haven't updated!
-        throw new IllegalArgumentException("ProtocolLib support was not added for " + ReflectionManager.getVersion().name());
+        return requiredVersion;
     }
 
     public static boolean isProtocolLibOutdated() {
