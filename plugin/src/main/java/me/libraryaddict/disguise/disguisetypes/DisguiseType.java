@@ -143,8 +143,7 @@ public enum DisguiseType {
 
     MINECART_MOB_SPAWNER(10, 4),
 
-    // Removed for now until ProtocolLib works again with this
-    @NmsAddedIn(NmsVersion.UNSUPPORTED) MINECART_TNT(10, 3),
+    MINECART_TNT(10, 3),
 
     MODDED_MISC,
 
