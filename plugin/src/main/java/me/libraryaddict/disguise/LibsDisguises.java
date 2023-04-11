@@ -192,8 +192,9 @@ public class LibsDisguises extends JavaPlugin {
             }
 
             if (ReflectionManager.getVersion() == null) {
-                getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
-                    StringUtils.join(Arrays.stream(NmsVersion.values()).map(v -> v.name().replace("_", ".")).collect(Collectors.toList()), " & ") + "!");
+                getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " + StringUtils.join(
+                    Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(v -> v.name().replace("_", "."))
+                        .collect(Collectors.toList()), " & ") + "!");
                 getPluginLoader().disablePlugin(this);
                 return;
             }
