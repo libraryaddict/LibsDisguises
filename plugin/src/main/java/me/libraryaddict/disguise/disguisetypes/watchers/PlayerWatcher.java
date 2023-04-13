@@ -50,6 +50,15 @@ public class PlayerWatcher extends LivingWatcher {
         ((PlayerDisguise) getDisguise()).setName(name);
     }
 
+    public String getTablistName() {
+        return ((PlayerDisguise) getDisguise()).getTablistName();
+    }
+
+    @RandomDefaultValue
+    public void setTablistName(String tablistName) {
+        ((PlayerDisguise) getDisguise()).setTablistName(tablistName);
+    }
+
     @Override
     public PlayerWatcher clone(Disguise disguise) {
         PlayerWatcher watcher = (PlayerWatcher) super.clone(disguise);

@@ -22,6 +22,7 @@ public class PlayerDisguise extends TargetedDisguise {
     private transient LibsProfileLookup currentLookup;
     private WrappedGameProfile gameProfile;
     private String playerName = "Herobrine";
+    private String tablistName;
     private String skinToUse;
     private boolean nameVisible = true;
     /**
@@ -278,6 +279,32 @@ public class PlayerDisguise extends TargetedDisguise {
         return playerName;
     }
 
+    public String getTablistName() {
+        if (tablistName == null) {
+            return getName();
+        }
+
+        return tablistName;
+    }
+
+    public void setTablistName(String tablistName) {
+        this.tablistName = tablistName;
+
+        if (!isDisplayedInTab() || !isDisguiseInUse()) {
+            return;
+        }
+
+        PacketContainer addTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!canSee(player)) {
+                continue;
+            }
+
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, addTab);
+        }
+    }
+
     public void setName(String name) {
         if (getName().equals("<Inherit>") && getEntity() != null) {
             name = getEntity().getCustomName();
@@ -357,7 +384,7 @@ public class PlayerDisguise extends TargetedDisguise {
                 }
             }
 
-            if (isDisplayedInTab()) {
+            if (isDisplayedInTab() && tablistName == null) {
                 PacketContainer addTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
 
                 for (Player player : Bukkit.getOnlinePlayers()) {

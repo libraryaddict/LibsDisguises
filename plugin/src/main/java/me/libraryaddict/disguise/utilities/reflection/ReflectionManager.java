@@ -977,13 +977,13 @@ public class ReflectionManager {
             return createTablistPacket(disguise, EnumWrappers.PlayerInfoAction.ADD_PLAYER);
         }
 
-        return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), disguise.isDisplayedInTab(),
+        return nmsReflection.getTabListPacket(disguise.getTablistName(), disguise.getGameProfile(), disguise.isDisplayedInTab(),
             EnumWrappers.PlayerInfoAction.ADD_PLAYER, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME, EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
     }
 
     public static PacketContainer createTablistPacket(PlayerDisguise disguise, EnumWrappers.PlayerInfoAction action) {
         if (nmsReflection != null) {
-            return nmsReflection.getTabListPacket(disguise.getName(), disguise.getGameProfile(), disguise.isDisplayedInTab(), action);
+            return nmsReflection.getTabListPacket(disguise.getTablistName(), disguise.getGameProfile(), disguise.isDisplayedInTab(), action);
         }
 
         try {

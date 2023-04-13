@@ -147,7 +147,7 @@ public class ParamInfoTypes {
                 new ParamInfoQuaternionf(Quaternionf.class, "Quaternion", "Quaternion (X, Y, Z, W)", "Four values used to define part of a Transformation"));
             paramInfos.add(new ParamInfoEnum(ItemDisplay.ItemDisplayTransform.class, "Item Display Transform", "How the Item Display is transformed"));
             paramInfos.add(new ParamInfoEnum(Display.Billboard.class, "Display Billboard", "How the billboard is aligned"));
-            paramInfos.add(new ParamInfoEnum(TextDisplay.TextAligment.class, "Text Display Alignment", "How the text is aligned in the display"));
+            paramInfos.add(new ParamInfoEnum(TextDisplay.TextAlignment.class, "Text Display Alignment", "How the text is aligned in the display"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

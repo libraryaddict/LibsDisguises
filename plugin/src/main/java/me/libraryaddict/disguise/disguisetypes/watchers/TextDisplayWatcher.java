@@ -86,17 +86,17 @@ public class TextDisplayWatcher extends DisplayWatcher {
         this.setFlag(4, defaultBackground);
     }
 
-    public TextDisplay.TextAligment getAlignment() {
+    public TextDisplay.TextAlignment getAlignment() {
         int flags = getData(MetaIndex.TEXT_DISPLAY_FLAGS);
 
         if ((flags & 8) != 0) {
-            return TextDisplay.TextAligment.LEFT;
+            return TextDisplay.TextAlignment.LEFT;
         } else {
-            return (flags & 16) != 0 ? TextDisplay.TextAligment.RIGHT : TextDisplay.TextAligment.CENTER;
+            return (flags & 16) != 0 ? TextDisplay.TextAlignment.RIGHT : TextDisplay.TextAlignment.CENTER;
         }
     }
 
-    public void setAlignment(TextDisplay.TextAligment alignment) {
+    public void setAlignment(TextDisplay.TextAlignment alignment) {
         switch (alignment.ordinal()) {
             case 0:
                 this.setFlag(8, false);
