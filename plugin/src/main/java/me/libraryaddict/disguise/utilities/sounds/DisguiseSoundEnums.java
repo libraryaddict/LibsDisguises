@@ -172,16 +172,8 @@ public enum DisguiseSoundEnums {
 
     PILLAGER(Sound.ENTITY_PILLAGER_HURT, Sound.BLOCK_GRASS_STEP, Sound.ENTITY_PILLAGER_DEATH, Sound.ENTITY_PILLAGER_AMBIENT, Sound.ENTITY_PILLAGER_CELEBRATE),
 
-    PLAYER(Sound.ENTITY_PLAYER_HURT, Arrays.stream(Sound.values()).
-
-        filter(sound -> sound.name().
-
-        startsWith("BLOCK_") && sound.name().
-
-        endsWith("_STEP")).
-
-        toArray(Sound[]::new),
-
+    PLAYER(Sound.ENTITY_PLAYER_HURT,
+        Arrays.stream(Sound.values()).filter(sound -> sound.name().startsWith("BLOCK_") && sound.name().endsWith("_STEP")).toArray(Sound[]::new),
         Sound.ENTITY_PLAYER_DEATH, null),
 
     PHANTOM(Sound.ENTITY_PHANTOM_HURT, new Sound[]{Sound.ENTITY_PHANTOM_FLAP, Sound.ENTITY_PHANTOM_SWOOP}, Sound.ENTITY_PHANTOM_DEATH,
