@@ -2205,34 +2205,44 @@ public class ReflectionManager {
      */
     @SneakyThrows
     public static void registerValues() {
+        int maxErrorsThrown = 5;
+
         for (DisguiseType disguiseType : DisguiseType.values()) {
-            if (disguiseType.getEntityType() == null) {
-                continue;
-            }
+            try {
+                if (disguiseType.getEntityType() == null) {
+                    continue;
+                }
 
-            Class watcherClass = getFlagWatcher(disguiseType);
+                Class watcherClass = getFlagWatcher(disguiseType);
 
-            if (watcherClass == null) {
-                DisguiseUtilities.getLogger().severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
-                continue;
-            }
+                if (watcherClass == null) {
+                    DisguiseUtilities.getLogger().severe("Error loading " + disguiseType.name() + ", FlagWatcher not assigned");
+                    continue;
+                }
 
-            // Invalidate invalid distribution
-            if (LibsPremium.isPremium() &&
-                ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() && !LibsPremium.getPaidInformation().isLegit()) ||
+                // Invalidate invalid distribution
+                if (LibsPremium.isPremium() && ((LibsPremium.getPaidInformation() != null && LibsPremium.getPaidInformation().isPremium() &&
+                    !LibsPremium.getPaidInformation().isLegit()) ||
                     (LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
                         !LibsPremium.getPluginInformation().isLegit()))) {
-                throw new IllegalStateException(
-                    "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " + "reporting this error!");
+                    throw new IllegalStateException(
+                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " + "reporting this error!");
+                }
+
+                disguiseType.setWatcherClass(watcherClass);
+
+                if (LibsDisguises.getInstance() == null || DisguiseValues.getDisguiseValues(disguiseType) != null) {
+                    continue;
+                }
+
+                createNMSValues(disguiseType);
+            } catch (Throwable throwable) {
+                if (maxErrorsThrown-- <= 0) {
+                    throw throwable;
+                }
+
+                throwable.printStackTrace();
             }
-
-            disguiseType.setWatcherClass(watcherClass);
-
-            if (LibsDisguises.getInstance() == null || DisguiseValues.getDisguiseValues(disguiseType) != null) {
-                continue;
-            }
-
-            createNMSValues(disguiseType);
         }
     }
 
