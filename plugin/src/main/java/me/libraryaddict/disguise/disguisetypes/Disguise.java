@@ -36,6 +36,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -853,8 +855,9 @@ public abstract class Disguise {
         }
 
         // If a horse is disguised as a horse, it should obey parent no gravity rule
-        if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse) &&
-            (getWatcher() instanceof BoatWatcher || getWatcher() instanceof AbstractHorseWatcher)) {
+        if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse || getEntity() instanceof Item || getEntity() instanceof FallingBlock) &&
+            (getWatcher() instanceof BoatWatcher || getWatcher() instanceof AbstractHorseWatcher || getEntity() instanceof Item ||
+                getEntity() instanceof FallingBlock)) {
             getWatcher().setNoGravity(!getEntity().hasGravity());
         } else {
             getWatcher().setNoGravity(true);
