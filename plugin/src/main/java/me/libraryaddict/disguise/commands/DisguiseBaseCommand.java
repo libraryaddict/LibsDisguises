@@ -23,6 +23,7 @@ import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.parser.WatcherMethod;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Art;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -178,12 +179,18 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         String methodName = null;
 
         if (allArgs.length == startsAt) {
-            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
+            if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK || disguisePerm.getType() == DisguiseType.BLOCK_DISPLAY) {
                 info = ParamInfoManager.getParamInfoItemBlock();
                 methodName = "setBlock";
-            } else if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM) {
+            } else if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM || disguisePerm.getType() == DisguiseType.ITEM_DISPLAY) {
                 info = ParamInfoManager.getParamInfo(ItemStack.class);
-                methodName = "setItemstack";
+                methodName = "setItemStack";
+            } else if (disguisePerm.getType() == DisguiseType.ITEM_FRAME) {
+                info = ParamInfoManager.getParamInfo(ItemStack.class);
+                methodName = "setItem";
+            } else if (disguisePerm.getType() == DisguiseType.PAINTING) {
+                info = ParamInfoManager.getParamInfo(Art.class);
+                methodName = "setArt";
             }
         } else if (allArgs.length > startsAt) {
             // Check what argument was used before the current argument to see what we're displaying

@@ -18,6 +18,7 @@ public class MobDisguise extends TargetedDisguise {
         this(disguiseType, true);
     }
 
+    @Deprecated
     public MobDisguise(DisguiseType disguiseType, boolean isAdult) {
         super(disguiseType);
 

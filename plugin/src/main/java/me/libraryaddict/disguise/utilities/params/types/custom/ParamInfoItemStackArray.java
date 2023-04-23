@@ -36,7 +36,7 @@ public class ParamInfoItemStackArray extends ParamInfoItemStack {
 
         String lastEntry = split.remove(split.size() - 1);
 
-        for (String material : super.getEnums(null)) {
+        for (String material : (Set<String>) super.getEnums(null)) {
             if (!split.isEmpty() && !material.toLowerCase(Locale.ENGLISH).startsWith(lastEntry.toLowerCase(Locale.ENGLISH))) {
                 continue;
             }

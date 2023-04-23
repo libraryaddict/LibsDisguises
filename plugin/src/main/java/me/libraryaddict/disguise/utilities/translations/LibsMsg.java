@@ -145,6 +145,7 @@ public enum LibsMsg {
     NOT_NUMBER("<red>Error! %s is not a number"),
     PARSE_CANT_DISG_UNKNOWN("<red>Error! You cannot disguise as <green>Unknown!"),
     PARSE_CANT_LOAD("<red>Error! This disguise couldn't be loaded!"),
+    PARSE_CANT_LOAD_DETAILS("<red>Error! This disguise couldn't be loaded! Tried to parse <green>%s<red> for <green>%s"),
     PARSE_DISG_NO_EXIST("<red>Error! The disguise <green>%s<red> doesn't exist!"),
     PARSE_EXPECTED_RECEIVED("<red>Expected <green>%s<red>, received <green>%s<red> instead for <green>%s"),
     PARSE_PARTICLE_BLOCK("<red>Expected <green>%s:Material<red>, received <green>%s<red> instead"),

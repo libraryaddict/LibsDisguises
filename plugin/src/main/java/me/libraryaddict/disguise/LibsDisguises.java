@@ -255,12 +255,11 @@ public class LibsDisguises extends JavaPlugin {
             new SoundManager().load();
 
             ReflectionManager.registerValues();
+            DisguiseParser.createDefaultMethods();
 
             ParamInfoManager.getParamInfoSoundGroup().recalculate();
 
             DisguiseConfig.loadConfig();
-
-            DisguiseParser.createDefaultMethods();
 
             PacketsManager.addPacketListeners();
 

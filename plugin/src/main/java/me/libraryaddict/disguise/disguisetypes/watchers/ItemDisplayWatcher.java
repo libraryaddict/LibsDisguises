@@ -9,6 +9,9 @@ import org.bukkit.inventory.ItemStack;
 public class ItemDisplayWatcher extends DisplayWatcher {
     public ItemDisplayWatcher(Disguise disguise) {
         super(disguise);
+
+        setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GROUND);
+        setItemStack(new ItemStack(Material.STONE));
     }
 
     public ItemStack getItemStack() {

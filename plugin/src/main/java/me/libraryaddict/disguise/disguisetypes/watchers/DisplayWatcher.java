@@ -3,6 +3,7 @@ package me.libraryaddict.disguise.disguisetypes.watchers;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
+import me.libraryaddict.disguise.utilities.parser.RandomDefaultValue;
 import org.bukkit.Color;
 import org.bukkit.entity.Display;
 import org.bukkit.util.Transformation;
@@ -23,6 +24,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
         return new Transformation(transformation, leftRotation, scale, rightRotation);
     }
 
+    // Because BlockDisplayWatcher modifies this on startup..
+    @RandomDefaultValue
     public void setTransformation(Transformation transformation) {
         setData(MetaIndex.DISPLAY_TRANSLATION, transformation.getTranslation());
         setData(MetaIndex.DISPLAY_LEFT_ROTATION, transformation.getLeftRotation());
@@ -36,6 +39,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
         return getData(MetaIndex.DISPLAY_TRANSLATION);
     }
 
+    // Because BlockDisplayWatcher modifies this on startup..
+    @RandomDefaultValue
     public void setTranslation(Vector3f translation) {
         setData(MetaIndex.DISPLAY_TRANSLATION, translation);
         sendData(MetaIndex.DISPLAY_TRANSLATION);
@@ -135,6 +140,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
         return Display.Billboard.values()[getData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS)];
     }
 
+    // Because TextDisplayWatcher modifies this on startup..
+    @RandomDefaultValue
     public void setBillboard(Display.Billboard billboard) {
         setData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS, (byte) billboard.ordinal());
         sendData(MetaIndex.DISPLAY_BILLBOARD_RENDER_CONSTRAINTS);

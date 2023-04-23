@@ -10,20 +10,28 @@ import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.ModdedDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
 import me.libraryaddict.disguise.disguisetypes.TargetedDisguise;
-import me.libraryaddict.disguise.disguisetypes.watchers.FallingBlockWatcher;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.modded.ModdedEntity;
 import me.libraryaddict.disguise.utilities.modded.ModdedManager;
 import me.libraryaddict.disguise.utilities.params.ParamInfo;
 import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
-import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.parser.constructors.ArtPaintingDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.BlockDisplayDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.ExtraDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.FallingBlockDisguiseParamNew;
+import me.libraryaddict.disguise.utilities.parser.constructors.FallingBlockDisguiseParamOld;
+import me.libraryaddict.disguise.utilities.parser.constructors.IntegerPaintingDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.ItemDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.ItemFrameDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.PlayerDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.SplashPotionDisguiseParam;
+import me.libraryaddict.disguise.utilities.parser.constructors.TextDisplayParam;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import me.libraryaddict.disguise.utilities.translations.TranslateType;
 import me.libraryaddict.disguise.utilities.watchers.DisguiseMethods;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -39,7 +47,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,6 +62,7 @@ public class DisguiseParser {
      * <Setter, <Getter, DefaultValue>>
      */
     private static final HashMap<WatcherMethod, Map.Entry<WatcherMethod, Object>> defaultWatcherValues = new HashMap<>();
+    private static final List<ExtraDisguiseParam> extraDisguiseParams = new ArrayList<>();
 
     public static void createDefaultMethods() {
         try {
@@ -156,11 +164,20 @@ public class DisguiseParser {
                     addWatcherDefault(setMethod, getMethod, defaultValue);
                 }
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
         }
+
+        extraDisguiseParams.add(new ArtPaintingDisguiseParam());
+        extraDisguiseParams.add(new BlockDisplayDisguiseParam());
+        extraDisguiseParams.add(new FallingBlockDisguiseParamNew());
+        extraDisguiseParams.add(new FallingBlockDisguiseParamOld());
+        extraDisguiseParams.add(new IntegerPaintingDisguiseParam());
+        extraDisguiseParams.add(new ItemDisguiseParam());
+        extraDisguiseParams.add(new ItemFrameDisguiseParam());
+        extraDisguiseParams.add(new PlayerDisguiseParam());
+        extraDisguiseParams.add(new SplashPotionDisguiseParam());
+        extraDisguiseParams.add(new TextDisplayParam());
     }
 
     public static HashMap<WatcherMethod, Entry<WatcherMethod, Object>> getMethodDefaults() {
@@ -637,7 +654,7 @@ public class DisguiseParser {
         Disguise disguise = null;
         DisguisePerm disguisePerm;
         String name;
-        boolean customName = false;
+        boolean hasSetCustomName = false;
 
         if (args[0].startsWith("@")) {
             if (sender.hasPermission("libsdisguises.disguise.disguiseclone")) {
@@ -652,7 +669,7 @@ public class DisguiseParser {
 
             disguisePerm = new DisguisePerm(disguise.getType());
             name = disguise.getDisguiseName();
-            customName = disguise.isCustomDisguiseName();
+            hasSetCustomName = disguise.isCustomDisguiseName();
 
             if (disguisePerm.isUnknown()) {
                 throw new DisguiseParseException(LibsMsg.PARSE_CANT_DISG_UNKNOWN);
@@ -682,7 +699,7 @@ public class DisguiseParser {
                 }
 
                 disguise = new ModdedDisguise(ent);
-                customName = true;
+                hasSetCustomName = true;
             }
 
             Entry<DisguisePerm, String> customDisguise = DisguiseConfig.getRawCustomDisguise(args[0]);
@@ -692,7 +709,7 @@ public class DisguiseParser {
                 // Need to add user defined args for the custom disguise
                 args = DisguiseUtilities.split(customDisguise.getValue());
                 name = customDisguise.getKey().toReadable();
-                customName = true;
+                hasSetCustomName = true;
             }
 
             args = parsePlaceholders(args, sender == null ? target : sender, target);
@@ -712,152 +729,108 @@ public class DisguiseParser {
             HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(sender, permNode, disguisePerm);
 
             if (disguise == null) {
+                WatcherMethod[] watcherMethods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass(), true);
+                String method = null;
+                Object param = null;
+
+                if (args.length > 1) {
+                    String[] argArray = args;
+
+                    if (Arrays.stream(watcherMethods).noneMatch(m -> m.getName().equalsIgnoreCase(argArray[1]))) {
+                        for (ExtraDisguiseParam extra : extraDisguiseParams) {
+                            if (!extra.isApplicable(disguisePerm.getType(), args[1])) {
+                                continue;
+                            }
+
+                            method = extra.getParameterMethod();
+
+                            try {
+                                param = extra.createParametervalue(sender, args[1]);
+                            } catch (DisguiseParseException ex) {
+                                throw ex;
+                            } catch (Throwable throwable) {
+                                throw new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED, extra.getParamInfo().getDescriptiveName(), args[1],
+                                    TranslateType.DISGUISE_OPTIONS.reverseGet(TranslateType.DISGUISE_OPTIONS.reverseGet(method)));
+                            }
+
+                            extra.checkParameterPermission(sender, permissions, disguiseOptions, usedOptions, disguisePerm, param);
+                            toSkip++;
+                            break;
+                        }
+                    }
+                }
+
                 if (disguisePerm.isPlayer()) {
                     // If he is doing a player disguise
                     if (args.length == 1) {
                         // He needs to give the player name
                         throw new DisguiseParseException(LibsMsg.PARSE_SUPPLY_PLAYER);
                     } else {
-                        // If they can't use this name, throw error
-                        if (!DisguisePermissions.hasPermissionOption(disguiseOptions, "setname", args[1].toLowerCase(Locale.ENGLISH))) {
-                            if (!args[1].equalsIgnoreCase(sender.getName()) ||
-                                !DisguisePermissions.hasPermissionOption(disguiseOptions, "setname", "themselves")) {
-                                throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
-                            }
-                        }
-
-                        args[1] = args[1].replace("\\_", " ");
-
-                        if (DisguiseConfig.isArmorstandsName() && !sender.hasPermission("libsdisguises.multiname")) {
-                            args[1] = DisguiseUtilities.quoteNewLine(args[1]);
+                        if (method == null) {
+                            param = "Nameless Player";
+                        } else if (!"setName".equalsIgnoreCase(method)) {
+                            throw new IllegalStateException(
+                                "Expected setName to be defined, this is an internal error, not a user error. Method was " + method);
                         }
 
                         // Construct the player disguise
-                        disguise = new PlayerDisguise(DisguiseUtilities.translateAlternateColorCodes(args[1]));
+                        disguise = new PlayerDisguise((String) param);
 
-                        if (!customName) {
+                        // Prevent this being set later
+                        method = null;
+
+                        if (!hasSetCustomName) {
                             name = ((PlayerDisguise) disguise).getName();
                         }
-
-                        toSkip++;
                     }
-                } else if (disguisePerm.isMob()) { // Its a mob, use the mob constructor
-                    if (args.length > 1) {
-                        boolean adult = true;
-
-                        if (args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("baby")) ||
-                            args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"))) {
-                            usedOptions.add("setbaby");
-                            doCheck(sender, permissions, disguisePerm, usedOptions);
-                            adult = args[1].equalsIgnoreCase(TranslateType.DISGUISE_OPTIONS.get("adult"));
-
-                            toSkip++;
-                            disguise = new MobDisguise(disguisePerm.getType(), adult);
-                        } else {
-                            disguise = new MobDisguise(disguisePerm.getType());
-                        }
-                    } else {
-                        disguise = new MobDisguise(disguisePerm.getType());
-                    }
+                } else if (disguisePerm.isMob()) {
+                    // Its a mob, use the mob constructor
+                    disguise = new MobDisguise(disguisePerm.getType());
                 } else if (disguisePerm.isMisc()) {
                     // Its a misc, we are going to use the MiscDisguise constructor.
-                    ItemStack itemStack = new ItemStack(Material.STONE);
-                    // The steps I go through for 1.12..
-                    Object blockData = null;
-                    int miscId = -1;
+                    disguise = new MiscDisguise(disguisePerm.getType());
+                }
 
-                    if (args.length > 1) {
-                        switch (disguisePerm.getType()) {
-                            case FALLING_BLOCK:
-                            case DROPPED_ITEM:
-                                ParamInfo info;
+                if (method != null && param != null) {
+                    WatcherMethod m = null;
 
-                                try {
-                                    if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
-                                        if (NmsVersion.v1_13.isSupported() && args[1].contains("[")) {
-                                            info = ParamInfoManager.getParamInfo(BlockData.class);
-                                            blockData = info.fromString(new ArrayList<>(Collections.singletonList(args[1])));
-                                        } else {
-                                            info = ParamInfoManager.getParamInfoItemBlock();
-
-                                            itemStack = (ItemStack) info.fromString(new ArrayList<>(Collections.singletonList(args[1])));
-                                        }
-                                    } else {
-                                        info = ParamInfoManager.getParamInfo(ItemStack.class);
-
-                                        itemStack = (ItemStack) info.fromString(new ArrayList<>(Collections.singletonList(args[1])));
-                                    }
-                                } catch (Exception ex) {
-                                    break;
-                                }
-
-                                String optionName;
-
-                                if (disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
-                                    optionName = "setblock";
-                                } else {
-                                    optionName = "setitemstack";
-                                }
-
-                                usedOptions.add(optionName);
-                                doCheck(sender, permissions, disguisePerm, usedOptions);
-                                String itemName = itemStack == null ? "null" : itemStack.getType().name().toLowerCase(Locale.ENGLISH);
-
-                                if (!DisguisePermissions.hasPermissionOption(disguiseOptions, optionName, itemName)) {
-                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, itemName, disguisePerm.toReadable());
-                                }
-
-                                toSkip++;
-
-                                break;
-                            case PAINTING:
-                            case SPLASH_POTION:
-                                if (!isInteger(args[1])) {
-                                    break;
-                                }
-
-                                miscId = Integer.parseInt(args[1]);
-                                toSkip++;
-
-                                if (disguisePerm.getType() == DisguiseType.PAINTING) {
-                                    optionName = "setpainting";
-                                } else {
-                                    optionName = "setpotionid";
-                                }
-
-                                usedOptions.add(optionName);
-
-                                doCheck(sender, permissions, disguisePerm, usedOptions);
-
-                                if (!DisguisePermissions.hasPermissionOption(disguiseOptions, optionName, miscId + "")) {
-                                    throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_PARAM, miscId + "", disguisePerm.toReadable());
-                                }
-                                break;
-                            default:
-                                break;
+                    for (WatcherMethod method1 : watcherMethods) {
+                        if (!method1.getName().equalsIgnoreCase(method)) {
+                            continue;
                         }
+
+                        if (!method1.getParam().isAssignableFrom(param.getClass())) {
+                            System.out.println("Can't cast " + method1.getParam() + " to " + param.getClass() + " for " + method);
+                            continue;
+                        }
+
+                        m = method1;
+                        break;
                     }
 
-                    // Construct the disguise
-                    if (disguisePerm.getType() == DisguiseType.DROPPED_ITEM || disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
-                        disguise = new MiscDisguise(disguisePerm.getType(), itemStack);
+                    if (m == null) {
+                        throw new DisguiseParseException(LibsMsg.PARSE_CANT_LOAD_DETAILS, args[1], method);
+                    }
 
-                        if (blockData != null && disguisePerm.getType() == DisguiseType.FALLING_BLOCK) {
-                            ((FallingBlockWatcher) disguise.getWatcher()).setBlockData((BlockData) blockData);
-                        }
+                    MethodHandle handle = m.getMethod();
 
-                        if (!customName) {
-                            name = disguise.getDisguiseName();
-                        }
+                    if (FlagWatcher.class.isAssignableFrom(m.getWatcherClass())) {
+                        handle = handle.bindTo(disguise.getWatcher());
                     } else {
-                        disguise = new MiscDisguise(disguisePerm.getType(), miscId);
+                        handle = handle.bindTo(disguise);
                     }
+
+                    handle.invoke(param);
+                }
+
+                if (!hasSetCustomName && !disguisePerm.isPlayer()) {
+                    name = disguise.getDisguiseName();
                 }
             }
         }
 
         disguise.setDisguiseName(name);
-        disguise.setCustomDisguiseName(customName);
+        disguise.setCustomDisguiseName(hasSetCustomName);
 
         // Copy strings to their new range
         String[] newArgs = new String[args.length - toSkip];
@@ -941,7 +914,7 @@ public class DisguiseParser {
                     break;
                 } catch (DisguiseParseException ex) {
                     parseException = ex;
-                } catch (Exception ignored) {
+                } catch (Exception ex) {
                     parseException =
                         new DisguiseParseException(LibsMsg.PARSE_EXPECTED_RECEIVED, paramInfo.getDescriptiveName(), list.isEmpty() ? null : list.get(0),
                             TranslateType.DISGUISE_OPTIONS.reverseGet(method.getName()));

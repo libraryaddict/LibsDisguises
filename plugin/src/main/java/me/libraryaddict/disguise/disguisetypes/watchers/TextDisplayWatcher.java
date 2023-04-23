@@ -7,11 +7,15 @@ import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Color;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
 
 public class TextDisplayWatcher extends DisplayWatcher {
     public TextDisplayWatcher(Disguise disguise) {
         super(disguise);
+
+        setBillboard(Display.Billboard.CENTER);
+        setText("Text Display");
     }
 
     public String getText() {
