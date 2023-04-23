@@ -202,7 +202,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                 // was no velocity event...
                 event.setCancelled(true);
                 // Clear old velocity, this should only occur once.
-                DisguiseUtilities.setPlayerVelocity(null);
+                DisguiseUtilities.clearPlayerVelocity(observer);
             }
         } catch (Throwable ex) {
             event.setCancelled(true);

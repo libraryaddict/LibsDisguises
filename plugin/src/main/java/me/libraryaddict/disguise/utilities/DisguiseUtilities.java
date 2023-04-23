@@ -12,6 +12,8 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtList;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
@@ -235,11 +237,7 @@ public class DisguiseUtilities {
     @Getter
     private static boolean pluginsUsed, commandsUsed, copyDisguiseCommandUsed, grabSkinCommandUsed, saveDisguiseCommandUsed, grabHeadCommandUsed;
     private static long libsDisguisesCalled;
-    /**
-     * Keeps track of what tick this occured
-     */
-    private static long velocityTime;
-    private static int velocityID;
+    private static final Cache<Integer, Long> velocityTimes = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final HashMap<UUID, ArrayList<Integer>> disguiseLoading = new HashMap<>();
     @Getter
     private static boolean runningPaper;
@@ -522,13 +520,11 @@ public class DisguiseUtilities {
     }
 
     public static void setPlayerVelocity(Player player) {
-        if (player == null) {
-            velocityID = 0;
-            velocityTime = 0;
-        } else {
-            velocityID = player.getEntityId();
-            velocityTime = player.getWorld().getTime();
-        }
+        velocityTimes.put(player.getEntityId(), player.getWorld().getGameTime());
+    }
+
+    public static void clearPlayerVelocity(Player player) {
+        velocityTimes.invalidate(player.getEntityId());
     }
 
     /**
@@ -644,7 +640,14 @@ public class DisguiseUtilities {
     public static boolean isPlayerVelocity(Player player) {
         // Be generous with how many ticks they have until they jump, the server could be lagging and the player
         // would effectively have anti-knockback
-        return player.getEntityId() == velocityID && (player.getWorld().getTime() - velocityTime) < 3;
+
+        Long velocityTime = velocityTimes.getIfPresent(player.getEntityId());
+
+        if (velocityTime == null) {
+            return false;
+        }
+
+        return Math.abs(player.getWorld().getGameTime() - velocityTime) <= 3;
     }
 
     public static void setGrabSkinCommandUsed() {
