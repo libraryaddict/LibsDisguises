@@ -263,8 +263,8 @@ public class DisguiseListener implements Listener {
         // If the packet is coming, then I need to replace the item they are switching to
         // As for the old item, I need to restore it.
         org.bukkit.inventory.ItemStack currentlyHeld = player.getItemInHand();
-        // If his old weapon isn't air
-        if (currentlyHeld != null && currentlyHeld.getType() != Material.AIR) {
+        // If their old weapon isn't air
+        if (DisguiseUtilities.shouldBeHiddenSelfDisguise(currentlyHeld)) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
 
             StructureModifier<Object> mods = packet.getModifier();
@@ -283,8 +283,8 @@ public class DisguiseListener implements Listener {
 
         org.bukkit.inventory.ItemStack newHeld = player.getInventory().getItem(event.getNewSlot());
 
-        // If his new weapon isn't air either!
-        if (newHeld != null && newHeld.getType() != Material.AIR) {
+        // If their new weapon isn't air either!
+        if (DisguiseUtilities.shouldBeHiddenSelfDisguise(newHeld)) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
 
             StructureModifier<Object> mods = packet.getModifier();

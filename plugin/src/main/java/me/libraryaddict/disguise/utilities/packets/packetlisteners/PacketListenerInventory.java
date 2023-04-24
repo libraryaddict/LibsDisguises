@@ -80,7 +80,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                     org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                    if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
+                    if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item) && item.getType() != Material.ELYTRA) {
                         PacketContainer packet = new PacketContainer(Server.SET_SLOT);
 
                         StructureModifier<Object> mods = packet.getModifier();
@@ -104,7 +104,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     if (slot + 36 == currentSlot || slot == 45) {
                         org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
 
-                        if (item != null && item.getType() != Material.AIR) {
+                        if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item)) {
                             PacketContainer packet = new PacketContainer(Server.SET_SLOT);
 
                             StructureModifier<Object> mods = packet.getModifier();
@@ -138,6 +138,7 @@ public class PacketListenerInventory extends PacketAdapter {
                 // Its a shift click
                 clickedItem = event.getPacket().getItemModifier().read(0);
 
+                // We don't look at if it should be hidden or not, we just want to prevent mis-synced inventory
                 if (clickedItem != null && clickedItem.getType() != Material.AIR) {
                     // Rather than predict the clients actions
                     // Lets just update the entire inventory..
@@ -159,7 +160,7 @@ public class PacketListenerInventory extends PacketAdapter {
                 clickedItem = player.getItemOnCursor();
             }
 
-            if (clickedItem != null && clickedItem.getType() != Material.AIR && clickedItem.getType() != Material.ELYTRA) {
+            if (DisguiseUtilities.shouldBeHiddenSelfDisguise(clickedItem) && clickedItem.getType() != Material.ELYTRA) {
                 // If the slot is a armor slot
                 if (slot >= 5 && slot <= 8) {
                     if (disguise.isHidingArmorFromSelf()) {
@@ -242,7 +243,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                     org.bukkit.inventory.ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                    if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
+                    if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item) && item.getType() != Material.ELYTRA) {
                         event.setPacket(event.getPacket().shallowClone());
 
                         event.getPacket().getItemModifier().write(0, new ItemStack(Material.AIR));
@@ -257,7 +258,7 @@ public class PacketListenerInventory extends PacketAdapter {
                     if (slot == currentSlot + 36 || slot == 45) {
                         org.bukkit.inventory.ItemStack item = player.getInventory().getItemInMainHand();
 
-                        if (item != null && item.getType() != Material.AIR) {
+                        if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item)) {
                             event.setPacket(event.getPacket().shallowClone());
 
                             event.getPacket().getItemModifier().write(0, new ItemStack(Material.AIR));
@@ -279,7 +280,7 @@ public class PacketListenerInventory extends PacketAdapter {
 
                         ItemStack item = player.getInventory().getArmorContents()[armorSlot];
 
-                        if (item != null && item.getType() != Material.AIR && item.getType() != Material.ELYTRA) {
+                        if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item) && item.getType() != Material.ELYTRA) {
                             items.set(slot, new ItemStack(Material.AIR));
                         }
                     }
@@ -292,7 +293,7 @@ public class PacketListenerInventory extends PacketAdapter {
                         if (slot == currentSlot + 36 || slot == 45) {
                             ItemStack item = player.getInventory().getItemInMainHand();
 
-                            if (item != null && item.getType() != Material.AIR) {
+                            if (DisguiseUtilities.shouldBeHiddenSelfDisguise(item)) {
                                 items.set(slot, new ItemStack(Material.AIR));
                             }
                         }

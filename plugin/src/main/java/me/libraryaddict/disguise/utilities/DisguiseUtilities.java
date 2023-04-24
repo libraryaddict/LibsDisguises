@@ -73,6 +73,7 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -262,6 +263,7 @@ public class DisguiseUtilities {
     @Setter
     private static boolean protocollibUpdateDownloaded;
     private static NamespacedKey savedDisguisesKey;
+    private static final List<Enchantment> whitelistedEnchantments = new ArrayList<>();
 
     static {
         final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(System.getProperty("java.version"));
@@ -286,6 +288,37 @@ public class DisguiseUtilities {
             profileCache = new File(LibsDisguises.getInstance().getDataFolder(), "SavedSkins");
             savedDisguises = new File(LibsDisguises.getInstance().getDataFolder(), "SavedDisguises");
         }
+
+        whitelistedEnchantments.add(Enchantment.DEPTH_STRIDER);
+        whitelistedEnchantments.add(Enchantment.OXYGEN);
+
+        if (NmsVersion.v1_13.isSupported()) {
+            whitelistedEnchantments.add(Enchantment.RIPTIDE);
+
+            if (NmsVersion.v1_19_R1.isSupported()) {
+
+                whitelistedEnchantments.add(Enchantment.SOUL_SPEED);
+                whitelistedEnchantments.add(Enchantment.SWIFT_SNEAK);
+            }
+        }
+    }
+
+    public static boolean shouldBeHiddenSelfDisguise(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) {
+            return false;
+        }
+
+        Map<Enchantment, Integer> enchants = itemStack.getEnchantments();
+
+        for (Enchantment enchantment : enchants.keySet()) {
+            if (!whitelistedEnchantments.contains(enchantment)) {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     public static String serialize(Component component) {

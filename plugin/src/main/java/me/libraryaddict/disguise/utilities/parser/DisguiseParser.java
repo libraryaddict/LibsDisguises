@@ -800,7 +800,6 @@ public class DisguiseParser {
                         }
 
                         if (!method1.getParam().isAssignableFrom(param.getClass())) {
-                            System.out.println("Can't cast " + method1.getParam() + " to " + param.getClass() + " for " + method);
                             continue;
                         }
 
