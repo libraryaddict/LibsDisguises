@@ -98,8 +98,7 @@ public class LibsDisguises extends JavaPlugin {
                     }
                 } catch (Exception e) {
                     getLogger().severe(
-                        "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" + " can " +
-                            "join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
+                        "Looks like ProtocolLib's site may be down! Try download it manually from https://ci.dmulloy2.net/job/ProtocolLib/");
                     e.printStackTrace();
                 }
 
