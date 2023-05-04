@@ -2518,9 +2518,9 @@ public class ReflectionManager {
         for (Objective objective : objectives) {
             Score s = objective.getScore(name);
 
-            if (s.isScoreSet() && s.getScore() == score) {
+            /*if (score == 0 ? s.isScoreSet() : s.getScore() == score) {
                 continue;
-            }
+            }*/
 
             s.setScore(score);
         }
