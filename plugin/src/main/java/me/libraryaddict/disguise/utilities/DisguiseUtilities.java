@@ -553,7 +553,7 @@ public class DisguiseUtilities {
     }
 
     public static void setPlayerVelocity(Player player) {
-        velocityTimes.put(player.getEntityId(), player.getWorld().getGameTime());
+        velocityTimes.put(player.getEntityId(), NmsVersion.v1_19_R3.isSupported() ? player.getWorld().getGameTime() : System.currentTimeMillis());
     }
 
     public static void clearPlayerVelocity(Player player) {
@@ -678,6 +678,10 @@ public class DisguiseUtilities {
 
         if (velocityTime == null) {
             return false;
+        }
+
+        if (NmsVersion.v1_19_R3.isSupported()) {
+            return System.currentTimeMillis() - velocityTime <= 100;
         }
 
         return Math.abs(player.getWorld().getGameTime() - velocityTime) <= 3;
