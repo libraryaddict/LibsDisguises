@@ -35,7 +35,7 @@
             <artifactId>spigot-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.dmulloy2</groupId>
+            <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
         </dependency>
     </dependencies>
