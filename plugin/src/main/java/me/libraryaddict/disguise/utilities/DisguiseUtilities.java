@@ -2789,7 +2789,7 @@ public class DisguiseUtilities {
         p.sendMessage(
             ChatColor.RED + "Please ask the server owner to update ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
                 requiredProtocolLib + "!");
-        p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
+        p.sendMessage(ChatColor.RED + "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/build/libs/ProtocolLib.jar);
         p.sendMessage(ChatColor.RED + "Or! Use " + ChatColor.DARK_RED + "/ld updatepl" + ChatColor.RED + " - To update to the latest development build");
         p.sendMessage(ChatColor.DARK_GREEN + "This message is `kindly` provided by Lib's Disguises on repeat to all players due to the sheer " +
             "number of people who don't see it");
