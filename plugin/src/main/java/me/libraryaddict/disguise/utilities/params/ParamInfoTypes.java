@@ -7,6 +7,7 @@ import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.EntityPose;
 import me.libraryaddict.disguise.disguisetypes.GolemCrack;
 import me.libraryaddict.disguise.disguisetypes.RabbitType;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.params.types.ParamInfoEnum;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoBoolean;
 import me.libraryaddict.disguise.utilities.params.types.base.ParamInfoDouble;
@@ -151,6 +152,8 @@ public class ParamInfoTypes {
             try {
                 paramInfos.add(new ParamInfoEnum(TextDisplay.TextAlignment.class, "Text Display Alignment", "How the text is aligned in the display"));
             } catch (Exception ex) {
+                DisguiseUtilities.getLogger()
+                    .severe("You are using 1.19.4, but you're using an outdated build of 1.19.4, you need to update the spigot (or paper) jar");
                 ex.printStackTrace();
             }
         }
