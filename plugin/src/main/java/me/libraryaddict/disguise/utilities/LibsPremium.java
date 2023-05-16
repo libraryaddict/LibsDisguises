@@ -231,7 +231,7 @@ public class LibsPremium {
 
                 thisPluginIsPaidFor = true;
             } else {
-                DisguiseUtilities.getLogger().warning("If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
+                DisguiseUtilities.getLogger().info("If you own the plugin, place the premium jar downloaded from https://www.spigotmc" +
                     ".org/resources/libs-disguises.32453/ in plugins/LibsDisguises/");
             }
         }
