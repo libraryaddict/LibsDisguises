@@ -16,8 +16,15 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
     public VillagerWatcher(Disguise disguise) {
         super(disguise);
 
+        setLevel(5);
+
         if (DisguiseConfig.isRandomDisguises()) {
             setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
+
+            if (NmsVersion.v1_14.isSupported()) {
+                setBiome(Villager.Type.values()[DisguiseUtilities.random.nextInt(Villager.Type.values().length)]);
+                setLevel(DisguiseUtilities.random.nextInt(5) + 1);
+            }
         }
     }
 
@@ -79,6 +86,6 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
 
     @NmsAddedIn(NmsVersion.v1_14)
     public void setLevel(int level) {
-        setVillagerData(new VillagerData(getType(), getProfession(), level));
+        setVillagerData(new VillagerData(getType(), getProfession(), Math.max(1, Math.min(5, level))));
     }
 }

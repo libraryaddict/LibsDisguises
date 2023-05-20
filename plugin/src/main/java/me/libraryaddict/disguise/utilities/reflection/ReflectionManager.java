@@ -1693,7 +1693,7 @@ public class ReflectionManager {
 
     public static Object getNmsVillagerData(VillagerData data) {
         if (nmsReflection != null) {
-            return nmsReflection.getNmsVillagerData(data.getType(), data.getProfession());
+            return nmsReflection.getNmsVillagerData(data.getType(), data.getProfession(), data.getLevel());
         }
 
         Object type = getVillagerType(data.getType());

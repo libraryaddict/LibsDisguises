@@ -382,11 +382,11 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return CraftItemStack.asNMSCopy(itemStack);
     }
 
-    public VillagerData getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession) {
+    public VillagerData getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession, int level) {
         VillagerType nmsVillagerType = Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(villagerType.getKey()));
         VillagerProfession nmsVillagerProfession = Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
 
-        return new net.minecraft.world.entity.npc.VillagerData(nmsVillagerType, nmsVillagerProfession, 1);
+        return new net.minecraft.world.entity.npc.VillagerData(nmsVillagerType, nmsVillagerProfession, level);
     }
 
     public VillagerType getVillagerType(Villager.Type type) {

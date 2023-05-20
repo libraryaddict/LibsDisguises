@@ -108,7 +108,7 @@ public interface ReflectionManagerAbstract {
 
     Object getNmsItem(ItemStack itemStack);
 
-    Object getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession);
+    Object getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession, int level);
 
     Object getVillagerType(Villager.Type type);
 
