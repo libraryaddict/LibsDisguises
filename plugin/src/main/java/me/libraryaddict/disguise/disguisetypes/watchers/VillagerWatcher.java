@@ -16,8 +16,6 @@ public class VillagerWatcher extends AbstractVillagerWatcher {
     public VillagerWatcher(Disguise disguise) {
         super(disguise);
 
-        setLevel(5);
-
         if (DisguiseConfig.isRandomDisguises()) {
             setProfession(Profession.values()[DisguiseUtilities.random.nextInt(Profession.values().length)]);
 
