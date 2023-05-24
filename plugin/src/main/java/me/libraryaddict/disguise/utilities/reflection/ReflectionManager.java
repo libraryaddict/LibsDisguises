@@ -2,7 +2,6 @@ package me.libraryaddict.disguise.utilities.reflection;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.FieldAccessException;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
@@ -2486,7 +2485,7 @@ public class ReflectionManager {
 
                 disguiseValues.setBabyBox(ReflectionManager.getBoundingBox(bukkitEntity));
             }
-        } catch (SecurityException | IllegalArgumentException | FieldAccessException ex) {
+        } catch (Exception ex) {
             DisguiseUtilities.getLogger().severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
             DisguiseUtilities.getLogger()
                 .severe("Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
