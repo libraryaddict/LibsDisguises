@@ -199,7 +199,7 @@ public class DisguiseParser {
         try {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.append(disguise.getType().toReadable().replace(" ", "_"));
+            stringBuilder.append(TranslateType.DISGUISES.reverseGet(disguise.getType().toReadable().replace(" ", "_")));
 
             if (disguise.isPlayerDisguise()) {
                 stringBuilder.append(" ").append(DisguiseUtilities.quote(((PlayerDisguise) disguise).getName()));
@@ -221,8 +221,8 @@ public class DisguiseParser {
                             continue;
                         }
 
-                        stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.get(m.getName())).append(" ")
-                            .append(TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(type.getName()));
+                        stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(m.getName())).append(" ")
+                            .append(TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(type.getName()));
                     }
 
                     continue;
@@ -269,7 +269,7 @@ public class DisguiseParser {
                     }
                 }
 
-                stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.get(m.getName()));
+                stringBuilder.append(" ").append(TranslateType.DISGUISE_OPTIONS.reverseGet(m.getName()));
 
                 if (ourValue instanceof Boolean && (Boolean) ourValue) {
                     continue;
@@ -281,12 +281,12 @@ public class DisguiseParser {
                     valueString = ParamInfoManager.getParamInfo(ourValue.getClass()).toString(ourValue);
 
                     if (ourValue instanceof String) {
-                        valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.get(valueString);
+                        valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet(valueString);
                     }
 
                     valueString = DisguiseUtilities.quote(valueString);
                 } else {
-                    valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.get("null");
+                    valueString = TranslateType.DISGUISE_OPTIONS_PARAMETERS.reverseGet("null");
                 }
 
                 stringBuilder.append(" ").append(valueString);
