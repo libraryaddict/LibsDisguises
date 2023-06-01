@@ -20,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Locale;
+
 /**
  * Created by libraryaddict on 28/12/2019.
  */
@@ -71,7 +73,7 @@ public class GrabSkinCommand implements CommandExecutor {
             }
         }
 
-        String name = tName;
+        String name = tName.toLowerCase(Locale.ROOT).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
             private final BukkitTask runnable = new BukkitRunnable() {
