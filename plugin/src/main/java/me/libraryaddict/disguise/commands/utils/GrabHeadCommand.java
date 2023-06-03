@@ -55,7 +55,7 @@ public class GrabHeadCommand implements CommandExecutor {
         String usable = SkinUtils.getUsableStatus();
 
         if (usable != null) {
-            sender.sendMessage(usable);
+            DisguiseUtilities.sendMessage(sender, usable);
             return true;
         }
 

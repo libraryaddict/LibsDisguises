@@ -176,8 +176,9 @@ public class SkinUtils {
                 return;
             }
 
-            File file =
-                new File(LibsDisguises.getInstance().getDataFolder(), "/Skins/" + param + (param.toLowerCase(Locale.ENGLISH).endsWith(".png") ? "" : ".png"));
+            File expectedFolder = new File(LibsDisguises.getInstance().getDataFolder(), "/Skins/");
+
+            File file = new File(expectedFolder, param + (param.toLowerCase(Locale.ENGLISH).endsWith(".png") ? "" : ".png"));
 
             if (!file.exists()) {
                 file = null;
@@ -186,6 +187,9 @@ public class SkinUtils {
                     callback.onError(LibsMsg.SKIN_API_BAD_FILE_NAME);
                     return;
                 }
+            } else if (!file.getParentFile().getAbsolutePath().equals(expectedFolder.getAbsolutePath())) {
+                callback.onError(LibsMsg.SKIN_API_INVALID_NAME);
+                return;
             }
 
             if (file != null) {

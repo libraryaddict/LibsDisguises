@@ -54,7 +54,7 @@ public class GrabSkinCommand implements CommandExecutor {
         String usable = SkinUtils.getUsableStatus();
 
         if (usable != null) {
-            sender.sendMessage(usable);
+            DisguiseUtilities.sendMessage(sender, usable);
             return true;
         }
 
@@ -73,7 +73,12 @@ public class GrabSkinCommand implements CommandExecutor {
             }
         }
 
-        String name = tName.toLowerCase(Locale.ROOT).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
+        String name = tName != null && tName.toLowerCase(Locale.ROOT).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
+
+        if (name != null && name.replaceAll("[_a-zA-Z \\d-@#]", "").length() > 0) {
+            LibsMsg.SKIN_API_INVALID_NAME.send(sender);
+            return true;
+        }
 
         SkinUtils.SkinCallback callback = new SkinUtils.SkinCallback() {
             private final BukkitTask runnable = new BukkitRunnable() {
