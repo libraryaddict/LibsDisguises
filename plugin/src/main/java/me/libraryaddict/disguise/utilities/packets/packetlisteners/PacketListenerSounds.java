@@ -51,7 +51,7 @@ public class PacketListenerSounds extends PacketAdapter {
         Entity entity = null;
 
         if (event.getPacketType() == Server.NAMED_SOUND_EFFECT) {
-            offset = 3;
+            offset = 2;
 
             int[] soundCords = new int[]{(Integer) mods.read(2), (Integer) mods.read(3), (Integer) mods.read(4)};
 
@@ -126,8 +126,8 @@ public class PacketListenerSounds extends PacketAdapter {
         }
 
         Enum soundCat = ReflectionManager.getSoundCategory(disguise.getType());
-        float volume = (float) mods.read(offset + 2);
-        float pitch = (float) mods.read(offset + 3);
+        float volume = (float) mods.read(offset + 3);
+        float pitch = (float) mods.read(offset + 4);
 
         // If the volume is the default, set it to what the real disguise sound group expects
         if (volume == soundGroup.getDamageAndIdleSoundVolume()) {
@@ -160,8 +160,8 @@ public class PacketListenerSounds extends PacketAdapter {
 
         mods.write(0, sound);
         mods.write(1, soundCat);
-        mods.write(offset + 2, volume);
-        mods.write(offset + 3, pitch);
+        mods.write(offset + 3, volume);
+        mods.write(offset + 4, pitch);
 
         event.setPacket(newPacket);
     }
