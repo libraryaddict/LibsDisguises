@@ -283,6 +283,9 @@ public class DisguiseConfig {
     @Getter
     @Setter
     private static List<String> disabledMethods = new ArrayList<>();
+    @Getter
+    @Setter
+    private static boolean neverUpdateProtocolLib;
 
     public static boolean isArmorstandsName() {
         return getPlayerNameType() == PlayerNameType.ARMORSTANDS;
@@ -706,6 +709,8 @@ public class DisguiseConfig {
         }
 
         setDisabledMethods(config.getStringList("DisabledMethods"));
+
+        setNeverUpdateProtocolLib(config.getBoolean("NeverUpdateProtocolLib", false));
 
         String seeCommands = config.getString("Permissions.SeeCommands");
         PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);

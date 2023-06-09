@@ -82,26 +82,30 @@ public class LibsDisguises extends JavaPlugin {
             Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
 
             if (plugin == null || DisguiseUtilities.isProtocolLibOutdated()) {
-                getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
+                if (DisguiseConfig.isNeverUpdateProtocolLib()) {
+                    getLogger().warning(
+                        "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or installs ProtocolLib. " +
+                            "Please do not report any issues with this plugin.");
+                } else {
+                    getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
 
-                try {
-                    File dest = DisguiseUtilities.updateProtocolLib();
+                    try {
+                        File dest = DisguiseUtilities.updateProtocolLib();
 
-                    if (plugin == null) {
-                        getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
-                        plugin = Bukkit.getPluginManager().loadPlugin(dest);
-                        plugin.onLoad();
+                        if (plugin == null) {
+                            getLogger().info("ProtocolLib downloaded and stuck in plugins folder! Now trying to load it!");
+                            plugin = Bukkit.getPluginManager().loadPlugin(dest);
+                            plugin.onLoad();
 
-                        Bukkit.getPluginManager().enablePlugin(plugin);
-                    } else {
-                        getLogger().severe("Please restart the server to complete the ProtocolLib update!");
+                            Bukkit.getPluginManager().enablePlugin(plugin);
+                        } else {
+                            getLogger().severe("Please restart the server to complete the ProtocolLib update!");
+                        }
+                    } catch (Exception e) {
+                        getLogger().severe("Looks like ProtocolLib's site may be down! Try download it manually from https://ci.dmulloy2.net/job/ProtocolLib/");
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    getLogger().severe(
-                        "Looks like ProtocolLib's site may be down! Try download it manually from https://ci.dmulloy2.net/job/ProtocolLib/");
-                    e.printStackTrace();
                 }
-
             }
 
             try {
@@ -198,7 +202,7 @@ public class LibsDisguises extends JavaPlugin {
                 return;
             }
 
-            if (DisguiseUtilities.isProtocolLibOutdated()) {
+            if (DisguiseUtilities.isProtocolLibOutdated() && !DisguiseConfig.isNeverUpdateProtocolLib()) {
                 String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
                 String version = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 

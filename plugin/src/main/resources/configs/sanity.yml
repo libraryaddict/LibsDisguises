@@ -44,3 +44,7 @@ SaddleableHorse: false
 # This doesn't affect player disguises as those would be severely impacted
 # If you are getting issues using this, please do not report them. You disable this at your own risk.
 RandomUUIDs: true
+
+# When you for some strange reason don't want ProtocolLib to update, enable this!
+# Disclaimer: If you enable this, you are responsible for ensuring ProtocolLib is up to date.
+NeverUpdateProtocolLib: false
