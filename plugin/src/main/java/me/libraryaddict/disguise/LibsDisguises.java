@@ -202,7 +202,7 @@ public class LibsDisguises extends JavaPlugin {
                 return;
             }
 
-            if (DisguiseUtilities.isProtocolLibOutdated() && !DisguiseConfig.isNeverUpdateProtocolLib()) {
+            if (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated()) {
                 String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
                 String version = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 
