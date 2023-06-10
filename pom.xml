@@ -25,7 +25,7 @@
         <lombok.version>1.18.22</lombok.version>
         <protocollib.version>5.0.0</protocollib.version>
         <spigot.version>1.20-R0.1-SNAPSHOT</spigot.version>
-        <junit.version>5.9.2</junit.version>
+        <junit.version>5.9.3</junit.version>
         <paper-api.version>1.20-R0.1-SNAPSHOT</paper-api.version>
         <bungeecord-chat.version>1.12-SNAPSHOT</bungeecord-chat.version>
         <adventure-minimessage.version>4.2.0-SNAPSHOT</adventure-minimessage.version>
