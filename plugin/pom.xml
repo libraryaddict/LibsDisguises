@@ -131,12 +131,10 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <optional>true</optional>
         </dependency>
         <!-- testing -->
         <dependency>
