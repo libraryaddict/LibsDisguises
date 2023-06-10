@@ -1038,6 +1038,16 @@ public class FlagWatcher {
         }
     }
 
+    @NmsAddedIn(NmsVersion.v1_17)
+    public void setTicksFrozen(int ticksFrozen) {
+        setData(MetaIndex.ENTITY_TICKS_FROZEN, ticksFrozen);
+        sendData(MetaIndex.ENTITY_TICKS_FROZEN);
+    }
+
+    public int getTicksFrozen() {
+        return getData(MetaIndex.ENTITY_TICKS_FROZEN);
+    }
+
     @Deprecated
     public <Y> void setUnsafeData(MetaIndex<Y> id, Y value) {
         if (!id.getDefault().getClass().isInstance(value)) {
