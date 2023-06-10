@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.22</lombok.version>
-        <protocollib.version>5.0.0-SNAPSHOT</protocollib.version>
+        <protocollib.version>5.0.0</protocollib.version>
         <spigot.version>1.20-R0.1-SNAPSHOT</spigot.version>
         <junit.version>5.9.2</junit.version>
         <paper-api.version>1.20-R0.1-SNAPSHOT</paper-api.version>
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>com.comphenix.protocol</groupId>
                 <artifactId>ProtocolLib</artifactId>
-                <version>5.0.0-SNAPSHOT</version>
+                <version>${protocollib.version}</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
