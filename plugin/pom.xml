@@ -21,7 +21,7 @@
     </properties>
 
     <build>
-        <defaultGoal>exec:java clean install -DskipTests</defaultGoal>
+        <defaultGoal>exec:java clean install</defaultGoal>
         <finalName>LibsDisguises</finalName>
 
         <resources>
