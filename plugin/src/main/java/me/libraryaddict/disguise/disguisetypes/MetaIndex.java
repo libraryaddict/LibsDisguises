@@ -116,6 +116,7 @@ import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Frog;
+import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.joml.Quaternionf;
@@ -743,7 +744,8 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<>(SnowmanWatcher.class, 0, (byte) 16);
 
-    public static MetaIndex<Byte> SNIFFER_STATE = new MetaIndex<>(SnifferWatcher.class, 0, (byte) 0);
+    public static MetaIndex<Sniffer.State> SNIFFER_STATE =
+        new MetaIndex<>(SnifferWatcher.class, 0, NmsVersion.v1_20.isSupported() ? Sniffer.State.IDLING : null);
 
     public static MetaIndex<Integer> SNIFFER_DROP_SEED_AT_TICK = new MetaIndex<>(SnifferWatcher.class, 1, 0);
 

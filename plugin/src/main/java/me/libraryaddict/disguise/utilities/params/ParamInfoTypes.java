@@ -56,6 +56,7 @@ import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
@@ -158,6 +159,10 @@ public class ParamInfoTypes {
                     .severe("You are using 1.19.4, but you're using an outdated build of 1.19.4, you need to update the spigot (or paper) jar");
                 ex.printStackTrace();
             }
+        }
+
+        if (NmsVersion.v1_20.isSupported()) {
+            paramInfos.add(new ParamInfoEnum(Sniffer.State.class, "Sniffer State", "The current mindset of a Sniffer"));
         }
 
         paramInfos.add(new ParamInfoEnum(DisguiseConfig.NotifyBar.class, "NotifyBar", "Where the disguised indicator should appear"));

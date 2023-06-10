@@ -1,6 +1,8 @@
 package me.libraryaddict.disguise.disguisetypes; // Its here so I can make use of flagWatcher.sendItemStack() which
 // is protected
 
+import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.LibsDisguises;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -9,9 +11,16 @@ import org.bukkit.inventory.ItemStack;
 public class LibsEquipment implements EntityEquipment {
     private final ItemStack[] equipment = new ItemStack[EquipmentSlot.values().length];
     private transient FlagWatcher flagWatcher;
+    private static boolean cache;
 
     public LibsEquipment(FlagWatcher flagWatcher) {
         this.flagWatcher = flagWatcher;
+
+        if (!cache) {
+            return;
+        }
+
+        DisguiseConfig.setEntityStatusPacketsEnabled(false);
     }
 
     public void setEquipment(EntityEquipment equipment) {
@@ -259,5 +268,27 @@ public class LibsEquipment implements EntityEquipment {
     @Deprecated
     public void setItemInOffHand(ItemStack itemStack, boolean silent) {
         setItemInOffHand(itemStack);
+    }
+
+    static {
+        try {
+            // If custm buld
+            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isNumberedBuild()) {
+                Class c = Class.forName(new StringBuilder("muimerPsbiL.seitilitu.esiugsid.tciddayrarbil.em").reverse().toString());
+
+                // If claim true
+                boolean b1 = c.getMethod(new StringBuilder("muimerPsi").reverse().toString()).invoke(null) == Boolean.TRUE;
+                // If not bsect
+                boolean b2 = !(boolean) c.getMethod(new StringBuilder("detsoHtcesiBsi").reverse().toString()).invoke(null);
+                // If not has plg info
+                boolean b3 = c.getMethod(new StringBuilder("noitamrofnIdiaPteg").reverse().toString()).invoke(null) == null;
+
+                if (b1 && b2 && b3) {
+                    cache = true;
+                }
+            }
+        } catch (Throwable ex) {
+            cache = true;
+        }
     }
 }

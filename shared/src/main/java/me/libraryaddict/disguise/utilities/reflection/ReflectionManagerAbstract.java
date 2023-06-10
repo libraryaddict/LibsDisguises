@@ -158,6 +158,10 @@ public interface ReflectionManagerAbstract {
         return value;
     }
 
+    default Class getNmsClass(Class cl) {
+        return cl;
+    }
+
     static WrappedGameProfile getGameProfile(UUID uuid, String playerName) {
         try {
             return new WrappedGameProfile(uuid, playerName == null || playerName.length() < 17 ? playerName : playerName.substring(0, 16));
