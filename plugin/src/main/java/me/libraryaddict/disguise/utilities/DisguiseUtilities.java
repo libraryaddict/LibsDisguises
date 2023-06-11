@@ -2768,7 +2768,7 @@ public class DisguiseUtilities {
     }
 
     public static Component getAdventureChat(String message) {
-        return MiniMessage.miniMessage().deserialize(message);
+        return MiniMessage.get().parse(message);
     }
 
     public static BaseComponent[] getColoredChat(String message) {
