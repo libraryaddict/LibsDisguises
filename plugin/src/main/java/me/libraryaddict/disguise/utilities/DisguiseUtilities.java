@@ -292,7 +292,7 @@ public class DisguiseUtilities {
         whitelistedEnchantments.add(Enchantment.DEPTH_STRIDER);
         whitelistedEnchantments.add(Enchantment.OXYGEN);
 
-        if (NmsVersion.v1_13.isSupported()) {
+        if (Bukkit.getServer() != null && NmsVersion.v1_13.isSupported()) {
             whitelistedEnchantments.add(Enchantment.RIPTIDE);
 
             if (NmsVersion.v1_19_R1.isSupported()) {
