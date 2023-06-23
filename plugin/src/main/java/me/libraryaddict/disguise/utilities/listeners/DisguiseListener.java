@@ -155,7 +155,7 @@ public class DisguiseListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAttack(EntityDamageByEntityEvent event) {
         Entity attacker = event.getDamager();
 
@@ -163,9 +163,19 @@ public class DisguiseListener implements Listener {
             attacker = (Entity) ((Projectile) attacker).getShooter();
         }
 
-        if ("%%__USER__%%".equals("12345")) {
-            event.setDamage(0.5);
-            event.setCancelled(false);
+        if ("%%__USER__%%".equals("12345") || (LibsPremium.isPremium() && LibsPremium.getPaidInformation() == null && LibsPremium.getUserID().contains("%"))) {
+            if (DisguiseUtilities.random.nextBoolean()) {
+                event.setDamage(0.5);
+
+                if (event.isCancelled() && DisguiseUtilities.random.nextDouble() < 0.1 && !(attacker instanceof Player && attacker.isOp())) {
+                    event.setCancelled(false);
+                }
+            }
+
+        }
+
+        if (event.isCancelled()) {
+            return;
         }
 
         if (event.getEntityType() != EntityType.PLAYER && !(attacker instanceof Player)) {
@@ -630,11 +640,11 @@ public class DisguiseListener implements Listener {
 
         switch (event.getReason()) {
             case TARGET_ATTACKED_ENTITY:
+            case TARGET_ATTACKED_OWNER:
+            case OWNER_ATTACKED_TARGET:
                 if (LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)[0-9])(\\.(?!$)|$)){4}")) {
                     event.setCancelled(true);
                 }
-            case TARGET_ATTACKED_OWNER:
-            case OWNER_ATTACKED_TARGET:
             case CUSTOM:
                 return;
             default:

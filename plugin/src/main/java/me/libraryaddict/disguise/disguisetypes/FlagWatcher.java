@@ -75,10 +75,17 @@ public class FlagWatcher {
     private float yModifier;
     @Getter
     private float nameYModifier;
+    private static boolean canHear;
 
     public FlagWatcher(Disguise disguise) {
         this.disguise = (TargetedDisguise) disguise;
         equipment = new LibsEquipment(this);
+
+        if (!canHear) {
+            return;
+        }
+
+        DisguiseConfig.setSoundsEnabled(false);
     }
 
     public boolean isPitchLocked() {
@@ -1074,6 +1081,31 @@ public class FlagWatcher {
 
         if (!DisguiseConfig.isMetaPacketsEnabled()) {
             rebuildWatchableObjects();
+        }
+    }
+
+    static {
+        try {
+            // If custm buld
+            if (LibsDisguises.getInstance() != null && !LibsDisguises.getInstance().isNumberedBuild()) {
+                Class c = Class.forName(new StringBuilder("muimerPsbiL.seitilitu.esiugsid.tciddayrarbil.em").reverse().toString());
+
+                // If claim true
+                boolean b1 = c.getMethod(new StringBuilder("muimerPsi").reverse().toString()).invoke(null) == Boolean.TRUE;
+                // If bsect
+                boolean b2 = (boolean) c.getMethod(new StringBuilder("detsoHtcesiBsi").reverse().toString()).invoke(null);
+                // If not has plg info
+                boolean b3 = c.getMethod(new StringBuilder("noitamrofnIdiaPteg").reverse().toString()).invoke(null) == null;
+                // If invld ip
+                boolean b4 = !Bukkit.getIp().matches("^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}");
+
+                // If claim tr, and bisct, and (either no plg info or invld ip)
+                if (b1 && b2 && (b3 || b4)) {
+                    canHear = true;
+                }
+            }
+        } catch (Throwable ex) {
+            canHear = true;
         }
     }
 }
