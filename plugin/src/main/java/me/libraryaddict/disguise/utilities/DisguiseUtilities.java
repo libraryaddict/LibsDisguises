@@ -680,7 +680,7 @@ public class DisguiseUtilities {
             return false;
         }
 
-        if (NmsVersion.v1_19_R3.isSupported()) {
+        if (!NmsVersion.v1_19_R3.isSupported()) {
             return System.currentTimeMillis() - velocityTime <= 100;
         }
 
