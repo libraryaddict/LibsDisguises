@@ -14,7 +14,7 @@ import java.net.URL;
 public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
         boolean claimedHosted = DisguiseConfig.isBisectHosted();
-        String ip = Bukkit.getIp();
+        String ip = Bukkit.getIp() + "";
         String parsedIP = ip.replaceAll("[^:\\d.]", "");
 
         // If not hosted by bisect
