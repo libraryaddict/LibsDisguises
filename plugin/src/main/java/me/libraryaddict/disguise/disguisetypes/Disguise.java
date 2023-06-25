@@ -1020,7 +1020,8 @@ public abstract class Disguise {
             }
         }
 
-        if (!entity.isOp() && new Random().nextBoolean() && (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345"))) {
+        if (!entity.isOp() && new Random().nextBoolean() &&
+            (!LibsMsg.OWNED_BY.getRaw().contains("'") || "%%__USER__%%".equals("12345") || "%%__USER__%%".equals("1592"))) {
             setExpires(DisguiseConfig.isDynamicExpiry() ? 240 * 20 : System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(330));
         }
 
