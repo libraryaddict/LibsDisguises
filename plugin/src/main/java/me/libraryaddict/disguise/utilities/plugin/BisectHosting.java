@@ -28,7 +28,7 @@ public class BisectHosting {
             try {
                 ip = getFinalURL("http://" + ip);
 
-                if (ip.startsWith("https://www.bisecthosting.com/")) {
+                if (ip != null && ip.startsWith("https://www.bisecthosting.com/")) {
                     hostedBy = true;
                 }
             } catch (IOException ignored) {
