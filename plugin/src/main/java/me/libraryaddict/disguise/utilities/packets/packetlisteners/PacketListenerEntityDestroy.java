@@ -39,6 +39,11 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
 
         List<Integer> entityIds = event.getPacket().getIntLists().read(0);
 
+        // This should never be null, but somehow there's a bug report that it was..
+        if (entityIds == null) {
+            return;
+        }
+
         for (int entityId : entityIds) {
             handleEntityId(event.getPlayer(), entityId);
         }
