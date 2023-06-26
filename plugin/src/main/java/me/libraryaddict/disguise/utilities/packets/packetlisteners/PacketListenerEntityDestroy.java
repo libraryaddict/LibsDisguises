@@ -72,7 +72,7 @@ public class PacketListenerEntityDestroy extends PacketAdapter {
     private void handleEntityId(Player player, int entityId) {
         int[] toRemove = getToRemove(player, entityId);
 
-        if (toRemove == null) {
+        if (toRemove == null || toRemove.length == 0) {
             return;
         }
 
