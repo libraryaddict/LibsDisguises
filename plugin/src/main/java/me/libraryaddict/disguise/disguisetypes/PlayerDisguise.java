@@ -723,8 +723,8 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     @Override
-    public boolean removeDisguise(boolean disguiseBeingReplaced) {
-        boolean result = super.removeDisguise(disguiseBeingReplaced);
+    public boolean removeDisguise(CommandSender sender, boolean disguiseBeingReplaced) {
+        boolean result = super.removeDisguise(sender, disguiseBeingReplaced);
 
         if (!result) {
             return result;
