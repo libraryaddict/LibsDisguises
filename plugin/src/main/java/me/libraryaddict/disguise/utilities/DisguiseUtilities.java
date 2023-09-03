@@ -2720,13 +2720,16 @@ public class DisguiseUtilities {
         StringBuilder builder = new StringBuilder();
 
         for (BaseComponent component : components) {
-            net.md_5.bungee.api.ChatColor color = component.getColor();
-            String string = color.toString();
+            net.md_5.bungee.api.ChatColor color = component.getColorRaw();
 
-            if (string.length() > 2) {
-                builder.append("<#").append(string.substring(2).replace(net.md_5.bungee.api.ChatColor.COLOR_CHAR + "", "")).append(">");
-            } else {
-                builder.append(string);
+            if (color != null) {
+                String string = color.toString();
+
+                if (string.length() > 2) {
+                    builder.append("<#").append(string.substring(2).replace(net.md_5.bungee.api.ChatColor.COLOR_CHAR + "", "")).append(">");
+                } else {
+                    builder.append(string);
+                }
             }
 
             if (component.isBold()) {
