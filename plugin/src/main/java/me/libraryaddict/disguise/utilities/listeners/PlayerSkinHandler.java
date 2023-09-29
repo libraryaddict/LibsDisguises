@@ -168,7 +168,7 @@ public class PlayerSkinHandler implements Listener {
     }
 
     public void handlePackets(Player player, PlayerDisguise disguise, LibsPackets packets) {
-        boolean spawn = packets.getPackets().stream().anyMatch(p -> p.getType() == Server.NAMED_ENTITY_SPAWN);
+        boolean spawn = packets.isSkinHandling();
 
         List<PlayerSkin> skins = getCache().getIfPresent(player);
 

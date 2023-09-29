@@ -89,6 +89,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -603,11 +604,29 @@ public class DisguiseUtilities {
             requiredVersion = new String[]{"5.0.0", "630"};
         }
 
+        // If you're on 1.20.2
+        if (NmsVersion.v1_20_R2.isSupported()) {
+            requiredVersion = new String[]{"5.1.1", "669"};
+        }
+
         return requiredVersion;
     }
 
     public static boolean isProtocolLibOutdated() {
-        String plVersion = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+
+        if (plugin == null) {
+            return true;
+        }
+
+        String plVersion;
+
+        try {
+            plVersion = plugin.getDescription().getVersion();
+        } catch (Throwable throwable) {
+            return true;
+        }
+
         String[] reqVersion = getProtocolLibRequiredVersion();
 
         // If this is also checking for a custom build, and PL has the custom build in..
@@ -638,12 +657,16 @@ public class DisguiseUtilities {
     public static File updateProtocolLib() throws Exception {
         File dest = new File(LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile(), "ProtocolLib.jar");
 
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+        try {
             Method getFile = JavaPlugin.class.getDeclaredMethod("getFile");
             getFile.setAccessible(true);
 
             File theirFile = (File) getFile.invoke(ProtocolLibrary.getPlugin());
             dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
+        } catch (Throwable throwable) {
+            if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && dest.exists()) {
+                dest = new File(Bukkit.getUpdateFolderFile(), "ProtocolLib.jar");
+            }
         }
 
         if (!dest.exists()) {
@@ -2591,8 +2614,10 @@ public class DisguiseUtilities {
             }
 
             ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-            // Send the player a packet with himself being spawned
-            manager.sendServerPacket(player, manager.createPacketConstructor(Server.NAMED_ENTITY_SPAWN, player).createPacket(player));
+            // Send the player a packet with themselves being spawned
+            manager.sendServerPacket(player,
+                manager.createPacketConstructor(NmsVersion.v1_20_R2.isSupported() ? Server.SPAWN_ENTITY : Server.NAMED_ENTITY_SPAWN, player)
+                    .createPacket(player));
 
             List<WatcherValue> watcherList = WrappedDataWatcher.getEntityWatcher(player).getWatchableObjects().stream()
                 .map(v -> new WatcherValue(MetaIndex.getMetaIndex(PlayerWatcher.class, v.getIndex()), v.getRawValue())).collect(Collectors.toList());
@@ -2603,7 +2628,7 @@ public class DisguiseUtilities {
 
             try {
                 // TODO Store the field
-                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField(
+                Field field = ReflectionManager.getNmsClass("EntityTrackerEntry").getDeclaredField(NmsVersion.v1_20_R2.isSupported() ? "i" :
                     NmsVersion.v1_19_R1.isSupported() ? "p" : NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
                 field.setAccessible(true);
                 isMoving = field.getBoolean(entityTrackerEntry);
@@ -2818,7 +2843,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Method to send a packet to the self disguise, translate his entity ID to the fake id.
+     * Method to send a packet to the self disguise, translate their entity ID to the fake id.
      */
     private static void sendSelfPacket(final Player player, final PacketContainer packet) {
         final Disguise disguise = DisguiseAPI.getDisguise(player, player);
@@ -2835,6 +2860,7 @@ public class DisguiseUtilities {
         }
 
         LibsPackets newPackets = new LibsPackets(disguise);
+        newPackets.setSkinHandling(transformed.isSkinHandling());
 
         for (PacketContainer p : transformed.getPackets()) {
             p.getIntegers().write(0, DisguiseAPI.getSelfDisguiseId());

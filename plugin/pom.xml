@@ -251,6 +251,14 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>LibsDisguises</groupId>
+            <artifactId>v1_20_R2</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>remapped-spigot</classifier>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
         <!-- Libraries -->
         <dependency>
             <groupId>it.unimi.dsi</groupId>

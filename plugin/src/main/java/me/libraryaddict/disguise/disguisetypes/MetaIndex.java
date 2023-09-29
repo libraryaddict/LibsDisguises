@@ -317,36 +317,39 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> DISPLAY_INTERPOLATION_DURATION = new MetaIndex<>(DisplayWatcher.class, 1, 0);
 
+    @NmsAddedIn(NmsVersion.v1_20_R2)
+    public static MetaIndex<Integer> DISPLAY_POS_ROT_INTERPOLATION_DURATION = new MetaIndex<>(DisplayWatcher.class, 2, 0);
+
     @NmsAddedIn(NmsVersion.v1_19_R3)
-    public static MetaIndex<Vector3f> DISPLAY_TRANSLATION = new MetaIndex<>(DisplayWatcher.class, 2, NmsVersion.v1_19_R3.isSupported() ? new Vector3f() : null);
+    public static MetaIndex<Vector3f> DISPLAY_TRANSLATION = new MetaIndex<>(DisplayWatcher.class, 3, NmsVersion.v1_19_R3.isSupported() ? new Vector3f() : null);
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
     public static MetaIndex<Vector3f> DISPLAY_SCALE =
-        new MetaIndex<>(DisplayWatcher.class, 3, NmsVersion.v1_19_R3.isSupported() ? new Vector3f(1F, 1F, 1F) : null);
+        new MetaIndex<>(DisplayWatcher.class, 4, NmsVersion.v1_19_R3.isSupported() ? new Vector3f(1F, 1F, 1F) : null);
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
     public static MetaIndex<Quaternionf> DISPLAY_LEFT_ROTATION =
-        new MetaIndex<>(DisplayWatcher.class, 4, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
+        new MetaIndex<>(DisplayWatcher.class, 5, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
     public static MetaIndex<Quaternionf> DISPLAY_RIGHT_ROTATION =
-        new MetaIndex<>(DisplayWatcher.class, 5, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
+        new MetaIndex<>(DisplayWatcher.class, 6, NmsVersion.v1_19_R3.isSupported() ? new Quaternionf() : null);
 
-    public static MetaIndex<Byte> DISPLAY_BILLBOARD_RENDER_CONSTRAINTS = new MetaIndex<>(DisplayWatcher.class, 6, (byte) 0);
+    public static MetaIndex<Byte> DISPLAY_BILLBOARD_RENDER_CONSTRAINTS = new MetaIndex<>(DisplayWatcher.class, 7, (byte) 0);
 
-    public static MetaIndex<Integer> DISPLAY_BRIGHTNESS_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 7, -1);
+    public static MetaIndex<Integer> DISPLAY_BRIGHTNESS_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 8, -1);
 
-    public static MetaIndex<Float> DISPLAY_VIEW_RANGE = new MetaIndex<>(DisplayWatcher.class, 8, 1F);
+    public static MetaIndex<Float> DISPLAY_VIEW_RANGE = new MetaIndex<>(DisplayWatcher.class, 9, 1F);
 
-    public static MetaIndex<Float> DISPLAY_SHADOW_RADIUS = new MetaIndex<>(DisplayWatcher.class, 9, 0F);
+    public static MetaIndex<Float> DISPLAY_SHADOW_RADIUS = new MetaIndex<>(DisplayWatcher.class, 10, 0F);
 
-    public static MetaIndex<Float> DISPLAY_SHADOW_STRENGTH = new MetaIndex<>(DisplayWatcher.class, 10, 1F);
+    public static MetaIndex<Float> DISPLAY_SHADOW_STRENGTH = new MetaIndex<>(DisplayWatcher.class, 11, 1F);
 
-    public static MetaIndex<Float> DISPLAY_WIDTH = new MetaIndex<>(DisplayWatcher.class, 11, 0F);
+    public static MetaIndex<Float> DISPLAY_WIDTH = new MetaIndex<>(DisplayWatcher.class, 12, 0F);
 
-    public static MetaIndex<Float> DISPLAY_HEIGHT = new MetaIndex<>(DisplayWatcher.class, 12, 0F);
+    public static MetaIndex<Float> DISPLAY_HEIGHT = new MetaIndex<>(DisplayWatcher.class, 13, 0F);
 
-    public static MetaIndex<Integer> DISPLAY_GLOW_COLOR_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 13, -1);
+    public static MetaIndex<Integer> DISPLAY_GLOW_COLOR_OVERRIDE = new MetaIndex<>(DisplayWatcher.class, 14, -1);
 
     /**
      * No visible effect
@@ -745,7 +748,7 @@ public class MetaIndex<Y> {
     public static MetaIndex<Byte> SNOWMAN_DERP = new MetaIndex<>(SnowmanWatcher.class, 0, (byte) 16);
 
     public static MetaIndex<Sniffer.State> SNIFFER_STATE =
-        new MetaIndex<>(SnifferWatcher.class, 0, NmsVersion.v1_20.isSupported() ? Sniffer.State.IDLING : null);
+        new MetaIndex<>(SnifferWatcher.class, 0, NmsVersion.v1_20_R1.isSupported() ? Sniffer.State.IDLING : null);
 
     public static MetaIndex<Integer> SNIFFER_DROP_SEED_AT_TICK = new MetaIndex<>(SnifferWatcher.class, 1, 0);
 

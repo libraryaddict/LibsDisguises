@@ -1,4 +1,4 @@
-package me.libraryaddict.disguise.utilities.reflection.v1_20;
+package me.libraryaddict.disguise.utilities.reflection.v1_20_R2;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -12,7 +12,6 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -30,6 +29,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
@@ -41,12 +41,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.entity.animal.FrogVariant;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
@@ -61,16 +63,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R1.CraftArt;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.CraftSound;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_20_R2.CraftArt;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.CraftSound;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -150,7 +152,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             net.minecraft.world.entity.Entity entity;
             if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
                 WrappedGameProfile gameProfile = ReflectionManagerAbstract.getGameProfile(new UUID(0, 0), "Steve");
-                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle());
+                ClientInformation information = new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
+                entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle(), information);
             } else {
                 entity = entityType.create(world);
             }
@@ -169,7 +172,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public MobEffect getMobEffectList(int id) {
-        return MobEffect.byId(id);
+        return BuiltInRegistries.MOB_EFFECT.byId(id);
     }
 
     public MobEffectInstance createMobEffect(PotionEffect effect) {
@@ -213,7 +216,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public Holder<SoundEvent> getCraftSound(Sound sound) {
-        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(CraftSound.getSoundEffect(sound));
+        return CraftSound.bukkitToMinecraftHolder(sound);
     }
 
     public ServerEntity getEntityTrackerEntry(Entity target) throws Exception {
@@ -237,7 +240,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public String getEnumArt(Art art) {
-        return BuiltInRegistries.PAINTING_VARIANT.getKey(CraftArt.BukkitToNotch(art).value()).getPath();
+        return BuiltInRegistries.PAINTING_VARIANT.getKey(CraftArt.bukkitToMinecraft(art)).getPath();
     }
 
     public BlockPos getBlockPosition(int x, int y, int z) {
@@ -318,7 +321,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     public WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         DedicatedServer minecraftServer = getMinecraftServer();
         MinecraftSessionService sessionService = minecraftServer.getSessionService();
-        return WrappedGameProfile.fromHandle(sessionService.fillProfileProperties((GameProfile) gameProfile.getHandle(), true));
+        return WrappedGameProfile.fromHandle(sessionService.fetchProfile(gameProfile.getUUID(), true).profile());
     }
 
     public Float getSoundModifier(Object entity) {
@@ -327,7 +330,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
             return 0.0f;
         } else {
             try {
-                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eR");
+                Method method = net.minecraft.world.entity.LivingEntity.class.getDeclaredMethod("eV");
                 method.setAccessible(true);
 
                 return (Float) method.invoke(entity);
@@ -340,8 +343,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public void injectCallback(String playername, ProfileLookupCallback callback) {
-        Agent agent = Agent.MINECRAFT;
-        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, agent, callback);
+        getMinecraftServer().getProfileRepository().findProfilesByNames(new String[]{playername}, callback);
     }
 
     public void setBoundingBox(Entity entity, double x, double y, double z) {
@@ -380,7 +382,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public Object getSoundString(Sound sound) {
-        return CraftSound.getSoundEffect(sound).getLocation().toString(); // TODO
+        return CraftSound.bukkitToMinecraft(sound).getLocation().toString();
     }
 
     public Optional<?> convertOptional(Object val) {
@@ -516,7 +518,7 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public ItemMeta getDeserializedItemMeta(Map<String, Object> meta) {
         try {
-            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaItem$SerializableMeta");
+            Class<?> aClass = Class.forName("org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaItem$SerializableMeta");
             Method deserialize = aClass.getDeclaredMethod("deserialize", Map.class);
             Object itemMeta = deserialize.invoke(null, meta);
 

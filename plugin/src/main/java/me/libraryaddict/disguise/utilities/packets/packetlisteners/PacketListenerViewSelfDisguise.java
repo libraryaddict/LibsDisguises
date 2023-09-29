@@ -31,9 +31,10 @@ import java.util.Map;
 
 public class PacketListenerViewSelfDisguise extends PacketAdapter {
     public PacketListenerViewSelfDisguise(LibsDisguises plugin) {
-        super(plugin, ListenerPriority.HIGH, Server.NAMED_ENTITY_SPAWN, Server.ATTACH_ENTITY, Server.REL_ENTITY_MOVE, Server.REL_ENTITY_MOVE_LOOK,
-            Server.ENTITY_LOOK, Server.ENTITY_TELEPORT, Server.ENTITY_HEAD_ROTATION, Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT, Server.ANIMATION,
-            Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES, Server.ENTITY_STATUS);
+        super(plugin, ListenerPriority.HIGH, NmsVersion.v1_20_R2.isSupported() ? Server.SPAWN_ENTITY : Server.NAMED_ENTITY_SPAWN, Server.ATTACH_ENTITY,
+            Server.REL_ENTITY_MOVE, Server.REL_ENTITY_MOVE_LOOK, Server.ENTITY_LOOK, Server.ENTITY_TELEPORT, Server.ENTITY_HEAD_ROTATION,
+            Server.ENTITY_METADATA, Server.ENTITY_EQUIPMENT, Server.ANIMATION, Server.ENTITY_EFFECT, Server.ENTITY_VELOCITY, Server.UPDATE_ATTRIBUTES,
+            Server.ENTITY_STATUS);
     }
 
     @Override
@@ -74,6 +75,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
             }
 
             LibsPackets selfTransformed = new LibsPackets(disguise);
+            selfTransformed.setSkinHandling(transformed.isSkinHandling());
 
             for (PacketContainer newPacket : transformed.getPackets()) {
                 if (newPacket.getType() != Server.PLAYER_INFO && newPacket.getType() != Server.ENTITY_DESTROY &&
@@ -145,7 +147,7 @@ public class PacketListenerViewSelfDisguise extends PacketAdapter {
                         watch.setValue(a);
                     }
                 }
-            } else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN) {
+            } else if (event.getPacketType() == Server.NAMED_ENTITY_SPAWN || event.getPacketType() == Server.SPAWN_ENTITY) {
                 event.setCancelled(true);
 
                 List<WatcherValue> watchableList = new ArrayList<>();

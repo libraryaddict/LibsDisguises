@@ -34,6 +34,7 @@ public class LibsPackets {
     private final HashMap<Integer, ArrayList<PacketContainer>> delayedPacketsMap = new HashMap<>();
     private final Disguise disguise;
     private boolean unhandled;
+    private boolean skinHandling;
 
     public Disguise getDisguise() {
         return disguise;

@@ -79,7 +79,6 @@ import org.bukkit.entity.Frog;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sniffer;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Zombie;
@@ -1270,13 +1269,13 @@ public class ReflectionManager {
      */
     public static WrappedGameProfile grabProfileAddUUID(String playername) {
         try {
-            Object minecraftServer = getMinecraftServer();
-
             LibsProfileLookupCaller callback = new LibsProfileLookupCaller();
 
             if (nmsReflection != null) {
                 nmsReflection.injectCallback(playername, callback);
             } else {
+                Object minecraftServer = getMinecraftServer();
+
                 for (Method method : getNmsClass("MinecraftServer").getMethods()) {
                     if (method.getReturnType().getSimpleName().equals("GameProfileRepository")) {
                         Object agent = Class.forName("com.mojang.authlib.Agent").getDeclaredField("MINECRAFT").get(null);

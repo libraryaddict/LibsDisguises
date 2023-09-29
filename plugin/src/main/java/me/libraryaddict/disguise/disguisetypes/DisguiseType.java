@@ -33,7 +33,7 @@ public enum DisguiseType {
 
     BOAT(1),
 
-    @NmsAddedIn(NmsVersion.v1_20) CAMEL,
+    @NmsAddedIn(NmsVersion.v1_20_R1) CAMEL,
 
     @NmsAddedIn(NmsVersion.v1_14) CAT,
 
@@ -203,7 +203,7 @@ public enum DisguiseType {
 
     SMALL_FIREBALL(63),
 
-    @NmsAddedIn(NmsVersion.v1_20) SNIFFER,
+    @NmsAddedIn(NmsVersion.v1_20_R1) SNIFFER,
 
     SNOWBALL(61),
 

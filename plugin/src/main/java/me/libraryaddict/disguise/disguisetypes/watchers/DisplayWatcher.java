@@ -174,4 +174,13 @@ public abstract class DisplayWatcher extends FlagWatcher {
         setData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE, brightness == null ? -1 : brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
         sendData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE);
     }
+
+    public int getTeleportDuration() {
+        return getData(MetaIndex.DISPLAY_POS_ROT_INTERPOLATION_DURATION);
+    }
+
+    public void setTeleportDuration(int duration) {
+        setData(MetaIndex.DISPLAY_POS_ROT_INTERPOLATION_DURATION, Math.max(0, Math.min(59, duration)));
+        sendData(MetaIndex.DISPLAY_POS_ROT_INTERPOLATION_DURATION);
+    }
 }

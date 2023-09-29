@@ -161,7 +161,7 @@ public class ParamInfoTypes {
             }
         }
 
-        if (NmsVersion.v1_20.isSupported()) {
+        if (NmsVersion.v1_20_R1.isSupported()) {
             paramInfos.add(new ParamInfoEnum(Sniffer.State.class, "Sniffer State", "The current mindset of a Sniffer"));
         }
 

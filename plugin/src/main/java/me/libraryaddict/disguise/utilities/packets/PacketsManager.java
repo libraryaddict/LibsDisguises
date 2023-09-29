@@ -124,7 +124,10 @@ public class PacketsManager {
             ArrayList<PacketType> packetsToListen = new ArrayList<>();
             // Add spawn packets
             {
-                packetsToListen.add(Server.NAMED_ENTITY_SPAWN);
+                if (!NmsVersion.v1_20_R2.isSupported()) {
+                    packetsToListen.add(Server.NAMED_ENTITY_SPAWN);
+                }
+
                 packetsToListen.add(Server.SPAWN_ENTITY_EXPERIENCE_ORB);
                 packetsToListen.add(Server.SPAWN_ENTITY);
 
