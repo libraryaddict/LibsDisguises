@@ -545,7 +545,7 @@ public class PlayerDisguise extends TargetedDisguise {
             return;
         }
 
-        if (isDisplayedInTab()) {
+        if (DisguiseUtilities.isFancyHiddenTabs() || isDisplayedInTab()) {
             PacketContainer addTab = ReflectionManager.createTablistAddPackets(this);
             PacketContainer deleteTab = ReflectionManager.createTablistPacket(this, PlayerInfoAction.REMOVE_PLAYER);
 
