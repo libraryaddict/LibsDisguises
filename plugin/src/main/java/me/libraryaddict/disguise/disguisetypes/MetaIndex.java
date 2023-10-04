@@ -1181,14 +1181,14 @@ public class MetaIndex<Y> {
         return false;
     }
 
-    private final Y _defaultValue;
-    private int _index;
     private final Class<? extends FlagWatcher> _watcher;
+    private int _index;
+    private final Y _defaultValue;
     private WrappedDataWatcher.Serializer serializer;
 
     public MetaIndex(Class<? extends FlagWatcher> watcher, int index, Y defaultValue) {
-        _index = index;
         _watcher = watcher;
+        _index = index;
         _defaultValue = defaultValue;
     }
 

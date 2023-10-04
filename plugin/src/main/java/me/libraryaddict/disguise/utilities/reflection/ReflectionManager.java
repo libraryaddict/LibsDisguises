@@ -451,12 +451,8 @@ public class ReflectionManager {
     }
 
     public static String getResourceAsString(File file, String fileName) {
-        try (JarFile jar = new JarFile(file)) {
-            JarEntry entry = jar.getJarEntry(fileName);
-
-            try (InputStream stream = jar.getInputStream(entry)) {
-                return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-            }
+        try {
+            return getResourceAsStringEx(file, fileName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -464,22 +460,54 @@ public class ReflectionManager {
         return null;
     }
 
+    @SneakyThrows
+    public static String getResourceAsStringEx(File file, String fileName) {
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry entry = jar.getJarEntry(fileName);
+
+            try (InputStream stream = jar.getInputStream(entry)) {
+                return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+            }
+        }
+    }
+
+    public static List<File> getFilesByPlugin(String pluginName) {
+        List<File> files = new ArrayList<>();
+
+        for (File file : LibsDisguises.getInstance().getDataFolder().getAbsoluteFile().getParentFile().listFiles()) {
+            if (!file.isFile() || !file.getName().toLowerCase().endsWith(".jar")) {
+                continue;
+            }
+
+            YamlConfiguration config = null;
+
+            try {
+                config = getPluginYAMLEx(file);
+
+            } catch (Throwable ignored) {
+            }
+
+            if (config == null) {
+                continue;
+            }
+
+            // If not the right plugin
+            if (!pluginName.equalsIgnoreCase(config.getString("name"))) {
+                continue;
+            }
+
+            files.add(file);
+        }
+
+        return files;
+    }
+
     /**
      * Copied from Bukkit
      */
     public static YamlConfiguration getPluginYAML(File file) {
         try {
-            String s = getResourceAsString(file, "plugin.yml");
-
-            if (s == null) {
-                return null;
-            }
-
-            YamlConfiguration config = new YamlConfiguration();
-
-            config.loadFromString(getResourceAsString(file, "plugin.yml"));
-
-            return config;
+            return getPluginYAMLEx(file);
         } catch (Exception e) {
             e.printStackTrace();
         }

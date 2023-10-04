@@ -664,8 +664,21 @@ public class DisguiseUtilities {
             File theirFile = (File) getFile.invoke(ProtocolLibrary.getPlugin());
             dest = new File(Bukkit.getUpdateFolderFile(), theirFile.getName());
         } catch (Throwable throwable) {
-            if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && dest.exists()) {
-                dest = new File(Bukkit.getUpdateFolderFile(), "ProtocolLib.jar");
+            if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+                List<File> plJars = ReflectionManager.getFilesByPlugin("ProtocolLib");
+                String fileName = "ProtocolLib.jar";
+
+                if (plJars.size() > 1) {
+                    // Its probably the first file regardless, Bukkit seems to use folder.listFiles() and use the order provided
+                    DisguiseUtilities.getLogger()
+                        .warning("You have multiple ProtocolLib jars in your plugin folder, you may need to update ProtocolLib yourself.");
+                }
+
+                if (!plJars.isEmpty()) {
+                    fileName = plJars.get(0).getName();
+                }
+
+                dest = new File(Bukkit.getUpdateFolderFile(), fileName);
             }
         }
 
