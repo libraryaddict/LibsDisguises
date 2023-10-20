@@ -708,7 +708,7 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().warning("Cannot load 'DisabledDisguises' in features.yml, invalid disguise types provided?");
         }
 
-        setDisabledMethods(config.getStringList("DisabledMethods"));
+        setDisabledMethods(config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList()));
 
         setNeverUpdateProtocolLib(config.getBoolean("NeverUpdateProtocolLib", false));
 
