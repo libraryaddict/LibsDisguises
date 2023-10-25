@@ -27,7 +27,10 @@ public class PacketListenerClientCustomPayload extends PacketAdapter {
             return;
         }
 
-        if (NmsVersion.v1_13.isSupported()) {
+        if (NmsVersion.v1_20_R2.isSupported()) {
+            // TODO Add support when PL 5.1.1 is available in maven
+            return;
+        } else if (NmsVersion.v1_13.isSupported()) {
             if (!event.getPacket().getMinecraftKeys().read(0).getFullKey().equals("minecraft:brand")) {
                 return;
             }
