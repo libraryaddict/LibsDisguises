@@ -21,13 +21,14 @@ public class ClassMappings {
     private static boolean updatingCache = false;
 
     public static String getClass(String packageHint, String className) {
-        String location = classLocations.get(className);
+        String key = packageHint + "." + className;
+        String location = classLocations.get(key);
 
         if (location != null) {
             return location;
         }
 
-        location = className;
+        location = "???";
 
         for (String pack : packages) {
             if (!pack.startsWith(packageHint)) {
@@ -43,7 +44,7 @@ public class ClassMappings {
             }
         }
 
-        classLocations.put(className, location);
+        classLocations.put(key, location);
 
         synchronized (classLocations) {
             if (!updatingCache && LibsDisguises.getInstance() != null && LibsDisguises.getInstance().isEnabled()) {
