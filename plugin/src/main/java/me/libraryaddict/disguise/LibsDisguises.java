@@ -62,6 +62,8 @@ public class LibsDisguises extends JavaPlugin {
     private DisguiseListener listener;
     private String buildNumber;
     @Getter
+    private String buildDate;
+    @Getter
     private boolean reloaded;
     @Getter
     private final UpdateChecker updateChecker = new UpdateChecker();
@@ -176,6 +178,7 @@ public class LibsDisguises extends JavaPlugin {
 
             YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
             buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
+            buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
 
             getLogger().info("File Name: " + getFile().getName());
 
@@ -183,7 +186,7 @@ public class LibsDisguises extends JavaPlugin {
 
             getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
-            getLogger().info("Build Date: " + pluginYml.getString("build-date"));
+            getLogger().info("Build Date: " + buildDate);
 
             DisguiseConfig.loadInternalConfig();
 

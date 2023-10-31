@@ -1,5 +1,10 @@
 package me.libraryaddict.disguise.utilities.reflection;
 
+import me.libraryaddict.disguise.LibsDisguises;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,34 +17,46 @@ import java.util.Map;
 
 public class ClassMappings {
     private static final HashMap<String, String> classLocations = new HashMap<>();
-
     private static final String[] packages = getPackages();
+    private static boolean updatingCache = false;
 
     public static String getClass(String packageHint, String className) {
         String location = classLocations.get(className);
+
         if (location != null) {
             return location;
         }
+
         location = className;
-        String[] arrayOfString;
-        int i;
-        byte b;
-        for (arrayOfString = packages, i = arrayOfString.length, b = 0; b < i; ) {
-            String pack = arrayOfString[b];
+
+        for (String pack : packages) {
             if (!pack.startsWith(packageHint)) {
-                b++;
                 continue;
             }
+
             String toTry = pack + "." + className;
             try {
                 Class.forName(toTry);
-                location = pack + "." + className;
+                location = toTry;
                 break;
-            } catch (Throwable throwable) {
-                b++;
+            } catch (Throwable ignored) {
             }
         }
+
         classLocations.put(className, location);
+
+        synchronized (classLocations) {
+            if (!updatingCache && LibsDisguises.getInstance() != null && LibsDisguises.getInstance().isEnabled()) {
+                // Run 10 seconds later
+                updatingCache = true;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        ClassMappings.saveMappingsCache(LibsDisguises.getInstance().getDataFolder());
+                    }
+                }.runTaskLater(LibsDisguises.getInstance(), 10 * 20);
+            }
+        }
         return location;
     }
 
@@ -59,37 +76,66 @@ public class ClassMappings {
         for (int i = 0; i < s.length; i++) {
             s[i] = s[i].replace("$version$", ReflectionManager.getBukkitVersion());
         }
+
         return s;
     }
 
+    private static String getVersion() {
+        return "Built for: " + Bukkit.getVersion() + "\t" + LibsDisguises.getInstance().getDescription().getVersion();
+    }
+
     public static void saveMappingsCache(File dataFolder) {
+        synchronized (classLocations) {
+            if (!updatingCache) {
+                return;
+            }
+
+            updatingCache = false;
+        }
+
         File mappingsCache = new File(dataFolder, "mappings_cache");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(mappingsCache))) {
+            writer.write(getVersion() + "\n");
+
             for (Map.Entry<String, String> entry : classLocations.entrySet()) {
-                if (!entry.getKey().equals(entry.getValue())) {
-                    writer.write(entry.getKey() + " " + entry.getValue() + "\n");
-                }
+                writer.write(entry.getKey() + " " + entry.getValue() + "\n");
             }
         } catch (IOException e) {
-            // don't care if cache can't be saved
             e.printStackTrace();
         }
     }
 
     public static void loadMappingsCache(File dataFolder) {
         File mappingsCache = new File(dataFolder, "mappings_cache");
+        if (!mappingsCache.exists()) {
+            return;
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(mappingsCache))) {
-            String line;
+            String line = reader.readLine();
+
+            // Not the correct version
+            if (line == null || !line.equals(getVersion())) {
+                DisguiseUtilities.getLogger().info("Outdated mappings cache, will rebuild.");
+                return;
+            }
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ", 2);
-                if (parts.length == 2) {
+
+                if (parts.length != 2) {
+                    continue;
+                }
+
+                try {
                     // Check if class name is still valid
-                    try {
+                    if (parts[1].contains(".")) {
                         Class.forName(parts[1]);
-                        classLocations.put(parts[0], parts[1]);
-                    } catch (ClassNotFoundException e) {
-                        // silently discard, we may have just changed versions
                     }
+
+                    classLocations.put(parts[0], parts[1]);
+                } catch (ClassNotFoundException e) {
+                    // silently discard, something went wrong though
                 }
             }
         } catch (FileNotFoundException e) {
