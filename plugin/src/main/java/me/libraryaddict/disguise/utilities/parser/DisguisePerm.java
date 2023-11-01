@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.FlagWatcher;
 import org.bukkit.entity.EntityType;
@@ -12,14 +13,23 @@ import java.util.Objects;
 public class DisguisePerm {
     private final DisguiseType disguiseType;
     private String permName;
+    @Getter
+    private String regexedName;
     private boolean customDisguise;
 
+    private DisguisePerm() {
+        regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase();
+    }
+
     public DisguisePerm(DisguiseType disguiseType) {
+        this();
+
         this.disguiseType = disguiseType;
     }
 
     public DisguisePerm(DisguiseType disguiseType, String disguisePerm) {
-        this.disguiseType = disguiseType;
+        this(disguiseType);
+
         permName = disguisePerm;
         customDisguise = true;
     }

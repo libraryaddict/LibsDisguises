@@ -361,15 +361,17 @@ public class DisguiseParser {
     }
 
     public static DisguisePerm getDisguisePerm(String name) {
+        name = name.replaceAll("[ |_]", "").toLowerCase();
+
         for (DisguisePerm perm : getDisguisePerms()) {
-            if (!perm.toReadable().replaceAll("[ |_]", "").equalsIgnoreCase(name.replaceAll("[ |_]", ""))) {
+            if (!perm.getRegexedName().equals(name)) {
                 continue;
             }
 
             return perm;
         }
 
-        if (name.equalsIgnoreCase("p")) {
+        if (name.equals("p")) {
             return getDisguisePerm(DisguiseType.PLAYER.toReadable());
         }
 
