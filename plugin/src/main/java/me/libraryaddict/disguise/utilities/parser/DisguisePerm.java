@@ -17,21 +17,16 @@ public class DisguisePerm {
     private String regexedName;
     private boolean customDisguise;
 
-    private DisguisePerm() {
+    public DisguisePerm(DisguiseType disguiseType) {
+        this.disguiseType = disguiseType;
         regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase();
     }
 
-    public DisguisePerm(DisguiseType disguiseType) {
-        this();
-
-        this.disguiseType = disguiseType;
-    }
-
     public DisguisePerm(DisguiseType disguiseType, String disguisePerm) {
-        this(disguiseType);
-
+        this.disguiseType = disguiseType; 
         permName = disguisePerm;
         customDisguise = true;
+        regexedName = toReadable().replaceAll("[ |_]", "").toLowerCase();
     }
 
     public boolean isCustomDisguise() {
