@@ -2,6 +2,7 @@ package me.libraryaddict.disguise.utilities.parser;
 
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;
@@ -108,6 +109,7 @@ public class DisguisePermissions {
      * List of PermissionStorage that the permission holder is able to use
      */
     private final List<PermissionStorage> disguises = new ArrayList<>();
+    private final static Map<String, DisguisePermissions> CONSOLE_PERMISSIONS = new HashMap<>();
 
     /**
      * @param permissionHolder The permissions to check
@@ -115,6 +117,22 @@ public class DisguisePermissions {
      */
     public DisguisePermissions(Permissible permissionHolder, String commandName) {
         loadPermissions(permissionHolder, commandName.toLowerCase(Locale.ENGLISH));
+
+        if (permissionHolder == Bukkit.getConsoleSender()) {
+            CONSOLE_PERMISSIONS.put(commandName, this);
+        }
+    }
+
+    public static DisguisePermissions getPermissions(Permissible permissionHolder, String commandName) {
+        if (permissionHolder == Bukkit.getConsoleSender() && CONSOLE_PERMISSIONS.containsKey(commandName)) {
+            return CONSOLE_PERMISSIONS.get(commandName);
+        }
+
+        return new DisguisePermissions(permissionHolder, commandName);
+    }
+
+    public static void onReload() {
+        CONSOLE_PERMISSIONS.clear();
     }
 
     /**

@@ -402,7 +402,7 @@ public class DisguiseParser {
      * Get perms for the node. Returns a hashmap of allowed disguisetypes and their options
      */
     public static DisguisePermissions getPermissions(CommandSender sender, String commandName) {
-        return new DisguisePermissions(sender, commandName);
+        return DisguisePermissions.getPermissions(sender, commandName);
     }
 
     private static boolean isInteger(String string) {
@@ -600,7 +600,7 @@ public class DisguiseParser {
             params = DisguiseParser.parsePlaceholders(params, target, target);
         }
 
-        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise, new DisguisePermissions(Bukkit.getConsoleSender(), "disguise"),
+        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise, DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "sender"),
             new DisguisePerm(disguise.getType()), new ArrayList<>(), params, "Disguise");
     }
 
@@ -621,7 +621,8 @@ public class DisguiseParser {
     }
 
     public static Disguise parseDisguise(CommandSender sender, Entity target, String disguise) throws Throwable {
-        return parseDisguise(sender, target, "disguise", DisguiseUtilities.split(disguise), new DisguisePermissions(Bukkit.getConsoleSender(), "disguise"));
+        return parseDisguise(sender, target, "disguise", DisguiseUtilities.split(disguise),
+            DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "disguise"));
     }
 
     /**

@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
 import me.libraryaddict.disguise.DisguiseConfig;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ public class LDReload implements LDCommand {
     public void onCommand(CommandSender sender, String[] args) {
         DisguiseConfig.loadConfig();
         new SoundManager().load();
+        DisguisePermissions.onReload();
         LibsMsg.RELOADED_CONFIG.send(sender);
     }
 
