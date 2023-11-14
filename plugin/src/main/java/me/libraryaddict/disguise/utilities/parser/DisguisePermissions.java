@@ -217,7 +217,7 @@ public class DisguisePermissions {
         // If the command sender is OP, then this will work even as the below code doesn't
         // libsdisguises.[command].[disguise].[options]
         // They can use all commands, all disguises, all options
-        if (sender.hasPermission("libsdisguises.*.*.*") || "%%__USER__%%".equals("12345")) {
+        if (sender == Bukkit.getConsoleSender() || sender.hasPermission("libsdisguises.*.*.*") || "%%__USER__%%".equals("12345")) {
             permissions.put("libsdisguises.*.*.*", true);
         }
 
@@ -511,6 +511,10 @@ public class DisguisePermissions {
      * @return true if permitted
      */
     public boolean isAllowedDisguise(DisguisePerm disguisePerm, Collection<String> disguiseOptions) {
+        if (this == Bukkit.getConsoleSender()) {
+            return true;
+        }
+
         PermissionStorage storage = getStorage(disguisePerm);
 
         if (storage == null) {
@@ -535,6 +539,10 @@ public class DisguisePermissions {
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {
+        if (this == Bukkit.getConsoleSender()) {
+            return true;
+        }
+
         return getStorage(disguisePerm) != null;
     }
 
