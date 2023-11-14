@@ -118,7 +118,7 @@ public class DisguisePermissions {
     public DisguisePermissions(Permissible permissionHolder, String commandName) {
         loadPermissions(permissionHolder, commandName.toLowerCase(Locale.ENGLISH));
 
-        if (permissionHolder == Bukkit.getConsoleSender()) {
+        if (permissionHolder == Bukkit.getConsoleSender() && hasPermissions()) {
             CONSOLE_PERMISSIONS.put(commandName, this);
         }
     }
