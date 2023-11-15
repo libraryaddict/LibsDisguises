@@ -600,7 +600,7 @@ public class DisguiseParser {
             params = DisguiseParser.parsePlaceholders(params, target, target);
         }
 
-        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise, DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "sender"),
+        DisguiseParser.callMethods(Bukkit.getConsoleSender(), disguise, DisguisePermissions.getPermissions(Bukkit.getConsoleSender(), "disguise"),
             new DisguisePerm(disguise.getType()), new ArrayList<>(), params, "Disguise");
     }
 
