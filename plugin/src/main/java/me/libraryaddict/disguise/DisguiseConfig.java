@@ -14,6 +14,7 @@ import me.libraryaddict.disguise.utilities.packets.PacketsManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParseException;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.parser.DisguisePermissions;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.translations.LibsMsg;
@@ -969,6 +970,8 @@ public class DisguiseConfig {
         }
 
         DisguiseUtilities.getLogger().info("Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ? "" : "s"));
+        // Reload the permissions here because otherwise our cached permissions doesn't know about the custom disguises
+        DisguisePermissions.onReload();
     }
 
     public static void addCustomDisguise(String disguiseName, String toParse) throws DisguiseParseException {

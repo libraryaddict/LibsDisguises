@@ -125,7 +125,7 @@ public class DisguisePermissions {
 
     public static DisguisePermissions getPermissions(Permissible permissionHolder, String commandName) {
         if (permissionHolder == Bukkit.getConsoleSender() && CONSOLE_PERMISSIONS.containsKey(commandName)) {
-           // return CONSOLE_PERMISSIONS.get(commandName);
+            return CONSOLE_PERMISSIONS.get(commandName);
         }
 
         return new DisguisePermissions(permissionHolder, commandName);
@@ -539,10 +539,6 @@ public class DisguisePermissions {
     }
 
     public boolean isAllowedDisguise(DisguisePerm disguisePerm) {
-        if (this == Bukkit.getConsoleSender()) {
-            return true;
-        }
-
         return getStorage(disguisePerm) != null;
     }
 
