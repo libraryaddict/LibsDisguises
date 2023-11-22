@@ -113,10 +113,6 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
             }
         }
 
-        if (!DisguiseAPI.isNotifyBarShown(disguise.getEntity())) {
-            disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
-        }
-
         disguise.startDisguise(sender);
 
         if (disguise.isDisguiseInUse()) {

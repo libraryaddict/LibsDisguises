@@ -221,10 +221,6 @@ public class DisguiseAPI {
             disguise.setViewSelfDisguise(!disguise.isSelfDisguiseVisible());
         }
 
-        if (hasActionBarPreference(entity) && !isNotifyBarShown(entity)) {
-            disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
-        }
-
         disguise.startDisguise(commandSender);
     }
 
@@ -519,23 +515,33 @@ public class DisguiseAPI {
     }
 
     public static void setActionBarShown(Player player, boolean isShown) {
-        if (isDisguised(player)) {
-            Disguise[] disguises = getDisguises(player);
-
-            for (Disguise disguise : disguises) {
-                disguise.setNotifyBar(isShown ? DisguiseConfig.getNotifyBar() : DisguiseConfig.NotifyBar.NONE);
-            }
-        }
+        boolean toggled = false;
 
         // If default is view and we want the opposite
         if (!isShown) {
             if (!hasActionBarPreference(player)) {
+                toggled = true;
                 DisguiseUtilities.getViewBar().add(player.getUniqueId());
                 DisguiseUtilities.addSaveAttempt();
             }
         } else {
-            DisguiseUtilities.getViewBar().remove(player.getUniqueId());
+            toggled = DisguiseUtilities.getViewBar().remove(player.getUniqueId());
             DisguiseUtilities.addSaveAttempt();
+        }
+
+        if (!toggled || !isDisguised(player)) {
+            return;
+        }
+
+        Disguise[] disguises = getDisguises(player);
+
+        for (Disguise disguise : disguises) {
+            if (disguise.getNotifyBar() != DisguiseConfig.NotifyBar.BOSS_BAR) {
+                continue;
+            }
+
+            disguise.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
+            disguise.setNotifyBar(DisguiseConfig.NotifyBar.BOSS_BAR);
         }
     }
 
