@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.utilities.parser;
 
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.bukkit.Bukkit;
@@ -42,6 +43,7 @@ public class DisguisePermissions {
     private static class ParsedPermission {
         private final Vector<DisguisePerm> disguisePerm;
         private final HashMap<String, Boolean> options;
+        @Getter
         private boolean negated;
         /**
          * 0 = Names a specific disguise
@@ -50,7 +52,9 @@ public class DisguisePermissions {
          * 3... = etc
          * 4 = * = Disguise wildcard
          */
+        @Getter
         private final byte inheritance;
+        @Getter
         private final boolean wildcardCommand;
 
         public ParsedPermission(DisguisePerm[] disguisePerm, HashMap<String, Boolean> options, byte inheritance, boolean wildcardCommand) {
@@ -60,27 +64,17 @@ public class DisguisePermissions {
             this.wildcardCommand = wildcardCommand;
         }
 
-        public boolean isWildcardCommand() {
-            return wildcardCommand;
-        }
-
         public boolean isDisguise(DisguisePerm perm) {
             return disguisePerm.contains(perm);
-        }
-
-        public boolean isNegated() {
-            return negated;
         }
 
         public void setNegated(boolean negated) {
             this.negated = negated;
         }
 
-        public byte getInheritance() {
-            return inheritance;
-        }
     }
 
+    @Getter
     static class DisguisePermitted {
         private final boolean strictAllowed;
         private final List<String> optionsAllowed;
@@ -92,17 +86,6 @@ public class DisguisePermissions {
             this.optionsForbidden = optionsForbidden;
         }
 
-        public boolean isStrictAllowed() {
-            return strictAllowed;
-        }
-
-        public List<String> getOptionsAllowed() {
-            return optionsAllowed;
-        }
-
-        public List<String> getOptionsForbidden() {
-            return optionsForbidden;
-        }
     }
 
     /**

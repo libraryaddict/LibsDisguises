@@ -994,6 +994,7 @@ public class DisguiseConfig {
             customDisguises.put(perm, toParse);
 
             DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
+            DisguisePermissions.onReload();
         } catch (DisguiseParseException e) {
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, (e.getMessage() == null ? "" : ": " + e.getMessage()));
         } catch (Throwable e) {
