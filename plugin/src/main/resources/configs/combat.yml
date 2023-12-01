@@ -11,7 +11,7 @@ DisablePvP: false
 DisablePvE: false
 
 # This works only for players, disguised monsters and the like will not be undisguised
-# Should the player's disguises be removed if they attacks something?
+# Should the player's disguises be removed if they attack something?
 # Blown Disguise message can be changed in translations
 # Message can be hidden with an empty translation
 BlowDisguisesWhenAttacking: false
