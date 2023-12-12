@@ -985,6 +985,9 @@ public class ReflectionManager {
         if (DisguiseUtilities.isFancyHiddenTabs()) {
             return nmsReflection.getTabListPacket(player.getPlayerListName(), ReflectionManager.getGameProfile(player), visible,
                 EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
+        } else if (NmsVersion.v1_19_R2.isSupported()) {
+            return nmsReflection.getTabListPacket(player.getPlayerListName(), ReflectionManager.getGameProfile(player), visible,
+                visible ? EnumWrappers.PlayerInfoAction.ADD_PLAYER : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
         }
 
         PlayerInfoData playerInfo =
