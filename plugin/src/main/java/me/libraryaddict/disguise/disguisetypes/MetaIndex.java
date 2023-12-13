@@ -786,6 +786,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Integer> TNT_FUSE_TICKS = new MetaIndex<>(TNTWatcher.class, 0, Integer.MAX_VALUE);
 
+    @NmsAddedIn(NmsVersion.v1_20_R3)
+    public static MetaIndex<BlockData> TNT_BLOCK_TYPE =
+        new MetaIndex<>(TNTWatcher.class, 1, NmsVersion.v1_20_R3.isSupported() ? Bukkit.createBlockData(Material.TNT) : null);
+
     public static MetaIndex<Byte> TRIDENT_ENCHANTS = new MetaIndex<>(TridentWatcher.class, 0, (byte) 0);
 
     @NmsAddedIn(NmsVersion.v1_15)

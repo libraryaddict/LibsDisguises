@@ -16,10 +16,11 @@ public enum NmsVersion {
     v1_19_R3, // 1.19.4
     v1_20_R1, // 1.20 & 1.20.1
     v1_20_R2, // 1.20.2
+    v1_20_R3, // 1.20.3
     UNSUPPORTED;
 
     /**
-     * If this nms version isn't newer than the running version
+     * If this enum version is older, or the same version as the current running server
      */
     public boolean isSupported() {
         return ReflectionManager.getVersion() != null && ReflectionManager.getVersion().ordinal() >= ordinal();

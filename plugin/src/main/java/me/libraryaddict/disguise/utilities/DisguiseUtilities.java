@@ -609,6 +609,11 @@ public class DisguiseUtilities {
             requiredVersion = new String[]{"5.1.1", "669"};
         }
 
+        // If you're on 1.20.4
+        if (NmsVersion.v1_20_R3.isSupported()) {
+            requiredVersion = new String[]{"5.2.0", "676"};
+        }
+
         return requiredVersion;
     }
 
@@ -632,19 +637,20 @@ public class DisguiseUtilities {
         // If this is also checking for a custom build, and PL has the custom build in..
         // We run this check first as the 4.7.1 isn't out, and it'd always tell us to update otherwise.
         if (reqVersion.length > 1 && plVersion.contains("-SNAPSHOT")) {
-            if (!plVersion.contains("-SNAPSHOT-b")) {
+            Matcher matcher = Pattern.compile("-SNAPSHOT-b?(\\d+)").matcher(plVersion);
+
+            // Just incase they're running a custom build?
+            if (!matcher.find()) {
                 return false;
             }
 
             try {
-                String build = plVersion.substring(plVersion.lastIndexOf("b") + 1);
+                int buildNo = Integer.parseInt(matcher.group(1));
 
-                // Just incase they're running a custom build?
-                if (build.length() < 3) {
+                // Must be a custom build
+                if (buildNo < 100) {
                     return false;
                 }
-
-                int buildNo = Integer.parseInt(build);
 
                 return buildNo < Integer.parseInt(reqVersion[1]);
             } catch (Throwable ignored) {
@@ -689,6 +695,12 @@ public class DisguiseUtilities {
 
         // We're connecting to jenkins's API for ProtocolLib
         URL url = new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/build/libs/ProtocolLib.jar");
+
+        // Bad workaround for failing jenkins
+        if (ReflectionManager.getVersion() == NmsVersion.v1_20_R3) {
+            url = new URL("https://ci.dmulloy2.net/job/ProtocolLib//lastBuild/artifact/build/libs/ProtocolLib.jar");
+        }
+
         // Creating a connection
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
@@ -749,18 +761,6 @@ public class DisguiseUtilities {
         synchronized (isSpecialInteract) {
             return isSpecialInteract.contains(entityId);
         }
-    }
-
-    public static boolean isGrabSkinCommandUsed() {
-        return grabSkinCommandUsed;
-    }
-
-    public static boolean isCopyDisguiseCommandUsed() {
-        return copyDisguiseCommandUsed;
-    }
-
-    public static boolean isSaveDisguiseCommandUsed() {
-        return saveDisguiseCommandUsed;
     }
 
     public static void setPluginsUsed() {

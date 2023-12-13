@@ -2333,6 +2333,8 @@ public class ReflectionManager {
                 case WARDEN:
                 case CAMEL:
                 case SNIFFER:
+                case BREEZE:
+                case WIND_CHARGE:
                     nmsEntityName = disguiseType.toReadable().replace(" ", "");
                     break;
                 case DONKEY:

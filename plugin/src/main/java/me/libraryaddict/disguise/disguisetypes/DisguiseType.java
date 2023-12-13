@@ -33,6 +33,8 @@ public enum DisguiseType {
 
     BOAT(1),
 
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) BREEZE,
+
     @NmsAddedIn(NmsVersion.v1_20_R1) CAMEL,
 
     @NmsAddedIn(NmsVersion.v1_14) CAT,
@@ -248,6 +250,8 @@ public enum DisguiseType {
     @NmsAddedIn(NmsVersion.v1_14) WANDERING_TRADER,
 
     @NmsAddedIn(NmsVersion.v1_19_R1) WARDEN,
+
+    @NmsAddedIn(NmsVersion.UNSUPPORTED) WIND_CHARGE,
 
     WITCH,
 

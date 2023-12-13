@@ -209,33 +209,7 @@ public class LibsDisguises extends JavaPlugin {
                 String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
                 String version = Bukkit.getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 
-                BukkitRunnable runnable = new BukkitRunnable() {
-                    private int timesRun;
-
-                    @Override
-                    public void run() {
-                        getLogger().severe("!! May I have your attention please !!");
-
-                        if (DisguiseUtilities.isProtocollibUpdateDownloaded()) {
-                            getLogger().severe(
-                                "An update for ProtocolLib has been downloaded and will be installed when the server restarts. When possible, please restart " +
-                                    "the server. Lib's Disguises may not work correctly until you do so.");
-                        } else {
-                            getLogger().severe(
-                                "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib +
-                                    "!");
-                            getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
-                            getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
-                        }
-
-                        if (timesRun++ > 0) {
-                            getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
-                        }
-
-                        getLogger().severe("!! May I have your attention please !!");
-                    }
-                };
-
+                BukkitRunnable runnable = createProtocolLibOutdatedRunnable(version, requiredProtocolLib);
                 runnable.run();
                 runnable.runTaskTimer(this, 20, 10 * 60 * 20);
             }
@@ -318,6 +292,35 @@ public class LibsDisguises extends JavaPlugin {
 
             throw throwable;
         }
+    }
+
+    @NotNull
+    private BukkitRunnable createProtocolLibOutdatedRunnable(String version, String requiredProtocolLib) {
+        return new BukkitRunnable() {
+            private int timesRun;
+
+            @Override
+            public void run() {
+                getLogger().severe("!! May I have your attention please !!");
+
+                if (DisguiseUtilities.isProtocollibUpdateDownloaded()) {
+                    getLogger().severe(
+                        "An update for ProtocolLib has been downloaded and will be installed when the server restarts. When possible, please restart " +
+                            "the server. Lib's Disguises may not work correctly until you do so.");
+                } else {
+                    getLogger().severe(
+                        "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib + "!");
+                    getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
+                    getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
+                }
+
+                if (timesRun++ > 0) {
+                    getLogger().severe("This message is on repeat due to the sheer number of people who don't see this.");
+                }
+
+                getLogger().severe("!! May I have your attention please !!");
+            }
+        };
     }
 
     public void unregisterCommands(boolean force) {
