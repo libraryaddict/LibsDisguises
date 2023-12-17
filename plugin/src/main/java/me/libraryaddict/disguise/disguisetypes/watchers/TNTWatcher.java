@@ -12,6 +12,7 @@ public class TNTWatcher extends FlagWatcher {
         super(disguise);
     }
 
+    @NmsAddedIn(NmsVersion.v1_20_R3)
     public BlockData getBlock() {
         return getData(MetaIndex.TNT_BLOCK_TYPE);
     }
