@@ -1,5 +1,6 @@
 package me.libraryaddict.disguise.commands.libsdisguises;
 
+import com.google.gson.Gson;
 import javax.net.ssl.HttpsURLConnection;
 import lombok.Data;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -33,11 +34,15 @@ import java.util.stream.Collectors;
  * Created by libraryaddict on 18/06/2020.
  */
 public class LDUploadLogs implements LDCommand {
+    class MCLogs {
+        boolean success;
+        String id;
+        String url;
+        String raw;
+    }
+
     private long lastUsed;
 
-    /**
-     * Small modification of https://gist.github.com/jamezrin/12de49643d7be7150da362e86407113f
-     */
     @Data
     public class GuestPaste {
         private String name = null;
@@ -49,39 +54,20 @@ public class LDUploadLogs implements LDCommand {
         }
 
         public URL paste() throws Exception {
-            URL url = new URL("https://pastebin.com/api/api_post.php");
+            URL url = new URL("https://api.mclo.gs/1/log");
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
             List<SimpleEntry<String, String>> params = new LinkedList<>();
-            // This doesn't give you access to my pastebin account ;)
-            // You need to enter another key for that, this key is for pastebin's tracking metrics.
-            // If you're using this code, please use your own pastebin dev key.
-            // Overuse will get it banned, and you'll have to ship a new version with your own key anyways.
-            // This is seperated into strings to prevent super easy scraping.
-            if (getClass().getName().contains("me.libraryaddict")) {
-                params.add(new SimpleEntry<>("api_dev_key", "62067f9d" + "cc1979a475105b529" + "eb453a5"));
-            }
-            params.add(new SimpleEntry<>("api_option", "paste"));
-            params.add(new SimpleEntry<>("api_paste_name", name));
             params.add(new SimpleEntry<>("api_paste_code", text));
 
-            params.add(new SimpleEntry<>("api_paste_format", "text"));
-            params.add(new SimpleEntry<>("api_paste_expire_date", "1M"));
-            params.add(new SimpleEntry<>("api_paste_private", "1"));
-
             StringBuilder output = new StringBuilder();
-            for (SimpleEntry<String, String> entry : params) {
-                if (output.length() > 0) {
-                    output.append('&');
-                }
 
-                output.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                output.append('=');
-                output.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            }
+            output.append(URLEncoder.encode("content", "UTF-8"));
+            output.append('=');
+            output.append(URLEncoder.encode(text, "UTF-8"));
 
             con.setDoOutput(true);
             try (DataOutputStream dos = new DataOutputStream(con.getOutputStream())) {
@@ -100,7 +86,9 @@ public class LDUploadLogs implements LDCommand {
                         response.append(inputLine);
                     }
 
-                    return new URL(response.toString());
+                    MCLogs logs = new Gson().fromJson(response.toString(), MCLogs.class);
+
+                    return new URL(logs.url);
                 }
             } else {
                 throw new IllegalStateException("Unexpected response code " + status);
@@ -195,7 +183,7 @@ public class LDUploadLogs implements LDCommand {
                 return;
             }
 
-            sender.sendMessage(ChatColor.GOLD + "Now creating pastebin links...");
+            sender.sendMessage(ChatColor.GOLD + "Now creating mclo.gs links...");
 
             new BukkitRunnable() {
                 @Override
@@ -258,7 +246,7 @@ public class LDUploadLogs implements LDCommand {
     }
 
     private boolean isTooBig(long length) {
-        return length >= 512 * 1024;
+        return length > 10_000_000;
     }
 
     @Override
