@@ -2540,6 +2540,11 @@ public class ReflectionManager {
     }
 
     public static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
+        // Disabled for 1.20.4, 1.20.4 introduces "read only" scores and I don't have an idea on how to deal with it as yet
+        if (NmsVersion.v1_20_R3.isSupported()) {
+            return;
+        }
+
         if (canScheduleTask && (!Bukkit.isPrimaryThread() || DisguiseUtilities.isRunningPaper())) {
             new BukkitRunnable() {
                 @Override

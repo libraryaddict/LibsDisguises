@@ -143,13 +143,13 @@ public class LDUploadLogs implements LDCommand {
 
         if (isTooBig(latest)) {
             sender.sendMessage(
-                ChatColor.RED + "Your latest.log file is too big! It should be less than 512kb! Please restart and run this " + "command again!");
+                ChatColor.RED + "Your latest.log file is too big! It should be less than 10mb! Please restart and run this " + "command again!");
             return;
         }
 
         if (isTooBig(disguises)) {
             sender.sendMessage(ChatColor.RED + "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
-                "should be less than 512kb!");
+                "should be less than 10mb!");
             return;
         }
 
@@ -246,7 +246,7 @@ public class LDUploadLogs implements LDCommand {
     }
 
     private boolean isTooBig(long length) {
-        return length > 10_000_000;
+        return length > 10_048_000;
     }
 
     @Override
