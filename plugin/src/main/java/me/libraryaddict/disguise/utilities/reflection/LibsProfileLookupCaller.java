@@ -3,16 +3,17 @@ package me.libraryaddict.disguise.utilities.reflection;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
+import lombok.Getter;
 
+@Getter
 public class LibsProfileLookupCaller implements ProfileLookupCallback {
-
     private WrappedGameProfile gameProfile;
 
-    public WrappedGameProfile getGameProfile() {
-        return gameProfile;
+    @Override
+    public void onProfileLookupFailed(String s, Exception e) {
     }
 
-    @Override
+    @Deprecated
     public void onProfileLookupFailed(GameProfile gameProfile, Exception arg1) {
     }
 

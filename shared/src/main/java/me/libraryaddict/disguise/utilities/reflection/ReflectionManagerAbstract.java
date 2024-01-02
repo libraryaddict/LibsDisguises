@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.ProfileLookupCallback;
+import com.mojang.authlib.minecraft.MinecraftSessionService;
 import org.bukkit.Art;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -82,7 +83,7 @@ public interface ReflectionManagerAbstract {
 
     float[] getSize(Entity entity);
 
-    WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile);
+    MinecraftSessionService getMinecraftSessionService();
 
     Float getSoundModifier(Object entity);
 

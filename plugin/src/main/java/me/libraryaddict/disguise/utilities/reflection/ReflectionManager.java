@@ -17,6 +17,7 @@ import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftSessionService;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -194,6 +195,7 @@ public class ReflectionManager {
     private static Field trackedPlayers;
     private static Method clearEntityTracker;
     private static Method addEntityTracker;
+    private static Method fillProfileProperties;
 
     public static void init() {
         try {
@@ -368,6 +370,15 @@ public class ReflectionManager {
             trackerField = getNmsField("WorldServer", "tracker");
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
             ihmGet = getNmsMethod("IntHashMap", "get", int.class);
+        }
+
+        for (Method m : MinecraftSessionService.class.getMethods()) {
+            if (!m.getName().equals("fillProfileProperties")) {
+                continue;
+            }
+
+            fillProfileProperties = m;
+            break;
         }
     }
 
@@ -1259,22 +1270,26 @@ public class ReflectionManager {
     }
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
-        if (nmsReflection != null) {
-            return nmsReflection.getSkullBlob(gameProfile);
-        }
-
         try {
-            Object minecraftServer = getMinecraftServer();
+            MinecraftSessionService service = null;
 
-            for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                    Object session = method.invoke(minecraftServer);
+            if (nmsReflection != null) {
+                service = nmsReflection.getMinecraftSessionService();
+            } else {
+                Object minecraftServer = getMinecraftServer();
 
-                    return WrappedGameProfile.fromHandle(
-                        session.getClass().getDeclaredMethod("fillProfileProperties", gameProfile.getHandleType(), boolean.class)
-                            .invoke(session, gameProfile.getHandle(), true));
+                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                    if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                        service = (MinecraftSessionService) method.invoke(minecraftServer);
+                    }
                 }
             }
+
+            if (fillProfileProperties == null) {
+                return WrappedGameProfile.fromHandle(service.fetchProfile(gameProfile.getUUID(), true).profile());
+            }
+
+            return WrappedGameProfile.fromHandle(fillProfileProperties.invoke(service, gameProfile.getHandle(), true));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

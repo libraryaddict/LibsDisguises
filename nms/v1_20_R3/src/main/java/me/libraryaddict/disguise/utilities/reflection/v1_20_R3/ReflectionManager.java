@@ -319,10 +319,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return new float[]{dimensions.width, nmsEntity.getEyeHeight()};
     }
 
-    public WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
-        DedicatedServer minecraftServer = getMinecraftServer();
-        MinecraftSessionService sessionService = minecraftServer.getSessionService();
-        return WrappedGameProfile.fromHandle(sessionService.fetchProfile(gameProfile.getUUID(), true).profile());
+    public MinecraftSessionService getMinecraftSessionService() {
+        return getMinecraftServer().getSessionService();
     }
 
     public Float getSoundModifier(Object entity) {
