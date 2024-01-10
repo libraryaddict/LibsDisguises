@@ -89,7 +89,19 @@ public class LibsDisguises extends JavaPlugin {
                         "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or installs ProtocolLib. " +
                             "Please do not report any issues with this plugin.");
                 } else {
-                    getLogger().warning("Noticed you're using an older version of ProtocolLib (or not using it)! We're forcibly updating you!");
+                    String reason;
+
+                    if (plugin == null) {
+                        reason = "ProtocolLib not installed";
+                    } else if (!plugin.isEnabled()) {
+                        reason = "ProtocolLib is not enabled";
+                    } else if (DisguiseUtilities.isProtocolLibOutdated()) {
+                        reason = "ProtocolLib is outdated";
+                    } else {
+                        reason = "Lib's Disguises couldn't process ProtocolLib properly";
+                    }
+
+                    getLogger().warning("An issue occured when trying to load ProtocolLib: " + reason + ". Lib's Disguises will attempt to update it.");
 
                     try {
                         File dest = DisguiseUtilities.updateProtocolLib();
