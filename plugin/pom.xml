@@ -99,6 +99,13 @@
                                 <include>**</include>
                             </includes>
                         </filter>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/versions/**</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
                     </filters>
                     <artifactSet>
                         <includes>
