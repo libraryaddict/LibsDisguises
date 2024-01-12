@@ -69,16 +69,10 @@ public class CompileMethods {
             list.add(sound.toString());
         }
 
-        File soundsFile = new File("plugin/target/classes/ANTI_PIRACY_SECRET_FILE");
+        File soundsFile = new File("plugin/target/classes/SOUND_MAPPINGS");
 
         try (FileOutputStream fos = new FileOutputStream(soundsFile)) {
-            byte[] array = String.join("\n", list).getBytes(StandardCharsets.UTF_8);
-
-            for (int i = 0; i < array.length; i++) {
-                array[i] = (byte) (Byte.MAX_VALUE - array[i]);
-            }
-
-            fos.write(array);
+            fos.write(String.join("\n", list).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -186,16 +180,10 @@ public class CompileMethods {
             }
         }
 
-        File methodsFile = new File("plugin/target/classes/ANTI_PIRACY_ENCRYPTION");
+        File methodsFile = new File("plugin/target/classes/METHOD_MAPPINGS");
 
         try (FileOutputStream fos = new FileOutputStream(methodsFile)) {
-            byte[] array = String.join("\n", methods).getBytes(StandardCharsets.UTF_8);
-
-            for (int i = 0; i < array.length; i++) {
-                array[i] = (byte) (Byte.MAX_VALUE - array[i]);
-            }
-
-            fos.write(array);
+            fos.write(String.join("\n", methods).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }

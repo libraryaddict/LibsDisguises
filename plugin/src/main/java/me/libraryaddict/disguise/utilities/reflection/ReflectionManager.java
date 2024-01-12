@@ -2304,13 +2304,7 @@ public class ReflectionManager {
             output.write(buffer, 0, bytesRead);
         }
 
-        byte[] array = output.toByteArray();
-
-        for (int i = 0; i < array.length; i++) {
-            array[i] = (byte) (Byte.MAX_VALUE - array[i]);
-        }
-
-        return array;
+        return output.toByteArray();
     }
 
     private static void createNMSValues(DisguiseType disguiseType) {

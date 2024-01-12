@@ -25,21 +25,15 @@ public class LibsPremium {
     /**
      * Information of the actively running plugin
      */
+    @Getter
     private static PluginInformation pluginInformation;
     /**
      * Information of the plugin used to activate premium, if exists
      */
+    @Getter
     private static PluginInformation paidInformation;
     @Getter
     private static boolean bisectHosted;
-
-    public static PluginInformation getPluginInformation() {
-        return pluginInformation;
-    }
-
-    public static PluginInformation getPaidInformation() {
-        return paidInformation;
-    }
 
     /**
      * @return Account ID if downloaded through SpigotMC
@@ -74,7 +68,11 @@ public class LibsPremium {
      * Returns true if this plugin is premium
      */
     public static Boolean isPremium() {
-        return thisPluginIsPaidFor == null ? isPremium(getResourceID(), getUserID()) : thisPluginIsPaidFor;
+        if (thisPluginIsPaidFor != null) {
+            return thisPluginIsPaidFor;
+        }
+
+        return isPremium(getResourceID(), getUserID());
     }
 
     /**

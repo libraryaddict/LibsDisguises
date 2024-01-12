@@ -53,7 +53,7 @@ public class DisguiseMethods {
     }
 
     private void loadMethods() {
-        try (InputStream stream = LibsDisguises.getInstance().getResource("ANTI_PIRACY_ENCRYPTION")) {
+        try (InputStream stream = LibsDisguises.getInstance().getResource("METHOD_MAPPINGS")) {
             String[] lines = new String(ReflectionManager.readFuzzyFully(stream), StandardCharsets.UTF_8).split("\n");
 
             HashMap<String, Class<? extends FlagWatcher>> classes = new HashMap<>();
