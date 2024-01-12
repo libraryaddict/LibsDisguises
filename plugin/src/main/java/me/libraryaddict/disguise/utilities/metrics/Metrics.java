@@ -214,7 +214,7 @@ public class Metrics {
         String osName = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
         String osVersion = System.getProperty("os.version");
-        int coreCount = Runtime.getRuntime().availableProcessors();
+        //int coreCount = Runtime.getRuntime().availableProcessors();
 
         JsonObject data = new JsonObject();
 
@@ -228,7 +228,7 @@ public class Metrics {
         data.addProperty("osName", osName);
         data.addProperty("osArch", osArch);
         data.addProperty("osVersion", osVersion);
-        data.addProperty("coreCount", coreCount);
+        //data.addProperty("coreCount", coreCount);
 
         return data;
     }
