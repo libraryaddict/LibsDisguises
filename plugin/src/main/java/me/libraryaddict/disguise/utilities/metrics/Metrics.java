@@ -209,7 +209,7 @@ public class Metrics {
         String bukkitVersion = org.bukkit.Bukkit.getVersion();
         bukkitVersion = bukkitVersion.substring(bukkitVersion.indexOf("MC: ") + 4, bukkitVersion.length() - 1);
 
-        // OS/Java specific data
+        /*// OS/Java specific data
         String javaVersion = System.getProperty("java.version");
         String osName = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
@@ -229,7 +229,8 @@ public class Metrics {
         data.addProperty("osArch", osArch);
         data.addProperty("osVersion", osVersion);
         //data.addProperty("coreCount", coreCount);
-
+*/
+        JsonObject data = new JsonObject();
         return data;
     }
 
