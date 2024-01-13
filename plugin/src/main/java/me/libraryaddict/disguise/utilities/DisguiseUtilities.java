@@ -611,7 +611,7 @@ public class DisguiseUtilities {
 
         // If you're on 1.20.4
         if (NmsVersion.v1_20_R3.isSupported()) {
-            requiredVersion = new String[]{"5.2.0", "676"};
+            requiredVersion = new String[]{"5.2.0", "679"};
         }
 
         return requiredVersion;

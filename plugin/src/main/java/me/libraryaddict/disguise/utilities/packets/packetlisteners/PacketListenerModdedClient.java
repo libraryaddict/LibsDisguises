@@ -98,7 +98,7 @@ public class PacketListenerModdedClient extends PacketAdapter {
     public void onPacketReceiving(PacketEvent event) {
         event.setCancelled(true);
 
-        if (event.getPacketType() != PacketType.Login.Client.START) {
+        if (event.getPacketType() == PacketType.Login.Client.CUSTOM_PAYLOAD) {
             String address = event.getPlayer().getAddress().toString();
 
             String name = loginAttempts.getIfPresent(address);

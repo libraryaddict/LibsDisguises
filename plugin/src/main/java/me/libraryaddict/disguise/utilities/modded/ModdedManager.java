@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.utilities.listeners.ModdedListener;
 import me.libraryaddict.disguise.utilities.packets.packetlisteners.PacketListenerModdedClient;
 import me.libraryaddict.disguise.utilities.parser.DisguisePerm;
+import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -41,6 +42,11 @@ public class ModdedManager {
 
     public ModdedManager(ArrayList<String> channels) {
         if (getEntities().isEmpty()) {
+            return;
+        }
+
+        // TODO Implement newer forge methods of registering a modded server
+        if (NmsVersion.v1_20_R2.isSupported()) {
             return;
         }
 

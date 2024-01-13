@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.26</lombok.version>
-        <protocollib.version>5.0.0</protocollib.version>
+        <protocollib.version>80aa420</protocollib.version>
         <spigot.version>1.20.3-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
@@ -35,14 +35,8 @@
 
     <dependencyManagement>
         <dependencies>
-            <!--<dependency>
-                 <groupId>com.comphenix.protocol</groupId>
-                 <artifactId>ProtocolLib</artifactId>
-                 <version>${protocollib.version}</version>
-                 <optional>true</optional>
-             </dependency>-->
             <dependency>
-                <groupId>com.comphenix.protocol</groupId>
+                <groupId>com.github.dmulloy2</groupId>
                 <artifactId>ProtocolLib</artifactId>
                 <version>${protocollib.version}</version>
                 <optional>true</optional>

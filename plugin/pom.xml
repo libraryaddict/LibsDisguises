@@ -125,7 +125,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.comphenix.protocol</groupId>
+            <groupId>com.github.dmulloy2</groupId>
             <artifactId>ProtocolLib</artifactId>
         </dependency>
         <dependency>
