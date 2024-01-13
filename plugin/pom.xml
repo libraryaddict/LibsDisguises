@@ -109,7 +109,7 @@
                     <relocations>
                         <relocation>
                             <pattern>net.kyori</pattern>
-                            <shadedPattern>ld-shaded.net.kyori</shadedPattern>
+                            <shadedPattern>libsdisg.shaded.net.kyori</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

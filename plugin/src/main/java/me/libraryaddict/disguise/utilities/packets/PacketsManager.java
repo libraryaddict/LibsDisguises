@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketListener;
+import lombok.Getter;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -32,7 +33,9 @@ public class PacketsManager {
     private static PacketListener soundsListener;
     private static boolean soundsListenerEnabled;
     private static PacketListener viewDisguisesListener;
+    @Getter
     private static boolean viewDisguisesListenerEnabled;
+    @Getter
     private static PacketsHandler packetsHandler;
 
     public static void addPacketListeners() {
@@ -64,10 +67,6 @@ public class PacketsManager {
         packetsHandler = new PacketsHandler();
     }
 
-    public static PacketsHandler getPacketsHandler() {
-        return packetsHandler;
-    }
-
     public static boolean isHearDisguisesEnabled() {
         return soundsListenerEnabled;
     }
@@ -77,30 +76,39 @@ public class PacketsManager {
     }
 
     public static void setInventoryListenerEnabled(boolean enabled) {
-        if (inventoryModifierEnabled != enabled) {
-            inventoryModifierEnabled = enabled;
-
-            if (inventoryModifierEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
-            } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListener);
-            }
-
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                Disguise disguise = DisguiseAPI.getDisguise(player, player);
-
-                if (disguise != null) {
-                    if (viewDisguisesListenerEnabled && disguise.isSelfDisguiseVisible() &&
-                        (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
-                        player.updateInventory();
-                    }
-                }
-            }
+        if (inventoryModifierEnabled == enabled) {
+            return;
         }
-    }
 
-    public static boolean isViewDisguisesListenerEnabled() {
-        return viewDisguisesListenerEnabled;
+        inventoryModifierEnabled = enabled;
+
+        if (inventoryModifierEnabled) {
+            ProtocolLibrary.getProtocolManager().addPacketListener(inventoryListener);
+        } else {
+            ProtocolLibrary.getProtocolManager().removePacketListener(inventoryListener);
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Disguise disguise = DisguiseAPI.getDisguise(player, player);
+
+            if (disguise == null) {
+                continue;
+            }
+
+            if (!isViewDisguisesListenerEnabled()) {
+                continue;
+            }
+
+            if (!disguise.isSelfDisguiseVisible()) {
+                continue;
+            }
+
+            if (!(disguise.isHideArmorFromSelf() || disguise.isHideHeldItemFromSelf())) {
+                continue;
+            }
+
+            player.updateInventory();
+        }
     }
 
     public static void setHearDisguisesListener(boolean enabled) {
@@ -191,32 +199,36 @@ public class PacketsManager {
     }
 
     public static void setViewDisguisesListener(boolean enabled) {
-        if (viewDisguisesListenerEnabled != enabled) {
-            viewDisguisesListenerEnabled = enabled;
+        if (viewDisguisesListenerEnabled == enabled) {
+            return;
+        }
 
-            if (viewDisguisesListenerEnabled) {
-                ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+        viewDisguisesListenerEnabled = enabled;
+
+        if (viewDisguisesListenerEnabled) {
+            ProtocolLibrary.getProtocolManager().addPacketListener(viewDisguisesListener);
+        } else {
+            ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Disguise disguise = DisguiseAPI.getDisguise(player, player);
+
+            if (disguise == null || !disguise.isSelfDisguiseVisible()) {
+                continue;
+            }
+
+            if (enabled) {
+                DisguiseUtilities.setupFakeDisguise(disguise);
             } else {
-                ProtocolLibrary.getProtocolManager().removePacketListener(viewDisguisesListener);
+                DisguiseUtilities.removeSelfDisguise(disguise);
             }
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                Disguise disguise = DisguiseAPI.getDisguise(player, player);
-
-                if (disguise != null) {
-                    if (disguise.isSelfDisguiseVisible()) {
-                        if (enabled) {
-                            DisguiseUtilities.setupFakeDisguise(disguise);
-                        } else {
-                            DisguiseUtilities.removeSelfDisguise(disguise);
-                        }
-
-                        if (inventoryModifierEnabled && (disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
-                            player.updateInventory();
-                        }
-                    }
-                }
+            if (!inventoryModifierEnabled || !(disguise.isHidingArmorFromSelf() || disguise.isHidingHeldItemFromSelf())) {
+                continue;
             }
+
+            player.updateInventory();
         }
     }
 }
