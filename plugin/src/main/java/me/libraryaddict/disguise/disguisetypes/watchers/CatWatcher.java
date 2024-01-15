@@ -39,6 +39,7 @@ public class CatWatcher extends TameableWatcher {
         if (NmsVersion.v1_19_R1.isSupported()) {
             setData(MetaIndex.CAT_TYPE_NEW, type);
             sendData(MetaIndex.CAT_TYPE_NEW);
+            return;
         }
 
         setData(MetaIndex.CAT_TYPE, type.ordinal());
