@@ -542,18 +542,27 @@ public class DisguiseListener implements Listener {
             DisguiseUtilities.doBoundingBox((TargetedDisguise) disguise);
         }
 
-        if (DisguiseConfig.isStopShulkerDisguisesFromMoving()) {
-            Disguise disguise;
+        Disguise disguise = DisguiseAPI.getDisguise(event.getPlayer());
 
-            if ((disguise = DisguiseAPI.getDisguise(event.getPlayer())) != null) {
-                if (disguise.getType() == DisguiseType.SHULKER) { // Stop Shulker disguises from moving their coordinates
-                    Location from = event.getFrom();
-                    Location to = event.getTo();
+        if (disguise != null) {
+            if (DisguiseConfig.isStopShulkerDisguisesFromMoving() &&
+                disguise.getType() == DisguiseType.SHULKER) { // Stop Shulker disguises from moving their coordinates
+                Location from = event.getFrom();
+                Location to = event.getTo();
 
-                    to.setX(from.getX());
-                    to.setZ(from.getZ());
+                to.setX(from.getX());
+                to.setZ(from.getZ());
 
-                    event.setTo(to);
+                event.setTo(to);
+            } else if (disguise.getType() == DisguiseType.LLAMA_SPIT) {
+                Location from = event.getFrom();
+                Location to = event.getTo();
+
+                // Llama spit disappears when it encounters a solid
+                if (Math.min(from.getY(), to.getY()) >= from.getWorld().getMinHeight() && Math.max(from.getY(), to.getY()) < from.getWorld().getMaxHeight()) {
+                    if (!from.getBlock().isEmpty() && to.getBlock().isEmpty()) {
+                        DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
+                    }
                 }
             }
         }
