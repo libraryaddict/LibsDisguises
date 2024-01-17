@@ -696,11 +696,6 @@ public class DisguiseUtilities {
         // We're connecting to jenkins's API for ProtocolLib
         URL url = new URL("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/build/libs/ProtocolLib.jar");
 
-        // Bad workaround for failing jenkins
-        if (ReflectionManager.getVersion() == NmsVersion.v1_20_R3) {
-            url = new URL("https://ci.dmulloy2.net/job/ProtocolLib//lastBuild/artifact/build/libs/ProtocolLib.jar");
-        }
-
         // Creating a connection
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestProperty("User-Agent", "libraryaddict/LibsDisguises");
