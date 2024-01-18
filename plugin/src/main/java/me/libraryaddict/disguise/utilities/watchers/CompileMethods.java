@@ -13,6 +13,7 @@ import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import me.libraryaddict.disguise.utilities.sounds.DisguiseSoundEnums;
 import me.libraryaddict.disguise.utilities.sounds.SoundGroup;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,31 +43,45 @@ public class CompileMethods {
     public static void main(String[] args) {
         doMethods();
         doSounds();
+        doFileCount();
+    }
+
+    public static String[] ignoredDirectories() {
+        return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
+            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class"};
+    }
+
+    private static void doFileCount() {
+        File classesFolder = new File("plugin/target/classes");
+
+        int count = getFileCount(classesFolder);
+
+        try {
+            Files.write(new File(classesFolder, "plugin.yml").toPath(), ("\nfile-count: " + count).getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static int getFileCount(File folder) {
+        int count = 0;
+
+        for (File f : folder.listFiles()) {
+            if (f.isFile()) {
+                count++;
+            } else {
+                count += getFileCount(f);
+            }
+        }
+
+        return count;
     }
 
     private static void doSounds() {
         List<String> list = new ArrayList<>();
 
         for (DisguiseSoundEnums e : DisguiseSoundEnums.values()) {
-            StringBuilder sound = new StringBuilder(e.name());
-
-            for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
-                sound.append("/");
-
-                int i = 0;
-
-                for (Map.Entry<String, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
-                    if (entry.getValue() != type) {
-                        continue;
-                    }
-
-                    if (i++ > 0) {
-                        sound.append(",");
-                    }
-
-                    sound.append(entry.getKey());
-                }
-            }
+            StringBuilder sound = getSoundAsString(e);
 
             list.add(sound.toString());
         }
@@ -76,6 +93,30 @@ public class CompileMethods {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @NotNull
+    private static StringBuilder getSoundAsString(DisguiseSoundEnums e) {
+        StringBuilder sound = new StringBuilder(e.name());
+
+        for (SoundGroup.SoundType type : SoundGroup.SoundType.values()) {
+            sound.append("/");
+
+            int i = 0;
+
+            for (Map.Entry<String, SoundGroup.SoundType> entry : e.getSounds().entrySet()) {
+                if (entry.getValue() != type) {
+                    continue;
+                }
+
+                if (i++ > 0) {
+                    sound.append(",");
+                }
+
+                sound.append(entry.getKey());
+            }
+        }
+        return sound;
     }
 
     private static void addClass(ArrayList<Class> classes, Class c) {

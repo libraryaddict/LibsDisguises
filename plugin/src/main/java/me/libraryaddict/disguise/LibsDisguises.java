@@ -1,6 +1,7 @@
 package me.libraryaddict.disguise;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.libraryaddict.disguise.commands.LibsDisguisesCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseCommand;
 import me.libraryaddict.disguise.commands.disguise.DisguiseEntityCommand;
@@ -38,6 +39,7 @@ import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.sounds.SoundManager;
 import me.libraryaddict.disguise.utilities.updates.UpdateChecker;
+import me.libraryaddict.disguise.utilities.watchers.CompileMethods;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -147,6 +149,7 @@ public class LibsDisguises extends JavaPlugin {
         }
     }
 
+    @SneakyThrows
     @Override
     public void onEnable() {
         try {
@@ -191,6 +194,12 @@ public class LibsDisguises extends JavaPlugin {
             YamlConfiguration pluginYml = ReflectionManager.getPluginYAML(getFile());
             buildNumber = StringUtils.stripToNull(pluginYml.getString("build-number"));
             buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
+
+            int fileCount = ReflectionManager.getJarFileCount(getFile(), CompileMethods.ignoredDirectories());
+
+            if (fileCount != pluginYml.getInt("file-count")) {
+                getLogger().severe("Lib's Disguises may be infected by malware by a third party, please redownload from a trusted source such as SpigotMC");
+            }
 
             getLogger().info("File Name: " + getFile().getName());
 

@@ -110,6 +110,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -469,6 +470,34 @@ public class ReflectionManager {
         }
 
         return null;
+    }
+
+    public static int getJarFileCount(File file, String... ignoredDirectories) throws IOException {
+        try (JarFile jar = new JarFile(file)) {
+            int count = 0;
+
+            Enumeration<JarEntry> entry = jar.entries();
+
+            loop:
+            while (entry.hasMoreElements()) {
+                JarEntry element = entry.nextElement();
+
+                if (element.isDirectory()) {
+                    continue;
+                }
+
+                for (String ignored : ignoredDirectories) {
+                    if (!element.getName().startsWith(ignored)) {
+                        continue;
+                    }
+
+                    continue loop;
+                }
+                count++;
+            }
+
+            return count;
+        }
     }
 
     @SneakyThrows
