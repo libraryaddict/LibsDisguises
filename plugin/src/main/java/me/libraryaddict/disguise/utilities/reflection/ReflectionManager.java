@@ -215,6 +215,26 @@ public class ReflectionManager {
                 ReflectionManager.getNmsClass("EntityPlayer"));
 
             if (nmsReflection != null) {
+                sessionService = nmsReflection.getMinecraftSessionService();
+            } else {
+                Object minecraftServer = getMinecraftServer();
+
+                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                    if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                        continue;
+                    }
+
+                    sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
+                    break;
+                }
+            }
+
+            try {
+                fillProfileProperties = sessionService.getClass().getMethod("fillProfileProperties", GameProfile.class, boolean.class);
+            } catch (Exception ignored) {
+            }
+
+            if (nmsReflection != null) {
                 return;
             }
 
@@ -321,29 +341,6 @@ public class ReflectionManager {
                 soundCategories.put((String) soundCategoryMethod.invoke(anEnum), anEnum);
             }
 
-            if (nmsReflection != null) {
-                sessionService = nmsReflection.getMinecraftSessionService();
-            } else {
-                Object minecraftServer = getMinecraftServer();
-
-                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                    if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                        continue;
-                    }
-
-                    sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
-                    break;
-                }
-            }
-
-            for (Method m : sessionService.getClass().getMethods()) {
-                if (!m.getName().equals("fillProfileProperties")) {
-                    continue;
-                }
-
-                fillProfileProperties = m;
-                break;
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
