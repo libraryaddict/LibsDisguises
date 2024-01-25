@@ -197,6 +197,7 @@ public class ReflectionManager {
     private static Method clearEntityTracker;
     private static Method addEntityTracker;
     private static Method fillProfileProperties;
+    private static MinecraftSessionService sessionService;
 
     public static void init() {
         try {
@@ -314,10 +315,34 @@ public class ReflectionManager {
                 break;
             }
 
-            Method method = getNmsMethod("SoundCategory", "a");
+            Method soundCategoryMethod = getNmsMethod("SoundCategory", "a");
 
             for (Enum anEnum : (Enum[]) getNmsClass("SoundCategory").getEnumConstants()) {
-                soundCategories.put((String) method.invoke(anEnum), anEnum);
+                soundCategories.put((String) soundCategoryMethod.invoke(anEnum), anEnum);
+            }
+
+            if (nmsReflection != null) {
+                sessionService = nmsReflection.getMinecraftSessionService();
+            } else {
+                Object minecraftServer = getMinecraftServer();
+
+                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
+                    if (!method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
+                        continue;
+                    }
+
+                    sessionService = (MinecraftSessionService) method.invoke(minecraftServer);
+                    break;
+                }
+            }
+
+            for (Method m : sessionService.getClass().getMethods()) {
+                if (!m.getName().equals("fillProfileProperties")) {
+                    continue;
+                }
+
+                fillProfileProperties = m;
+                break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -371,15 +396,6 @@ public class ReflectionManager {
             trackerField = getNmsField("WorldServer", "tracker");
             entitiesField = getNmsField("EntityTracker", "trackedEntities");
             ihmGet = getNmsMethod("IntHashMap", "get", int.class);
-        }
-
-        for (Method m : MinecraftSessionService.class.getMethods()) {
-            if (!m.getName().equals("fillProfileProperties")) {
-                continue;
-            }
-
-            fillProfileProperties = m;
-            break;
         }
     }
 
@@ -1300,25 +1316,11 @@ public class ReflectionManager {
 
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         try {
-            MinecraftSessionService service = null;
-
-            if (nmsReflection != null) {
-                service = nmsReflection.getMinecraftSessionService();
-            } else {
-                Object minecraftServer = getMinecraftServer();
-
-                for (Method method : getNmsClass("MinecraftServer").getMethods()) {
-                    if (method.getReturnType().getSimpleName().equals("MinecraftSessionService")) {
-                        service = (MinecraftSessionService) method.invoke(minecraftServer);
-                    }
-                }
-            }
-
             if (fillProfileProperties == null) {
-                return WrappedGameProfile.fromHandle(service.fetchProfile(gameProfile.getUUID(), true).profile());
+                return WrappedGameProfile.fromHandle(sessionService.fetchProfile(gameProfile.getUUID(), true).profile());
             }
 
-            return WrappedGameProfile.fromHandle(fillProfileProperties.invoke(service, gameProfile.getHandle(), true));
+            return WrappedGameProfile.fromHandle(fillProfileProperties.invoke(sessionService, gameProfile.getHandle(), true));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
