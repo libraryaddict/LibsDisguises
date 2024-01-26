@@ -509,6 +509,7 @@ public class ReflectionManager {
 
                     continue loop;
                 }
+
                 count++;
             }
 

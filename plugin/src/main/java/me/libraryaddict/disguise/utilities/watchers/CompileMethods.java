@@ -48,7 +48,7 @@ public class CompileMethods {
 
     public static String[] ignoredDirectories() {
         return new String[]{"META-INF/", "libsdisg/", "me/libraryaddict/disguise/utilities/reflection/v",
-            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class"};
+            "me/libraryaddict/disguise/utilities/reflection/ReflectionManagerAbstract.class", "fernflower_"};
     }
 
     private static void doFileCount() {
