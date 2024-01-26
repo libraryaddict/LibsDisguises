@@ -122,11 +122,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class ReflectionManager {
     private static final HashMap<String, Enum> soundCategories = new HashMap<>();
-    private static String bukkitVersion;
+    private static String craftbukkitVersion;
     private static Method itemAsCraftCopyMethod;
     private static Method itemAsNmsCopyMethod;
     private static Method damageAndIdleSoundMethod;
@@ -198,6 +200,7 @@ public class ReflectionManager {
     private static Method addEntityTracker;
     private static Method fillProfileProperties;
     private static MinecraftSessionService sessionService;
+    private static String minecraftVersion;
 
     public static void init() {
         try {
@@ -217,6 +220,8 @@ public class ReflectionManager {
             if (nmsReflection != null) {
                 sessionService = nmsReflection.getMinecraftSessionService();
             } else {
+                getServerMethod = getCraftMethod("CraftServer", "getServer");
+
                 Object minecraftServer = getMinecraftServer();
 
                 for (Method method : getNmsClass("MinecraftServer").getMethods()) {
@@ -254,7 +259,6 @@ public class ReflectionManager {
             itemAsNmsCopyMethod = getCraftMethod(craftItemClass, "asNMSCopy", ItemStack.class);
             itemAsBukkitMethod = getCraftMethod(craftItemClass, "asBukkitCopy", getNmsClass("ItemStack"));
 
-            getServerMethod = getCraftMethod("CraftServer", "getServer");
             getEnumArtMethod = getCraftMethod("CraftArt", "BukkitToNotch", Art.class);
             blockPositionConstructor = getNmsConstructor("BlockPosition", int.class, int.class, int.class);
             enumDirectionMethod = getNmsMethod("EnumDirection", "fromType2", int.class);
@@ -340,7 +344,6 @@ public class ReflectionManager {
             for (Enum anEnum : (Enum[]) getNmsClass("SoundCategory").getEnumConstants()) {
                 soundCategories.put((String) soundCategoryMethod.invoke(anEnum), anEnum);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -850,19 +853,47 @@ public class ReflectionManager {
     }
 
     public static NmsVersion getVersion() {
-        if (version == null) {
-            getBukkitVersion();
+        if (craftbukkitVersion == null) {
+            getCraftBukkitPackage();
         }
 
         return version;
     }
 
-    public static String getBukkitVersion() {
-        if (bukkitVersion == null) {
-            bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    public static String getMinecraftVersion() {
+        if (minecraftVersion == null) {
+            Matcher matcher = Pattern.compile(" \\(MC: ([^)]+?)\\)").matcher(Bukkit.getVersion());
+
+            if (!matcher.find()) {
+                throw new IllegalStateException("Lib's Disguises is unable to find and parse a ` (MC: 1.10.1)` version in Bukkit.getVersion()");
+            }
+
+            minecraftVersion = matcher.group(1);
+        }
+
+        return minecraftVersion;
+    }
+
+    @Deprecated
+    public static String getNmsPackage() {
+        String cbPackage = craftbukkitVersion;
+        String[] spl = cbPackage.split("\\.");
+
+        if (spl.length != 4) {
+            return "";
+        }
+
+        return spl[3];
+    }
+
+    public static String getCraftBukkitPackage() {
+        if (craftbukkitVersion == null) {
+            craftbukkitVersion = Bukkit.getServer().getClass().getPackage().getName();
+
+            String mcVersion = getMinecraftVersion();
 
             for (NmsVersion v : NmsVersion.values()) {
-                if (!getBukkitVersion().startsWith(v.name())) {
+                if (!v.isMinecraftVersion(mcVersion)) {
                     continue;
                 }
 
@@ -870,7 +901,7 @@ public class ReflectionManager {
             }
         }
 
-        return bukkitVersion;
+        return craftbukkitVersion;
     }
 
     public static Class<?> getCraftClass(String className) {
@@ -1839,12 +1870,6 @@ public class ReflectionManager {
         }
 
         return null;
-    }
-
-    public static String getMinecraftVersion() {
-        String version = Bukkit.getVersion();
-        version = version.substring(version.lastIndexOf(" ") + 1, version.length() - 1);
-        return version;
     }
 
     public static WrappedDataWatcherObject createDataWatcherObject(MetaIndex index, Object value) {

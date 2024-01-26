@@ -74,8 +74,16 @@ public class ClassMappings {
             "net.minecraft.world.level.block.state", "net.minecraft.world.level", "net.minecraft.world.phys", "org.bukkit.craftbukkit.$version$.block.data",
             "org.bukkit.craftbukkit.$version$", "org.bukkit.craftbukkit.$version$.entity", "org.bukkit.craftbukkit.$version$.inventory",
             "org.bukkit.craftbukkit.$version$.util"};
+        String replaceStr = "$version$";
+        String version = ReflectionManager.getNmsPackage();
+
+        // If there is no nms package, then replace the . as well so we don't have a "org.bukkit..server" package name situation
+        if (version.isEmpty()) {
+            replaceStr = "." + replaceStr;
+        }
+
         for (int i = 0; i < s.length; i++) {
-            s[i] = s[i].replace("$version$", ReflectionManager.getBukkitVersion());
+            s[i] = s[i].replace(replaceStr, version);
         }
 
         return s;

@@ -205,7 +205,14 @@ public class LibsDisguises extends JavaPlugin {
 
             getLogger().info("File Name: " + getFile().getName());
 
-            getLogger().info("Discovered nms version: " + ReflectionManager.getBukkitVersion() + " (" + ReflectionManager.getVersion() + ")");
+            String nmsPackageName = ReflectionManager.getNmsPackage();
+
+            if (nmsPackageName.isEmpty()) {
+                nmsPackageName = "{Not package relocated}";
+            }
+
+            getLogger().info("Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " +
+                ReflectionManager.getMinecraftVersion() + ")");
 
             getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
@@ -222,8 +229,8 @@ public class LibsDisguises extends JavaPlugin {
 
             if (ReflectionManager.getVersion() == null) {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " + StringUtils.join(
-                    Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(v -> v.name().replace("_", "."))
-                        .collect(Collectors.toList()), " & ") + "!");
+                    Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(v -> String.join(", ", v.getSupportedVersions()))
+                        .collect(Collectors.toList()), ", ") + "!");
                 getPluginLoader().disablePlugin(this);
                 return;
             }
