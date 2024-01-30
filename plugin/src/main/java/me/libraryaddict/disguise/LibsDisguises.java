@@ -200,7 +200,8 @@ public class LibsDisguises extends JavaPlugin {
             if (fileCount != pluginYml.getInt("file-count", fileCount)) {
                 getLogger().severe(
                     "Lib's Disguises may be infected with malware, please redownload from a trusted source such as SpigotMC. If this warning shows even after" +
-                        " updating, please contact libraryaddict on discord https://discord.gg/J5XRqYX");
+                        " updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ otherwise if that doesn't help then please contact " +
+                        "libraryaddict on discord https://discord.gg/J5XRqYX");
             }
 
             getLogger().info("File Name: " + getFile().getName());
