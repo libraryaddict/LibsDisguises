@@ -38,12 +38,13 @@ public class BisectHosting {
         }
 
         if (claimedHosted != hostedBy || !DisguiseConfig.getSavedServerIp().equals(parsedIP)) {
-            DisguiseConfig.setBisectHosted(hostedBy, Bukkit.getIp());
+            DisguiseConfig.setBisectHosted(hostedBy, parsedIP);
         }
 
         if (!hostedBy && !DisguiseConfig.getSavedServerIp().equals("")) {
             // Just a small message for those who tried to enable it
             LibsDisguises.getInstance().getLogger().severe("Check for BisectHosting failed! Connection error?");
+            DisguiseConfig.setBisectHosted(hostedBy, parsedIP);
         }
 
         return hostedBy;
