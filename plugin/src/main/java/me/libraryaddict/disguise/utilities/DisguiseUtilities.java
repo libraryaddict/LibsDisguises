@@ -2094,7 +2094,7 @@ public class DisguiseUtilities {
             if (entityTrackerEntry != null) {
 
                 // TODO Store reflection fields
-                // If the tracker exists. Remove himself from his tracker
+                // If the tracker exists. Remove the player from their tracker
                 if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
                     ReflectionManager.getTrackedPlayers(entityTrackerEntry).remove(ReflectionManager.getPlayerConnectionOrPlayer(player));
                 } else {
@@ -2612,7 +2612,7 @@ public class DisguiseUtilities {
             // TODO Store reflection fields
             // Check for code differences in PaperSpigot vs Spigot
             if (!isRunningPaper() || NmsVersion.v1_17.isSupported()) {
-                // Add himself to his own entity tracker
+                // Add the player to their own entity tracker
                 ReflectionManager.getTrackedPlayers(entityTrackerEntry).add(ReflectionManager.getPlayerConnectionOrPlayer(player));
             } else {
                 Field field = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
@@ -2899,7 +2899,7 @@ public class DisguiseUtilities {
     }
 
     /**
-     * Setup it so he can see himself when disguised
+     * Setup it so he can see their own disguise when disguised
      *
      * @param disguise
      */
@@ -2921,7 +2921,7 @@ public class DisguiseUtilities {
         // Remove the old disguise, else we have weird disguises around the place
         DisguiseUtilities.removeSelfDisguise(disguise);
 
-        // If the disguised player can't see himself. Return
+        // If the disguised player can't see themselves. Return
         if (!disguise.isSelfDisguiseVisible() || !PacketsManager.isViewDisguisesListenerEnabled() || player.getVehicle() != null) {
             return;
         }

@@ -489,7 +489,7 @@ public class DisguiseAPI {
     }
 
     /**
-     * Set whether this player can see his own disguise or not.
+     * Set whether this player can see their own disguise or not.
      *
      * @param entity
      * @param canSeeSelfDisguises

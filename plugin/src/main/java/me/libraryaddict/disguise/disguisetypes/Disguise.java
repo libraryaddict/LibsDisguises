@@ -655,7 +655,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Can the disguised view himself as the disguise
+     * Can the disguised view themselves as the disguise
      *
      * @return viewSelfDisguise
      */
@@ -869,7 +869,7 @@ public abstract class Disguise {
     }
 
     /**
-     * Can the disguised view himself as the disguise
+     * Can the disguised view themselves as the disguise
      *
      * @param viewSelfDisguise
      * @return
@@ -1009,7 +1009,7 @@ public abstract class Disguise {
         // Resend the disguised entity's packet
         DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
 
-        // If he is a player, then self disguise himself
+        // Setup a scheduler for a self disguise
         Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
