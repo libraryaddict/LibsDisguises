@@ -30,15 +30,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Setter
 public class LibsPackets {
+    @Getter
     private final ArrayList<PacketContainer> packets = new ArrayList<>();
     private final HashMap<Integer, ArrayList<PacketContainer>> delayedPacketsMap = new HashMap<>();
+    @Getter
     private final Disguise disguise;
     private boolean unhandled;
     private boolean skinHandling;
-
-    public Disguise getDisguise() {
-        return disguise;
-    }
 
     public void addPacket(PacketContainer packet) {
         packets.add(packet);
@@ -58,10 +56,6 @@ public class LibsPackets {
         }
 
         delayedPacketsMap.get(ticksDelayed).add(packet);
-    }
-
-    public ArrayList<PacketContainer> getPackets() {
-        return packets;
     }
 
     public void sendDelayed(final Player observer) {

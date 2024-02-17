@@ -445,6 +445,12 @@ public class PacketHandlerSpawn implements IPacketHandler {
                 packets.addDelayedPacket(packet);
             }
         }
+
+        if (disguisedEntity != observer && observer.getSpectatorTarget() == disguisedEntity) {
+            PacketContainer camera = new PacketContainer(PacketType.Play.Server.CAMERA);
+            camera.getIntegers().write(0, disguisedEntity.getEntityId());
+            packets.addPacket(camera);
+        }
     }
 
     private static PacketContainer constructLivingPacket(Player observer, LibsPackets packets, Entity disguisedEntity, Location loc, byte pitch, byte yaw) {
