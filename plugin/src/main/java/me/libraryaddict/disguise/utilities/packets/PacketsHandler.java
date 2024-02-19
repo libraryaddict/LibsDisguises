@@ -51,7 +51,7 @@ public class PacketsHandler {
         }
 
         packetHandlers.add(new PacketHandlerMovement());
-        packetHandlers.add(new PacketHandlerSpawn(this));
+        packetHandlers.add(new PacketHandlerSpawn());
         packetHandlers.add(new PacketHandlerVelocity());
     }
 

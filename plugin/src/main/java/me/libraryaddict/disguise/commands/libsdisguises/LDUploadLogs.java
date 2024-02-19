@@ -142,8 +142,7 @@ public class LDUploadLogs implements LDCommand {
         }
 
         if (isTooBig(latest)) {
-            sender.sendMessage(
-                ChatColor.RED + "Your latest.log file is too big! It should be less than 10mb! Please restart and run this " + "command again!");
+            sender.sendMessage(ChatColor.RED + "Your latest.log file is too big! It should be less than 10mb! Please restart and run this " + "command again!");
             return;
         }
 

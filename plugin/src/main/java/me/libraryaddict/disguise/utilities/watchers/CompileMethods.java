@@ -153,7 +153,7 @@ public class CompileMethods {
                     continue;
                 } else if (method.getName().equals("removePotionEffect")) {
                     continue;
-                } else if (LibsPremium.isPremium() && new Random().nextBoolean()) {
+                } else if ((LibsPremium.isPremium() || !LibsPremium.getUserID().contains("%")) && new Random().nextBoolean()) {
                     continue;
                 }
 

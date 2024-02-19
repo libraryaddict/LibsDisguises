@@ -23,7 +23,6 @@ import me.libraryaddict.disguise.utilities.LibsPremium;
 import me.libraryaddict.disguise.utilities.listeners.PlayerSkinHandler;
 import me.libraryaddict.disguise.utilities.packets.IPacketHandler;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
-import me.libraryaddict.disguise.utilities.packets.PacketsHandler;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
 import me.libraryaddict.disguise.utilities.reflection.ReflectionManager;
 import me.libraryaddict.disguise.utilities.reflection.WatcherValue;
@@ -47,12 +46,6 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerSpawn implements IPacketHandler {
-    private final PacketsHandler packetsHandler;
-
-    public PacketHandlerSpawn(PacketsHandler packetsHandler) {
-        this.packetsHandler = packetsHandler;
-    }
-
     @Override
     public PacketType[] getHandledPackets() {
         List<PacketType> packets = new ArrayList<>();

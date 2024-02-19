@@ -1045,14 +1045,14 @@ public class FlagWatcher {
         }
     }
 
+    public int getTicksFrozen() {
+        return getData(MetaIndex.ENTITY_TICKS_FROZEN);
+    }
+
     @NmsAddedIn(NmsVersion.v1_17)
     public void setTicksFrozen(int ticksFrozen) {
         setData(MetaIndex.ENTITY_TICKS_FROZEN, ticksFrozen);
         sendData(MetaIndex.ENTITY_TICKS_FROZEN);
-    }
-
-    public int getTicksFrozen() {
-        return getData(MetaIndex.ENTITY_TICKS_FROZEN);
     }
 
     @Deprecated

@@ -24,7 +24,7 @@ public class PaperDisguiseListener implements Listener {
 
         Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
 
-        if (disguises.length <= 0) {
+        if (disguises.length == 0) {
             return;
         }
 
@@ -46,7 +46,7 @@ public class PaperDisguiseListener implements Listener {
 
         Disguise[] disguises = DisguiseAPI.getDisguises(entity);
 
-        if (disguises.length <= 0) {
+        if (disguises.length == 0) {
             return;
         }
 

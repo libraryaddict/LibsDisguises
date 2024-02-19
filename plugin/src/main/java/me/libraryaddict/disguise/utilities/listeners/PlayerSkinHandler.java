@@ -45,16 +45,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlayerSkinHandler implements Listener {
     @RequiredArgsConstructor
+    @Getter
     public static class PlayerSkin {
         private final long firstPacketSent = System.currentTimeMillis();
-        @Getter
         private final WeakReference<PlayerDisguise> disguise;
-        @Getter
         private final HashMap<Integer, ArrayList<PacketContainer>> sleptPackets = new HashMap<>();
-        @Getter
         @Setter
         private boolean doTabList = true;
-        @Getter
         @Setter
         private boolean sleepPackets;
 

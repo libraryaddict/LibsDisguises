@@ -81,7 +81,7 @@ public class LibsPremium {
     private static boolean isValidVersion(String currentVersion, String premiumVersion) {
         currentVersion = currentVersion.replaceAll("(v)|(-SNAPSHOT)", "");
 
-        // Premium version must be using an accepted versioning system
+        /* Premium version must be using an accepted versioning system */
         if (!premiumVersion.matches("\\d+(\\.\\d+)+")) {
             return false;
         }
@@ -90,31 +90,28 @@ public class LibsPremium {
             return false;
         }
 
-        // If current version is not a number version, then the premium version cannot be checked
+        /* If current version is not a number version, then the premium version cannot be checked */
         if (!currentVersion.matches("\\d+(\\.\\d+)+")) {
-            // Return true as the rest of the version check cannot be used
+            /* Return true as the rest of the version check cannot be used */
             return true;
         }
 
-        // Split by decimal points
+        /* Split by decimal points */
         String[] currentSplit = currentVersion.split("\\.");
         String[] premSplit = premiumVersion.split("\\.");
 
-        // Comparing major versions
-        // Current version must be the same, or lower than premium version
+        /* Comparing major versions
+        Current version must be the same, or lower than premium version */
         return Integer.parseInt(currentSplit[0]) <= Integer.parseInt(premSplit[0]);
-
-        // Snapshot must be of current version
-        //return premiumVersion.equals(currentVersion);
     }
 
     public static PluginInformation getInformation(File file) throws Exception {
         try (URLClassLoader cl = new URLClassLoader(new URL[]{file.toURI().toURL()})) {
             Class c = cl.loadClass(LibsPremium.class.getName());
 
-            // Fetch the plugin.yml from the jar file
+            /* Fetch the plugin.yml from the jar file */
             YamlConfiguration config = ReflectionManager.getPluginYAMLEx(file);
-            // No checks for null config as the correct error will be thrown on access
+            /* No checks for null config as the correct error will be thrown on access */
 
             String userId = (String) c.getMethod("getUserID").invoke(null);
             String downloadId = (String) c.getMethod("getDownloadID").invoke(null);
@@ -123,18 +120,18 @@ public class LibsPremium {
 
             String pluginBuildDate = "??/??/????";
 
-            // If plugin.yml contains a build-date
+            /* If plugin.yml contains a build-date */
             if (config.contains("build-date")) {
                 pluginBuildDate = config.getString("build-date");
             }
 
             String pluginBuildNumber = "???";
 
-            // If plugin.yml contains a jenkins build number
+            /* If plugin.yml contains a jenkins build number */
             if (config.contains("build-number")) {
                 pluginBuildNumber = config.getString("build-number");
 
-                // If build number is composed of purely numbers, prepend with # for readability
+                /* If build number is composed of purely numbers, prepend with # for readability */
                 if (pluginBuildNumber.matches("\\d+")) {
                     pluginBuildNumber = "#" + pluginBuildNumber;
                 }
@@ -182,8 +179,8 @@ public class LibsPremium {
                 continue;
             }
 
-            // Format into a string
-            // v5.2.6, build #40, created 16/02/2019
+            /* Format into a string
+            v5.2.6, build #40, created 16/02/2019 */
             String fileInfo = String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(), plugin.getBuildDate());
 
             if (plugin.isPremium()) {
@@ -198,11 +195,10 @@ public class LibsPremium {
                 paidInformation = plugin;
 
                 thisPluginIsPaidFor = true;
-                // Found a premium Lib's Disguises jar (v5.2.6, build #40, created 16/02/2019)
+                /* Found a premium Lib's Disguises jar (v5.2.6, build #40, created 16/02/2019) */
                 DisguiseUtilities.getLogger().info("Found a premium Lib's Disguises jar (" + fileInfo + ")");
                 DisguiseUtilities.getLogger().info("Registered to: " + getSanitizedUser(plugin.getUserID()));
 
-                // >.>
                 if (plugin.getBuildNumber() == null || !plugin.getBuildNumber().matches("#\\d+") ||
                     Integer.parseInt(plugin.getBuildNumber().substring(1)) < 300) {
                     file.delete();
@@ -210,8 +206,8 @@ public class LibsPremium {
                 }
                 break;
             } else {
-                // You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
-                // 16/02/2019) in the LibsDisguises folder!
+                /* You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
+                 16/02/2019) in the LibsDisguises folder! */
                 DisguiseUtilities.getLogger()
                     .warning("You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
                 DisguiseUtilities.getLogger()
@@ -268,7 +264,7 @@ public class LibsPremium {
                     config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n")));
                 }
 
-                // If plugin.yml contains a build-date
+                /* If plugin.yml contains a build-date */
                 if (config.contains("build-date")) {
                     pluginBuildDate = config.getString("build-date");
                 }
@@ -293,7 +289,7 @@ public class LibsPremium {
 
             boolean foundBetter = false;
 
-            // Lets not do any sanity checks since it won't affect legit users
+            /* Let's not do any sanity checks since it won't affect legit users */
             for (File f : LibsDisguises.getInstance().getDataFolder().listFiles()) {
                 if (f.isDirectory() || !f.getName().endsWith(".jar")) {
                     continue;

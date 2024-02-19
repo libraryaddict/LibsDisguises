@@ -23,3 +23,9 @@ Please make sure you<br>
 
 Verify that there were no error messages while Lib's Disguises was loading, that you're using the appropiate version of <a href="https://www.spigotmc.org/resources/protocollib.1997/">ProtocolLib</a>.
 If you're using the development builds of Lib's Disguises, make sure you are up to date before reporting a bug.
+
+Important Note
+=============
+
+This project does not give permission to modify or bypass code that limits features to paying customers.
+Especially not to publish said code.
