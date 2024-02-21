@@ -108,8 +108,9 @@ public class FlagWatcher {
             return;
         }
 
-        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
-            .createPacket(getDisguise().getEntity());
+        PacketContainer packet =
+            ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
+                .createPacket(getDisguise().getEntity());
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -127,8 +128,9 @@ public class FlagWatcher {
             return;
         }
 
-        PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
-            .createPacket(getDisguise().getEntity());
+        PacketContainer packet =
+            ProtocolLibrary.getProtocolManager().createPacketConstructor(Server.ENTITY_TELEPORT, getDisguise().getEntity())
+                .createPacket(getDisguise().getEntity());
 
         for (Player player : DisguiseUtilities.getPerverts(getDisguise())) {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
@@ -891,7 +893,8 @@ public class FlagWatcher {
 
             Object value = entityValues.get(data.getIndex());
 
-            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() && (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
+            if (isEntityAnimationsAdded() && DisguiseConfig.isMetaPacketsEnabled() &&
+                (data == MetaIndex.ENTITY_META || data == MetaIndex.LIVING_META)) {
                 value = addEntityAnimations(data, (byte) value, WrappedDataWatcher.getEntityWatcher(disguise.getEntity()).getByte(0));
             }
 
@@ -1070,7 +1073,8 @@ public class FlagWatcher {
         }
 
         if (id.getIndex() == -1) {
-            throw new IllegalArgumentException("You can't do that in this version of Minecraft! I can't use " + MetaIndex.getName(id) + "!");
+            throw new IllegalArgumentException("You can't do that in this version of Minecraft! I can't use " + MetaIndex.getName(id) +
+                "! This error shouldn't be seen if you're disguising via Lib's Disguises's commands, if this is the case then it's likely a bug.");
         }
 
         if (value == null && id.getDefault() instanceof ItemStack) {
