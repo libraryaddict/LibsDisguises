@@ -4,6 +4,7 @@ import me.libraryaddict.disguise.disguisetypes.AnimalColor;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.MetaIndex;
 import me.libraryaddict.disguise.utilities.reflection.NmsVersion;
+import me.libraryaddict.disguise.utilities.reflection.annotations.NmsAddedIn;
 import me.libraryaddict.disguise.utilities.reflection.annotations.NmsRemovedIn;
 import org.bukkit.DyeColor;
 
@@ -45,19 +46,26 @@ public class WolfWatcher extends TameableWatcher {
     }
 
     public boolean isAngry() {
+        if (!NmsVersion.v1_16.isSupported()) {
+            return isTameableFlag(2);
+        }
+
         return getAnger() > 0;
-        //return isTameableFlag(2);
     }
 
     public void setAngry(boolean angry) {
-        setAnger(angry ? 1 : 0);
-        //setTameableFlag(2, angry);
+        if (!NmsVersion.v1_16.isSupported()) {
+            setTameableFlag(2, angry);
+        } else {
+            setAnger(angry ? 1 : 0);
+        }
     }
 
     public int getAnger() {
         return getData(MetaIndex.WOLF_ANGER);
     }
 
+    @NmsAddedIn(NmsVersion.v1_16)
     public void setAnger(int anger) {
         setData(MetaIndex.WOLF_ANGER, anger);
         sendData(MetaIndex.WOLF_ANGER);
