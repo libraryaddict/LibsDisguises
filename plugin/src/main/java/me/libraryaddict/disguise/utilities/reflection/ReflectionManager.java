@@ -195,7 +195,9 @@ public class ReflectionManager {
     private static Field playerInventoryContainer;
     @Getter
     private static ReflectionManagerAbstract nmsReflection;
+    private static Field trackerIsMoving;
     private static Field trackedPlayers;
+    private static Field trackedPlayersMap;
     private static Method clearEntityTracker;
     private static Method addEntityTracker;
     private static Method fillProfileProperties;
@@ -212,10 +214,18 @@ public class ReflectionManager {
             nmsReflection = getReflectionManager(getVersion());
 
             trackedPlayers = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayers");
+
+            if (DisguiseUtilities.isRunningPaper() && !NmsVersion.v1_17.isSupported()) {
+                trackedPlayersMap = ReflectionManager.getNmsField("EntityTrackerEntry", "trackedPlayerMap");
+            }
+
             clearEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "a" : "clear",
                 ReflectionManager.getNmsClass("EntityPlayer"));
             addEntityTracker = ReflectionManager.getNmsMethod("EntityTrackerEntry", NmsVersion.v1_14.isSupported() ? "b" : "updatePlayer",
                 ReflectionManager.getNmsClass("EntityPlayer"));
+            trackerIsMoving = ReflectionManager.getNmsField("EntityTrackerEntry", NmsVersion.v1_20_R2.isSupported() ? "i" :
+                NmsVersion.v1_19_R1.isSupported() ? "p" :
+                    NmsVersion.v1_17.isSupported() ? "r" : NmsVersion.v1_14.isSupported() ? "q" : "isMoving");
 
             if (nmsReflection != null) {
                 sessionService = nmsReflection.getMinecraftSessionService();
@@ -243,13 +253,15 @@ public class ReflectionManager {
                 return;
             }
 
-            boundingBoxConstructor = getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
+            boundingBoxConstructor =
+                getNmsConstructor("AxisAlignedBB", double.class, double.class, double.class, double.class, double.class, double.class);
 
             setBoundingBoxMethod = getNmsMethod("Entity", "a", getNmsClass("AxisAlignedBB"));
 
             entityCountField = getNmsField("Entity", "entityCount");
 
-            mobEffectConstructor = getNmsConstructor("MobEffect", getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE);
+            mobEffectConstructor =
+                getNmsConstructor("MobEffect", getNmsClass("MobEffectList"), Integer.TYPE, Integer.TYPE, Boolean.TYPE, Boolean.TYPE);
             mobEffectList = getNmsMethod("MobEffectList", "fromId", Integer.TYPE);
             boundingBoxMethod = getNmsMethod("Entity", "getBoundingBox");
             bukkitEntityMethod = getNmsMethod("Entity", "getBukkitEntity");
@@ -266,8 +278,8 @@ public class ReflectionManager {
             chatComponentConstructor = getNmsConstructor("ChatComponentText", String.class);
 
             playerInfoConstructor =
-                getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class, int.class,
-                    getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
+                getNmsConstructor("PacketPlayOutPlayerInfo$PlayerInfoData", getNmsClass("PacketPlayOutPlayerInfo"), GameProfile.class,
+                    int.class, getNmsClass("EnumGamemode"), getNmsClass("IChatBaseComponent"));
 
             enumGamemode = (Enum[]) getNmsClass("EnumGamemode").getEnumConstants();
             getNmsEntityMethod = getCraftMethod("CraftEntity", "getHandle");
@@ -296,7 +308,8 @@ public class ReflectionManager {
 
                 if (NmsVersion.v1_14.isSupported()) {
                     registryBlocksGetMethod = getNmsMethod("RegistryBlocks", "get", getNmsClass("MinecraftKey"));
-                    villagerDataConstructor = getNmsConstructor("VillagerData", getNmsClass("VillagerType"), getNmsClass("VillagerProfession"), int.class);
+                    villagerDataConstructor =
+                        getNmsConstructor("VillagerData", getNmsClass("VillagerType"), getNmsClass("VillagerProfession"), int.class);
 
                     villagerProfessionRegistry = getNmsField("IRegistry", "VILLAGER_PROFESSION").get(null);
                     villagerTypeRegistry = getNmsField("IRegistry", "VILLAGER_TYPE").get(null);
@@ -669,27 +682,28 @@ public class ReflectionManager {
                 Object minecraftServer = getNmsMethod("MinecraftServer", "getServer").invoke(null);
                 WrappedGameProfile gameProfile = getGameProfile(new UUID(0, 0), "Steve");
 
-                Object playerinteractmanager =
-                    getNmsClass("PlayerInteractManager").getDeclaredConstructor(getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World"))
-                        .newInstance(world);
+                Object playerinteractmanager = getNmsClass("PlayerInteractManager").getDeclaredConstructor(
+                    getNmsClass(NmsVersion.v1_14.isSupported() ? "WorldServer" : "World")).newInstance(world);
 
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"), gameProfile.getHandleType(),
-                    playerinteractmanager.getClass()).newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
+                entityObject = entityClass.getDeclaredConstructor(getNmsClass("MinecraftServer"), getNmsClass("WorldServer"),
+                        gameProfile.getHandleType(), playerinteractmanager.getClass())
+                    .newInstance(minecraftServer, world, gameProfile.getHandle(), playerinteractmanager);
 
             } else if (entityName.equals("EnderPearl")) {
                 entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityLiving"))
                     .newInstance(world, createEntityInstance(DisguiseType.COW, "Cow"));
             } else if (entityName.equals("FishingHook")) {
                 if (NmsVersion.v1_14.isSupported()) {
-                    entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityHuman"), getNmsClass("World"), int.class, int.class)
-                        .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
+                    entityObject =
+                        entityClass.getDeclaredConstructor(getNmsClass("EntityHuman"), getNmsClass("World"), int.class, int.class)
+                            .newInstance(createEntityInstance(DisguiseType.PLAYER, "Player"), world, 0, 0);
                 } else {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), getNmsClass("EntityHuman"))
                         .newInstance(world, createEntityInstance(DisguiseType.PLAYER, "Player"));
                 }
             } else if (!NmsVersion.v1_14.isSupported() && entityName.equals("Potion")) {
-                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE, getNmsClass("ItemStack"))
-                    .newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
+                entityObject = entityClass.getDeclaredConstructor(getNmsClass("World"), Double.TYPE, Double.TYPE, Double.TYPE,
+                    getNmsClass("ItemStack")).newInstance(world, 0d, 0d, 0d, getNmsItem(new ItemStack(Material.SPLASH_POTION)));
             } else {
                 if (NmsVersion.v1_14.isSupported()) {
                     entityObject = entityClass.getDeclaredConstructor(getNmsClass("EntityTypes"), getNmsClass("World"))
@@ -727,7 +741,8 @@ public class ReflectionManager {
     }
 
     public static Object createMobEffect(PotionEffect effect) {
-        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(),
+            effect.hasParticles());
     }
 
     public static Object createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
@@ -866,7 +881,8 @@ public class ReflectionManager {
             Matcher matcher = Pattern.compile(" \\(MC: ([^)]+?)\\)").matcher(Bukkit.getVersion());
 
             if (!matcher.find()) {
-                throw new IllegalStateException("Lib's Disguises is unable to find and parse a ` (MC: 1.10.1)` version in Bukkit.getVersion()");
+                throw new IllegalStateException(
+                    "Lib's Disguises is unable to find and parse a ` (MC: 1.10.1)` version in Bukkit.getVersion()");
             }
 
             minecraftVersion = matcher.group(1);
@@ -1081,7 +1097,8 @@ public class ReflectionManager {
 
         PacketContainer addTab = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
 
-        addTab.getPlayerInfoAction().write(0, visible ? EnumWrappers.PlayerInfoAction.ADD_PLAYER : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
+        addTab.getPlayerInfoAction()
+            .write(0, visible ? EnumWrappers.PlayerInfoAction.ADD_PLAYER : EnumWrappers.PlayerInfoAction.REMOVE_PLAYER);
         addTab.getPlayerInfoDataLists().write(0, Collections.singletonList(playerInfo));
 
         return addTab;
@@ -1093,17 +1110,20 @@ public class ReflectionManager {
         }
 
         return nmsReflection.getTabListPacket(disguise.getTablistName(), disguise.getGameProfile(), disguise.isDisplayedInTab(),
-            EnumWrappers.PlayerInfoAction.ADD_PLAYER, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME, EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
+            EnumWrappers.PlayerInfoAction.ADD_PLAYER, EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME,
+            EnumWrappers.PlayerInfoAction.UPDATE_LISTED);
     }
 
     public static PacketContainer createTablistPacket(PlayerDisguise disguise, EnumWrappers.PlayerInfoAction action) {
         if (nmsReflection != null) {
-            return nmsReflection.getTabListPacket(disguise.getTablistName(), disguise.getGameProfile(), disguise.isDisplayedInTab(), action);
+            return nmsReflection.getTabListPacket(disguise.getTablistName(), disguise.getGameProfile(), disguise.isDisplayedInTab(),
+                action);
         }
 
         try {
             WrappedGameProfile profile =
-                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(), disguise.getGameProfile());
+                ReflectionManager.getGameProfileWithThisSkin(disguise.getGameProfile().getUUID(), disguise.getProfileName(),
+                    disguise.getGameProfile());
             PlayerInfoData playerInfo = new PlayerInfoData(profile, 0, EnumWrappers.NativeGameMode.fromBukkit(GameMode.SURVIVAL),
                 WrappedChatComponent.fromText(disguise.getGameProfile().getName()));
 
@@ -1159,7 +1179,8 @@ public class ReflectionManager {
             return uuid;
         }
 
-        return new UUID((uuid.getMostSignificantBits() & ~(4 << 12)) | ((long) DisguiseConfig.getUUIDGeneratedVersion() << 12), uuid.getLeastSignificantBits());
+        return new UUID((uuid.getMostSignificantBits() & ~(4 << 12)) | ((long) DisguiseConfig.getUUIDGeneratedVersion() << 12),
+            uuid.getLeastSignificantBits());
     }
 
     private static String getLocation(String pack, String className) {
@@ -1244,6 +1265,11 @@ public class ReflectionManager {
     }
 
     @SneakyThrows
+    public static boolean isEntityTrackerMoving(Object entityTrackerEntry) {
+        return (boolean) trackerIsMoving.get(entityTrackerEntry);
+    }
+
+    @SneakyThrows
     public static void clearEntityTracker(Object tracker, Object player) {
         clearEntityTracker.invoke(tracker, player);
     }
@@ -1251,6 +1277,30 @@ public class ReflectionManager {
     @SneakyThrows
     public static void addEntityTracker(Object tracker, Object player) {
         addEntityTracker.invoke(tracker, player);
+    }
+
+    @SneakyThrows
+    public static void addEntityToTrackedMap(Object tracker, Player player) {
+        Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);
+
+        // Add the player to their own entity tracker
+        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+            ReflectionManager.getTrackedPlayers(tracker).add(nmsEntity);
+        } else {
+            Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(tracker));
+            map.put(nmsEntity, true);
+        }
+    }
+
+    @SneakyThrows
+    public static void removeEntityFromTracked(Object tracker, Player player) {
+        Object nmsEntity = ReflectionManager.getPlayerConnectionOrPlayer(player);
+
+        if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
+            ReflectionManager.getTrackedPlayers(tracker).remove(nmsEntity);
+        } else {
+            ((Map<Object, Object>) ReflectionManager.getTrackedPlayers(tracker)).remove(nmsEntity);
+        }
     }
 
     public static Object getNmsItem(ItemStack itemstack) {
@@ -1388,8 +1438,8 @@ public class ReflectionManager {
 
                         Object profileRepo = method.invoke(minecraftServer);
 
-                        method.getReturnType()
-                            .getMethod("findProfilesByNames", String[].class, agent.getClass(), Class.forName("com.mojang.authlib.ProfileLookupCallback"))
+                        method.getReturnType().getMethod("findProfilesByNames", String[].class, agent.getClass(),
+                                Class.forName("com.mojang.authlib.ProfileLookupCallback"))
                             .invoke(profileRepo, new String[]{playername}, agent, callback);
                         break;
                     }
@@ -1417,8 +1467,9 @@ public class ReflectionManager {
         try {
             Location loc = entity.getLocation();
 
-            Object boundingBox = boundingBoxConstructor.newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
-                loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
+            Object boundingBox =
+                boundingBoxConstructor.newInstance(loc.getX() - (newBox.getX() / 2), loc.getY(), loc.getZ() - (newBox.getZ() / 2),
+                    loc.getX() + (newBox.getX() / 2), loc.getY() + newBox.getY(), loc.getZ() + (newBox.getZ() / 2));
 
             setBoundingBoxMethod.invoke(getNmsEntity(entity), boundingBox);
         } catch (Exception ex) {
@@ -1960,7 +2011,8 @@ public class ReflectionManager {
         }
 
         try {
-            Object val = entityTypesAMethod.invoke(null, entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName());
+            Object val = entityTypesAMethod.invoke(null,
+                entityType.getName() == null ? entityType.name().toLowerCase(Locale.ENGLISH) : entityType.getName());
 
             if (NmsVersion.v1_14.isSupported()) {
                 return ((Optional<Object>) val).orElse(null);
@@ -2080,10 +2132,12 @@ public class ReflectionManager {
 
     public static Object getNmsEntityPose(EntityPose entityPose) {
         if (nmsReflection != null) {
-            return nmsReflection.getNmsEntityPose(entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
+            return nmsReflection.getNmsEntityPose(
+                entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
         }
 
-        return Enum.valueOf(entityPoseClass, entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
+        return Enum.valueOf(entityPoseClass,
+            entityPose == EntityPose.SNEAKING && NmsVersion.v1_15.isSupported() ? "CROUCHING" : entityPose.name());
     }
 
     public static EntityPose getEntityPose(Object nmsEntityPose) {
@@ -2329,7 +2383,8 @@ public class ReflectionManager {
                     (LibsPremium.getPluginInformation() != null && LibsPremium.getPluginInformation().isPremium() &&
                         !LibsPremium.getPluginInformation().isLegit()))) {
                     throw new IllegalStateException(
-                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " + "reporting this error!");
+                        "Error while checking pi rate on startup! Please re-download the jar from SpigotMC before " +
+                            "reporting this error!");
                 }
 
                 disguiseType.setWatcherClass(watcherClass);
@@ -2488,8 +2543,8 @@ public class ReflectionManager {
                 return;
             }
 
-            Object nmsEntity =
-                ReflectionManager.createEntityInstance(disguiseType, nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
+            Object nmsEntity = ReflectionManager.createEntityInstance(disguiseType,
+                nmsReflection != null ? disguiseType.getEntityType().getKey().getKey() : nmsEntityName);
 
             if (nmsEntity == null) {
                 DisguiseUtilities.getLogger().warning("Entity not found! (" + nmsEntityName + ")");
@@ -2538,8 +2593,9 @@ public class ReflectionManager {
                     }
 
                     DisguiseUtilities.getLogger().severe(StringUtils.repeat("-", 20));
-                    DisguiseUtilities.getLogger()
-                        .severe("Index: " + watch.getIndex() + " | " + flagType.getFlagWatcher().getSimpleName() + " | " + MetaIndex.getName(flagType));
+                    DisguiseUtilities.getLogger().severe(
+                        "Index: " + watch.getIndex() + " | " + flagType.getFlagWatcher().getSimpleName() + " | " +
+                            MetaIndex.getName(flagType));
                     Object flagDefault = flagType.getDefault();
 
                     DisguiseUtilities.getLogger().severe("LibsDisguises: " + flagDefault + " (" + flagDefault.getClass() + ")");
@@ -2551,8 +2607,8 @@ public class ReflectionManager {
             }
 
             for (MetaIndex index : indexes) {
-                DisguiseUtilities.getLogger()
-                    .severe(disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
+                DisguiseUtilities.getLogger().severe(
+                    disguiseType + " has MetaIndex remaining! " + index.getFlagWatcher().getSimpleName() + " at index " + index.getIndex());
             }
 
             SoundGroup sound = SoundGroup.getGroup(disguiseType.name());
@@ -2588,11 +2644,10 @@ public class ReflectionManager {
             }
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().severe("Uh oh! Trouble while making values for the disguise " + disguiseType.name() + "!");
-            DisguiseUtilities.getLogger()
-                .severe("Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
             DisguiseUtilities.getLogger().severe(
-                "Development builds are available at (ProtocolLib) " + "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) https://ci.md-5" +
-                    ".net/job/LibsDisguises/");
+                "Before reporting this error, " + "please make sure you are using the latest version of LibsDisguises and ProtocolLib.");
+            DisguiseUtilities.getLogger().severe("Development builds are available at (ProtocolLib) " +
+                "http://ci.dmulloy2.net/job/ProtocolLib/ and (LibsDisguises) https://ci.md-5" + ".net/job/LibsDisguises/");
 
             ex.printStackTrace();
         }
@@ -2604,6 +2659,7 @@ public class ReflectionManager {
 
     public static void setScore(Scoreboard scoreboard, String name, int score, boolean canScheduleTask) {
         // Disabled for 1.20.4, 1.20.4 introduces "read only" scores and I don't have an idea on how to deal with it as yet
+        // Edit: The solution as far as I can see, is to modify the outgoing packet?
         if (NmsVersion.v1_20_R3.isSupported()) {
             return;
         }
