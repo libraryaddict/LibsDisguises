@@ -114,15 +114,17 @@ public class LDUploadLogs implements LDCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (lastUsed + TimeUnit.MINUTES.toMillis(3) > System.currentTimeMillis()) {
-            sender.sendMessage(ChatColor.RED + "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " + "disappear!");
+            sender.sendMessage(
+                ChatColor.RED + "You last used this command under 3 minutes ago! Restart the server or wait for this timer to " +
+                    "disappear!");
             return;
         }
 
         File latest = new File("logs/latest.log");
         File disguises = new File(LibsDisguises.getInstance().getDataFolder(), "configs/disguises.yml");
 
-        List<File> configs =
-            new ConfigLoader().getConfigs().stream().map(f -> new File(LibsDisguises.getInstance().getDataFolder(), f)).collect(Collectors.toList());
+        List<File> configs = new ConfigLoader().getConfigs().stream().map(f -> new File(LibsDisguises.getInstance().getDataFolder(), f))
+            .collect(Collectors.toList());
 
         StringBuilder configText = new StringBuilder();
 
@@ -142,13 +144,16 @@ public class LDUploadLogs implements LDCommand {
         }
 
         if (isTooBig(latest)) {
-            sender.sendMessage(ChatColor.RED + "Your latest.log file is too big! It should be less than 10mb! Please restart and run this " + "command again!");
+            sender.sendMessage(
+                ChatColor.RED + "Your latest.log file is too big! It should be less than 10mb! Please restart and run this " +
+                    "command again!");
             return;
         }
 
         if (isTooBig(disguises)) {
-            sender.sendMessage(ChatColor.RED + "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
-                "should be less than 10mb!");
+            sender.sendMessage(
+                ChatColor.RED + "Your disguises.yml is too big! You'll need to trim that file down before using this command! It " +
+                    "should be less than 10mb!");
             return;
         }
 
@@ -169,7 +174,8 @@ public class LDUploadLogs implements LDCommand {
 
                 lastFind = nextLine + 2;
 
-                if (!str.contains("Starting minecraft server version") && !str.contains("Loading properties") && !str.contains("This server is running")) {
+                if (!str.contains("Starting minecraft server version") && !str.contains("Loading properties") &&
+                    !str.contains("This server is running")) {
                     continue;
                 }
 
@@ -218,8 +224,8 @@ public class LDUploadLogs implements LDCommand {
                                     sender.sendMessage(ChatColor.GOLD + "Click on the below message to have it appear in your chat input");
                                 }
 
-                                String text =
-                                    "My log file: " + latestPaste + ", my combined config files: " + configPaste + " and my disguises file: " + disguisesPaste;
+                                String text = "My log file: " + latestPaste + ", my combined config files: " + configPaste +
+                                    " and my disguises file: " + disguisesPaste;
 
                                 ComponentBuilder builder = new ComponentBuilder("");
                                 builder.append(text);

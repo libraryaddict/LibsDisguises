@@ -23,7 +23,8 @@ import java.util.List;
  * Created by libraryaddict on 3/01/2019.
  */
 public class PacketHandlerAttributes implements IPacketHandler {
-    private final boolean skipAttributes = !NmsVersion.v1_14.isSupported() && ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
+    private final boolean skipAttributes =
+        !NmsVersion.v1_14.isSupported() && ProtocolLibrary.getPlugin().getDescription().getVersion().equals("4.5.0");
 
     public PacketHandlerAttributes() {
         if (!skipAttributes) {
@@ -73,8 +74,9 @@ public class PacketHandlerAttributes implements IPacketHandler {
                 builder.packet(updateAttributes);
 
                 attributes.add(builder.build());
-            } else if (attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.movement_speed" : "generic.movementSpeed") &&
-                disguise.getWatcher() instanceof AbstractHorseWatcher) {
+            } else if (
+                attribute.getAttributeKey().equals(NmsVersion.v1_16.isSupported() ? "generic.movement_speed" : "generic.movementSpeed") &&
+                    disguise.getWatcher() instanceof AbstractHorseWatcher) {
                 WrappedAttribute.Builder builder = WrappedAttribute.newBuilder(attribute);
                 builder.packet(updateAttributes);
 

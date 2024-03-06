@@ -153,7 +153,8 @@ public class DisguisePermissions {
 
         // If this refers to a specific disguise
         if (dPerm != null) {
-            return new ParsedPermission(new DisguisePerm[]{dPerm}, options, (byte) (options.containsKey("*") ? 1 : 0), split[1].equals("*"));
+            return new ParsedPermission(new DisguisePerm[]{dPerm}, options, (byte) (options.containsKey("*") ? 1 : 0),
+                split[1].equals("*"));
         }
 
         // If the disguise can't be found, it may be refering to a range
@@ -273,7 +274,8 @@ public class DisguisePermissions {
 
             if (spl.length > 3 && !spl[3].equals("*")) {
                 List<DisguisePerm> validFor =
-                    Arrays.stream(DisguiseParser.getDisguisePerms()).filter(perm -> getInheritance(perm, spl[3]) >= 0).collect(Collectors.toList());
+                    Arrays.stream(DisguiseParser.getDisguisePerms()).filter(perm -> getInheritance(perm, spl[3]) >= 0)
+                        .collect(Collectors.toList());
 
                 for (ParsedPermission perms : list) {
                     if (perms.disguisePerm.stream().anyMatch(p -> !validFor.contains(p))) {
@@ -529,7 +531,8 @@ public class DisguisePermissions {
         return disguises.stream().filter(disguise -> disguise.getDisguise().equals(disguisePerm)).findAny().orElse(null);
     }
 
-    public static HashMap<String, HashMap<String, Boolean>> getDisguiseOptions(Permissible permissionsHolder, String permNode, DisguisePerm type) {
+    public static HashMap<String, HashMap<String, Boolean>> getDisguiseOptions(Permissible permissionsHolder, String permNode,
+                                                                               DisguisePerm type) {
         HashMap<String, HashMap<String, Boolean>> returns = new HashMap<>();
 
         // libsdisguises.options.<command>.<disguise>.<method>.<options>

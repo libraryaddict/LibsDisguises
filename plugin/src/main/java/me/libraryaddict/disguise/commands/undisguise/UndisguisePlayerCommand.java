@@ -62,8 +62,8 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
         if (sender instanceof Player && !sender.isOp() &&
             (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED +
-                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for non-admin " +
-                "usage!");
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the " +
+                "plugin for non-admin " + "usage!");
             return true;
         }
 
@@ -95,9 +95,11 @@ public class UndisguisePlayerCommand implements CommandExecutor, TabCompleter {
 
         if (DisguiseAPI.isDisguised(entityTarget)) {
             DisguiseAPI.undisguiseToAll(sender, entityTarget);
-            LibsMsg.UNDISG_PLAYER.send(sender, entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
+            LibsMsg.UNDISG_PLAYER.send(sender,
+                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
         } else {
-            LibsMsg.UNDISG_PLAYER_FAIL.send(sender, entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
+            LibsMsg.UNDISG_PLAYER_FAIL.send(sender,
+                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable());
         }
 
         return true;

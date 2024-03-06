@@ -44,13 +44,14 @@ public class LDCount implements LDCommand {
             LibsMsg.ACTIVE_DISGUISES_COUNT.send(sender, counts.values().stream().reduce(Integer::sum).get());
 
             ArrayList<DisguiseType> types = new ArrayList<>(counts.keySet());
-            types.sort(
-                (d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(TranslateType.DISGUISES.get(d1.toReadable()), TranslateType.DISGUISES.get(d2.toReadable())));
+            types.sort((d1, d2) -> String.CASE_INSENSITIVE_ORDER.compare(TranslateType.DISGUISES.get(d1.toReadable()),
+                TranslateType.DISGUISES.get(d2.toReadable())));
 
             StringBuilder builder = new StringBuilder();
 
             for (int i = 0; i < types.size(); i++) {
-                builder.append(LibsMsg.ACTIVE_DISGUISES_DISGUISE.get(TranslateType.DISGUISES.get(types.get(i).toReadable()), counts.get(types.get(i))));
+                builder.append(LibsMsg.ACTIVE_DISGUISES_DISGUISE.get(TranslateType.DISGUISES.get(types.get(i).toReadable()),
+                    counts.get(types.get(i))));
 
                 if (i + 1 < types.size()) {
                     builder.append(LibsMsg.ACTIVE_DISGUISES_SEPERATOR.get());

@@ -37,22 +37,26 @@ public class DisguisePermissionsTest {
     public void testPermissionNames() {
         Assert.assertFalse("There should not be permissions", createPermissions("Disguise", false).hasPermissions());
 
-        Assert.assertFalse("The commands should not match", createPermissions("Disguise", false, "libsdisguises.disguiseentity.cow").hasPermissions());
+        Assert.assertFalse("The commands should not match",
+            createPermissions("Disguise", false, "libsdisguises.disguiseentity.cow").hasPermissions());
 
-        Assert.assertFalse("The commands should not match", createPermissions("Disguised", false, "libsdisguises.disguise.cow").hasPermissions());
+        Assert.assertFalse("The commands should not match",
+            createPermissions("Disguised", false, "libsdisguises.disguise.cow").hasPermissions());
 
         Assert.assertTrue("There should be permissions", createPermissions("Disguise", false, "libsdisguises.*.animal").hasPermissions());
     }
 
     @Test
     public void testOperatorPermissions() {
-        DisguisePermissions permissions = createPermissions("Disguise", true, "-libsdisguises.disguise.sheep", "-libsdisguises.disguise.horse.setBaby");
+        DisguisePermissions permissions =
+            createPermissions("Disguise", true, "-libsdisguises.disguise.sheep", "-libsdisguises.disguise.horse.setBaby");
 
         Assert.assertTrue("There should be permissions", permissions.hasPermissions());
 
         Assert.assertTrue("The disguise cow should be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow")));
 
-        Assert.assertFalse("The disguise sheep should not be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep")));
+        Assert.assertFalse("The disguise sheep should not be allowed",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep")));
 
         Assert.assertTrue("The disguise horse should be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Horse")));
 
@@ -78,7 +82,8 @@ public class DisguisePermissionsTest {
             createPermissions("Disguise", false, "libsdisguises.*.Firework").isAllowedDisguise(DisguiseParser.getDisguisePerm("Firework")));
 
         Assert.assertFalse("The firework disguise should not be allowed",
-            createPermissions("Disguise", false, "libsdisguises.*.*", "-libsdisguises.*.misc").isAllowedDisguise(DisguiseParser.getDisguisePerm("Firework")));
+            createPermissions("Disguise", false, "libsdisguises.*.*", "-libsdisguises.*.misc").isAllowedDisguise(
+                DisguiseParser.getDisguisePerm("Firework")));
 
         Assert.assertTrue("The firework disguise should be allowed",
             createPermissions("Disguise", false, "libsdisguises.disguise.*", "-libsdisguises.*.*").isAllowedDisguise(
@@ -91,9 +96,11 @@ public class DisguisePermissionsTest {
 
     @Test
     public void testInheritedPermissions() {
-        testInheritedPermissions(createPermissions("Disguise", false, "libsdisguises.disguise.animal.setBaby", "-libsdisguises.disguise.sheep.setBaby"));
+        testInheritedPermissions(
+            createPermissions("Disguise", false, "libsdisguises.disguise.animal.setBaby", "-libsdisguises.disguise.sheep.setBaby"));
 
-        testInheritedPermissions(createPermissions("Disguise", false, "libsdisguises.disguise.animal.setBaby", "libsdisguises.disguise.sheep.-setBaby"));
+        testInheritedPermissions(
+            createPermissions("Disguise", false, "libsdisguises.disguise.animal.setBaby", "libsdisguises.disguise.sheep.-setBaby"));
     }
 
     private void testInheritedPermissions(DisguisePermissions permissions) {
@@ -107,20 +114,22 @@ public class DisguisePermissionsTest {
         Assert.assertFalse("The sheep disguise should not be allowed with setBaby",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep"), Collections.singletonList("setBaby")));
 
-        Assert.assertFalse("The firework disguise should not be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Firework")));
+        Assert.assertFalse("The firework disguise should not be allowed",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Firework")));
     }
 
     @Test
     public void testNegatedPermissions() {
         DisguisePermissions permissions =
-            createPermissions("Disguise", false, "libsdisguises.disguise.sheep", "-libsdisguises.disguise.cow.setSprinting", "-libsdisguises.disguise.donkey",
-                "-libsdisguises.disguise.horse.setRearing", "libsdisguises.disguise.horse");
+            createPermissions("Disguise", false, "libsdisguises.disguise.sheep", "-libsdisguises.disguise.cow.setSprinting",
+                "-libsdisguises.disguise.donkey", "-libsdisguises.disguise.horse.setRearing", "libsdisguises.disguise.horse");
 
         Assert.assertFalse("The cow disguise should not be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow")));
 
         Assert.assertTrue("The sheep disguise should be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Sheep")));
 
-        Assert.assertFalse("The donkey disguise should not be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Donkey")));
+        Assert.assertFalse("The donkey disguise should not be allowed",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Donkey")));
 
         Assert.assertTrue("The horse disguise should be allowed", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Horse")));
 
@@ -133,8 +142,9 @@ public class DisguisePermissionsTest {
 
     @Test
     public void testMultiDisguises() {
-        DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.cow.setBaby", "libsdisguises.disguise.cow.setHealth",
-            "libsdisguises.disguise.cow.-setBurning");
+        DisguisePermissions permissions =
+            createPermissions("Disguise", false, "libsdisguises.disguise.cow.setBaby", "libsdisguises.disguise.cow.setHealth",
+                "libsdisguises.disguise.cow.-setBurning");
 
         Assert.assertTrue("The cow disguise should be able to use setBaby",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow"), Collections.singletonList("setBaby")));
@@ -170,7 +180,8 @@ public class DisguisePermissionsTest {
 
         Assert.assertTrue("The cow disguise should be allowed", permissions.isAllowedDisguise(cow));
 
-        Assert.assertTrue("The cow disguise should be allowed with options", permissions.isAllowedDisguise(cow, Arrays.asList("setBaby", "setBurning")));
+        Assert.assertTrue("The cow disguise should be allowed with options",
+            permissions.isAllowedDisguise(cow, Arrays.asList("setBaby", "setBurning")));
 
         Assert.assertFalse("The cow disguise should not be allowed with options setSprinting",
             permissions.isAllowedDisguise(cow, Arrays.asList("setBaby", "setSprinting")));
@@ -183,9 +194,11 @@ public class DisguisePermissionsTest {
         Assert.assertFalse("The sheep disguise should not be allowed with options",
             permissions.isAllowedDisguise(sheep, Arrays.asList("setBaby", "setBurning")));
 
-        Assert.assertTrue("The sheep disguise should be allowed setColor", permissions.isAllowedDisguise(sheep, Collections.singletonList("setColor")));
+        Assert.assertTrue("The sheep disguise should be allowed setColor",
+            permissions.isAllowedDisguise(sheep, Collections.singletonList("setColor")));
 
-        Assert.assertTrue("The sheep disguise should be allowed setSprinting", permissions.isAllowedDisguise(sheep, Collections.singletonList("setSprinting")));
+        Assert.assertTrue("The sheep disguise should be allowed setSprinting",
+            permissions.isAllowedDisguise(sheep, Collections.singletonList("setSprinting")));
 
         Assert.assertFalse("The sheep disguise should not be allowed setColor and setBaby",
             permissions.isAllowedDisguise(sheep, Arrays.asList("setColor", "setBaby")));
@@ -201,9 +214,9 @@ public class DisguisePermissionsTest {
 
     @Test
     public void testDisguiseParameters() {
-        HashMap<String, HashMap<String, Boolean>> disguiseOptions =
-            DisguisePermissions.getDisguiseOptions(createPermissionsHolder(false, "libsdisguises.options.disguise.falling_block.setblock.stone"), "Disguise",
-                new DisguisePerm(DisguiseType.FALLING_BLOCK));
+        HashMap<String, HashMap<String, Boolean>> disguiseOptions = DisguisePermissions.getDisguiseOptions(
+            createPermissionsHolder(false, "libsdisguises.options.disguise.falling_block.setblock.stone"), "Disguise",
+            new DisguisePerm(DisguiseType.FALLING_BLOCK));
 
         Assert.assertTrue("They should be allowed to use true as a disguise option on setBurning",
             DisguisePermissions.hasPermissionOption(disguiseOptions, "setBurning", "true"));
@@ -217,8 +230,8 @@ public class DisguisePermissionsTest {
 
     @Test
     public void testDisguiseValidWorksToGiveMore() {
-        DisguisePermissions permissions =
-            createPermissions("Disguise", false, "libsdisguises.disguise.falling_block.setCustomName", "libsdisguises.disguise.valid.falling_block.setblock");
+        DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.falling_block.setCustomName",
+            "libsdisguises.disguise.valid.falling_block.setblock");
 
         Assert.assertFalse("The falling block disguise should not allow setBurning",
             permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")));
@@ -234,7 +247,8 @@ public class DisguisePermissionsTest {
     public void testDisguiseValidDoesntGiveExtra() {
         DisguisePermissions permissions = createPermissions("Disguise", false, "libsdisguises.disguise.valid.falling_block.setblock");
 
-        Assert.assertFalse("The falling block disguise should not be allowed", permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK)));
+        Assert.assertFalse("The falling block disguise should not be allowed",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK)));
 
         Assert.assertFalse("The falling block disguise should not allow setBurning",
             permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.FALLING_BLOCK), Arrays.asList("setBurning")));
@@ -248,7 +262,8 @@ public class DisguisePermissionsTest {
     public void testCustomDisguisePermissions() {
         DisguiseConfig.getCustomDisguises().put(new DisguisePerm(DisguiseType.BEE, "babybee"), "bee setbaby");
 
-        DisguisePermissions permissions = createPermissions("disguise", false, "libsdisguises.disguise.bee.-*", "libsdisguises.disguise.babybee.nooptions");
+        DisguisePermissions permissions =
+            createPermissions("disguise", false, "libsdisguises.disguise.bee.-*", "libsdisguises.disguise.babybee.nooptions");
 
         Assert.assertNotNull("The custom disguise babybee should exist", DisguiseParser.getDisguisePerm("babybee"));
 
@@ -260,9 +275,11 @@ public class DisguisePermissionsTest {
         Assert.assertFalse("They should not be allowed to disguise as a burning bee",
             permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.BEE), Collections.singletonList("setburning")));
 
-        Assert.assertFalse("They should not be allowed to disguise as a slime", permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.SLIME)));
+        Assert.assertFalse("They should not be allowed to disguise as a slime",
+            permissions.isAllowedDisguise(new DisguisePerm(DisguiseType.SLIME)));
 
-        Assert.assertTrue("They should be allowed to disguise as babybee", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("babybee")));
+        Assert.assertTrue("They should be allowed to disguise as babybee",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("babybee")));
 
         Assert.assertFalse("They should not be allowed to disguise as babybee and use setbaby",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("babybee"), Collections.singletonList("setbaby")));
@@ -275,8 +292,9 @@ public class DisguisePermissionsTest {
         DisguiseConfig.setExplicitDisguisePermissions(true);
 
         DisguisePermissions permissions =
-            createPermissions("Disguise", false, "libsdisguises.disguise.animal", "libsdisguises.disguise.zombie", "libsdisguises.disguise.skeleton.*",
-                "libsdisguises.disguise.wither.setburning", "libsdisguises.disguise.silverfish.-setburning");
+            createPermissions("Disguise", false, "libsdisguises.disguise.animal", "libsdisguises.disguise.zombie",
+                "libsdisguises.disguise.skeleton.*", "libsdisguises.disguise.wither.setburning",
+                "libsdisguises.disguise.silverfish.-setburning");
 
         Assert.assertTrue("The cow disguise should be usable", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Cow")));
 
@@ -288,7 +306,8 @@ public class DisguisePermissionsTest {
         Assert.assertFalse("The zombie disguise should not be able to use setBurning",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Zombie"), Collections.singletonList("setBurning")));
 
-        Assert.assertTrue("The skeleton disguise should be usable", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Skeleton")));
+        Assert.assertTrue("The skeleton disguise should be usable",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Skeleton")));
 
         Assert.assertTrue("The skeleton disguise should be able to use setBurning",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Skeleton"), Collections.singletonList("setBurning")));
@@ -301,7 +320,8 @@ public class DisguisePermissionsTest {
         Assert.assertFalse("The wither disguise should not be able to use setSprinting",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Wither"), Collections.singletonList("setSprinting")));
 
-        Assert.assertTrue("The silverfish disguise should be usable", permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish")));
+        Assert.assertTrue("The silverfish disguise should be usable",
+            permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish")));
 
         Assert.assertFalse("The silverfish disguise should not be able to use setBurning",
             permissions.isAllowedDisguise(DisguiseParser.getDisguisePerm("Silverfish"), Collections.singletonList("setBurning")));

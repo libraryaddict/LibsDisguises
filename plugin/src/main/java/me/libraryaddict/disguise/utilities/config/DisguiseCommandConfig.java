@@ -103,9 +103,8 @@ public class DisguiseCommandConfig {
 
         configString = configString.replaceAll("\n([a-zA-Z])", "\n\n$1");
 
-        String s =
-            "# The following can be changed to modify how the disguise commands are registered\n# This will only work on server startup\nModifyCommands: " +
-                modifyCommands + "\n\n" + configString;
+        String s = "# The following can be changed to modify how the disguise commands are registered\n# This will only work on server " +
+            "startup\nModifyCommands: " + modifyCommands + "\n\n" + configString;
 
         commandConfig.delete();
 

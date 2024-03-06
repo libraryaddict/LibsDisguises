@@ -32,8 +32,8 @@ public class GrabSkinCommand implements CommandExecutor {
         if (sender instanceof Player && !sender.isOp() &&
             (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED +
-                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
-                "non-admin usage!");
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the " +
+                "plugin for " + "non-admin usage!");
             return true;
         }
 
@@ -73,7 +73,8 @@ public class GrabSkinCommand implements CommandExecutor {
             }
         }
 
-        String name = tName != null && tName.toLowerCase(Locale.ROOT).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
+        String name =
+            tName != null && tName.toLowerCase(Locale.ROOT).endsWith(":slim") ? tName.substring(0, tName.lastIndexOf(":")) : tName;
 
         if (name != null && name.replaceAll("[_a-zA-Z \\d-@#]", "").length() > 0) {
             LibsMsg.SKIN_API_INVALID_NAME.send(sender);

@@ -258,9 +258,8 @@ public abstract class Disguise {
      */
     protected void createDisguise() {
         if (getType().getEntityType() == null) {
-            throw new RuntimeException(
-                "DisguiseType " + getType() + " was used in a futile attempt to construct a disguise, but this Minecraft version does not have " +
-                    "that entity");
+            throw new RuntimeException("DisguiseType " + getType() +
+                " was used in a futile attempt to construct a disguise, but this Minecraft version does not have " + "that entity");
         }
 
         // Get if they are a adult now..
@@ -293,7 +292,8 @@ public abstract class Disguise {
     }
 
     public boolean isDisguiseExpired() {
-        return DisguiseConfig.isDynamicExpiry() ? disguiseExpires == 1 : disguiseExpires > 0 && disguiseExpires < System.currentTimeMillis();
+        return DisguiseConfig.isDynamicExpiry() ? disguiseExpires == 1 :
+            disguiseExpires > 0 && disguiseExpires < System.currentTimeMillis();
     }
 
     public long getExpires() {
@@ -375,8 +375,8 @@ public abstract class Disguise {
 
         removeBossBar();
 
-        BossBar bar = Bukkit.createBossBar(getBossBar(), BaseComponent.toLegacyText(LibsMsg.ACTION_BAR_MESSAGE.getBase(getDisguiseName())), getBossBarColor(),
-            getBossBarStyle());
+        BossBar bar = Bukkit.createBossBar(getBossBar(), BaseComponent.toLegacyText(LibsMsg.ACTION_BAR_MESSAGE.getBase(getDisguiseName())),
+            getBossBarColor(), getBossBarStyle());
         bar.setProgress(1);
         bar.addPlayer((Player) getEntity());
     }
@@ -392,8 +392,9 @@ public abstract class Disguise {
     }
 
     protected void doActionBar() {
-        if (getNotifyBar() == DisguiseConfig.NotifyBar.ACTION_BAR && getEntity() instanceof Player && DisguiseAPI.isNotifyBarShown(getEntity()) &&
-            !getEntity().hasPermission("libsdisguises.noactionbar") && DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
+        if (getNotifyBar() == DisguiseConfig.NotifyBar.ACTION_BAR && getEntity() instanceof Player &&
+            DisguiseAPI.isNotifyBarShown(getEntity()) && !getEntity().hasPermission("libsdisguises.noactionbar") &&
+            DisguiseAPI.getDisguise(getEntity()) == Disguise.this) {
             ((Player) getEntity()).spigot().sendMessage(ChatMessageType.ACTION_BAR, LibsMsg.ACTION_BAR_MESSAGE.getBase(getDisguiseName()));
         }
 
@@ -458,7 +459,8 @@ public abstract class Disguise {
         }
 
         if (isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
-            throw new RuntimeException("Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the " + "config to do this");
+            throw new RuntimeException(
+                "Cannot disguise a living entity with a misc disguise. Reenable MiscDisguisesForLiving in the " + "config to do this");
         }
 
         this.entity = entity;
@@ -523,8 +525,8 @@ public abstract class Disguise {
     public Disguise setWatcher(FlagWatcher newWatcher) {
         if (!getType().getWatcherClass().isInstance(newWatcher)) {
             throw new IllegalArgumentException(
-                (newWatcher == null ? "null" : newWatcher.getClass().getSimpleName()) + " is not a instance of " + getType().getWatcherClass().getSimpleName() +
-                    " for DisguiseType " + getType().name());
+                (newWatcher == null ? "null" : newWatcher.getClass().getSimpleName()) + " is not a instance of " +
+                    getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
         watcher = newWatcher;
@@ -646,7 +648,8 @@ public abstract class Disguise {
      * Internal use
      */
     public boolean isRemoveDisguiseOnDeath() {
-        return getEntity() == null || (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() : getEntity().isDead() || !getEntity().isValid());
+        return getEntity() == null ||
+            (getEntity() instanceof Player ? !isKeepDisguiseOnPlayerDeath() : getEntity().isDead() || !getEntity().isValid());
     }
 
     @Deprecated
@@ -859,7 +862,8 @@ public abstract class Disguise {
         }
 
         // If a horse is disguised as a horse, it should obey parent no gravity rule
-        if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse || getEntity() instanceof Item || getEntity() instanceof FallingBlock) &&
+        if ((getEntity() instanceof Boat || getEntity() instanceof AbstractHorse || getEntity() instanceof Item ||
+            getEntity() instanceof FallingBlock) &&
             (getWatcher() instanceof BoatWatcher || getWatcher() instanceof AbstractHorseWatcher || getEntity() instanceof Item ||
                 getEntity() instanceof FallingBlock)) {
             getWatcher().setNoGravity(!getEntity().hasGravity());
@@ -1010,7 +1014,8 @@ public abstract class Disguise {
         DisguiseUtilities.refreshTrackers((TargetedDisguise) this);
 
         // Setup a scheduler for a self disguise
-        Bukkit.getScheduler().scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
+        Bukkit.getScheduler()
+            .scheduleSyncDelayedTask(LibsDisguises.getInstance(), () -> DisguiseUtilities.setupFakeDisguise(Disguise.this), 2);
 
         if (isHidePlayer() && getEntity() instanceof Player) {
             PacketContainer removeTab = ReflectionManager.updateTablistVisibility((Player) getEntity(), false);

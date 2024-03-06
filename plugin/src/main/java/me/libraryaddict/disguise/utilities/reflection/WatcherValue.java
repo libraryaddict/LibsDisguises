@@ -48,7 +48,8 @@ public class WatcherValue {
     }
 
     public WrappedDataValue getDataValue() {
-        return new WrappedDataValue(getMetaIndex().getIndex(), getMetaIndex().getSerializer(), ReflectionManager.convertInvalidMeta(getValue()));
+        return new WrappedDataValue(getMetaIndex().getIndex(), getMetaIndex().getSerializer(),
+            ReflectionManager.convertInvalidMeta(getValue()));
     }
 
     public static List<WatcherValue> getValues(WrappedDataWatcher dataWatcher) {

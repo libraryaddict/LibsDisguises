@@ -128,8 +128,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
                 @Override
                 public void run() {
                     // Fire self interact event
-                    DisguiseInteractEvent selfEvent =
-                        new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed, interactType == EnumWrappers.EntityUseAction.ATTACK);
+                    DisguiseInteractEvent selfEvent = new DisguiseInteractEvent((TargetedDisguise) disguise, handUsed,
+                        interactType == EnumWrappers.EntityUseAction.ATTACK);
 
                     Bukkit.getPluginManager().callEvent(selfEvent);
                 }
@@ -176,7 +176,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                    observer.getInventory().getItemInOffHand()}) {
 
                     if (item == null || item.getType() != Material.SADDLE) {
                         continue;
@@ -197,7 +198,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                    observer.getInventory().getItemInOffHand()}) {
                     if (item == null || !item.getType().name().endsWith("_CARPET")) {
                         continue;
                     }
@@ -223,7 +225,8 @@ public class PacketListenerClientInteract extends PacketAdapter {
             @Override
             public void run() {
                 // If this is something the player can dye the disguise with
-                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(), observer.getInventory().getItemInOffHand()}) {
+                for (ItemStack item : new ItemStack[]{observer.getInventory().getItemInMainHand(),
+                    observer.getInventory().getItemInOffHand()}) {
                     if (item == null) {
                         continue;
                     }

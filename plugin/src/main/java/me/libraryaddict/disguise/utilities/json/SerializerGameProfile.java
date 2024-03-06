@@ -28,9 +28,8 @@ public class SerializerGameProfile implements JsonSerializer<WrappedGameProfile>
         JsonObject obj = json.getAsJsonObject();
 
         if (obj.has("id") && !obj.get("id").getAsString().contains("-")) {
-            obj.addProperty("id",
-                Pattern.compile("([\\da-fA-F]{8})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]+)").matcher(obj.get("id").getAsString())
-                    .replaceFirst("$1-$2-$3-$4-$5"));
+            obj.addProperty("id", Pattern.compile("([\\da-fA-F]{8})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]{4})([\\da-fA-F]+)")
+                .matcher(obj.get("id").getAsString()).replaceFirst("$1-$2-$3-$4-$5"));
         }
 
         return WrappedGameProfile.fromHandle(context.deserialize(json, GameProfile.class));

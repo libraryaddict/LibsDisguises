@@ -72,7 +72,8 @@ public class LDGithub {
             con.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
             // We believe we're on the latest version and know what the last etag was
-            if (Objects.equals(ourVersion, DisguiseConfig.getLastPluginUpdateVersion()) && DisguiseConfig.getLastGithubUpdateETag() != null) {
+            if (Objects.equals(ourVersion, DisguiseConfig.getLastPluginUpdateVersion()) &&
+                DisguiseConfig.getLastGithubUpdateETag() != null) {
                 con.setRequestProperty("If-None-Match", DisguiseConfig.getLastGithubUpdateETag());
             }
 
@@ -86,18 +87,21 @@ public class LDGithub {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String json =
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 gitData = new Gson().fromJson(json, GithubData.class);
             } catch (IOException ex) {
                 try (InputStream error = con.getErrorStream()) {
-                    String line = new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                    String line =
+                        new BufferedReader(new InputStreamReader(error, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                     DisguiseUtilities.getLogger().severe("Error with Github! " + line);
 
                     if (line.contains("rate limit") && !DisguiseConfig.isHittingRateLimit()) {
                         DisguiseConfig.setHittingRateLimit(true);
-                        DisguiseUtilities.getLogger().severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
+                        DisguiseUtilities.getLogger()
+                            .severe("Changed update checker to be every 36 hours due to rate limiting from this IP");
                         return null;
                     }
                 } catch (Exception ex1) {

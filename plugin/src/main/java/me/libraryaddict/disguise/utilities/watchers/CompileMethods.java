@@ -57,7 +57,8 @@ public class CompileMethods {
         int count = getFileCount(classesFolder);
 
         try {
-            Files.write(new File(classesFolder, "plugin.yml").toPath(), ("\nfile-count: " + count).getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+            Files.write(new File(classesFolder, "plugin.yml").toPath(), ("\nfile-count: " + count).getBytes(StandardCharsets.UTF_8),
+                StandardOpenOption.APPEND);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,7 +133,8 @@ public class CompileMethods {
     }
 
     private static void doMethods() {
-        ArrayList<Class<?>> classes = ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
+        ArrayList<Class<?>> classes =
+            ClassGetter.getClassesForPackage(FlagWatcher.class, "me.libraryaddict.disguise.disguisetypes.watchers");
 
         ArrayList<Class> sorted = new ArrayList<>();
 
@@ -146,10 +148,11 @@ public class CompileMethods {
             for (Method method : c.getMethods()) {
                 if (!FlagWatcher.class.isAssignableFrom(method.getDeclaringClass())) {
                     continue;
-                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) && !method.isAnnotationPresent(NmsRemovedIn.class)) {
+                } else if (method.getParameterCount() > 1 && !method.isAnnotationPresent(NmsAddedIn.class) &&
+                    !method.isAnnotationPresent(NmsRemovedIn.class)) {
                     continue;
-                } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) && !method.getName().startsWith("get") &&
-                    !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
+                } else if (!(method.getName().startsWith("set") && method.getParameterCount() == 1) &&
+                    !method.getName().startsWith("get") && !method.getName().startsWith("has") && !method.getName().startsWith("is")) {
                     continue;
                 } else if (method.getName().equals("removePotionEffect")) {
                     continue;

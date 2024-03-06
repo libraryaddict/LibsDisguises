@@ -16,7 +16,8 @@ public class ParamInfoQuaternionf extends ParamInfo<Quaternionf> {
             return null;
         }
 
-        return new Quaternionf(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+        return new Quaternionf(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]),
+            Float.parseFloat(split[3]));
     }
 
     @Override

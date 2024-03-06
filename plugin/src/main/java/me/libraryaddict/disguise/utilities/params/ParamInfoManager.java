@@ -56,7 +56,8 @@ public class ParamInfoManager {
             return getParamInfoItemBlock();
         }
 
-        if (method.getWatcherClass() == FallingBlockWatcher.class && (method.getParam() == Material.class || method.getParam() == ItemStack.class)) {
+        if (method.getWatcherClass() == FallingBlockWatcher.class &&
+            (method.getParam() == Material.class || method.getParam() == ItemStack.class)) {
             return getParamInfoItemBlock();
         }
 

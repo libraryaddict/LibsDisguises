@@ -63,7 +63,8 @@ public class LDUpdateProtocolLib implements LDCommand {
                         @Override
                         public void run() {
                             sender.sendMessage(ChatColor.RED +
-                                "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord.gg/EErRhJ4qgx you" +
+                                "Looks like ProtocolLib's site may be down! MythicCraft/MythicMobs has a discord server https://discord" +
+                                ".gg/EErRhJ4qgx you" +
                                 " can join. Check the pins in #libs-support for a ProtocolLib.jar you can download!");
                             sender.sendMessage(ChatColor.RED + "Update failed, " + ex.getMessage());
                         }

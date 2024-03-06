@@ -1074,7 +1074,8 @@ public class FlagWatcher {
 
         if (id.getIndex() == -1) {
             throw new IllegalArgumentException("You can't do that in this version of Minecraft! I can't use " + MetaIndex.getName(id) +
-                "! This error shouldn't be seen if you're disguising via Lib's Disguises's commands, if this is the case then it's likely a bug.");
+                "! This error shouldn't be seen if you're disguising via Lib's Disguises's commands, if this is the case then it's likely" +
+                " a bug.");
         }
 
         if (value == null && id.getDefault() instanceof ItemStack) {

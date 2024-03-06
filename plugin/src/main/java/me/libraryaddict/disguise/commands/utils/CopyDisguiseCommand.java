@@ -33,8 +33,8 @@ public class CopyDisguiseCommand implements CommandExecutor {
         if (sender instanceof Player && !sender.isOp() &&
             (!LibsPremium.isPremium() || LibsPremium.getPaidInformation() == LibsPremium.getPluginInformation())) {
             sender.sendMessage(ChatColor.RED +
-                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the plugin for " +
-                "non-admin usage!");
+                "This is the free version of Lib's Disguises, player commands are limited to console and Operators only! Purchase the " +
+                "plugin for " + "non-admin usage!");
             return true;
         }
 
@@ -78,7 +78,8 @@ public class CopyDisguiseCommand implements CommandExecutor {
         sendMessage(sender, LibsMsg.CLICK_TO_COPY, LibsMsg.COPY_DISGUISE_NO_COPY, disguiseString, false);
 
         if (disguise instanceof PlayerDisguise) {
-            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY, DisguiseParser.parseToString(disguise), true);
+            sendMessage(sender, LibsMsg.CLICK_TO_COPY_WITH_SKIN, LibsMsg.CLICK_TO_COPY_WITH_SKIN_NO_COPY,
+                DisguiseParser.parseToString(disguise), true);
         }
 
         DisguiseUtilities.setCopyDisguiseCommandUsed();

@@ -22,8 +22,8 @@ public class ParamInfoTransformation extends ParamInfo<Transformation> {
         Quaternionf leftRotation =
             new Quaternionf(Float.parseFloat(split[3]), Float.parseFloat(split[4]), Float.parseFloat(split[5]), Float.parseFloat(split[6]));
         Vector3f scale = new Vector3f(Float.parseFloat(split[7]), Float.parseFloat(split[8]), Float.parseFloat(split[9]));
-        Quaternionf rightRotation =
-            new Quaternionf(Float.parseFloat(split[10]), Float.parseFloat(split[11]), Float.parseFloat(split[12]), Float.parseFloat(split[13]));
+        Quaternionf rightRotation = new Quaternionf(Float.parseFloat(split[10]), Float.parseFloat(split[11]), Float.parseFloat(split[12]),
+            Float.parseFloat(split[13]));
 
         return new Transformation(translation, leftRotation, scale, rightRotation);
     }
@@ -35,7 +35,7 @@ public class ParamInfoTransformation extends ParamInfo<Transformation> {
         Vector3f scale = transformation.getScale();
         Quaternionf lR = transformation.getRightRotation();
 
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", trans.x(), trans.y(), trans.z(), lL.x(), lL.y(), lL.z(), lL.w(), scale.x(), scale.y(),
-            scale.z(), lR.x(), lR.y(), lR.z(), lR.w());
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", trans.x(), trans.y(), trans.z(), lL.x(), lL.y(), lL.z(), lL.w(),
+            scale.x(), scale.y(), scale.z(), lR.x(), lR.y(), lR.z(), lR.w());
     }
 }

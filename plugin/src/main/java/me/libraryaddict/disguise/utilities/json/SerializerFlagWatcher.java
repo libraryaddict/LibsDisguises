@@ -83,7 +83,8 @@ public class SerializerFlagWatcher implements JsonDeserializer<FlagWatcher>, Ins
                 }
             } else if (entry.getValue() instanceof String) {
                 if (index.getDefault() instanceof WrappedParticle) {
-                    entry.setValue(((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class)).fromString((String) entry.getValue()));
+                    entry.setValue(
+                        ((ParamInfoParticle) ParamInfoManager.getParamInfo(WrappedParticle.class)).fromString((String) entry.getValue()));
                 } else if (index.getDefault() instanceof EntityPose) {
                     entry.setValue(((ParamInfoEnum) ParamInfoManager.getParamInfo(EntityPose.class)).fromString((String) entry.getValue()));
                 }

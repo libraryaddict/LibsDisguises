@@ -102,7 +102,8 @@ public class DisguiseEntityCommand extends DisguiseBaseCommand implements TabCom
 
         LibsMsg.DISG_ENT_HELP4.send(sender);
 
-        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
+        if (allowedDisguises.stream()
+            .anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.DISG_ENT_HELP5.send(sender);
         }
     }

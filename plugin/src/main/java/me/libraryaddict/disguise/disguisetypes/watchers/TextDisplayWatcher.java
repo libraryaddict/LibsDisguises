@@ -25,7 +25,8 @@ public class TextDisplayWatcher extends DisplayWatcher {
     }
 
     public void setText(String string) {
-        setData(MetaIndex.TEXT_DISPLAY_TEXT, WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(string))));
+        setData(MetaIndex.TEXT_DISPLAY_TEXT,
+            WrappedChatComponent.fromJson(DisguiseUtilities.serialize(DisguiseUtilities.getAdventureChat(string))));
         sendData(MetaIndex.TEXT_DISPLAY_TEXT);
     }
 

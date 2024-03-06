@@ -88,8 +88,8 @@ public class LibsDisguises extends JavaPlugin {
             if (plugin == null || DisguiseUtilities.isProtocolLibOutdated()) {
                 if (DisguiseConfig.isNeverUpdateProtocolLib()) {
                     getLogger().warning(
-                        "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or installs ProtocolLib. " +
-                            "Please do not report any issues with this plugin.");
+                        "Defined in plugins/LibsDisguises/configs/sanity.yml, you have requested that Lib's Disguises never updates or " +
+                            "installs ProtocolLib. " + "Please do not report any issues with this plugin.");
                 } else {
                     String reason;
 
@@ -103,7 +103,8 @@ public class LibsDisguises extends JavaPlugin {
                         reason = "Lib's Disguises couldn't process ProtocolLib properly";
                     }
 
-                    getLogger().warning("An issue occured when trying to load ProtocolLib: " + reason + ". Lib's Disguises will attempt to update it.");
+                    getLogger().warning(
+                        "An issue occured when trying to load ProtocolLib: " + reason + ". Lib's Disguises will attempt to update it.");
 
                     try {
                         File dest = DisguiseUtilities.updateProtocolLib();
@@ -118,7 +119,8 @@ public class LibsDisguises extends JavaPlugin {
                             getLogger().severe("Please restart the server to complete the ProtocolLib update!");
                         }
                     } catch (Exception e) {
-                        getLogger().severe("Looks like ProtocolLib's site may be down! Try download it manually from https://ci.dmulloy2.net/job/ProtocolLib/");
+                        getLogger().severe("Looks like ProtocolLib's site may be down! Try download it manually from https://ci.dmulloy2" +
+                            ".net/job/ProtocolLib/");
                         e.printStackTrace();
                     }
                 }
@@ -163,11 +165,13 @@ public class LibsDisguises extends JavaPlugin {
 
             if (Bukkit.getVersion().contains("(MC: 1.18)") || Bukkit.getVersion().contains("(MC: 1.18.1)")) {
                 getLogger().severe(
-                    "Please update from MC 1.18 and MC 1.18.1! You should be using 1.18.2! Support will eventually be dropped for your specific version!");
+                    "Please update from MC 1.18 and MC 1.18.1! You should be using 1.18.2! Support will eventually be dropped for your " +
+                        "specific version!");
             }
 
             if (Bukkit.getVersion().contains("(MC: 1.19)")) {
-                getLogger().severe("Please update from MC 1.19.0! You should be using at least 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
+                getLogger().severe(
+                    "Please update from MC 1.19.0! You should be using at least 1.19.3! 1.19.1 is the lowest supported 1.19 version!");
             }
 
             try {
@@ -199,9 +203,10 @@ public class LibsDisguises extends JavaPlugin {
 
             if (fileCount != pluginYml.getInt("file-count", fileCount)) {
                 getLogger().severe(
-                    "Lib's Disguises may be infected with malware, please redownload from a trusted source such as SpigotMC. If this warning shows even after" +
-                        " updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ otherwise if that doesn't help then please contact " +
-                        "libraryaddict on discord https://discord.gg/J5XRqYX");
+                    "Lib's Disguises may be infected with malware, please redownload from a trusted source such as SpigotMC. If this " +
+                        "warning shows even after" +
+                        " updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ otherwise if that doesn't help then" +
+                        " please contact " + "libraryaddict on discord https://discord.gg/J5XRqYX");
             }
 
             getLogger().info("File Name: " + getFile().getName());
@@ -212,8 +217,9 @@ public class LibsDisguises extends JavaPlugin {
                 nmsPackageName = "{Not package relocated}";
             }
 
-            getLogger().info("Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " +
-                ReflectionManager.getMinecraftVersion() + ")");
+            getLogger().info(
+                "Discovered nms version: (Package: " + nmsPackageName + ") (LD: " + ReflectionManager.getVersion() + ") (MC: " +
+                    ReflectionManager.getMinecraftVersion() + ")");
 
             getLogger().info("Jenkins Build: " + (isNumberedBuild() ? "#" : "") + getBuildNo());
 
@@ -225,13 +231,14 @@ public class LibsDisguises extends JavaPlugin {
 
             if (!LibsPremium.isPremium()) {
                 getLogger().info(
-                    "You are running the free version, commands limited to non-players and operators. (Console," + " Command " + "Blocks, Admins)");
+                    "You are running the free version, commands limited to non-players and operators. (Console," + " Command " +
+                        "Blocks, Admins)");
             }
 
             if (ReflectionManager.getVersion() == null) {
-                getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " + StringUtils.join(
-                    Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED).map(v -> String.join(", ", v.getSupportedVersions()))
-                        .collect(Collectors.toList()), ", ") + "!");
+                getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
+                    StringUtils.join(Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED)
+                        .map(v -> String.join(", ", v.getSupportedVersions())).collect(Collectors.toList()), ", ") + "!");
                 getPluginLoader().disablePlugin(this);
                 return;
             }
@@ -336,12 +343,14 @@ public class LibsDisguises extends JavaPlugin {
 
                 if (DisguiseUtilities.isProtocollibUpdateDownloaded()) {
                     getLogger().severe(
-                        "An update for ProtocolLib has been downloaded and will be installed when the server restarts. When possible, please restart " +
-                            "the server. Lib's Disguises may not work correctly until you do so.");
+                        "An update for ProtocolLib has been downloaded and will be installed when the server restarts. When possible, " +
+                            "please restart " + "the server. Lib's Disguises may not work correctly until you do so.");
                 } else {
                     getLogger().severe(
-                        "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " + requiredProtocolLib + "!");
-                    getLogger().severe("https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
+                        "Update your ProtocolLib! You are running " + version + " but the minimum version you should be on is " +
+                            requiredProtocolLib + "!");
+                    getLogger().severe(
+                        "https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/artifact/target" + "/ProtocolLib" + ".jar");
                     getLogger().severe("Or! Use /ld protocollib - To update to the latest development build");
                 }
 

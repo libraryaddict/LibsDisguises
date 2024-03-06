@@ -71,15 +71,16 @@ public class SoundManager {
                         SoundGroup subGroup = SoundGroup.getGroup(sound);
 
                         if (subGroup == null) {
-                            DisguiseUtilities.getLogger().warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
+                            DisguiseUtilities.getLogger()
+                                .warning("Invalid sound '" + sound + "'! Must be a minecraft:sound.name or SoundGroup name!");
                             continue;
                         }
 
                         Object[] sounds = subGroup.getDisguiseSounds().get(type);
 
                         if (sounds == null) {
-                            DisguiseUtilities.getLogger()
-                                .warning("Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
+                            DisguiseUtilities.getLogger().warning(
+                                "Sound group '" + sound + "' does not contain a category for " + type + "! Can't use as default in " + key);
                             continue;
                         }
 

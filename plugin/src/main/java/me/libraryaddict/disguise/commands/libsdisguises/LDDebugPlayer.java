@@ -49,15 +49,15 @@ public class LDDebugPlayer implements LDCommand {
 
             DisguiseUtilities.DScoreTeam name = disg.getScoreboardName();
 
-            player.sendMessage(ChatColor.RED +
-                String.format("Prefix: '%s', Suffix: '%s', Disguise Name: '%s', Team '%s'", name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'),
-                    name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'), name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
+            player.sendMessage(ChatColor.RED + String.format("Prefix: '%s', Suffix: '%s', Disguise Name: '%s', Team '%s'",
+                name.getPrefix().replace(ChatColor.COLOR_CHAR, '&'), name.getSuffix().replace(ChatColor.COLOR_CHAR, '&'),
+                name.getPlayer().replace(ChatColor.COLOR_CHAR, '&'), name.getTeamName()));
 
             if (DisguiseConfig.isArmorstandsName()) {
                 player.sendMessage(ChatColor.AQUA + "Oh! You're using armorstands! Lets give some debug for that too..");
-                player.sendMessage(ChatColor.RED +
-                    String.format("Names: %s, Length: %s, Custom Name: '%s'", new Gson().toJson(disg.getMultiName()).replace(ChatColor.COLOR_CHAR, '&'),
-                        disg.getMultiNameLength(), disg.getWatcher().getCustomName().replace(ChatColor.COLOR_CHAR, '&')));
+                player.sendMessage(ChatColor.RED + String.format("Names: %s, Length: %s, Custom Name: '%s'",
+                    new Gson().toJson(disg.getMultiName()).replace(ChatColor.COLOR_CHAR, '&'), disg.getMultiNameLength(),
+                    disg.getWatcher().getCustomName().replace(ChatColor.COLOR_CHAR, '&')));
             }
 
             Team team = player.getScoreboard().getTeam(name.getTeamName());
@@ -71,9 +71,9 @@ public class LDDebugPlayer implements LDCommand {
                 return;
             }
 
-            player.sendMessage(ChatColor.RED +
-                String.format("Prefix Matches: %s, Suffix Matches: %s, In Team: %s, Name Visibility: %s", team.getPrefix().equals(name.getPrefix()),
-                    team.getSuffix().equals(name.getSuffix()), team.hasEntry(name.getPlayer()), team.getOption(Team.Option.NAME_TAG_VISIBILITY)));
+            player.sendMessage(ChatColor.RED + String.format("Prefix Matches: %s, Suffix Matches: %s, In Team: %s, Name Visibility: %s",
+                team.getPrefix().equals(name.getPrefix()), team.getSuffix().equals(name.getSuffix()), team.hasEntry(name.getPlayer()),
+                team.getOption(Team.Option.NAME_TAG_VISIBILITY)));
         }
     }
 

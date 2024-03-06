@@ -78,7 +78,8 @@ public class MineSkinResponse {
             return null;
         }
 
-        GameProfile profile = new GameProfile(getData().getUUID(), StringUtils.stripToNull(getData().getName()) == null ? "Unknown" : getData().getName());
+        GameProfile profile =
+            new GameProfile(getData().getUUID(), StringUtils.stripToNull(getData().getName()) == null ? "Unknown" : getData().getName());
 
         if (getData().getTexture() != null) {
             Property property = new Property("textures", getData().getTexture().getValue(), getData().getTexture().getSignature());

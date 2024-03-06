@@ -80,7 +80,8 @@ public class MineSkinAPI {
         LibsDisguises.getInstance().getLogger().info("[MineSkinAPI] " + message);
     }
 
-    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file, SkinUtils.ModelType modelType) {
+    private MineSkinResponse doPost(SkinUtils.SkinCallback callback, String path, String skinUrl, File file,
+                                    SkinUtils.ModelType modelType) {
         lock.lock();
 
         long sleep = nextRequest - System.currentTimeMillis();
@@ -128,7 +129,8 @@ public class MineSkinAPI {
             String charset = "UTF-8";
             String CRLF = "\r\n"; // Line separator required by multipart/form-data.
 
-            try (OutputStream output = connection.getOutputStream(); PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true)) {
+            try (OutputStream output = connection.getOutputStream();
+                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, charset), true)) {
                 // Send normal param.
                 writer.append("--").append(boundary).append(CRLF);
                 writer.append("Content-Disposition: form-data; name=\"visibility\"").append(CRLF);
@@ -138,7 +140,8 @@ public class MineSkinAPI {
                 if (file != null) {
                     // Send binary file.
                     writer.append("--").append(boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(file.getName()).append("\"").append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(file.getName()).append("\"")
+                        .append(CRLF);
                     writer.append("Content-Type: image/png").append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
@@ -165,8 +168,8 @@ public class MineSkinAPI {
             printDebug("Received status code: " + connection.getResponseCode());
 
             if (connection.getResponseCode() == 500) {
-                String errorMessage =
-                    new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String errorMessage = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
 
                 APIError error = new Gson().fromJson(errorMessage, APIError.class);
 
@@ -201,7 +204,8 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = connection.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String response =
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 printDebug("Received: " + response);
 
@@ -220,8 +224,9 @@ public class MineSkinAPI {
             return null;
         } catch (Exception ex) {
             try {
-                if (connection != null && (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
-                    connection.getResponseCode() == 599)) {
+                if (connection != null &&
+                    (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
+                        connection.getResponseCode() == 599)) {
                     if (getApiKey() != null && connection.getResponseCode() == 504) {
                         callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
                     } else {
@@ -279,7 +284,8 @@ public class MineSkinAPI {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String response = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String response =
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 MineSkinResponse skinResponse = new Gson().fromJson(response, MineSkinResponse.class);
 

@@ -26,7 +26,8 @@ import java.util.Set;
 public class PacketListenerSounds extends PacketAdapter {
     public PacketListenerSounds(LibsDisguises plugin) {
         super(plugin, ListenerPriority.NORMAL,
-            NmsVersion.v1_19_R2.isSupported() ? new PacketType[]{Server.NAMED_SOUND_EFFECT, Server.ENTITY_SOUND} : new PacketType[]{Server.NAMED_SOUND_EFFECT});
+            NmsVersion.v1_19_R2.isSupported() ? new PacketType[]{Server.NAMED_SOUND_EFFECT, Server.ENTITY_SOUND} :
+                new PacketType[]{Server.NAMED_SOUND_EFFECT});
     }
 
     @Override

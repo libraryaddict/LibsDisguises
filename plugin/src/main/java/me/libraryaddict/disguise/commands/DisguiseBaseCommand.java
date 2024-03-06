@@ -83,7 +83,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         String requiredProtocolLib = StringUtils.join(DisguiseUtilities.getProtocolLibRequiredVersion(), " or build #");
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
-        if (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() && sender.hasPermission("libsdisguises.update")) {
+        if (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() &&
+            sender.hasPermission("libsdisguises.update")) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(sender, version, requiredProtocolLib);
         }
 
@@ -100,7 +101,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return false;
     }
 
-    protected List<String> getTabDisguiseTypes(CommandSender sender, DisguisePermissions perms, String[] allArgs, int startsAt, String currentArg) {
+    protected List<String> getTabDisguiseTypes(CommandSender sender, DisguisePermissions perms, String[] allArgs, int startsAt,
+                                               String currentArg) {
         // If not enough arguments to get current disguise type
         if (allArgs.length <= startsAt) {
             return getAllowedDisguises(perms);
@@ -143,8 +145,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
      * @param startsAt     What index this starts at
      * @return a list of viable disguise options
      */
-    protected List<String> getTabDisguiseOptions(CommandSender commandSender, DisguisePermissions perms, DisguisePerm disguisePerm, String[] allArgs,
-                                                 int startsAt, String currentArg) {
+    protected List<String> getTabDisguiseOptions(CommandSender commandSender, DisguisePermissions perms, DisguisePerm disguisePerm,
+                                                 String[] allArgs, int startsAt, String currentArg) {
         ArrayList<String> usedOptions = new ArrayList<>();
         WatcherMethod[] methods = ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass());
 
@@ -170,8 +172,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         return getTabDisguiseSubOptions(commandSender, perms, disguisePerm, allArgs, startsAt, currentArg);
     }
 
-    protected List<String> getTabDisguiseSubOptions(CommandSender commandSender, DisguisePermissions perms, DisguisePerm disguisePerm, String[] allArgs,
-                                                    int startsAt, String currentArg) {
+    protected List<String> getTabDisguiseSubOptions(CommandSender commandSender, DisguisePermissions perms, DisguisePerm disguisePerm,
+                                                    String[] allArgs, int startsAt, String currentArg) {
         boolean addMethods = true;
         List<String> tabs = new ArrayList<>();
 
@@ -230,7 +232,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
             }
 
             if (wantToUse != null) {
-                HashMap<String, HashMap<String, Boolean>> allowedOptions = DisguisePermissions.getDisguiseOptions(commandSender, getPermNode(), disguisePerm);
+                HashMap<String, HashMap<String, Boolean>> allowedOptions =
+                    DisguisePermissions.getDisguiseOptions(commandSender, getPermNode(), disguisePerm);
                 HashMap<String, Boolean> methodValues = allowedOptions.get(methodName.toLowerCase(Locale.ENGLISH));
 
                 if (methodValues != null) {
@@ -250,7 +253,8 @@ public abstract class DisguiseBaseCommand implements CommandExecutor {
         if (addMethods) {
             // If this is a method, add. Else if it can be a param of the previous argument, add.
             for (WatcherMethod method : ParamInfoManager.getDisguiseWatcherMethods(disguisePerm.getWatcherClass())) {
-                if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getName())) || !method.isUsable(disguisePerm.getType())) {
+                if (!perms.isAllowedDisguise(disguisePerm, Collections.singletonList(method.getName())) ||
+                    !method.isUsable(disguisePerm.getType())) {
                     continue;
                 }
 

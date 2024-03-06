@@ -79,7 +79,9 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")), permissions);
+            disguise =
+                DisguiseParser.parseDisguise(sender, entityTarget, getPermNode(), DisguiseUtilities.split(StringUtils.join(newArgs, " ")),
+                    permissions);
         } catch (DisguiseParseException ex) {
             ex.send(sender);
             return true;
@@ -116,11 +118,13 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
         disguise.startDisguise(sender);
 
         if (disguise.isDisguiseInUse()) {
-            LibsMsg.DISG_PLAYER_AS_DISG.send(sender, entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
+            LibsMsg.DISG_PLAYER_AS_DISG.send(sender,
+                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
                 disguise.getDisguiseName());
         } else {
             LibsMsg.DISG_PLAYER_AS_DISG_FAIL.send(sender,
-                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(), disguise.getDisguiseName());
+                entityTarget instanceof Player ? entityTarget.getName() : DisguiseType.getType(entityTarget).toReadable(),
+                disguise.getDisguiseName());
         }
 
         return true;
@@ -182,7 +186,8 @@ public class DisguisePlayerCommand extends DisguiseBaseCommand implements TabCom
 
         LibsMsg.D_HELP4.send(sender);
 
-        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
+        if (allowedDisguises.stream()
+            .anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.D_HELP5.send(sender);
         }
     }

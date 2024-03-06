@@ -69,7 +69,8 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     equipPacket.getModifier().write(1, newSlots);
                 }
 
-                newSlots.add(Pair.of(pair.getFirst(), ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack)));
+                newSlots.add(
+                    Pair.of(pair.getFirst(), ReflectionManager.getNmsItem(itemStack.getType() == Material.AIR ? null : itemStack)));
             } else {
                 newSlots.add(pair);
                 itemStack = ReflectionManager.getBukkitItem(pair.getSecond());
@@ -83,8 +84,8 @@ public class PacketHandlerEquipment implements IPacketHandler {
                     List<WatcherValue> list = new ArrayList<>();
 
                     if (DisguiseConfig.isMetaPacketsEnabled()) {
-                        WatcherValue watch =
-                            new WatcherValue(MetaIndex.LIVING_META, WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
+                        WatcherValue watch = new WatcherValue(MetaIndex.LIVING_META,
+                            WrappedDataWatcher.getEntityWatcher(entity).getByte(MetaIndex.LIVING_META.getIndex()));
 
                         if (watch != null) {
                             list.add(watch);
@@ -145,7 +146,8 @@ public class PacketHandlerEquipment implements IPacketHandler {
         }
 
         if ((disguise.getWatcher().isMainHandRaised() && slot == EquipmentSlot.HAND) ||
-            (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() && slot == EquipmentSlot.OFF_HAND)) {
+            (disguise.getWatcher() instanceof LivingWatcher && ((LivingWatcher) disguise.getWatcher()).isOffhandRaised() &&
+                slot == EquipmentSlot.OFF_HAND)) {
             if (itemStack == null) {
                 itemStack = packets.getPackets().get(0).getItemModifier().read(0);
             }

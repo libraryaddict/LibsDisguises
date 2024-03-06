@@ -47,8 +47,9 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(sender, (Entity) sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")),
-                getPermissions(sender));
+            disguise =
+                DisguiseParser.parseDisguise(sender, (Entity) sender, getPermNode(), DisguiseUtilities.split(StringUtils.join(args, " ")),
+                    getPermissions(sender));
         } catch (DisguiseParseException ex) {
             ex.send(sender);
 
@@ -78,8 +79,10 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
             }
         }
 
-        if (!sender.isOp() && LibsPremium.isBisectHosted() && !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}")) {
-            disguise.setExpires(DisguiseConfig.isDynamicExpiry() ? 20 * 60 * 10 : System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
+        if (!sender.isOp() && LibsPremium.isBisectHosted() &&
+            !Bukkit.getIp().matches("((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}")) {
+            disguise.setExpires(
+                DisguiseConfig.isDynamicExpiry() ? 20 * 60 * 10 : System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(10));
         }
 
         disguise.startDisguise(sender);
@@ -136,7 +139,8 @@ public class DisguiseCommand extends DisguiseBaseCommand implements TabCompleter
 
         LibsMsg.DISG_HELP3.send(sender);
 
-        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
+        if (allowedDisguises.stream()
+            .anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.DISG_HELP4.send(sender);
         }
     }

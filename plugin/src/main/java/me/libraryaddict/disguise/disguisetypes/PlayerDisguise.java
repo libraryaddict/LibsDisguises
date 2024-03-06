@@ -24,6 +24,7 @@ public class PlayerDisguise extends TargetedDisguise {
     private String playerName = "Herobrine";
     private String tablistName;
     private String skinToUse;
+    @Getter
     private boolean nameVisible = true;
     /**
      * Has someone set name visible explicitly?
@@ -149,10 +150,6 @@ public class PlayerDisguise extends TargetedDisguise {
             isDeadmau5Ears() ? "deadmau5" : hasScoreboardName() ? getScoreboardName().getPlayer() : getName().isEmpty() ? "§r" : getName();
     }
 
-    public boolean isNameVisible() {
-        return nameVisible;
-    }
-
     public PlayerDisguise setNameVisible(boolean nameVisible) {
         return setNameVisible(nameVisible, false);
     }
@@ -243,7 +240,8 @@ public class PlayerDisguise extends TargetedDisguise {
 
         if (currentLookup == null && gameProfile != null) {
             disguise.skinToUse = getSkin();
-            disguise.gameProfile = ReflectionManager.getGameProfileWithThisSkin(disguise.getUUID(), getGameProfile().getName(), getGameProfile());
+            disguise.gameProfile =
+                ReflectionManager.getGameProfileWithThisSkin(disguise.getUUID(), getGameProfile().getName(), getGameProfile());
         } else {
             disguise.setSkin(getSkin());
         }
@@ -264,7 +262,8 @@ public class PlayerDisguise extends TargetedDisguise {
             if (getSkin() != null) {
                 gameProfile = ReflectionManager.getGameProfile(getUUID(), getProfileName());
             } else {
-                gameProfile = ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), DisguiseUtilities.getProfileFromMojang(this));
+                gameProfile =
+                    ReflectionManager.getGameProfileWithThisSkin(getUUID(), getProfileName(), DisguiseUtilities.getProfileFromMojang(this));
             }
         }
 
@@ -494,7 +493,8 @@ public class PlayerDisguise extends TargetedDisguise {
                     }
                 };
 
-                WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
+                WrappedGameProfile gameProfile =
+                    DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
 
                 if (gameProfile != null) {
                     setSkin(gameProfile);
@@ -529,7 +529,8 @@ public class PlayerDisguise extends TargetedDisguise {
     }
 
     private WrappedGameProfile getProfile(String string) {
-        if (string != null && string.length() > 70 && string.startsWith("{\"id\":") && string.endsWith("}") && string.contains(",\"name\":")) {
+        if (string != null && string.length() > 70 && string.startsWith("{\"id\":") && string.endsWith("}") &&
+            string.contains(",\"name\":")) {
             try {
                 return DisguiseUtilities.getGson().fromJson(string, WrappedGameProfile.class);
             } catch (Exception ex) {
@@ -660,7 +661,8 @@ public class PlayerDisguise extends TargetedDisguise {
                 }
             };
 
-            WrappedGameProfile gameProfile = DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
+            WrappedGameProfile gameProfile =
+                DisguiseUtilities.getProfileFromMojang(this.skinToUse, currentLookup, DisguiseConfig.isContactMojangServers());
 
             if (gameProfile != null) {
                 setSkin(gameProfile);

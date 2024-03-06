@@ -139,7 +139,8 @@ public class LibsPremium {
 
             String pluginVersion = config.getString("version");
 
-            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber, pluginBuildDate);
+            return new PluginInformation(file.length(), userId, resourceId, downloadId, premium, pluginVersion, pluginBuildNumber,
+                pluginBuildDate);
         }
     }
 
@@ -170,8 +171,8 @@ public class LibsPremium {
             try {
                 plugin = getInformation(file);
             } catch (ClassNotFoundException | NoClassDefFoundError ex) {
-                DisguiseUtilities.getLogger().warning(
-                    "Found an unrecognized jar in the LibsDisguises folder (" + file.getName() + ") - It may need replacing with a newer jar from SpigotMC");
+                DisguiseUtilities.getLogger().warning("Found an unrecognized jar in the LibsDisguises folder (" + file.getName() +
+                    ") - It may need replacing with a newer jar from SpigotMC");
                 continue;
             } catch (Exception ex) {
                 DisguiseUtilities.getLogger().warning("Error while trying to handle the file " + file.getName());
@@ -181,7 +182,8 @@ public class LibsPremium {
 
             /* Format into a string
             v5.2.6, build #40, created 16/02/2019 */
-            String fileInfo = String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(), plugin.getBuildDate());
+            String fileInfo =
+                String.format("v%s, build %s, created %s", plugin.getVersion(), plugin.getBuildNumber(), plugin.getBuildDate());
 
             if (plugin.isPremium()) {
                 if (!isValidVersion(version, plugin.getVersion()) || plugin.getUserID() == null || plugin.getDownloadID() == null ||
@@ -208,10 +210,11 @@ public class LibsPremium {
             } else {
                 /* You have a non-premium Lib's Disguises jar (LibsDisguises.jar v5.2.6, build #40, created
                  16/02/2019) in the LibsDisguises folder! */
-                DisguiseUtilities.getLogger()
-                    .warning("You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
-                DisguiseUtilities.getLogger()
-                    .warning("Please place the premium jar downloaded from https://www.spigotmc" + ".org/resources/libs-disguises.32453/ " + "in here!");
+                DisguiseUtilities.getLogger().warning(
+                    "You have a non-premium Lib's Disguises jar (" + file.getName() + " " + fileInfo + ") in the LibsDisguises folder!");
+                DisguiseUtilities.getLogger().warning(
+                    "Please place the premium jar downloaded from https://www.spigotmc" + ".org/resources/libs-disguises.32453/ " +
+                        "in here!");
             }
         }
 
@@ -261,7 +264,8 @@ public class LibsPremium {
 
             try {
                 try (InputStream stream = LibsDisguises.getInstance().getResource("plugin.yml")) {
-                    config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n")));
+                    config.loadFromString(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).lines()
+                        .collect(Collectors.joining("\n")));
                 }
 
                 /* If plugin.yml contains a build-date */
@@ -278,8 +282,9 @@ public class LibsPremium {
                 buildNo = "#" + buildNo;
             }
 
-            pluginInformation = new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(), getResourceID(), getDownloadID(),
-                isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
+            pluginInformation =
+                new PluginInformation(LibsDisguises.getInstance().getFile().length(), getUserID(), getResourceID(), getDownloadID(),
+                    isPremium(getResourceID(), getUserID()), version, buildNo, pluginBuildDate);
         }
 
         if (!isPremium() || !LibsDisguises.getInstance().isReleaseBuild()) {
@@ -330,7 +335,8 @@ public class LibsPremium {
 
                 FileUtil.copy(f, new File(LibsDisguises.getInstance().getDataFolder(), f.getName()));
 
-                DisguiseUtilities.getLogger().info("Copied " + f.getName() + " to the plugin folder! You can use dev builds with premium enabled!");
+                DisguiseUtilities.getLogger()
+                    .info("Copied " + f.getName() + " to the plugin folder! You can use dev builds with premium enabled!");
             }
         }
 

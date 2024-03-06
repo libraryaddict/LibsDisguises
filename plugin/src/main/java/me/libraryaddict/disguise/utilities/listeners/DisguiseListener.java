@@ -163,11 +163,13 @@ public class DisguiseListener implements Listener {
             attacker = (Entity) ((Projectile) attacker).getShooter();
         }
 
-        if ("%%__USER__%%".equals("12345") || (LibsPremium.isPremium() && LibsPremium.getPaidInformation() == null && LibsPremium.getUserID().contains("%"))) {
+        if ("%%__USER__%%".equals("12345") ||
+            (LibsPremium.isPremium() && LibsPremium.getPaidInformation() == null && LibsPremium.getUserID().contains("%"))) {
             if (DisguiseUtilities.random.nextBoolean()) {
                 event.setDamage(0.5);
 
-                if (event.isCancelled() && DisguiseUtilities.random.nextDouble() < 0.1 && !(attacker instanceof Player && attacker.isOp())) {
+                if (event.isCancelled() && DisguiseUtilities.random.nextDouble() < 0.1 &&
+                    !(attacker instanceof Player && attacker.isOp())) {
                     event.setCancelled(false);
                 }
             }
@@ -215,7 +217,8 @@ public class DisguiseListener implements Listener {
             return;
         }
 
-        if (!attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve")) && !attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve"))) {
+        if (!attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve")) &&
+            !attacker.hasPermission("libsdisguises." + (pvp ? "pvp" : "pve"))) {
             if (!DisguiseConfig.isRetaliationCombat() || !canRetaliate(attacker)) {
                 Disguise[] disguises = DisguiseAPI.getDisguises(attacker);
 
@@ -412,7 +415,8 @@ public class DisguiseListener implements Listener {
         String version = ProtocolLibrary.getPlugin().getDescription().getVersion();
 
         if ("1592".equals(LibsPremium.getUserID()) ||
-            (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() && p.hasPermission("libsdisguises.update"))) {
+            (!DisguiseConfig.isNeverUpdateProtocolLib() && DisguiseUtilities.isProtocolLibOutdated() &&
+                p.hasPermission("libsdisguises.update"))) {
             DisguiseUtilities.sendProtocolLibUpdateMessage(p, version, requiredProtocolLib);
 
             new BukkitRunnable() {
@@ -490,7 +494,8 @@ public class DisguiseListener implements Listener {
                     required.ifPresent(customEntity -> p.kickPlayer(customEntity.getRequired()));
                 }
 
-                if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() && DisguiseUtilities.hasGameProfile(p.getName())) {
+                if (DisguiseConfig.isSaveGameProfiles() && DisguiseConfig.isUpdateGameProfiles() &&
+                    DisguiseUtilities.hasGameProfile(p.getName())) {
                     WrappedGameProfile profile = WrappedGameProfile.fromPlayer(p);
 
                     if (!profile.getProperties().isEmpty()) {
@@ -523,7 +528,8 @@ public class DisguiseListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         // If yer a pirate with a pirated jar, sometimes you can't move
-        if (("%%__USER__%%".isEmpty() || DisguiseUtilities.isInvalidFile()) && !event.getPlayer().isOp() && RandomUtils.nextDouble() < 0.01) {
+        if (("%%__USER__%%".isEmpty() || DisguiseUtilities.isInvalidFile()) && !event.getPlayer().isOp() &&
+            RandomUtils.nextDouble() < 0.01) {
             event.setCancelled(true);
         }
 
@@ -559,7 +565,8 @@ public class DisguiseListener implements Listener {
                 Location to = event.getTo();
 
                 // Llama spit disappears when it encounters a solid
-                if (Math.min(from.getY(), to.getY()) >= from.getWorld().getMinHeight() && Math.max(from.getY(), to.getY()) < from.getWorld().getMaxHeight()) {
+                if (Math.min(from.getY(), to.getY()) >= from.getWorld().getMinHeight() &&
+                    Math.max(from.getY(), to.getY()) < from.getWorld().getMaxHeight()) {
                     if (!from.getBlock().isEmpty() && to.getBlock().isEmpty()) {
                         DisguiseUtilities.refreshTrackers((TargetedDisguise) disguise);
                     }
@@ -607,7 +614,8 @@ public class DisguiseListener implements Listener {
         Player p = event.getPlayer();
 
         if (!interactions.containsKey(p.getName())) {
-            if (isDodgyUser() && System.currentTimeMillis() % 6 == 0 && !p.getAllowFlight() && p.getPreviousGameMode() != GameMode.CREATIVE) {
+            if (isDodgyUser() && System.currentTimeMillis() % 6 == 0 && !p.getAllowFlight() &&
+                p.getPreviousGameMode() != GameMode.CREATIVE) {
                 event.setCancelled(true);
             }
 
@@ -689,7 +697,8 @@ public class DisguiseListener implements Listener {
             return;
         }
 
-        if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null && to.getWorld() != from.getWorld()) {
+        if (DisguiseConfig.isUndisguiseOnWorldChange() && to.getWorld() != null && from.getWorld() != null &&
+            to.getWorld() != from.getWorld()) {
             Disguise[] disguises = DisguiseAPI.getDisguises(event.getPlayer());
 
             if (disguises.length > 0) {

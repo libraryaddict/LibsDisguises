@@ -85,7 +85,8 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
             case SNOWBALL:
             case PAINTING:
             case PRIMED_TNT:
-                if ((pitchLock == null || yawLock == null) && sentPacket.getBytes().read(0) == 0 && entity.getVelocity().lengthSquared() > 0) {
+                if ((pitchLock == null || yawLock == null) && sentPacket.getBytes().read(0) == 0 &&
+                    entity.getVelocity().lengthSquared() > 0) {
                     loc.setDirection(entity.getVelocity());
 
                     if (pitchLock == null) {
@@ -100,7 +101,8 @@ public class PacketHandlerHeadRotation implements IPacketHandler {
                 }
             default:
                 if (pitchLock == null) {
-                    pitch = DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()), (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+                    pitch =
+                        DisguiseUtilities.getPitch(DisguiseType.getType(entity.getType()), (byte) (int) (loc.getPitch() * 256.0F / 360.0F));
                 }
 
                 if (yawLock == null) {

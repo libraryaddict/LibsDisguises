@@ -59,7 +59,7 @@ public enum TranslateType {
         }
     }
 
-    protected void saveTranslations() {
+    void saveTranslations() {
         // First remove translations which are not different from each other. We don't need to store messages that
         // were not translated.
 
@@ -119,8 +119,8 @@ public enum TranslateType {
 
                     if (!newKey.equals(translated.get(newKey))) {
                         diff++;
-                        translated.put(newKey,
-                            translated.get(newKey) + (diff % 3 == 0 || LibsMsg.OWNED_BY.getRaw().contains("Plugin registered to '") ? "" : " "));
+                        translated.put(newKey, translated.get(newKey) +
+                            (diff % 3 == 0 || LibsMsg.OWNED_BY.getRaw().contains("Plugin registered to '") ? "" : " "));
                     }
                 }
             }
@@ -129,7 +129,8 @@ public enum TranslateType {
         }
 
         if (LibsPremium.isPremium() && DisguiseConfig.isUseTranslations()) {
-            DisguiseUtilities.getLogger().info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
+            DisguiseUtilities.getLogger()
+                .info("Loaded " + translated.size() + " translations for " + name() + " with " + diff + " changed");
         } else if (diff > 0 && !DisguiseConfig.isUseTranslations()) {
             DisguiseUtilities.getLogger().info(
                 "Translations are disabled in libsdisguises.yml, but you modified " + diff + " messages in the translations for " + name() +
@@ -216,7 +217,8 @@ public enum TranslateType {
                 return;
             }
 
-            ArrayList<String> disguiseText = new ArrayList(Arrays.asList(new String(Files.readAllBytes(getFile().toPath())).split("\r?\n")));
+            ArrayList<String> disguiseText =
+                new ArrayList(Arrays.asList(new String(Files.readAllBytes(getFile().toPath())).split("\r?\n")));
             int dupes = 0;
             int outdated = 0;
 
@@ -258,8 +260,9 @@ public enum TranslateType {
             }
 
             if (dupes + outdated > 0) {
-                DisguiseUtilities.getLogger().info("Removed " + dupes + " duplicate and " + outdated + " outdated translations from " + getFile().getName() +
-                    ", this was likely caused by a previous issue in the plugin");
+                DisguiseUtilities.getLogger().info(
+                    "Removed " + dupes + " duplicate and " + outdated + " outdated translations from " + getFile().getName() +
+                        ", this was likely caused by a previous issue in the plugin");
 
                 Files.write(getFile().toPath(), StringUtils.join(disguiseText, "\n").getBytes());
             }

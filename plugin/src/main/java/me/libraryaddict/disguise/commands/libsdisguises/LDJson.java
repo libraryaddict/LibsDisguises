@@ -115,7 +115,8 @@ public class LDJson implements LDCommand {
 
             builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, sub));
             builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append((string.length() <= 256 ? "" : " " + msg)).create()));
+                new ComponentBuilder("").append(LibsMsg.CLICK_TO_COPY_HOVER.getBase()).append((string.length() <= 256 ? "" : " " + msg))
+                    .create()));
             msg += 1;
         }
 

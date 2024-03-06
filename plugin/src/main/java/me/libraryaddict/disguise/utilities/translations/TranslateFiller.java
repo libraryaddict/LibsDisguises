@@ -21,13 +21,15 @@ public class TranslateFiller {
         // Fill the configs
 
         for (ParamInfo info : ParamInfoManager.getParamInfos()) {
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(), "A disguise option name, has description " + info.getDescription());
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawName(),
+                "A disguise option name, has description " + info.getDescription());
 
             if (!info.getRawName().equals(info.getRawDescriptiveName())) {
                 TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescriptiveName(), "A disguise option descriptive name");
             }
 
-            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescription(), "Description for the disguise option " + info.getRawName());
+            TranslateType.DISGUISE_OPTIONS_PARAMETERS.save(info.getRawDescription(),
+                "Description for the disguise option " + info.getRawName());
 
             if (info.canTranslateValues()) {
                 for (String e : ((Map<String, Object>) info.getValues()).keySet()) {
@@ -88,7 +90,8 @@ public class TranslateFiller {
 
         for (Class c : validClasses) {
             if (c != Entity.class && Entity.class.isAssignableFrom(c) && c.getAnnotation(Deprecated.class) == null) {
-                TranslateType.DISGUISES.save(c.getSimpleName(), "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
+                TranslateType.DISGUISES.save(c.getSimpleName(),
+                    "Name for the " + c.getSimpleName() + " EntityType, " + "this is used in radius commands");
             }
         }
 

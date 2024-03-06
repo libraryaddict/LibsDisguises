@@ -99,13 +99,13 @@ public class DisguiseMethods {
 
                 String paramName = info.getParam();
 
-                MethodType type = param == null || param == Void.TYPE ? MethodType.methodType(returnType) : MethodType.methodType(returnType, param);
+                MethodType type =
+                    param == null || param == Void.TYPE ? MethodType.methodType(returnType) : MethodType.methodType(returnType, param);
 
                 MethodHandle method = MethodHandles.publicLookup().findVirtual(watcher, info.getMethod(), type);
 
-                WatcherMethod m =
-                    new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault(), info.isDeprecated() && info.getAdded() == 0,
-                        info.getUnusableBy());
+                WatcherMethod m = new WatcherMethod(watcher, method, info.getMethod(), returnType, param, info.isRandomDefault(),
+                    info.isDeprecated() && info.getAdded() == 0, info.getUnusableBy());
 
                 methods.add(m);
 
@@ -120,9 +120,9 @@ public class DisguiseMethods {
             PlayerDisguise disguise = new PlayerDisguise("");
 
             // Add these last as it's what we want to present to be called the least
-            for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf", "setHearSelfDisguise",
-                "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle", "setTallDisguisesVisible", "setDynamicName",
-                "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"}) {
+            for (String methodName : new String[]{"setSelfDisguiseVisible", "setHideHeldItemFromSelf", "setHideArmorFromSelf",
+                "setHearSelfDisguise", "setHidePlayer", "setExpires", "setNotifyBar", "setBossBarColor", "setBossBarStyle",
+                "setTallDisguisesVisible", "setDynamicName", "setSoundGroup", "setDisguiseName", "setDeadmau5Ears"}) {
                 try {
                     Class cl = boolean.class;
                     Class disguiseClass = Disguise.class;
@@ -156,19 +156,19 @@ public class DisguiseMethods {
                     for (Class returnType : new Class[]{Void.TYPE, disguiseClass}) {
                         try {
                             WatcherMethod method = new WatcherMethod(disguiseClass,
-                                MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)), methodName, null,
-                                cl, randomDefault, false, new boolean[DisguiseType.values().length]);
+                                MethodHandles.publicLookup().findVirtual(disguiseClass, methodName, MethodType.methodType(returnType, cl)),
+                                methodName, null, cl, randomDefault, false, new boolean[DisguiseType.values().length]);
 
                             methods.add(method);
 
-                            watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class, (a) -> new ArrayList<>())
-                                .add(method);
+                            watcherMethods.computeIfAbsent(disguiseClass == Disguise.class ? FlagWatcher.class : PlayerWatcher.class,
+                                (a) -> new ArrayList<>()).add(method);
 
                             String getName = (cl == boolean.class ? "is" : "get") + methodName.substring(3);
 
-                            WatcherMethod getMethod =
-                                new WatcherMethod(disguiseClass, MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)),
-                                    getName, cl, null, randomDefault, false, new boolean[DisguiseType.values().length]);
+                            WatcherMethod getMethod = new WatcherMethod(disguiseClass,
+                                MethodHandles.publicLookup().findVirtual(disguiseClass, getName, MethodType.methodType(cl)), getName, cl,
+                                null, randomDefault, false, new boolean[DisguiseType.values().length]);
 
                             methods.add(getMethod);
                             break;

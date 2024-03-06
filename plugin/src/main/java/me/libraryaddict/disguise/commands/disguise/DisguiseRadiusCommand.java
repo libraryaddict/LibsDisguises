@@ -70,7 +70,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
             return true;
         }
 
-        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) || args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
+        if (args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType")) ||
+            args[0].equalsIgnoreCase(TranslateType.DISGUISES.get("EntityType") + "s")) {
             ArrayList<String> classes = new ArrayList<>();
 
             for (Class c : validClasses) {
@@ -79,7 +80,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
             Collections.sort(classes);
 
-            LibsMsg.DRADIUS_ENTITIES.send(sender, ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
+            LibsMsg.DRADIUS_ENTITIES.send(sender,
+                ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
 
@@ -176,7 +178,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
                 Disguise disguise = DisguiseParser.parseDisguise(sender, entity, getPermNode(), disguiseArgs, permissions);
 
-                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() && !entity.hasPermission("libsdisguises.hidename")) {
+                if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
+                    !entity.hasPermission("libsdisguises.hidename")) {
                     if (disguise.getWatcher() instanceof LivingWatcher) {
                         disguise.getWatcher().setCustomName(getDisplayName(entity));
 
@@ -292,7 +295,8 @@ public class DisguiseRadiusCommand extends DisguiseBaseCommand implements TabCom
 
         LibsMsg.DRADIUS_HELP4.send(sender);
 
-        if (allowedDisguises.stream().anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
+        if (allowedDisguises.stream()
+            .anyMatch(disguise -> disguise.equalsIgnoreCase("dropped_item") || disguise.equalsIgnoreCase("falling_block"))) {
             LibsMsg.DRADIUS_HELP5.send(sender);
         }
 

@@ -36,7 +36,8 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         Disguise disguise;
 
         try {
-            disguise = DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs, DisguiseParser.getPermissions(p, "disguiseentity"));
+            disguise =
+                DisguiseParser.parseDisguise(p, entity, "disguiseentity", disguiseArgs, DisguiseParser.getPermissions(p, "disguiseentity"));
         } catch (DisguiseParseException e) {
             e.send(p);
             return;
@@ -48,7 +49,8 @@ public class DisguiseEntityInteraction implements LibsEntityInteract {
         if (disguise.isMiscDisguise() && !DisguiseConfig.isMiscDisguisesForLivingEnabled() && entity instanceof LivingEntity) {
             LibsMsg.DISABLED_LIVING_TO_MISC.send(p);
         } else {
-            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() && !entity.hasPermission("libsdisguises.hidename")) {
+            if (entity instanceof Player && DisguiseConfig.isNameOfPlayerShownAboveDisguise() &&
+                !entity.hasPermission("libsdisguises.hidename")) {
                 if (disguise.getWatcher() instanceof LivingWatcher) {
                     disguise.getWatcher().setCustomName(getDisplayName(entity));
 

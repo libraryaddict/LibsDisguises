@@ -172,10 +172,10 @@ class DisguiseRunnable extends BukkitRunnable {
                     lookPacket.getIntegers().write(0, disguise.getEntity().getEntityId());
                     Location loc = disguise.getEntity().getLocation();
 
-                    mods.write(4,
-                        DisguiseUtilities.getYaw(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
-                    mods.write(5,
-                        DisguiseUtilities.getPitch(disguise.getType(), disguise.getEntity().getType(), (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
+                    mods.write(4, DisguiseUtilities.getYaw(disguise.getType(), disguise.getEntity().getType(),
+                        (byte) Math.floor(loc.getYaw() * 256.0F / 360.0F)));
+                    mods.write(5, DisguiseUtilities.getPitch(disguise.getType(), disguise.getEntity().getType(),
+                        (byte) Math.floor(loc.getPitch() * 256.0F / 360.0F)));
 
                     if (disguise.isSelfDisguiseVisible() && disguise.getEntity() instanceof Player) {
                         PacketContainer selfLookPacket = lookPacket.shallowClone();

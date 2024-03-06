@@ -28,7 +28,8 @@ public class DisguiseUtilitiesTest {
 
         Assert.assertArrayEquals(new String[]{"\"A double quoted string\""}, DisguiseUtilities.split("\"\"A double quoted string\"\""));
 
-        Assert.assertArrayEquals(new String[]{"A", "string", "containing a", "quote"}, DisguiseUtilities.split("A string \"containing a\" quote"));
+        Assert.assertArrayEquals(new String[]{"A", "string", "containing a", "quote"},
+            DisguiseUtilities.split("A string \"containing a\" quote"));
 
         Assert.assertArrayEquals(new String[]{"A", "string", "fully", "split"}, DisguiseUtilities.split("\"A\" string fully split"));
 
@@ -41,7 +42,8 @@ public class DisguiseUtilitiesTest {
 
         Assert.assertArrayEquals(new String[]{"A", "\"string", "\"fully", "split"}, DisguiseUtilities.split("A \"string \"fully split"));
 
-        Assert.assertArrayEquals(new String[]{"\"A", "\"string", "\"fully", "split"}, DisguiseUtilities.split("\"A \"string \"fully split"));
+        Assert.assertArrayEquals(new String[]{"\"A", "\"string", "\"fully", "split"},
+            DisguiseUtilities.split("\"A \"string \"fully split"));
 
         Assert.assertArrayEquals(new String[]{"A", "string\"", "fully", "split"}, DisguiseUtilities.split("A string\" fully split"));
 
@@ -49,7 +51,8 @@ public class DisguiseUtilitiesTest {
 
         Assert.assertArrayEquals(new String[]{"A", "string", "fully\"", "split"}, DisguiseUtilities.split("A \"string\" fully\" split"));
 
-        Assert.assertArrayEquals(new String[]{"A \"string", "with", "four", "splits"}, DisguiseUtilities.split("\"A \"string\" with four splits"));
+        Assert.assertArrayEquals(new String[]{"A \"string", "with", "four", "splits"},
+            DisguiseUtilities.split("\"A \"string\" with four splits"));
 
         // Test for quotes inside words
         Assert.assertArrayEquals(new String[]{"Fully", "split", "\"", "message"}, DisguiseUtilities.split("Fully split \"\"\" message"));
@@ -98,10 +101,11 @@ public class DisguiseUtilitiesTest {
 
         splitEquals("'//// ////'", "//// //");
 
-        splitEquals("Foobar is not 'Foo Bar' but is a single word 'foobar' or as some quote it, /'foobar/' and again, " + "not /'foo bar/' - It is 'foobar'!",
+        splitEquals("Foobar is not 'Foo Bar' but is a single word 'foobar' or as some quote it, /'foobar/' and again, " +
+                "not /'foo bar/' - It is 'foobar'!",
 
-            "Foobar", "is", "not", "Foo Bar", "but", "is", "a", "single", "word", "foobar", "or", "as", "some", "quote", "it,", "'foobar'", "and", "again,",
-            "not", "'foo", "bar'", "-", "It", "is", "'foobar'!");
+            "Foobar", "is", "not", "Foo Bar", "but", "is", "a", "single", "word", "foobar", "or", "as", "some", "quote", "it,", "'foobar'",
+            "and", "again,", "not", "'foo", "bar'", "-", "It", "is", "'foobar'!");
 
         splitAndBack("Hi \" bye");
         splitAndBack("Hi\\\" I'm Sam");

@@ -332,8 +332,8 @@ public class DisguiseConfig {
     }
 
     private static void doUpdaterTask() {
-        boolean startTask = isAutoUpdate() || isNotifyUpdate() ||
-            "1592".equals((LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
+        boolean startTask = isAutoUpdate() || isNotifyUpdate() || "1592".equals(
+            (LibsPremium.getPaidInformation() == null ? LibsPremium.getPluginInformation() : LibsPremium.getPaidInformation()).getUserID());
 
         // Don't ever run the auto updater on a custom build..
         if (!LibsDisguises.getInstance().isNumberedBuild()) {
@@ -358,9 +358,8 @@ public class DisguiseConfig {
         // Next update check will be in 30 minutes, or the timer - elapsed time. Whatever is greater
         timeSinceLast = Math.max(30 * 60 * 20, timer - timeSinceLast);
 
-        updaterTask = Bukkit.getScheduler()
-            .runTaskTimerAsynchronously(LibsDisguises.getInstance(), () -> LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck(), timeSinceLast,
-                timer);
+        updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(LibsDisguises.getInstance(),
+            () -> LibsDisguises.getInstance().getUpdateChecker().doAutoUpdateCheck(), timeSinceLast, timer);
     }
 
     public static void setUsingReleaseBuilds(boolean useReleaseBuilds) {
@@ -421,8 +420,8 @@ public class DisguiseConfig {
         String internalConfig = ReflectionManager.getResourceAsString(LibsDisguises.getInstance().getFile(), "internal.yml");
 
         // Bisect hosted, server ip, release builds
-        for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(), isHittingRateLimit(),
-            getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
+        for (Object s : new Object[]{isBisectHosted(), getSavedServerIp(), isUsingReleaseBuild(), getLastUpdateRequest(),
+            isHittingRateLimit(), getLastGithubUpdateETag(), getLastPluginUpdateVersion(), getData()}) {
             internalConfig = internalConfig.replaceFirst("%data%", "" + s);
         }
 
@@ -575,7 +574,8 @@ public class DisguiseConfig {
                 explain.createNewFile();
 
                 try (PrintWriter out = new PrintWriter(explain)) {
-                    out.println("This folder is used to store .png files for uploading with the /savedisguise or " + "/grabskin " + "commands");
+                    out.println(
+                        "This folder is used to store .png files for uploading with the /savedisguise or " + "/grabskin " + "commands");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -668,7 +668,8 @@ public class DisguiseConfig {
         try {
             setPlayerNameType(PlayerNameType.valueOf(config.getString("PlayerNames").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
+            DisguiseUtilities.getLogger()
+                .warning("Cannot parse '" + config.getString("PlayerNames") + "' to a valid option for PlayerNames");
         }
 
         try {
@@ -687,29 +688,34 @@ public class DisguiseConfig {
         try {
             setBossBarColor(BarColor.valueOf(config.getString("BossBarColor").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("BossBarColor") + "' to a valid option for BossBarColor");
+            DisguiseUtilities.getLogger()
+                .warning("Cannot parse '" + config.getString("BossBarColor") + "' to a valid option for BossBarColor");
         }
 
         try {
             setBossBarStyle(BarStyle.valueOf(config.getString("BossBarStyle").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("BossBarStyle") + "' to a valid option for BossBarStyle");
+            DisguiseUtilities.getLogger()
+                .warning("Cannot parse '" + config.getString("BossBarStyle") + "' to a valid option for BossBarStyle");
         }
 
         try {
             setUpdatesBranch(UpdatesBranch.valueOf(config.getString("UpdatesBranch").toUpperCase(Locale.ENGLISH)));
         } catch (Exception ex) {
-            DisguiseUtilities.getLogger().warning("Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
+            DisguiseUtilities.getLogger()
+                .warning("Cannot parse '" + config.getString("UpdatesBranch") + "' to a valid option for UpdatesBranch");
         }
 
         try {
             setDisabledDisguises(
-                config.getStringList("DisabledDisguises").stream().map(s -> DisguiseType.valueOf(s.toUpperCase(Locale.ROOT))).collect(Collectors.toList()));
+                config.getStringList("DisabledDisguises").stream().map(s -> DisguiseType.valueOf(s.toUpperCase(Locale.ROOT)))
+                    .collect(Collectors.toList()));
         } catch (Exception ex) {
             DisguiseUtilities.getLogger().warning("Cannot load 'DisabledDisguises' in features.yml, invalid disguise types provided?");
         }
 
-        setDisabledMethods(config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList()));
+        setDisabledMethods(
+            config.getStringList("DisabledMethods").stream().map(s -> s.toLowerCase(Locale.ROOT)).collect(Collectors.toList()));
 
         setNeverUpdateProtocolLib(config.getBoolean("NeverUpdateProtocolLib", false));
 
@@ -717,8 +723,8 @@ public class DisguiseConfig {
         PermissionDefault commandVisibility = seeCommands == null ? null : PermissionDefault.getByName(seeCommands);
 
         if (commandVisibility == null) {
-            DisguiseUtilities.getLogger()
-                .warning("Invalid option '" + config.getString("Permissions.SeeCommands") + "' for Permissions.SeeCommands when loading config!");
+            DisguiseUtilities.getLogger().warning(
+                "Invalid option '" + config.getString("Permissions.SeeCommands") + "' for Permissions.SeeCommands when loading config!");
         } else {
             setCommandVisibility(commandVisibility);
         }
@@ -747,7 +753,8 @@ public class DisguiseConfig {
         if (config.contains("VerboseConfig")) {
             verbose = config.getBoolean("VerboseConfig");
         } else {
-            DisguiseUtilities.getLogger().info("As 'VerboseConfig' hasn't been set, it is assumed true. Set it in your config to remove " + "these messages!");
+            DisguiseUtilities.getLogger()
+                .info("As 'VerboseConfig' hasn't been set, it is assumed true. Set it in your config to remove " + "these messages!");
             verbose = true;
         }
 
@@ -757,9 +764,8 @@ public class DisguiseConfig {
             ArrayList<String> returns = doOutput(config, changed, verbose);
 
             if (!returns.isEmpty()) {
-                DisguiseUtilities.getLogger().info(
-                    "This is not an error! Now outputting " + (verbose ? "missing " : "") + (changed ? (verbose ? "and " : "") + "changed/invalid " : "") +
-                        "config values");
+                DisguiseUtilities.getLogger().info("This is not an error! Now outputting " + (verbose ? "missing " : "") +
+                    (changed ? (verbose ? "and " : "") + "changed/invalid " : "") + "config values");
 
                 for (String v : returns) {
                     DisguiseUtilities.getLogger().info(v);
@@ -774,7 +780,8 @@ public class DisguiseConfig {
                 configLoader.saveDefaultConfigs();
                 DisguiseUtilities.getLogger().info("Config has been auto-updated!");
             } else if (!verbose) {
-                DisguiseUtilities.getLogger().warning("Your config is missing " + missingConfigs + " options! Please consider regenerating your config!");
+                DisguiseUtilities.getLogger()
+                    .warning("Your config is missing " + missingConfigs + " options! Please consider regenerating your config!");
                 DisguiseUtilities.getLogger().info("You can also add the missing entries yourself! Try '/libsdisguises config'");
             }
         } else {
@@ -850,12 +857,13 @@ public class DisguiseConfig {
                 ModdedEntity entity = new ModdedEntity(null, name, living, mod, version, requireMessage, 0);
 
                 if (ModdedManager.getModdedEntity(name) != null) {
-                    DisguiseUtilities.getLogger().info("Modded entity " + name + " has already been " + (register ? "registered" : "added"));
+                    DisguiseUtilities.getLogger()
+                        .info("Modded entity " + name + " has already been " + (register ? "registered" : "added"));
                     continue;
                 }
 
-                ModdedManager.registerModdedEntity(new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)), entity,
-                    register);
+                ModdedManager.registerModdedEntity(
+                    new NamespacedKey(key.substring(0, key.indexOf(":")), key.substring(key.indexOf(":") + 1)), entity, register);
 
                 DisguiseUtilities.getLogger().info("Modded entity " + name + " has been " + (register ? "registered" : "added"));
             } catch (Exception ex) {
@@ -942,8 +950,8 @@ public class DisguiseConfig {
             String toParse = section.getString(key);
 
             if (!NmsVersion.v1_13.isSupported() && key.equals("libraryaddict")) {
-                toParse =
-                    toParse.replace("GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET", "GOLD_BOOTS,GOLD_LEGGINGS,GOLD_CHESTPLATE,GOLD_HELMET");
+                toParse = toParse.replace("GOLDEN_BOOTS,GOLDEN_LEGGINGS,GOLDEN_CHESTPLATE,GOLDEN_HELMET",
+                    "GOLD_BOOTS,GOLD_LEGGINGS,GOLD_CHESTPLATE,GOLD_HELMET");
             }
 
             try {
@@ -969,7 +977,8 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().warning("Failed to load " + failedCustomDisguises + " custom disguises");
         }
 
-        DisguiseUtilities.getLogger().info("Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ? "" : "s"));
+        DisguiseUtilities.getLogger()
+            .info("Loaded " + customDisguises.size() + " custom disguise" + (customDisguises.size() == 1 ? "" : "s"));
         // Reload the permissions here because otherwise our cached permissions doesn't know about the custom disguises
         DisguisePermissions.onReload();
     }
@@ -996,7 +1005,8 @@ public class DisguiseConfig {
             DisguiseUtilities.getLogger().info("Loaded custom disguise " + disguiseName);
             DisguisePermissions.onReload();
         } catch (DisguiseParseException e) {
-            throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, (e.getMessage() == null ? "" : ": " + e.getMessage()));
+            throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName,
+                (e.getMessage() == null ? "" : ": " + e.getMessage()));
         } catch (Throwable e) {
             e.printStackTrace();
             throw new DisguiseParseException(LibsMsg.ERROR_LOADING_CUSTOM_DISGUISE, disguiseName, "");

@@ -83,7 +83,8 @@ public class UpdateChecker {
     public boolean isUsingReleaseBuilds() {
         DisguiseConfig.UpdatesBranch builds = DisguiseConfig.getUpdatesBranch();
 
-        return builds == DisguiseConfig.UpdatesBranch.RELEASES || (builds == DisguiseConfig.UpdatesBranch.SAME_BUILDS && DisguiseConfig.isUsingReleaseBuild());
+        return builds == DisguiseConfig.UpdatesBranch.RELEASES ||
+            (builds == DisguiseConfig.UpdatesBranch.SAME_BUILDS && DisguiseConfig.isUsingReleaseBuild());
     }
 
     public void notifyUpdate(CommandSender player) {
@@ -192,7 +193,8 @@ public class UpdateChecker {
 
             String build = LibsDisguises.getInstance().getBuildNo();
 
-            updateMessage = new String[]{LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("\\d+") ? "#" : "") + build, newBuild), LibsMsg.UPDATE_HOW.get()};
+            updateMessage = new String[]{LibsMsg.UPDATE_READY_SNAPSHOT.get((build.matches("\\d+") ? "#" : "") + build, newBuild),
+                LibsMsg.UPDATE_HOW.get()};
         }
 
         return null;
@@ -233,7 +235,8 @@ public class UpdateChecker {
             lastDownload = result;
 
             updateMessage = new String[]{LibsMsg.UPDATE_SUCCESS.get(),
-                LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(), result.getSize() / 1024)};
+                LibsMsg.UPDATE_INFO.get(result.getVersion(), result.getBuildNumber(), result.getParsedBuildDate().toString(),
+                    result.getSize() / 1024)};
 
             return result;
         } catch (Exception ex) {

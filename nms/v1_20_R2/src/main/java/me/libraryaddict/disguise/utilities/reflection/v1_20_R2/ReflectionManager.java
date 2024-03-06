@@ -145,14 +145,16 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public net.minecraft.world.entity.Entity createEntityInstance(String entityName) {
-        Optional<net.minecraft.world.entity.EntityType<?>> optional = net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ROOT));
+        Optional<net.minecraft.world.entity.EntityType<?>> optional =
+            net.minecraft.world.entity.EntityType.byString(entityName.toLowerCase(Locale.ROOT));
         if (optional.isPresent()) {
             net.minecraft.world.entity.EntityType<?> entityType = optional.get();
             ServerLevel world = getWorldServer(Bukkit.getWorlds().get(0));
             net.minecraft.world.entity.Entity entity;
             if (entityType == net.minecraft.world.entity.EntityType.PLAYER) {
                 WrappedGameProfile gameProfile = ReflectionManagerAbstract.getGameProfile(new UUID(0, 0), "Steve");
-                ClientInformation information = new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
+                ClientInformation information =
+                    new ClientInformation("english", 10, ChatVisiblity.FULL, true, 0, HumanoidArm.RIGHT, true, true);
                 entity = new ServerPlayer(getMinecraftServer(), world, (GameProfile) gameProfile.getHandle(), information);
             } else {
                 entity = entityType.create(world);
@@ -176,7 +178,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
     }
 
     public MobEffectInstance createMobEffect(PotionEffect effect) {
-        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+        return createMobEffect(effect.getType().getId(), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(),
+            effect.hasParticles());
     }
 
     public MobEffectInstance createMobEffect(int id, int duration, int amplification, boolean ambient, boolean particles) {
@@ -281,7 +284,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         event.getPacket().getModifier().write(1, canKeep);
     }
 
-    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible, EnumWrappers.PlayerInfoAction... actions) {
+    public PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible,
+                                            EnumWrappers.PlayerInfoAction... actions) {
         if (actions[0] == EnumWrappers.PlayerInfoAction.REMOVE_PLAYER) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO_REMOVE);
             packet.getModifier().write(0, Collections.singletonList(gameProfile.getUUID()));
@@ -290,13 +294,14 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         }
 
         ClientboundPlayerInfoUpdatePacket.Entry entry =
-            new ClientboundPlayerInfoUpdatePacket.Entry(gameProfile.getUUID(), (GameProfile) gameProfile.getHandle(), nameVisible, 0, GameType.SURVIVAL,
-                Component.literal(displayName), null);
+            new ClientboundPlayerInfoUpdatePacket.Entry(gameProfile.getUUID(), (GameProfile) gameProfile.getHandle(), nameVisible, 0,
+                GameType.SURVIVAL, Component.literal(displayName), null);
 
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.PLAYER_INFO);
         StructureModifier<Object> modifier = packet.getModifier();
-        EnumSet<ClientboundPlayerInfoUpdatePacket.Action> enumSet =
-            EnumSet.copyOf(Arrays.stream(actions).map(action -> ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name())).collect(Collectors.toList()));
+        EnumSet<ClientboundPlayerInfoUpdatePacket.Action> enumSet = EnumSet.copyOf(
+            Arrays.stream(actions).map(action -> ClientboundPlayerInfoUpdatePacket.Action.valueOf(action.name()))
+                .collect(Collectors.toList()));
 
         modifier.write(0, enumSet);
         modifier.write(1, Collections.singletonList(entry));
@@ -346,8 +351,9 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public void setBoundingBox(Entity entity, double x, double y, double z) {
         Location loc = entity.getLocation();
-        ((CraftEntity) entity).getHandle()
-            .setBoundingBox(new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2, loc.getZ() + z / 2));
+        ((CraftEntity) entity).getHandle().setBoundingBox(
+            new AABB(loc.getX() - x / 2, loc.getY() - y / 2, loc.getZ() - z / 2, loc.getX() + x / 2, loc.getY() + y / 2,
+                loc.getZ() + z / 2));
     }
 
     public Enum getSoundCategory(String category) {
@@ -431,7 +437,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
 
     public VillagerData getNmsVillagerData(Villager.Type villagerType, Villager.Profession villagerProfession, int level) {
         VillagerType nmsVillagerType = BuiltInRegistries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(villagerType.getKey()));
-        VillagerProfession nmsVillagerProfession = BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
+        VillagerProfession nmsVillagerProfession =
+            BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(villagerProfession.getKey()));
 
         return new net.minecraft.world.entity.npc.VillagerData(nmsVillagerType, nmsVillagerProfession, level);
     }
@@ -444,7 +451,8 @@ public class ReflectionManager implements ReflectionManagerAbstract {
         return BuiltInRegistries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(profession.getKey()));
     }
 
-    public <T> SynchedEntityData.DataItem<T> createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject, T metaItem) {
+    public <T> SynchedEntityData.DataItem<T> createDataWatcherItem(WrappedDataWatcher.WrappedDataWatcherObject wrappedDataWatcherObject,
+                                                                   T metaItem) {
         return new SynchedEntityData.DataItem<>((EntityDataAccessor<T>) wrappedDataWatcherObject.getHandle(), metaItem);
     }
 

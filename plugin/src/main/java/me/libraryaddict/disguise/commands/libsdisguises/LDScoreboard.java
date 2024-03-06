@@ -56,8 +56,8 @@ public class LDScoreboard implements LDCommand {
 
                     if (!((PlayerDisguise) disguise).hasScoreboardName()) {
                         if (unexpected++ < 3) {
-                            sender.sendMessage(
-                                "The player disguise " + ((PlayerDisguise) disguise).getName() + " isn't using a scoreboard name? This is unexpected");
+                            sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName() +
+                                " isn't using a scoreboard name? This is unexpected");
                         }
                         continue;
                     }
@@ -83,33 +83,36 @@ public class LDScoreboard implements LDCommand {
 
                         if (team == null) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                    " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                    " and possibly more players!");
+                                sender.sendMessage(
+                                    "The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
+                                        " is missing a scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                        " and possibly more players!");
                             }
 
                             continue;
                         }
 
-                        if (!team.getPrefix().equals("Colorize") &&
-                            (!team.getPrefix().equals(scoreboardName.getPrefix()) || !team.getSuffix().equals(scoreboardName.getSuffix()))) {
+                        if (!team.getPrefix().equals("Colorize") && (!team.getPrefix().equals(scoreboardName.getPrefix()) ||
+                            !team.getSuffix().equals(scoreboardName.getSuffix()))) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                    " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                    " has an unexpected prefix/suffix of '" + team.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
-                                    team.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'! Expected '" +
-                                    scoreboardName.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
-                                    scoreboardName.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'");
+                                sender.sendMessage(
+                                    "The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
+                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                        " has an unexpected prefix/suffix of '" + team.getPrefix().replace(ChatColor.COLOR_CHAR, '&') +
+                                        "' & '" + team.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'! Expected '" +
+                                        scoreboardName.getPrefix().replace(ChatColor.COLOR_CHAR, '&') + "' & '" +
+                                        scoreboardName.getSuffix().replace(ChatColor.COLOR_CHAR, '&') + "'");
                             }
                             continue;
                         }
 
                         if (!team.hasEntry(scoreboardName.getPlayer())) {
                             if (issuesFound++ < 5) {
-                                sender.sendMessage("The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
-                                    " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
-                                    " does not have the player entry expected! Instead has '" +
-                                    StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') + "'");
+                                sender.sendMessage(
+                                    "The player disguise " + ((PlayerDisguise) disguise).getName().replace(ChatColor.COLOR_CHAR, '&') +
+                                        " on scoreboard team '" + scoreboardName.getTeamName() + "' on " + player.getName() +
+                                        " does not have the player entry expected! Instead has '" +
+                                        StringUtils.join(team.getEntries(), ", ").replace(ChatColor.COLOR_CHAR, '&') + "'");
                             }
                         }
                     }
@@ -131,7 +134,8 @@ public class LDScoreboard implements LDCommand {
 
         if (!listeners.isEmpty()) {
             ComponentBuilder builder = new ComponentBuilder("");
-            builder.append("The following plugins are listening for scoreboard teams using ProtocolLib, and could be modifying collisions: ");
+            builder.append(
+                "The following plugins are listening for scoreboard teams using ProtocolLib, and could be modifying collisions: ");
             builder.color(net.md_5.bungee.api.ChatColor.BLUE);
 
             boolean comma = false;
@@ -149,12 +153,14 @@ public class LDScoreboard implements LDCommand {
                 builder.append(listener.getPlugin().getName());
                 builder.color(net.md_5.bungee.api.ChatColor.AQUA);
 
-                String plugin =
-                    ChatColor.GOLD + "Plugin: " + ChatColor.YELLOW + listener.getPlugin().getName() + " v" + listener.getPlugin().getDescription().getVersion();
-                String listenerClass = ChatColor.GOLD + "Listener: " + ChatColor.YELLOW + listener.getClass().toString();
-                String packets = ChatColor.GOLD + "Packets: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getTypes(), ", ");
+                String plugin = ChatColor.GOLD + "Plugin: " + ChatColor.YELLOW + listener.getPlugin().getName() + " v" +
+                    listener.getPlugin().getDescription().getVersion();
+                String listenerClass = ChatColor.GOLD + "Listener: " + ChatColor.YELLOW + listener.getClass();
+                String packets =
+                    ChatColor.GOLD + "Packets: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getTypes(), ", ");
                 String priority = ChatColor.GOLD + "Priority: " + ChatColor.YELLOW + listener.getSendingWhitelist().getPriority();
-                String options = ChatColor.GOLD + "Options: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getOptions(), ", ");
+                String options =
+                    ChatColor.GOLD + "Options: " + ChatColor.YELLOW + StringUtils.join(listener.getSendingWhitelist().getOptions(), ", ");
 
                 builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     TextComponent.fromLegacyText(plugin + "\n" + listenerClass + "\n" + packets + "\n" + priority + "\n" + options)));
@@ -165,8 +171,9 @@ public class LDScoreboard implements LDCommand {
 
         LibsMsg.LIBS_SCOREBOARD_IGNORE_TEST.send(sender);
 
-        sender.sendMessage(
-            ChatColor.RED + "This command is somewhat outdated and needs to be changed, pushing is now disabled on the entities themselves and not players");
+        sender.sendMessage(ChatColor.RED +
+            "This command is somewhat outdated and needs to be changed, pushing is now disabled on the entities themselves and not " +
+            "players");
 
         Player player;
 

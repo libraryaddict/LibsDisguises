@@ -29,8 +29,9 @@ public abstract class ExtraDisguiseParam<T> {
 
     public abstract String getParameterAsString(T param);
 
-    public void checkParameterPermission(CommandSender sender, DisguisePermissions permissions, HashMap<String, HashMap<String, Boolean>> disguiseOptions,
-                                         ArrayList<String> usedOptions, DisguisePerm disguisePerm, T param) throws DisguiseParseException {
+    public void checkParameterPermission(CommandSender sender, DisguisePermissions permissions,
+                                         HashMap<String, HashMap<String, Boolean>> disguiseOptions, ArrayList<String> usedOptions,
+                                         DisguisePerm disguisePerm, T param) throws DisguiseParseException {
         checkParameterPermission(permissions, disguiseOptions, usedOptions, disguisePerm, param);
     }
 

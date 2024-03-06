@@ -160,8 +160,8 @@ public class MetaIndex<Y> {
      * The type of particle to display
      */
     @NmsAddedIn(NmsVersion.v1_13)
-    public static MetaIndex<WrappedParticle> AREA_EFFECT_PARTICLE =
-        new MetaIndex<>(AreaEffectCloudWatcher.class, 3, NmsVersion.v1_13.isSupported() ? WrappedParticle.create(Particle.SPELL_MOB, null) : null);
+    public static MetaIndex<WrappedParticle> AREA_EFFECT_PARTICLE = new MetaIndex<>(AreaEffectCloudWatcher.class, 3,
+        NmsVersion.v1_13.isSupported() ? WrappedParticle.create(Particle.SPELL_MOB, null) : null);
 
     @NmsRemovedIn(NmsVersion.v1_13)
     public static MetaIndex<Integer> AREA_EFFECT_PARTICLE_OLD = new MetaIndex<>(AreaEffectCloudWatcher.class, 3, 0);
@@ -287,7 +287,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> CAT_TYPE = new MetaIndex<>(CatWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_19_R1)
-    public static MetaIndex<Cat.Type> CAT_TYPE_NEW = new MetaIndex<>(CatWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Cat.Type.BLACK : null);
+    public static MetaIndex<Cat.Type> CAT_TYPE_NEW =
+        new MetaIndex<>(CatWatcher.class, 0, NmsVersion.v1_19_R1.isSupported() ? Cat.Type.BLACK : null);
 
     @NmsAddedIn(NmsVersion.v1_14)
     public static MetaIndex<Boolean> CAT_LYING_DOWN = new MetaIndex<>(CatWatcher.class, 1, false);
@@ -321,7 +322,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> DISPLAY_POS_ROT_INTERPOLATION_DURATION = new MetaIndex<>(DisplayWatcher.class, 2, 0);
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
-    public static MetaIndex<Vector3f> DISPLAY_TRANSLATION = new MetaIndex<>(DisplayWatcher.class, 3, NmsVersion.v1_19_R3.isSupported() ? new Vector3f() : null);
+    public static MetaIndex<Vector3f> DISPLAY_TRANSLATION =
+        new MetaIndex<>(DisplayWatcher.class, 3, NmsVersion.v1_19_R3.isSupported() ? new Vector3f() : null);
 
     @NmsAddedIn(NmsVersion.v1_19_R3)
     public static MetaIndex<Vector3f> DISPLAY_SCALE =
@@ -713,9 +715,11 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> PLAYER_SKIN = new MetaIndex<>(PlayerWatcher.class, 2, (byte) 127);
 
-    public static MetaIndex<NbtBase> PLAYER_LEFT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 4, NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
+    public static MetaIndex<NbtBase> PLAYER_LEFT_SHOULDER_ENTITY =
+        new MetaIndex<>(PlayerWatcher.class, 4, NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
 
-    public static MetaIndex<NbtBase> PLAYER_RIGHT_SHOULDER_ENTITY = new MetaIndex<>(PlayerWatcher.class, 5, NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
+    public static MetaIndex<NbtBase> PLAYER_RIGHT_SHOULDER_ENTITY =
+        new MetaIndex<>(PlayerWatcher.class, 5, NbtFactory.ofWrapper(NbtType.TAG_COMPOUND, "None"));
 
     public static MetaIndex<Boolean> POLAR_BEAR_STANDING = new MetaIndex<>(PolarBearWatcher.class, 0, false);
 
@@ -763,13 +767,15 @@ public class MetaIndex<Y> {
 
     public static MetaIndex<Byte> SPIDER_CLIMB = new MetaIndex<>(SpiderWatcher.class, 0, (byte) 0);
 
-    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM = new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.SPLASH_POTION));
+    public static MetaIndex<ItemStack> SPLASH_POTION_ITEM =
+        new MetaIndex<>(SplashPotionWatcher.class, 0, new ItemStack(Material.SPLASH_POTION));
 
     public static MetaIndex<Byte> TAMEABLE_META = new MetaIndex<>(TameableWatcher.class, 0, (byte) 0);
 
     public static MetaIndex<Optional<UUID>> TAMEABLE_OWNER = new MetaIndex<>(TameableWatcher.class, 1, Optional.empty());
 
-    public static MetaIndex<WrappedChatComponent> TEXT_DISPLAY_TEXT = new MetaIndex<>(TextDisplayWatcher.class, 0, WrappedChatComponent.fromText(""));
+    public static MetaIndex<WrappedChatComponent> TEXT_DISPLAY_TEXT =
+        new MetaIndex<>(TextDisplayWatcher.class, 0, WrappedChatComponent.fromText(""));
 
     public static MetaIndex<Integer> TEXT_DISPLAY_LINE_WIDTH = new MetaIndex<>(TextDisplayWatcher.class, 1, 200);
 
@@ -818,8 +824,8 @@ public class MetaIndex<Y> {
     public static MetaIndex<Integer> ABSTRACT_VILLAGER_ANGRY = new MetaIndex<>(AbstractVillagerWatcher.class, 0, 0);
 
     @NmsAddedIn(NmsVersion.v1_14)
-    public static MetaIndex<VillagerData> VILLAGER_DATA =
-        new MetaIndex<>(VillagerWatcher.class, 0, NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
+    public static MetaIndex<VillagerData> VILLAGER_DATA = new MetaIndex<>(VillagerWatcher.class, 0,
+        NmsVersion.v1_14.isSupported() ? new VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE, 1) : null);
 
     public static MetaIndex<Integer> WARDEN_ANGER = new MetaIndex<>(WardenWatcher.class, 0, 0);
 
@@ -936,8 +942,9 @@ public class MetaIndex<Y> {
                     }
 
                     if (found != null) {
-                        DisguiseUtilities.getLogger().severe(entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" +
-                            type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
+                        DisguiseUtilities.getLogger().severe(
+                            entry.getKey().getSimpleName() + " has multiple FlagType's registered for the index " + i + " (" +
+                                type.getFlagWatcher().getSimpleName() + ", " + found.getFlagWatcher().getSimpleName() + ")");
                         continue loop;
                     }
 
@@ -1126,8 +1133,8 @@ public class MetaIndex<Y> {
                 }
 
                 DisguiseUtilities.getLogger().severe(
-                    "MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() + " has already registered this! (" +
-                        metaIndex.getDefault() + "," + index.getDefault() + ")");
+                    "MetaIndex " + metaIndex.getFlagWatcher().getSimpleName() + " at index " + metaIndex.getIndex() +
+                        " has already registered this! (" + metaIndex.getDefault() + "," + index.getDefault() + ")");
             }
 
             values()[i] = metaIndexes[a];

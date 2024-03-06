@@ -171,7 +171,8 @@ public abstract class DisplayWatcher extends FlagWatcher {
     }
 
     public void setBrightness(Display.Brightness brightness) {
-        setData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE, brightness == null ? -1 : brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
+        setData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE,
+            brightness == null ? -1 : brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
         sendData(MetaIndex.DISPLAY_BRIGHTNESS_OVERRIDE);
     }
 

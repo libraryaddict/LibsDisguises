@@ -72,7 +72,8 @@ public class PacketListenerModdedClient extends PacketAdapter {
         int size = 256;
 
         if (j > size * 4) {
-            throw new DecoderException("The received encoded string buffer length is longer than maximum allowed (" + j + " > " + size * 4 + ")");
+            throw new DecoderException(
+                "The received encoded string buffer length is longer than maximum allowed (" + j + " > " + size * 4 + ")");
         } else if (j < 0) {
             throw new DecoderException("The received encoded string buffer length is less than zero! Weird string!");
         } else {
@@ -132,8 +133,8 @@ public class PacketListenerModdedClient extends PacketAdapter {
         packet1.getMinecraftKeys().write(0, new com.comphenix.protocol.wrappers.MinecraftKey("fml", "handshake"));
 
         try {
-            Object obj1 =
-                ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class).newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake()));
+            Object obj1 = ReflectionManager.getNmsConstructor("PacketDataSerializer", ByteBuf.class)
+                .newInstance(Unpooled.wrappedBuffer(ModdedManager.getFmlHandshake()));
 
             packet1.getModifier().write(2, obj1);
 

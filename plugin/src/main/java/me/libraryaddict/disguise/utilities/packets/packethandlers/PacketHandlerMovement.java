@@ -31,8 +31,8 @@ public class PacketHandlerMovement implements IPacketHandler {
 
     @Override
     public PacketType[] getHandledPackets() {
-        return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK, PacketType.Play.Server.ENTITY_TELEPORT,
-            PacketType.Play.Server.REL_ENTITY_MOVE};
+        return new PacketType[]{PacketType.Play.Server.REL_ENTITY_MOVE_LOOK, PacketType.Play.Server.ENTITY_LOOK,
+            PacketType.Play.Server.ENTITY_TELEPORT, PacketType.Play.Server.REL_ENTITY_MOVE};
     }
 
     private short conRel(double oldCord, double newCord) {
@@ -157,8 +157,8 @@ public class PacketHandlerMovement implements IPacketHandler {
 
             packets.addPacket(movePacket);
             return;
-        } else if (disguise.getType() == DisguiseType.RABBIT &&
-            (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE || sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
+        } else if (disguise.getType() == DisguiseType.RABBIT && (sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE ||
+            sentPacket.getType() == PacketType.Play.Server.REL_ENTITY_MOVE_LOOK)) {
             // When did the rabbit disguise last hop
             long lastHop = 999999;
 
@@ -228,7 +228,8 @@ public class PacketHandlerMovement implements IPacketHandler {
                     packet.getBytes().write(1, pitchValue);
 
                     packets.addPacket(packet);
-                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT && disguise.getType() == DisguiseType.ITEM_FRAME) {
+                } else if (sentPacket.getType() == PacketType.Play.Server.ENTITY_TELEPORT &&
+                    disguise.getType() == DisguiseType.ITEM_FRAME) {
                     StructureModifier<Double> doubles = movePacket.getDoubles();
 
                     Location loc = entity.getLocation();

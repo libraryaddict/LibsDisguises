@@ -19,8 +19,8 @@ public class PluginInformation {
     private final String buildNumber;
     private final String buildDate;
 
-    public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium, String version, String buildNumber,
-                             String buildDate) {
+    public PluginInformation(long size, String userID, String resourceID, String downloadID, boolean premium, String version,
+                             String buildNumber, String buildDate) {
         this.size = size;
         this.userID = userID;
         this.resourceID = resourceID;
@@ -69,6 +69,7 @@ public class PluginInformation {
     }
 
     public boolean isLegit() {
-        return getUserID().matches("\\d+") && !getUserID().equals("12345") && getResourceID().equals("32453") && getDownloadID().matches("-?\\d+");
+        return getUserID().matches("\\d+") && !getUserID().equals("12345") && getResourceID().equals("32453") &&
+            getDownloadID().matches("-?\\d+");
     }
 }

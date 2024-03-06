@@ -76,7 +76,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
 
             Collections.sort(classes);
 
-            LibsMsg.DMODRADIUS_USABLE.send(sender, ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
+            LibsMsg.DMODRADIUS_USABLE.send(sender,
+                ChatColor.GREEN + StringUtils.join(classes, ChatColor.DARK_GREEN + ", " + ChatColor.GREEN));
             return true;
         }
 
@@ -173,7 +174,8 @@ public class DisguiseModifyRadiusCommand extends DisguiseBaseCommand implements 
             tempArgs = DisguiseParser.parsePlaceholders(tempArgs, sender, entity);
 
             try {
-                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs, "DisguiseModifyRadius");
+                DisguiseParser.callMethods(sender, disguise, permissions, disguisePerm, new ArrayList<>(), tempArgs,
+                    "DisguiseModifyRadius");
                 modifiedDisguises++;
             } catch (DisguiseParseException ex) {
                 ex.send(sender);

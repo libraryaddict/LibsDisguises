@@ -78,8 +78,8 @@ public enum LibsMsg {
     DCLONE_EQUIP("ignoreEquip"),
     DCLONE_ADDEDANIMATIONS("doAddedAnimations"),
     DMODRADIUS_HELP2(
-        "<dark_green>/disguisemodifyradius <<green>DisguiseType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> <<green>Disguise " +
-            "Methods<dark_green>>"),
+        "<dark_green>/disguisemodifyradius <<green>DisguiseType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
+            "<<green>Disguise " + "Methods<dark_green>>"),
     DMODRADIUS_HELP3("<dark_green>See the DisguiseType's usable by <green>/disguisemodifyradius DisguiseType"),
     DMODRADIUS_NEEDOPTIONS("<red>You need to supply the disguise methods as well as the radius"),
     DMODRADIUS_NEEDOPTIONS_ENTITY("<red>You need to supply the disguise methods as well as the radius and EntityType"),
@@ -90,14 +90,18 @@ public enum LibsMsg {
     DPLAYER_SUPPLY("<red>You need to supply a disguise as well as the player/uuid"),
     DRADIUS_ENTITIES("<dark_green>EntityTypes usable are: %s"),
     DRADIUS_HELP1("<dark_green>Disguise all entities in a radius! Caps at %s blocks!"),
-    DRADIUS_HELP3("<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> player " +
-        "<<green>Name<dark_green>>"),
+    DRADIUS_HELP3(
+        "<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> player " +
+            "<<green>Name<dark_green>>"),
     DRADIUS_HELP4("<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
         "<<green>DisguiseType<dark_green>> <<green>Baby<dark_green>(<green>Optional<dark_green>)>"),
     DRADIUS_HELP5("<dark_green>/disguiseradius <<green>EntityType<dark_green>(<green>Optional<dark_green>)> <<green>Radius<dark_green>> " +
-        "<<green>Dropped_Item/Falling_Block<dark_green>> <<green>Id<dark_green>> <<green>Durability<dark_green>(<green>Optional<dark_green>)" + ">"),
+        "<<green>Dropped_Item/Falling_Block<dark_green>> <<green>Id<dark_green>> <<green>Durability<dark_green>" +
+        "(<green>Optional<dark_green>)" + ">"),
     DRADIUS_HELP6("<dark_green>See the EntityType's usable by <green>/disguiseradius EntityTypes"),
-    DRADIUS_MISCDISG("<red>Failed to disguise %s entities because the option to disguise a living entity as a non-living has been disabled in the config"),
+    DRADIUS_MISCDISG(
+        "<red>Failed to disguise %s entities because the option to disguise a living entity as a non-living has been disabled in the " +
+            "config"),
     DRADIUS_NEEDOPTIONS("<red>You need to supply a disguise as well as the radius"),
     DRADIUS_NEEDOPTIONS_ENTITY("<red>You need to supply a disguise as well as the radius and EntityType"),
     FAILED_DISGIUSE("<red>Failed to disguise as %s"),
@@ -163,7 +167,9 @@ public enum LibsMsg {
     PARSE_INVALID_TIME("<red>Error! %s is not a valid time! Use s,m,h,d or secs,mins,hours,days"),
     PARSE_INVALID_TIME_SEQUENCE("<red>Error! %s is not a valid time! Do amount then time, eg. 4min10sec"),
     PARSE_USE_SECOND_NUM("<red>Error! Only the disguises %s and %s uses a second number!"),
-    REF_TOO_MANY("<red>Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or lower the time they last"),
+    REF_TOO_MANY(
+        "<red>Failed to store the reference, too many cloned disguises. Please raise the maximum cloned disguises, or lower the time they" +
+            " last"),
     RELOADED_CONFIG("<green>[LibsDisguises] Reloaded config."),
     UND_ENTITY("<red>Right click a disguised entity to undisguise them!"),
     UNDISG("<red>You are no longer disguised"),
@@ -171,10 +177,12 @@ public enum LibsMsg {
     UNDISG_PLAYER_FAIL("<red>%s not disguised!"),
     UNDISG_PLAYER_HELP("<red>/undisguiseplayer <Name>"),
     UNDISRADIUS("<red>Successfully undisguised %s entities!"),
-    UPDATE_READY("<red>[LibsDisguises] <dark_red>There is a update ready to be downloaded! You are using <red>v%s<dark_red>, the new version is " +
-        "<red>v%s<dark_red>!"),
-    UPDATE_READY_SNAPSHOT("<red>[LibsDisguises] <dark_red>There is a new build of Lib's Disguises! You are using <red>%s<dark_red>, the latest build is " +
-        "<red>#%s<dark_red>!"),
+    UPDATE_READY(
+        "<red>[LibsDisguises] <dark_red>There is a update ready to be downloaded! You are using <red>v%s<dark_red>, the new version is " +
+            "<red>v%s<dark_red>!"),
+    UPDATE_READY_SNAPSHOT(
+        "<red>[LibsDisguises] <dark_red>There is a new build of Lib's Disguises! You are using <red>%s<dark_red>, the latest build is " +
+            "<red>#%s<dark_red>!"),
     UPDATE_HOW("<dark_aqua>Use <aqua>/libsdisgusies changelog<dark_aqua> to see what changed, use <aqua>/libsdisguises update!" +
         "<dark_aqua> to download the update!"),
     VIEW_SELF_ON("<green>Toggled viewing own disguise on!"),
@@ -220,7 +228,8 @@ public enum LibsMsg {
     SAVE_DISG_HELP_4("<green>Your arguments need to be as if you're using /disguise. So '/disguise player Notch setsneaking' - " +
         "Means '/savedisguise Notch player Notch setsneaking'"),
     SAVE_DISG_HELP_5("<green>Remember! You can upload your own skins, then reference those skins!"),
-    SAVE_DISG_HELP_6("<green>If you are using setSkin, you can append :slim to your skin path to get the slim Alex model. So myskin.png:slim"),
+    SAVE_DISG_HELP_6(
+        "<green>If you are using setSkin, you can append :slim to your skin path to get the slim Alex model. So myskin.png:slim"),
     GRAB_DISG_HELP_1("<green>You can choose a name to save the skins under, the names will be usable as if it was an actual player skin"),
     GRAB_DISG_HELP_2("<dark_green>/grabskin <Optional Name> https://somesite.com/myskin.png"),
     GRAB_DISG_HELP_3("<dark_green>/grabskin <Optional Name> myskin.png - Skins must be in the folder!"),
@@ -268,10 +277,11 @@ public enum LibsMsg {
     ITEM_SERIALIZED_MC_LD_NO_COPY("<gold>MC Serialized for LD: <yellow>%s"),
     ITEM_SIMPLE_STRING_NO_COPY("<gold>Simple: <yellow>%s"),
     LIBS_SCOREBOARD_NO_TEAM("<red>Not on a scoreboard team!"),
-    LIBS_SCOREBOARD_SUCCESS("<gold>On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right now, then " +
-        "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
-        "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the end' if you " +
-        "still need help with this, or we'll assume you can't read."),
+    LIBS_SCOREBOARD_SUCCESS(
+        "<gold>On scoreboard team '%s' with pushing disabled! If you're still having issues and you are disguised right now, then " +
+            "you have a plugin modifying scoreboard through packets. Example of this is a plugin that modifies your " +
+            "name above head, or the tablist. Check their configs for pushing disabling options\nSay 'I read to the end' if you " +
+            "still need help with this, or we'll assume you can't read."),
     LIBS_SCOREBOARD_NAMES_DISABLED("<red>Scoreboard names has been disabled, the test for player disguises has failed before it started"),
     LIBS_SCOREBOARD_IGNORE_TEST("<green>This was a seperate test from the self disguising collision test that will follow!"),
     USING_DEFAULT_CONFIG("<dark_green>Using the default config!"),
@@ -282,16 +292,18 @@ public enum LibsMsg {
     LD_COMMAND_COUNT("<blue>/libsdisguises count - <aqua>Tells you how many active disguises there are"),
     LD_COMMAND_METAINFO("<blue>/libsdisguises metainfo - <aqua>Debugging info, tells you what the metadata is for a disguise"),
     LD_COMMAND_CONFIG("<blue>/libsdisguises config - <aqua>Tells you what's not normal in your config"),
-    LD_COMMAND_UPDATE(
-        "<blue>/libsdisguises update - <aqua>" + "'update' will fetch an update, 'update dev' will fetch a dev build update, 'update release' will fetch a" +
-            " release build update and 'update!' will download that update!"),
+    LD_COMMAND_UPDATE("<blue>/libsdisguises update - <aqua>" +
+        "'update' will fetch an update, 'update dev' will fetch a dev build update, 'update release' will fetch a" +
+        " release build update and 'update!' will download that update!"),
     LD_COMMAND_CHANGELOG("<blue>/libsdisguises changelog - <aqua>Gives you the changelog of the current update fetched"),
     LD_DEBUG_MINESKIN("<blue>/libsdisguises mineskin - <aqua>Prints debug information about MineSkin to console"),
     LD_DEBUG_MINESKIN_TOGGLE("<blue>MineSkin debug is now %s, this command toggles the printing of MineSkin information to console"),
     LD_COMMAND_JSON("<blue>/libsdisguises json - <aqua>Turns the current held item into a string format"),
-    LD_COMMAND_MODS("<blue>/libsdisguises mods <Player?> - <aqua>" + "If using modded entities, this will tell you what mods a player is using if possible"),
+    LD_COMMAND_MODS("<blue>/libsdisguises mods <Player?> - <aqua>" +
+        "If using modded entities, this will tell you what mods a player is using if possible"),
     LD_COMMAND_PERMTEST("<blue>/libsdisguises permtest <Player?> - <aqua>Does a quick test to see if your permissions are working"),
-    LD_COMMAND_SCOREBOARD("<blue>/libsdisguises scoreboard <Player?> - <aqua>Does a test to see if there's any scoreboard issues it can detect"),
+    LD_COMMAND_SCOREBOARD(
+        "<blue>/libsdisguises scoreboard <Player?> - <aqua>Does a test to see if there's any scoreboard issues it can detect"),
     LD_COMMAND_RELOAD("<blue>/libsdisguises reload - <aqua>Reload's the plugin config and possibly blows disguises"),
     LD_COMMAND_DEBUG("<blue>/libsdisguises debug - <aqua>Used to help debug scoreboard issues on a player disguise"),
     LD_COMMAND_UPLOAD_LOGS("<blue>/libsdisguises uploadlogs - <aqua>" +
@@ -342,8 +354,8 @@ public enum LibsMsg {
         int matches = StringUtils.countMatches(getRaw(), "%s");
 
         if (matches != strings.length) {
-            DisguiseUtilities.getLogger()
-                .severe("Mismatch in messages, incorrect parameters supplied for " + name() + ". Please inform plugin author if not using translations.");
+            DisguiseUtilities.getLogger().severe("Mismatch in messages, incorrect parameters supplied for " + name() +
+                ". Please inform plugin author if not using translations.");
         }
 
         String trans = TranslateType.MESSAGES.get(this);

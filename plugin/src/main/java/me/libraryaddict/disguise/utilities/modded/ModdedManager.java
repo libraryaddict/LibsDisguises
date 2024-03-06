@@ -38,7 +38,8 @@ public class ModdedManager {
     @Getter
     private static byte[] fmlRegistries;
     @Getter
-    private static final Cache<String, ArrayList<String>> forgeMods = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+    private static final Cache<String, ArrayList<String>> forgeMods =
+        CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 
     public ModdedManager(ArrayList<String> channels) {
         if (getEntities().isEmpty()) {
@@ -206,7 +207,8 @@ public class ModdedManager {
         ArrayList<DisguisePerm> perms = new ArrayList<>();
 
         for (Map.Entry<NamespacedKey, ModdedEntity> entry : entities.entrySet()) {
-            perms.add(new DisguisePerm(entry.getValue().isLiving() ? DisguiseType.MODDED_LIVING : DisguiseType.MODDED_MISC, entry.getValue().getName()));
+            perms.add(new DisguisePerm(entry.getValue().isLiving() ? DisguiseType.MODDED_LIVING : DisguiseType.MODDED_MISC,
+                entry.getValue().getName()));
         }
 
         return perms;

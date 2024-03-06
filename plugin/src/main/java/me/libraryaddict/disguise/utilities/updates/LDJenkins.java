@@ -62,7 +62,8 @@ public class LDJenkins {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String json =
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 map = new Gson().fromJson(json, HashMap.class);
             }
@@ -86,8 +87,8 @@ public class LDJenkins {
             String[] users = getBadUsers();
 
             for (String s : users) {
-                if (LibsPremium.getPaidInformation() != null &&
-                    (s.equals(LibsPremium.getPaidInformation().getDownloadID()) || s.equals(LibsPremium.getPaidInformation().getUserID()))) {
+                if (LibsPremium.getPaidInformation() != null && (s.equals(LibsPremium.getPaidInformation().getDownloadID()) ||
+                    s.equals(LibsPremium.getPaidInformation().getUserID()))) {
                     LibsDisguises.getInstance().unregisterCommands(true);
                 }
             }
@@ -103,7 +104,8 @@ public class LDJenkins {
             // Get the input stream, what we receive
             try (InputStream input = con.getInputStream()) {
                 // Read it to string
-                String json = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+                String json =
+                    new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
 
                 jsonObject = new Gson().fromJson(json, Map.class);
             }

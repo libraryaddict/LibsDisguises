@@ -14,7 +14,7 @@ import java.net.URL;
 public class BisectHosting {
     public boolean isBisectHosted(String pluginName) {
         boolean claimedHosted = DisguiseConfig.isBisectHosted();
-        String ip = Bukkit.getIp() + "";
+        String ip = Bukkit.getIp();
         String parsedIP = ip.replaceAll("[^:\\d.]", "");
 
         // If not hosted by bisect
@@ -29,8 +29,7 @@ public class BisectHosting {
                 ip = getFinalURL("http://" + ip);
 
                 // Doing this funny stringbuilder because antiviruses may find it "dodgy". Or does this make it dodgier?
-                if (ip != null && ip.startsWith(
-                    new StringBuilder("https").append("://").append("www").append(".").append("bisecthosting").append(".").append("com/").toString())) {
+                if (ip != null && ip.startsWith("https" + "://" + "www" + "." + "bisecthosting" + "." + "com/")) {
                     hostedBy = true;
                 }
             } catch (IOException ignored) {

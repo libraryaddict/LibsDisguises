@@ -47,11 +47,13 @@ public class PlayerDisguiseParam extends ExtraDisguiseParam<String> {
         return param;
     }
 
-    public void checkParameterPermission(CommandSender sender, DisguisePermissions permissions, HashMap<String, HashMap<String, Boolean>> disguiseOptions,
-                                         ArrayList<String> usedOptions, DisguisePerm disguisePerm, String param) throws DisguiseParseException {
+    public void checkParameterPermission(CommandSender sender, DisguisePermissions permissions,
+                                         HashMap<String, HashMap<String, Boolean>> disguiseOptions, ArrayList<String> usedOptions,
+                                         DisguisePerm disguisePerm, String param) throws DisguiseParseException {
         // If they can't use this name, throw error
         if (sender != null && !DisguisePermissions.hasPermissionOption(disguiseOptions, "setname", param.toLowerCase(Locale.ENGLISH))) {
-            if (!param.equalsIgnoreCase(sender.getName()) || !DisguisePermissions.hasPermissionOption(disguiseOptions, "setname", "themselves")) {
+            if (!param.equalsIgnoreCase(sender.getName()) ||
+                !DisguisePermissions.hasPermissionOption(disguiseOptions, "setname", "themselves")) {
                 throw new DisguiseParseException(LibsMsg.PARSE_NO_PERM_NAME);
             }
         }

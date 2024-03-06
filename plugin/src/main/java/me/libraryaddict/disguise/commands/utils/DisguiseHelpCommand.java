@@ -48,7 +48,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
                 if (help != null) {
                     if (help.hasValues() && help.canTranslateValues()) {
-                        LibsMsg.DHELP_HELP4.send(sender, help.getName(), StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
+                        LibsMsg.DHELP_HELP4.send(sender, help.getName(),
+                            StringUtils.join(help.getEnums(""), LibsMsg.DHELP_HELP4_SEPERATOR.get()));
                     } else {
                         if (!help.getName().equals(help.getDescriptiveName())) {
                             LibsMsg.DHELP_HELP6.send(sender, help.getName(), help.getDescriptiveName(), help.getDescription());
@@ -100,8 +101,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                             methodColor = ChatColor.GRAY;
                         }
 
-                        String str = TranslateType.DISGUISE_OPTIONS.get(method.getName()) + ChatColor.DARK_RED + "(" + ChatColor.GREEN + info.getName() +
-                            ChatColor.DARK_RED + ")";
+                        String str = TranslateType.DISGUISE_OPTIONS.get(method.getName()) + ChatColor.DARK_RED + "(" + ChatColor.GREEN +
+                            info.getName() + ChatColor.DARK_RED + ")";
 
                         methods.add(methodColor + str);
                     }
@@ -113,7 +114,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
                     methods.add(LibsMsg.DHELP_NO_OPTIONS.get());
                 }
 
-                LibsMsg.DHELP_OPTIONS.send(sender, ChatColor.DARK_RED + type.toReadable(), StringUtils.join(methods, ChatColor.DARK_RED + ", "));
+                LibsMsg.DHELP_OPTIONS.send(sender, ChatColor.DARK_RED + type.toReadable(),
+                    StringUtils.join(methods, ChatColor.DARK_RED + ", "));
 
                 if (ignored > 0) {
                     LibsMsg.NO_PERMS_USE_OPTIONS.send(sender, ignored);
@@ -165,7 +167,8 @@ public class DisguiseHelpCommand extends DisguiseBaseCommand implements TabCompl
 
         for (ParamInfo s : ParamInfoManager.getParamInfos()) {
             LibsMsg.DHELP_HELP3.send(sender,
-                s.getName().replaceAll(" ", "") + (!s.getName().equals(s.getDescriptiveName()) ? " ~ " + s.getDescriptiveName() : ""), s.getDescription());
+                s.getName().replaceAll(" ", "") + (!s.getName().equals(s.getDescriptiveName()) ? " ~ " + s.getDescriptiveName() : ""),
+                s.getDescription());
         }
     }
 }

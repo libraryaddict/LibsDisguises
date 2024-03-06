@@ -18,5 +18,5 @@ public enum EntityPose {
     ROARING,
     SNIFFING,
     EMERGING,
-    DIGGING;
+    DIGGING
 }

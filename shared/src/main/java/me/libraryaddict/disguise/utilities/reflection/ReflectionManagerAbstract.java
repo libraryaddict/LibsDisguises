@@ -75,7 +75,8 @@ public interface ReflectionManagerAbstract {
 
     Enum getEnumDirection(int direction);
 
-    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible, EnumWrappers.PlayerInfoAction... actions);
+    PacketContainer getTabListPacket(String displayName, WrappedGameProfile gameProfile, boolean nameVisible,
+                                     EnumWrappers.PlayerInfoAction... actions);
 
     Object getNmsEntity(Entity entity);
 
