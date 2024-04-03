@@ -305,25 +305,25 @@ public class LibsPremium {
 
                     if (info.getBuildNumber() == null || !info.getBuildNumber().matches("#\\d+")) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Ew, I don't recognize " + f.getName());
+                        DisguiseUtilities.getLogger().info("Unknown file detected and deleted: LibsDisguises/" + f.getName());
                         continue;
                     } else if (Integer.parseInt(info.getBuildNumber().replace("#", "")) <
                         Integer.parseInt(LibsDisguises.getInstance().getBuildNo().replace("#", ""))) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Ew, " + f.getName() + " is so old");
+                        DisguiseUtilities.getLogger().info("Outdated file deleted: LibsDisguises/" + f.getName());
                         continue;
                     }
 
                     if (!info.isLegit()) {
                         f.delete();
-                        DisguiseUtilities.getLogger().info("Ew, I saw something nasty in " + f.getName());
+                        DisguiseUtilities.getLogger().info("Potential virus was deleted: LibsDisguises/" + f.getName());
                         continue;
                     }
 
                     foundBetter = true;
                     break;
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    DisguiseUtilities.getLogger().info("Ew, error about invalid Libs Disguises jar. Deleting " + f.getName());
+                    DisguiseUtilities.getLogger().info("Invalid Lib's Disguises jar has errored, deleting LibsDisguises/" + f.getName());
                     f.delete();
                 } catch (Throwable e) {
                     e.printStackTrace();

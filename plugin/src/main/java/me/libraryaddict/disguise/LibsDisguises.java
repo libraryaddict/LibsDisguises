@@ -133,6 +133,16 @@ public class LibsDisguises extends JavaPlugin {
                     "plugin will continue to load, but it will look like a mugging victim");
             }
 
+            // Note that Forge/Hybrid is unsupported
+            // Previously was supported but changes in both LD and nms has made it unsustainable
+            // The time and complexibility it would take is far too high for the amount of usage it would receive.
+            // Any extra income from sales would never cover the time spent implementing this.
+            if (Bukkit.getVersion().toLowerCase().matches(".*(arclight|mohist|magma).*")) {
+                getLogger().severe(
+                    "Lib's Disguises will not work correctly on Forge/Hybrid servers, due to complexibility and time commitment there is " +
+                        "no support for this. Do not report any issues to Lib's Disguises.");
+            }
+
             commandConfig = new DisguiseCommandConfig();
 
             if (!reloaded) {
