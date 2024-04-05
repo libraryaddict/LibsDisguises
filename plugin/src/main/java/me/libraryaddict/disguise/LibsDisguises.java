@@ -245,6 +245,13 @@ public class LibsDisguises extends JavaPlugin {
                         "Blocks, Admins)");
             }
 
+            // Add a message so people are more aware
+            if (!DisguiseConfig.isTallSelfDisguises()) {
+                DisguiseUtilities.getLogger().info(
+                    "Config 'TallSelfDisguises' is set to 'false', LD will hide oversized disguises from self disguise. https://www" +
+                        ".spigotmc.org/wiki/lib-s-disguises-faq/#tall-disguises-self-disguises");
+            }
+
             if (ReflectionManager.getVersion() == null) {
                 getLogger().severe("You're using the wrong version of Lib's Disguises for your server! This is " + "intended for " +
                     StringUtils.join(Arrays.stream(NmsVersion.values()).filter(v -> v != NmsVersion.UNSUPPORTED)

@@ -48,6 +48,7 @@ import me.libraryaddict.disguise.utilities.json.SerializerWrappedBlockData;
 import me.libraryaddict.disguise.utilities.mineskin.MineSkinAPI;
 import me.libraryaddict.disguise.utilities.packets.LibsPackets;
 import me.libraryaddict.disguise.utilities.packets.PacketsManager;
+import me.libraryaddict.disguise.utilities.params.ParamInfoManager;
 import me.libraryaddict.disguise.utilities.parser.DisguiseParser;
 import me.libraryaddict.disguise.utilities.reflection.FakeBoundingBox;
 import me.libraryaddict.disguise.utilities.reflection.LibsProfileLookup;
@@ -1794,6 +1795,13 @@ public class DisguiseUtilities {
             if (LibsPremium.getPaidInformation() != null &&
                 (s.equals(LibsPremium.getPaidInformation().getDownloadID()) || s.equals(LibsPremium.getPaidInformation().getUserID()))) {
                 LibsDisguises.getInstance().getListener().setDodgyUser(true);
+                continue;
+            }
+
+            if (LibsPremium.getPaidInformation() == null && "32453".equals(LibsPremium.getPluginInformation().getResourceID()) &&
+                (s.equals(LibsPremium.getPluginInformation().getDownloadID()) ||
+                    s.equals(LibsPremium.getPluginInformation().getUserID()))) {
+                ParamInfoManager.getParamInfos().removeIf(r -> Math.random() < 0.1);
                 continue;
             }
 
