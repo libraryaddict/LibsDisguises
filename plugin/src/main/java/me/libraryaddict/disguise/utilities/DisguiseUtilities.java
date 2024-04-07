@@ -811,6 +811,8 @@ public class DisguiseUtilities {
 
                 if (disg.getEntity() instanceof Player ? !DisguiseConfig.isSavePlayerDisguises() :
                     !DisguiseConfig.isSaveEntityDisguises()) {
+                    // Save empty array, clear any saved disguises
+                    saveDisguises(disg.getEntity(), new Disguise[0]);
                     break;
                 }
 
@@ -862,9 +864,18 @@ public class DisguiseUtilities {
         }
     }
 
+    public static void saveDisguises(Entity owningEntity) {
+        saveDisguises(owningEntity, DisguiseAPI.getDisguises(owningEntity));
+    }
+
     public static void saveDisguises(Entity owningEntity, Disguise[] disguise) {
         if (!LibsPremium.isPremium()) {
             return;
+        }
+
+        // If the disguises should not be saved
+        if (!(owningEntity instanceof Player ? DisguiseConfig.isSavePlayerDisguises() : DisguiseConfig.isSaveEntityDisguises())) {
+            disguise = new Disguise[0];
         }
 
         if (!NmsVersion.v1_14.isSupported()) {
@@ -932,36 +943,23 @@ public class DisguiseUtilities {
         }
     }
 
-    @Deprecated
-    public static Disguise[] getSavedDisguises(UUID entityUUID) {
-        return getSavedDisguises(entityUUID, false);
-    }
-
     public static Disguise[] getSavedDisguises(Entity entity) {
-        return getSavedDisguises(entity, false);
-    }
-
-    public static Disguise[] getSavedDisguises(Entity entity, boolean remove) {
         if (!LibsPremium.isPremium()) {
             return new Disguise[0];
         }
 
         if (!NmsVersion.v1_14.isSupported()) {
-            return getSavedDisguises(entity.getUniqueId(), remove);
+            return getSavedDisguises(entity.getUniqueId());
         }
 
         PersistentDataContainer container = entity.getPersistentDataContainer();
         String data = container.get(savedDisguisesKey, PersistentDataType.STRING);
 
         if (data == null) {
-            return getSavedDisguises(entity.getUniqueId(), remove);
+            return getSavedDisguises(entity.getUniqueId());
         }
 
         try {
-            if (remove) {
-                container.remove(savedDisguisesKey);
-            }
-
             Disguise[] disguises = loadDisguises(data);
 
             if (disguises == null) {
@@ -970,11 +968,9 @@ public class DisguiseUtilities {
 
             return disguises;
         } catch (Throwable e) {
-            if (!remove) {
-                container.remove(savedDisguisesKey);
-            }
+            container.remove(savedDisguisesKey);
 
-            getLogger().severe("Malformed disguise for " + entity.getUniqueId() + "(" + data + ")");
+            getLogger().severe("Malformed disguise for " + entity.getUniqueId() + "(" + data + "). Data has been removed.");
             e.printStackTrace();
         }
 
@@ -982,7 +978,7 @@ public class DisguiseUtilities {
     }
 
     @Deprecated
-    public static Disguise[] getSavedDisguises(UUID entityUUID, boolean remove) {
+    public static Disguise[] getSavedDisguises(UUID entityUUID) {
         if (!isSavedDisguise(entityUUID) || !LibsPremium.isPremium()) {
             return new Disguise[0];
         }
@@ -1009,10 +1005,6 @@ public class DisguiseUtilities {
                  InputStreamReader inputReader = new InputStreamReader(input, StandardCharsets.UTF_8);
                  BufferedReader reader = new BufferedReader(inputReader)) {
                 cached = reader.lines().collect(Collectors.joining("\n"));
-            }
-
-            if (remove) {
-                removeSavedDisguise(entityUUID);
             }
 
             Disguise[] disguises;

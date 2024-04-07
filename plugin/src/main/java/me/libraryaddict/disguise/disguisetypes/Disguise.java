@@ -806,6 +806,8 @@ public abstract class Disguise {
             removeBossBar();
         }
 
+        DisguiseUtilities.saveDisguises(getEntity());
+
         return true;
     }
 
@@ -1035,6 +1037,7 @@ public abstract class Disguise {
         }
 
         makeBossBar();
+        DisguiseUtilities.saveDisguises(getEntity());
 
         return true;
     }

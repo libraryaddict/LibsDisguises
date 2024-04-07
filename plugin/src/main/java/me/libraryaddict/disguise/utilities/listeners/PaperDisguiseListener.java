@@ -33,7 +33,7 @@ public class PaperDisguiseListener implements Listener {
 
         Entity entity = event.getEntity();
 
-        Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
+        Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity);
 
         if (disguises.length == 0) {
             return;
@@ -55,13 +55,7 @@ public class PaperDisguiseListener implements Listener {
 
         Entity entity = event.getEntity();
 
-        Disguise[] disguises = DisguiseAPI.getDisguises(entity);
-
-        if (disguises.length == 0) {
-            return;
-        }
-
-        DisguiseUtilities.saveDisguises(entity, disguises);
+        DisguiseUtilities.saveDisguises(entity);
     }
 
     private boolean isWeirdBuild() {

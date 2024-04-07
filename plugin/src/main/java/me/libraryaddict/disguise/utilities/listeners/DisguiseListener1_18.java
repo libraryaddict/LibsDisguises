@@ -18,7 +18,7 @@ public class DisguiseListener1_18 implements Listener {
         }
 
         for (Entity entity : event.getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity);
 
             if (disguises.length == 0) {
                 continue;
@@ -40,13 +40,7 @@ public class DisguiseListener1_18 implements Listener {
         }
 
         for (Entity entity : event.getEntities()) {
-            Disguise[] disguises = DisguiseAPI.getDisguises(entity);
-
-            if (disguises.length == 0) {
-                continue;
-            }
-
-            DisguiseUtilities.saveDisguises(entity, disguises);
+            DisguiseUtilities.saveDisguises(entity);
         }
     }
 }

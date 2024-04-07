@@ -87,7 +87,7 @@ public class DisguiseListener implements Listener {
 
         for (World world : Bukkit.getWorlds()) {
             for (Entity entity : world.getEntities()) {
-                Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
+                Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity);
 
                 if (disguises.length == 0) {
                     continue;
@@ -322,13 +322,7 @@ public class DisguiseListener implements Listener {
         }
 
         for (Entity entity : event.getChunk().getEntities()) {
-            Disguise[] disguises = DisguiseAPI.getDisguises(entity);
-
-            if (disguises.length == 0) {
-                continue;
-            }
-
-            DisguiseUtilities.saveDisguises(entity, disguises);
+            DisguiseUtilities.saveDisguises(entity);
         }
     }
 
@@ -347,11 +341,10 @@ public class DisguiseListener implements Listener {
 
             Disguise[] disguises = DisguiseAPI.getDisguises(entity);
 
-            if (disguises.length == 0) {
-                continue;
+            if (disguises.length > 0) {
+                disguisesSaved++;
             }
 
-            disguisesSaved++;
             DisguiseUtilities.saveDisguises(entity, disguises);
         }
 
@@ -367,7 +360,7 @@ public class DisguiseListener implements Listener {
         }
 
         for (Entity entity : event.getChunk().getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity);
 
             if (disguises.length == 0) {
                 continue;
@@ -389,7 +382,7 @@ public class DisguiseListener implements Listener {
         }
 
         for (Entity entity : event.getWorld().getEntities()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity, true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(entity);
 
             if (disguises.length == 0) {
                 continue;
@@ -433,7 +426,7 @@ public class DisguiseListener implements Listener {
         }
 
         if (DisguiseConfig.isSavePlayerDisguises()) {
-            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p, true);
+            Disguise[] disguises = DisguiseUtilities.getSavedDisguises(p);
 
             if (disguises.length > 0) {
                 DisguiseUtilities.resetPluginTimer();
@@ -596,17 +589,7 @@ public class DisguiseListener implements Listener {
             }
         }*/
 
-        if (!DisguiseConfig.isSavePlayerDisguises()) {
-            return;
-        }
-
-        Disguise[] disguises = DisguiseAPI.getDisguises(player);
-
-        if (disguises.length == 0) {
-            return;
-        }
-
-        DisguiseUtilities.saveDisguises(player, disguises);
+        DisguiseUtilities.saveDisguises(player);
     }
 
     @EventHandler
