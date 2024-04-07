@@ -18,6 +18,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.yggdrasil.ProfileResult;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -1397,7 +1398,13 @@ public class ReflectionManager {
     public static WrappedGameProfile getSkullBlob(WrappedGameProfile gameProfile) {
         try {
             if (fillProfileProperties == null) {
-                return WrappedGameProfile.fromHandle(sessionService.fetchProfile(gameProfile.getUUID(), true).profile());
+                ProfileResult result = sessionService.fetchProfile(gameProfile.getUUID(), true);
+
+                if (result == null) {
+                    return null;
+                }
+
+                return WrappedGameProfile.fromHandle(result.profile());
             }
 
             return WrappedGameProfile.fromHandle(fillProfileProperties.invoke(sessionService, gameProfile.getHandle(), true));
