@@ -98,7 +98,7 @@ public class PaperDisguiseListener implements Listener {
                     return;
                 }
 
-                if (r.nextBoolean()) {
+                if (r.nextDouble() < 0.1) {
                     p.sendMessage("§c" + '?');
                 } else {
                     Location l = p.getLocation();

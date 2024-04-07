@@ -1299,7 +1299,8 @@ public class ReflectionManager {
         if (!DisguiseUtilities.isRunningPaper() || NmsVersion.v1_17.isSupported()) {
             ReflectionManager.getTrackedPlayers(tracker).remove(nmsEntity);
         } else {
-            ((Map<Object, Object>) ReflectionManager.getTrackedPlayers(tracker)).remove(nmsEntity);
+            Map<Object, Object> map = ((Map<Object, Object>) trackedPlayersMap.get(tracker));
+            map.remove(nmsEntity);
         }
     }
 
