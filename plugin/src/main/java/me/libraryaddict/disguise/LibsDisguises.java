@@ -210,13 +210,13 @@ public class LibsDisguises extends JavaPlugin {
             buildDate = StringUtils.stripToNull(pluginYml.getString("build-date"));
 
             int fileCount = ReflectionManager.getJarFileCount(getFile(), CompileMethods.ignoredDirectories());
+            int expected = pluginYml.getInt("file-count", fileCount);
 
-            if (fileCount != pluginYml.getInt("file-count", fileCount)) {
-                getLogger().severe(
-                    "Lib's Disguises may be infected with malware, please redownload from a trusted source such as SpigotMC. If this " +
-                        "warning shows even after" +
-                        " updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ otherwise if that doesn't help then" +
-                        " please contact " + "libraryaddict on discord https://discord.gg/J5XRqYX");
+            if (fileCount != expected) {
+                getLogger().severe("Lib's Disguises may be infected with malware, there were " + (fileCount - expected) +
+                    " unknown files injected into the jar. Please redownload from a trusted source such as SpigotMC. If this warning " +
+                    "shows even after updating, try https://www.spigotmc.org/resources/spigot-anti-malware.64982/ otherwise if that " +
+                    "doesn't help then please contact libraryaddict on discord https://discord.gg/J5XRqYX");
             }
 
             getLogger().info("File Name: " + getFile().getName());
