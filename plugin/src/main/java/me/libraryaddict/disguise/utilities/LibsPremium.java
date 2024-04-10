@@ -224,7 +224,7 @@ public class LibsPremium {
             if (bisectHosted) {
                 DisguiseUtilities.getLogger().info("Hosted by BisectHosting! Premium enabled!");
 
-                paidInformation = new PluginInformation(0, "2", "32453", "2", true, "0", "#0", "0");
+                paidInformation = new PluginInformation(0, "2", "32453", "2", true, "0", "#1", "0");
 
                 thisPluginIsPaidFor = true;
             } else {
