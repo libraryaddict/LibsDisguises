@@ -21,6 +21,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,6 +49,7 @@ public class MineSkinAPI {
     @Getter
     @Setter
     private String apiKey;
+    private static long lastErrorPage;
 
     public boolean isInUse() {
         return lock.isLocked();
@@ -223,19 +225,51 @@ public class MineSkinAPI {
             callback.onError(skinUrl == null ? LibsMsg.SKIN_API_TIMEOUT_ERROR : LibsMsg.SKIN_API_IMAGE_TIMEOUT);
             return null;
         } catch (Exception ex) {
-            try {
-                if (connection != null &&
-                    (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
-                        connection.getResponseCode() == 599)) {
-                    if (getApiKey() != null && connection.getResponseCode() == 504) {
-                        callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
-                    } else {
-                        callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
-                    }
+            if (connection != null) {
 
-                    return null;
+                try {
+                    int code = connection.getResponseCode();
+
+                    if (connection.getResponseCode() == 524 || connection.getResponseCode() == 408 || connection.getResponseCode() == 504 ||
+                        connection.getResponseCode() == 599) {
+                        if (getApiKey() != null && connection.getResponseCode() == 504) {
+                            callback.onError(LibsMsg.SKIN_API_TIMEOUT_API_KEY_ERROR);
+                        } else {
+                            callback.onError(LibsMsg.SKIN_API_TIMEOUT_ERROR);
+                        }
+
+                        return null;
+                    }
+                } catch (IOException ignored) {
                 }
-            } catch (IOException ignored) {
+
+                if (DisguiseUtilities.getLogger() != null) {
+                    // Get the input stream, what we receive
+                    try (InputStream errorStream = connection.getErrorStream()) {
+                        // Read it to string
+                        String response = new BufferedReader(new InputStreamReader(errorStream, StandardCharsets.UTF_8)).lines()
+                            .collect(Collectors.joining("\n"));
+
+                        // I don't think there's a reliable way to detect the page.
+                        // They change the page layout, text and don't identify themselves clearly as this is not meant to be bottable
+                        if (response.toLowerCase(Locale.ROOT).contains("challenge") &&
+                            response.toLowerCase(Locale.ROOT).contains("javascript")) {
+                            DisguiseUtilities.getLogger().warning(
+                                "We may have encountered a Cloudflare challenge page while connecting to MineSkin, unfortunately this " +
+                                    "could be of several reasons. Foremost is the site suffering a bot attack, your IP could be " +
+                                    "blacklisted, there could be a Cloudflare misconfiguration.");
+                        }
+
+                        if (response.length() < 10_000 || lastErrorPage + TimeUnit.HOURS.toMillis(12) < System.currentTimeMillis()) {
+                            DisguiseUtilities.getLogger().warning("MineSkin error: " + response);
+                            lastErrorPage = System.currentTimeMillis();
+                        } else {
+                            DisguiseUtilities.getLogger()
+                                .warning("MineSkin error logging skipped as it has been printed in the last 12h and is spammy");
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }
             }
 
             if (DisguiseUtilities.getLogger() != null) {
