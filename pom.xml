@@ -24,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.32</lombok.version>
-        <packetevents.version>2.3.0</packetevents.version>
+        <packetevents.version>2.3.1-SNAPSHOT</packetevents.version>
         <spigot.version>1.20.6-R0.1-SNAPSHOT</spigot.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
@@ -43,8 +43,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.github.retrooper.packetevents</groupId>
-            <artifactId>spigot</artifactId>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
             <optional>true</optional>
             <scope>compile</scope>
         </dependency>
@@ -73,8 +73,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.retrooper.packetevents</groupId>
-                <artifactId>spigot</artifactId>
+                <groupId>com.github.retrooper</groupId>
+                <artifactId>packetevents-spigot</artifactId>
                 <version>${packetevents.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -123,6 +123,10 @@
         <repository>
             <id>codemc-releases</id>
             <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 

@@ -33,7 +33,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
     @RequiredArgsConstructor
     @Getter
     private static class WrappedData {
-        private final LinkedHashMap<StateValue, Object> data;
+        private final Map<StateValue, Object> data;
         private final WrappedBlockState block;
         private final String blockName;
 
@@ -52,6 +52,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
 
     private final List<WrappedData> defaultBlockStates = new ArrayList<>();
     private final Method methodGlobalIdNoCache;
+    private final Method cloneBlockstate;
 
     @SneakyThrows
     public ParamInfoWrappedBlockData(Class paramClass, String name, String description) {
@@ -65,6 +66,8 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
         // If this breaks in the future, I'll probably have a better idea on how to do things
         methodGlobalIdNoCache = WrappedBlockState.class.getDeclaredMethod("getGlobalIdNoCache");
         methodGlobalIdNoCache.setAccessible(true);
+        cloneBlockstate = WrappedBlockState.class.getDeclaredMethod("checkIfCloneNeeded");
+        cloneBlockstate.setAccessible(true);
     }
 
     @SneakyThrows
@@ -304,6 +307,7 @@ public class ParamInfoWrappedBlockData extends ParamInfo {
         }
 
         WrappedBlockState blockState = bData.getBlock().clone();
+        cloneBlockstate.invoke(blockState);
 
         for (int i = 1; i < parseSplit.size() - 1; i++) {
             // This is ensured key=value
